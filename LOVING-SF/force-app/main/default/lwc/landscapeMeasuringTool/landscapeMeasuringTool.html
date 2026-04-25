@@ -1,0 +1,233 @@
+<template>
+    <lightning-card title="Landscape Measuring Tool" icon-name="utility:location">
+        <div slot="actions">
+            <lightning-button-group>
+                <lightning-button
+                    label="Sod Area"
+                    value="sod"
+                    variant={sodVariant}
+                    onclick={setMode}
+                    title="Draw polygon to measure sod area (sq ft)">
+                </lightning-button>
+                <lightning-button
+                    label="Bed/Mulch"
+                    value="bed"
+                    variant={bedVariant}
+                    onclick={setMode}
+                    title="Draw polygon to measure planting bed area (sq ft)">
+                </lightning-button>
+                <lightning-button
+                    label="Linear"
+                    value="linear"
+                    variant={linearVariant}
+                    onclick={setMode}
+                    title="Draw line to measure edging, walls, fence (linear ft)">
+                </lightning-button>
+                <lightning-button
+                    label="Plants"
+                    value="plants"
+                    variant={plantsVariant}
+                    onclick={setMode}
+                    title="Place markers to count shrubs, trees, lighting">
+                </lightning-button>
+                <lightning-button
+                    label="Grading"
+                    value="grading"
+                    variant={gradingVariant}
+                    onclick={setMode}
+                    title="Measure slope percentage between two points">
+                </lightning-button>
+            </lightning-button-group>
+            <lightning-button
+                class="slds-m-left_x-small"
+                label="Clear All"
+                variant="destructive-text"
+                onclick={clearAll}
+                title="Remove all drawn shapes from the map">
+            </lightning-button>
+        </div>
+
+        <div class="slds-p-around_small">
+
+            <!-- Mode instruction banner -->
+            <div class="mode-banner slds-box slds-box_x-small slds-m-bottom_small">
+                <lightning-icon icon-name={modeIconName} size="x-small" class="slds-m-right_xx-small"></lightning-icon>
+                <span class="slds-text-body_small">{modeInstruction}</span>
+            </div>
+
+            <!-- Map + Summary two-column layout -->
+            <div class="layout-wrapper">
+
+                <!-- Leaflet map -->
+                <div class="map-column">
+                    <div class="map-container" lwc:dom="manual"></div>
+                    <div class="map-attribution">Satellite imagery © Esri</div>
+                </div>
+
+                <!-- Summary panel -->
+                <div class="summary-column">
+                    <div class="slds-box slds-box_x-small summary-box">
+                        <h3 class="slds-text-heading_small slds-m-bottom_small">Takeoff Summary</h3>
+
+                        <!-- Sod -->
+                        <div class="summary-section">
+                            <div class="summary-label sod-label">Sod Area</div>
+                            <div class="summary-value">{sodSqft} <span class="summary-unit">sq ft</span></div>
+                        </div>
+
+                        <!-- Beds -->
+                        <div class="summary-section">
+                            <div class="summary-label bed-label">Bed/Mulch Area</div>
+                            <div class="summary-value">{bedSqft} <span class="summary-unit">sq ft</span></div>
+                        </div>
+
+                        <!-- Linear -->
+                        <div class="summary-section">
+                            <div class="summary-label linear-label">Linear Measure</div>
+                            <div class="summary-value">{linearFt} <span class="summary-unit">lin ft</span></div>
+                        </div>
+
+                        <hr class="slds-m-vertical_small" />
+
+                        <!-- Shrubs -->
+                        <div class="summary-label plant-label slds-m-bottom_xx-small">Shrubs</div>
+                        <div class="plant-grid">
+                            <div class="plant-item">
+                                <span class="plant-count">{shrubs1G}</span>
+                                <span class="plant-size">1 Gal</span>
+                            </div>
+                            <div class="plant-item">
+                                <span class="plant-count">{shrubs3G}</span>
+                                <span class="plant-size">3 Gal</span>
+                            </div>
+                            <div class="plant-item">
+                                <span class="plant-count">{shrubs7G}</span>
+                                <span class="plant-size">7 Gal</span>
+                            </div>
+                        </div>
+
+                        <!-- Trees -->
+                        <div class="summary-label plant-label slds-m-top_x-small slds-m-bottom_xx-small">Trees</div>
+                        <div class="plant-grid">
+                            <div class="plant-item">
+                                <span class="plant-count">{trees15G}</span>
+                                <span class="plant-size">15 Gal</span>
+                            </div>
+                            <div class="plant-item">
+                                <span class="plant-count">{trees30G}</span>
+                                <span class="plant-size">30 Gal</span>
+                            </div>
+                            <div class="plant-item">
+                                <span class="plant-count">{trees45G}</span>
+                                <span class="plant-size">45 Gal</span>
+                            </div>
+                        </div>
+
+                        <!-- Lighting -->
+                        <div class="summary-section slds-m-top_x-small">
+                            <div class="summary-label plant-label">Lighting</div>
+                            <div class="summary-value">{lights} <span class="summary-unit">units</span></div>
+                        </div>
+
+                        <hr class="slds-m-vertical_small" />
+
+                        <!-- Grading -->
+                        <div class="summary-label grading-label slds-m-bottom_xx-small">Grading</div>
+                        <template if:true={hasGradeValue}>
+                            <div class="grade-badge-wrapper">
+                                <span class={gradeBadgeClass}>{slopePct}% grade</span>
+                                <span class="slds-m-left_x-small slds-text-body_small">{gradeStatus}</span>
+                            </div>
+                        </template>
+                        <template if:false={hasGradeValue}>
+                            <span class="slds-text-body_small slds-text-color_weak">Not measured</span>
+                        </template>
+                    </div>
+
+                    <!-- Plant counter (shown in plants mode) -->
+                    <template if:true={isPlantsMode}>
+                        <div class="slds-box slds-box_x-small slds-m-top_small">
+                            <h4 class="slds-text-heading_x-small slds-m-bottom_small">Add Plant</h4>
+                            <lightning-combobox
+                                label="Plant Type"
+                                value={selectedPlantType}
+                                options={plantTypeOptions}
+                                onchange={handlePlantTypeChange}>
+                            </lightning-combobox>
+                            <lightning-button
+                                class="slds-m-top_small"
+                                label="+ Add 1"
+                                variant="brand-outline"
+                                onclick={addPlant}>
+                            </lightning-button>
+                            <lightning-button
+                                class="slds-m-top_small slds-m-left_x-small"
+                                label="- Remove 1"
+                                variant="destructive-text"
+                                onclick={removePlant}>
+                            </lightning-button>
+                        </div>
+                    </template>
+
+                    <!-- Grading calculator (shown in grading mode) -->
+                    <template if:true={isGradingMode}>
+                        <div class="slds-box slds-box_x-small slds-m-top_small">
+                            <h4 class="slds-text-heading_x-small slds-m-bottom_small">Grade Calculator</h4>
+                            <p class="slds-text-body_small slds-m-bottom_small">
+                                Draw a line on the map between the high point and low point.
+                                The horizontal distance is calculated automatically.
+                            </p>
+                            <lightning-input
+                                type="number"
+                                label="Horizontal Distance (ft)"
+                                value={gradeHorizontalFt}
+                                min="0"
+                                step="0.1"
+                                onchange={handleHorizontalChange}>
+                            </lightning-input>
+                            <lightning-input
+                                type="number"
+                                label="Vertical Rise/Drop (inches)"
+                                value={gradeVerticalIn}
+                                min="0"
+                                step="0.5"
+                                onchange={handleVerticalChange}
+                                class="slds-m-top_x-small">
+                            </lightning-input>
+                            <template if:true={hasGradeValue}>
+                                <div class="slds-m-top_small">
+                                    <div class="grade-result">
+                                        <span class={gradeBadgeClass}>{slopePct}%</span>
+                                        <span class="slds-m-left_x-small">{gradeStatus}</span>
+                                    </div>
+                                </div>
+                            </template>
+                            <lightning-input
+                                type="textarea"
+                                label="Grading Notes"
+                                value={gradingNotes}
+                                placeholder="Drainage issues, high/low spots, retaining wall needed..."
+                                onchange={handleGradingNotesChange}
+                                class="slds-m-top_small">
+                            </lightning-input>
+                        </div>
+                    </template>
+
+                    <!-- Save button -->
+                    <div class="slds-m-top_small">
+                        <lightning-button
+                            label="Save Takeoff Measurements"
+                            variant="brand"
+                            onclick={saveMeasurements}
+                            disabled={isSaving}
+                            class="save-btn">
+                        </lightning-button>
+                        <template if:true={isSaving}>
+                            <lightning-spinner alternative-text="Saving..." size="small" class="slds-m-left_small"></lightning-spinner>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </lightning-card>
+</template>

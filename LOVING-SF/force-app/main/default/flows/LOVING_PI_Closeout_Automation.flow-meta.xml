@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <description>Sub-flow: Closeout Automation. Fires when WO status = Completed (Field Complete). Creates QI Inspection, QI Task, and updates WO QI Status to Scheduled.</description>
+    <environments>Default</environments>
+    <interviewLabel>LOVING PI Closeout Automation {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING PI Closeout Automation</label>
+    <processMetadataValues><n>BuilderType</n><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start><locationX>50</locationX><locationY>0</locationY><connector><targetReference>Get_Closeout_WO</targetReference></connector></start>
+    <status>Active</status>
+
+    <variables><n>varWorkOrderId</n><dataType>String</dataType><isCollection>false</isCollection><isInput>true</isInput><isOutput>false</isOutput></variables>
+    <variables><n>varWO</n><dataType>SObject</dataType><isCollection>false</isCollection><isInput>false</isInput><isOutput>false</isOutput><objectType>WorkOrder</objectType></variables>
+    <variables><n>varNewQIId</n><dataType>String</dataType><isCollection>false</isCollection><isInput>false</isInput><isOutput>false</isOutput></variables>
+
+    <recordLookups>
+        <n>Get_Closeout_WO</n><label>Get Work Order</label>
+        <locationX>200</locationX><locationY>100</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector><targetReference>Create_QI_Inspection</targetReference></connector>
+        <filterLogic>and</filterLogic>
+        <filters><field>Id</field><operator>EqualTo</operator><value><elementReference>varWorkOrderId</elementReference></value></filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkOrder</object>
+        <outputReference>varWO</outputReference>
+        <queriedFields><field>Id</field></queriedFields>
+        <queriedFields><field>FM__c</field></queriedFields>
+        <queriedFields><field>Lot_Address__c</field></queriedFields>
+        <queriedFields><field>Crew_Complete_Timestamp__c</field></queriedFields>
+    </recordLookups>
+
+    <recordCreates>
+        <n>Create_QI_Inspection</n><label>Create QI Inspection Record</label>
+        <locationX>200</locationX><locationY>200</locationY>
+        <connector><targetReference>Create_QI_Task</targetReference></connector>
+        <inputAssignments><field>Work_Order__c</field><value><elementReference>varWO.Id</elementReference></value></inputAssignments>
+        <inputAssignments><field>FM__c</field><value><elementReference>varWO.FM__c</elementReference></value></inputAssignments>
+        <inputAssignments><field>Status__c</field><value><stringValue>Scheduled</stringValue></value></inputAssignments>
+        <object>QI_Inspection__c</object>
+        <outputAssignments><assignToReference>varNewQIId</assignToReference><field>Id</field></outputAssignments>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+
+    <recordCreates>
+        <n>Create_QI_Task</n><label>Create QI Inspection Task</label>
+        <locationX>200</locationX><locationY>300</locationY>
+        <connector><targetReference>Update_WO_QI_Status</targetReference></connector>
+        <inputAssignments><field>Subject</field><value><stringValue>QI Inspection Due — Complete By Next Business Day</stringValue></value></inputAssignments>
+        <inputAssignments><field>OwnerId</field><value><elementReference>varWO.FM__c</elementReference></value></inputAssignments>
+        <inputAssignments><field>WhatId</field><value><elementReference>varWO.Id</elementReference></value></inputAssignments>
+        <inputAssignments><field>Priority</field><value><stringValue>High</stringValue></value></inputAssignments>
+        <inputAssignments><field>ActivityDate</field><value><elementReference>$Flow.CurrentDate</elementReference></value></inputAssignments>
+        <inputAssignments><field>Type</field><value><stringValue>QI Inspection</stringValue></value></inputAssignments>
+        <inputAssignments><field>Description</field><value><stringValue>Complete the QI Inspection on the next business day after crew completion. Physical site visit required — you must be at the lot. Score every installed line item 1-10 on the QI Inspection record in Salesforce. Any score 3 or below requires a detailed note. Submit when complete. DEADLINE: 48 hours. Missed deadline escalates to your manager.</stringValue></value></inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+
+    <recordUpdates>
+        <n>Update_WO_QI_Status</n><label>Update WO QI Status to Scheduled</label>
+        <locationX>200</locationX><locationY>400</locationY>
+        <filterLogic>and</filterLogic>
+        <filters><field>Id</field><operator>EqualTo</operator><value><elementReference>varWorkOrderId</elementReference></value></filters>
+        <inputAssignments><field>QI_Status__c</field><value><stringValue>Scheduled</stringValue></value></inputAssignments>
+        <object>WorkOrder</object>
+    </recordUpdates>
+</Flow>
