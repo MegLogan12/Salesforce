@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>GP_Hard_Floor_Invoice_Block</fullName>
+    <active>true</active>
+    <description>Invoice Number cannot be entered if GP is below 22% hard floor. Requires COO override (clear the field and re-enter with override notes).</description>
+    <errorConditionFormula>AND(
+        NOT(ISBLANK(Invoice_Number__c)),
+        ISCHANGED(Invoice_Number__c),
+        NOT(ISBLANK(Gross_Margin_Pct__c)),
+        Gross_Margin_Pct__c &lt; 22
+    )</errorConditionFormula>
+    <errorMessage>Invoice cannot be created. Gross Margin is below the 22% hard floor. Review line item costs and revenue on this Work Order. COO approval required to override this block. Contact your COO and document the approval in the Closeout Notes field before proceeding.</errorMessage>
+</ValidationRule>

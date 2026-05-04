@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Red_Flag_Notes_Required</fullName>
+    <active>true</active>
+    <description>Red Flag Notes are mandatory when Health_Check_Status__c is set to Red.</description>
+    <errorConditionFormula>AND(
+        Health_Check_Status__c = "Red - Will Not Complete Today",
+        ISBLANK(Red_Flag_Notes__c)
+    )</errorConditionFormula>
+    <errorMessage>Red Flag Notes are required when marking a health check Red. Describe specifically why the job will not complete today, what has been completed, and what remains. Scheduling and your manager will be notified immediately.</errorMessage>
+</ValidationRule>

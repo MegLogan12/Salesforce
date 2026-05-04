@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <compactLayoutAssignment>SYSTEM</compactLayoutAssignment>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableLicensing>false</enableLicensing>
+    <enableReports>true</enableReports>
+    <enableSearch>false</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <label>QI Line Item</label>
+    <nameField>
+        <displayFormat>QILI-{0000}</displayFormat>
+        <label>QI Line Item Number</label>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>QI Line Items</pluralLabel>
+    <searchLayouts/>
+    <sharingModel>ControlledByParent</sharingModel>
+    <visibility>Public</visibility>
+    <fields>
+        <fullName>QI_Inspection__c</fullName>
+        <label>QI Inspection</label>
+        <referenceTo>QI_Inspection__c</referenceTo>
+        <relationshipLabel>QI Line Items</relationshipLabel>
+        <relationshipName>QI_Line_Items</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>Work_Order_Line_Item_Ref__c</fullName>
+        <label>Line Item Description</label>
+        <length>255</length>
+        <required>true</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>FM_Score__c</fullName>
+        <label>FM Score (1-10)</label>
+        <precision>2</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>FM_Note__c</fullName>
+        <label>FM Note</label>
+        <length>2000</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>LongTextArea</type>
+        <visibleLines>3</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Score_Flag__c</fullName>
+        <defaultValue>false</defaultValue>
+        <formula>FM_Score__c &lt;= 3</formula>
+        <label>Score Flag (3 or Below)</label>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Catalog_Item__c</fullName>
+        <label>Catalog Item</label>
+        <length>255</length>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Quantity__c</fullName>
+        <label>Quantity</label>
+        <precision>8</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+    </fields>
+    <validationRules>
+        <fullName>FM_Note_Required_On_Low_Score</fullName>
+        <active>true</active>
+        <description>FM note is required when score is 3 or below</description>
+        <errorConditionFormula>FM_Score__c &lt;= 3 &amp;&amp; ISBLANK(FM_Note__c)</errorConditionFormula>
+        <errorMessage>FM Note is required when score is 3 or below. Describe the specific defect and whether rework is needed.</errorMessage>
+    </validationRules>
+    <validationRules>
+        <fullName>Score_Range_1_to_10</fullName>
+        <active>true</active>
+        <description>FM Score must be between 1 and 10</description>
+        <errorConditionFormula>FM_Score__c &lt; 1 || FM_Score__c &gt; 10</errorConditionFormula>
+        <errorMessage>FM Score must be between 1 and 10.</errorMessage>
+    </validationRules>
+</CustomObject>

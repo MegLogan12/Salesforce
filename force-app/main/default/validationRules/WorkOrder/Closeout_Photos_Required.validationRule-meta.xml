@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Closeout_Photos_Required</fullName>
+    <active>true</active>
+    <description>Closeout_Photos_Attached__c must be true before status can change to Pending Closeout Approval.</description>
+    <errorConditionFormula>AND(
+        Status = "Pending Closeout Approval",
+        PRIORVALUE(Status) != "Pending Closeout Approval",
+        NOT(Closeout_Photos_Attached__c)
+    )</errorConditionFormula>
+    <errorMessage>Closeout photos must be attached before submitting for approval. Take and upload photos of the completed installation before changing status. Required: front of lot, plantings installed, any notable site conditions.</errorMessage>
+</ValidationRule>
