@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <description>Scheduled Flow: Daily 5AM Bucket Engine. Updates Pipeline_Bucket__c on all active Lot accounts based on days until Target_Start_Date. Creates Takeoff Tasks when lots first enter the 30-day window. The heavy lifting is delegated to LOVING_BucketEngineService.runBucketEngine() via an Apex Action for scalability across large Lot counts.</description>
+    <environments>Default</environments>
+    <interviewLabel>LOVING Bucket Engine {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING Bucket Engine Daily 5AM</label>
+    <processMetadataValues><n>BuilderType</n><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX><locationY>0</locationY>
+        <connector><targetReference>Run_Bucket_Engine_Apex</targetReference></connector>
+        <schedule>
+            <frequency>Daily</frequency>
+            <startDate>2025-01-01</startDate>
+            <startTime>05:00:00.000Z</startTime>
+        </schedule>
+        <triggerType>Scheduled</triggerType>
+    </start>
+    <status>Active</status>
+
+    <actionCalls>
+        <n>Run_Bucket_Engine_Apex</n>
+        <label>Run Bucket Engine (Apex)</label>
+        <locationX>200</locationX><locationY>100</locationY>
+        <actionName>LOVING_BucketEngineService</actionName>
+        <actionType>apex</actionType>
+        <faultConnector><targetReference>Log_Bucket_Engine_Error</targetReference></faultConnector>
+    </actionCalls>
+
+    <recordCreates>
+        <n>Log_Bucket_Engine_Error</n>
+        <label>Log Bucket Engine Error</label>
+        <locationX>400</locationX><locationY>100</locationY>
+        <inputAssignments><field>Subject</field><value><stringValue>SYSTEM ERROR — Bucket Engine Failed</stringValue></value></inputAssignments>
+        <inputAssignments><field>Priority</field><value><stringValue>High</stringValue></value></inputAssignments>
+        <inputAssignments><field>ActivityDate</field><value><elementReference>$Flow.CurrentDate</elementReference></value></inputAssignments>
+        <inputAssignments><field>Description</field><value><elementReference>$Flow.FaultMessage</elementReference></value></inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+</Flow>

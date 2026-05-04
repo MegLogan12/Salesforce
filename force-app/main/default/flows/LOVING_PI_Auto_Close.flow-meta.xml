@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <description>Sub-flow: Auto Close. Fires when WO status = Closed. Updates Lot Pipeline Bucket to Complete and creates a close-out summary record.</description>
+    <environments>Default</environments>
+    <interviewLabel>LOVING PI Auto Close {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING PI Auto Close</label>
+    <processMetadataValues><n>BuilderType</n><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start><locationX>50</locationX><locationY>0</locationY><connector><targetReference>Get_Close_WO</targetReference></connector></start>
+    <status>Active</status>
+
+    <variables><n>varWorkOrderId</n><dataType>String</dataType><isCollection>false</isCollection><isInput>true</isInput><isOutput>false</isOutput></variables>
+    <variables><n>varWO</n><dataType>SObject</dataType><isCollection>false</isCollection><isInput>false</isInput><isOutput>false</isOutput><objectType>WorkOrder</objectType></variables>
+
+    <recordLookups>
+        <n>Get_Close_WO</n><label>Get Work Order for Close</label>
+        <locationX>200</locationX><locationY>100</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector><targetReference>Update_Lot_To_Complete</targetReference></connector>
+        <filterLogic>and</filterLogic>
+        <filters><field>Id</field><operator>EqualTo</operator><value><elementReference>varWorkOrderId</elementReference></value></filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkOrder</object>
+        <outputReference>varWO</outputReference>
+        <queriedFields><field>Id</field></queriedFields>
+        <queriedFields><field>Lot__c</field></queriedFields>
+        <queriedFields><field>Community__c</field></queriedFields>
+        <queriedFields><field>Aqua_Community__c</field></queriedFields>
+    </recordLookups>
+
+    <recordUpdates>
+        <n>Update_Lot_To_Complete</n><label>Update Lot to Complete</label>
+        <locationX>200</locationX><locationY>200</locationY>
+        <connector><targetReference>Check_Aqua_Pickup</targetReference></connector>
+        <filterLogic>and</filterLogic>
+        <filters><field>Id</field><operator>EqualTo</operator><value><elementReference>varWO.Lot__c</elementReference></value></filters>
+        <inputAssignments><field>Pipeline_Bucket__c</field><value><stringValue>Complete</stringValue></value></inputAssignments>
+        <inputAssignments><field>Lot_Status__c</field><value><stringValue>Complete</stringValue></value></inputAssignments>
+        <inputAssignments><field>Install_Complete__c</field><value><booleanValue>true</booleanValue></value></inputAssignments>
+        <inputAssignments><field>Bucket_Changed_Date__c</field><value><elementReference>$Flow.CurrentDateTime</elementReference></value></inputAssignments>
+        <object>Account</object>
+    </recordUpdates>
+
+    <decisions>
+        <n>Check_Aqua_Pickup</n><label>Aqua Community — Schedule Pickup?</label>
+        <locationX>200</locationX><locationY>300</locationY>
+        <defaultConnectorLabel>Not Aqua</defaultConnectorLabel>
+        <rules>
+            <n>Is_Aqua_On_Close</n>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varWO.Aqua_Community__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><booleanValue>true</booleanValue></rightValue>
+            </conditions>
+            <connector><targetReference>Create_Aqua_Pickup_Task</targetReference></connector>
+            <label>Aqua — Create Pickup Task</label>
+        </rules>
+    </decisions>
+
+    <recordCreates>
+        <n>Create_Aqua_Pickup_Task</n><label>Create Aqua Pickup Task</label>
+        <locationX>400</locationX><locationY>300</locationY>
+        <inputAssignments><field>Subject</field><value><stringValue>Aqua Pickup Required — Lot Closed</stringValue></value></inputAssignments>
+        <inputAssignments><field>WhatId</field><value><elementReference>varWO.Id</elementReference></value></inputAssignments>
+        <inputAssignments><field>Priority</field><value><stringValue>High</stringValue></value></inputAssignments>
+        <inputAssignments><field>ActivityDate</field><value><elementReference>$Flow.CurrentDate</elementReference></value></inputAssignments>
+        <inputAssignments><field>Type</field><value><stringValue>Aqua Pickup</stringValue></value></inputAssignments>
+        <inputAssignments><field>Description</field><value><stringValue>Lot is now closed. Schedule and complete Aqua equipment pickup on the next community service day. Create an Aqua Pickup Work Order from the lot record. Retrieve ALL equipment and reconcile against the on-site inventory record. Any variance triggers billing adjustment and inventory reconciliation.</stringValue></value></inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+</Flow>

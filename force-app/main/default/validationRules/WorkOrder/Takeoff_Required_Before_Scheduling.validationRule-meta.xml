@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Takeoff_Required_Before_Scheduling</fullName>
+    <active>true</active>
+    <description>Work Order cannot move to Finalize Schedule or Scheduled status until Takeoff_Complete__c is true.</description>
+    <errorConditionFormula>AND(
+        OR(Status = "Finalize Schedule", Status = "Scheduled"),
+        NOT(Takeoff_Complete__c)
+    )</errorConditionFormula>
+    <errorMessage>A completed site takeoff is required before this Work Order can be scheduled. The FM must complete the physical site takeoff and submit it from the lot location before scheduling can proceed.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,78 @@
+name: Deploy LOVING SF Package to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_org:
+        description: 'Target org alias (prod or sandbox)'
+        required: true
+        default: 'prod'
+        type: choice
+        options:
+          - prod
+          - sandbox
+      dry_run:
+        description: 'Validate only (no actual deploy)'
+        required: true
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+jobs:
+  deploy:
+    name: Deploy to Salesforce
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Salesforce CLI
+        run: |
+          npm install -g @salesforce/cli
+          sf --version
+
+      - name: Authenticate to Salesforce (Production)
+        if: ${{ github.event.inputs.target_org == 'prod' }}
+        run: |
+          echo "${{ secrets.SF_AUTH_URL_PROD }}" > /tmp/sf_auth.txt
+          sf org login sfdx-url --sfdx-url-file /tmp/sf_auth.txt --alias prod --set-default
+          rm /tmp/sf_auth.txt
+
+      - name: Authenticate to Salesforce (Sandbox)
+        if: ${{ github.event.inputs.target_org == 'sandbox' }}
+        run: |
+          echo "${{ secrets.SF_AUTH_URL_SANDBOX }}" > /tmp/sf_auth.txt
+          sf org login sfdx-url --sfdx-url-file /tmp/sf_auth.txt --alias sandbox --set-default
+          rm /tmp/sf_auth.txt
+
+      - name: Validate deployment (dry run)
+        if: ${{ github.event.inputs.dry_run == 'true' }}
+        run: |
+          sf project deploy validate \
+            --source-dir force-app \
+            --target-org ${{ github.event.inputs.target_org }} \
+            --test-level RunSpecifiedTests \
+            --tests LOVING_WorkOrderTriggerHandlerTest \
+            --wait 30
+
+      - name: Deploy to Salesforce
+        if: ${{ github.event.inputs.dry_run == 'false' }}
+        run: |
+          sf project deploy start \
+            --source-dir force-app \
+            --target-org ${{ github.event.inputs.target_org }} \
+            --test-level RunSpecifiedTests \
+            --tests LOVING_WorkOrderTriggerHandlerTest \
+            --wait 60
+
+      - name: Run Apex tests
+        if: ${{ github.event.inputs.dry_run == 'false' }}
+        run: |
+          sf apex run test \
+            --class-names LOVING_WorkOrderTriggerHandlerTest \
+            --target-org ${{ github.event.inputs.target_org }} \
+            --result-format human \
+            --wait 10

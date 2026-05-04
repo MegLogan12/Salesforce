@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <description>Scheduled Flow: Hourly check for overdue takeoff tasks. Lots in 30-day or Ready To Schedule bucket with Takeoff_Task_Created__c = true and Takeoff_Complete__c = false that are more than 48 hours past Bucket_Changed_Date__c are escalated to the FM Manager. Delegates to LOVING_TakeoffEscalationScheduler (Apex).</description>
+    <environments>Default</environments>
+    <interviewLabel>LOVING Takeoff Escalation {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING Takeoff Escalation Hourly</label>
+    <processMetadataValues><n>BuilderType</n><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX><locationY>0</locationY>
+        <connector><targetReference>Run_Takeoff_Escalation</targetReference></connector>
+        <schedule>
+            <frequency>Daily</frequency>
+            <startDate>2025-01-01</startDate>
+            <startTime>09:00:00.000Z</startTime>
+        </schedule>
+        <triggerType>Scheduled</triggerType>
+    </start>
+    <status>Active</status>
+
+    <actionCalls>
+        <n>Run_Takeoff_Escalation</n>
+        <label>Run Takeoff Escalation Check (Apex)</label>
+        <locationX>200</locationX><locationY>100</locationY>
+        <actionName>LOVING_TakeoffEscalationScheduler</actionName>
+        <actionType>apex</actionType>
+    </actionCalls>
+</Flow>

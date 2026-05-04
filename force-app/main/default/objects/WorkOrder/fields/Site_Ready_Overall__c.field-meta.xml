@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Site_Ready_Overall__c</fullName>
+    <formula>AND(Grading_OK__c, Access_OK__c, Irrigation_OK__c, Debris_Clear__c, Builder_Punch_Clear__c, Utilities_Cleared__c)</formula>
+    <label>Site Ready Overall</label>
+    <type>Checkbox</type>
+</CustomField>
