@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sod_Species__c</fullName><label>Sod Species</label>
+    <required>false</required><type>Picklist</type>
+    <valueSet><restricted>false</restricted><valueSetDefinition><sorted>false</sorted>
+        <value><fullName>Bermuda</fullName><default>false</default><label>Bermuda</label></value>
+        <value><fullName>Fescue</fullName><default>false</default><label>Fescue</label></value>
+        <value><fullName>Zoysia</fullName><default>false</default><label>Zoysia</label></value>
+        <value><fullName>St. Augustine</fullName><default>false</default><label>St. Augustine</label></value>
+        <value><fullName>Centipede</fullName><default>false</default><label>Centipede</label></value>
+    </valueSetDefinition></valueSet>
+</CustomField>
