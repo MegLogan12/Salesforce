@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "LOVING Foreman",
+    "slug": "loving-foreman-app",
+    "scheme": "lovingforeman",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.thelovinggroup.foreman.alpha",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSCameraUsageDescription": "LOVING Field App captures required job photos for field execution and closeout.",
+        "NSPhotoLibraryUsageDescription": "LOVING Field App stages required photos for upload and offline sync.",
+        "NSLocationWhenInUseUsageDescription": "LOVING Field App captures location for arrival, navigation, and sync audit."
+      }
+    },
+    "android": {
+      "package": "com.thelovinggroup.foreman.alpha",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "CAMERA",
+        "READ_MEDIA_IMAGES"
+      ]
+    },
+    "owner": "megan.logan"
+  }
+}
