@@ -1,13 +1,3 @@
-/**
- * LOVING_LandscapeMeasureController
- *
- * Apex controller for the landscapeMeasuringTool LWC.
- * Loads WorkOrder + lot address data for map centering, and saves
- * all field-measured takeoff quantities back to the WorkOrder record.
- *
- * Save operation reuses the TriggerGuard pattern to avoid recursion,
- * then lets the existing WorkOrderTriggerHandler fire GP recalculation.
- */
 public with sharing class LOVING_LandscapeMeasureController {
 
     @AuraEnabled(cacheable=true)
@@ -15,7 +5,6 @@ public with sharing class LOVING_LandscapeMeasureController {
         WorkOrder wo = [
             SELECT Id,
                    AccountId,
-                   Account.Street_Address__c,
                    Account.BillingStreet,
                    Account.BillingCity,
                    Account.BillingState,
@@ -42,9 +31,7 @@ public with sharing class LOVING_LandscapeMeasureController {
             LIMIT 1
         ];
 
-        String streetAddress = wo.Account?.Street_Address__c != null
-            ? wo.Account.Street_Address__c
-            : wo.Account?.BillingStreet;
+        String streetAddress = wo.Account?.BillingStreet;
 
         return new Map<String, Object>{
             'id'             => wo.Id,
@@ -120,7 +107,6 @@ public with sharing class LOVING_LandscapeMeasureController {
         wo.Takeoff_Complete__c = true;
         wo.Takeoff_Date__c     = Date.today();
 
-        LOVING_TriggerGuard.clearAlreadyRun('WorkOrder');
         update wo;
     }
 
