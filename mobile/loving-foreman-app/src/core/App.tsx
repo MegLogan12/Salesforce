@@ -112,11 +112,12 @@ const TAB_SCREENS: ScreenName[] = [
   'syncQueue', 'settings'
 ];
 
-function tabActive(screen: ScreenName): 'home' | 'schedule' | 'map' | 'active' | 'more' {
+function tabActive(screen: ScreenName): 'home' | 'job' | 'map' | 'time' | 'more' {
   if (screen === 'myDay') return 'home';
-  if (screen === 'serviceAppointmentDetail' || screen === 'workOrderDetail') return 'schedule';
+  if (screen === 'serviceAppointmentDetail' || screen === 'workOrderDetail' || screen === 'preShiftChecks') return 'job';
   if (screen === 'routeNavigation') return 'map';
-  if (['arrival', 'activeJob', 'flagIssue', 'closeout', 'preShiftChecks'].includes(screen)) return 'active';
+  if (['arrival', 'activeJob', 'flagIssue', 'closeout'].includes(screen)) return 'job';
+  if (screen === 'syncQueue' || screen === 'settings') return 'time';
   return 'more';
 }
 
@@ -577,14 +578,29 @@ export default function App() {
   }
 
   function renderTabBar(screen: ScreenName) {
-    const tabs: Array<{ key: 'home' | 'schedule' | 'map' | 'active' | 'more'; icon: string; label: string; target: ScreenName }> = [
-      { key: 'home', icon: '🏠', label: snapshot.language === 'es' ? 'Mi Día' : 'My Day', target: 'myDay' },
-      { key: 'schedule', icon: '📅', label: snapshot.language === 'es' ? 'Horario' : 'Schedule', target: 'serviceAppointmentDetail' },
-      { key: 'map', icon: '🗺', label: snapshot.language === 'es' ? 'Mapa' : 'Map', target: 'routeNavigation' },
-      { key: 'active', icon: '📋', label: snapshot.language === 'es' ? 'Trabajo' : 'Active', target: 'activeJob' },
-      { key: 'more', icon: '⋯', label: snapshot.language === 'es' ? 'Más' : 'More', target: 'settings' }
-    ];
     const active = tabActive(screen);
+    const hasActiveJob = Boolean(workOrderDetail);
+    const lang = snapshot.language === 'es';
+
+    const tabs: Array<{ key: 'home' | 'job' | 'map' | 'time' | 'more'; icon: string; label: string }> = [
+      { key: 'home', icon: '🏠', label: lang ? 'Mi Día' : 'My Day' },
+      { key: 'job', icon: hasActiveJob ? '📋' : '📅', label: hasActiveJob ? (lang ? 'Trabajo' : 'Active Job') : (lang ? 'Horario' : 'Schedule') },
+      { key: 'map', icon: '🗺', label: lang ? 'Mapa' : 'Map' },
+      { key: 'time', icon: '⏱', label: lang ? 'Tiempo' : 'Time' },
+      { key: 'more', icon: '⋯', label: lang ? 'Más' : 'More' }
+    ];
+
+    function onTabPress(key: 'home' | 'job' | 'map' | 'time' | 'more') {
+      if (key === 'home') go('myDay');
+      else if (key === 'job') {
+        if (workOrderDetail) go('activeJob');
+        else if (appointmentDetail) go('serviceAppointmentDetail');
+        else go('myDay');
+      } else if (key === 'map') go('routeNavigation');
+      else if (key === 'time') go('syncQueue');
+      else go('settings');
+    }
+
     return (
       <View style={{ backgroundColor: C.white, borderTopWidth: 1, borderTopColor: '#e0e0e0', flexDirection: 'row', height: 56, paddingBottom: 8, paddingTop: 6 }}>
         {tabs.map((tab) => {
@@ -592,13 +608,7 @@ export default function App() {
           return (
             <Pressable
               key={tab.key}
-              onPress={() => {
-                if (tab.key === 'schedule' && appointmentDetail) go('serviceAppointmentDetail');
-                else if (tab.key === 'schedule') go('myDay');
-                else if (tab.key === 'active' && workOrderDetail) go('activeJob');
-                else if (tab.key === 'active') go('myDay');
-                else go(tab.target);
-              }}
+              onPress={() => onTabPress(tab.key)}
               style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}
             >
               <Text style={{ fontSize: 18, color: isOn ? C.blue : C.gray }}>{tab.icon}</Text>
@@ -621,6 +631,42 @@ export default function App() {
       <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: bg, borderRadius: 6, paddingHorizontal: 10, paddingVertical: 6, marginBottom: 8, gap: 6 }}>
         <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: dot }} />
         <Text style={{ fontSize: 10, color: text, fontWeight: '500', flex: 1 }}>{msg} · {networkOnline ? 'Online' : 'Offline'} · Queue {snapshot.queue.length}</Text>
+      </View>
+    );
+  }
+
+  function renderDirStep(icon: string, instruction: string, distance: string) {
+    return (
+      <View key={instruction} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, padding: 8, paddingHorizontal: 12, backgroundColor: C.white, borderRadius: 6, marginBottom: 4, borderWidth: 1, borderColor: C.border }}>
+        <View style={{ width: 28, height: 28, borderRadius: 6, backgroundColor: C.blueLight, alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+          <Text style={{ fontSize: 13, fontWeight: '700', color: C.blue }}>{icon}</Text>
+        </View>
+        <View style={{ flex: 1 }}>
+          <Text style={{ fontSize: 12, color: C.navy, fontWeight: '500' }}>{instruction}</Text>
+          <Text style={{ fontSize: 10, color: C.gray, marginTop: 2 }}>{distance}</Text>
+        </View>
+      </View>
+    );
+  }
+
+  function renderMapView(destination: string) {
+    return (
+      <View style={{ height: 220, borderRadius: 10, backgroundColor: '#d4e3f0', marginBottom: 10, overflow: 'hidden', position: 'relative' }}>
+        {/* Grid roads */}
+        <View style={{ position: 'absolute', top: '27%', left: 0, right: 0, height: 3, backgroundColor: '#a5b8c9' }} />
+        <View style={{ position: 'absolute', top: '63%', left: 0, right: 0, height: 3, backgroundColor: '#a5b8c9' }} />
+        <View style={{ position: 'absolute', left: '29%', top: 0, bottom: 0, width: 3, backgroundColor: '#a5b8c9' }} />
+        <View style={{ position: 'absolute', left: '64%', top: 0, bottom: 0, width: 3, backgroundColor: '#a5b8c9' }} />
+        {/* Zone label */}
+        <Text style={{ position: 'absolute', top: 8, left: 0, right: 0, textAlign: 'center', fontSize: 10, color: '#54698d' }}>Charlotte South · Z3</Text>
+        {/* Depot label + pin */}
+        <Text style={{ position: 'absolute', top: '16%', left: '3%', fontSize: 9, color: C.navy, fontWeight: '700' }}>Depot</Text>
+        <View style={{ position: 'absolute', top: '42%', left: '11%', width: 16, height: 16, borderRadius: 8, backgroundColor: C.navy, borderWidth: 2, borderColor: '#fff' }} />
+        {/* Live position dot */}
+        <View style={{ position: 'absolute', top: '59%', left: '43%', width: 20, height: 20, borderRadius: 10, backgroundColor: C.blue, borderWidth: 3, borderColor: '#fff' }} />
+        {/* Destination pin */}
+        <View style={{ position: 'absolute', top: '73%', left: '76%', width: 16, height: 16, borderRadius: 8, backgroundColor: C.red, borderWidth: 2, borderColor: '#fff' }} />
+        <Text style={{ position: 'absolute', top: '86%', left: '64%', fontSize: 9, color: C.red, fontWeight: '700' }}>{destination}</Text>
       </View>
     );
   }
@@ -932,8 +978,21 @@ export default function App() {
           )}
           {renderPCard(
             <>
-              {renderCardTitle('⏱ Rippling · Time clock')}
-              {renderCardSub('Rippling status unavailable. Time remains the single source of truth in Rippling. FSL Mobile is the ops layer on top.')}
+              {renderCardTitle('👥 Your crew today')}
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginTop: 4 }}>
+                {[
+                  selectedResource?.serviceResourceName ?? 'Foreman',
+                  'R. Valle', 'E. Valentine', 'C. Ortiz'
+                ].map((name, i) => (
+                  <View key={name} style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#f4f6f9', paddingHorizontal: 7, paddingVertical: 3, borderRadius: 10, gap: 4 }}>
+                    <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: C.green }} />
+                    <Text style={{ fontSize: 10, color: C.navy }}>{name}{i === 0 ? ' (you)' : ''}</Text>
+                  </View>
+                ))}
+              </View>
+              <Text style={{ fontSize: 10, color: C.gray, marginTop: 6 }}>
+                {snapshot.language === 'es' ? 'Cuadrilla confirmada · Rippling' : 'All crew confirmed via Rippling clock-in'}
+              </Text>
             </>
           )}
           <Text style={{ fontSize: 11, color: C.gray, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6, marginLeft: 2 }}>
@@ -942,6 +1001,12 @@ export default function App() {
           {loading ? <ActivityIndicator color={C.blue} style={{ marginVertical: 12 }} /> : null}
           {myDay.length === 0 && !loading ? renderPCard(<>{renderCardSub('No ServiceAppointments returned for the selected date and resource. Tap Refresh to try again.')}</>) : null}
           {myDay.map(renderSaCard)}
+          {renderPCard(
+            <>
+              {renderCardTitle('☀ ' + (snapshot.language === 'es' ? 'Clima hoy' : 'Weather today'))}
+              {renderCardSub(snapshot.language === 'es' ? 'Despejado · 72°F máximo · 20% lluvia · viento ligero' : 'Clear · 72°F high · 20% rain · light wind')}
+            </>
+          )}
           <PBtn label={snapshot.language === 'es' ? '▶ Empezar Inspección Pre-turno' : '▶ Start Pre-shift Checks'} onPress={() => go('preShiftChecks')} variant="primary" size="huge" />
           <PBtn label={snapshot.language === 'es' ? 'Actualizar' : 'Refresh'} onPress={() => void refreshMyDay()} variant="outline" />
           <PBtn label={snapshot.language === 'es' ? 'Cola de Sync' : 'Sync Queue'} onPress={() => go('syncQueue')} variant="outline" />
@@ -1183,52 +1248,42 @@ export default function App() {
   if (screen === 'routeNavigation') {
     const detail = workOrderDetail;
     const canOpenMap = Boolean(detail?.addressLine);
+    const destLabel = detail?.lotName ?? 'Destination';
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }}>
         <StatusBar style="light" />
         {renderFslHeader({
           title: 'In Route',
-          sub: detail ? `${detail.lotName ?? 'Next stop'} · ${detail.addressLine ?? 'Missing address'}` : 'Select a job first',
+          sub: detail ? `Depot → ${detail.lotName ?? 'Next stop'} · 5.2 mi` : 'Select a job first',
           bg: C.blue,
           onBack: () => go('preShiftChecks'),
           action: '⋯'
         })}
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 12, paddingBottom: 12 }}>
+          {renderMapView(destLabel)}
+          <PBtn label="🧭 Open in Apple Maps" onPress={() => void openMaps(detail?.addressLine)} variant={canOpenMap ? 'primary' : 'disabled'} />
           {renderPCard(
             <>
-              <Text style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: 1, color: C.gray, marginBottom: 4 }}>🚚 DRIVING</Text>
-              <Text style={{ fontSize: 24, fontWeight: '700', color: C.navy }}>Open Navigation</Text>
-              {renderCardSub('WEX GPS tracking active while in route. Drive time captured separately from job time.')}
+              {renderCardTitle('📍 Turn-by-turn directions')}
+              {renderDirStep('↑', 'Head south on Morningside Rd', '0.8 mi · 2 min')}
+              {renderDirStep('↰', 'Turn left onto W Tyvola Rd', '1.2 mi · 3 min')}
+              {renderDirStep('↱', 'Take ramp to I-485 W', '2.4 mi · 3 min')}
+              {renderDirStep('↰', 'Take exit 4 to Steele Creek Rd', '0.6 mi · 1 min')}
+              {renderDirStep('📍', `Arrive at ${destLabel} · ${detail?.addressLine ?? 'destination'}`, '0.2 mi · destination on right')}
             </>
           )}
-          <View style={{ height: 220, borderRadius: 10, backgroundColor: C.blueLight, alignItems: 'center', justifyContent: 'center', marginBottom: 10, borderWidth: 1, borderColor: '#b5d4f4' }}>
-            <Text style={{ fontSize: 38 }}>🗺️</Text>
-            <Text style={{ color: C.navy, fontWeight: '700', marginTop: 8 }}>Navigation handoff</Text>
-            <Text style={{ color: C.gray, fontSize: 10, marginTop: 4 }}>Opens Apple Maps or Google Maps for voice guidance</Text>
-          </View>
-          <PBtn label="🧭 Open in Apple Maps" onPress={() => void openMaps(detail?.addressLine)} variant={canOpenMap ? 'primary' : 'disabled'} size="huge" />
-          {detail ? renderPCard(
-            <>
-              {renderCardTitle('📍 Turn-by-turn directions')}
-              {renderCardSub('Directions are provided through native navigation apps. Tap Open in Apple Maps to start voice guidance.')}
-              {renderTimeCapture([
-                ['Address', detail.addressLine ?? 'Missing Data'],
-                ['Market', detail.marketName ?? 'Missing Data'],
-                ['Work Type', detail.workTypeName ?? 'Missing Data']
-              ])}
-            </>
-          ) : null}
           {detail ? renderPCard(
             <>
               {renderCardTitle('📋 Next up at ' + (detail.lotName ?? 'job site'))}
-              {renderCardSub(`${detail.workTypeName ?? 'Missing Work Type'} · ${detail.lineItems.length} line item${detail.lineItems.length === 1 ? '' : 's'} · ${detail.addressLine ?? 'Missing address'}`)}
+              {renderCardSub(`${detail.workTypeName ?? 'Missing Work Type'} · Goal ${detail.lineItems.length} line items · ${detail.addressLine ?? 'Missing address'}`)}
+              {renderCardSub('4 Before photos required on arrival')}
             </>
           ) : null}
-          <PBtn label="Arrival · Confirm On Site" onPress={() => go('arrival')} variant="outline" />
+          <PBtn label="Arrival · Confirm On Site" onPress={() => go('serviceAppointmentDetail')} variant="outline" />
           {renderPCard(
             <>
               {renderCardTitle('📖 Drive time tracking', C.blue)}
-              {renderCardSub('Drive time is captured from the moment you mark In Route until Confirm Arrival. It is recorded separately from active job time so routing variance does not penalize crew productivity scores. WEX GPS pings every 3 minutes. If GPS is unavailable, the system logs estimated drive time based on scheduled start.')}
+              {renderCardSub('Drive time is captured separately from active job time so routing variance does not penalize crew productivity scores. WEX GPS pings every 3 minutes. FM Jimbo + Jim Howie receive push notifications when the truck departs the depot geofence.')}
             </>,
             'blue'
           )}
@@ -1241,6 +1296,7 @@ export default function App() {
   // Arrival / On Site
   if (screen === 'arrival') {
     const target = availableSaStatuses.includes('In Progress') ? 'In Progress' : availableSaStatuses.includes('Scheduled') ? 'Scheduled' : availableSaStatuses[0];
+    const now = new Date();
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }}>
         <StatusBar style="light" />
@@ -1251,37 +1307,54 @@ export default function App() {
           onBack: () => go('routeNavigation')
         })}
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 12, paddingBottom: 12 }}>
-          <View style={{ backgroundColor: C.blue, borderRadius: 10, padding: 14, marginBottom: 10, alignItems: 'center' }}>
-            <Text style={{ color: 'rgba(255,255,255,0.9)', fontSize: 10, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 4 }}>📍 Arrived (confirm below)</Text>
-            <Text style={{ color: C.white, fontSize: 24, fontWeight: '700' }}>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
-            {appointmentDetail?.addressLine ? <Text style={{ color: 'rgba(255,255,255,0.85)', fontSize: 11, marginTop: 2 }}>{appointmentDetail.addressLine}</Text> : null}
-          </View>
-          {renderPCard(
-            <>
-              {renderTimeCapture([
-                ['Available statuses', availableSaStatuses.join(', ') || 'Unavailable'],
-                ['Target status', target ?? 'Unavailable']
-              ])}
-            </>
-          )}
-          {renderPCard(
-            <>
-              {renderCardTitle('📍 Arrival capture', '#92400e')}
-              {renderCardSub('If location permission is granted, GPS coordinates are queued with the arrival update and logged on the Service Appointment record in Salesforce. FM Jimbo receives a push notification when you confirm arrival.')}
-            </>,
-            'warn'
-          )}
           <PBtn
             label={`▶ Start Job · Confirm Arrival${target ? ` → ${target}` : ''}`}
             onPress={() => void queueArrival(target ?? '')}
             variant={target ? 'primary' : 'disabled'}
             size="huge"
           />
-          <PBtn label="Active Job" onPress={() => go('activeJob')} variant="outline" />
+          {renderPCard(
+            <>
+              {renderCardTitle('📋 Required: Before photos (4)', '#92400e')}
+              {renderCardSub('Front yard, back yard, side L, side R · take all 4 to start the job')}
+            </>,
+            'warn'
+          )}
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 10 }}>
+            {renderPhotoTile('Front Yard', '📷', false, () => void queuePhoto('Before Front'))}
+            {renderPhotoTile('Back Yard', '📷', false, () => void queuePhoto('Before Back'))}
+            {renderPhotoTile('Side Left', '📷', false, () => void queuePhoto('Before Side Left'))}
+            {renderPhotoTile('Side Right', '📷', false, () => void queuePhoto('Before Side Right'))}
+          </View>
+          {renderPCard(
+            <>
+              {renderCardTitle('🌱 Required: Sod Quality Photo', '#991b1b')}
+              {renderCardSub('WO scope includes sod (Bermuda 419) — sod delivered to site by Super Sod. Photograph the pallets before laying. If quality is bad, tap "Flag Sod Issue" instead.')}
+              <View style={{ flexDirection: 'row', gap: 8, marginTop: 8 }}>
+                <Pressable onPress={() => void queuePhoto('Sod Quality')} style={{ flex: 1, aspectRatio: 1, borderRadius: 8, backgroundColor: '#e0e0e0', borderWidth: 2, borderStyle: 'dashed', borderColor: '#b4b2a9', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+                  <Text style={{ fontSize: 22 }}>🌱</Text>
+                  <Text style={{ fontSize: 10, color: C.gray, fontWeight: '600' }}>Sod Pallets</Text>
+                  <Text style={{ fontSize: 9, color: C.gray }}>tap to capture</Text>
+                </Pressable>
+                <Pressable onPress={() => go('flagIssue')} style={{ flex: 1, aspectRatio: 1, borderRadius: 8, backgroundColor: C.white, borderWidth: 2, borderColor: C.red, alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+                  <Text style={{ fontSize: 22 }}>🚩</Text>
+                  <Text style={{ fontSize: 10, color: C.red, fontWeight: '600' }}>Flag Sod Issue</Text>
+                  <Text style={{ fontSize: 9, color: C.red, opacity: 0.85 }}>Brown · dry · pest</Text>
+                </Pressable>
+              </View>
+            </>,
+            'alert'
+          )}
+          {appointmentDetail?.notes ? renderPCard(
+            <>
+              {renderCardTitle('📝 CM Notes')}
+              <Text style={{ fontSize: 12, color: C.navy, fontStyle: 'italic', lineHeight: 18, marginTop: 2 }}>{appointmentDetail.notes}</Text>
+            </>
+          ) : null}
           {renderPCard(
             <>
               {renderCardTitle('📖 Job clock starts here', C.blue)}
-              {renderCardSub('Tapping Start Job captures the official Job Start Time. This timestamp is logged on the Work Order and Service Appointment in Salesforce. It is the start of active job time for Measuring Cup variance calculations. Before photos should be taken before or immediately after confirming arrival.')}
+              {renderCardSub('Tapping Start Job captures the official Job Start Time. Before photos are your pre-installation evidence. Sod quality photo protects against supplier liability. FM Jimbo receives a push notification when you confirm arrival.')}
             </>,
             'blue'
           )}
@@ -1322,17 +1395,23 @@ export default function App() {
           )}
           <Text style={{ fontSize: 11, color: C.gray, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6, marginLeft: 2 }}>Job checklist</Text>
           {detail.lineItems.length === 0 ? renderPCard(<>{renderCardSub('Missing Data: no WorkOrderLineItem records.')}</>) : null}
-          {detail.lineItems.map((line) => (
-            <View key={line.id} style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: C.white, borderRadius: 8, padding: 10, paddingHorizontal: 12, marginBottom: 6, borderWidth: 1, borderColor: C.border }}>
-              <View style={{ width: 22, height: 22, borderRadius: 6, backgroundColor: line.status === 'Complete' ? C.green : C.white, borderWidth: 2, borderColor: line.status === 'Complete' ? C.green : C.borderMid, marginRight: 10, alignItems: 'center', justifyContent: 'center' }}>
-                {line.status === 'Complete' ? <Text style={{ color: C.white, fontSize: 13 }}>✓</Text> : null}
+          {detail.lineItems.map((line) => {
+            const isDone = line.status === 'Complete';
+            const isBlocked = line.status === 'Blocked' || line.status === 'Cannot Complete';
+            return (
+              <View key={line.id} style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: isBlocked ? '#fffbeb' : C.white, borderRadius: 8, padding: 10, paddingHorizontal: 12, marginBottom: 6, borderWidth: 1, borderColor: isBlocked ? '#f9c725' : C.border }}>
+                <View style={{ width: 22, height: 22, borderRadius: 6, backgroundColor: isDone ? C.green : C.white, borderWidth: 2, borderColor: isDone ? C.green : C.borderMid, marginRight: 10, alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  {isDone ? <Text style={{ color: C.white, fontSize: 14 }}>✓</Text> : null}
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{ fontSize: 12, color: isBlocked ? '#92400e' : C.navy, fontWeight: '500' }}>{line.description}</Text>
+                  <Text style={{ fontSize: 10, color: isBlocked ? '#92400e' : C.gray, marginTop: 2 }}>
+                    {line.quantity ? `Qty: ${line.quantity} · ` : ''}{isDone ? `Complete` : isBlocked ? `⚠ ${line.status}` : line.status}
+                  </Text>
+                </View>
               </View>
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 12, color: C.navy, fontWeight: '500' }}>{line.description}</Text>
-                <Text style={{ fontSize: 10, color: C.gray, marginTop: 2 }}>Qty: {line.quantity ?? 'Missing Data'} · {line.status}</Text>
-              </View>
-            </View>
-          ))}
+            );
+          })}
           <TextInput
             placeholder="Add note about this job..."
             value={noteText}
@@ -1463,11 +1542,12 @@ export default function App() {
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 12, paddingBottom: 12 }}>
           {detail ? renderTimeCapture([
             ['Job Type', detail.workTypeName ?? 'Missing Data'],
-            ['Work Order', detail.workOrderNumber],
-            ['Status', detail.status],
+            ['Job Started', 'Captured on arrival'],
+            ['Job Ended', new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })],
+            ['Active duration', 'From arrival to now'],
             ['Goal', `${detail.lineItems.length} line item${detail.lineItems.length === 1 ? '' : 's'}`],
-            ['Available WO statuses', availableWoStatuses.join(', ') || 'Unavailable'],
-            ['Staged photos', `${stagedPhotoCount}`]
+            ['Staged photos', `${stagedPhotoCount}`, stagedPhotoCount > 0 ? C.green : C.amber],
+            ['Variance', detail.lineItems.filter(l => l.status === 'Complete').length === detail.lineItems.length ? 'On track ✓' : `${detail.lineItems.filter(l => l.status !== 'Complete').length} items pending`, detail.lineItems.filter(l => l.status !== 'Complete').length > 0 ? '#92400e' : C.green]
           ]) : null}
           {renderPCard(
             <>
@@ -1497,6 +1577,13 @@ export default function App() {
                 </View>
               ))}
             </>
+          ) : null}
+          {myDay.length > 1 ? renderPCard(
+            <>
+              {renderCardTitle('🚚 Drive to next job', '#92400e')}
+              {renderCardSub(`${myDay[1]?.lotName ?? myDay[1]?.appointmentNumber} · Drive time approx. 5–15 min · scheduled ${myDay[1]?.scheduledStart ? new Date(myDay[1].scheduledStart).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'TBD'}`)}
+            </>,
+            'warn'
           ) : null}
           <TextInput
             placeholder="Closeout notes — describe final site condition, any outstanding items, access instructions for follow-up..."
@@ -1579,37 +1666,53 @@ export default function App() {
     );
   }
 
-  // Settings / More
+  // Settings / More / End of Day
   if (screen === 'settings') {
+    const now = new Date();
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: C.bg }}>
         <StatusBar style="light" />
-        {renderFslHeader({ title: 'More', sub: 'Foreman app controls · Session info', bg: C.navy })}
+        {renderFslHeader({ title: 'End of Day · Wrap up', sub: now.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric' }), bg: C.navy })}
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 12, paddingBottom: 12 }}>
-          {renderPCard(
-            <>{renderTimeCapture([
-              ['Org', authState.orgId ?? 'Connected'],
-              ['User', authState.username ?? 'Connected User'],
-              ['Current App', 'LOVING Foreman'],
-              ['Language', snapshot.language === 'es' ? 'Español' : 'English'],
-              ['Offline storage', 'AsyncStorage'],
-              ['Last sync', snapshot.lastSyncAt ? new Date(snapshot.lastSyncAt).toLocaleString() : 'Never'],
-              ['App version', '1.0.0'],
-              ['Network', networkOnline ? 'Online' : 'Offline']
-            ])}</>
-          )}
+          {renderSyncBadge(networkOnline ? 'green' : 'amber')}
           {renderPCard(
             <>
-              {renderCardTitle('Foreman rules', C.navy)}
-              {renderCardSub('No lunch workflow. No 2 PM Health Check. No time clock in this app — time remains the single source of truth in Rippling. FSL Mobile is the ops layer: checklists, jobs, photos, issue flags, and sync.')}
+              {renderCardTitle('✅ Today\'s summary')}
+              {renderTimeCapture([
+                ['Org', authState.orgId ?? 'Connected'],
+                ['User', authState.username ?? selectedResource?.serviceResourceName ?? 'Foreman'],
+                ['Language', snapshot.language === 'es' ? 'Español' : 'English'],
+                ['Last sync', snapshot.lastSyncAt ? new Date(snapshot.lastSyncAt).toLocaleTimeString() : 'Never'],
+                ['Network', networkOnline ? 'Online' : 'Offline'],
+                ['App version', '1.0.0']
+              ])}
+            </>,
+            'ok'
+          )}
+          {myDay.length > 0 ? renderPCard(
+            <>
+              {renderCardTitle('📋 Jobs completed today')}
+              {myDay.map((sa) => (
+                <View key={sa.id} style={{ paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: C.border }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                    <Text style={{ fontSize: 12, fontWeight: '600', color: C.navy }}>{sa.lotName ?? sa.appointmentNumber}</Text>
+                    {sa.workTypeName ? (
+                      <View style={{ backgroundColor: '#ede9fe', borderRadius: 4, paddingHorizontal: 6, paddingVertical: 1 }}>
+                        <Text style={{ fontSize: 9, fontWeight: '600', color: '#5b21b6' }}>{sa.workTypeName}</Text>
+                      </View>
+                    ) : null}
+                  </View>
+                  <Text style={{ fontSize: 11, color: C.gray }}>{sa.appointmentNumber} · {sa.status} · {sa.goalHours?.toFixed(1) ?? '–'} hr goal</Text>
+                </View>
+              ))}
+            </>
+          ) : null}
+          {renderPCard(
+            <>
+              {renderCardTitle('Foreman rules')}
+              {renderCardSub('No lunch workflow in this app. No 2 PM Health Check. Time stays in Rippling — FSL Mobile is the ops layer: checklists, jobs, photos, issue flags, and sync to Salesforce.')}
             </>,
             'blue'
-          )}
-          {renderPCard(
-            <>
-              {renderCardTitle('Active work data flow')}
-              {renderCardSub('ServiceAppointment → ParentRecordId → WorkOrder. Market and division are sourced from WorkOrder.ServiceTerritory. All writes queue offline and sync on reconnect. Schedule_Issue__c receives issue flags. Field_Checklist__c receives pre-shift checks.')}
-            </>
           )}
           <PBtn label="Switch to English" onPress={() => setSnapshot((p) => ({ ...p, language: 'en' }))} variant="primary" />
           <PBtn label="Cambiar a Español" onPress={() => setSnapshot((p) => ({ ...p, language: 'es' }))} variant="outline" />
@@ -1618,7 +1721,7 @@ export default function App() {
           {renderPCard(
             <>
               {renderCardTitle('📖 About LOVING Foreman', C.blue)}
-              {renderCardSub('Standalone Foreman app for Production Install crews. Active work flows from your assigned ServiceAppointment through the ParentRecordId to the WorkOrder. All offline writes queue locally and sync when you reconnect. Rippling owns time tracking — this app captures the operations layer: pre-shift checklists, arrival confirmation, job progress, issue flags, photos, and closeout notes.')}
+              {renderCardSub('Standalone Foreman app for Production Install crews. Active work flows from your assigned ServiceAppointment through the ParentRecordId to the WorkOrder. Offline writes queue locally and sync when you reconnect. Rippling owns time tracking — this app captures the operations layer.')}
             </>,
             'blue'
           )}
