@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableReports>true</enableReports>
+    <enableSearch>false</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <label>Aqua Inventory</label>
+    <nameField>
+        <displayFormat>AI-{0000}</displayFormat>
+        <label>Aqua Inventory Number</label>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Aqua Inventory Records</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+    <visibility>Public</visibility>
+    <fields>
+        <fullName>Community__c</fullName>
+        <label>Community</label>
+        <referenceTo>Account</referenceTo>
+        <relationshipLabel>Aqua Inventory (Community)</relationshipLabel>
+        <relationshipName>Aqua_Inventory_Community</relationshipName>
+        <required>false</required>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Lot__c</fullName>
+        <label>Lot</label>
+        <referenceTo>Account</referenceTo>
+        <relationshipLabel>Aqua Inventory (Lot)</relationshipLabel>
+        <relationshipName>Aqua_Inventory_Lot</relationshipName>
+        <required>false</required>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Aqua_Tech__c</fullName>
+        <label>Aqua Tech</label>
+        <referenceTo>User</referenceTo>
+        <relationshipLabel>Aqua Inventory (Tech)</relationshipLabel>
+        <relationshipName>Aqua_Inventory_Tech</relationshipName>
+        <required>false</required>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Location__c</fullName>
+        <label>Location</label>
+        <required>true</required>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value><fullName>Shop</fullName><default>false</default><label>Shop</label></value>
+                <value><fullName>Van</fullName><default>false</default><label>Van</label></value>
+                <value><fullName>On-Site</fullName><default>false</default><label>On-Site</label></value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Item_Type__c</fullName>
+        <label>Item Type</label>
+        <required>true</required>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value><fullName>Hose</fullName><default>false</default><label>Hose</label></value>
+                <value><fullName>Controller</fullName><default>false</default><label>Controller</label></value>
+                <value><fullName>Spray Head</fullName><default>false</default><label>Spray Head</label></value>
+                <value><fullName>Valve</fullName><default>false</default><label>Valve</label></value>
+                <value><fullName>Other</fullName><default>false</default><label>Other</label></value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Quantity__c</fullName>
+        <label>Quantity</label>
+        <precision>5</precision>
+        <required>true</required>
+        <scale>0</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>Reporting_Bucket__c</fullName>
+        <label>Reporting Bucket</label>
+        <required>false</required>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value><fullName>Inventory (Standard Movement)</fullName><default>true</default><label>Inventory (Standard Movement)</label></value>
+                <value><fullName>Missing Material (Stolen - Billable)</fullName><default>false</default><label>Missing Material (Stolen - Billable)</label></value>
+                <value><fullName>Damaged Material (Warranty - No Charge)</fullName><default>false</default><label>Damaged Material (Warranty - No Charge)</label></value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Last_Updated__c</fullName>
+        <label>Last Updated</label>
+        <required>false</required>
+        <type>DateTime</type>
+    </fields>
+</CustomObject>
