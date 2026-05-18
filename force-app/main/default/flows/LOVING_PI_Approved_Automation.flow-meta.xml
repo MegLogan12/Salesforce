@@ -5,16 +5,16 @@
     <environments>Default</environments>
     <interviewLabel>LOVING PI Approved Automation {!$Flow.CurrentDateTime}</interviewLabel>
     <label>LOVING PI Approved Automation</label>
-    <processMetadataValues><n>BuilderType</n><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues>
+    <processMetadataValues><name>BuilderType</name><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
     <start><locationX>50</locationX><locationY>0</locationY><connector><targetReference>Get_Approved_WO</targetReference></connector></start>
     <status>Active</status>
 
-    <variables><n>varWorkOrderId</n><dataType>String</dataType><isCollection>false</isCollection><isInput>true</isInput><isOutput>false</isOutput></variables>
-    <variables><n>varWO</n><dataType>SObject</dataType><isCollection>false</isCollection><isInput>false</isInput><isOutput>false</isOutput><objectType>WorkOrder</objectType></variables>
+    <variables><name>varWorkOrderId</name><dataType>String</dataType><isCollection>false</isCollection><isInput>true</isInput><isOutput>false</isOutput></variables>
+    <variables><name>varWO</name><dataType>SObject</dataType><isCollection>false</isCollection><isInput>false</isInput><isOutput>false</isOutput><objectType>WorkOrder</objectType></variables>
 
     <recordLookups>
-        <n>Get_Approved_WO</n><label>Get Approved Work Order</label>
+        <name>Get_Approved_WO</name><label>Get Approved Work Order</label>
         <locationX>200</locationX><locationY>100</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector><targetReference>Check_GP_Floor</targetReference></connector>
@@ -32,12 +32,12 @@
     </recordLookups>
 
     <decisions>
-        <n>Check_GP_Floor</n><label>GP Status Check</label>
+        <name>Check_GP_Floor</name><label>GP Status Check</label>
         <locationX>200</locationX><locationY>200</locationY>
         <defaultConnectorLabel>GP OK — Proceed to Invoice</defaultConnectorLabel>
         <defaultConnector><targetReference>Create_Invoice_Task</targetReference></defaultConnector>
         <rules>
-            <n>GP_Red_Hard_Stop</n>
+            <name>GP_Red_Hard_Stop</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
                 <leftValueReference>varWO.GP_Status__c</leftValueReference>
@@ -50,7 +50,7 @@
     </decisions>
 
     <recordCreates>
-        <n>Create_Invoice_Task</n><label>Create Invoice Task for Finance</label>
+        <name>Create_Invoice_Task</name><label>Create Invoice Task for Finance</label>
         <locationX>200</locationX><locationY>300</locationY>
         <inputAssignments><field>Subject</field><value><stringValue>Invoice Ready — Create and Send to Builder</stringValue></value></inputAssignments>
         <inputAssignments><field>WhatId</field><value><elementReference>varWO.Id</elementReference></value></inputAssignments>
@@ -63,7 +63,7 @@
     </recordCreates>
 
     <recordCreates>
-        <n>Create_GP_Block_Task</n><label>Create GP Hard Stop Task</label>
+        <name>Create_GP_Block_Task</name><label>Create GP Hard Stop Task</label>
         <locationX>400</locationX><locationY>200</locationY>
         <inputAssignments><field>Subject</field><value><stringValue>GP HARD STOP — Invoice Blocked — GP Below 22% Floor</stringValue></value></inputAssignments>
         <inputAssignments><field>WhatId</field><value><elementReference>varWO.Id</elementReference></value></inputAssignments>

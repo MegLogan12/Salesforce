@@ -16,7 +16,7 @@
     <interviewLabel>LOVING PI Schedule Automation {!$Flow.CurrentDateTime}</interviewLabel>
     <label>LOVING PI Schedule Automation</label>
     <processMetadataValues>
-        <n>BuilderType</n>
+        <name>BuilderType</name>
         <value><stringValue>LightningFlowBuilder</stringValue></value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
@@ -29,14 +29,14 @@
 
     <!-- INPUT VARIABLES -->
     <variables>
-        <n>varWorkOrderId</n>
+        <name>varWorkOrderId</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
         <isOutput>false</isOutput>
     </variables>
     <variables>
-        <n>varWorkOrder</n>
+        <name>varWorkOrder</name>
         <dataType>SObject</dataType>
         <isCollection>false</isCollection>
         <isInput>false</isInput>
@@ -44,7 +44,7 @@
         <objectType>WorkOrder</objectType>
     </variables>
     <variables>
-        <n>varSiteReadinessDueDate</n>
+        <name>varSiteReadinessDueDate</name>
         <dataType>Date</dataType>
         <isCollection>false</isCollection>
         <isInput>false</isInput>
@@ -53,7 +53,7 @@
 
     <!-- GET FULL WO RECORD -->
     <recordLookups>
-        <n>Get_Full_WO</n>
+        <name>Get_Full_WO</name>
         <label>Get Full Work Order</label>
         <locationX>200</locationX>
         <locationY>100</locationY>
@@ -86,7 +86,7 @@
 
     <!-- CALCULATE SITE READINESS DUE DATE (Scheduled_Date - 2) -->
     <assignments>
-        <n>Calc_Site_Readiness_Due_Date</n>
+        <name>Calc_Site_Readiness_Due_Date</name>
         <label>Calculate Site Readiness Due Date</label>
         <locationX>200</locationX>
         <locationY>200</locationY>
@@ -100,7 +100,7 @@
 
     <!-- CREATE SITE READINESS CHECK TASK -->
     <recordCreates>
-        <n>Create_Site_Readiness_Task</n>
+        <name>Create_Site_Readiness_Task</name>
         <label>Create Site Readiness Check Task (T-48 hrs)</label>
         <locationX>200</locationX>
         <locationY>300</locationY>
@@ -151,7 +151,7 @@ WAIVER: Only a COO can waive a failed readiness check. Do not override without C
 
     <!-- CREATE PULL TICKET -->
     <recordCreates>
-        <n>Create_Pull_Ticket</n>
+        <name>Create_Pull_Ticket</name>
         <label>Create Pull Ticket</label>
         <locationX>200</locationX>
         <locationY>400</locationY>
@@ -210,7 +210,7 @@ WAIVER: Only a COO can waive a failed readiness check. Do not override without C
 
     <!-- CREATE LOADING TICKET -->
     <recordCreates>
-        <n>Create_Loading_Ticket</n>
+        <name>Create_Loading_Ticket</name>
         <label>Create Loading Ticket</label>
         <locationX>200</locationX>
         <locationY>500</locationY>
@@ -257,14 +257,14 @@ WAIVER: Only a COO can waive a failed readiness check. Do not override without C
 
     <!-- CHECK IF AQUA COMMUNITY -->
     <decisions>
-        <n>Check_Aqua_Community</n>
+        <name>Check_Aqua_Community</name>
         <label>Is Aqua Community?</label>
         <locationX>200</locationX>
         <locationY>600</locationY>
         <defaultConnectorLabel>Not Aqua — Update Lot Bucket</defaultConnectorLabel>
         <defaultConnector><targetReference>Update_Lot_To_Scheduled</targetReference></defaultConnector>
         <rules>
-            <n>Is_Aqua_Community</n>
+            <name>Is_Aqua_Community</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
                 <leftValueReference>varWorkOrder.Aqua_Community__c</leftValueReference>
@@ -278,7 +278,7 @@ WAIVER: Only a COO can waive a failed readiness check. Do not override without C
 
     <!-- CREATE AQUA INSTALL WORK ORDER -->
     <recordCreates>
-        <n>Create_Aqua_Install_WO</n>
+        <name>Create_Aqua_Install_WO</name>
         <label>Create Aqua Install Work Order</label>
         <locationX>400</locationX>
         <locationY>600</locationY>
@@ -337,7 +337,7 @@ WAIVER: Only a COO can waive a failed readiness check. Do not override without C
 
     <!-- UPDATE LOT PIPELINE BUCKET TO SCHEDULED -->
     <recordUpdates>
-        <n>Update_Lot_To_Scheduled</n>
+        <name>Update_Lot_To_Scheduled</name>
         <label>Update Lot Pipeline Bucket to Scheduled</label>
         <locationX>200</locationX>
         <locationY>700</locationY>

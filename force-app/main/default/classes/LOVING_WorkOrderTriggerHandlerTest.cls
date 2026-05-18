@@ -114,7 +114,7 @@ private class LOVING_WorkOrderTriggerHandlerTest {
             Shift_Start_Time__c, NFI_Count__c FROM WorkOrder WHERE Id = :wo.Id];
         System.assertEquals(60,    result.Lunch_Minutes__c,   'Lunch default');
         System.assertEquals(15,    result.Cushion_Minutes__c, 'Cushion default');
-        System.assertEquals('06:30', result.Shift_Start_Time__c, 'Shift start default');
+        System.assertEquals(Time.newInstance(6, 30, 0, 0), result.Shift_Start_Time__c, 'Shift start default');
         System.assertEquals(0,     result.NFI_Count__c,       'NFI count default');
     }
 
@@ -440,11 +440,10 @@ private class LOVING_WorkOrderTriggerHandlerTest {
         Account lot = makeLot(com.Id);
 
         WorkOrder wo = makeWO(com, lot, 'Scheduled');
-        wo.Goal_Hours__c          = 6;    // 360 goal minutes
         wo.Travel_Minutes_Planned__c = 30;
         wo.Lunch_Minutes__c       = 60;
         wo.Cushion_Minutes__c     = 15;
-        wo.Shift_Start_Time__c    = '06:30';
+        wo.Shift_Start_Time__c    = Time.newInstance(6, 30, 0, 0);
         insert wo;
 
         Test.startTest();
@@ -452,8 +451,9 @@ private class LOVING_WorkOrderTriggerHandlerTest {
             new List<WorkOrder>{wo});
         Test.stopTest();
 
-        // Expected: 6:30 + (360 + 30 + 60 + 15) min = 6:30 + 7h45m = 14:15
-        System.assertEquals('14:15', rtnMap.get(wo.Id),
-            'RTN = 06:30 + 360 + 30 + 60 + 15 min = 14:15');
+        // Goal_Hours__c is a formula (rollup from WOLIs); with no WOLIs = 0
+        // Expected: 6:30 + (0 + 30 + 60 + 15) min = 6:30 + 1h45m = 08:15
+        System.assertEquals('08:15', rtnMap.get(wo.Id),
+            'RTN = 06:30 + 0 + 30 + 60 + 15 min = 08:15');
     }
 }

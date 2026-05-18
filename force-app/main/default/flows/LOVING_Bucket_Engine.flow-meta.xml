@@ -5,7 +5,7 @@
     <environments>Default</environments>
     <interviewLabel>LOVING Bucket Engine {!$Flow.CurrentDateTime}</interviewLabel>
     <label>LOVING Bucket Engine Daily 5AM</label>
-    <processMetadataValues><n>BuilderType</n><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues>
+    <processMetadataValues><name>BuilderType</name><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
     <start>
         <locationX>50</locationX><locationY>0</locationY>
@@ -20,7 +20,7 @@
     <status>Active</status>
 
     <actionCalls>
-        <n>Run_Bucket_Engine_Apex</n>
+        <name>Run_Bucket_Engine_Apex</name>
         <label>Run Bucket Engine (Apex)</label>
         <locationX>200</locationX><locationY>100</locationY>
         <actionName>LOVING_BucketEngineService</actionName>
@@ -29,7 +29,7 @@
     </actionCalls>
 
     <recordCreates>
-        <n>Log_Bucket_Engine_Error</n>
+        <name>Log_Bucket_Engine_Error</name>
         <label>Log Bucket Engine Error</label>
         <locationX>400</locationX><locationY>100</locationY>
         <inputAssignments><field>Subject</field><value><stringValue>SYSTEM ERROR — Bucket Engine Failed</stringValue></value></inputAssignments>
