@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <description>Scheduled Flow: fires daily at 2PM on weekdays. Sends health check prompt tasks to all FMs with In Progress Production Install WOs where health check has not yet been submitted today. Escalation at 3PM is handled by LOVING_HealthCheckEscalationScheduler (Apex).</description>
+    <environments>Default</environments>
+    <interviewLabel>LOVING Health Check Daily {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING Health Check Daily 2PM</label>
+    <processMetadataValues><n>BuilderType</n><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX><locationY>0</locationY>
+        <connector><targetReference>Get_Active_WOs</targetReference></connector>
+        <schedule>
+            <frequency>Daily</frequency>
+            <startDate>2025-01-01</startDate>
+            <startTime>14:00:00.000Z</startTime>
+        </schedule>
+        <triggerType>Scheduled</triggerType>
+    </start>
+    <status>Active</status>
+
+    <variables>
+        <n>varActiveWOs</n><dataType>SObject</dataType>
+        <isCollection>true</isCollection><isInput>false</isInput><isOutput>false</isOutput>
+        <objectType>WorkOrder</objectType>
+    </variables>
+    <variables>
+        <n>varCurrentWO</n><dataType>SObject</dataType>
+        <isCollection>false</isCollection><isInput>false</isInput><isOutput>false</isOutput>
+        <objectType>WorkOrder</objectType>
+    </variables>
+    <variables>
+        <n>varTasksToCreate</n><dataType>SObject</dataType>
+        <isCollection>true</isCollection><isInput>false</isInput><isOutput>false</isOutput>
+        <objectType>Task</objectType>
+    </variables>
+    <variables>
+        <n>varNewTask</n><dataType>SObject</dataType>
+        <isCollection>false</isCollection><isInput>false</isInput><isOutput>false</isOutput>
+        <objectType>Task</objectType>
+    </variables>
+
+    <recordLookups>
+        <n>Get_Active_WOs</n>
+        <label>Get All In Progress Production Install WOs</label>
+        <locationX>200</locationX><locationY>100</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector><targetReference>Loop_Active_WOs</targetReference></connector>
+        <filterLogic>and</filterLogic>
+        <filters><field>Status</field><operator>EqualTo</operator><value><stringValue>In Progress</stringValue></value></filters>
+        <filters><field>Work_Order_Type__c</field><operator>EqualTo</operator><value><stringValue>Production Install</stringValue></value></filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>WorkOrder</object>
+        <outputReference>varActiveWOs</outputReference>
+        <queriedFields><field>Id</field></queriedFields>
+        <queriedFields><field>FM__c</field></queriedFields>
+        <queriedFields><field>Lot_Address__c</field></queriedFields>
+        <queriedFields><field>Health_Check_Date__c</field></queriedFields>
+    </recordLookups>
+
+    <loops>
+        <n>Loop_Active_WOs</n>
+        <label>Loop Active Work Orders</label>
+        <locationX>200</locationX><locationY>200</locationY>
+        <collectionReference>varActiveWOs</collectionReference>
+        <iterationOrder>Asc</iterationOrder>
+        <nextValueConnector><targetReference>Check_HC_Not_Submitted_Today</targetReference></nextValueConnector>
+        <noMoreValuesConnector><targetReference>Create_All_HC_Tasks</targetReference></noMoreValuesConnector>
+        <outputReference>varCurrentWO</outputReference>
+    </loops>
+
+    <decisions>
+        <n>Check_HC_Not_Submitted_Today</n>
+        <label>Health Check Not Yet Submitted Today?</label>
+        <locationX>400</locationX><locationY>200</locationY>
+        <defaultConnectorLabel>Already Submitted — Skip</defaultConnectorLabel>
+        <defaultConnector><targetReference>Loop_Active_WOs</targetReference></defaultConnector>
+        <rules>
+            <n>HC_Not_Yet_Done</n>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>varCurrentWO.Health_Check_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue><booleanValue>true</booleanValue></rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>varCurrentWO.Health_Check_Date__c</leftValueReference>
+                <operator>LessThan</operator>
+                <rightValue><elementReference>$Flow.CurrentDateTime</elementReference></rightValue>
+            </conditions>
+            <connector><targetReference>Build_HC_Task</targetReference></connector>
+            <label>Not Yet Submitted Today</label>
+        </rules>
+    </decisions>
+
+    <assignments>
+        <n>Build_HC_Task</n>
+        <label>Build Health Check Task Record</label>
+        <locationX>600</locationX><locationY>200</locationY>
+        <assignmentItems>
+            <assignToReference>varNewTask.Subject</assignToReference>
+            <operator>Assign</operator>
+            <value><stringValue>2PM HEALTH CHECK REQUIRED — Submit Before 3PM</stringValue></value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varNewTask.OwnerId</assignToReference>
+            <operator>Assign</operator>
+            <value><elementReference>varCurrentWO.FM__c</elementReference></value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varNewTask.WhatId</assignToReference>
+            <operator>Assign</operator>
+            <value><elementReference>varCurrentWO.Id</elementReference></value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varNewTask.Priority</assignToReference>
+            <operator>Assign</operator>
+            <value><stringValue>High</stringValue></value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varNewTask.ActivityDate</assignToReference>
+            <operator>Assign</operator>
+            <value><elementReference>$Flow.CurrentDate</elementReference></value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varNewTask.Type</assignToReference>
+            <operator>Assign</operator>
+            <value><stringValue>Health Check</stringValue></value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varNewTask.Description</assignToReference>
+            <operator>Assign</operator>
+            <value><stringValue>Mark this job GREEN or RED on the Work Order Health Check Status field. GREEN = job will complete today. RED = job will not complete today (Red Flag Notes required). DEADLINE: 3:00 PM. If not submitted by 3PM, your manager is notified automatically.</stringValue></value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>varTasksToCreate</assignToReference>
+            <operator>Add</operator>
+            <value><elementReference>varNewTask</elementReference></value>
+        </assignmentItems>
+        <connector><targetReference>Loop_Active_WOs</targetReference></connector>
+    </assignments>
+
+    <recordCreates>
+        <n>Create_All_HC_Tasks</n>
+        <label>Create All Health Check Tasks</label>
+        <locationX>200</locationX><locationY>300</locationY>
+        <inputReference>varTasksToCreate</inputReference>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+</Flow>

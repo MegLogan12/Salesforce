@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Finish_Job_Reason__c</fullName><label>Finish Job Reason</label><required>false</required><type>Picklist</type>
+    <valueSet><restricted>true</restricted><valueSetDefinition><sorted>false</sorted>
+        <value><fullName>Ran Out of Time</fullName><default>false</default><label>Ran Out of Time</label></value>
+        <value><fullName>Material Short</fullName><default>false</default><label>Material Short</label></value>
+        <value><fullName>Equipment Failure</fullName><default>false</default><label>Equipment Failure</label></value>
+        <value><fullName>Scope Change</fullName><default>false</default><label>Scope Change</label></value>
+        <value><fullName>Weather</fullName><default>false</default><label>Weather</label></value>
+        <value><fullName>Site Access Blocked</fullName><default>false</default><label>Site Access Blocked</label></value>
+        <value><fullName>Crew Short</fullName><default>false</default><label>Crew Short</label></value>
+        <value><fullName>Other</fullName><default>false</default><label>Other</label></value>
+    </valueSetDefinition></valueSet>
+</CustomField>
