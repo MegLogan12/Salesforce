@@ -1,8 +1,10 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import type { ActionResult, FieldManagerWorkspace, JobRecord, PillTone, PhotoProof } from "./types";
-import { exportWorkspace, loadWorkspace, resetWorkspace, saveWorkspace } from "./services/fieldManagerRepository";
+import { exportWorkspace, loadWorkspace, loadLiveWorkspace, resetWorkspace, saveWorkspace, commitLiveAction } from "./services/fieldManagerRepository";
 import { acceptPhotoPackage, advanceStage, approveCloseout, completeChecklistItem, createFinishedJob, dispatchAquaRepair, requestReschedule, returnWork, selectJob, submitQiPass, updateTakeoffVerifiedAmount, uploadPhoto, validateTakeoff } from "./services/domainActions";
 import { captureFieldPhoto } from "./mobile/camera";
+import { resolveStartupMode, handleOAuthCallback, startOAuthFlow, clearSession, type AppMode, type SalesforceSession } from "./services/auth";
+import { SalesforceFieldManagerApi } from "./services/salesforceApiClient";
 
 type TabId = "command" | "takeoffTab" | "workTab" | "aquaTab" | "photosTab" | "qiTab" | "mobileTab";
 type ModalKey = "takeoff" | "schedule" | "photos" | "qi" | "fj" | "return" | "reschedule" | "aquaRepair" | "photoUpload" | "jsonExport" | "siteVisit" | "siteReadiness" | "healthCheck" | "aquaCheck" | "aquaPickup";
@@ -77,13 +79,60 @@ function Toast({ message }: { message: string | null }) {
   return <div className={classNames("toast", message && "show")}>{message}</div>;
 }
 
-function Topbar({ userName }: { userName: string }) {
+function Topbar({ userName, mode, onSignOut }: { userName: string; mode: AppMode; onSignOut?: () => void }) {
+  const modeBadge = mode === 'live'
+    ? <span className="user-pill" style={{ background: 'rgba(4,136,75,0.25)', borderColor: 'rgba(4,136,75,0.5)', color: '#a7f3d0', fontSize: 11 }}>● LIVE SALESFORCE</span>
+    : <span className="user-pill" style={{ background: 'rgba(254,147,57,0.25)', borderColor: 'rgba(254,147,57,0.5)', color: '#fde68a', fontSize: 11 }}>◎ DEMO MODE</span>;
   return (
     <div className="topbar">
       <div className="brand"><div className="logo">L</div><div>LOVING Salesforce | Field Manager Workspace</div></div>
       <div className="top-actions">
-        <span>Field Service Console</span>
+        {modeBadge}
         <span className="user-pill">FM: {userName}</span>
+        {onSignOut ? <button className="mini-button" style={{ color: '#d9e7ff', background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)' }} onClick={onSignOut}>Sign Out</button> : null}
+      </div>
+    </div>
+  );
+}
+
+function LoginScreen({ onLogin, onDemo }: { onLogin: () => void; onDemo: () => void }) {
+  const [loggingIn, setLoggingIn] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const handleLogin = async () => {
+    setLoggingIn(true);
+    setError(null);
+    try { await startOAuthFlow(); }
+    catch (err) { setError(err instanceof Error ? err.message : String(err)); setLoggingIn(false); }
+  };
+  return (
+    <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="record-header" style={{ maxWidth: 440, width: '100%', padding: 32, textAlign: 'center' }}>
+        <div style={{ width: 56, height: 56, borderRadius: 14, background: 'linear-gradient(135deg,#0a8aa6,#04844b)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', boxShadow: '0 2px 8px rgba(0,0,0,0.18)' }}>
+          <span style={{ color: '#fff', fontSize: 28, fontWeight: 900 }}>L</span>
+        </div>
+        <h2 style={{ marginBottom: 6, color: 'var(--navy)' }}>LOVING Field Manager</h2>
+        <p style={{ color: 'var(--muted)', fontSize: 13, marginBottom: 24 }}>Sign in with your Salesforce credentials to load your live work queue.</p>
+        {error ? <div className="alert red" style={{ marginBottom: 16, textAlign: 'left' }}><div>!</div><div>{error}</div></div> : null}
+        <button className="button primary" style={{ width: '100%', justifyContent: 'center', marginBottom: 10 }} onClick={handleLogin} disabled={loggingIn}>
+          {loggingIn ? 'Redirecting to Salesforce...' : '🔐 Sign in with Salesforce'}
+        </button>
+        <button className="button" style={{ width: '100%', justifyContent: 'center' }} onClick={onDemo}>
+          Use Demo Mode (seed data)
+        </button>
+        <p style={{ marginTop: 16, fontSize: 11, color: 'var(--muted)' }}>
+          Requires <code>VITE_SF_CLIENT_ID</code> and <code>VITE_SF_INSTANCE_URL</code> to be set.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function LoadingScreen({ message }: { message: string }) {
+  return (
+    <div style={{ minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ textAlign: 'center', color: 'var(--muted)' }}>
+        <div style={{ fontSize: 32, marginBottom: 12 }}>⏳</div>
+        <div style={{ fontSize: 14 }}>{message}</div>
       </div>
     </div>
   );
@@ -583,6 +632,13 @@ function Modal({ keyName, workspace, job, onClose, onCommit }: { keyName: ModalK
 }
 
 export default function App() {
+  const startup = useMemo(() => resolveStartupMode(), []);
+  const [appMode, setAppMode] = useState<AppMode>(startup.mode);
+  const [sfSession, setSfSession] = useState<SalesforceSession | null>(startup.session);
+  const [sfApi, setSfApi] = useState<SalesforceFieldManagerApi | null>(
+    startup.session ? new SalesforceFieldManagerApi(startup.session) : null
+  );
+  const [loadingMessage, setLoadingMessage] = useState('Loading workspace...');
   const [workspace, setWorkspace] = useState<FieldManagerWorkspace>(() => loadWorkspace());
   const [activeTab, setActiveTab] = useState<TabId>("command");
   const [modalKey, setModalKey] = useState<ModalKey | null>(null);
@@ -590,46 +646,141 @@ export default function App() {
 
   const job = useMemo(() => workspace.jobs.find((item) => item.id === workspace.selectedJobId) ?? workspace.jobs[0], [workspace]);
 
-  const showToast = (message: string) => {
+  const showToast = (message: string, duration = 4200) => {
     setToast(message);
-    window.setTimeout(() => setToast(null), 4200);
+    window.setTimeout(() => setToast(null), duration);
   };
 
-  const commit = (result: ActionResult) => {
+  // Handle OAuth callback (URL has ?code=)
+  useEffect(() => {
+    if (startup.oauthCode) {
+      setLoadingMessage('Completing Salesforce login...');
+      handleOAuthCallback(startup.oauthCode)
+        .then((session) => {
+          window.history.replaceState({}, '', window.location.pathname);
+          const api = new SalesforceFieldManagerApi(session);
+          setSfSession(session);
+          setSfApi(api);
+          setAppMode('loading');
+          setLoadingMessage('Loading your live work queue from Salesforce...');
+          return loadLiveWorkspace(api);
+        })
+        .then((liveWorkspace) => {
+          setWorkspace(liveWorkspace);
+          setAppMode('live');
+        })
+        .catch((err: unknown) => {
+          showToast(`Login failed: ${err instanceof Error ? err.message : String(err)}`, 8000);
+          setAppMode('login');
+        });
+    }
+  }, [startup.oauthCode]);
+
+  // Load live workspace when session is known at startup
+  useEffect(() => {
+    if (appMode === 'live' && sfApi && !startup.oauthCode) {
+      setLoadingMessage('Loading your live work queue from Salesforce...');
+      loadLiveWorkspace(sfApi)
+        .then((liveWorkspace) => {
+          setWorkspace(liveWorkspace);
+          sfApi.getUserDisplayName().then((name) => {
+            setWorkspace(prev => ({ ...prev, currentUser: { ...prev.currentUser, name } }));
+          }).catch(() => null);
+        })
+        .catch((err: unknown) => {
+          showToast(`Salesforce load failed: ${err instanceof Error ? err.message : String(err)}. Showing last cached state.`, 8000);
+        });
+    }
+  }, [appMode, sfApi, startup.oauthCode]);
+
+  const signOut = () => {
+    clearSession();
+    setSfSession(null);
+    setSfApi(null);
+    setWorkspace(loadWorkspace());
+    setAppMode('login');
+  };
+
+  // Domain action commit: apply locally instantly, also write to Salesforce if live
+  const commit = (result: ActionResult, sfWrite?: (api: SalesforceFieldManagerApi) => Promise<unknown>) => {
     if (result.ok) {
       setWorkspace(result.workspace);
-      saveWorkspace(result.workspace);
+      if (appMode === 'demo') saveWorkspace(result.workspace);
+      if (appMode === 'live' && sfApi && sfWrite) {
+        commitLiveAction(sfApi, sfWrite).then((sfResult) => {
+          if (!sfResult.ok) {
+            showToast(`Salesforce write failed: ${sfResult.error}`, 8000);
+          } else if (sfResult.sfId) {
+            showToast(`${result.message} · Salesforce ID: ${sfResult.sfId}`);
+          }
+        });
+      }
     }
     showToast(result.message);
   };
 
+  if (appMode === 'loading' || startup.oauthCode) {
+    return <LoadingScreen message={loadingMessage} />;
+  }
+  if (appMode === 'login') {
+    return <LoginScreen onLogin={() => startOAuthFlow().catch((e: unknown) => showToast(String(e)))} onDemo={() => { setWorkspace(loadWorkspace()); setAppMode('demo'); }} />;
+  }
+
+  const currentMode = appMode as 'live' | 'demo';
+  const userName = workspace.currentUser.name;
+
   return (
     <>
-      <Topbar userName={workspace.currentUser.name} />
+      <Topbar userName={userName} mode={currentMode} onSignOut={appMode === 'live' ? signOut : undefined} />
       <div className="shell">
-        <Sidebar workspace={workspace} selectedJob={job} onSelect={(id) => commit(selectJob(workspace, id))} />
+        <Sidebar workspace={workspace} selectedJob={job ?? workspace.jobs[0]} onSelect={(id) => commit(selectJob(workspace, id))} />
         <main className="main">
-          <RecordHeader job={job} onOpenModal={setModalKey} onAdvance={() => commit(advanceStage(workspace, job.id))} />
-          <KpiGrid job={job} />
-          <section className="tabs">
-            <div className="tab-bar">
-              {tabOrder.map((tab) => <div className={classNames("tab", activeTab === tab.id && "active")} onClick={() => setActiveTab(tab.id)} key={tab.id}>{tab.label}</div>)}
+          {!job ? (
+            <div className="alert aqua" style={{ margin: 18 }}>
+              <div>ⓘ</div>
+              <div>
+                {appMode === 'live'
+                  ? <><strong>No active WorkOrders found.</strong> The FM app queries WorkOrders where <code>FM__c = {sfSession?.userId ?? 'your user ID'}</code> and Status is not Closed/Invoiced/Cancelled. Assign yourself as FM on one or more WorkOrders in Salesforce to populate this queue.</>
+                  : <><strong>No jobs in demo workspace.</strong> <button className="mini-button" onClick={() => { setWorkspace(loadWorkspace()); }}>Reload seed data</button></>
+                }
+              </div>
             </div>
-            {activeTab === "command" && <CommandTab workspace={workspace} job={job} onOpenModal={setModalKey} onSwitchTab={setActiveTab} onApproveCloseout={() => commit(approveCloseout(workspace, job.id))} />}
-            {activeTab === "takeoffTab" && <TakeoffTab job={job} onOpenModal={setModalKey} onUpdateVerified={(lineId, value) => commit(updateTakeoffVerifiedAmount(workspace, job.id, lineId, value))} onValidateTakeoff={() => commit(validateTakeoff(workspace, job.id))} onToggleChecklist={(area, itemId) => commit(completeChecklistItem(workspace, job.id, area, itemId))} />}
-            {activeTab === "workTab" && <WorkTab job={job} onOpenModal={setModalKey} />}
-            {activeTab === "aquaTab" && <AquaTab job={job} onOpenModal={setModalKey} onToggleChecklist={(area, itemId) => commit(completeChecklistItem(workspace, job.id, area, itemId))} />}
-            {activeTab === "photosTab" && <PhotosTab job={job} onOpenModal={setModalKey} onAccept={() => commit(acceptPhotoPackage(workspace, job.id))} />}
-            {activeTab === "qiTab" && <QiTab job={job} onOpenModal={setModalKey} onSubmitQi={() => setModalKey("qi")} onApproveCloseout={() => commit(approveCloseout(workspace, job.id))} />}
-            {activeTab === "mobileTab" && <MobileTab job={job} onOpenModal={setModalKey} />}
-          </section>
+          ) : (
+            <>
+              <RecordHeader job={job} onOpenModal={setModalKey} onAdvance={() => commit(advanceStage(workspace, job.id))} />
+              <KpiGrid job={job} />
+              <section className="tabs">
+                <div className="tab-bar">
+                  {tabOrder.map((tab) => <div className={classNames("tab", activeTab === tab.id && "active")} onClick={() => setActiveTab(tab.id)} key={tab.id}>{tab.label}</div>)}
+                </div>
+                {activeTab === "command" && <CommandTab workspace={workspace} job={job} onOpenModal={setModalKey} onSwitchTab={setActiveTab} onApproveCloseout={() => commit(approveCloseout(workspace, job.id), sfApi ? (api) => api.approveCloseout(job.id, '') : undefined)} />}
+                {activeTab === "takeoffTab" && <TakeoffTab job={job} onOpenModal={setModalKey} onUpdateVerified={(lineId, value) => commit(updateTakeoffVerifiedAmount(workspace, job.id, lineId, value))} onValidateTakeoff={() => commit(validateTakeoff(workspace, job.id), sfApi ? (api) => api.validateTakeoff(job.id) : undefined)} onToggleChecklist={(area, itemId) => commit(completeChecklistItem(workspace, job.id, area, itemId))} />}
+                {activeTab === "workTab" && <WorkTab job={job} onOpenModal={setModalKey} />}
+                {activeTab === "aquaTab" && <AquaTab job={job} onOpenModal={setModalKey} onToggleChecklist={(area, itemId) => commit(completeChecklistItem(workspace, job.id, area, itemId))} />}
+                {activeTab === "photosTab" && <PhotosTab job={job} onOpenModal={setModalKey} onAccept={() => commit(acceptPhotoPackage(workspace, job.id), sfApi ? (api) => api.acceptPhotoPackage(job.id) : undefined)} />}
+                {activeTab === "qiTab" && <QiTab job={job} onOpenModal={setModalKey} onSubmitQi={() => setModalKey("qi")} onApproveCloseout={() => commit(approveCloseout(workspace, job.id), sfApi ? (api) => api.approveCloseout(job.id, '') : undefined)} />}
+                {activeTab === "mobileTab" && <MobileTab job={job} onOpenModal={setModalKey} />}
+              </section>
+            </>
+          )}
           <div style={{ marginTop: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
             <button className="mini-button" onClick={() => setModalKey("jsonExport")}>Export Current Data</button>
-            <button className="mini-button" onClick={() => { const fresh = resetWorkspace(); setWorkspace(fresh); showToast("Workspace reset to seed data."); }}>Reset Seed Data</button>
+            {appMode === 'demo' && <button className="mini-button" onClick={() => { const fresh = resetWorkspace(); setWorkspace(fresh); showToast("Workspace reset to seed data."); }}>Reset Seed Data</button>}
+            {appMode === 'live' && sfApi && <button className="mini-button" onClick={() => { setLoadingMessage('Refreshing from Salesforce...'); loadLiveWorkspace(sfApi).then(setWorkspace).catch((err: unknown) => showToast(String(err))); }}>↻ Refresh from Salesforce</button>}
           </div>
         </main>
       </div>
-      <Modal keyName={modalKey} workspace={workspace} job={job} onClose={() => setModalKey(null)} onCommit={commit} />
+      <Modal keyName={modalKey} workspace={workspace} job={job ?? workspace.jobs[0]} onClose={() => setModalKey(null)} onCommit={(result) => {
+        const sfWrite = sfApi && job ? (() => {
+          if (modalKey === 'fj') return (api: SalesforceFieldManagerApi) => api.createFinishJob(job.id, '', '');
+          if (modalKey === 'return') return (api: SalesforceFieldManagerApi) => api.returnWork(job.id, '', '', '');
+          if (modalKey === 'reschedule') return (api: SalesforceFieldManagerApi) => api.requestReschedule(job.id, '', '', '');
+          if (modalKey === 'aquaRepair') return (api: SalesforceFieldManagerApi) => api.dispatchAquaRepair(job.id, '', '', '', '', '');
+          if (modalKey === 'qi') return (api: SalesforceFieldManagerApi) => api.submitQI(job.id, {}, '');
+          return undefined;
+        })() : undefined;
+        commit(result, sfWrite);
+      }} />
       <Toast message={toast} />
     </>
   );
