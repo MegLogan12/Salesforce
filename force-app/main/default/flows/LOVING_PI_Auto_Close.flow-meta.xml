@@ -23,10 +23,10 @@
         <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>WorkOrder</object>
         <outputReference>varWO</outputReference>
-        <queriedFields><field>Id</field></queriedFields>
-        <queriedFields><field>Lot__c</field></queriedFields>
-        <queriedFields><field>Community__c</field></queriedFields>
-        <queriedFields><field>Aqua_Community__c</field></queriedFields>
+<queriedFields>Id</queriedFields>
+<queriedFields>Lot__c</queriedFields>
+<queriedFields>Community__c</queriedFields>
+<queriedFields>Aqua_Community__c</queriedFields>
     </recordLookups>
 
     <recordUpdates>

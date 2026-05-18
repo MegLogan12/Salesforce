@@ -68,20 +68,18 @@
         <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>WorkOrder</object>
         <outputReference>varWorkOrder</outputReference>
-        <queriedFields>
-            <field>Id</field>
-            <field>FM__c</field>
-            <field>AccountId</field>
-            <field>Lot__c</field>
-            <field>Community__c</field>
-            <field>Builder_Regional__c</field>
-            <field>Lot_Address__c</field>
-            <field>Lot_Number__c</field>
-            <field>Scheduled_Date__c</field>
-            <field>Aqua_Community__c</field>
-            <field>Zone__c</field>
-            <field>Goal_Headcount__c</field>
-        </queriedFields>
+<queriedFields>Id</queriedFields>
+        <queriedFields>FM__c</queriedFields>
+        <queriedFields>AccountId</queriedFields>
+        <queriedFields>Lot__c</queriedFields>
+        <queriedFields>Community__c</queriedFields>
+        <queriedFields>Builder_Regional__c</queriedFields>
+        <queriedFields>Lot_Address__c</queriedFields>
+        <queriedFields>Lot_Number__c</queriedFields>
+        <queriedFields>Scheduled_Date__c</queriedFields>
+        <queriedFields>Aqua_Community__c</queriedFields>
+        <queriedFields>Zone__c</queriedFields>
+        <queriedFields>Goal_Headcount__c</queriedFields>
     </recordLookups>
 
     <!-- CALCULATE SITE READINESS DUE DATE (Scheduled_Date - 2) -->

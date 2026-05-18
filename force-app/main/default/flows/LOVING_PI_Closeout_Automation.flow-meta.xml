@@ -24,10 +24,10 @@
         <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>WorkOrder</object>
         <outputReference>varWO</outputReference>
-        <queriedFields><field>Id</field></queriedFields>
-        <queriedFields><field>FM__c</field></queriedFields>
-        <queriedFields><field>Lot_Address__c</field></queriedFields>
-        <queriedFields><field>Crew_Complete_Timestamp__c</field></queriedFields>
+<queriedFields>Id</queriedFields>
+<queriedFields>FM__c</queriedFields>
+<queriedFields>Lot_Address__c</queriedFields>
+<queriedFields>Crew_Complete_Timestamp__c</queriedFields>
     </recordLookups>
 
     <recordCreates>

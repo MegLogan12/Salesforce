@@ -171,7 +171,6 @@ public inherited sharing class LOVING_WorkOrderTriggerHandler {
      */
     private static void handleStatusToScheduled(List<WorkOrder> wos) {
         List<Task> tasksToInsert = new List<Task>();
-        List<WorkOrder> aquaWOs  = new List<WorkOrder>();
         List<WorkOrder> pullTickets    = new List<WorkOrder>();
         List<WorkOrder> loadingTickets = new List<WorkOrder>();
 
@@ -205,11 +204,6 @@ public inherited sharing class LOVING_WorkOrderTriggerHandler {
                 tasksToInsert.add(srt);
             }
 
-            // Aqua trigger
-            if (full.Aqua_Community__c) {
-                aquaWOs.add(full);
-            }
-
             // Prepare Pull and Loading tickets
             pullTickets.add(wo);
             loadingTickets.add(wo);
@@ -229,10 +223,7 @@ public inherited sharing class LOVING_WorkOrderTriggerHandler {
             createSubTickets(loadingTickets, 'Loading Ticket');
         }
 
-        // Aqua install ticket creation
-        if (!aquaWOs.isEmpty()) {
-            LOVING_AquaTicketService.createAquaInstallTickets(aquaWOs);
-        }
+        // Aqua install ticket creation deferred — no Aqua Tech setup yet
     }
 
     /**

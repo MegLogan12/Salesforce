@@ -16,7 +16,6 @@
         <value><stringValue>LightningFlowBuilder</stringValue></value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
-    <recordTriggerType>Update</recordTriggerType>
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
@@ -122,18 +121,16 @@
         <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>Account</object>
         <outputReference>varCommunity</outputReference>
-        <queriedFields>
-            <field>Id</field>
-            <field>Name</field>
-            <field>ParentId</field>
-            <field>Zone__c</field>
-            <field>FM__c</field>
-            <field>Aqua_Customer__c</field>
-            <field>Sod_Species__c</field>
-            <field>BMG_Package__c</field>
-            <field>DR_Horton_Tree_Avg__c</field>
-            <field>Spec_Type__c</field>
-        </queriedFields>
+<queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <queriedFields>ParentId</queriedFields>
+        <queriedFields>Zone__c</queriedFields>
+        <queriedFields>FM__c</queriedFields>
+        <queriedFields>Aqua_Customer__c</queriedFields>
+        <queriedFields>Sod_Species__c</queriedFields>
+        <queriedFields>BMG_Package__c</queriedFields>
+        <queriedFields>DR_Horton_Tree_Avg__c</queriedFields>
+        <queriedFields>Spec_Type__c</queriedFields>
     </recordLookups>
 
     <!-- ═══════════════════════════════════════════════════════
@@ -157,13 +154,11 @@
         <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>Account</object>
         <outputReference>varBuilderRegional</outputReference>
-        <queriedFields>
-            <field>Id</field>
-            <field>Name</field>
-            <field>Spec_Type__c</field>
-            <field>Billing_Method__c</field>
-            <field>Payment_Terms__c</field>
-        </queriedFields>
+<queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <queriedFields>Spec_Type__c</queriedFields>
+        <queriedFields>Billing_Method__c</queriedFields>
+        <queriedFields>Payment_Terms__c</queriedFields>
     </recordLookups>
 
     <!-- ═══════════════════════════════════════════════════════

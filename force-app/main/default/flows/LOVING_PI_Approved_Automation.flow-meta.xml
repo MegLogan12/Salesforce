@@ -23,12 +23,12 @@
         <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>WorkOrder</object>
         <outputReference>varWO</outputReference>
-        <queriedFields><field>Id</field></queriedFields>
-        <queriedFields><field>Lot_Address__c</field></queriedFields>
-        <queriedFields><field>Lot_Number__c</field></queriedFields>
-        <queriedFields><field>GP_Status__c</field></queriedFields>
-        <queriedFields><field>Gross_Margin_Pct__c</field></queriedFields>
-        <queriedFields><field>Revenue_Amount__c</field></queriedFields>
+<queriedFields>Id</queriedFields>
+<queriedFields>Lot_Address__c</queriedFields>
+<queriedFields>Lot_Number__c</queriedFields>
+<queriedFields>GP_Status__c</queriedFields>
+<queriedFields>Gross_Margin_Pct__c</queriedFields>
+<queriedFields>Revenue_Amount__c</queriedFields>
     </recordLookups>
 
     <decisions>

@@ -1,5 +1,15 @@
 global without sharing class LOVING_TakeoffEscalationScheduler implements Schedulable {
+
+    @InvocableMethod(label='Run Takeoff Escalation')
+    public static void runFromFlow(List<String> ignored) {
+        runEscalation();
+    }
+
     global void execute(SchedulableContext ctx) {
+        runEscalation();
+    }
+
+    private static void runEscalation() {
         DateTime cutoff = System.now().addHours(-48);
         List<Account> lots = [
             SELECT Id, Name, FM__c, FM__r.ManagerId, Target_Start_Date__c, Bucket_Changed_Date__c

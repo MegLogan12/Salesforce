@@ -59,12 +59,12 @@
         <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>WorkOrder</object>
         <outputReference>varWO</outputReference>
-        <queriedFields><field>Id</field></queriedFields>
-        <queriedFields><field>FM__c</field></queriedFields>
-        <queriedFields><field>FM__r.ManagerId</field></queriedFields>
-        <queriedFields><field>Lot_Address__c</field></queriedFields>
-        <queriedFields><field>NFI_Count__c</field></queriedFields>
-        <queriedFields><field>Need_Further_Info_Notes__c</field></queriedFields>
+<queriedFields>Id</queriedFields>
+<queriedFields>FM__c</queriedFields>
+<queriedFields>FM__r.ManagerId</queriedFields>
+<queriedFields>Lot_Address__c</queriedFields>
+<queriedFields>NFI_Count__c</queriedFields>
+<queriedFields>Need_Further_Info_Notes__c</queriedFields>
     </recordLookups>
 
     <!-- FM TASK -->
