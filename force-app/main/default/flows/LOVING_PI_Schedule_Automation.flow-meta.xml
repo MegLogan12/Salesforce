@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <description>
+        Sub-flow: Schedule Automation.
+        Fires when a Production Install WO moves to Scheduled status.
+        Actions:
+          1. Create Pull Ticket (child WO)
+          2. Create Loading Ticket (child WO)
+          3. Create Site Readiness Check Task (due T-48 hrs)
+          4. If Aqua Community = true → create Aqua Install child WO
+          5. Update Lot Pipeline_Bucket__c = Scheduled
+        Called by LOVING_PI_Orchestrator.
+    </description>
+    <environments>Default</environments>
+    <interviewLabel>LOVING PI Schedule Automation {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING PI Schedule Automation</label>
+    <processMetadataValues>
+        <n>BuilderType</n>
+        <value><stringValue>LightningFlowBuilder</stringValue></value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector><targetReference>Get_Full_WO</targetReference></connector>
+    </start>
+    <status>Active</status>
+
+    <!-- INPUT VARIABLES -->
+    <variables>
+        <n>varWorkOrderId</n>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <n>varWorkOrder</n>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>WorkOrder</objectType>
+    </variables>
+    <variables>
+        <n>varSiteReadinessDueDate</n>
+        <dataType>Date</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+
+    <!-- GET FULL WO RECORD -->
+    <recordLookups>
+        <n>Get_Full_WO</n>
+        <label>Get Full Work Order</label>
+        <locationX>200</locationX>
+        <locationY>100</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector><targetReference>Calc_Site_Readiness_Due_Date</targetReference></connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value><elementReference>varWorkOrderId</elementReference></value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkOrder</object>
+        <outputReference>varWorkOrder</outputReference>
+        <queriedFields>
+            <field>Id</field>
+            <field>FM__c</field>
+            <field>AccountId</field>
+            <field>Lot__c</field>
+            <field>Community__c</field>
+            <field>Builder_Regional__c</field>
+            <field>Lot_Address__c</field>
+            <field>Lot_Number__c</field>
+            <field>Scheduled_Date__c</field>
+            <field>Aqua_Community__c</field>
+            <field>Zone__c</field>
+            <field>Goal_Headcount__c</field>
+        </queriedFields>
+    </recordLookups>
+
+    <!-- CALCULATE SITE READINESS DUE DATE (Scheduled_Date - 2) -->
+    <assignments>
+        <n>Calc_Site_Readiness_Due_Date</n>
+        <label>Calculate Site Readiness Due Date</label>
+        <locationX>200</locationX>
+        <locationY>200</locationY>
+        <assignmentItems>
+            <assignToReference>varSiteReadinessDueDate</assignToReference>
+            <operator>Add</operator>
+            <value><elementReference>varWorkOrder.Scheduled_Date__c</elementReference></value>
+        </assignmentItems>
+        <connector><targetReference>Create_Site_Readiness_Task</targetReference></connector>
+    </assignments>
+
+    <!-- CREATE SITE READINESS CHECK TASK -->
+    <recordCreates>
+        <n>Create_Site_Readiness_Task</n>
+        <label>Create Site Readiness Check Task (T-48 hrs)</label>
+        <locationX>200</locationX>
+        <locationY>300</locationY>
+        <connector><targetReference>Create_Pull_Ticket</targetReference></connector>
+        <inputAssignments>
+            <field>Subject</field>
+            <value><stringValue>Site Readiness Check Required — Complete Before Crew Leaves the Shop</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value><elementReference>varWorkOrder.FM__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhatId</field>
+            <value><elementReference>varWorkOrder.Id</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value><stringValue>High</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ActivityDate</field>
+            <value><elementReference>varWorkOrder.Scheduled_Date__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type</field>
+            <value><stringValue>Site Readiness Check</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Description</field>
+            <value><stringValue>Complete the 6-point site readiness checklist in Salesforce before the crew departs for the lot.
+
+CHECKLIST:
+1. Grading OK — subgrade is level and correct
+2. Site Access OK — gates, fencing, no obstructions
+3. Irrigation OK — rough-in is complete and capped
+4. Debris Clear — no construction debris on planting area
+5. Builder Punch Clear — no active builder punch items blocking landscape
+6. Utilities Cleared — 811 dig-safe confirmed
+
+IF ANY CHECK FAILS: Pull the job from today's schedule immediately and contact the builder contact. Do NOT send the crew to a site that fails readiness.
+
+WAIVER: Only a COO can waive a failed readiness check. Do not override without COO approval.</stringValue></value>
+        </inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+
+    <!-- CREATE PULL TICKET -->
+    <recordCreates>
+        <n>Create_Pull_Ticket</n>
+        <label>Create Pull Ticket</label>
+        <locationX>200</locationX>
+        <locationY>400</locationY>
+        <connector><targetReference>Create_Loading_Ticket</targetReference></connector>
+        <inputAssignments>
+            <field>Work_Order_Type__c</field>
+            <value><stringValue>Pull Ticket</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value><stringValue>New</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>AccountId</field>
+            <value><elementReference>varWorkOrder.AccountId</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ParentWorkOrderId</field>
+            <value><elementReference>varWorkOrder.Id</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>FM__c</field>
+            <value><elementReference>varWorkOrder.FM__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lot_Address__c</field>
+            <value><elementReference>varWorkOrder.Lot_Address__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lot_Number__c</field>
+            <value><elementReference>varWorkOrder.Lot_Number__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Scheduled_Date__c</field>
+            <value><elementReference>varWorkOrder.Scheduled_Date__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Community__c</field>
+            <value><elementReference>varWorkOrder.Community__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Zone__c</field>
+            <value><elementReference>varWorkOrder.Zone__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value><stringValue>Pull Ticket</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Description</field>
+            <value><stringValue>Pull all materials for this lot from the yard/shop inventory prior to load. Verify quantities against the Work Order line items. Any discrepancy must be flagged to the Ops Manager before the truck loads.</stringValue></value>
+        </inputAssignments>
+        <object>WorkOrder</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+
+    <!-- CREATE LOADING TICKET -->
+    <recordCreates>
+        <n>Create_Loading_Ticket</n>
+        <label>Create Loading Ticket</label>
+        <locationX>200</locationX>
+        <locationY>500</locationY>
+        <connector><targetReference>Check_Aqua_Community</targetReference></connector>
+        <inputAssignments>
+            <field>Work_Order_Type__c</field>
+            <value><stringValue>Loading Ticket</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value><stringValue>New</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>AccountId</field>
+            <value><elementReference>varWorkOrder.AccountId</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ParentWorkOrderId</field>
+            <value><elementReference>varWorkOrder.Id</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>FM__c</field>
+            <value><elementReference>varWorkOrder.FM__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lot_Address__c</field>
+            <value><elementReference>varWorkOrder.Lot_Address__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Scheduled_Date__c</field>
+            <value><elementReference>varWorkOrder.Scheduled_Date__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value><stringValue>Loading Ticket</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Description</field>
+            <value><stringValue>Confirm all pulled materials are loaded onto the correct truck in the correct stop order. FM signs off before truck departs. Photograph the loaded truck bed before leaving the shop.</stringValue></value>
+        </inputAssignments>
+        <object>WorkOrder</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+
+    <!-- CHECK IF AQUA COMMUNITY -->
+    <decisions>
+        <n>Check_Aqua_Community</n>
+        <label>Is Aqua Community?</label>
+        <locationX>200</locationX>
+        <locationY>600</locationY>
+        <defaultConnectorLabel>Not Aqua — Update Lot Bucket</defaultConnectorLabel>
+        <defaultConnector><targetReference>Update_Lot_To_Scheduled</targetReference></defaultConnector>
+        <rules>
+            <n>Is_Aqua_Community</n>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varWorkOrder.Aqua_Community__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><booleanValue>true</booleanValue></rightValue>
+            </conditions>
+            <connector><targetReference>Create_Aqua_Install_WO</targetReference></connector>
+            <label>Aqua Community</label>
+        </rules>
+    </decisions>
+
+    <!-- CREATE AQUA INSTALL WORK ORDER -->
+    <recordCreates>
+        <n>Create_Aqua_Install_WO</n>
+        <label>Create Aqua Install Work Order</label>
+        <locationX>400</locationX>
+        <locationY>600</locationY>
+        <connector><targetReference>Update_Lot_To_Scheduled</targetReference></connector>
+        <inputAssignments>
+            <field>Work_Order_Type__c</field>
+            <value><stringValue>Aqua Install</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value><stringValue>New</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>AccountId</field>
+            <value><elementReference>varWorkOrder.AccountId</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ParentWorkOrderId</field>
+            <value><elementReference>varWorkOrder.Id</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>FM__c</field>
+            <value><elementReference>varWorkOrder.FM__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Community__c</field>
+            <value><elementReference>varWorkOrder.Community__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lot__c</field>
+            <value><elementReference>varWorkOrder.Lot__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lot_Address__c</field>
+            <value><elementReference>varWorkOrder.Lot_Address__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lot_Number__c</field>
+            <value><elementReference>varWorkOrder.Lot_Number__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Scheduled_Date__c</field>
+            <value><elementReference>varWorkOrder.Scheduled_Date__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value><stringValue>Aqua Install</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Description</field>
+            <value><stringValue>Install temporary irrigation components on same day as landscape install. Record exact quantities of all components installed: hoses, controllers, spray heads, valves. Confirm quantities on closeout — these become the on-site inventory record that all future Check tickets are verified against.</stringValue></value>
+        </inputAssignments>
+        <object>WorkOrder</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+
+    <!-- UPDATE LOT PIPELINE BUCKET TO SCHEDULED -->
+    <recordUpdates>
+        <n>Update_Lot_To_Scheduled</n>
+        <label>Update Lot Pipeline Bucket to Scheduled</label>
+        <locationX>200</locationX>
+        <locationY>700</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value><elementReference>varWorkOrder.Lot__c</elementReference></value>
+        </filters>
+        <inputAssignments>
+            <field>Pipeline_Bucket__c</field>
+            <value><stringValue>Scheduled</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Bucket_Changed_Date__c</field>
+            <value><elementReference>$Flow.CurrentDateTime</elementReference></value>
+        </inputAssignments>
+        <object>Account</object>
+    </recordUpdates>
+
+</Flow>

@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <description>
+        LOVING Takeoff to Work Order Creation.
+        Fires after save on Account (Lot record type) when Takeoff_Complete__c
+        changes from false to true AND WO_Created__c is false.
+        Creates the Work Order from confirmed takeoff data, creates WO Line Items
+        from the community BMG package, and triggers FSL scheduling.
+    </description>
+    <environments>Default</environments>
+    <interviewLabel>LOVING Takeoff To WO Creation {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING Takeoff To Work Order Creation</label>
+    <processMetadataValues>
+        <n>BuilderType</n>
+        <value><stringValue>LightningFlowBuilder</stringValue></value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordTriggerType>Update</recordTriggerType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Guard_Check_WO_Not_Created</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Takeoff_Complete__c</field>
+            <operator>EqualTo</operator>
+            <value><booleanValue>true</booleanValue></value>
+        </filters>
+        <filters>
+            <field>WO_Created__c</field>
+            <operator>EqualTo</operator>
+            <value><booleanValue>false</booleanValue></value>
+        </filters>
+        <filters>
+            <field>RecordType.DeveloperName</field>
+            <operator>EqualTo</operator>
+            <value><stringValue>Lot</stringValue></value>
+        </filters>
+        <object>Account</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+
+    <!-- ═══════════════════════════════════════════════════════
+         VARIABLES
+    ═══════════════════════════════════════════════════════ -->
+    <variables>
+        <n>varNewWOId</n>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <n>varCommunity</n>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Account</objectType>
+    </variables>
+    <variables>
+        <n>varBuilderRegional</n>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Account</objectType>
+    </variables>
+
+    <!-- ═══════════════════════════════════════════════════════
+         GUARD: Prevent duplicate WO creation
+    ═══════════════════════════════════════════════════════ -->
+    <decisions>
+        <n>Guard_Check_WO_Not_Created</n>
+        <label>WO Not Yet Created?</label>
+        <locationX>200</locationX>
+        <locationY>100</locationY>
+        <defaultConnectorLabel>WO Already Exists — Exit</defaultConnectorLabel>
+        <rules>
+            <n>WO_Not_Yet_Created</n>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.WO_Created__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><booleanValue>false</booleanValue></rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Takeoff_Complete__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><booleanValue>true</booleanValue></rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Community_Record</targetReference>
+            </connector>
+            <label>Not Yet Created</label>
+        </rules>
+    </decisions>
+
+    <!-- ═══════════════════════════════════════════════════════
+         GET COMMUNITY RECORD (parent of Lot)
+    ═══════════════════════════════════════════════════════ -->
+    <recordLookups>
+        <n>Get_Community_Record</n>
+        <label>Get Community Record</label>
+        <locationX>200</locationX>
+        <locationY>200</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_Builder_Regional</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value><elementReference>$Record.ParentId</elementReference></value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Account</object>
+        <outputReference>varCommunity</outputReference>
+        <queriedFields>
+            <field>Id</field>
+            <field>Name</field>
+            <field>ParentId</field>
+            <field>Zone__c</field>
+            <field>FM__c</field>
+            <field>Aqua_Customer__c</field>
+            <field>Sod_Species__c</field>
+            <field>BMG_Package__c</field>
+            <field>DR_Horton_Tree_Avg__c</field>
+            <field>Spec_Type__c</field>
+        </queriedFields>
+    </recordLookups>
+
+    <!-- ═══════════════════════════════════════════════════════
+         GET BUILDER REGIONAL (parent of Community)
+    ═══════════════════════════════════════════════════════ -->
+    <recordLookups>
+        <n>Get_Builder_Regional</n>
+        <label>Get Builder Regional Account</label>
+        <locationX>200</locationX>
+        <locationY>300</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Variance_Rule</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value><elementReference>varCommunity.ParentId</elementReference></value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Account</object>
+        <outputReference>varBuilderRegional</outputReference>
+        <queriedFields>
+            <field>Id</field>
+            <field>Name</field>
+            <field>Spec_Type__c</field>
+            <field>Billing_Method__c</field>
+            <field>Payment_Terms__c</field>
+        </queriedFields>
+    </recordLookups>
+
+    <!-- ═══════════════════════════════════════════════════════
+         CHECK VARIANCE — Determines Takeoff_Status__c
+    ═══════════════════════════════════════════════════════ -->
+    <decisions>
+        <n>Check_Variance_Rule</n>
+        <label>Package Variance Present?</label>
+        <locationX>200</locationX>
+        <locationY>400</locationY>
+        <defaultConnectorLabel>No Variance — Confirmed</defaultConnectorLabel>
+        <defaultConnector>
+            <targetReference>Create_Work_Order</targetReference>
+        </defaultConnector>
+        <rules>
+            <n>Has_Package_Variance</n>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Package_Variance__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><booleanValue>true</booleanValue></rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_Lennar_Hard_Block</targetReference>
+            </connector>
+            <label>Has Variance</label>
+        </rules>
+    </decisions>
+
+    <decisions>
+        <n>Check_Lennar_Hard_Block</n>
+        <label>Is Lennar (Hard Block)?</label>
+        <locationX>400</locationX>
+        <locationY>400</locationY>
+        <defaultConnectorLabel>Not Lennar — Flag and Continue</defaultConnectorLabel>
+        <defaultConnector>
+            <targetReference>Create_Work_Order_With_Variance</targetReference>
+        </defaultConnector>
+        <rules>
+            <n>Is_Lennar_Spec</n>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varBuilderRegional.Spec_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><stringValue>Exact (Lennar)</stringValue></rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Create_Lennar_Block_Task</targetReference>
+            </connector>
+            <label>Lennar — Hard Block</label>
+        </rules>
+    </decisions>
+
+    <!-- ═══════════════════════════════════════════════════════
+         CREATE WORK ORDER — Confirmed (no variance)
+    ═══════════════════════════════════════════════════════ -->
+    <recordCreates>
+        <n>Create_Work_Order</n>
+        <label>Create Work Order (Confirmed)</label>
+        <locationX>200</locationX>
+        <locationY>500</locationY>
+        <connector>
+            <targetReference>Mark_Lot_WO_Created</targetReference>
+        </connector>
+        <faultConnector>
+            <targetReference>Handle_WO_Create_Error</targetReference>
+        </faultConnector>
+        <inputAssignments>
+            <field>Status</field>
+            <value><stringValue>Takeoff Complete</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Work_Order_Type__c</field>
+            <value><stringValue>Production Install</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>AccountId</field>
+            <value><elementReference>$Record.Id</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Community__c</field>
+            <value><elementReference>$Record.ParentId</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Builder_Regional__c</field>
+            <value><elementReference>varCommunity.ParentId</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lot__c</field>
+            <value><elementReference>$Record.Id</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lot_Number__c</field>
+            <value><elementReference>$Record.Lot_Number__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lot_Address__c</field>
+            <value><elementReference>$Record.Street_Address__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>PO_Number__c</field>
+            <value><elementReference>$Record.PO_Number__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>PO_Received_Date__c</field>
+            <value><elementReference>$Record.PO_Received_Date__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Target_Start_Date__c</field>
+            <value><elementReference>$Record.Target_Start_Date__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>FM__c</field>
+            <value><elementReference>varCommunity.FM__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Zone__c</field>
+            <value><elementReference>varCommunity.Zone__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Aqua_Community__c</field>
+            <value><elementReference>varCommunity.Aqua_Customer__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Builder_Spec_Type__c</field>
+            <value><elementReference>varBuilderRegional.Spec_Type__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>DR_Horton_Tree_Avg__c</field>
+            <value><elementReference>varCommunity.DR_Horton_Tree_Avg__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Takeoff_Complete__c</field>
+            <value><booleanValue>true</booleanValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Takeoff_Status__c</field>
+            <value><stringValue>Confirmed</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Package_Variance__c</field>
+            <value><booleanValue>false</booleanValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Scope_Outside_PO__c</field>
+            <value><elementReference>$Record.Scope_Outside_PO__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lunch_Minutes__c</field>
+            <value><numberValue>60.0</numberValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Cushion_Minutes__c</field>
+            <value><numberValue>15.0</numberValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Shift_Start_Time__c</field>
+            <value><stringValue>06:30</stringValue></value>
+        </inputAssignments>
+        <!-- Takeoff quantity fields -->
+        <inputAssignments>
+            <field>Takeoff_Sod_Sqft__c</field>
+            <value><elementReference>$Record.Takeoff_Confirmed_Sod_Sqft__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Takeoff_Shrubs_1G__c</field>
+            <value><elementReference>$Record.Takeoff_Confirmed_Shrubs_1G__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Takeoff_Shrubs_3G__c</field>
+            <value><elementReference>$Record.Takeoff_Confirmed_Shrubs_3G__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Takeoff_Shrubs_7G__c</field>
+            <value><elementReference>$Record.Takeoff_Confirmed_Shrubs_7G__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Takeoff_Trees_15G__c</field>
+            <value><elementReference>$Record.Takeoff_Confirmed_Trees_15G__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Takeoff_Trees_30G__c</field>
+            <value><elementReference>$Record.Takeoff_Confirmed_Trees_30G__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Takeoff_Trees_45G__c</field>
+            <value><elementReference>$Record.Takeoff_Confirmed_Trees_45G__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Takeoff_Lighting_Units__c</field>
+            <value><elementReference>$Record.Takeoff_Confirmed_Lighting__c</elementReference></value>
+        </inputAssignments>
+        <object>WorkOrder</object>
+        <outputAssignments>
+            <assignToReference>varNewWOId</assignToReference>
+            <field>Id</field>
+        </outputAssignments>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+
+    <!-- Create Work Order WITH variance flag -->
+    <recordCreates>
+        <n>Create_Work_Order_With_Variance</n>
+        <label>Create Work Order (Variance Flagged)</label>
+        <locationX>400</locationX>
+        <locationY>500</locationY>
+        <connector>
+            <targetReference>Create_Variance_Review_Task</targetReference>
+        </connector>
+        <faultConnector>
+            <targetReference>Handle_WO_Create_Error</targetReference>
+        </faultConnector>
+        <inputAssignments>
+            <field>Status</field>
+            <value><stringValue>Takeoff Complete</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Work_Order_Type__c</field>
+            <value><stringValue>Production Install</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>AccountId</field>
+            <value><elementReference>$Record.Id</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Community__c</field>
+            <value><elementReference>$Record.ParentId</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Builder_Regional__c</field>
+            <value><elementReference>varCommunity.ParentId</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lot__c</field>
+            <value><elementReference>$Record.Id</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lot_Number__c</field>
+            <value><elementReference>$Record.Lot_Number__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lot_Address__c</field>
+            <value><elementReference>$Record.Street_Address__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>PO_Number__c</field>
+            <value><elementReference>$Record.PO_Number__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Target_Start_Date__c</field>
+            <value><elementReference>$Record.Target_Start_Date__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>FM__c</field>
+            <value><elementReference>varCommunity.FM__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Zone__c</field>
+            <value><elementReference>varCommunity.Zone__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Aqua_Community__c</field>
+            <value><elementReference>varCommunity.Aqua_Customer__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Builder_Spec_Type__c</field>
+            <value><elementReference>varBuilderRegional.Spec_Type__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Takeoff_Complete__c</field>
+            <value><booleanValue>true</booleanValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Takeoff_Status__c</field>
+            <value><stringValue>Variance Flagged</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Package_Variance__c</field>
+            <value><booleanValue>true</booleanValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lunch_Minutes__c</field>
+            <value><numberValue>60.0</numberValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Cushion_Minutes__c</field>
+            <value><numberValue>15.0</numberValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Shift_Start_Time__c</field>
+            <value><stringValue>06:30</stringValue></value>
+        </inputAssignments>
+        <object>WorkOrder</object>
+        <outputAssignments>
+            <assignToReference>varNewWOId</assignToReference>
+            <field>Id</field>
+        </outputAssignments>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+
+    <!-- Lennar Hard Block: create task for Operations Manager, do NOT create WO -->
+    <recordCreates>
+        <n>Create_Lennar_Block_Task</n>
+        <label>Create Lennar Block Task (No WO)</label>
+        <locationX>600</locationX>
+        <locationY>400</locationY>
+        <inputAssignments>
+            <field>Subject</field>
+            <value><stringValue>LENNAR HOLD — Takeoff Variance Requires Ops Manager Approval Before WO Can Be Created</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhatId</field>
+            <value><elementReference>$Record.Id</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value><stringValue>High</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ActivityDate</field>
+            <value><elementReference>$Flow.CurrentDate</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type</field>
+            <value><stringValue>Variance Review</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Description</field>
+            <value><stringValue>Lennar requires exact quantities (Exact spec type). A takeoff variance was detected. Operations Manager or COO must review and approve before the Work Order can be created. Lot: see related record.</stringValue></value>
+        </inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+
+    <!-- Variance Review Task (non-Lennar) -->
+    <recordCreates>
+        <n>Create_Variance_Review_Task</n>
+        <label>Create Variance Review Task</label>
+        <locationX>400</locationX>
+        <locationY>600</locationY>
+        <connector>
+            <targetReference>Mark_Lot_WO_Created</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Subject</field>
+            <value><stringValue>Package Variance Flagged — Review Required</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhatId</field>
+            <value><elementReference>varNewWOId</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value><stringValue>Normal</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ActivityDate</field>
+            <value><elementReference>$Flow.CurrentDate</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type</field>
+            <value><stringValue>Variance Review</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Description</field>
+            <value><stringValue>FM confirmed quantities differ from the community package by more than 5% on one or more line items. Work Order has been created and can proceed to scheduling, but this variance is logged for review. Check the Work Order line items and confirm the variance is acceptable.</stringValue></value>
+        </inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+
+    <!-- ═══════════════════════════════════════════════════════
+         MARK LOT AS WO CREATED
+    ═══════════════════════════════════════════════════════ -->
+    <recordUpdates>
+        <n>Mark_Lot_WO_Created</n>
+        <label>Mark Lot WO Created</label>
+        <locationX>200</locationX>
+        <locationY>700</locationY>
+        <connector>
+            <targetReference>Update_Lot_Pipeline_Bucket</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>WO_Created__c</field>
+            <value><booleanValue>true</booleanValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WO_ID__c</field>
+            <value><elementReference>varNewWOId</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Pipeline_Bucket__c</field>
+            <value><stringValue>Takeoff Complete</stringValue></value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+
+    <!-- Update Pipeline Bucket to Takeoff Complete -->
+    <recordUpdates>
+        <n>Update_Lot_Pipeline_Bucket</n>
+        <label>Update Pipeline Bucket to Takeoff Complete</label>
+        <locationX>200</locationX>
+        <locationY>800</locationY>
+        <inputAssignments>
+            <field>Pipeline_Bucket__c</field>
+            <value><stringValue>Takeoff Complete</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Bucket_Changed_Date__c</field>
+            <value><elementReference>$Flow.CurrentDateTime</elementReference></value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+
+    <!-- ═══════════════════════════════════════════════════════
+         ERROR HANDLING
+    ═══════════════════════════════════════════════════════ -->
+    <recordCreates>
+        <n>Handle_WO_Create_Error</n>
+        <label>Log WO Creation Error</label>
+        <locationX>800</locationX>
+        <locationY>500</locationY>
+        <inputAssignments>
+            <field>Subject</field>
+            <value><stringValue>ERROR — Work Order Creation Failed from Takeoff</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhatId</field>
+            <value><elementReference>$Record.Id</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value><stringValue>High</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ActivityDate</field>
+            <value><elementReference>$Flow.CurrentDate</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type</field>
+            <value><stringValue>System Error</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Description</field>
+            <value><elementReference>$Flow.FaultMessage</elementReference></value>
+        </inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+
+</Flow>

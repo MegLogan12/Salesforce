@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <description>
+        LOVING Production Install Orchestrator Flow.
+        Record-Triggered on WorkOrder after save (create and update).
+        Routes status transitions to appropriate sub-flows and automation.
+        Covers all 18 stages of the Production Install lifecycle including
+        NFI loop, Finish Job branch, Aqua trigger, and auto-close.
+    </description>
+    <environments>Default</environments>
+    <interviewLabel>LOVING PI Orchestrator {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING Production Install Orchestrator</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value><stringValue>LightningFlowBuilder</stringValue></value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordTriggerType>CreateAndUpdate</recordTriggerType>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_Is_Production_Install</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Work_Order_Type__c</field>
+            <operator>EqualTo</operator>
+            <value><stringValue>Production Install</stringValue></value>
+        </filters>
+        <object>WorkOrder</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+
+    <!-- ═══════════════════════════════════════════════════════
+         VARIABLES
+    ═══════════════════════════════════════════════════════ -->
+    <variables>
+        <name>varStatusChanged</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <value><booleanValue>false</booleanValue></value>
+    </variables>
+    <variables>
+        <name>varOldStatus</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>varNewStatus</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+
+    <!-- ═══════════════════════════════════════════════════════
+         DECISIONS
+    ═══════════════════════════════════════════════════════ -->
+
+    <!-- Gate: only process Production Install records -->
+    <decisions>
+        <name>Check_Is_Production_Install</name>
+        <label>Is Production Install WO?</label>
+        <locationX>200</locationX>
+        <locationY>100</locationY>
+        <defaultConnectorLabel>Not Production Install — Exit</defaultConnectorLabel>
+        <rules>
+            <name>Is_Production_Install</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Work_Order_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><stringValue>Production Install</stringValue></rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_Status_Changed</targetReference>
+            </connector>
+            <label>Yes — Production Install</label>
+        </rules>
+    </decisions>
+
+    <!-- Check if status changed (skip on field-only updates with same status) -->
+    <decisions>
+        <name>Check_Status_Changed</name>
+        <label>Status Changed?</label>
+        <locationX>200</locationX>
+        <locationY>200</locationY>
+        <defaultConnectorLabel>Status Same — Check Health Check</defaultConnectorLabel>
+        <defaultConnector>
+            <targetReference>Check_Health_Check_Red</targetReference>
+        </defaultConnector>
+        <rules>
+            <name>Status_Did_Change</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue><elementReference>$Record__Prior.Status</elementReference></rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Route_By_New_Status</targetReference>
+            </connector>
+            <label>Status Changed</label>
+        </rules>
+    </decisions>
+
+    <!-- Route by new status value -->
+    <decisions>
+        <name>Route_By_New_Status</name>
+        <label>Route by New Status</label>
+        <locationX>400</locationX>
+        <locationY>200</locationY>
+        <defaultConnectorLabel>Other Status — No Automation</defaultConnectorLabel>
+        <rules>
+            <!-- Stage 7: Scheduled -->
+            <name>Status_Is_Scheduled</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><stringValue>Scheduled</stringValue></rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Subflow_Schedule_Automation</targetReference>
+            </connector>
+            <label>Scheduled</label>
+        </rules>
+        <rules>
+            <!-- Stage 8: Site Readiness Check -->
+            <name>Status_Is_Site_Readiness</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><stringValue>Site Readiness Check</stringValue></rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Create_Site_Readiness_Task</targetReference>
+            </connector>
+            <label>Site Readiness Check</label>
+        </rules>
+        <rules>
+            <!-- Stage 11: Completed (Field Complete) -->
+            <name>Status_Is_Completed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><stringValue>Completed (Field Complete)</stringValue></rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Subflow_Closeout_Automation</targetReference>
+            </connector>
+            <label>Completed (Field Complete)</label>
+        </rules>
+        <rules>
+            <!-- Stage 12: Pending Closeout Approval -->
+            <name>Status_Is_Pending_Approval</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><stringValue>Pending Closeout Approval</stringValue></rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Create_Closeout_Review_Task</targetReference>
+            </connector>
+            <label>Pending Closeout Approval</label>
+        </rules>
+        <rules>
+            <!-- NFI Loop: Need Further Info -->
+            <name>Status_Is_NFI</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><stringValue>Need Further Info</stringValue></rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Subflow_NFI_Loop</targetReference>
+            </connector>
+            <label>Need Further Info</label>
+        </rules>
+        <rules>
+            <!-- Stage 13: Approved -->
+            <name>Status_Is_Approved</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><stringValue>Approved</stringValue></rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Subflow_Approved_Automation</targetReference>
+            </connector>
+            <label>Approved</label>
+        </rules>
+        <rules>
+            <!-- Stage 18: Closed (auto-close) -->
+            <name>Status_Is_Closed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><stringValue>Closed</stringValue></rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Subflow_Auto_Close</targetReference>
+            </connector>
+            <label>Closed</label>
+        </rules>
+    </decisions>
+
+    <!-- Health Check Red Decision (fires even when status hasn't changed) -->
+    <decisions>
+        <name>Check_Health_Check_Red</name>
+        <label>Health Check Went Red?</label>
+        <locationX>200</locationX>
+        <locationY>350</locationY>
+        <defaultConnectorLabel>Not Red or Unchanged</defaultConnectorLabel>
+        <rules>
+            <name>Health_Check_Is_Now_Red</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Health_Check_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><stringValue>Red - Will Not Complete Today</stringValue></rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.Health_Check_Status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue><stringValue>Red - Will Not Complete Today</stringValue></rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Subflow_Red_Flag</targetReference>
+            </connector>
+            <label>Health Check → Red</label>
+        </rules>
+    </decisions>
+
+    <!-- Auto-Close Check (fires when Payment or QI status changes) -->
+    <decisions>
+        <name>Check_Auto_Close_Conditions</name>
+        <label>Auto-Close Conditions Met?</label>
+        <locationX>200</locationX>
+        <locationY>500</locationY>
+        <defaultConnectorLabel>Not Ready to Close</defaultConnectorLabel>
+        <rules>
+            <name>Ready_To_Auto_Close</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Payment_Received__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><booleanValue>true</booleanValue></rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.QI_Submitted__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><booleanValue>true</booleanValue></rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.QI_Status__c</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue><stringValue>FM QI Review (Red Hold)</stringValue></rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue><stringValue>Closed</stringValue></rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_WO_To_Closed</targetReference>
+            </connector>
+            <label>Paid + QI Complete + Not Red Hold</label>
+        </rules>
+    </decisions>
+
+    <!-- ═══════════════════════════════════════════════════════
+         RECORD UPDATES
+    ═══════════════════════════════════════════════════════ -->
+
+    <!-- Auto-close: update status to Closed -->
+    <recordUpdates>
+        <name>Update_WO_To_Closed</name>
+        <label>Update WO Status to Closed</label>
+        <locationX>400</locationX>
+        <locationY>500</locationY>
+        <inputAssignments>
+            <field>Status</field>
+            <value><stringValue>Closed</stringValue></value>
+        </inputAssignments>
+        <inputReference>$Record</inputReference>
+    </recordUpdates>
+
+    <!-- ═══════════════════════════════════════════════════════
+         RECORD CREATES — Inline tasks
+    ═══════════════════════════════════════════════════════ -->
+
+    <!-- Site Readiness Check task (also created by scheduling automation, this is a safety net) -->
+    <recordCreates>
+        <name>Create_Site_Readiness_Task</name>
+        <label>Create Site Readiness Check Task</label>
+        <locationX>600</locationX>
+        <locationY>200</locationY>
+        <inputAssignments>
+            <field>Subject</field>
+            <value><elementReference>Site_Readiness_Task_Subject</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value><elementReference>$Record.FM__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhatId</field>
+            <value><elementReference>$Record.Id</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value><stringValue>High</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ActivityDate</field>
+            <value><elementReference>Site_Readiness_Due_Date</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type</field>
+            <value><stringValue>Site Readiness Check</stringValue></value>
+        </inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+
+    <!-- Closeout Review Task for Operations Manager queue -->
+    <recordCreates>
+        <name>Create_Closeout_Review_Task</name>
+        <label>Create Closeout Review Task</label>
+        <locationX>600</locationX>
+        <locationY>300</locationY>
+        <inputAssignments>
+            <field>Subject</field>
+            <value><elementReference>Closeout_Review_Subject</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhatId</field>
+            <value><elementReference>$Record.Id</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value><stringValue>Normal</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ActivityDate</field>
+            <value><elementReference>$Flow.CurrentDate</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type</field>
+            <value><stringValue>Closeout Review</stringValue></value>
+        </inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+
+    <!-- ═══════════════════════════════════════════════════════
+         FORMULAS
+    ═══════════════════════════════════════════════════════ -->
+
+    <formulas>
+        <name>Site_Readiness_Task_Subject</name>
+        <dataType>String</dataType>
+        <expression>"Site Readiness Check Required — " &amp; {!$Record.Lot_Address__c}</expression>
+    </formulas>
+
+    <formulas>
+        <name>Site_Readiness_Due_Date</name>
+        <dataType>Date</dataType>
+        <expression>IF(NOT(ISBLANK({!$Record.Scheduled_Date__c})),
+            {!$Record.Scheduled_Date__c} - 2,
+            TODAY() + 1)</expression>
+    </formulas>
+
+    <formulas>
+        <name>Closeout_Review_Subject</name>
+        <dataType>String</dataType>
+        <expression>"Closeout Review Required — " &amp; {!$Record.Lot_Address__c}
+            &amp; " — " &amp; {!$Record.Lot_Number__c}</expression>
+    </formulas>
+
+    <!-- ═══════════════════════════════════════════════════════
+         SUBFLOW REFERENCES
+         Each sub-flow handles one phase of the lifecycle.
+         Inputs pass the current Work Order record ID.
+    ═══════════════════════════════════════════════════════ -->
+
+    <!-- Status → Scheduled: Pull Ticket, Loading Ticket, Site Readiness Task, Aqua Trigger -->
+    <subflows>
+        <name>Subflow_Schedule_Automation</name>
+        <label>Run Schedule Automation</label>
+        <locationX>600</locationX>
+        <locationY>100</locationY>
+        <flowName>LOVING_PI_Schedule_Automation</flowName>
+        <inputAssignments>
+            <name>varWorkOrderId</name>
+            <value><elementReference>$Record.Id</elementReference></value>
+        </inputAssignments>
+    </subflows>
+
+    <!-- Status → Completed: QI Inspection, QI Line Items, QI Task -->
+    <subflows>
+        <name>Subflow_Closeout_Automation</name>
+        <label>Run Closeout Automation</label>
+        <locationX>600</locationX>
+        <locationY>200</locationY>
+        <flowName>LOVING_PI_Closeout_Automation</flowName>
+        <inputAssignments>
+            <name>varWorkOrderId</name>
+            <value><elementReference>$Record.Id</elementReference></value>
+        </inputAssignments>
+    </subflows>
+
+    <!-- Status → NFI: FM notification task, escalation if NFI > 2 -->
+    <subflows>
+        <name>Subflow_NFI_Loop</name>
+        <label>Run NFI Loop</label>
+        <locationX>600</locationX>
+        <locationY>300</locationY>
+        <flowName>LOVING_PI_NFI_Loop</flowName>
+        <inputAssignments>
+            <name>varWorkOrderId</name>
+            <value><elementReference>$Record.Id</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varNFICount</name>
+            <value><elementReference>$Record.NFI_Count__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varNFINotes</name>
+            <value><elementReference>$Record.Need_Further_Info_Notes__c</elementReference></value>
+        </inputAssignments>
+    </subflows>
+
+    <!-- Status → Approved: Invoice creation, AR queue stamp -->
+    <subflows>
+        <name>Subflow_Approved_Automation</name>
+        <label>Run Approved Automation</label>
+        <locationX>600</locationX>
+        <locationY>400</locationY>
+        <flowName>LOVING_PI_Approved_Automation</flowName>
+        <inputAssignments>
+            <name>varWorkOrderId</name>
+            <value><elementReference>$Record.Id</elementReference></value>
+        </inputAssignments>
+    </subflows>
+
+    <!-- Health Check → Red: escalation tasks -->
+    <subflows>
+        <name>Subflow_Red_Flag</name>
+        <label>Run Red Flag Automation</label>
+        <locationX>400</locationX>
+        <locationY>350</locationY>
+        <flowName>LOVING_PI_RedFlag_Automation</flowName>
+        <inputAssignments>
+            <name>varWorkOrderId</name>
+            <value><elementReference>$Record.Id</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varFJRequired</name>
+            <value><elementReference>$Record.Finish_Job_Required__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varFJReason</name>
+            <value><elementReference>$Record.Finish_Job_Reason__c</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>varRedNotes</name>
+            <value><elementReference>$Record.Red_Flag_Notes__c</elementReference></value>
+        </inputAssignments>
+    </subflows>
+
+    <!-- Auto-close (called when Closed status is set) -->
+    <subflows>
+        <name>Subflow_Auto_Close</name>
+        <label>Run Auto Close</label>
+        <locationX>600</locationX>
+        <locationY>500</locationY>
+        <flowName>LOVING_PI_Auto_Close</flowName>
+        <inputAssignments>
+            <name>varWorkOrderId</name>
+            <value><elementReference>$Record.Id</elementReference></value>
+        </inputAssignments>
+    </subflows>
+
+</Flow>
