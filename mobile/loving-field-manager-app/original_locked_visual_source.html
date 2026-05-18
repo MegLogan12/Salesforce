@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LOVING Salesforce | Field Manager Execution Model</title>
+  <style>
+    :root {
+      --navy: #16325c;
+      --navy-2: #0f2748;
+      --text: #16325c;
+      --muted: #54698d;
+      --border: #d8dde6;
+      --bg: #f3f3f3;
+      --card: #ffffff;
+      --aqua: #0a8aa6;
+      --aqua-light: #e6f4f7;
+      --green: #04844b;
+      --green-bg: #e3fcef;
+      --amber: #fe9339;
+      --amber-bg: #fff4e5;
+      --red: #c23934;
+      --red-bg: #fdecea;
+      --blue: #0c447c;
+      --blue-bg: #eaf3ff;
+      --purple: #5b21b6;
+      --purple-bg: #f1eafe;
+      --shadow: 0 2px 8px rgba(22, 50, 92, 0.10);
+      --radius: 14px;
+      --font: "Salesforce Sans", Arial, Helvetica, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    .topbar {
+      height: 54px;
+      background: var(--navy);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 18px;
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+
+    .logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #0a8aa6, #04844b);
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 900;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.18);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: #d9e7ff;
+    }
+
+    .user-pill {
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 999px;
+      padding: 6px 10px;
+      color: white;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      min-height: calc(100vh - 54px);
+    }
+
+    .sidebar {
+      background: #fff;
+      border-right: 1px solid var(--border);
+      padding: 16px;
+      position: sticky;
+      top: 54px;
+      height: calc(100vh - 54px);
+      overflow: auto;
+    }
+
+    .side-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--muted);
+      font-weight: 800;
+      margin: 12px 0 8px;
+    }
+
+    .job-card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      background: #fbfcfe;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .job-card:hover, .job-card.active {
+      border-color: var(--aqua);
+      box-shadow: 0 0 0 2px rgba(10,138,166,0.12);
+      background: #fff;
+    }
+
+    .job-card strong { display: block; font-size: 14px; margin-bottom: 4px; }
+    .job-card span { display: block; color: var(--muted); font-size: 12px; line-height: 1.4; }
+
+    .main {
+      padding: 18px;
+      overflow: auto;
+    }
+
+    .record-header {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+
+    .crumbs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding: 12px 16px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .crumbs span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-body {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      padding: 18px;
+      align-items: start;
+    }
+
+    .record-kicker {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 4px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 27px;
+      line-height: 1.15;
+      color: var(--navy);
+    }
+
+    .header-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .header-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+      max-width: 500px;
+    }
+
+    .button {
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--navy);
+      border-radius: 8px;
+      padding: 8px 11px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+    }
+
+    .button:hover { border-color: var(--aqua); color: var(--aqua); box-shadow: 0 1px 4px rgba(10,138,166,0.15); }
+    .button.primary { background: var(--aqua); color: white; border-color: var(--aqua); }
+    .button.primary:hover { background: #07788f; color: #fff; }
+    .button.green { background: var(--green); color: white; border-color: var(--green); }
+    .button.red { background: var(--red); color: white; border-color: var(--red); }
+    .button.amber { background: var(--amber); color: white; border-color: var(--amber); }
+    .button.disabled, .button:disabled { opacity: 0.48; cursor: not-allowed; background: #f4f6f9; color: #6b7280; }
+
+    .stage-rail {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      border-top: 1px solid var(--border);
+      background: #fff;
+    }
+
+    .stage {
+      padding: 11px 8px;
+      font-size: 11px;
+      font-weight: 800;
+      text-align: center;
+      border-right: 1px solid var(--border);
+      color: var(--muted);
+      position: relative;
+    }
+
+    .stage:last-child { border-right: 0; }
+    .stage.done { background: var(--green-bg); color: var(--green); }
+    .stage.current { background: var(--aqua-light); color: var(--aqua); box-shadow: inset 0 -3px 0 var(--aqua); }
+    .stage.blocked { background: var(--red-bg); color: var(--red); }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .kpi {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 13px;
+      box-shadow: var(--shadow);
+      min-height: 92px;
+    }
+
+    .kpi .label {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      font-weight: 900;
+      margin-bottom: 7px;
+    }
+
+    .kpi .value {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+
+    .kpi .sub { color: var(--muted); font-size: 12px; line-height: 1.4; }
+
+    .tabs {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .tab-bar {
+      display: flex;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--border);
+      background: #f8fafc;
+    }
+
+    .tab {
+      padding: 13px 16px;
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--muted);
+      cursor: pointer;
+      border-right: 1px solid var(--border);
+      white-space: nowrap;
+      min-width: fit-content;
+    }
+
+    .tab.active {
+      color: var(--aqua);
+      background: #fff;
+      box-shadow: inset 0 -3px 0 var(--aqua);
+    }
+
+    .tab-content { display: none; padding: 16px; }
+    .tab-content.active { display: block; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap: 16px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 13px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--navy);
+    }
+
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .card-body { padding: 14px; }
+
+    .right-rail { display: flex; flex-direction: column; gap: 14px; }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 11px;
+      font-weight: 900;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .pill.green { color: var(--green); background: var(--green-bg); border-color: #bfe9d2; }
+    .pill.amber { color: #9c5700; background: var(--amber-bg); border-color: #ffd7a7; }
+    .pill.red { color: var(--red); background: var(--red-bg); border-color: #f5b7b4; }
+    .pill.aqua { color: var(--aqua); background: var(--aqua-light); border-color: #b8e0e7; }
+    .pill.blue { color: var(--blue); background: var(--blue-bg); border-color: #b7d8ff; }
+    .pill.purple { color: var(--purple); background: var(--purple-bg); border-color: #d8c5fb; }
+    .pill.gray { color: var(--muted); background: #f4f6f9; border-color: var(--border); }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px 18px;
+    }
+
+    .field { min-width: 0; }
+    .field label {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 4px;
+    }
+
+    .field div {
+      font-size: 13px;
+      color: var(--navy);
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .alert {
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 12px 13px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 13px;
+      line-height: 1.45;
+      margin-bottom: 14px;
+      background: #fff;
+    }
+
+    .alert strong { display: block; margin-bottom: 2px; }
+    .alert.aqua { border-color: #b8e0e7; background: var(--aqua-light); }
+    .alert.amber { border-color: #ffd7a7; background: var(--amber-bg); }
+    .alert.red { border-color: #f5b7b4; background: var(--red-bg); }
+    .alert.green { border-color: #bfe9d2; background: var(--green-bg); }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .timeline-row {
+      display: grid;
+      grid-template-columns: 26px 1fr auto;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 900;
+      margin-top: 1px;
+    }
+
+    .dot.green { background: var(--green); }
+    .dot.aqua { background: var(--aqua); }
+    .dot.amber { background: var(--amber); }
+    .dot.red { background: var(--red); }
+    .dot.gray { background: #9aa7b8; }
+
+    .timeline-title { font-size: 13px; font-weight: 900; color: var(--navy); }
+    .timeline-note { font-size: 12px; color: var(--muted); line-height: 1.4; margin-top: 2px; }
+    .timeline-time { font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      overflow: hidden;
+    }
+
+    th {
+      text-align: left;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 10px;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+      background: #f8fafc;
+    }
+
+    td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #eef1f5;
+      vertical-align: top;
+      color: var(--navy);
+      font-weight: 650;
+    }
+
+    tr:last-child td { border-bottom: 0; }
+
+    .mini-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .mini-button {
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 7px;
+      padding: 5px 7px;
+      font-size: 11px;
+      font-weight: 900;
+      cursor: pointer;
+      color: var(--navy);
+    }
+    .mini-button:hover { border-color: var(--aqua); color: var(--aqua); }
+
+    .checklist {
+      display: grid;
+      gap: 9px;
+    }
+
+    .check-item {
+      display: grid;
+      grid-template-columns: 24px 1fr auto;
+      gap: 9px;
+      align-items: center;
+      padding: 9px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fbfcfe;
+      cursor: pointer;
+    }
+
+    .check-box {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      border: 2px solid var(--border);
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      color: #fff;
+    }
+
+    .check-item.done .check-box { background: var(--green); border-color: var(--green); }
+    .check-item.done .check-box::before { content: "✓"; }
+    .check-title { font-size: 13px; font-weight: 900; }
+    .check-note { color: var(--muted); font-size: 12px; margin-top: 2px; }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .photo-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .photo-thumb {
+      height: 88px;
+      background: linear-gradient(135deg, #d7ebf0, #eff7e8);
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .photo-thumb.issue { background: linear-gradient(135deg, #fdecea, #fff4e5); }
+    .photo-thumb.complete { background: linear-gradient(135deg, #e3fcef, #e6f4f7); }
+    .photo-caption { padding: 8px; font-size: 11px; font-weight: 900; color: var(--navy); }
+    .photo-caption span { display: block; color: var(--muted); font-weight: 700; margin-top: 2px; }
+
+    .phone-wrap {
+      border: 10px solid #1f2937;
+      border-radius: 28px;
+      background: #111827;
+      padding: 8px;
+      width: 270px;
+      margin: 0 auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .phone-screen {
+      background: #fff;
+      border-radius: 18px;
+      overflow: hidden;
+      min-height: 520px;
+    }
+
+    .phone-header {
+      background: var(--navy);
+      color: #fff;
+      padding: 12px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .phone-body { padding: 12px; }
+    .mobile-step {
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 10px;
+      margin-bottom: 9px;
+      background: #fbfcfe;
+    }
+    .mobile-step strong { display: block; font-size: 12px; margin-bottom: 4px; }
+    .mobile-step span { color: var(--muted); font-size: 11px; line-height: 1.35; display: block; }
+
+    .split-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .full { grid-column: 1 / -1; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      display: none;
+      place-items: center;
+      z-index: 50;
+      padding: 20px;
+    }
+
+    .modal-backdrop.show { display: grid; }
+    .modal {
+      width: min(740px, 96vw);
+      background: #fff;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .modal-header h2 { margin: 0; font-size: 18px; color: var(--navy); }
+    .modal-body { padding: 18px; }
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      border-top: 1px solid var(--border);
+      padding: 13px 18px;
+      background: #f8fafc;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 10px;
+      font-family: var(--font);
+      color: var(--navy);
+      outline: none;
+    }
+
+    input:focus, select:focus, textarea:focus { border-color: var(--aqua); box-shadow: 0 0 0 2px rgba(10,138,166,0.12); }
+    textarea { min-height: 88px; resize: vertical; }
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: var(--navy);
+      color: #fff;
+      padding: 12px 14px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+      max-width: 360px;
+      display: none;
+      z-index: 80;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .toast.show { display: block; }
+
+    @media (max-width: 1200px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .side-title { grid-column: 1 / -1; }
+      .layout { grid-template-columns: 1fr; }
+      .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 820px) {
+      .header-body { grid-template-columns: 1fr; }
+      .header-actions { justify-content: flex-start; }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .cards, .split-3 { grid-template-columns: 1fr; }
+      .stage-rail { grid-template-columns: repeat(4, 1fr); }
+      .photo-grid { grid-template-columns: repeat(2, 1fr); }
+      .sidebar { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><div class="logo">L</div><div>LOVING Salesforce | Field Manager Workspace</div></div>
+    <div class="top-actions">
+      <span>Field Service Console</span>
+      <span class="user-pill">FM: Jordan Ellis</span>
+    </div>
+  </div>
+
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="side-title">FM Work Queue</div>
+      <div class="job-card active" onclick="selectJob('lot118')">
+        <strong>Lot 118, Oak Ridge</strong>
+        <span>Production Install, scheduled tomorrow</span>
+        <span><span class="pill aqua">QI review pending</span></span>
+      </div>
+      <div class="job-card" onclick="showToast('Lot 204 selected. This mockup keeps Lot 118 as the active demo record so the CEO can follow one full job.')">
+        <strong>Lot 204, Pine Hollow</strong>
+        <span>Takeoff returned, missing access photo</span>
+        <span><span class="pill amber">NFI</span></span>
+      </div>
+      <div class="job-card" onclick="showToast('Lot 77 selected. This mockup keeps Lot 118 as the active demo record so the CEO can follow one full job.')">
+        <strong>Lot 77, Riverbend</strong>
+        <span>Aqua check issue, same-day review</span>
+        <span><span class="pill red">Same-Day</span></span>
+      </div>
+      <div class="job-card" onclick="showToast('Lot 44 selected. This mockup keeps Lot 118 as the active demo record so the CEO can follow one full job.')">
+        <strong>Lot 44, Ashton Park</strong>
+        <span>Closeout ready, invoice pending approval</span>
+        <span><span class="pill green">Ready</span></span>
+      </div>
+
+      <div class="side-title">Today’s FM Priorities</div>
+      <div class="checklist">
+        <div class="check-item done"><div class="check-box"></div><div><div class="check-title">Review 2 PM health checks</div><div class="check-note">1 red, 3 green</div></div><span class="pill red">1 red</span></div>
+        <div class="check-item"><div class="check-box"></div><div><div class="check-title">Approve pending closeouts</div><div class="check-note">3 jobs waiting</div></div><span class="pill amber">Due</span></div>
+        <div class="check-item"><div class="check-box"></div><div><div class="check-title">Clear Aqua issue</div><div class="check-note">Riverbend dry spot</div></div><span class="pill red">Same-Day</span></div>
+        <div class="check-item done"><div class="check-box"></div><div><div class="check-title">Review tomorrow schedule</div><div class="check-note">Crew assignments locked</div></div><span class="pill green">Done</span></div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="record-header">
+        <div class="crumbs">
+          <span>Parent: DR Horton</span><span>›</span>
+          <span>Division: DR Horton Charlotte</span><span>›</span>
+          <span>Community: Oak Ridge</span><span>›</span>
+          <span>Lot: 118</span><span>›</span>
+          <span>WorkOrder: WO-004291</span>
+        </div>
+        <div class="header-body">
+          <div>
+            <div class="record-kicker">Field Manager Execution View</div>
+            <h1>Lot 118, Oak Ridge | Production Install</h1>
+            <div class="header-meta">
+              <span>1248 Willow Bend Dr, Charlotte NC</span>
+              <span>Package: Oak Ridge Standard</span>
+              <span>FM: Jordan Ellis</span>
+              <span>Foreman: Luis Martinez</span>
+              <span>Service Territory: Charlotte North</span>
+            </div>
+          </div>
+          <div class="header-actions">
+            <button class="button" onclick="openModal('takeoff')">Open Takeoff</button>
+            <button class="button" onclick="openModal('schedule')">Review Schedule</button>
+            <button class="button" onclick="openModal('photos')">Review Photos</button>
+            <button class="button primary" onclick="openModal('qi')">Start QI Review</button>
+            <button class="button green" onclick="advanceStage()">Advance Demo Stage</button>
+          </div>
+        </div>
+        <div class="stage-rail" id="stageRail">
+          <div class="stage done">PO Reviewed</div>
+          <div class="stage done">Takeoff Complete</div>
+          <div class="stage done">Ready to Schedule</div>
+          <div class="stage done">Scheduled</div>
+          <div class="stage current">Field Complete</div>
+          <div class="stage">QI Review</div>
+          <div class="stage">Closeout</div>
+          <div class="stage">Invoice</div>
+        </div>
+      </section>
+
+      <section class="kpi-grid">
+        <div class="kpi"><div class="label">Job Health</div><div class="value" id="kpiHealth">Green</div><div class="sub">Foreman submitted field complete</div></div>
+        <div class="kpi"><div class="label">Photo Gate</div><div class="value" id="kpiPhotos">6 / 6</div><div class="sub">Required categories received</div></div>
+        <div class="kpi"><div class="label">Goal vs Actual</div><div class="value">7.5 / 8.1</div><div class="sub">+0.6 hrs, within tolerance</div></div>
+        <div class="kpi"><div class="label">Aqua</div><div class="value">Active</div><div class="sub">Install ticket complete, checks pending</div></div>
+        <div class="kpi"><div class="label">QI</div><div class="value" id="kpiQi">Pending</div><div class="sub">FM review required before closeout</div></div>
+        <div class="kpi"><div class="label">Invoice</div><div class="value" id="kpiInvoice">Blocked</div><div class="sub">Waits for FM closeout approval</div></div>
+      </section>
+
+      <section class="tabs">
+        <div class="tab-bar">
+          <div class="tab active" onclick="switchTab('command')">FM Command Center</div>
+          <div class="tab" onclick="switchTab('takeoffTab')">Takeoff + Site Readiness</div>
+          <div class="tab" onclick="switchTab('workTab')">WorkOrder + Field Service</div>
+          <div class="tab" onclick="switchTab('aquaTab')">Aqua</div>
+          <div class="tab" onclick="switchTab('photosTab')">Photos + Proof</div>
+          <div class="tab" onclick="switchTab('qiTab')">QI + Closeout</div>
+          <div class="tab" onclick="switchTab('mobileTab')">Field Mobile View</div>
+        </div>
+
+        <div id="command" class="tab-content active">
+          <div class="alert aqua">
+            <div>ⓘ</div>
+            <div><strong>What the Field Manager sees first:</strong> This page does not make the FM hunt through the full Salesforce model. It shows the exact Lot, WorkOrder, schedule, crew, proof, Aqua, QI, and closeout gates needed to move this job forward.</div>
+          </div>
+          <div class="layout">
+            <div class="cards">
+              <div class="card">
+                <div class="card-header"><div><div class="card-title">Next Best Action</div><div class="card-subtitle">System-driven work queue for the FM</div></div><span class="pill aqua">Now</span></div>
+                <div class="card-body">
+                  <div class="timeline">
+                    <div class="timeline-row"><div class="dot aqua">1</div><div><div class="timeline-title">Review closeout photo package</div><div class="timeline-note">All 6 required photo categories are present. Check quality and confirm no missing scope.</div></div><div class="timeline-time">3 min</div></div>
+                    <div class="timeline-row"><div class="dot aqua">2</div><div><div class="timeline-title">Complete QI scoring</div><div class="timeline-note">Score sod install, plant install, cleanup, site condition, and Aqua if applicable.</div></div><div class="timeline-time">7 min</div></div>
+                    <div class="timeline-row"><div class="dot gray">3</div><div><div class="timeline-title">Approve closeout or create Finished Job</div><div class="timeline-note">If all gates pass, approve closeout. If not, create a child Finished Job.</div></div><div class="timeline-time">Decision</div></div>
+                    <div class="timeline-row"><div class="dot gray">4</div><div><div class="timeline-title">Release invoice path</div><div class="timeline-note">Invoice is created only after closeout approval and bills the Division, not Parent.</div></div><div class="timeline-time">Auto</div></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header"><div><div class="card-title">Record Ownership</div><div class="card-subtitle">Keeps the FM from working at the wrong level</div></div><span class="pill green">Correct</span></div>
+                <div class="card-body">
+                  <div class="field-grid">
+                    <div class="field"><label>Parent</label><div>DR Horton, roll-up only</div></div>
+                    <div class="field"><label>Division</label><div>DR Horton Charlotte, BMG and services</div></div>
+                    <div class="field"><label>Community</label><div>Oak Ridge, packages and service rules</div></div>
+                    <div class="field"><label>Lot</label><div>Lot 118, execution history</div></div>
+                    <div class="field"><label>Work Execution</label><div>Standard WorkOrder and Field Service</div></div>
+                    <div class="field"><label>Billing</label><div>Invoice to Division Account</div></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card full">
+                <div class="card-header"><div><div class="card-title">FM Daily Operating Queue</div><div class="card-subtitle">What Jordan Ellis manages today</div></div><button class="mini-button" onclick="showToast('This would open the filtered Field Manager queue in Salesforce.')">Open List View</button></div>
+                <div class="card-body">
+                  <table>
+                    <thead><tr><th>Priority</th><th>Lot</th><th>Stage</th><th>Risk</th><th>Required FM Action</th><th>Button</th></tr></thead>
+                    <tbody>
+                      <tr><td><span class="pill red">1</span></td><td>Riverbend Lot 77</td><td>Aqua Same-Day</td><td>Dry spot reported</td><td>Dispatch repair or approve tech route</td><td><button class="mini-button" onclick="openModal('aquaRepair')">Open</button></td></tr>
+                      <tr><td><span class="pill aqua">2</span></td><td>Oak Ridge Lot 118</td><td>QI Review</td><td>None</td><td>Review photos and approve closeout</td><td><button class="mini-button" onclick="switchTab('qiTab')">Review</button></td></tr>
+                      <tr><td><span class="pill amber">3</span></td><td>Pine Hollow Lot 204</td><td>Returned Takeoff</td><td>Access photo missing</td><td>Return note to FM field task</td><td><button class="mini-button" onclick="openModal('return')">Return</button></td></tr>
+                      <tr><td><span class="pill green">4</span></td><td>Ashton Park Lot 44</td><td>Closeout Ready</td><td>Invoice ready after closeout</td><td>Approve closeout</td><td><button class="mini-button" onclick="showToast('Closeout approval preview opened.')">Approve</button></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <aside class="right-rail">
+              <div class="card">
+                <div class="card-header"><div class="card-title">Gate Status</div><span class="pill amber">1 open</span></div>
+                <div class="card-body checklist">
+                  <div class="check-item done"><div class="check-box"></div><div><div class="check-title">PO reviewed</div><div class="check-note">CSM approved package match</div></div><span class="pill green">Done</span></div>
+                  <div class="check-item done"><div class="check-box"></div><div><div class="check-title">Takeoff complete</div><div class="check-note">811, measurements, photos</div></div><span class="pill green">Done</span></div>
+                  <div class="check-item done"><div class="check-box"></div><div><div class="check-title">Field complete</div><div class="check-note">Foreman submitted closeout</div></div><span class="pill green">Done</span></div>
+                  <div class="check-item"><div class="check-box"></div><div><div class="check-title">FM QI approval</div><div class="check-note">Required before invoice</div></div><span class="pill amber">Open</span></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header"><div class="card-title">Role Guardrails</div><span class="pill blue">FM</span></div>
+                <div class="card-body">
+                  <div class="alert green"><div>✓</div><div><strong>FM can:</strong> review takeoff, return field work, approve QI, create Finished Jobs, approve closeout, manage Aqua decisions.</div></div>
+                  <div class="alert red"><div>!</div><div><strong>FM cannot:</strong> change builder BMG pricing, bill Parent Account, skip CSM takeoff approval, or close without required proof.</div></div>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+        <div id="takeoffTab" class="tab-content">
+          <div class="layout">
+            <div class="cards">
+              <div class="card full">
+                <div class="card-header"><div><div class="card-title">Takeoff and Site Readiness</div><div class="card-subtitle">FM verifies field reality before work can be scheduled</div></div><span class="pill green">Complete</span></div>
+                <div class="card-body split-3">
+                  <div class="field"><label>Takeoff Status</label><div>Locked, CSM Approved</div></div>
+                  <div class="field"><label>811 Utility Mark</label><div>Complete, ticket 811-55921</div></div>
+                  <div class="field"><label>Site Readiness</label><div>Ready, no access issue</div></div>
+                  <div class="field"><label>Measurements</label><div>Sod 6,420 SF, 8 trees, 64 shrubs</div></div>
+                  <div class="field"><label>Photos</label><div>4 takeoff photos received</div></div>
+                  <div class="field"><label>Package Match</label><div>Matches Oak Ridge Standard</div></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header"><div class="card-title">Takeoff Tasks</div><button class="mini-button" onclick="openModal('takeoff')">Open Record</button></div>
+                <div class="card-body checklist">
+                  <div class="check-item done"><div class="check-box"></div><div><div class="check-title">811 complete</div><div class="check-note">Marked complete by Jordan Ellis</div></div><span class="pill green">Done</span></div>
+                  <div class="check-item done"><div class="check-box"></div><div><div class="check-title">Site measurements</div><div class="check-note">Quantities entered</div></div><span class="pill green">Done</span></div>
+                  <div class="check-item done"><div class="check-box"></div><div><div class="check-title">Access notes</div><div class="check-note">Gate code and staging area recorded</div></div><span class="pill green">Done</span></div>
+                  <div class="check-item done"><div class="check-box"></div><div><div class="check-title">Scope verification</div><div class="check-note">No mismatch found</div></div><span class="pill green">Done</span></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header"><div class="card-title">Package Comparison</div><span class="pill blue">Standard</span></div>
+                <div class="card-body">
+                  <table>
+                    <thead><tr><th>Item</th><th>Package</th><th>Takeoff</th><th>Result</th></tr></thead>
+                    <tbody>
+                      <tr><td>Sod</td><td>6,400 SF</td><td>6,420 SF</td><td><span class="pill green">OK</span></td></tr>
+                      <tr><td>Trees</td><td>8</td><td>8</td><td><span class="pill green">OK</span></td></tr>
+                      <tr><td>Shrubs</td><td>64</td><td>64</td><td><span class="pill green">OK</span></td></tr>
+                      <tr><td>Aqua</td><td>Included</td><td>Needed</td><td><span class="pill aqua">Create ticket</span></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <aside class="right-rail">
+              <div class="card"><div class="card-header"><div class="card-title">FM Decision</div></div><div class="card-body"><button class="button green" onclick="showToast('Takeoff already approved. WorkOrder was created and moved to Field Service scheduling.')">Confirm Takeoff Ready</button><br><br><button class="button" onclick="openModal('return')">Return with Notes</button></div></div>
+              <div class="alert amber"><div>!</div><div><strong>Guardrail:</strong> If the package does not match takeoff or BMG, the FM cannot push the job to scheduling. It returns to CSM review.</div></div>
+            </aside>
+          </div>
+        </div>
+
+        <div id="workTab" class="tab-content">
+          <div class="layout">
+            <div class="cards">
+              <div class="card full">
+                <div class="card-header"><div><div class="card-title">Standard WorkOrder + Field Service</div><div class="card-subtitle">This is where FSL becomes the scheduling and execution backbone</div></div><span class="pill aqua">WO-004291</span></div>
+                <div class="card-body split-3">
+                  <div class="field"><label>WorkOrder Status</label><div>Pending Closeout</div></div>
+                  <div class="field"><label>Service Appointment</label><div>SA-008811, Completed</div></div>
+                  <div class="field"><label>Assigned Resource</label><div>Crew C-12, Luis Martinez</div></div>
+                  <div class="field"><label>Scheduled Date</label><div>May 13, 2026</div></div>
+                  <div class="field"><label>Route Sequence</label><div>Stop 3 of 7</div></div>
+                  <div class="field"><label>Territory</label><div>Charlotte North</div></div>
+                </div>
+              </div>
+              <div class="card full">
+                <div class="card-header"><div class="card-title">WorkOrder Line Items</div><button class="mini-button" onclick="showToast('This would open the WorkOrder Line Item related list.')">Open WOLI</button></div>
+                <div class="card-body">
+                  <table>
+                    <thead><tr><th>Line</th><th>Planned Qty</th><th>Actual Qty</th><th>Goal Hrs</th><th>Actual Hrs</th><th>Status</th></tr></thead>
+                    <tbody>
+                      <tr><td>Bermuda Sod</td><td>6,420 SF</td><td>6,420 SF</td><td>3.2</td><td>3.4</td><td><span class="pill green">Complete</span></td></tr>
+                      <tr><td>Trees, 15 gal</td><td>8 EA</td><td>8 EA</td><td>1.4</td><td>1.5</td><td><span class="pill green">Complete</span></td></tr>
+                      <tr><td>Shrub package</td><td>64 EA</td><td>64 EA</td><td>1.8</td><td>1.9</td><td><span class="pill green">Complete</span></td></tr>
+                      <tr><td>Mulch install</td><td>18 CY</td><td>18 CY</td><td>1.1</td><td>1.3</td><td><span class="pill green">Complete</span></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <aside class="right-rail">
+              <div class="card"><div class="card-header"><div class="card-title">Schedule Controls</div><span class="pill green">Locked</span></div><div class="card-body"><div class="field-grid"><div class="field"><label>Released</label><div>May 12, 4:00 PM</div></div><div class="field"><label>PTO Conflict</label><div>None</div></div><div class="field"><label>Inventory</label><div>Loaded</div></div><div class="field"><label>Weather</label><div>Clear</div></div></div></div></div>
+              <div class="card"><div class="card-header"><div class="card-title">FM Actions</div></div><div class="card-body"><button class="button" onclick="openModal('reschedule')">Request Reschedule</button><br><br><button class="button amber" onclick="openModal('fj')">Create Finished Job</button></div></div>
+            </aside>
+          </div>
+        </div>
+
+        <div id="aquaTab" class="tab-content">
+          <div class="alert aqua"><div>💧</div><div><strong>Aqua appears because the Community package says Aqua applies.</strong> The FM does not manually remember this. Salesforce reads the Community package/service rules and creates the needed Aqua work.</div></div>
+          <div class="cards">
+            <div class="card">
+              <div class="card-header"><div><div class="card-title">Aqua Install Ticket</div><div class="card-subtitle">Created from package rule after production install scheduled</div></div><span class="pill green">Completed</span></div>
+              <div class="card-body field-grid">
+                <div class="field"><label>Ticket</label><div>AIT-000118</div></div>
+                <div class="field"><label>Tech</label><div>Marcos Rivera</div></div>
+                <div class="field"><label>Device Installed</label><div>Yes</div></div>
+                <div class="field"><label>Coverage Verified</label><div>Yes</div></div>
+                <div class="field"><label>Inventory Recorded</label><div>Controller 1, Heads 12, Flags 8</div></div>
+                <div class="field"><label>Photos</label><div>Controller, water source, system running</div></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div><div class="card-title">Aqua Check Schedule</div><div class="card-subtitle">Daily/recurring checks while lot is active</div></div><span class="pill aqua">Pending</span></div>
+              <div class="card-body">
+                <table>
+                  <thead><tr><th>Date</th><th>Tech</th><th>Status</th><th>Issue</th></tr></thead>
+                  <tbody>
+                    <tr><td>May 14</td><td>Marcos</td><td><span class="pill blue">Scheduled</span></td><td>None</td></tr>
+                    <tr><td>May 15</td><td>Marcos</td><td><span class="pill gray">Planned</span></td><td>None</td></tr>
+                    <tr><td>May 16</td><td>Backup Tech</td><td><span class="pill gray">Planned</span></td><td>None</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="card full">
+              <div class="card-header"><div class="card-title">Aqua FM Closeout Gates</div><button class="mini-button" onclick="openModal('aquaRepair')">Open Aqua Console</button></div>
+              <div class="card-body checklist">
+                <div class="check-item done"><div class="check-box"></div><div><div class="check-title">Device installed</div><div class="check-note">Controller and timer installed</div></div><span class="pill green">Done</span></div>
+                <div class="check-item done"><div class="check-box"></div><div><div class="check-title">Timer tested</div><div class="check-note">Run time confirmed</div></div><span class="pill green">Done</span></div>
+                <div class="check-item done"><div class="check-box"></div><div><div class="check-title">Coverage verified</div><div class="check-note">All zones observed</div></div><span class="pill green">Done</span></div>
+                <div class="check-item done"><div class="check-box"></div><div><div class="check-title">Inventory recorded</div><div class="check-note">On-site inventory assigned to Lot 118</div></div><span class="pill green">Done</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="photosTab" class="tab-content">
+          <div class="layout">
+            <div>
+              <div class="card">
+                <div class="card-header"><div><div class="card-title">Photo Proof Package</div><div class="card-subtitle">FM reviews quality and category completion, not just file count</div></div><span class="pill green">6 of 6</span></div>
+                <div class="card-body photo-grid">
+                  <div class="photo-card"><div class="photo-thumb complete">✓</div><div class="photo-caption">Before<span>Site overview, timestamped</span></div></div>
+                  <div class="photo-card"><div class="photo-thumb complete">✓</div><div class="photo-caption">Sod Installed<span>Full front yard view</span></div></div>
+                  <div class="photo-card"><div class="photo-thumb complete">✓</div><div class="photo-caption">Trees and Shrubs<span>Plant package proof</span></div></div>
+                  <div class="photo-card"><div class="photo-thumb complete">✓</div><div class="photo-caption">Aqua Controller<span>Serial and timer proof</span></div></div>
+                  <div class="photo-card"><div class="photo-thumb complete">✓</div><div class="photo-caption">System Running<span>Water coverage proof</span></div></div>
+                  <div class="photo-card"><div class="photo-thumb complete">✓</div><div class="photo-caption">After<span>Final clean area</span></div></div>
+                  <div class="photo-card"><div class="photo-thumb issue">!</div><div class="photo-caption">Issue Photo<span>Not required, none submitted</span></div></div>
+                  <div class="photo-card"><div class="photo-thumb">+</div><div class="photo-caption">Add Photo<span>Upload or mobile camera</span></div></div>
+                </div>
+              </div>
+            </div>
+            <aside class="right-rail">
+              <div class="card"><div class="card-header"><div class="card-title">Photo Gate</div></div><div class="card-body"><button class="button green" onclick="showToast('Photo package accepted by FM. QI scoring can proceed.')">Accept Photo Package</button><br><br><button class="button" onclick="openModal('return')">Return for Missing Proof</button></div></div>
+              <div class="alert amber"><div>!</div><div><strong>Important:</strong> A raw count of 6 photos is not enough. The FM must verify required categories are present and usable.</div></div>
+            </aside>
+          </div>
+        </div>
+
+        <div id="qiTab" class="tab-content">
+          <div class="layout">
+            <div class="cards">
+              <div class="card full">
+                <div class="card-header"><div><div class="card-title">QI Scoring</div><div class="card-subtitle">FM/QI review decides whether closeout can proceed</div></div><span class="pill amber" id="qiStatusPill">Pending</span></div>
+                <div class="card-body">
+                  <table>
+                    <thead><tr><th>Category</th><th>Score</th><th>FM Finding</th><th>Result</th></tr></thead>
+                    <tbody>
+                      <tr><td>Sod Install</td><td><select><option>9</option><option>8</option><option>7</option><option>6</option></select></td><td>Edges clean, seams acceptable</td><td><span class="pill green">Pass</span></td></tr>
+                      <tr><td>Plant Install</td><td><select><option>8</option><option>9</option><option>7</option><option>6</option></select></td><td>Package matches takeoff</td><td><span class="pill green">Pass</span></td></tr>
+                      <tr><td>Cleanup</td><td><select><option>8</option><option>9</option><option>7</option><option>6</option></select></td><td>Driveway clean, minor pine straw touchup noted</td><td><span class="pill green">Pass</span></td></tr>
+                      <tr><td>Aqua</td><td><select><option>9</option><option>8</option><option>7</option><option>6</option></select></td><td>Coverage verified</td><td><span class="pill green">Pass</span></td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header"><div class="card-title">Closeout Gate</div><span class="pill amber" id="closeoutPill">Waiting</span></div>
+                <div class="card-body checklist">
+                  <div class="check-item done"><div class="check-box"></div><div><div class="check-title">All WOLI complete</div><div class="check-note">No missing scope</div></div><span class="pill green">Done</span></div>
+                  <div class="check-item done"><div class="check-box"></div><div><div class="check-title">Photos accepted</div><div class="check-note">6 categories complete</div></div><span class="pill green">Done</span></div>
+                  <div class="check-item"><div class="check-box"></div><div><div class="check-title">QI submitted</div><div class="check-note">FM must submit before closeout</div></div><span class="pill amber">Open</span></div>
+                  <div class="check-item"><div class="check-box"></div><div><div class="check-title">Closeout approved</div><div class="check-note">Creates invoice path</div></div><span class="pill gray">Locked</span></div>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header"><div class="card-title">FM Decision</div></div>
+                <div class="card-body">
+                  <button class="button green" onclick="approveQi()">Submit QI Pass</button><br><br>
+                  <button class="button amber" onclick="openModal('fj')">Create Finished Job</button><br><br>
+                  <button class="button red" onclick="openModal('return')">Return Closeout</button>
+                </div>
+              </div>
+            </div>
+            <aside class="right-rail">
+              <div class="card"><div class="card-header"><div class="card-title">Invoice Preview</div><span class="pill gray" id="invoiceRailPill">Locked</span></div><div class="card-body field-grid"><div class="field"><label>Bill To</label><div>DR Horton Charlotte</div></div><div class="field"><label>Parent</label><div>DR Horton roll-up only</div></div><div class="field"><label>Revenue</label><div>$4,850</div></div><div class="field"><label>GP Status</label><div>Green</div></div></div></div>
+              <div class="alert red"><div>!</div><div><strong>Guardrail:</strong> The FM cannot bill the Parent Account. Invoice must attach to the Division Account and the completed WorkOrder.</div></div>
+            </aside>
+          </div>
+        </div>
+
+        <div id="mobileTab" class="tab-content">
+          <div class="layout">
+            <div class="cards">
+              <div class="card full">
+                <div class="card-header"><div><div class="card-title">What the FM Sees on Tablet or Phone</div><div class="card-subtitle">This is not the foreman-only mobile flow. It is the FM review and approval view.</div></div><span class="pill blue">Responsive</span></div>
+                <div class="card-body split-3">
+                  <div class="phone-wrap">
+                    <div class="phone-screen">
+                      <div class="phone-header">LOVING FM Review<br>Lot 118, Oak Ridge</div>
+                      <div class="phone-body">
+                        <div class="mobile-step"><strong>Job Status</strong><span>Pending Closeout, field complete by Luis Martinez</span></div>
+                        <div class="mobile-step"><strong>Photo Gate</strong><span>6 of 6 categories uploaded. Tap to review.</span></div>
+                        <div class="mobile-step"><strong>QI Required</strong><span>Sod, plant, cleanup, Aqua score required.</span></div>
+                        <div class="mobile-step"><strong>Aqua</strong><span>Install complete. First check scheduled May 14.</span></div>
+                        <button class="button primary" style="width:100%; justify-content:center;" onclick="openModal('qi')">Start QI</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card" style="box-shadow:none;"><div class="card-header"><div class="card-title">FM Mobile Actions</div></div><div class="card-body checklist"><div class="check-item done"><div class="check-box"></div><div><div class="check-title">Review photos</div><div class="check-note">Open categorized proof</div></div></div><div class="check-item"><div class="check-box"></div><div><div class="check-title">Score QI</div><div class="check-note">Submit pass/fail</div></div></div><div class="check-item"><div class="check-box"></div><div><div class="check-title">Approve closeout</div><div class="check-note">Unlock invoice path</div></div></div></div></div>
+                  <div class="card" style="box-shadow:none;"><div class="card-header"><div class="card-title">What is hidden from FM Mobile</div></div><div class="card-body"><div class="alert red"><div>!</div><div>BMG pricing edits, Parent Account billing, admin setup, and destructive record actions stay out of the FM mobile flow.</div></div><div class="alert aqua"><div>ⓘ</div><div>The mobile screen is focused on review, proof, QI, and closeout decisions.</div></div></div></div>
+                </div>
+              </div>
+            </div>
+            <aside class="right-rail">
+              <div class="card"><div class="card-header"><div class="card-title">Training Note</div></div><div class="card-body">The FM should be trained to ask only three questions: Is the scope complete? Is the proof complete? Is the quality acceptable? If yes, approve closeout. If no, return or create Finished Job.</div></div>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="modalBackdrop" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h2 id="modalTitle">Action</h2>
+          <div class="card-subtitle" id="modalSubtitle">Preview of the Salesforce action screen</div>
+        </div>
+        <button class="mini-button" onclick="hideModal()">Close</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-footer">
+        <button class="button" onclick="hideModal()">Cancel</button>
+        <button class="button primary" onclick="completeModalAction()" id="modalPrimary">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const modalContent = {
+      takeoff: {
+        title: 'Takeoff Record: TO-001188',
+        subtitle: 'FM field verification before WorkOrder scheduling',
+        primary: 'Mark Reviewed',
+        html: `<div class="split-3"><div class="field"><label>811</label><div>Complete</div></div><div class="field"><label>Measurements</label><div>Complete</div></div><div class="field"><label>Photos</label><div>4 received</div></div><div class="field"><label>Mismatch Found</label><div>No</div></div><div class="field"><label>CSM Approved</label><div>Yes</div></div><div class="field"><label>Status</label><div>Locked</div></div></div><br><div class="alert green"><div>✓</div><div><strong>Result:</strong> This takeoff has already passed the required gate. WorkOrder WO-004291 was created from the approved takeoff.</div></div>`
+      },
+      schedule: {
+        title: 'Field Service Schedule Review',
+        subtitle: 'ServiceAppointment and AssignedResource details',
+        primary: 'Confirm Schedule',
+        html: `<div class="split-3"><div class="field"><label>Service Appointment</label><div>SA-008811</div></div><div class="field"><label>Work Type</label><div>Production Install</div></div><div class="field"><label>Assigned Crew</label><div>Crew C-12</div></div><div class="field"><label>Scheduled Date</label><div>May 13, 2026</div></div><div class="field"><label>Territory</label><div>Charlotte North</div></div><div class="field"><label>Route Stop</label><div>3 of 7</div></div></div><br><div class="alert aqua"><div>ⓘ</div><div>Field Service owns scheduling, route sequence, crew/resource assignment, and mobile visibility. The FM reviews operational readiness, but the scheduler owns dispatch changes.</div></div>`
+      },
+      photos: {
+        title: 'Photo Review',
+        subtitle: 'Required proof categories before QI and closeout',
+        primary: 'Accept Photos',
+        html: `<div class="checklist"><div class="check-item done"><div class="check-box"></div><div><div class="check-title">Before</div><div class="check-note">Accepted</div></div><span class="pill green">OK</span></div><div class="check-item done"><div class="check-box"></div><div><div class="check-title">Sod installed</div><div class="check-note">Accepted</div></div><span class="pill green">OK</span></div><div class="check-item done"><div class="check-box"></div><div><div class="check-title">Trees and shrubs</div><div class="check-note">Accepted</div></div><span class="pill green">OK</span></div><div class="check-item done"><div class="check-box"></div><div><div class="check-title">Aqua controller and running system</div><div class="check-note">Accepted</div></div><span class="pill green">OK</span></div></div>`
+      },
+      qi: {
+        title: 'Start QI Review',
+        subtitle: 'FM review must pass before closeout approval',
+        primary: 'Submit QI Pass',
+        html: `<div class="field-grid"><div class="field"><label>Overall Score</label><input value="8.6" /></div><div class="field"><label>Outcome</label><select><option>Pass</option><option>Return to Foreman</option><option>Create Finished Job</option></select></div><div class="field full"><label>FM Notes</label><textarea>Scope complete. Photos acceptable. Aqua install verified. Minor cleanup note addressed by foreman before departure.</textarea></div></div><br><div class="alert amber"><div>!</div><div>If score is below threshold or scope is incomplete, closeout stays blocked and the FM should create a Finished Job.</div></div>`
+      },
+      fj: {
+        title: 'Create Finished Job',
+        subtitle: 'Child WorkOrder when scope is incomplete or QI fails',
+        primary: 'Create Finished Job',
+        html: `<div class="field-grid"><div class="field"><label>Parent WorkOrder</label><div>WO-004291</div></div><div class="field"><label>Billing Type</label><div>No Charge</div></div><div class="field"><label>Reason</label><select><option>Incomplete Scope</option><option>QI Red</option><option>Missing Material</option><option>Cleanup Required</option></select></div><div class="field"><label>Schedule Need</label><select><option>Return tomorrow</option><option>Schedule this week</option><option>Hold for FM review</option></select></div><div class="field full"><label>Scope to Complete</label><textarea>Describe the missing work that must be returned to complete.</textarea></div></div>`
+      },
+      return: {
+        title: 'Return Work with Notes',
+        subtitle: 'Use when proof, scope, or notes are incomplete',
+        primary: 'Return to Field',
+        html: `<div class="field-grid"><div class="field"><label>Return Reason</label><select><option>Missing required photo</option><option>Scope incomplete</option><option>Closeout notes incomplete</option><option>QI issue</option><option>Aqua issue</option></select></div><div class="field"><label>Send To</label><select><option>Foreman</option><option>Aqua Tech</option><option>CSM</option><option>Scheduler</option></select></div><div class="field full"><label>Instructions</label><textarea>Enter clear return instructions. This becomes the field-facing note.</textarea></div></div>`
+      },
+      reschedule: {
+        title: 'Request Reschedule',
+        subtitle: 'FM can request, Scheduling Manager owns schedule changes',
+        primary: 'Send Request',
+        html: `<div class="field-grid"><div class="field"><label>Reason</label><select><option>Site Not Ready</option><option>Weather Hold</option><option>Access Issue</option><option>Material Issue</option><option>Builder Request</option></select></div><div class="field"><label>Requested Date</label><input type="date" value="2026-05-15" /></div><div class="field full"><label>FM Notes</label><textarea>Explain the reason for reschedule and what must be true before the job is released again.</textarea></div></div>`
+      },
+      aquaRepair: {
+        title: 'Aqua Same-Day / Repair Decision',
+        subtitle: 'FM decides repair dispatch, tech completes work in mobile',
+        primary: 'Dispatch Repair',
+        html: `<div class="field-grid"><div class="field"><label>Issue Type</label><select><option>Dry Spot</option><option>Broken Head</option><option>Timer Issue</option><option>Device Missing</option><option>Runoff</option></select></div><div class="field"><label>Priority</label><select><option>Same-Day</option><option>Next Route</option><option>Monitor</option></select></div><div class="field"><label>Assigned Tech</label><select><option>Marcos Rivera</option><option>Backup Tech</option></select></div><div class="field"><label>Inventory Needed</label><input value="2 heads, 4 flags" /></div><div class="field full"><label>Dispatch Notes</label><textarea>Dry spot on front left turf. Verify coverage and replace head if needed.</textarea></div></div>`
+      }
+    };
+
+    let modalKey = null;
+    let demoStage = 4;
+
+    function switchTab(id) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      const tabMap = { command:0, takeoffTab:1, workTab:2, aquaTab:3, photosTab:4, qiTab:5, mobileTab:6 };
+      document.querySelectorAll('.tab')[tabMap[id]].classList.add('active');
+      document.getElementById(id).classList.add('active');
+    }
+
+    function openModal(key) {
+      modalKey = key;
+      const content = modalContent[key] || modalContent.qi;
+      document.getElementById('modalTitle').textContent = content.title;
+      document.getElementById('modalSubtitle').textContent = content.subtitle;
+      document.getElementById('modalBody').innerHTML = content.html;
+      document.getElementById('modalPrimary').textContent = content.primary;
+      document.getElementById('modalBackdrop').classList.add('show');
+    }
+
+    function hideModal() {
+      document.getElementById('modalBackdrop').classList.remove('show');
+    }
+
+    function closeModal(event) {
+      if (event.target.id === 'modalBackdrop') hideModal();
+    }
+
+    function completeModalAction() {
+      if (modalKey === 'qi') approveQi();
+      else if (modalKey === 'fj') showToast('Finished Job child WorkOrder would be created and linked to WO-004291. It would count against FM FJ reporting.');
+      else if (modalKey === 'return') showToast('Return note would be sent to the selected owner and closeout would remain blocked.');
+      else if (modalKey === 'aquaRepair') showToast('Aqua same-day repair would create or update the Aqua ticket and ServiceAppointment for the assigned tech.');
+      else showToast('Action saved in this demo. In Salesforce this button would create, update, route, or validate a real record.');
+      hideModal();
+    }
+
+    function approveQi() {
+      document.getElementById('kpiQi').textContent = '8.6';
+      document.getElementById('kpiInvoice').textContent = 'Ready';
+      document.getElementById('qiStatusPill').textContent = 'Passed';
+      document.getElementById('qiStatusPill').className = 'pill green';
+      document.getElementById('closeoutPill').textContent = 'Ready';
+      document.getElementById('closeoutPill').className = 'pill green';
+      document.getElementById('invoiceRailPill').textContent = 'Ready';
+      document.getElementById('invoiceRailPill').className = 'pill green';
+      setStages(6);
+      showToast('QI passed. Closeout can now be approved, which unlocks invoice creation to the Division Account.');
+    }
+
+    function setStages(currentIndex) {
+      const stages = document.querySelectorAll('#stageRail .stage');
+      stages.forEach((stage, index) => {
+        stage.classList.remove('done','current','blocked');
+        if (index < currentIndex) stage.classList.add('done');
+        if (index === currentIndex) stage.classList.add('current');
+      });
+    }
+
+    function advanceStage() {
+      demoStage = Math.min(demoStage + 1, 7);
+      setStages(demoStage);
+      const labels = ['PO Reviewed','Takeoff Complete','Ready to Schedule','Scheduled','Field Complete','QI Review','Closeout','Invoice'];
+      showToast('Demo advanced to: ' + labels[demoStage] + '. This shows how the FM page changes as work moves forward.');
+      if (demoStage >= 5) document.getElementById('kpiQi').textContent = demoStage === 5 ? 'In Review' : '8.6';
+      if (demoStage >= 7) document.getElementById('kpiInvoice').textContent = 'Created';
+    }
+
+    function selectJob(id) {
+      document.querySelectorAll('.job-card').forEach(j => j.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      showToast('Lot 118 is active. This mockup follows one job so the process is easy to explain.');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 4200);
+    }
+  </script>
+</body>
+</html>
