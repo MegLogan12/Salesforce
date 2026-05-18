@@ -4,7 +4,7 @@
     <active>true</active>
     <description>QI Status cannot be set to FM QI Review (Red Hold) without QI_Submitted__c = true.</description>
     <errorConditionFormula>AND(
-        QI_Status__c = "FM QI Review (Red Hold)",
+        ISPICKVAL(QI_Status__c, "FM QI Review (Red Hold)"),
         NOT(QI_Submitted__c)
     )</errorConditionFormula>
     <errorMessage>A QI Inspection must be submitted before placing a Work Order in FM QI Review (Red Hold). Complete and submit the QI Inspection from the QI Inspection record, then update the status.</errorMessage>
