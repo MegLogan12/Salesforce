@@ -28,10 +28,9 @@ public inherited sharing class LOVING_MeasuringCupService {
             Decimal lunchMinutes   = wo.Lunch_Minutes__c != null ? wo.Lunch_Minutes__c : 60;
             Decimal cushionMinutes = wo.Cushion_Minutes__c != null ? wo.Cushion_Minutes__c : 15;
 
-            // Parse shift start time (stored as HH:MM text, default 06:30)
-            String shiftStart = wo.Shift_Start_Time__c != null ? wo.Shift_Start_Time__c : '06:30';
-            Integer shiftHour = Integer.valueOf(shiftStart.split(':')[0]);
-            Integer shiftMin  = Integer.valueOf(shiftStart.split(':')[1]);
+            Time shiftTime = wo.Shift_Start_Time__c != null ? wo.Shift_Start_Time__c : Time.newInstance(6, 30, 0, 0);
+            Integer shiftHour = shiftTime.hour();
+            Integer shiftMin  = shiftTime.minute();
             Decimal shiftDecimalHours = shiftHour + (shiftMin / 60.0);
 
             Decimal totalMinutes = goalMinutes + travelMinutes + lunchMinutes + cushionMinutes;

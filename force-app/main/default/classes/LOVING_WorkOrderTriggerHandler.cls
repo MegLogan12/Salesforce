@@ -489,7 +489,7 @@ public inherited sharing class LOVING_WorkOrderTriggerHandler {
         for (WorkOrder wo : wos) {
             if (wo.Lunch_Minutes__c == null)   wo.Lunch_Minutes__c = 60;
             if (wo.Cushion_Minutes__c == null) wo.Cushion_Minutes__c = 15;
-            if (wo.Shift_Start_Time__c == null) wo.Shift_Start_Time__c = '06:30';
+            if (wo.Shift_Start_Time__c == null) wo.Shift_Start_Time__c = Time.newInstance(6, 30, 0, 0);
             if (wo.NFI_Count__c == null)       wo.NFI_Count__c = 0;
         }
     }
