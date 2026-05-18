@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NFI_Notes_Required</fullName>
+    <active>true</active>
+    <description>Need_Further_Info_Notes__c must describe the specific issue when status is set to Need Further Info.</description>
+    <errorConditionFormula>AND(
+        Status = "Need Further Info",
+        PRIORVALUE(Status) != "Need Further Info",
+        ISBLANK(Need_Further_Info_Notes__c)
+    )</errorConditionFormula>
+    <errorMessage>Need Further Info Notes are required. Describe specifically: (1) what information is missing or incorrect, (2) what the FM needs to do to resolve it, and (3) whether photos or documentation are needed. The FM cannot see the approval queue — only this note tells them what to fix.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Site_Readiness_Required</fullName>
+    <active>true</active>
+    <description>Work Order cannot move to In Progress until Site Readiness Check passes all 6 criteria, or COO waives.</description>
+    <errorConditionFormula>AND(
+        Status = "In Progress",
+        PRIORVALUE(Status) = "Site Readiness Check",
+        NOT(Site_Ready_Overall__c),
+        NOT(Site_Readiness_Status__c = "Waived (COO Only)")
+    )</errorConditionFormula>
+    <errorMessage>All 6 site readiness checks must pass before moving to In Progress. If a check fails: pull the job from the schedule and contact the builder. COO override required for any waiver — do not change status without approval.</errorMessage>
+</ValidationRule>

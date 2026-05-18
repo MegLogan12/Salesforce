@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <description>Sub-flow: Approved Automation. Fires when WO status = Approved. Creates invoicing task for Finance, stamps Approval_Date. GP check runs before task creation.</description>
+    <environments>Default</environments>
+    <interviewLabel>LOVING PI Approved Automation {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING PI Approved Automation</label>
+    <processMetadataValues><n>BuilderType</n><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start><locationX>50</locationX><locationY>0</locationY><connector><targetReference>Get_Approved_WO</targetReference></connector></start>
+    <status>Active</status>
+
+    <variables><n>varWorkOrderId</n><dataType>String</dataType><isCollection>false</isCollection><isInput>true</isInput><isOutput>false</isOutput></variables>
+    <variables><n>varWO</n><dataType>SObject</dataType><isCollection>false</isCollection><isInput>false</isInput><isOutput>false</isOutput><objectType>WorkOrder</objectType></variables>
+
+    <recordLookups>
+        <n>Get_Approved_WO</n><label>Get Approved Work Order</label>
+        <locationX>200</locationX><locationY>100</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector><targetReference>Check_GP_Floor</targetReference></connector>
+        <filterLogic>and</filterLogic>
+        <filters><field>Id</field><operator>EqualTo</operator><value><elementReference>varWorkOrderId</elementReference></value></filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkOrder</object>
+        <outputReference>varWO</outputReference>
+        <queriedFields><field>Id</field></queriedFields>
+        <queriedFields><field>Lot_Address__c</field></queriedFields>
+        <queriedFields><field>Lot_Number__c</field></queriedFields>
+        <queriedFields><field>GP_Status__c</field></queriedFields>
+        <queriedFields><field>Gross_Margin_Pct__c</field></queriedFields>
+        <queriedFields><field>Revenue_Amount__c</field></queriedFields>
+    </recordLookups>
+
+    <decisions>
+        <n>Check_GP_Floor</n><label>GP Status Check</label>
+        <locationX>200</locationX><locationY>200</locationY>
+        <defaultConnectorLabel>GP OK — Proceed to Invoice</defaultConnectorLabel>
+        <defaultConnector><targetReference>Create_Invoice_Task</targetReference></defaultConnector>
+        <rules>
+            <n>GP_Red_Hard_Stop</n>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varWO.GP_Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><stringValue>Red</stringValue></rightValue>
+            </conditions>
+            <connector><targetReference>Create_GP_Block_Task</targetReference></connector>
+            <label>GP Red — Hard Stop</label>
+        </rules>
+    </decisions>
+
+    <recordCreates>
+        <n>Create_Invoice_Task</n><label>Create Invoice Task for Finance</label>
+        <locationX>200</locationX><locationY>300</locationY>
+        <inputAssignments><field>Subject</field><value><stringValue>Invoice Ready — Create and Send to Builder</stringValue></value></inputAssignments>
+        <inputAssignments><field>WhatId</field><value><elementReference>varWO.Id</elementReference></value></inputAssignments>
+        <inputAssignments><field>Priority</field><value><stringValue>Normal</stringValue></value></inputAssignments>
+        <inputAssignments><field>ActivityDate</field><value><elementReference>$Flow.CurrentDate</elementReference></value></inputAssignments>
+        <inputAssignments><field>Type</field><value><stringValue>Invoicing</stringValue></value></inputAssignments>
+        <inputAssignments><field>Description</field><value><stringValue>Work Order approved. Create invoice in QuickBooks and attach the invoice number to this Work Order in the Invoice_Number__c field. Invoice will sync to Salesforce via Celigo nightly. Mark Payment_Received__c = true when payment posts. That action, combined with QI Submitted, will auto-close the Work Order.</stringValue></value></inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+
+    <recordCreates>
+        <n>Create_GP_Block_Task</n><label>Create GP Hard Stop Task</label>
+        <locationX>400</locationX><locationY>200</locationY>
+        <inputAssignments><field>Subject</field><value><stringValue>GP HARD STOP — Invoice Blocked — GP Below 22% Floor</stringValue></value></inputAssignments>
+        <inputAssignments><field>WhatId</field><value><elementReference>varWO.Id</elementReference></value></inputAssignments>
+        <inputAssignments><field>Priority</field><value><stringValue>High</stringValue></value></inputAssignments>
+        <inputAssignments><field>ActivityDate</field><value><elementReference>$Flow.CurrentDate</elementReference></value></inputAssignments>
+        <inputAssignments><field>Type</field><value><stringValue>GP Review</stringValue></value></inputAssignments>
+        <inputAssignments><field>Description</field><value><stringValue>Gross Margin on this Work Order is below the 22% hard floor. Invoicing is blocked until a COO-level override is entered. Review cost vs. revenue on the Work Order, identify the variance driver, and either correct the line items or obtain COO override approval before proceeding to invoice.</stringValue></value></inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+</Flow>

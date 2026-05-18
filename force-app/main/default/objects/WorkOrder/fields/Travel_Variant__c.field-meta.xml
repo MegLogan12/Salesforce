@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Travel_Variant__c</fullName><label>Travel Variant</label><required>false</required><type>Picklist</type>
+    <valueSet><restricted>true</restricted><valueSetDefinition><sorted>false</sorted>
+        <value><fullName>To-Only</fullName><default>false</default><label>To-Only</label></value>
+        <value><fullName>From-Only</fullName><default>false</default><label>From-Only</label></value>
+        <value><fullName>To-and-From</fullName><default>true</default><label>To-and-From</label></value>
+    </valueSetDefinition></valueSet>
+</CustomField>
