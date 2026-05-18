@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Takeoff_FM__c</fullName><label>Takeoff FM</label>
+    <referenceTo>User</referenceTo>
+    <relationshipLabel>Takeoff FM</relationshipLabel>
+    <relationshipName>WO_Takeoff_FM</relationshipName>
+    <required>false</required><type>Lookup</type>
+</CustomField>

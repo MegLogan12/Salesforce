@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <allowInChatterGroups>false</allowInChatterGroups>
+    <deploymentStatus>Deployed</deploymentStatus>
+    <enableActivities>true</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <label>Finish Job</label>
+    <nameField>
+        <displayFormat>FJ-{0000}</displayFormat>
+        <label>Finish Job Number</label>
+        <trackHistory>false</trackHistory>
+        <type>AutoNumber</type>
+    </nameField>
+    <pluralLabel>Finish Jobs</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+    <visibility>Public</visibility>
+    <fields>
+        <fullName>Parent_Work_Order__c</fullName>
+        <label>Parent Work Order</label>
+        <referenceTo>WorkOrder</referenceTo>
+        <relationshipLabel>Finish Jobs</relationshipLabel>
+        <relationshipName>Finish_Jobs</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>FM__c</fullName>
+        <label>Field Manager</label>
+        <referenceTo>User</referenceTo>
+        <relationshipLabel>Finish Jobs</relationshipLabel>
+        <relationshipName>FM_Finish_Jobs</relationshipName>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>FJ_Reason__c</fullName>
+        <label>Finish Job Reason</label>
+        <required>true</required>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value><fullName>Ran Out of Time</fullName><default>false</default><label>Ran Out of Time</label></value>
+                <value><fullName>Material Short</fullName><default>false</default><label>Material Short</label></value>
+                <value><fullName>Equipment Failure</fullName><default>false</default><label>Equipment Failure</label></value>
+                <value><fullName>Scope Change</fullName><default>false</default><label>Scope Change</label></value>
+                <value><fullName>Weather</fullName><default>false</default><label>Weather</label></value>
+                <value><fullName>Site Access Blocked</fullName><default>false</default><label>Site Access Blocked</label></value>
+                <value><fullName>Crew Short</fullName><default>false</default><label>Crew Short</label></value>
+                <value><fullName>Other</fullName><default>false</default><label>Other</label></value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Accountability_Notes__c</fullName>
+        <label>Accountability Notes</label>
+        <length>2000</length>
+        <required>true</required>
+        <type>LongTextArea</type>
+        <visibleLines>4</visibleLines>
+    </fields>
+    <fields>
+        <fullName>Estimated_Hours__c</fullName>
+        <label>Estimated Return Hours</label>
+        <precision>5</precision>
+        <required>false</required>
+        <scale>2</scale>
+        <type>Number</type>
+    </fields>
+    <fields>
+        <fullName>FJ_Date__c</fullName>
+        <label>FJ Date</label>
+        <required>false</required>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>FJ_Completed__c</fullName>
+        <defaultValue>false</defaultValue>
+        <label>FJ Completed</label>
+        <type>Checkbox</type>
+    </fields>
+</CustomObject>
