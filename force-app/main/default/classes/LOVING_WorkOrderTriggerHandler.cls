@@ -14,7 +14,7 @@
  *   Approved → AR Queue + Invoice
  *   Paid + QI Complete → auto-close
  */
-public without sharing class LOVING_WorkOrderTriggerHandler {
+public inherited sharing class LOVING_WorkOrderTriggerHandler {
 
     // ─── Public entry point ───────────────────────────────────────────────────
     public static void handle(
@@ -370,11 +370,6 @@ public without sharing class LOVING_WorkOrderTriggerHandler {
     private static void handleStatusToNFI(List<WorkOrder> wos) {
         List<Task> tasks = new List<Task>();
 
-        Map<Id, WorkOrder> woMap = new Map<Id, WorkOrder>([
-            SELECT Id, FM__c, Lot_Address__c, Need_Further_Info_Notes__c, NFI_Count__c
-            FROM WorkOrder WHERE Id IN :wos.stream().map(w -> w.Id).toList()
-        ]);
-        // Note: above SOQL style won't work — use explicit loop
         Set<Id> woIds = new Set<Id>();
         for (WorkOrder wo : wos) woIds.add(wo.Id);
         Map<Id, WorkOrder> woFullMap = new Map<Id, WorkOrder>([

@@ -11,7 +11,7 @@
  * Called from LOVING_WorkOrderTriggerHandler and scheduled processes.
  * All methods are bulkified.
  */
-public without sharing class LOVING_MeasuringCupService {
+public inherited sharing class LOVING_MeasuringCupService {
 
     // ── RTN Calculation ───────────────────────────────────────────────────────
     /**

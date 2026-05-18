@@ -21,7 +21,7 @@ global without sharing class LOVING_BucketEngineScheduler implements Schedulable
  * Business logic for the bucket engine, separated for testability and
  * for invocation from both the scheduler and Flow (via @InvocableMethod).
  */
-public without sharing class LOVING_BucketEngineService {
+public with sharing class LOVING_BucketEngineService {
 
     // Bucket values must match Pipeline_Bucket__c picklist exactly
     private static final String BUCKET_90   = '90+ Days';

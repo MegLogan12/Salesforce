@@ -12,7 +12,7 @@
  *   - Aqua Pickup Ticket: created when lot is marked Closed.
  *   - All Aqua tickets are WorkOrder records with Work_Order_Type__c set accordingly.
  */
-public without sharing class LOVING_AquaTicketService {
+public inherited sharing class LOVING_AquaTicketService {
 
     // ── Constants ────────────────────────────────────────────────────────────
     private static final String TYPE_INSTALL = 'Aqua Install';
