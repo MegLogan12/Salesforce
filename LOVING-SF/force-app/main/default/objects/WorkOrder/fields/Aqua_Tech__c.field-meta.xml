@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Aqua_Tech__c</fullName>
+    <label>Aqua Tech</label>
+    <referenceTo>User</referenceTo>
+    <relationshipLabel>Aqua Work Orders</relationshipLabel>
+    <relationshipName>WorkOrder_Aqua_Tech</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>

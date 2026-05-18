@@ -71,7 +71,6 @@
     ═══════════════════════════════════════════════ -->
     <types>
         <members>WorkOrder.Work_Order_Type__c</members>
-        <members>WorkOrder.Job_Type__c</members>
         <members>WorkOrder.Builder__c</members>
         <members>WorkOrder.Community__c</members>
         <members>WorkOrder.Builder_Regional__c</members>
@@ -155,6 +154,18 @@
         <members>WorkOrder.Payment_Received__c</members>
         <members>WorkOrder.Payment_Date__c</members>
         <members>WorkOrder.Crew_Complete_Timestamp__c</members>
+        <!-- WorkOrder Aqua ticket fields — required by LOVING_AquaTicketService -->
+        <members>WorkOrder.Aqua_Tech__c</members>
+        <members>WorkOrder.Confirmed_Hoses__c</members>
+        <members>WorkOrder.Confirmed_Controllers__c</members>
+        <members>WorkOrder.Confirmed_Heads__c</members>
+        <members>WorkOrder.Confirmed_Valves__c</members>
+        <members>WorkOrder.Expected_Hoses__c</members>
+        <members>WorkOrder.Expected_Controllers__c</members>
+        <members>WorkOrder.Expected_Heads__c</members>
+        <members>WorkOrder.Expected_Valves__c</members>
+        <members>WorkOrder.Check_Visit_Number__c</members>
+        <members>WorkOrder.Is_First_Visit__c</members>
         <!-- Account fields -->
         <members>Account.Pipeline_Bucket__c</members>
         <members>Account.Target_Start_Date__c</members>
