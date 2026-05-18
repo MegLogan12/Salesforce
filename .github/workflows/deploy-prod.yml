@@ -1,0 +1,61 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      validate_only:
+        description: 'Validate only (dry run — no changes deployed)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+          - 'false'
+          - 'true'
+
+jobs:
+  deploy:
+    name: ${{ github.event.inputs.validate_only == 'true' && 'Validate (Dry Run)' || 'Deploy to Production' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Salesforce CLI
+        run: npm install -g @salesforce/cli
+
+      - name: Authenticate to production org
+        run: |
+          echo "${{ secrets.SF_AUTH_URL_PROD }}" > /tmp/auth_url.txt
+          sf org login sfdx-url --sfdx-url-file /tmp/auth_url.txt --alias loving-prod
+          rm /tmp/auth_url.txt
+
+      - name: Validate (dry run)
+        if: ${{ github.event.inputs.validate_only == 'true' }}
+        run: |
+          sf project deploy validate \
+            --source-dir force-app \
+            --target-org loving-prod \
+            --test-level RunSpecifiedTests \
+            --tests LOVING_WorkOrderTriggerHandlerTest
+
+      - name: Deploy to production
+        if: ${{ github.event.inputs.validate_only != 'true' }}
+        run: |
+          sf project deploy start \
+            --source-dir force-app \
+            --target-org loving-prod \
+            --test-level RunSpecifiedTests \
+            --tests LOVING_WorkOrderTriggerHandlerTest
+
+      - name: Run Apex tests
+        if: ${{ github.event.inputs.validate_only != 'true' }}
+        run: |
+          sf apex run test \
+            --class-names LOVING_WorkOrderTriggerHandlerTest \
+            --target-org loving-prod \
+            --result-format human \
+            --wait 10
