@@ -1,0 +1,31 @@
+<apex:page showHeader="false" standardStylesheets="false" docType="html-5.0" applyBodyTag="false" applyHtmlTag="false" contentType="text/html" cache="false">
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LOVING Field Manager</title>
+  <link rel="stylesheet" href="{!URLFOR($Resource.LovingFMApp, 'assets/index.css')}" />
+  <style>
+    body { margin: 0; background: #0a1628; }
+    #root { min-height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script>
+    // Inject Salesforce session so the app skips OAuth entirely.
+    // $Api.Session_ID is the current user's access token.
+    var _eu = "{!$Api.Enterprise_Server_URL_350}";
+    window.__SF_VF__ = {
+      instanceUrl: _eu.substring(0, _eu.indexOf("/services")),
+      accessToken: "{!$Api.Session_ID}",
+      userId: "{!$User.Id}",
+      orgId: "{!$Organization.Id}",
+      username: "{!$User.Username}"
+    };
+  </script>
+  <script type="module" src="{!URLFOR($Resource.LovingFMApp, 'assets/esm.js')}"></script>
+  <script type="module" src="{!URLFOR($Resource.LovingFMApp, 'assets/index.js')}"></script>
+</body>
+</html>
+</apex:page>

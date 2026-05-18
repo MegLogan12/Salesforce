@@ -143,9 +143,31 @@ export async function handleOAuthCallback(code: string): Promise<SalesforceSessi
   return session;
 }
 
+// ─── Visualforce session injection ───────────────────────────────────────────
+// When the app is hosted as a Salesforce Visualforce page, the VF page injects
+// __SF_VF__ before the React bundle loads, bypassing OAuth entirely.
+
+interface VFInjectedSession {
+  instanceUrl: string;
+  accessToken: string;
+  userId: string;
+  orgId: string;
+  username: string;
+}
+
+export function getVFSession(): SalesforceSession | null {
+  const vf = (window as Window & { __SF_VF__?: VFInjectedSession }).__SF_VF__;
+  if (vf?.accessToken && vf?.instanceUrl) return vf as SalesforceSession;
+  return null;
+}
+
 // ─── Startup resolver ────────────────────────────────────────────────────────
 
 export function resolveStartupMode(): { mode: AppMode; session: SalesforceSession | null; oauthCode: string | null } {
+  // 0. Visualforce session injection (highest priority — already authenticated)
+  const vf = getVFSession();
+  if (vf) return { mode: 'live', session: vf, oauthCode: null };
+
   // 1. OAuth callback
   const params = new URLSearchParams(window.location.search);
   const code = params.get('code');
