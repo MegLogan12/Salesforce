@@ -440,7 +440,7 @@ private class LOVING_WorkOrderTriggerHandlerTest {
         Account lot = makeLot(com.Id);
 
         WorkOrder wo = makeWO(com, lot, 'Scheduled');
-        wo.Goal_Hours__c          = 6;    // 360 goal minutes
+        wo.Goal_Hours__c          = 6;
         wo.Travel_Minutes_Planned__c = 30;
         wo.Lunch_Minutes__c       = 60;
         wo.Cushion_Minutes__c     = 15;

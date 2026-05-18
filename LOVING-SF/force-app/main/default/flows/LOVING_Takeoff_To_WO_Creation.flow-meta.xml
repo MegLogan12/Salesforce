@@ -12,7 +12,7 @@
     <interviewLabel>LOVING Takeoff To WO Creation {!$Flow.CurrentDateTime}</interviewLabel>
     <label>LOVING Takeoff To Work Order Creation</label>
     <processMetadataValues>
-        <n>BuilderType</n>
+        <name>BuilderType</name>
         <value><stringValue>LightningFlowBuilder</stringValue></value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
@@ -49,14 +49,14 @@
          VARIABLES
     ═══════════════════════════════════════════════════════ -->
     <variables>
-        <n>varNewWOId</n>
+        <name>varNewWOId</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>false</isInput>
         <isOutput>true</isOutput>
     </variables>
     <variables>
-        <n>varCommunity</n>
+        <name>varCommunity</name>
         <dataType>SObject</dataType>
         <isCollection>false</isCollection>
         <isInput>false</isInput>
@@ -64,7 +64,7 @@
         <objectType>Account</objectType>
     </variables>
     <variables>
-        <n>varBuilderRegional</n>
+        <name>varBuilderRegional</name>
         <dataType>SObject</dataType>
         <isCollection>false</isCollection>
         <isInput>false</isInput>
@@ -76,13 +76,13 @@
          GUARD: Prevent duplicate WO creation
     ═══════════════════════════════════════════════════════ -->
     <decisions>
-        <n>Guard_Check_WO_Not_Created</n>
+        <name>Guard_Check_WO_Not_Created</name>
         <label>WO Not Yet Created?</label>
         <locationX>200</locationX>
         <locationY>100</locationY>
         <defaultConnectorLabel>WO Already Exists — Exit</defaultConnectorLabel>
         <rules>
-            <n>WO_Not_Yet_Created</n>
+            <name>WO_Not_Yet_Created</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
                 <leftValueReference>$Record.WO_Created__c</leftValueReference>
@@ -105,7 +105,7 @@
          GET COMMUNITY RECORD (parent of Lot)
     ═══════════════════════════════════════════════════════ -->
     <recordLookups>
-        <n>Get_Community_Record</n>
+        <name>Get_Community_Record</name>
         <label>Get Community Record</label>
         <locationX>200</locationX>
         <locationY>200</locationY>
@@ -140,7 +140,7 @@
          GET BUILDER REGIONAL (parent of Community)
     ═══════════════════════════════════════════════════════ -->
     <recordLookups>
-        <n>Get_Builder_Regional</n>
+        <name>Get_Builder_Regional</name>
         <label>Get Builder Regional Account</label>
         <locationX>200</locationX>
         <locationY>300</locationY>
@@ -170,7 +170,7 @@
          CHECK VARIANCE — Determines Takeoff_Status__c
     ═══════════════════════════════════════════════════════ -->
     <decisions>
-        <n>Check_Variance_Rule</n>
+        <name>Check_Variance_Rule</name>
         <label>Package Variance Present?</label>
         <locationX>200</locationX>
         <locationY>400</locationY>
@@ -179,7 +179,7 @@
             <targetReference>Create_Work_Order</targetReference>
         </defaultConnector>
         <rules>
-            <n>Has_Package_Variance</n>
+            <name>Has_Package_Variance</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
                 <leftValueReference>$Record.Package_Variance__c</leftValueReference>
@@ -194,7 +194,7 @@
     </decisions>
 
     <decisions>
-        <n>Check_Lennar_Hard_Block</n>
+        <name>Check_Lennar_Hard_Block</name>
         <label>Is Lennar (Hard Block)?</label>
         <locationX>400</locationX>
         <locationY>400</locationY>
@@ -203,7 +203,7 @@
             <targetReference>Create_Work_Order_With_Variance</targetReference>
         </defaultConnector>
         <rules>
-            <n>Is_Lennar_Spec</n>
+            <name>Is_Lennar_Spec</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
                 <leftValueReference>varBuilderRegional.Spec_Type__c</leftValueReference>
@@ -221,7 +221,7 @@
          CREATE WORK ORDER — Confirmed (no variance)
     ═══════════════════════════════════════════════════════ -->
     <recordCreates>
-        <n>Create_Work_Order</n>
+        <name>Create_Work_Order</name>
         <label>Create Work Order (Confirmed)</label>
         <locationX>200</locationX>
         <locationY>500</locationY>
@@ -366,7 +366,7 @@
 
     <!-- Create Work Order WITH variance flag -->
     <recordCreates>
-        <n>Create_Work_Order_With_Variance</n>
+        <name>Create_Work_Order_With_Variance</name>
         <label>Create Work Order (Variance Flagged)</label>
         <locationX>400</locationX>
         <locationY>500</locationY>
@@ -466,7 +466,7 @@
 
     <!-- Lennar Hard Block: create task for Operations Manager, do NOT create WO -->
     <recordCreates>
-        <n>Create_Lennar_Block_Task</n>
+        <name>Create_Lennar_Block_Task</name>
         <label>Create Lennar Block Task (No WO)</label>
         <locationX>600</locationX>
         <locationY>400</locationY>
@@ -500,7 +500,7 @@
 
     <!-- Variance Review Task (non-Lennar) -->
     <recordCreates>
-        <n>Create_Variance_Review_Task</n>
+        <name>Create_Variance_Review_Task</name>
         <label>Create Variance Review Task</label>
         <locationX>400</locationX>
         <locationY>600</locationY>
@@ -539,7 +539,7 @@
          MARK LOT AS WO CREATED
     ═══════════════════════════════════════════════════════ -->
     <recordUpdates>
-        <n>Mark_Lot_WO_Created</n>
+        <name>Mark_Lot_WO_Created</name>
         <label>Mark Lot WO Created</label>
         <locationX>200</locationX>
         <locationY>700</locationY>
@@ -563,7 +563,7 @@
 
     <!-- Update Pipeline Bucket to Takeoff Complete -->
     <recordUpdates>
-        <n>Update_Lot_Pipeline_Bucket</n>
+        <name>Update_Lot_Pipeline_Bucket</name>
         <label>Update Pipeline Bucket to Takeoff Complete</label>
         <locationX>200</locationX>
         <locationY>800</locationY>
@@ -582,7 +582,7 @@
          ERROR HANDLING
     ═══════════════════════════════════════════════════════ -->
     <recordCreates>
-        <n>Handle_WO_Create_Error</n>
+        <name>Handle_WO_Create_Error</name>
         <label>Log WO Creation Error</label>
         <locationX>800</locationX>
         <locationY>500</locationY>

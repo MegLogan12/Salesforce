@@ -1,0 +1,4 @@
+# Exclude WorkOrder fields that already exist in org with conflicting types/references
+force-app/main/default/objects/WorkOrder/fields/Builder__c.field-meta.xml
+force-app/main/default/objects/WorkOrder/fields/Community__c.field-meta.xml
+force-app/main/default/objects/WorkOrder/fields/Lot__c.field-meta.xml

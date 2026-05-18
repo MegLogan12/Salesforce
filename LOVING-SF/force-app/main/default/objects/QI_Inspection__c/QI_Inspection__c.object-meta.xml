@@ -25,7 +25,7 @@
     </nameField>
     <pluralLabel>QI Inspections</pluralLabel>
     <searchLayouts/>
-    <sharingModel>ReadWrite</sharingModel>
+    <sharingModel>ControlledByParent</sharingModel>
     <visibility>Public</visibility>
     <fields>
         <fullName>Work_Order__c</fullName>

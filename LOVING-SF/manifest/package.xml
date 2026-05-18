@@ -71,10 +71,7 @@
     ═══════════════════════════════════════════════ -->
     <types>
         <members>WorkOrder.Work_Order_Type__c</members>
-        <members>WorkOrder.Builder__c</members>
-        <members>WorkOrder.Community__c</members>
         <members>WorkOrder.Builder_Regional__c</members>
-        <members>WorkOrder.Lot__c</members>
         <members>WorkOrder.Lot_Number__c</members>
         <members>WorkOrder.Lot_Address__c</members>
         <members>WorkOrder.PO_Number__c</members>
