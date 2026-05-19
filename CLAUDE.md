@@ -1,5 +1,26 @@
 # LOVING-SF — Claude Code Notes
 
+## Purpose of this CLI foundation
+
+The Salesforce CLI is connected to the **LOVING production org** so Claude Code
+can safely inspect metadata, retrieve org information, run read-only checks, and
+perform validation-only deployment checks before any approved production change.
+
+**Allowed operations:**
+- Authenticate to production (`sf org login web`)
+- Inspect and retrieve metadata (`sf project retrieve`, `sf org display`, etc.)
+- Validation-only deploys (`sf project deploy validate`) — dry run, no org changes
+
+**Never allowed without explicit written approval from Megan Logan:**
+- `sf project deploy start` — deploys metadata to production
+- Any command that modifies, deletes, renames, deactivates, or overwrites
+  production metadata, records, or configuration
+- Any command that modifies production data
+
+When in doubt, do not run the command. Ask first.
+
+---
+
 ## Session startup hook
 
 **File:** `.claude/hooks/session-start.sh`
@@ -26,17 +47,13 @@ repo. To upgrade, test the new version manually, update the pin in
 
 ---
 
-## Authenticating an org after session start
+## Authenticating the production org after session start
 
 The hook installs the CLI but does **not** authenticate any org.
-Run one of the following after the session starts:
+Run the following after the session starts to connect to production:
 
 ```bash
-# Production / Developer Edition
-sf org login web --alias loving-prod
-
-# Sandbox
-sf org login web --alias loving-sandbox --instance-url https://test.salesforce.com
+sf org login web --alias loving-prod --instance-url https://login.salesforce.com
 ```
 
 Authentication tokens are stored in `~/.sf/` on the container only and are
@@ -62,32 +79,31 @@ These are all covered by `.gitignore`. If you accidentally stage one, run
 
 ## Smoke-test commands
 
-Run these in order after authenticating an org to confirm the CLI and project
-are wired up correctly.
+Run these in order after authenticating to confirm the CLI and project are
+wired up correctly against the production org.
 
 ```bash
 # 1. Confirm CLI version
 sf --version
 
-# 2. List authenticated orgs
+# 2. List authenticated orgs (confirm loving-prod appears)
 sf org list
 
 # 3. Validate metadata (dry-run deploy — no changes made to the org)
 sf project deploy validate \
   --source-dir force-app \
-  --target-org <alias> \
+  --target-org loving-prod \
   --test-level RunSpecifiedTests \
   --tests LOVING_WorkOrderTriggerHandlerTest
 
-# 4. Run Apex tests against an authenticated org
+# 4. Run Apex tests against the production org
 sf apex run test \
   --class-names LOVING_WorkOrderTriggerHandlerTest \
-  --target-org <alias> \
+  --target-org loving-prod \
   --result-format human \
   --wait 10
 ```
 
-Replace `<alias>` with the alias you used in `sf org login web --alias ...`.
-
-**Do not run `sf project deploy start` without explicit approval.** Validation
-(`deploy validate`) is always safe — it performs a dry run with no org changes.
+`deploy validate` is always safe — it is a dry run and makes no changes to
+the org. Do NOT run `sf project deploy start`. Any production deployment
+requires explicit written approval before Claude will execute it.
