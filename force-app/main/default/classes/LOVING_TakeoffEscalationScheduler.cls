@@ -1,5 +1,15 @@
 global without sharing class LOVING_TakeoffEscalationScheduler implements Schedulable {
+
+    @InvocableMethod(label='Run Takeoff Escalation' description='Escalates overdue takeoff tasks to FM managers')
+    public static void runFromFlow(List<String> params) {
+        escalate();
+    }
+
     global void execute(SchedulableContext ctx) {
+        escalate();
+    }
+
+    private static void escalate() {
         DateTime cutoff = System.now().addHours(-48);
         List<Account> lots = [
             SELECT Id, Name, FM__c, FM__r.ManagerId, Target_Start_Date__c, Bucket_Changed_Date__c
@@ -30,3 +40,4 @@ global without sharing class LOVING_TakeoffEscalationScheduler implements Schedu
         if (!toFlag.isEmpty()) update toFlag;
     }
 }
+

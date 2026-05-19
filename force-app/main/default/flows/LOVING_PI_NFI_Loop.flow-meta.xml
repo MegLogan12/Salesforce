@@ -6,7 +6,7 @@
         Fires when WO status moves to Need Further Info.
         Actions:
           1. Create FM task with specific NFI reason
-          2. If NFI_Count > 2 → escalate to COO with separate task
+          2. If NFI_Count &gt; 2 → escalate to COO with separate task
           3. Reset WO status to Pending Closeout Approval after FM resolves
         The return path (FM re-submits → Pending Closeout Approval) is handled
         by the Orchestrator when status changes back.
@@ -16,100 +16,24 @@
     <label>LOVING PI NFI Loop</label>
     <processMetadataValues>
         <name>BuilderType</name>
-        <value><stringValue>LightningFlowBuilder</stringValue></value>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
-        <connector><targetReference>Get_NFI_WO</targetReference></connector>
+        <connector>
+            <targetReference>Get_NFI_WO</targetReference>
+        </connector>
     </start>
     <status>Active</status>
-
-    <variables>
-        <name>varWorkOrderId</name><dataType>String</dataType>
-        <isCollection>false</isCollection><isInput>true</isInput><isOutput>false</isOutput>
-    </variables>
-    <variables>
-        <name>varNFICount</name><dataType>Number</dataType>
-        <isCollection>false</isCollection><isInput>true</isInput><isOutput>false</isOutput>
-        <scale>0</scale>
-    </variables>
-    <variables>
-        <name>varNFINotes</name><dataType>String</dataType>
-        <isCollection>false</isCollection><isInput>true</isInput><isOutput>false</isOutput>
-    </variables>
-    <variables>
-        <name>varWO</name><dataType>SObject</dataType>
-        <isCollection>false</isCollection><isInput>false</isInput><isOutput>false</isOutput>
-        <objectType>WorkOrder</objectType>
-    </variables>
-
-    <recordLookups>
-        <name>Get_NFI_WO</name>
-        <label>Get Work Order</label>
-        <locationX>200</locationX><locationY>100</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector><targetReference>Create_FM_NFI_Task</targetReference></connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Id</field><operator>EqualTo</operator>
-            <value><elementReference>varWorkOrderId</elementReference></value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>WorkOrder</object>
-        <outputReference>varWO</outputReference>
-        <queriedFields><field>Id</field></queriedFields>
-        <queriedFields><field>FM__c</field></queriedFields>
-        <queriedFields><field>FM__r.ManagerId</field></queriedFields>
-        <queriedFields><field>Lot_Address__c</field></queriedFields>
-        <queriedFields><field>NFI_Count__c</field></queriedFields>
-        <queriedFields><field>Need_Further_Info_Notes__c</field></queriedFields>
-    </recordLookups>
-
-    <!-- FM TASK -->
-    <recordCreates>
-        <name>Create_FM_NFI_Task</name>
-        <label>Create FM NFI Resolution Task</label>
-        <locationX>200</locationX><locationY>200</locationY>
-        <connector><targetReference>Check_NFI_Escalation</targetReference></connector>
-        <inputAssignments>
-            <field>Subject</field>
-            <value><stringValue>ACTION REQUIRED — Work Order Returned: Need Further Info</stringValue></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>OwnerId</field>
-            <value><elementReference>varWO.FM__c</elementReference></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>WhatId</field>
-            <value><elementReference>varWO.Id</elementReference></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Priority</field>
-            <value><stringValue>High</stringValue></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>ActivityDate</field>
-            <value><elementReference>$Flow.CurrentDate</elementReference></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Type</field>
-            <value><stringValue>NFI Resolution</stringValue></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Description</field>
-            <value><elementReference>varNFINotes</elementReference></value>
-        </inputAssignments>
-        <object>Task</object>
-        <storeOutputAutomatically>false</storeOutputAutomatically>
-    </recordCreates>
-
-    <!-- CHECK IF NFI COUNT > 2 -->
     <decisions>
         <name>Check_NFI_Escalation</name>
         <label>NFI Count Greater Than 2?</label>
-        <locationX>200</locationX><locationY>300</locationY>
+        <locationX>200</locationX>
+        <locationY>300</locationY>
         <defaultConnectorLabel>NFI Count OK</defaultConnectorLabel>
         <rules>
             <name>NFI_Exceeds_Threshold</name>
@@ -117,44 +41,168 @@
             <conditions>
                 <leftValueReference>varWO.NFI_Count__c</leftValueReference>
                 <operator>GreaterThan</operator>
-                <rightValue><numberValue>2</numberValue></rightValue>
+                <rightValue>
+                    <numberValue>2</numberValue>
+                </rightValue>
             </conditions>
-            <connector><targetReference>Create_COO_Escalation_Task</targetReference></connector>
+            <connector>
+                <targetReference>Create_COO_Escalation_Task</targetReference>
+            </connector>
             <label>NFI &gt; 2 — Escalate to COO</label>
         </rules>
     </decisions>
-
-    <!-- COO ESCALATION TASK -->
     <recordCreates>
-        <name>Create_COO_Escalation_Task</name>
-        <label>Create COO Escalation Task</label>
-        <locationX>400</locationX><locationY>300</locationY>
+        <name>Create_FM_NFI_Task</name>
+        <label>Create FM NFI Resolution Task</label>
+        <locationX>200</locationX>
+        <locationY>200</locationY>
+        <connector>
+            <targetReference>Check_NFI_Escalation</targetReference>
+        </connector>
         <inputAssignments>
             <field>Subject</field>
-            <value><stringValue>ESCALATION — Work Order Returned 3+ Times — COO Review Required</stringValue></value>
+            <value>
+                <stringValue>ACTION REQUIRED — Work Order Returned: Need Further Info</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <elementReference>varWO.FM__c</elementReference>
+            </value>
         </inputAssignments>
         <inputAssignments>
             <field>WhatId</field>
-            <value><elementReference>varWO.Id</elementReference></value>
+            <value>
+                <elementReference>varWO.Id</elementReference>
+            </value>
         </inputAssignments>
         <inputAssignments>
             <field>Priority</field>
-            <value><stringValue>High</stringValue></value>
+            <value>
+                <stringValue>High</stringValue>
+            </value>
         </inputAssignments>
         <inputAssignments>
             <field>ActivityDate</field>
-            <value><elementReference>$Flow.CurrentDate</elementReference></value>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
         </inputAssignments>
         <inputAssignments>
             <field>Type</field>
-            <value><stringValue>COO Escalation</stringValue></value>
+            <value>
+                <stringValue>NFI Resolution</stringValue>
+            </value>
         </inputAssignments>
         <inputAssignments>
             <field>Description</field>
-            <value><stringValue>This Work Order has been returned via Need Further Info more than twice. COO review required before this closeout can proceed. Review the NFI notes history on the Work Order and determine whether FM coaching or a process exception is needed.</stringValue></value>
+            <value>
+                <elementReference>varNFINotes</elementReference>
+            </value>
         </inputAssignments>
         <object>Task</object>
         <storeOutputAutomatically>false</storeOutputAutomatically>
     </recordCreates>
-
+    <recordCreates>
+        <name>Create_COO_Escalation_Task</name>
+        <label>Create COO Escalation Task</label>
+        <locationX>400</locationX>
+        <locationY>300</locationY>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <stringValue>ESCALATION — Work Order Returned 3+ Times — COO Review Required</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhatId</field>
+            <value>
+                <elementReference>varWO.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value>
+                <stringValue>High</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ActivityDate</field>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type</field>
+            <value>
+                <stringValue>COO Escalation</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Description</field>
+            <value>
+                <stringValue>This Work Order has been returned via Need Further Info more than twice. COO review required before this closeout can proceed. Review the NFI notes history on the Work Order and determine whether FM coaching or a process exception is needed.</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+    <recordLookups>
+        <name>Get_NFI_WO</name>
+        <label>Get Work Order</label>
+        <locationX>200</locationX>
+        <locationY>100</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Create_FM_NFI_Task</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>varWorkOrderId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkOrder</object>
+        <outputReference>varWO</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>FM__c</queriedFields>
+        <queriedFields>FM__r.ManagerId</queriedFields>
+        <queriedFields>Lot_Address__c</queriedFields>
+        <queriedFields>NFI_Count__c</queriedFields>
+        <queriedFields>Need_Further_Info_Notes__c</queriedFields>
+    </recordLookups>
+    <variables>
+        <name>varWorkOrderId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>varNFICount</name>
+        <dataType>Number</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <scale>0</scale>
+    </variables>
+    <variables>
+        <name>varNFINotes</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>varWO</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>WorkOrder</objectType>
+    </variables>
 </Flow>

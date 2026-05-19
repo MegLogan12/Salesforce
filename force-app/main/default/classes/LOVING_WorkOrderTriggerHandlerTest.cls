@@ -25,8 +25,9 @@ private class LOVING_WorkOrderTriggerHandlerTest {
 
     // ── Test Data Factory ─────────────────────────────────────────────────────
     private static Account makeBuilderNational() {
-        Account a = new Account(Name='DR Horton National Test',
-            RecordTypeId=getRT('Account','Builder_National'));
+        Account a = new Account(Name='DR Horton National Test');
+        Id rtId = getRT('Account','Builder_National');
+        if (rtId != null) a.RecordTypeId = rtId;
         insert a;
         return a;
     }
@@ -34,9 +35,10 @@ private class LOVING_WorkOrderTriggerHandlerTest {
     private static Account makeBuilderRegional(Id parentId) {
         Account a = new Account(Name='DR Horton Charlotte Test',
             ParentId=parentId,
-            RecordTypeId=getRT('Account','Builder_Regional'),
             Spec_Type__c='Average (DR Horton)',
             Billing_Method__c='SupplyPro');
+        Id rtId = getRT('Account','Builder_Regional');
+        if (rtId != null) a.RecordTypeId = rtId;
         insert a;
         return a;
     }
@@ -44,10 +46,11 @@ private class LOVING_WorkOrderTriggerHandlerTest {
     private static Account makeCommunity(Id parentId, Boolean aqua) {
         Account a = new Account(Name='Carlton Pointe Test',
             ParentId=parentId,
-            RecordTypeId=getRT('Account','Community'),
             Aqua_Customer__c=aqua,
             Zone__c=3,
             FM__c=UserInfo.getUserId());
+        Id rtId = getRT('Account','Community');
+        if (rtId != null) a.RecordTypeId = rtId;
         insert a;
         return a;
     }
@@ -55,11 +58,12 @@ private class LOVING_WorkOrderTriggerHandlerTest {
     private static Account makeLot(Id parentId) {
         Account a = new Account(Name='Lot 7 Test',
             ParentId=parentId,
-            RecordTypeId=getRT('Account','Lot'),
             Lot_Number__c='7',
             Street_Address__c='123 Test Lane Charlotte NC 28214',
             Lot_Status__c='Active',
             Target_Start_Date__c=Date.today().addDays(45));
+        Id rtId = getRT('Account','Lot');
+        if (rtId != null) a.RecordTypeId = rtId;
         insert a;
         return a;
     }
