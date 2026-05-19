@@ -1,4 +1,31 @@
 extracted/
+node_modules/
+
+# Salesforce CLI local state and auth artifacts
 .sfdx/
 .sf/
-node_modules/
+**/sfdx-project.json.bak
+
+# Scratch org config files (may contain usernames/org IDs)
+orgs/
+config/project-scratch-def.json.local
+
+# CLI logs
+logs/
+*.log
+.sfdx-logs/
+.sf-logs/
+
+# Auth tokens and session files written by `sf auth`
+# (sf stores them under ~/.sf/ but guard against local copies)
+authTokens/
+access_token
+refresh_token
+*.auth.json
+
+# VS Code / IntelliJ local overrides
+.vscode/settings.json
+.idea/
+
+# macOS metadata
+.DS_Store
