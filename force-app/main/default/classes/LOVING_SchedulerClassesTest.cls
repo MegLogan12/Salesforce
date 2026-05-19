@@ -7,7 +7,8 @@ private class LOVING_SchedulerClassesTest {
         Extentia_SIM__MapPlotterTriggerSettings__c s =
             Extentia_SIM__MapPlotterTriggerSettings__c.getOrgDefaults();
         if (s.Id == null) {
-            s.Name = 'OrgDefault';
+            s.Name = UserInfo.getOrganizationId();
+            s.SetupOwnerId = UserInfo.getOrganizationId();
         }
         s.Extentia_SIM__Bypass_Trigger__c = true;
         upsert s;
