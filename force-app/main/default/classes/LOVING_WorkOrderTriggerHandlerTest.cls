@@ -88,11 +88,13 @@ private class LOVING_WorkOrderTriggerHandlerTest {
     }
 
     private static Id getRT(String objectName, String devName) {
-        // Return null-safe RT Id; in test orgs without RT setup, returns null
         try {
-            return Schema.getGlobalDescribe().get(objectName)
-                .getDescribe().getRecordTypeInfosByDeveloperName()
-                .get(devName).getRecordTypeId();
+            Schema.RecordTypeInfo rti = Schema.getGlobalDescribe()
+                .get(objectName)
+                .getDescribe()
+                .getRecordTypeInfosByDeveloperName()
+                .get(devName);
+            return (rti != null && rti.isAvailable()) ? rti.getRecordTypeId() : null;
         } catch(Exception e) {
             return null;
         }
