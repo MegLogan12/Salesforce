@@ -20,7 +20,7 @@
  *  13. GP calculations
  *  14. Trigger guard prevents recursion
  */
-@IsTest
+@IsTest(SeeAllData=true)
 private class LOVING_WorkOrderTriggerHandlerTest {
 
     // ── Test Data Factory ─────────────────────────────────────────────────────
