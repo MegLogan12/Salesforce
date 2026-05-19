@@ -27,6 +27,9 @@ private class LOVING_WorkOrderTriggerHandlerTest {
     static void setupBypass() {
         Extentia_SIM__MapPlotterTriggerSettings__c s =
             Extentia_SIM__MapPlotterTriggerSettings__c.getOrgDefaults();
+        if (s.Id == null) {
+            s.Name = 'OrgDefault';
+        }
         s.Extentia_SIM__Bypass_Trigger__c = true;
         upsert s;
     }
