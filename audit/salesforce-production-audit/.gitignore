@@ -1,0 +1,4 @@
+# Raw SOQL query outputs contain production usernames, org IDs, and record IDs.
+# Per CLAUDE.md policy: never commit files containing org usernames or org IDs.
+# Raw data stays local only. Synthesized audit reports (*.md) are committed.
+raw/
