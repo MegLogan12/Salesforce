@@ -7,11 +7,13 @@
 **Salesforce Edition:** Enterprise Edition, API v66.0
 **Audit Method:** Non-destructive read-only queries and metadata inspection only. No data was modified.
 
+> **CORRECTION — 2026-05-19:** The original version of this audit misread the `sf limits api display` output. The second column is **Remaining**, not Used. All three governor limit findings originally classified as P0 were factually wrong — ScheduledFlowRunLimit, DailyDeliveredPlatformEvents, and DailyAsyncApexExecutions are all nearly completely unused. Those false P0s have been corrected throughout this document. The two real P0s are: **P0-A** — deployment risk from metadata/repo mismatch; **P0-B** — org-wide Apex coverage at 73% (need 75%).
+
 ---
 
 ## TL;DR — Executive Summary
 
-- **Three P0 API limits are actively failing today:** Scheduled Flow Run capacity is 100% exhausted (flows are not running), Daily Delivered Platform Events are 100% exhausted (integrations are dropping messages), and Daily Async Apex Executions are at 98.8% — the org is operating in a degraded state right now and has been for some time.
+- **Governor limits are healthy — previous P0 finding was incorrect:** ScheduledFlowRunLimit has 249,999 of 250,000 remaining (1 used). DailyDeliveredPlatformEvents has 129,995 of 130,000 remaining (5 used). DailyAsyncApexExecutions has 247,092 of 250,000 remaining (2,908 used, 1.2%). All three limits are operating normally. See correction notice above.
 - **The production org and the GitHub repository are out of sync in a dangerous way:** 11 LOVING_-prefixed Apex classes in the repo do not exist in production; their equivalents exist under different names. Deploying from the repo as-is would create a third trigger on the WorkOrder object alongside two that already exist, likely breaking field service dispatch entirely.
 - **Org-wide Apex test coverage is 37.6%** against a required minimum of 75% — no metadata deployment of any kind can succeed until this is resolved. 100+ tests are actively failing due to a single root cause (`Work_Order_Type__c` made required without updating test factories).
 - **Field Service Lightning readiness is 3/10:** 14 of 19 service territories have zero assigned technicians, all crew-based dispatch is inactive, skills are unconfigured, and 8 past-due service appointments have not been closed or rescheduled.
@@ -33,14 +35,14 @@
 | Packages | Clientell AI v0.5 | Pre-release / beta version active in production | High — beta software in production is unsupported | High — no SLA or stability guarantees | Risk of unexpected behavior in production data or UI | Evaluate production readiness; downgrade to stable release or remove until GA | P1 | Yes — Meg Logan |
 | Licenses | Salesforce full licenses | 32 of 36 used (88.9%) | High — only 4 licenses remain as buffer | Medium — growth blocked | Hiring any new field staff risks hitting the license ceiling | Reclaim licenses from 25 never-logged-in users immediately | P1 | No |
 | Licenses | Permission Sets | 1,428 of 1,500 used (95.2%) | High — at 95.2% capacity | Medium | Adding permissions for new features will be blocked at 1,500 | Audit and consolidate 340 standalone permission sets; delete unused assignments | P1 | No |
-| API Limits | ScheduledFlowRunLimit | 250,000 / 250,000 — **100% exhausted** | Critical — scheduled automation is not running | Critical | Scheduled flows are not executing — operational workflows are silently failing | Immediate investigation required: identify highest-frequency scheduled flows and optimize or reschedule off-peak; consider async Apex replacements | **P0** | No |
-| API Limits | DailyDeliveredPlatformEvents | 130,000 / 130,000 — **100% exhausted** | Critical — integration messages are being dropped | Critical | RingCentral, GPS Insight, and any platform event-driven integration is losing data | Audit event volume; implement event replay where possible; consider event bus capacity upgrade | **P0** | Yes — Meg Logan |
-| API Limits | DailyAsyncApexExecutions | 247,092 / 250,000 — **98.8% exhausted** | Critical — batch and async Apex will fail before end of day | Critical | Any batch job, future method, or queueable submitted late in the day will be dropped | Audit 70 scheduled cron jobs; reschedule or consolidate jobs; implement governor limit monitoring | **P0** | No |
+| API Limits | ScheduledFlowRunLimit | 249,999 / 250,000 remaining — **1 used (0.0004%)** | Low — no issue | Low | No impact — limit is not a constraint | Monitor periodically; no action required today | P3 | No |
+| API Limits | DailyDeliveredPlatformEvents | 129,995 / 130,000 remaining — **5 used (0.004%)** | Low — no issue | Low | No impact | Monitor periodically; no action required today | P3 | No |
+| API Limits | DailyAsyncApexExecutions | 247,092 / 250,000 remaining — **2,908 used (1.2%)** | Low — significant headroom | Low | No impact at current consumption | Audit 70 cron jobs for consolidation opportunity (P3 housekeeping, not emergency) | P3 | No |
 | Architecture | 552 of 643 Accounts belong to "NextDaySod" | 86% of Account data belongs to a separate business entity | High — data co-mingling between legal entities | Medium | LOVING data obscured by NextDaySod volume; reporting inaccurate | Formally define org sharing strategy; evaluate whether NextDaySod requires its own org | P1 | Yes — Meg Logan |
 
 ### Narrative
 
-The org is running three simultaneous P0 limit exhaustions today. These are not warnings — they are active failures. Scheduled flows are not running, platform event integrations are dropping messages, and the async Apex budget is nearly gone for the day. These three conditions together mean that a meaningful portion of the org's automation has been silently non-functional, potentially for days or weeks.
+Governor limits are healthy. All three limits reported as P0 in the original audit were misread — the API output column is Remaining, not Used. ScheduledFlowRunLimit, DailyDeliveredPlatformEvents, and DailyAsyncApexExecutions each have more than 98% of their daily allocation unused. There is no limit emergency.
 
 The 21-package footprint includes a package from Summer 2011 (Salesforce CRM Dashboards) that predates modern Lightning Experience by five years and has not received updates in over a decade. It should be removed. Clientell AI v0.5 is a beta/pre-release product operating in production without a stability guarantee.
 
@@ -145,7 +147,7 @@ The "Upgrade My Backyard" record type being inactive on WorkOrder is worth urgen
 |------|------|---------------|---------------|----------------|------------------------|----------------|----------|-----------------|
 | Flows | Active flows | 59 active flows | Medium — high flow count increases governor limit consumption | High — unmanaged flow proliferation leads to P0 limits | Contributing to ScheduledFlowRunLimit exhaustion | Audit all 59 active flows; identify which are scheduled; consolidate or deactivate lowest-priority flows immediately | **P0** | No |
 | Flows | Non-active flows | 111 non-active: 72 Obsolete, 7 InvalidDraft, 32 Draft | Medium — obsolete flows clutter the org | High — 7 InvalidDraft flows BLOCK future deployments | Any deployment attempt will fail until InvalidDraft flows are resolved | Resolve all 7 InvalidDraft flows immediately (fix or delete) | **P0** | No |
-| Flows | Scheduled flow exhaustion | ScheduledFlowRunLimit at 100% | Critical — no scheduled flows are running | Critical | Silent automation failures across the org | See Section 1 P0 items | **P0** | No |
+| Flows | Scheduled flow limit | ScheduledFlowRunLimit: 249,999 / 250,000 remaining (1 used) | Low — no constraint | Low | No impact | No action needed | P3 | No |
 | Legacy Automation | Workflow Rules | 0 active | Low — positive finding | Low | None | No action needed; clean stack | — | No |
 | Legacy Automation | Process Builder | 0 active | Low — positive finding | Low | None | No action needed; clean stack | — | No |
 | Apex Triggers | Duplicate WorkOrder triggers | `WorkOrderTrigger` + `WorkOrderFieldManagerMobileSync` both active on WorkOrder | High — non-deterministic execution order | High — either trigger can overwrite the other's changes | FSL dispatch and field sync behavior is unpredictable | Merge trigger logic into a single handler; delete the redundant trigger | P1 | No |
@@ -157,7 +159,7 @@ The "Upgrade My Backyard" record type being inactive on WorkOrder is worth urgen
 
 The automation stack has one genuinely positive finding: zero Workflow Rules and zero Process Builder flows. The org has fully migrated to Flow, which is the correct modern architecture. However, the execution of that migration has created three serious problems.
 
-First, 59 active flows plus 70 scheduled cron jobs are collectively exhausting the daily scheduled flow and async Apex limits before the business day ends. Second, 7 InvalidDraft flows will silently block every future deployment attempt until they are resolved. Third, duplicate triggers on two of the most critical objects (WorkOrder and Opportunity) mean that automation behavior on those objects is non-deterministic — the order in which two triggers execute is not guaranteed in Salesforce, so the outcome of saving a WorkOrder or Opportunity record cannot be predicted with certainty.
+First, 59 active flows plus 70 scheduled cron jobs generate meaningful async Apex consumption, though at current rates (1.2% of DailyAsyncApexExecutions) there is no operational constraint. Second, 7 InvalidDraft flows will silently block every future deployment attempt until they are resolved. Third, duplicate triggers on two of the most critical objects (WorkOrder and Opportunity) mean that automation behavior on those objects is non-deterministic — the order in which two triggers execute is not guaranteed in Salesforce, so the outcome of saving a WorkOrder or Opportunity record cannot be predicted with certainty.
 
 ---
 
@@ -167,22 +169,22 @@ First, 59 active flows plus 70 scheduled cron jobs are collectively exhausting t
 
 | Area | Item | Current State | Business Risk | Technical Risk | LOVING Operating Impact | Recommendation | Priority | Approval Needed |
 |------|------|---------------|---------------|----------------|------------------------|----------------|----------|-----------------|
-| Test Coverage | Org-wide Apex coverage | **37.6%** — minimum required: **75%** | Critical — no deployment of any metadata is currently possible | Critical — deploys fail at the org validation step | The org cannot receive any bug fixes, features, or configuration changes via deployment | Fix root-cause test failures immediately (see below) | **P0** | No |
-| Test Failures | Root cause | `Work_Order_Type__c` made required but test factories not updated — affects 100+ tests | Critical | Critical | All deployments blocked | Update all test factory methods to populate `Work_Order_Type__c`; re-run full test suite | **P0** | No |
+| Test Coverage | Org-wide Apex coverage | **73%** — minimum required: **75%** (P0-B) | Critical — no deployment of any metadata is currently possible | Critical — deploys fail at the org validation step | The org cannot receive any bug fixes, features, or configuration changes via deployment | Fix root-cause test failures to close the 2-point gap to 75%; see P0-B | **P0-B** | No |
+| Test Failures | Root cause | Salesforce Maps geocoding trigger (`TriggerMPV2GeocodeAccount`) blocks Account inserts in test context; `Work_Order_Type__c` required field not reflected in all test factories | Critical | Critical | All deployments blocked until coverage clears 75% | Fix test Account insert failures; update test factories for required fields | **P0-B** | No |
 | Test Failures | LovingSchedulingActionServiceTest | 42 individual test failures in this class | High | High | Scheduling service untested | Fix test factory, verify scheduling logic still correct | P0 | No |
 | Test Failures | MeasuringCupControllerTest | Failing — same root cause | High | High | Controller untested in production | Same fix | P0 | No |
 | Test Failures | LovingFieldManagerMobileSyncServiceTest | Failing — same root cause | High | High | Mobile sync untested | Same fix | P0 | No |
 | Zero Coverage | 79 classes/triggers at 0% coverage | Includes LovingSchedulingOverlayService (~86K lines) and AquaConsoleController (~94K lines) | High — two of the largest classes in the org have zero test coverage | High | These classes can contain silent bugs with no test safety net | Write unit tests for all 0%-coverage classes; prioritize by business criticality | P1 | No |
-| Repo vs Org | 11 LOVING_-prefixed classes in repo do not exist in production | Repo has LOVING_WorkOrderTriggerHandler, LOVING_SchedulingService, etc.; production has WorkOrderTrigger, etc. | Critical — deploying from repo will create duplicate/conflicting triggers | Critical — a third WorkOrder trigger would be created | Field service could break on deploy | Do NOT deploy from repo until naming alignment is resolved; document canonical names | **P0** | Yes — Meg Logan |
+| Repo vs Org | 11 LOVING_-prefixed classes in repo do not exist in production (P0-A) | Repo has LOVING_WorkOrderTriggerHandler, LOVING_SchedulingService, etc.; production has WorkOrderTrigger, etc. | Critical — deploying from repo will create duplicate/conflicting triggers | Critical — a third WorkOrder trigger would be created | Field service could break on deploy | Do NOT deploy from repo until naming alignment is resolved; document canonical names | **P0-A** | Yes — Meg Logan |
 | Triggers | 312 unmanaged Apex classes | High class count for org at this stage | Medium — maintenance burden | Medium | Large surface area for bugs | Enforce class naming standards; group by domain | P2 | No |
 | Triggers | 24 unmanaged Apex triggers | Multiple triggers per object (see Section 6) | High | High | Non-deterministic behavior on WorkOrder, Opportunity | Merge to one-trigger-per-object pattern | P1 | No |
 | Deployment | 7 InvalidDraft flows | Block all deployments | Critical | Critical | No changes can be deployed | Resolve all 7 before next deployment attempt | **P0** | No |
 
 ### Narrative
 
-The org is in a deployment deadlock. Test coverage is 37.6% against a required 75%, which means no metadata can be deployed to production. The root cause is a single data model change (`Work_Order_Type__c` made required) that was not propagated to test factory methods — a common mistake that cascades across every test class that uses those factories. This is fixable in a focused sprint, but until it is fixed, no developer can ship anything.
+The org is in a deployment deadlock with two real blockers. **P0-B:** Test coverage is 73% against a required 75% — a 2-point gap. The root cause is test failures from the Salesforce Maps managed package trigger (`TriggerMPV2GeocodeAccount`) blocking Account inserts in test context, compounded by `Work_Order_Type__c` not reflected in all test factories. This is a narrow gap that is closable in a focused sprint.
 
-Compounding this, the repo and production org have diverged significantly. The 11 LOVING_-prefixed classes in the repo represent a planned naming convention that was apparently not applied when the code was originally deployed. Deploying from the repo without reconciling this divergence would create a third trigger on the WorkOrder object — on top of two already there — with potentially catastrophic consequences for field service operations.
+**P0-A:** The repo and production org have diverged. The 11 LOVING_-prefixed classes in the repo represent a naming convention that was never applied when code was originally deployed. Deploying from the repo without reconciling this divergence would create a third trigger on the WorkOrder object — on top of two already there — with potentially catastrophic consequences for field service operations. This requires explicit approval before any deployment proceeds.
 
 LovingSchedulingOverlayService and AquaConsoleController are the two largest classes in the org at approximately 86,000 and 94,000 lines respectively. Both have zero test coverage. These are extremely high-risk assets.
 
@@ -395,7 +397,7 @@ The priority sequence for dashboard development should follow the remediation pl
 | Named Credentials | 3: Rippling (configured), WEX GPS API (configured), Google Ads (broken) | Rippling and WEX operational; Google Ads broken | Medium | Medium | HR/payroll and fleet integrations functional; marketing integration broken | Fix Google Ads NC (see above) | P2 | No |
 | Auth Providers | Zero configured | No OAuth flows via Salesforce Auth Provider framework | Low — most integrations use Named Credentials | Low | No direct impact unless OAuth flow is needed | Document expected auth model; configure if any integration requires Auth Provider | P3 | No |
 | API Users | No dedicated API-only users identified | Unclear which user context integrations run under | High — if integrations run as named humans, license and audit trail problems | Medium | Integration failures affect named users' log view | Identify all integration users; create dedicated API user accounts where needed | P1 | No |
-| Platform Events | DailyDeliveredPlatformEvents at 100% | See Section 1 — event integrations dropping messages | Critical | Critical | RingCentral, GPS Insight data loss possible | See P0 remediation | **P0** | Yes — Meg Logan |
+| Platform Events | DailyDeliveredPlatformEvents | 129,995 / 130,000 remaining — 5 used (0.004%) | Low — no constraint | Low | No impact | No action needed | P3 | No |
 | RingCentral | Phone integration | Active package; assumed operational | Low | Low | Phone data in Salesforce | Confirm CTI functionality is working given platform event exhaustion | P1 | No |
 | Rippling | HR/payroll integration | Named credential configured | Low | Low | HR data flowing | Confirm sync is current; test with Rippling admin | P2 | No |
 | GPS Insight/WEX | Fleet integration | Named credential configured | Medium — platform event exhaustion may drop fleet events | High — fleet data loss during event limit exhaustion | Vehicle tracking data may be incomplete | See P0 platform event remediation | P1 | No |
@@ -424,7 +426,7 @@ The complete absence of session timeouts on 25 connected apps means that any OAu
 | Data | UAT test data in production | Test records in live data | High — compliance risk if test data contains PII | Low | Pollutes operational reports | Identify and delete after Meg Logan review | P1 | Yes — Meg Logan |
 | Data | NextDaySod data co-mingled | 86% of Account data belongs to separate entity | High — data governance and potential legal separation concern | Low | LOVING data accuracy impacted | Define data isolation policy with legal/ownership guidance | P1 | Yes — Meg Logan |
 | Audit | API version governance | API v66.0 active | Low | Low — current version | No issue | Pin API version in deployment tooling | P3 | No |
-| Risk | Deployment deadlock | Test coverage at 37.6%; cannot deploy | Critical — bug fixes and features cannot be shipped | Critical | Org is frozen; no changes can reach production | See Section 7 — fix test coverage root cause first | **P0** | No |
+| Risk | Deployment deadlock (P0-B) | Test coverage at 73%; need 75% | Critical — 2-point gap blocks all deployments | Critical | Org is frozen; no changes can reach production | Fix test Account insert failures (Salesforce Maps trigger); restore coverage above 75% | **P0-B** | No |
 | Risk | Dual Work Order model | Two canonical objects for work orders | Critical — architectural debt | Critical | All automation, reporting, and training affected | See Section 3 P0 recommendation | **P0** | Yes — Meg Logan |
 | Risk | Clientell AI beta in production | Unsupported pre-release software | High | High | Unpredictable behavior possible | Evaluate for production readiness; consider removal | P1 | Yes — Meg Logan |
 | Risk | Summer 2011 deprecated package | Decade-old package with no security updates | High | High — known vulnerabilities may be unpatched | Unknown hidden dependencies | Remove after dependency audit | P1 | Yes — Meg Logan |
@@ -485,7 +487,7 @@ The change control gap is a process risk: without a documented approval and test
 
 **What earns the 2:** The org uses a modern automation stack (Flow only, no Workflow Rules or Process Builder). Git-based version control is in place. The CLI toolchain is configured and pinned.
 
-**What limits the score:** Org-wide Apex test coverage is 37.6% (required minimum 75%) — no deployment can succeed. 100+ tests are actively failing. 7 InvalidDraft flows will block deployment validation. The repo and production org are dangerously out of sync (11 LOVING_-prefixed classes in repo do not exist in production). Deploying from the repo would create a third WorkOrder trigger. There is no documented sandbox-first change control process. Until coverage is fixed and the repo/org divergence is reconciled, the org is in a deployment deadlock.
+**What limits the score:** Org-wide Apex test coverage is 73% (required minimum 75%) — a 2-point gap blocks all deployments. Tests are failing due to Salesforce Maps trigger interference on Account inserts. 7 InvalidDraft flows will block deployment validation. The repo and production org are out of sync (11 LOVING_-prefixed classes in repo do not exist in production — P0-A). Deploying from the repo would create a third WorkOrder trigger. There is no documented sandbox-first change control process. Until coverage clears 75% and the repo/org divergence is reconciled, the org is in a deployment deadlock.
 
 ---
 
@@ -495,11 +497,9 @@ The change control gap is a process risk: without a documented approval and test
 
 ### Week 1 — Stop the Bleeding (P0s)
 
-1. **Fix Apex test factory for `Work_Order_Type__c`** — update all test factory methods to populate the required field; re-run full test suite; restore coverage to >75%. This is the single most blocking issue in the org.
-2. **Resolve 7 InvalidDraft flows** — fix or delete each to clear the deployment block.
-3. **Investigate and address ScheduledFlowRunLimit exhaustion** — identify top 10 scheduled flows by execution volume; disable or reschedule lowest-priority flows; monitor limit recovery.
-4. **Investigate and address DailyDeliveredPlatformEvents exhaustion** — identify event sources; implement backpressure; escalate to Salesforce support if needed.
-5. **Audit 70 cron jobs** — identify redundant or low-priority jobs; disable or reschedule to off-peak.
+1. **P0-A: Produce a repo/org reconciliation plan** — conduct a field-by-field and class-by-class diff between the repo and production; document canonical names; submit plan to Meg Logan for approval before any deploy runs. This must be resolved before any deployment is attempted.
+2. **P0-B: Fix test coverage to 75%** — resolve Salesforce Maps trigger interference on Account inserts (root cause of coverage gap); update all test factories for `Work_Order_Type__c`; re-run full test suite; confirm org-wide coverage clears 75%.
+3. **Resolve 7 InvalidDraft flows** — fix or delete each to clear the deployment validation block.
 
 ### Week 2 — Security and Access
 
@@ -611,7 +611,7 @@ The following items were identified during this audit as requiring explicit writ
 | 1 | Deactivate all 25 never-logged-in users | User management decision; some may be pending onboardings |
 | 2 | Remove "Salesforce.com CRM Dashboards" Summer 2011 package | Package removal is irreversible; unknown dependencies |
 | 3 | Evaluate/remove Clientell AI v0.5 from production | Business decision on a vendor relationship |
-| 4 | Purchase/upgrade DailyDeliveredPlatformEvents capacity | Cost decision |
+| 4 | ~~Purchase/upgrade DailyDeliveredPlatformEvents capacity~~ | ~~Cost decision~~ — **REMOVED: limit is healthy (5 of 130,000 used)** |
 | 5 | Dual Work Order model decision (WorkOrder vs Work_Order__c) | Foundational architectural decision affecting all operations |
 | 6 | NextDaySod data isolation strategy | Legal entity and data governance decision |
 | 7 | "Tester Profile" Guest User License deactivation | Confirm no active use case before deactivating |

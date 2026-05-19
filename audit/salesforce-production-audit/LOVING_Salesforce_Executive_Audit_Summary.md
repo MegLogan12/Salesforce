@@ -3,12 +3,14 @@
 **Platform:** https://loving.my.salesforce.com
 **Auditor:** Claude Code (read-only inspection, no changes made to the org)
 
+> **CORRECTION — 2026-05-19:** The original version of this summary stated that three daily governor limits were at or near 100% exhaustion. This was wrong. The `sf limits api display` output column is Remaining, not Used. ScheduledFlowRunLimit has 249,999/250,000 remaining (1 used). DailyDeliveredPlatformEvents has 129,995/130,000 remaining (5 used). DailyAsyncApexExecutions has 247,092/250,000 remaining (2,908 used, 1.2%). **There is no governor limit emergency.** The two real P0 blockers are: P0-A — metadata/repo mismatch; P0-B — org-wide Apex coverage at 73% (need 75%).
+
 ---
 
 ## TL;DR
 
 - **The platform cannot be deployed to today.** Org-wide Apex test coverage is 37.6% against a 75% requirement. 100+ tests are failing. 7 flows are in an invalid state. Any deployment attempt will fail.
-- **Three daily governor limits are at or near 100%.** Scheduled flows are not running. Platform events are dropping. Async Apex is exhausted. Automation that appears configured is silently not executing.
+- **Governor limits are healthy — previous finding was incorrect.** ScheduledFlowRunLimit: 1 of 250,000 used. DailyDeliveredPlatformEvents: 5 of 130,000 used. DailyAsyncApexExecutions: 2,908 of 250,000 used (1.2%). See correction notice above.
 - **Field Service Lightning is not operational.** 14 of 19 service territories have no assigned resources. All crew-type resources are inactive. 10 service appointments are unassigned and 8 are overdue.
 - **2,065 Cases have never moved out of "New" status.** Case management automation is non-functional. No case has been worked through the system.
 - **A deactivated former sysadmin (Frank Realmuto) has 15 active permission set assignments** including FieldServiceAdmin and DocuSign_Administrator, with a login recorded 46 days ago. This is an active security exposure.
@@ -44,9 +46,9 @@ The LOVING Salesforce org has the right foundation — FSL is licensed and confi
 
 ## What Is Broken
 
-- **Scheduled flow automation** — ScheduledFlowRunLimit is at 100%. Flows are not running.
-- **Platform event integrations** — DailyDeliveredPlatformEvents is at 100%. Events are dropping.
-- **Async Apex jobs** — DailyAsyncApexExecutions at 98.8%. Batch jobs and future methods are backed up or failing.
+- ~~**Scheduled flow automation**~~ — **CORRECTED: ScheduledFlowRunLimit is healthy** (1 of 250,000 used). No issue.
+- ~~**Platform event integrations**~~ — **CORRECTED: DailyDeliveredPlatformEvents is healthy** (5 of 130,000 used). No issue.
+- ~~**Async Apex jobs**~~ — **CORRECTED: DailyAsyncApexExecutions is healthy** (2,908 of 250,000 used, 1.2%). No issue.
 - **Case management** — 2,065 Cases are permanently stuck in "New." No assignment, routing, or escalation automation is functioning.
 - **FSL dispatching** — 14 of 19 territories have no resource members. Work cannot be assigned in those markets.
 - **Crew dispatch** — All C-type crew resources are inactive. Crew-based work cannot be dispatched at all.
@@ -139,8 +141,8 @@ The LOVING Salesforce org has the right foundation — FSL is licensed and confi
 
 The following items will cause any production deployment to fail and must be resolved before any deployment is attempted:
 
-1. **Org-wide Apex test coverage is 37.6%** — Salesforce requires 75% minimum. Deployment will hard-fail.
-2. **100+ failing Apex tests** — all test suites touching Work Orders are failing due to the Work_Order_Type__c required field not being reflected in test factories and validation rule interference from Work_Order__c. Deployment will hard-fail.
+1. **(P0-B) Org-wide Apex test coverage is 73%** — Salesforce requires 75% minimum. 2-point gap. Deployment will hard-fail until this clears. Root cause: Salesforce Maps trigger (`TriggerMPV2GeocodeAccount`) blocking Account inserts in test context, plus `Work_Order_Type__c` required field not reflected in all test factories.
+2. **(P0-A) Repo/org mismatch** — 11 LOVING_-prefixed classes in the repo do not exist in production. Deploying without reconciliation would add a third WorkOrder trigger alongside two already active, creating a high-probability data corruption scenario.
 3. **7 InvalidDraft flows** — any deployment that includes these flows will fail. They must be fixed or excluded from the deploy scope.
 4. **Repo/org mismatch (LOVING_-prefixed classes)** — deploying the current repo without a reconciliation plan will add a third trigger to WorkOrder alongside two existing triggers. This must be assessed and a deployment strategy approved before any deploy runs.
 
@@ -171,7 +173,7 @@ The following data issues make reports, dashboards, and operational decisions un
 | Inventory Readiness | 1/10 | Warehouse location mis-configured; zero ProductItems; inventory tracking has never been deployed |
 | Reporting Readiness | 2/10 | 300 reports exist, 154 never run, only 2 dashboards, no coverage of FSL / Aqua / inventory / QI / margin |
 | Security / Permissions | 4/10 | Active permission exposure from deactivated former sysadmin; 340 unrationalised permission sets; guest profile in production; no session timeouts |
-| Deployment Readiness | 2/10 | Blocked by 37.6% test coverage, 100+ failing tests, 7 invalid flows, and repo/org mismatch |
+| Deployment Readiness | 2/10 | Blocked by P0-B (73% coverage, need 75%), P0-A (repo/org mismatch), 100+ failing tests, and 7 invalid flows |
 
 ---
 
@@ -203,21 +205,16 @@ Focus: Unblock deployment. Stop the bleeding on governor limits. Fix immediate s
 - Deactivate "Tester Profile" with Guest User License
 - Audit and correct PayPal/Stripe/Adyen remote site settings to remove sandbox endpoints from production
 
-**Week 1 — Governor limit emergency response:**
-- Audit all 70 active cron jobs; deactivate redundant or stale scheduled jobs (Meg Logan approval required for any deactivation)
-- Identify and pause any runaway async Apex jobs consuming DailyAsyncApexExecutions
-- Identify and remove or pause the highest-volume platform event producers
-
-**Week 2 — Deployment blocker: test coverage and failing tests:**
-- Update test factory to reflect Work_Order_Type__c as a required field
-- Resolve validation rule interference from Work_Order__c in test context
-- Assign all 79 zero-coverage classes to developers; begin coverage sprint
-- Fix 7 InvalidDraft flows
-
-**Week 3 — Repo/org reconciliation:**
+**Week 1 — P0-A: Repo/org reconciliation:**
 - Conduct a full diff between the repo and production org
 - Produce a reconciliation plan for LOVING_-prefixed classes and the third trigger risk
 - Submit reconciliation plan to Meg Logan for approval before any deployment proceeds
+
+**Week 1 — P0-B: Test coverage and failing tests:**
+- Fix Salesforce Maps trigger (`TriggerMPV2GeocodeAccount`) interference in test Account insert context
+- Update test factory to reflect Work_Order_Type__c as a required field
+- Re-run full test suite; confirm coverage clears 75%
+- Fix 7 InvalidDraft flows
 
 **Week 4 — Data baseline:**
 - Remove UAT test records from production (Meg Logan approval required)
@@ -270,7 +267,7 @@ The following decisions involve production changes, data modification, personnel
 
 1. **Frank Realmuto permission revocation** — removing permission sets from a deactivated user
 2. **Deactivation or modification of any cron jobs** — 70 active scheduled jobs; deactivating any could break running workflows
-3. **DailyAsyncApexExecutions remediation** — any action that pauses or removes async job submissions
+3. ~~**DailyAsyncApexExecutions remediation**~~ — **REMOVED: limit is healthy (1.2% used)**
 4. **Deployment to production** — all deployment actions require the repo/org reconciliation plan to be reviewed and approved
 5. **Case management remediation** — any automation or bulk update that touches 2,065 stuck Cases
 6. **Crew resource reactivation** — activating crew resources determines who can receive work assignments

@@ -21,16 +21,14 @@ Priority labels follow a four-tier system:
 
 ## P0 — Production-Breaking / Deployment-Blocking
 
+> **CORRECTION:** P0-01, P0-02, and P0-03 from the original audit were based on a misread of `sf limits api display` output (Remaining column was read as Used). All three governor limits are healthy. They have been moved to P3. The two real P0 blockers are P0-A and P0-B below.
+
 | ID | Item | Root Cause | Impact if Unresolved | Owner | Approval Needed | Est. Effort |
 |----|------|-----------|----------------------|-------|----------------|-------------|
-| P0-01 | ScheduledFlowRunLimit at 100% (250,000/250,000) | 70 active cron jobs + scheduled flows consuming entire daily allocation | All scheduled flows are silently not running today. Any flow-driven automation (assignment, notifications, escalations) is frozen. | Admin | Meg Logan Approval Required | L |
-| P0-02 | DailyDeliveredPlatformEvents at 100% (130,000/130,000) | Event volume exceeds org limit | All platform event integrations are dropping events. Any system relying on event-driven messaging is silently failing. | Admin | No | M |
-| P0-03 | DailyAsyncApexExecutions at 98.8% (247,092/250,000) | 70 active cron jobs + runaway async Apex jobs | Async Apex is functionally exhausted. Batch jobs, future methods, and queueable chains are failing or queued indefinitely. | Admin | Meg Logan Approval Required | M |
-| P0-04 | Org-wide Apex test coverage at 37.6% (need 75%) | 79 Apex classes/triggers at 0% coverage; test factory not updated for required fields | Any full metadata deployment will fail with a test coverage error. Deployment is blocked until coverage reaches 75%+. | Dev | No | XXL |
-| P0-05 | 100+ failing Apex tests | Work_Order_Type__c required field not reflected in test factory; validation rule interference from Work_Order__c custom object | All test suites are failing. Cannot validate deployments. Test results are unreliable for any class touching Work Orders. | Dev | No | L |
-| P0-06 | REPO vs ORG MISMATCH — LOVING_-prefixed classes in repo do not exist in org | Development work done in repo was never deployed; org has diverged | Deploying the current repo would add a third trigger to WorkOrder alongside WorkOrderTrigger + WorkOrderFieldManagerMobileSync — risk of duplicate task creation, double escalations, and corrupted Work Order records. | Dev | Meg Logan Approval Required | L |
-| P0-07 | 7 InvalidDraft flows in org | Flows saved in draft state with validation errors | Any deployment that includes these flows will fail. They block the deploy pipeline and cannot be deployed or referenced by other automation. | Admin | No | M |
-| P0-08 | 2,065 Cases stuck in "New" status | Case management workflow non-functional — no routing, assignment, or automation moving cases forward | Customer support is non-functional. 2,065 Cases have never progressed. No case is being worked. | Admin | Meg Logan Approval Required | XL |
+| P0-A | REPO vs ORG MISMATCH — LOVING_-prefixed classes in repo do not exist in org | Development work done in repo was never deployed; org has diverged | Deploying the current repo would add a third trigger to WorkOrder alongside WorkOrderTrigger + WorkOrderFieldManagerMobileSync — risk of duplicate task creation, double escalations, and corrupted Work Order records. | Dev | Meg Logan Approval Required | L |
+| P0-B | Org-wide Apex test coverage at 73% (need 75%) | Salesforce Maps managed package trigger (`TriggerMPV2GeocodeAccount`) blocks Account inserts in test context; `Work_Order_Type__c` required field not reflected in all test factories | Any deployment will fail at the coverage gate. 2-point gap blocks all metadata changes from reaching production. | Dev | No | M |
+| P0-C | 100+ failing Apex tests (related to P0-B) | Same root causes as P0-B | Test failures prevent reliable deploy validation and contribute to the coverage gap. | Dev | No | M |
+| P0-D | 7 InvalidDraft flows in org | Flows saved in draft state with validation errors | Any deployment that includes these flows will fail. They block the deploy pipeline and cannot be deployed or referenced by other automation. | Admin | No | M |
 
 ---
 
@@ -104,7 +102,10 @@ Priority labels follow a four-tier system:
 | P3-08 | 3 service appointments with null WorkType | Created without required FSL field | 3 service appointments have no work type, meaning the FSL scheduler has no duration or skill requirement data to work with. | Admin | No | XS |
 | P3-09 | LovingSchedulingOverlayService (~86K lines) at 0% coverage | Large class deployed without test coverage | An 86,000-line class has zero test coverage. Any bug in this class is undetectable until it fails in production. | Dev | No | XXL |
 | P3-10 | AquaConsoleController (~94K lines) at 0% coverage | Large class deployed without test coverage | A 94,000-line class has zero test coverage. This is the largest untested code asset in the org. | Dev | No | XXL |
-| P3-11 | 70 active cron jobs contributing to limit exhaustion | Cron jobs added without auditing existing scheduled jobs | 70 scheduled jobs consume the daily async and scheduled flow limits. Many are likely redundant or stale. Auditing and pruning these jobs would meaningfully reduce P0-01 and P0-03 limit pressure. | Admin | Meg Logan Approval Required | M |
+| P3-11 | 70 active cron jobs — consolidation opportunity | Cron jobs added without auditing existing scheduled jobs | 70 scheduled jobs are running. Limits are healthy (DailyAsyncApexExecutions: 1.2% used). Many jobs are likely redundant or stale. Pruning would reduce noise and improve org manageability. | Admin | Meg Logan Approval Required | M |
+| P3-12 | ScheduledFlowRunLimit: 1 of 250,000 used | Previously misclassified as P0 — limit is healthy | No operational impact | Admin | No | — |
+| P3-13 | DailyDeliveredPlatformEvents: 5 of 130,000 used | Previously misclassified as P0 — limit is healthy | No operational impact | Admin | No | — |
+| P3-14 | DailyAsyncApexExecutions: 2,908 of 250,000 used (1.2%) | Previously misclassified as P0 — limit is healthy | No operational impact today | Admin | No | — |
 
 ---
 
@@ -130,19 +131,19 @@ These items are real but should not be prioritized until P0 and P1 items are res
 The following sequencing must be respected. Working P1 items before their P0 dependencies are resolved will produce incomplete or failed results.
 
 **Before any deployment can proceed:**
-- P0-04 (test coverage to 75%) must be resolved
-- P0-05 (failing tests) must be resolved
-- P0-06 (repo/org mismatch) must be assessed and a deployment strategy approved by Meg Logan
-- P0-07 (InvalidDraft flows) must be resolved
+- P0-A (repo/org mismatch) must be assessed and a deployment strategy approved by Meg Logan
+- P0-B (test coverage to 75%) must be resolved
+- P0-C (failing tests) must be resolved
+- P0-D (InvalidDraft flows) must be resolved
 
-**Before P0-04 and P0-05 can be resolved:**
+**Before P0-B and P0-C can be resolved:**
+- Salesforce Maps trigger (`TriggerMPV2GeocodeAccount`) interference on Account inserts must be fixed in test context
 - The test factory must be updated for Work_Order_Type__c (required field)
-- Validation rule interference from Work_Order__c must be addressed
-- The 79 zero-coverage classes must be assigned to developers with a coverage sprint
+- Coverage must clear 75% org-wide before any deployment validation will pass
 
 **Before FSL scheduling can function (P1-01 through P1-05):**
-- P0-01 (ScheduledFlowRunLimit) must be brought below 100% or FSL scheduled flows will not run even after territory/resource fixes
-- P0-03 (DailyAsyncApexExecutions) must be reduced or FSL async operations will queue indefinitely
+- Governor limits are healthy — no limit blockers exist for FSL scheduling
+- P0-A and P0-B must be resolved first so that FSL configuration changes can be deployed
 
 **Before Aqua operations can function (P1-13, P1-14):**
 - Aqua custom fields must be deployed to production (P1-14) before Aqua flows are activated
@@ -156,5 +157,5 @@ The following sequencing must be respected. Working P1 items before their P0 dep
 - P2-03 (deactivated user permission cleanup) should follow immediately
 - P2-02 (340 permission sets) is a longer-term rationalization project that requires P2-03 to be clean first
 
-**Before limit exhaustion (P0-01, P0-02, P0-03) can be sustainably resolved:**
-- P3-11 (70 cron jobs) must be audited and pruned — this is the primary driver of limit consumption
+**Governor limits (previously P0-01, P0-02, P0-03 — now P3-12/13/14):**
+- No action required. All three limits are healthy. P3-11 (cron job audit) is a housekeeping item, not an emergency.
