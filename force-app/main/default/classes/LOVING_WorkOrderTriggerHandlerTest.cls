@@ -20,8 +20,16 @@
  *  13. GP calculations
  *  14. Trigger guard prevents recursion
  */
-@IsTest(SeeAllData=true)
+@IsTest
 private class LOVING_WorkOrderTriggerHandlerTest {
+
+    @TestSetup
+    static void setupBypass() {
+        Extentia_SIM__MapPlotterTriggerSettings__c s =
+            Extentia_SIM__MapPlotterTriggerSettings__c.getOrgDefaults();
+        s.Extentia_SIM__Bypass_Trigger__c = true;
+        upsert s;
+    }
 
     // ── Test Data Factory ─────────────────────────────────────────────────────
     private static Account makeBuilderNational() {
