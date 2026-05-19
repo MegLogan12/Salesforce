@@ -15,7 +15,6 @@
         <members>LOVING_WorkOrderTriggerHandler</members>
         <members>LOVING_TriggerGuard</members>
         <members>LOVING_MeasuringCupService</members>
-        <members>LOVING_QIAutoCloseService</members>
         <members>LOVING_AquaTicketService</members>
         <members>LOVING_BucketEngineScheduler</members>
         <members>LOVING_BucketEngineService</members>
@@ -30,11 +29,7 @@
     <types>
         <!-- WorkOrder custom fields -->
         <members>WorkOrder.Work_Order_Type__c</members>
-        <members>WorkOrder.Job_Type__c</members>
-        <members>WorkOrder.Builder__c</members>
-        <members>WorkOrder.Community__c</members>
         <members>WorkOrder.Builder_Regional__c</members>
-        <members>WorkOrder.Lot__c</members>
         <members>WorkOrder.Lot_Number__c</members>
         <members>WorkOrder.Lot_Address__c</members>
         <members>WorkOrder.PO_Number__c</members>
@@ -73,13 +68,10 @@
         <members>WorkOrder.Scope_Outside_PO__c</members>
         <members>WorkOrder.MPO_Lot__c</members>
         <members>WorkOrder.Outside_PO_Notes__c</members>
-        <members>WorkOrder.Shift_Start_Time__c</members>
         <members>WorkOrder.Lunch_Minutes__c</members>
         <members>WorkOrder.Cushion_Minutes__c</members>
         <members>WorkOrder.Goal_Headcount__c</members>
         <members>WorkOrder.Actual_Headcount__c</members>
-        <members>WorkOrder.Goal_Hours__c</members>
-        <members>WorkOrder.Actual_Hours__c</members>
         <members>WorkOrder.Variance_Hours__c</members>
         <members>WorkOrder.Travel_Minutes_Planned__c</members>
         <members>WorkOrder.Zone__c</members>
@@ -101,7 +93,6 @@
         <members>WorkOrder.Red_Flag_Timestamp__c</members>
         <members>WorkOrder.Finish_Job_Required__c</members>
         <members>WorkOrder.Finish_Job_Reason__c</members>
-        <members>WorkOrder.FJ_Count__c</members>
         <members>WorkOrder.Closeout_Photos_Attached__c</members>
         <members>WorkOrder.Closeout_Quantities_Confirmed__c</members>
         <members>WorkOrder.Closeout_Notes__c</members>
@@ -166,7 +157,6 @@
     <types>
         <members>WorkOrder.Takeoff_Required_Before_Scheduling</members>
         <members>WorkOrder.Site_Readiness_Required</members>
-        <members>WorkOrder.Loading_Ticket_Required</members>
         <members>WorkOrder.Red_Flag_Notes_Required</members>
         <members>WorkOrder.Closeout_Photos_Required</members>
         <members>WorkOrder.Closeout_Quantities_Required</members>
