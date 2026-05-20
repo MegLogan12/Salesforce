@@ -139,45 +139,45 @@
         </rules>
     </decisions>
     <description>Sends a customer email when a ServiceAppointment is Scheduled or Rescheduled. For Rescheduled appointments, includes the previous and new appointment windows in the body.</description>
-    <formulas>
+    <textTemplates>
         <name>Rescheduled_Email_Body</name>
-        <dataType>String</dataType>
-        <expression>&quot;Dear &quot; &amp; {!varContact.FirstName} &amp; &quot;,
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Dear {!varContact.FirstName},
 
 We are writing to let you know that your appointment has been rescheduled.
 
-Appointment: &quot; &amp; {!$Record.AppointmentNumber} &amp; &quot;
-New Date &amp; Time: &quot; &amp; TEXT({!$Record.SchedStartTime}) &amp; &quot;
+Appointment: {!$Record.AppointmentNumber}
+New Date &amp; Time: {!$Record.SchedStartTime}
 
 We apologize for any inconvenience this change may cause. If this new time does not work for you, or if you have any questions, please contact us as soon as possible and we will work with you to find a suitable alternative.
 
 Thank you for your understanding and for choosing LOVING Group.
 
 Warm regards,
-LOVING Group Scheduling Team&quot;</expression>
-    </formulas>
-    <formulas>
+LOVING Group Scheduling Team</text>
+    </textTemplates>
+    <textTemplates>
         <name>Rescheduled_Subject</name>
-        <dataType>String</dataType>
-        <expression>&quot;Your appointment has been rescheduled — &quot; &amp; {!$Record.AppointmentNumber}</expression>
-    </formulas>
-    <formulas>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Your appointment has been rescheduled — {!$Record.AppointmentNumber}</text>
+    </textTemplates>
+    <textTemplates>
         <name>Scheduled_Email_Body</name>
-        <dataType>String</dataType>
-        <expression>&quot;Dear &quot; &amp; {!varContact.FirstName} &amp; &quot;,
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Dear {!varContact.FirstName},
 
 We are pleased to confirm your upcoming appointment with LOVING Group.
 
-Appointment: &quot; &amp; {!$Record.AppointmentNumber} &amp; &quot;
-Date &amp; Time: &quot; &amp; TEXT({!$Record.SchedStartTime}) &amp; &quot;
+Appointment: {!$Record.AppointmentNumber}
+Date &amp; Time: {!$Record.SchedStartTime}
 
 If you have any questions or need to make changes, please don&apos;t hesitate to contact us.
 
 Thank you for choosing LOVING Group. We look forward to seeing you!
 
 Warm regards,
-LOVING Group Scheduling Team&quot;</expression>
-    </formulas>
+LOVING Group Scheduling Team</text>
+    </textTemplates>
     <interviewLabel>LOVING SA Customer Notification {!$Flow.CurrentDateTime}</interviewLabel>
     <label>LOVING SA Customer Notification</label>
     <processMetadataValues>
