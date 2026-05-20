@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pipeline_Bucket__c</fullName>
+    <label>Pipeline Bucket</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>false</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Ready_to_Schedule</fullName>
+                <default>false</default>
+                <label>Ready_to_Schedule</label>
+            </value>
+            <value>
+                <fullName>Clear for Schedule</fullName>
+                <default>false</default>
+                <label>Clear for Schedule</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

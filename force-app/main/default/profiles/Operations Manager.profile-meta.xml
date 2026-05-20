@@ -229,4 +229,8 @@
         <default>false</default>
         <visible>true</visible>
     </applicationVisibilities>
+    <classAccesses>
+        <apexClass>SchedulingConsoleController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
 </Profile>

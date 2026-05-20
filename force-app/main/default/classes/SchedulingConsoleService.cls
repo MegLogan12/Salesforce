@@ -44,7 +44,7 @@ public without sharing class SchedulingConsoleService {
 
         List<String> closedStatuses = new List<String>{'Approved','Invoiced','Paid','Closed','Pending Closeout','FM QI Review'};
         d.closedThisMonth = [SELECT COUNT() FROM WorkOrder
-            WHERE Status__c IN :closedStatuses
+            WHERE Status IN :closedStatuses
               AND Closed_Date__c >= :monthStart AND Closed_Date__c <= :monthEnd];
 
         d.stopsPerDayAvg = d.workDaysElapsed > 0
@@ -63,7 +63,7 @@ public without sharing class SchedulingConsoleService {
             Object[] cfg = buckets.get(lbl);
             List<String> statuses = (List<String>)cfg[1];
             Integer cnt = [SELECT COUNT() FROM WorkOrder
-                WHERE Status__c IN :statuses
+                WHERE Status IN :statuses
                   AND Scheduled_Date__c >= :monthStart AND Scheduled_Date__c <= :monthEnd];
             SchedulingConsoleController.StatusBarDto b = new SchedulingConsoleController.StatusBarDto();
             b.label = lbl; b.count = cnt; b.color = (String)cfg[0];
@@ -113,7 +113,7 @@ public without sharing class SchedulingConsoleService {
             // Fallback: query WorkOrder directly
             List<WorkOrder> wos = [
                 SELECT Id, WorkOrderNumber, Crew__c, Crew__r.Name, Field_Manager__r.Name, Stop_Sequence__c,
-                       Route_Distance_Miles__c, Status__c, Community__r.Name,
+                       Route_Distance_Miles__c, Status, Community__r.Name,
                        Sod_Sqft__c, Work_Order_Type__c,
                        Lot_Latitude__c, Lot_Longitude__c
                 FROM WorkOrder
@@ -444,11 +444,11 @@ public without sharing class SchedulingConsoleService {
         // Sub_Status__c not yet deployed. When deployed, add:
         //   OR Sub_Status__c = 'Same Day' to the WHERE clause
         //   and Sub_Status__c to the SELECT.
-        for (WorkOrder wo : [SELECT Id, WorkOrderNumber, Community__r.Name, Status__c, Work_Order_Type__c
-            FROM WorkOrder WHERE Status__c = 'NFI'
+        for (WorkOrder wo : [SELECT Id, WorkOrderNumber, Community__r.Name, Status, Work_Order_Type__c
+            FROM WorkOrder WHERE Status = 'NFI'
             AND Schedule_Locked__c = true AND Scheduled_Date__c = TODAY ORDER BY WorkOrderNumber LIMIT 10]) {
             SchedulingConsoleController.PendingItemDto r = makePendingRow(wo, '🚨', '#fce8e8', 'Urgent', 'chip chip-red');
-            r.blockDetail = (wo.Work_Order_Type__c != null ? wo.Work_Order_Type__c + ' · ' : '') + wo.Status__c;
+            r.blockDetail = (wo.Work_Order_Type__c != null ? wo.Work_Order_Type__c + ' · ' : '') + wo.Status;
             pi.sameDayUrgent.add(r);
         }
 
