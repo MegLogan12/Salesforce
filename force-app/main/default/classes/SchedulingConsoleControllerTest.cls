@@ -46,7 +46,6 @@ private class SchedulingConsoleControllerTest {
         wo1.Crew__c            = crew.Id;
         wo1.Sod_Sqft__c        = 4000;
         wo1.Work_Order_Type__c = 'Production Install';
-        wo1.ServiceTerritoryId = st.Id;
         insert wo1;
 
         // WorkOrder 2: ready to schedule (pre-pipeline)
