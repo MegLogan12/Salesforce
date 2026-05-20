@@ -8,7 +8,7 @@ const LINKS = {
 };
 
 export default class LovingOpsLinks extends LightningElement {
-    @api label = 'Ops Links';
+    @api label;
     openWex()      { window.open(LINKS.wex,      '_blank'); }
     openWeather()  { window.open(LINKS.weather,  '_blank'); }
     openRippling() { window.open(LINKS.rippling, '_blank'); }

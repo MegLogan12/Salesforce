@@ -5,4 +5,9 @@
     <targets>
         <target>lightning__UtilityBar</target>
     </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__UtilityBar">
+            <property name="label" type="String" default="Ops Links" label="Button Label"/>
+        </targetConfig>
+    </targetConfigs>
 </LightningComponentBundle>
