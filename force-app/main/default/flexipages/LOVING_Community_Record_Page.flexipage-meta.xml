@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
-    <activationContext>
-        <identifier>a1546ff3-fef4-4396-93d4-255f8409bb18</identifier>
-        <type>OrgDefault</type>
-    </activationContext>
     <flexiPageRegions>
         <name>header</name>
         <type>Region</type>
@@ -302,4 +298,10 @@
         <name>flexipage:recordHomeTemplateDesktop</name>
     </template>
     <type>RecordPage</type>
+    <activationContexts>
+    <activationContext>
+        <identifier>a1546ff3-fef4-4396-93d4-255f8409bb18</identifier>
+        <type>OrgDefault</type>
+    </activationContext>
+    </activationContexts>
 </FlexiPage>

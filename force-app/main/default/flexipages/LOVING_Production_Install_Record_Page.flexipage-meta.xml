@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
-    <activationContext>
-        <app>Field_Service_Console</app>
-        <identifier>74233442-b6e7-49d4-9770-91ed03c9ac02</identifier>
-        <recordType>Production_Install</recordType>
-        <type>AppAndRecordType</type>
-    </activationContext>
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -40,4 +34,12 @@
         <name>flexipage:recordHomeTemplateDesktop</name>
     </template>
     <type>RecordPage</type>
+    <activationContexts>
+    <activationContext>
+        <app>Field_Service_Console</app>
+        <identifier>74233442-b6e7-49d4-9770-91ed03c9ac02</identifier>
+        <recordType>Production_Install</recordType>
+        <type>AppAndRecordType</type>
+    </activationContext>
+    </activationContexts>
 </FlexiPage>
