@@ -1740,6 +1740,9 @@
             <tab>Community__c</tab>
         </mappings>
         <mappings>
+            <tab>Dispatch_Map</tab>
+        </mappings>
+        <mappings>
             <tab>FSL__FieldService</tab>
         </mappings>
         <mappings>
@@ -1750,9 +1753,6 @@
         </mappings>
         <mappings>
             <tab>Scheduling_Console</tab>
-        </mappings>
-        <mappings>
-            <tab>Dispatch_Map</tab>
         </mappings>
         <mappings>
             <tab>standard-Account</tab>

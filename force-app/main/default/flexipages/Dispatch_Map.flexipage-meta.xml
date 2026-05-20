@@ -3,7 +3,7 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>c:lovingDispatchMap</componentName>
+                <componentName>lovingDispatchMap</componentName>
                 <identifier>dispatch_map_main</identifier>
             </componentInstance>
         </itemInstances>
