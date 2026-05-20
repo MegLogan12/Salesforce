@@ -65,6 +65,26 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
+        <comment>Outdoor Living builder division account view.</comment>
+        <content>LOVING_Account_Builder_Division_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Builder_Market</recordType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>Outdoor Living builder parent account view.</comment>
+        <content>LOVING_Account_Builder_Parent_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Builder_Parent</recordType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
         <comment>Outdoor Living campaign workspace view.</comment>
         <content>ODL_Campaign_Record_Page</content>
         <formFactor>Large</formFactor>
