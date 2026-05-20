@@ -1,0 +1,718 @@
+<template>
+
+<!-- Console identity banner -->
+<div class="sc-banner">
+    <div class="sc-banner-icon">📅</div>
+    <div class="sc-banner-text">
+        <div class="sc-banner-title">LOVING Schedule Console</div>
+        <div class="sc-banner-sub">{todayDisplay} · {territory}</div>
+    </div>
+    <div class="sc-banner-kpis">
+        <div class="sc-bk">
+            <span class="sc-bk-n">{todayKpi.crewsOut}</span>
+            <span class="sc-bk-l">Crews Out</span>
+        </div>
+        <div class="sc-bk">
+            <span class="sc-bk-n">{unscheduledCount}</span>
+            <span class="sc-bk-l">Unscheduled</span>
+        </div>
+        <div class={blockedBannerCls}>
+            <span class="sc-bk-n">{blockedCount}</span>
+            <span class="sc-bk-l">Blocked</span>
+        </div>
+        <div class={requestBannerCls}>
+            <span class="sc-bk-n">{requestCount}</span>
+            <span class="sc-bk-l">Requests</span>
+        </div>
+    </div>
+</div>
+
+<!-- Tab navigation -->
+<div class="sf-nav">
+    <template for:each={tabs} for:item="t">
+        <button key={t.id} data-id={t.id} class={t.cls} onclick={handleTab}>
+            {t.label}
+            <template if:true={t.badge}><span class="num-badge">{t.badge}</span></template>
+        </button>
+    </template>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:8px;padding-right:4px">
+        <template for:each={divisionChips} for:item="dc">
+            <button key={dc.value} data-div={dc.value} class={dc.cls} onclick={handleDivChip}>{dc.label}</button>
+        </template>
+        <button class="sf-btn" onclick={handleRefreshAll} style="margin-left:8px">↻ Refresh</button>
+    </div>
+</div>
+
+<!-- Loading -->
+<template if:true={isLoading}>
+    <div class="sc-spinner"><lightning-spinner alternative-text="Loading" size="small"></lightning-spinner></div>
+</template>
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 1 — TODAY
+══════════════════════════════════════════════════════ -->
+<template if:true={isToday}>
+<div class="sf-body">
+
+    <!-- KPI strip -->
+    <div class="g6" style="margin-bottom:14px">
+        <div class="kpi kb"><div class="kn big">{todayKpi.crewsOut}</div><div class="kl">Crews Out</div></div>
+        <div class="kpi kb"><div class="kn big">{todayKpi.stopsTotal}</div><div class="kl">Stops Today</div></div>
+        <div class="kpi kg"><div class="kn big">{todayKpi.stopsCompleted}</div><div class="kl">Completed</div></div>
+        <div class="kpi ka"><div class="kn big">{todayKpi.stopsRemaining}</div><div class="kl">Remaining</div></div>
+        <div class="kpi kr"><div class="kn big">{todayKpi.issueCount}</div><div class="kl">Issues</div></div>
+        <div class="kpi kp"><div class="kn big">{todayKpi.readyCount}</div><div class="kl">Ready to Schedule</div></div>
+    </div>
+
+    <!-- Weather radar & live traffic -->
+    <div class="g2" style="margin-bottom:14px">
+        <div class="card" style="margin-bottom:0">
+            <div class="ch">
+                <div class="ci" style="background:#0070d2">🌧</div>
+                <h3>Live Weather Radar — {territory}</h3>
+                <span class="ch-note">Windy.com · updates every 10 min</span>
+            </div>
+            <div class="map-frame-wrap">
+                <iframe src={weatherMapUrl} class="map-frame" frameborder="0" scrolling="no" allowfullscreen title="Live weather radar"></iframe>
+            </div>
+        </div>
+        <div class="card" style="margin-bottom:0">
+            <div class="ch">
+                <div class="ci" style="background:#c23934">🚦</div>
+                <h3>Live Traffic — {territory}</h3>
+                <span class="ch-note">Waze · real-time incidents and conditions</span>
+            </div>
+            <div class="map-frame-wrap">
+                <iframe src={trafficMapUrl} class="map-frame" frameborder="0" allowfullscreen title="Live traffic map"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Today's stops -->
+    <div class="card">
+        <div class="ch"><div class="ci" style="background:#0070d2">📋</div><h3>Today's Schedule Stops</h3></div>
+        <div class="cb" style="padding:0">
+            <template if:true={hasTodayStops}>
+                <table class="tbl">
+                    <thead><tr>
+                        <th>Work Order</th><th>Community</th><th>Lot</th><th>Crew</th>
+                        <th>FM</th><th>Time</th><th class="num">Goal Hrs</th><th>Status</th>
+                    </tr></thead>
+                    <tbody>
+                        <template for:each={todayStops} for:item="s">
+                            <tr key={s.id}>
+                                <td><span class="nl" data-id={s.id} onclick={handleNavigateWO}>{s.woName}</span></td>
+                                <td>{s.community}</td><td>{s.lot}</td><td>{s.crew}</td>
+                                <td>{s.fm}</td><td>{s.scheduledTime}</td>
+                                <td class="num">{s.goalHours}</td>
+                                <td><span class={s.statusCls}>{s.statusLabel}</span></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={hasTodayStops}>
+                <div style="padding:20px;text-align:center;color:#54698d;font-size:12px">No stops scheduled for today</div>
+            </template>
+        </div>
+    </div>
+
+    <!-- FM overview -->
+    <div class="card last">
+        <div class="ch"><div class="ci" style="background:#534ab7">👤</div><h3>Field Manager Summary — Today</h3></div>
+        <div class="cb" style="padding:0">
+            <template if:true={hasTodayFMs}>
+                <table class="tbl">
+                    <thead><tr>
+                        <th>Field Manager</th><th>Territory</th><th class="num">Open WOs</th>
+                        <th class="num">Scheduled</th><th class="num">Crews</th><th class="num">Stops</th><th>Status</th>
+                    </tr></thead>
+                    <tbody>
+                        <template for:each={todayFMCards} for:item="fm">
+                            <tr key={fm.id}>
+                                <td><span class="nl">{fm.name}</span></td>
+                                <td>{fm.territory}</td>
+                                <td class="num">{fm.openWOs}</td>
+                                <td class="num">{fm.scheduledWOs}</td>
+                                <td class="num">{fm.crewsToday}</td>
+                                <td class="num">{fm.stopsToday}</td>
+                                <td><span class={fm.statusCls}>{fm.statusLabel}</span></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={hasTodayFMs}>
+                <div style="padding:20px;text-align:center;color:#54698d;font-size:12px">No field manager data available</div>
+            </template>
+        </div>
+    </div>
+
+</div><!-- /sf-body today -->
+</template><!-- /isToday -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 2 — UNSCHEDULED WORK
+══════════════════════════════════════════════════════ -->
+<template if:true={isUnscheduled}>
+<div class="sf-body">
+
+    <!-- WO type filters -->
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+        <template for:each={woTypeFilters} for:item="f">
+            <button key={f.value} data-type={f.value} class={f.cls} onclick={handleWoTypeFilter}>{f.label}</button>
+        </template>
+    </div>
+
+    <div class="card last">
+        <div class="ch"><div class="ci" style="background:#fe9339">⏳</div><h3>Unscheduled Work Orders</h3></div>
+        <div class="cb" style="padding:0">
+            <template if:true={hasUnscheduledRows}>
+                <table class="tbl">
+                    <thead><tr>
+                        <th>Work Order</th><th>Type</th><th>Community</th><th>Lot</th>
+                        <th>FM</th><th class="num">Days Waiting</th><th>Readiness</th><th>Status</th><th>Actions</th>
+                    </tr></thead>
+                    <tbody>
+                        <template for:each={unscheduledRows} for:item="wo">
+                            <tr key={wo.id}>
+                                <td><span class="nl" data-id={wo.id} onclick={handleNavigateWO}>{wo.woName}</span></td>
+                                <td>{wo.woType}</td><td>{wo.community}</td><td>{wo.lot}</td><td>{wo.fm}</td>
+                                <td class="num"><span style={wo.daysStyle}>{wo.daysWaiting}</span></td>
+                                <td><span class={wo.readinessCls}>{wo.readiness}</span></td>
+                                <td><span class={wo.statusCls}>{wo.statusLabel}</span></td>
+                                <td>
+                                    <button class="sf-btn primary" data-id={wo.id} onclick={handleSendToScheduling} style="font-size:11px;padding:3px 8px">Send to FSL</button>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={hasUnscheduledRows}>
+                <div style="padding:20px;text-align:center;color:#54698d;font-size:12px">No unscheduled work orders — all caught up</div>
+            </template>
+        </div>
+    </div>
+
+</div><!-- /sf-body unscheduled -->
+</template><!-- /isUnscheduled -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 3 — SCHEDULED WORK
+══════════════════════════════════════════════════════ -->
+<template if:true={isScheduled}>
+<div class="sf-body">
+
+    <div class="card last">
+        <div class="ch"><div class="ci" style="background:#04844b">📅</div><h3>Scheduled Service Appointments</h3></div>
+        <div class="cb" style="padding:0">
+            <template if:true={hasScheduledRows}>
+                <table class="tbl">
+                    <thead><tr>
+                        <th>SA #</th><th>Work Order</th><th>Community</th>
+                        <th>Territory</th><th>Crew</th><th>Scheduled Date</th><th class="num">Duration</th><th>Status</th>
+                    </tr></thead>
+                    <tbody>
+                        <template for:each={scheduledRows} for:item="sa">
+                            <tr key={sa.id}>
+                                <td><span class="nl" data-id={sa.id} onclick={handleNavigateSA}>{sa.saNumber}</span></td>
+                                <td>{sa.woName}</td><td>{sa.community}</td>
+                                <td>{sa.territory}</td><td>{sa.crew}</td><td>{sa.scheduledDate}</td>
+                                <td class="num">{sa.duration}</td>
+                                <td><span class={sa.statusCls}>{sa.statusLabel}</span></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={hasScheduledRows}>
+                <div style="padding:20px;text-align:center;color:#54698d;font-size:12px">No scheduled service appointments found</div>
+            </template>
+        </div>
+    </div>
+
+</div><!-- /sf-body scheduled -->
+</template><!-- /isScheduled -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 4 — BLOCKED WORK
+══════════════════════════════════════════════════════ -->
+<template if:true={isBlocked}>
+<div class="sf-body">
+
+    <!-- Alert banner when high-severity blockers exist -->
+    <template if:true={highSeverityCount}>
+        <div class="ab ab-r" style="margin-bottom:14px">
+            <div class="ab-ic">!</div>
+            <div><strong>{highSeverityCount} high-severity blockers</strong> require immediate FM review before scheduling can proceed.</div>
+        </div>
+    </template>
+
+    <div class="card last">
+        <div class="ch"><div class="ci" style="background:#c23934">🚫</div><h3>Blocked Work Orders</h3></div>
+        <div class="cb" style="padding:0">
+            <template if:true={hasBlockedRows}>
+                <table class="tbl">
+                    <thead><tr>
+                        <th>Work Order</th><th>Type</th><th>Community</th><th>Lot</th>
+                        <th>FM</th><th>Block Reason</th><th>Blocked Since</th><th>Severity</th><th>Actions</th>
+                    </tr></thead>
+                    <tbody>
+                        <template for:each={blockedRows} for:item="wo">
+                            <tr key={wo.id}>
+                                <td><span class="nl" data-id={wo.id} onclick={handleNavigateWO}>{wo.woName}</span></td>
+                                <td>{wo.woType}</td><td>{wo.community}</td><td>{wo.lot}</td><td>{wo.fm}</td>
+                                <td>{wo.blockReason}</td><td>{wo.blockedSince}</td>
+                                <td><span class={wo.blockCls}>{wo.blockLabel}</span></td>
+                                <td>
+                                    <button class="sf-btn" data-id={wo.id} onclick={handleClearBlocker} style="font-size:11px;padding:3px 8px">Clear Blocker</button>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={hasBlockedRows}>
+                <div style="padding:20px;text-align:center;color:#2e7d32;font-size:12px">✓ No blocked work orders — all clear</div>
+            </template>
+        </div>
+    </div>
+
+</div><!-- /sf-body blocked -->
+</template><!-- /isBlocked -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 5 — FIELD MANAGERS
+══════════════════════════════════════════════════════ -->
+<template if:true={isFM}>
+<div class="sf-body">
+
+    <div class="card last">
+        <div class="ch"><div class="ci" style="background:#534ab7">👤</div><h3>Field Manager Summary</h3></div>
+        <div class="cb" style="padding:0">
+            <template if:true={hasFMRows}>
+                <table class="tbl">
+                    <thead><tr>
+                        <th>Field Manager</th><th>Territory</th><th class="num">Open WOs</th>
+                        <th class="num">Scheduled WOs</th><th class="num">Blocked WOs</th>
+                        <th class="num">Crews Assigned</th><th class="num">Crews Today</th><th>Status</th>
+                    </tr></thead>
+                    <tbody>
+                        <template for:each={fmRows} for:item="fm">
+                            <tr key={fm.id}>
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:8px">
+                                        <div style="width:28px;height:28px;border-radius:50%;background:#534ab7;color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0">{fm.initials}</div>
+                                        <span class="nl">{fm.name}</span>
+                                    </div>
+                                </td>
+                                <td>{fm.territory}</td>
+                                <td class="num">{fm.openWOs}</td>
+                                <td class="num">{fm.scheduledWOs}</td>
+                                <td class="num"><span style={fm.blockedStyle}>{fm.blockedWOs}</span></td>
+                                <td class="num">{fm.crewsAssigned}</td>
+                                <td class="num">{fm.crewsToday}</td>
+                                <td><span class={fm.statusCls}>{fm.statusLabel}</span></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={hasFMRows}>
+                <div style="padding:20px;text-align:center;color:#54698d;font-size:12px">No field manager data available</div>
+            </template>
+        </div>
+    </div>
+
+</div><!-- /sf-body fm -->
+</template><!-- /isFM -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 6 — SERVICE TERRITORIES
+══════════════════════════════════════════════════════ -->
+<template if:true={isTerritory}>
+<div class="sf-body">
+
+    <div class="card last">
+        <div class="ch"><div class="ci" style="background:#0070d2">🗺</div><h3>Territory Capacity Overview</h3></div>
+        <div class="cb" style="padding:0">
+            <template if:true={hasTerritoryRows}>
+                <table class="tbl">
+                    <thead><tr>
+                        <th>Territory</th><th>Division</th><th class="num">Weekly Capacity (hrs)</th>
+                        <th class="num">Scheduled SAs</th><th class="num">Open WOs</th>
+                        <th class="num">Blocked WOs</th><th>Utilization</th><th>Status</th>
+                    </tr></thead>
+                    <tbody>
+                        <template for:each={territoryRows} for:item="t">
+                            <tr key={t.id}>
+                                <td>{t.name}</td><td>{t.division}</td>
+                                <td class="num">{t.capacity}</td>
+                                <td class="num">{t.scheduledSA}</td>
+                                <td class="num">{t.openWOs}</td>
+                                <td class="num">{t.blockedWOs}</td>
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:8px">
+                                        <div class="pbar" style="flex:1;height:6px"><div class="pfill" style={t.utilizationBar}></div></div>
+                                        <span style="font-size:10px;color:#54698d;width:32px;text-align:right">{t.utilizationPct}%</span>
+                                    </div>
+                                </td>
+                                <td><span class={t.statusCls}>{t.statusLabel}</span></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={hasTerritoryRows}>
+                <div style="padding:20px;text-align:center;color:#54698d;font-size:12px">No territory data available</div>
+            </template>
+        </div>
+    </div>
+
+</div><!-- /sf-body territory -->
+</template><!-- /isTerritory -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 7 — WORK ORDERS
+══════════════════════════════════════════════════════ -->
+<template if:true={isWO}>
+<div class="sf-body">
+
+    <!-- WO type filters -->
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+        <template for:each={woTypeFilters} for:item="f">
+            <button key={f.value} data-type={f.value} class={f.cls} onclick={handleWoTypeFilter}>{f.label}</button>
+        </template>
+    </div>
+
+    <div class="card last">
+        <div class="ch"><div class="ci" style="background:#0070d2">📋</div><h3>Work Order List</h3></div>
+        <div class="cb" style="padding:0">
+            <template if:true={hasWORows}>
+                <table class="tbl">
+                    <thead><tr>
+                        <th>Work Order</th><th>Type</th><th>Community</th><th>Lot</th>
+                        <th>FM</th><th>Territory</th><th>Priority</th><th class="num">Days Open</th><th>Status</th>
+                    </tr></thead>
+                    <tbody>
+                        <template for:each={woRows} for:item="wo">
+                            <tr key={wo.id}>
+                                <td><span class="nl" data-id={wo.id} onclick={handleNavigateWO}>{wo.woName}</span></td>
+                                <td>{wo.woType}</td><td>{wo.community}</td><td>{wo.lot}</td>
+                                <td>{wo.fm}</td><td>{wo.territory}</td>
+                                <td><span class={wo.priorityCls}>{wo.priority}</span></td>
+                                <td class="num"><span style={wo.daysStyle}>{wo.daysOpen}</span></td>
+                                <td><span class={wo.statusCls}>{wo.status}</span></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={hasWORows}>
+                <div style="padding:20px;text-align:center;color:#54698d;font-size:12px">No work orders found for the selected filter</div>
+            </template>
+        </div>
+    </div>
+
+</div><!-- /sf-body wo -->
+</template><!-- /isWO -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 8 — SERVICE APPOINTMENTS
+══════════════════════════════════════════════════════ -->
+<template if:true={isSA}>
+<div class="sf-body">
+
+    <div class="card last">
+        <div class="ch"><div class="ci" style="background:#04844b">📅</div><h3>Service Appointment List</h3></div>
+        <div class="cb" style="padding:0">
+            <template if:true={hasSARows}>
+                <table class="tbl">
+                    <thead><tr>
+                        <th>SA #</th><th>Work Order</th><th>Territory</th><th>Crew</th>
+                        <th>Scheduled Date</th><th class="num">Duration</th><th>Pin</th><th>Status</th>
+                    </tr></thead>
+                    <tbody>
+                        <template for:each={saRows} for:item="sa">
+                            <tr key={sa.id}>
+                                <td><span class="nl" data-id={sa.id} onclick={handleNavigateSA}>{sa.saNumber}</span></td>
+                                <td>{sa.woName}</td><td>{sa.territory}</td><td>{sa.crew}</td>
+                                <td>{sa.scheduledDate}</td>
+                                <td class="num">{sa.duration}</td>
+                                <td><span class={sa.pinnedCls}>{sa.pinnedLabel}</span></td>
+                                <td><span class={sa.statusCls}>{sa.statusLabel}</span></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={hasSARows}>
+                <div style="padding:20px;text-align:center;color:#54698d;font-size:12px">No service appointments found</div>
+            </template>
+        </div>
+    </div>
+
+</div><!-- /sf-body sa -->
+</template><!-- /isSA -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 9 — SCHEDULE REQUESTS
+══════════════════════════════════════════════════════ -->
+<template if:true={isRequests}>
+<div class="sf-body">
+
+    <div class="card last">
+        <div class="ch"><div class="ci" style="background:#534ab7">📨</div><h3>Pending Schedule Requests</h3></div>
+        <div class="cb" style="padding:0">
+            <template if:true={hasRequestRows}>
+                <table class="tbl">
+                    <thead><tr>
+                        <th>Work Order</th><th>Type</th><th>Community</th><th>Lot</th>
+                        <th>FM</th><th>Requested Date</th><th>Notes</th><th>Status</th><th>Actions</th>
+                    </tr></thead>
+                    <tbody>
+                        <template for:each={requestRows} for:item="r">
+                            <tr key={r.id}>
+                                <td><span class="nl">{r.woName}</span></td>
+                                <td>{r.woType}</td><td>{r.community}</td><td>{r.lot}</td>
+                                <td>{r.fm}</td><td>{r.requestedDate}</td><td>{r.notes}</td>
+                                <td><span class={r.statusCls}>{r.statusLabel}</span></td>
+                                <td style="display:flex;gap:4px">
+                                    <button class="sf-btn success" data-id={r.id} onclick={handleApproveRequest} style="font-size:11px;padding:3px 8px">Approve</button>
+                                    <button class="sf-btn warning" data-id={r.id} onclick={handleRejectRequest} style="font-size:11px;padding:3px 8px">Reject</button>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={hasRequestRows}>
+                <div style="padding:20px;text-align:center;color:#2e7d32;font-size:12px">✓ No pending schedule requests</div>
+            </template>
+        </div>
+    </div>
+
+</div><!-- /sf-body requests -->
+</template><!-- /isRequests -->
+
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 10 — DATA ISSUES
+══════════════════════════════════════════════════════ -->
+<template if:true={isData}>
+<div class="sf-body">
+
+    <template if:true={highIssueCount}>
+        <div class="ab ab-r" style="margin-bottom:14px">
+            <div class="ab-ic">!</div>
+            <div><strong>{highIssueCount} high-severity data issues</strong> are blocking scheduling. Resolve these first.</div>
+        </div>
+    </template>
+
+    <div class="card last">
+        <div class="ch"><div class="ci" style="background:#c23934">⚠</div><h3>Data Quality Issues</h3></div>
+        <div class="cb" style="padding:0">
+            <template if:true={hasDataIssueRows}>
+                <table class="tbl">
+                    <thead><tr>
+                        <th>Record</th><th>Object</th><th>Field</th><th>Issue Type</th>
+                        <th>Description</th><th>Severity</th><th>Suggested Fix</th>
+                    </tr></thead>
+                    <tbody>
+                        <template for:each={dataIssueRows} for:item="i">
+                            <tr key={i.id}>
+                                <td><span class="nl">{i.recordName}</span></td>
+                                <td>{i.objectType}</td><td>{i.fieldName}</td><td>{i.issueType}</td>
+                                <td>{i.description}</td>
+                                <td><span class={i.severityCls}>{i.severity}</span></td>
+                                <td style="font-size:11px;color:#54698d">{i.suggestedFix}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={hasDataIssueRows}>
+                <div style="padding:20px;text-align:center;color:#2e7d32;font-size:12px">✓ No data issues found — all records are valid</div>
+            </template>
+        </div>
+    </div>
+
+</div><!-- /sf-body data -->
+</template><!-- /isData -->
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 11 — ROUTE + GPS
+══════════════════════════════════════════════════════ -->
+<template if:true={isGps}>
+<div class="sf-body">
+
+    <div class="card">
+        <div class="ch">
+            <div class="ci" style="background:#0070d2">🛰</div>
+            <h3>Route + GPS — {todayDisplay}</h3>
+            <span class="ch-note">WEX GPS · refreshes on reload</span>
+        </div>
+        <template if:true={gpsEmpty}>
+            <div style="padding:24px;text-align:center;color:#54698d;font-size:12px">No GPS data available for today. Verify WEX integration and that vehicles have active ignition signals.</div>
+        </template>
+        <template if:false={gpsEmpty}>
+            <table class="tbl">
+                <thead><tr>
+                    <th>Crew</th>
+                    <th>Speed</th>
+                    <th>Ignition</th>
+                    <th>Last Seen</th>
+                    <th>Status</th>
+                    <th>Lat / Lng</th>
+                </tr></thead>
+                <tbody>
+                    <template for:each={gpsRows} for:item="g">
+                        <tr key={g.markerId}>
+                            <td><strong>{g.crewName}</strong></td>
+                            <td>{g.speedMph} mph</td>
+                            <td>{g.ignitionStatus}</td>
+                            <td>{g.lastSeen}</td>
+                            <td><span class="chip cgr">{g.status}</span></td>
+                            <td style="font-family:monospace;font-size:10px">{g.lat}, {g.lng}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </template>
+    </div>
+
+</div><!-- /sf-body gps -->
+</template><!-- /isGps -->
+
+<!-- ══════════════════════════════════════════════════════
+     TAB 12 — HOURS + OT
+══════════════════════════════════════════════════════ -->
+<template if:true={isHours}>
+<div class="sf-body">
+
+    <!-- Overtime risk -->
+    <div class="card" style="margin-bottom:14px">
+        <div class="ch">
+            <div class="ci" style="background:#c23934">⚠</div>
+            <h3>Overtime Risk</h3>
+        </div>
+        <template if:true={otEmpty}>
+            <div style="padding:24px;text-align:center;color:#54698d;font-size:12px">No overtime risks detected this week.</div>
+        </template>
+        <template if:false={otEmpty}>
+            <table class="tbl">
+                <thead><tr>
+                    <th>Employee</th>
+                    <th>Crew</th>
+                    <th>Scheduled hrs</th>
+                    <th>Actual hrs</th>
+                    <th>Projected hrs</th>
+                    <th>OT Risk</th>
+                </tr></thead>
+                <tbody>
+                    <template for:each={otRows} for:item="r">
+                        <tr key={r.employeeId}>
+                            <td><strong>{r.resourceName}</strong></td>
+                            <td>{r.crewName}</td>
+                            <td>{r.scheduledHours}</td>
+                            <td>{r.actualHours}</td>
+                            <td>{r.projectedHours}</td>
+                            <td><span class={r.chipCss}>{r.otLabel}</span></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </template>
+    </div>
+
+    <!-- Crew utilization -->
+    <div class="card" style="margin-bottom:14px">
+        <div class="ch">
+            <div class="ci" style="background:#0070d2">📊</div>
+            <h3>Crew Utilization — This Week</h3>
+        </div>
+        <template if:true={utilizationEmpty}>
+            <div style="padding:24px;text-align:center;color:#54698d;font-size:12px">No utilization data available yet.</div>
+        </template>
+        <template if:false={utilizationEmpty}>
+            <table class="tbl">
+                <thead><tr>
+                    <th>Crew</th>
+                    <th>Foreman</th>
+                    <th>Goal hrs</th>
+                    <th>Scheduled hrs</th>
+                    <th>Actual hrs</th>
+                    <th>Efficiency</th>
+                    <th>OT</th>
+                    <th>Time Off</th>
+                </tr></thead>
+                <tbody>
+                    <template for:each={utilizationRows} for:item="u">
+                        <tr key={u.crewId}>
+                            <td><strong>{u.crewName}</strong></td>
+                            <td>{u.foremanName}</td>
+                            <td>{u.goalHoursWeek}</td>
+                            <td>{u.scheduledHoursWeek}</td>
+                            <td>{u.actualHoursWeek}</td>
+                            <td><span class={u.effCss}>{u.efficiencyPct}%</span></td>
+                            <td><span class={u.otCss}>{u.otLabel}</span></td>
+                            <td>{u.timeOffStatus}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </template>
+    </div>
+
+    <!-- Rippling time off -->
+    <div class="card">
+        <div class="ch">
+            <div class="ci" style="background:#54698d">📅</div>
+            <h3>Time Off — Next 7 Days</h3>
+            <span class="ch-note">Rippling sync</span>
+        </div>
+        <template if:true={timeOffEmpty}>
+            <div style="padding:24px;text-align:center;color:#54698d;font-size:12px">No time off scheduled in the next 7 days.</div>
+        </template>
+        <template if:false={timeOffEmpty}>
+            <table class="tbl">
+                <thead><tr>
+                    <th>Employee</th>
+                    <th>Crew</th>
+                    <th>Role</th>
+                    <th>Type</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Status</th>
+                </tr></thead>
+                <tbody>
+                    <template for:each={timeOffRows} for:item="t">
+                        <tr key={t.employeeId}>
+                            <td><strong>{t.employeeName}</strong></td>
+                            <td>{t.crewName}</td>
+                            <td>{t.role}</td>
+                            <td>{t.timeOffType}</td>
+                            <td>{t.startDate}</td>
+                            <td>{t.endDate}</td>
+                            <td><span class={t.chipCss}>{t.status}</span></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </template>
+    </div>
+
+</div><!-- /sf-body hours -->
+</template><!-- /isHours -->
+
+
+</template>

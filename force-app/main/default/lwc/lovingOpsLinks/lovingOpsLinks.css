@@ -1,0 +1,98 @@
+.ops-panel {
+    padding: 8px 10px 12px;
+    font-family: var(--lwc-fontFamily, 'Salesforce Sans', sans-serif);
+    min-width: 220px;
+}
+
+.ops-header {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #5a6872;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e0e5ee;
+}
+
+.ops-section {
+    margin-bottom: 8px;
+}
+
+.ops-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #8a96a3;
+    margin-bottom: 4px;
+    padding-left: 2px;
+}
+
+.ops-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 7px 10px;
+    border-radius: 6px;
+    border: 1px solid #e0e5ee;
+    background: #fff;
+    cursor: pointer;
+    text-align: left;
+    gap: 10px;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.ops-btn:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    border-color: #c9d3df;
+}
+
+.ops-btn:focus {
+    outline: 2px solid #0070d2;
+    outline-offset: 1px;
+}
+
+.ops-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.ops-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.ops-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #16325c;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ops-sub {
+    font-size: 10px;
+    color: #7a8a9a;
+    margin-top: 1px;
+}
+
+.ops-arrow {
+    font-size: 11px;
+    color: #a8b7c7;
+    flex-shrink: 0;
+}
+
+.ops-btn.wex { border-left: 3px solid #e8ab00; }
+.ops-btn.weather { border-left: 3px solid #4bc1e8; }
+.ops-btn.rippling { border-left: 3px solid #6b47dc; }
+.ops-btn.maps { border-left: 3px solid #34a853; }
+
+.ops-divider {
+    height: 1px;
+    background: #e0e5ee;
+    margin: 8px 0;
+}

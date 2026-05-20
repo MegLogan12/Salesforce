@@ -13,6 +13,16 @@
                 <identifier>notes_utility</identifier>
             </componentInstance>
         </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>label</name>
+                    <value>Ops Links</value>
+                </componentInstanceProperties>
+                <componentName>c:lovingOpsLinks</componentName>
+                <identifier>loving_ops_links</identifier>
+            </componentInstance>
+        </itemInstances>
         <name>utilityItems</name>
         <type>Region</type>
     </flexiPageRegions>
