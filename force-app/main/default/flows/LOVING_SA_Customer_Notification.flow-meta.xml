@@ -11,7 +11,7 @@
         <inputParameters>
             <name>emailAddresses</name>
             <value>
-                <elementReference>$Record.Contact.Email</elementReference>
+                <elementReference>varContact.Email</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -39,7 +39,7 @@
         <inputParameters>
             <name>emailAddresses</name>
             <value>
-                <elementReference>$Record.Contact.Email</elementReference>
+                <elementReference>varContact.Email</elementReference>
             </value>
         </inputParameters>
         <inputParameters>
@@ -56,12 +56,12 @@
         </inputParameters>
         <nameSegment>emailSimple</nameSegment>
     </actionCalls>
-    <apiVersion>61.0</apiVersion>
+    <apiVersion>62.0</apiVersion>
     <decisions>
         <name>Check_Status_Changed</name>
         <label>Status is Scheduled or Rescheduled?</label>
         <locationX>200</locationX>
-        <locationY>120</locationY>
+        <locationY>230</locationY>
         <defaultConnectorLabel>Not Applicable</defaultConnectorLabel>
         <rules>
             <name>Is_Scheduled</name>
@@ -104,7 +104,7 @@
             <name>Has_Email_Resched</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>$Record.Contact.Email</leftValueReference>
+                <leftValueReference>varContact.Email</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
@@ -126,7 +126,7 @@
             <name>Has_Email_Sched</name>
             <conditionLogic>and</conditionLogic>
             <conditions>
-                <leftValueReference>$Record.Contact.Email</leftValueReference>
+                <leftValueReference>varContact.Email</leftValueReference>
                 <operator>IsNull</operator>
                 <rightValue>
                     <booleanValue>false</booleanValue>
@@ -142,7 +142,7 @@
     <formulas>
         <name>Rescheduled_Email_Body</name>
         <dataType>String</dataType>
-        <expression>&quot;Dear &quot; &amp; $Record.Contact.FirstName &amp; &quot;,
+        <expression>&quot;Dear &quot; &amp; varContact.FirstName &amp; &quot;,
 
 We are writing to let you know that your appointment has been rescheduled.
 
@@ -164,7 +164,7 @@ LOVING Group Scheduling Team&quot;</expression>
     <formulas>
         <name>Scheduled_Email_Body</name>
         <dataType>String</dataType>
-        <expression>&quot;Dear &quot; &amp; $Record.Contact.FirstName &amp; &quot;,
+        <expression>&quot;Dear &quot; &amp; varContact.FirstName &amp; &quot;,
 
 We are pleased to confirm your upcoming appointment with LOVING Group.
 
@@ -178,6 +178,7 @@ Thank you for choosing LOVING Group. We look forward to seeing you!
 Warm regards,
 LOVING Group Scheduling Team&quot;</expression>
     </formulas>
+    <interviewLabel>LOVING SA Customer Notification {!$Flow.CurrentDateTime}</interviewLabel>
     <label>LOVING SA Customer Notification</label>
     <processMetadataValues>
         <name>BuilderType</name>
@@ -186,11 +187,35 @@ LOVING Group Scheduling Team&quot;</expression>
         </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Contact</name>
+        <label>Get Contact for Email</label>
+        <locationX>200</locationX>
+        <locationY>110</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Status_Changed</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.ContactId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Contact</object>
+        <outputReference>varContact</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>FirstName</queriedFields>
+        <queriedFields>Email</queriedFields>
+    </recordLookups>
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
         <connector>
-            <targetReference>Check_Status_Changed</targetReference>
+            <targetReference>Get_Contact</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -204,5 +229,13 @@ LOVING Group Scheduling Team&quot;</expression>
         <recordTriggerType>CreateAndUpdate</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>InvalidDraft</status>
+    <status>Active</status>
+    <variables>
+        <name>varContact</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Contact</objectType>
+    </variables>
 </Flow>
