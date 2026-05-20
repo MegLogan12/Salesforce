@@ -1,0 +1,207 @@
+:host {
+    display: block;
+    height: 100%;
+}
+
+.dispatch-board {
+    display: flex;
+    flex-direction: column;
+    background: #f0f4f9;
+    min-height: 100%;
+    font-family: var(--lwc-fontFamily, 'Salesforce Sans', sans-serif);
+}
+
+/* ── Header ── */
+.dispatch-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #0d1f3c;
+    color: #fff;
+    padding: 14px 20px;
+    flex-shrink: 0;
+}
+
+.dh-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dh-icon { --lwc-colorTextIconDefault: #4a9eed; }
+
+.dh-title {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #ffffff;
+}
+
+.dh-territory {
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    background: #1a4a7a;
+    color: #7ab8f5;
+    padding: 3px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.dh-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.dh-stat {
+    background: #0070d2;
+    color: #fff;
+    padding: 4px 14px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.dh-date {
+    font-size: 11px;
+    color: #7a9ec4;
+}
+
+.dh-refresh { --lwc-colorTextIconDefault: #7a9ec4; }
+
+/* ── Map ── */
+.map-wrap {
+    height: 520px;
+    flex-shrink: 0;
+    background: #e8edf4;
+}
+
+.loading-wrap {
+    height: 520px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ── Roster ── */
+.roster-section {
+    padding: 16px 20px 20px;
+}
+
+.roster-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #8a96a3;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.roster-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.truck-card {
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #dde3ec;
+    border-top: 3px solid #0070d2;
+    padding: 12px 14px;
+    flex: 1 1 180px;
+    max-width: 220px;
+    min-width: 160px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+
+.tc-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.tc-unit {
+    font-size: 15px;
+    font-weight: 800;
+    color: #16325c;
+    letter-spacing: 0.3px;
+}
+
+.tc-driver {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0070d2;
+    margin-bottom: 7px;
+}
+
+.tc-driver-icon,
+.tc-loc-icon { flex-shrink: 0; }
+
+.tc-job {
+    font-size: 12px;
+    color: #2b2b2b;
+    font-weight: 500;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tc-addr {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 11px;
+    color: #6b7a8d;
+    margin-bottom: 8px;
+}
+
+.tc-time {
+    font-size: 11px;
+    font-weight: 700;
+    color: #333;
+}
+
+/* Status chips */
+.tc-status {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 7px;
+    border-radius: 10px;
+}
+
+.status-scheduled  { background: #e3f2fd; color: #1565c0; }
+.status-dispatched { background: #e8f5e9; color: #2e7d32; }
+.status-inprogress { background: #fff8e1; color: #f57f17; }
+.status-completed  { background: #f3e5f5; color: #6a1b9a; }
+.status-other      { background: #f5f5f5; color: #616161; }
+
+/* Empty / error */
+.no-dispatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: #8a96a3;
+    gap: 12px;
+}
+
+.error-banner {
+    margin: 12px 20px;
+    padding: 12px 16px;
+    background: #fef0ef;
+    color: #c23934;
+    border-radius: 6px;
+    font-size: 13px;
+    border-left: 3px solid #c23934;
+}

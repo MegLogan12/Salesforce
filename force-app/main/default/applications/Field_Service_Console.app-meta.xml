@@ -1717,6 +1717,7 @@
     </profileActionOverrides>
     <tabs>standard-home</tabs>
     <tabs>Scheduling_Console</tabs>
+    <tabs>Dispatch_Map</tabs>
     <tabs>FSL__FieldService</tabs>
     <tabs>standard-WorkOrder</tabs>
     <tabs>standard-ServiceAppointment</tabs>
@@ -1749,6 +1750,9 @@
         </mappings>
         <mappings>
             <tab>Scheduling_Console</tab>
+        </mappings>
+        <mappings>
+            <tab>Dispatch_Map</tab>
         </mappings>
         <mappings>
             <tab>standard-Account</tab>

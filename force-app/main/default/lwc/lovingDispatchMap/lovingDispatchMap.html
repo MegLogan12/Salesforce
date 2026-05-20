@@ -1,0 +1,81 @@
+<template>
+    <div class="dispatch-board">
+
+        <div class="dispatch-header">
+            <div class="dh-brand">
+                <lightning-icon icon-name="utility:routing_offline" size="small" class="dh-icon"></lightning-icon>
+                <span class="dh-title">LOVING DISPATCH</span>
+                <span class="dh-territory">Charlotte North</span>
+            </div>
+            <div class="dh-meta">
+                <span class="dh-stat">{activeCount} units deployed today</span>
+                <span class="dh-date">{todayLabel}</span>
+                <lightning-button-icon
+                    icon-name="utility:refresh"
+                    variant="bare-inverse"
+                    title="Refresh"
+                    onclick={handleRefresh}
+                    class="dh-refresh">
+                </lightning-button-icon>
+            </div>
+        </div>
+
+        <template if:true={isLoading}>
+            <div class="loading-wrap">
+                <lightning-spinner alternative-text="Loading dispatch data..." size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:false={isLoading}>
+            <template if:true={hasTrucks}>
+
+                <div class="map-wrap">
+                    <lightning-map
+                        map-markers={mapMarkers}
+                        zoom-level="11"
+                        center={mapCenter}
+                        list-view="visible"
+                        markers-title="Units Deployed Today">
+                    </lightning-map>
+                </div>
+
+                <div class="roster-section">
+                    <div class="roster-label">TODAY'S ROSTER</div>
+                    <div class="roster-grid">
+                        <template for:each={trucks} for:item="truck">
+                            <div key={truck.appointmentNumber} class="truck-card">
+                                <div class="tc-top">
+                                    <span class="tc-unit">{truck.unitName}</span>
+                                    <span class={truck.statusClass}>{truck.status}</span>
+                                </div>
+                                <div class="tc-driver">
+                                    <lightning-icon icon-name="standard:user" size="x-small" class="tc-driver-icon"></lightning-icon>
+                                    <span>{truck.driverName}</span>
+                                </div>
+                                <div class="tc-job">{truck.subject}</div>
+                                <div class="tc-addr">
+                                    <lightning-icon icon-name="utility:location" size="xx-small" class="tc-loc-icon"></lightning-icon>
+                                    {truck.street}, {truck.city}
+                                </div>
+                                <div class="tc-time">{truck.schedTime}</div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+            </template>
+
+            <template if:false={hasTrucks}>
+                <div class="no-dispatch">
+                    <lightning-icon icon-name="utility:warning" size="medium"></lightning-icon>
+                    <p>No units scheduled for today.</p>
+                </div>
+            </template>
+        </template>
+
+        <template if:true={error}>
+            <div class="error-banner">{error}</div>
+        </template>
+
+    </div>
+</template>
