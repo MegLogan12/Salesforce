@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
+        <members>LOVING_2PM_Health_Check_Prompt</members>
+        <members>LOVING_FJ_Customer_Care_Notify</members>
+        <members>LOVING_Foreman_Closeout_Submit</members>
+        <members>LOVING_Foreman_PreShift_VehicleCheck</members>
         <members>LOVING_Health_Check_Daily</members>
         <members>LOVING_PI_Approved_Automation</members>
         <members>LOVING_PI_Auto_Close</members>
         <members>LOVING_PI_Closeout_Automation</members>
         <members>LOVING_PI_NFI_Loop</members>
+        <members>LOVING_PI_Orchestrator</members>
         <members>LOVING_PI_RedFlag_Automation</members>
         <members>LOVING_PI_Schedule_Automation</members>
+        <members>LOVING_SA_Customer_Notification</members>
         <members>LOVING_Takeoff_To_WO_Creation</members>
         <name>Flow</name>
     </types>
