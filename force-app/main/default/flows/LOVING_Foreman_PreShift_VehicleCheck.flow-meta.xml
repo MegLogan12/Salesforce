@@ -281,7 +281,7 @@
             </defaultValue>
             <fieldText>Materials on truck match today&apos;s work order scope / Los materiales en el camión coinciden con el alcance de la orden de trabajo</fieldText>
             <fieldType>InputField</fieldType>
-            <isRequired>false</isRequired>
+            <isRequired>true</isRequired>
         </fields>
         <fields>
             <name>LoadingVerifiedCheck</name>
@@ -291,7 +291,7 @@
             </defaultValue>
             <fieldText>Truck is fully loaded and ready for today&apos;s route / El camión está completamente cargado y listo para la ruta de hoy</fieldText>
             <fieldType>InputField</fieldType>
-            <isRequired>false</isRequired>
+            <isRequired>true</isRequired>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>true</showHeader>
@@ -317,7 +317,7 @@
             <dataType>String</dataType>
             <fieldText>Truck / vehicle number / Número de camión</fieldText>
             <fieldType>InputField</fieldType>
-            <isRequired>false</isRequired>
+            <isRequired>true</isRequired>
         </fields>
         <fields>
             <name>FluidsCheck</name>
@@ -327,7 +327,7 @@
             </defaultValue>
             <fieldText>Fluids checked (oil, coolant, washer fluid) / Fluidos revisados (aceite, refrigerante, agua)</fieldText>
             <fieldType>InputField</fieldType>
-            <isRequired>false</isRequired>
+            <isRequired>true</isRequired>
         </fields>
         <fields>
             <name>FuelCheck</name>
@@ -337,7 +337,7 @@
             </defaultValue>
             <fieldText>Fuel level adequate for today&apos;s route / Combustible suficiente para la ruta de hoy</fieldText>
             <fieldType>InputField</fieldType>
-            <isRequired>false</isRequired>
+            <isRequired>true</isRequired>
         </fields>
         <fields>
             <name>LightsCheck</name>
@@ -347,7 +347,7 @@
             </defaultValue>
             <fieldText>All lights working (headlights, brake, turn signals) / Todas las luces funcionando</fieldText>
             <fieldType>InputField</fieldType>
-            <isRequired>false</isRequired>
+            <isRequired>true</isRequired>
         </fields>
         <fields>
             <name>TiresCheck</name>
@@ -357,7 +357,7 @@
             </defaultValue>
             <fieldText>Tires — adequate pressure and no visible damage / Llantas — presión adecuada y sin daños</fieldText>
             <fieldType>InputField</fieldType>
-            <isRequired>false</isRequired>
+            <isRequired>true</isRequired>
         </fields>
         <fields>
             <name>TrailerCheck</name>
@@ -367,7 +367,7 @@
             </defaultValue>
             <fieldText>Trailer — hitch secured, lights connected, ramp functional (if applicable) / Remolque — enganche asegurado (si aplica)</fieldText>
             <fieldType>InputField</fieldType>
-            <isRequired>false</isRequired>
+            <isRequired>true</isRequired>
         </fields>
         <fields>
             <name>SafetyCheck</name>
@@ -377,7 +377,7 @@
             </defaultValue>
             <fieldText>Safety equipment on truck (gloves, vests, first aid) / Equipo de seguridad en camión</fieldText>
             <fieldType>InputField</fieldType>
-            <isRequired>false</isRequired>
+            <isRequired>true</isRequired>
         </fields>
         <fields>
             <name>VehicleNotes</name>

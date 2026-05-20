@@ -4,14 +4,14 @@
         <name>Send_CC_Notification</name>
         <label>Send Finished Job Notification to Customer Care</label>
         <locationX>176</locationX>
-        <locationY>288</locationY>
+        <locationY>408</locationY>
         <actionName>customNotificationAction</actionName>
         <actionType>customNotificationAction</actionType>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
-            <name>customNotifTypeApiName</name>
+            <name>customNotifTypeId</name>
             <value>
-                <stringValue>LOVING_NFI_Alert</stringValue>
+                <stringValue>0MLVu000000SiKfOAK</stringValue>
             </value>
         </inputParameters>
         <inputParameters>
@@ -35,7 +35,7 @@
         <inputParameters>
             <name>recipientIds</name>
             <value>
-                <elementReference>$Record.OwnerId</elementReference>
+                <elementReference>varRecipientIds</elementReference>
             </value>
         </inputParameters>
         <nameSegment>customNotificationAction</nameSegment>
@@ -52,7 +52,7 @@
         <locationX>176</locationX>
         <locationY>168</locationY>
         <connector>
-            <targetReference>Send_CC_Notification</targetReference>
+            <targetReference>Assign_Recipient_Id</targetReference>
         </connector>
         <inputAssignments>
             <field>Description</field>
@@ -93,6 +93,22 @@
         <object>Task</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordCreates>
+    <assignments>
+        <name>Assign_Recipient_Id</name>
+        <label>Add Owner to Recipient Collection</label>
+        <locationX>176</locationX>
+        <locationY>288</locationY>
+        <assignmentItems>
+            <assignToReference>varRecipientIds</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>$Record.OwnerId</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Send_CC_Notification</targetReference>
+        </connector>
+    </assignments>
     <runInMode>SystemModeWithSharing</runInMode>
     <start>
         <locationX>176</locationX>
@@ -112,5 +128,12 @@
         <recordTriggerType>Update</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>InvalidDraft</status>
+    <status>Active</status>
+    <variables>
+        <name>varRecipientIds</name>
+        <dataType>String</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
 </Flow>
