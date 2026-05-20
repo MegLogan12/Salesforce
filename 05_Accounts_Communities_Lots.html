@@ -169,6 +169,47 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 .jt-chip{display:inline-flex;align-items:center;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:500}
 .jt-install{background:#ede9fe;color:#534ab7}.jt-fj{background:#fce8e8;color:#c23934}
 .jt-aqua{background:#e6f4f7;color:#0a8aa6}.jt-lc{background:#e8f5e9;color:#2e7d32}
+/* Opportunity-style record page */
+.opp-layout{display:grid;grid-template-columns:1fr 340px;gap:0;min-height:400px}
+.opp-main{padding:16px 20px;border-right:1px solid #e5e5e5;min-width:0}
+.opp-rail{min-width:0;background:#fff}
+.sec-header{display:flex;align-items:center;gap:8px;padding:10px 0 8px;border-bottom:1px solid #e5e5e5;margin-bottom:12px;cursor:pointer;user-select:none}
+.sec-toggle{font-size:11px;color:#54698d;width:16px;text-align:center;transition:transform .2s}
+.sec-toggle.open{transform:rotate(90deg)}
+.sec-title{font-size:13px;font-weight:600;color:#16325c}
+.sec-body{display:grid;grid-template-columns:1fr 1fr;gap:10px 28px;margin-bottom:20px}
+.sec-body.hidden{display:none!important}
+.opp-field{display:flex;flex-direction:column;padding:4px 0;border-bottom:1px solid #f4f6f9}
+.opp-field:last-child{border-bottom:none}
+.opp-label{font-size:10px;color:#54698d;text-transform:uppercase;letter-spacing:.4px;font-weight:500;margin-bottom:2px}
+.opp-value{font-size:12px;color:#16325c;min-height:18px;line-height:1.4}
+.opp-value a{color:#0070d2;cursor:pointer}
+/* Activity panel */
+.act-panel{display:flex;flex-direction:column;height:100%}
+.act-actions{display:flex;gap:1px;border-bottom:1px solid #e5e5e5;background:#f4f6f9}
+.act-btn{flex:1;padding:9px 6px;font-size:11px;font-weight:500;color:#0070d2;background:#fff;border:none;border-right:1px solid #e5e5e5;cursor:pointer;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px}
+.act-btn:last-child{border-right:none}
+.act-btn:hover{background:#f4f6f9}
+.act-btn-icon{font-size:14px}
+.act-feed{padding:0 14px;overflow-y:auto;flex:1}
+.act-section-hdr{font-size:10px;font-weight:600;color:#54698d;text-transform:uppercase;letter-spacing:.5px;padding:12px 0 6px;border-bottom:1px solid #e5e5e5;margin-bottom:2px}
+.act-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #f4f6f9;cursor:pointer}
+.act-item:hover{background:#f9f9f9;margin:0 -14px;padding:10px 14px}
+.act-item:last-child{border-bottom:none}
+.act-dot-col{display:flex;flex-direction:column;align-items:center;padding-top:2px;width:14px;flex-shrink:0}
+.act-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.act-dot.task{background:#534ab7}.act-dot.call{background:#0070d2}
+.act-dot.event{background:#04844b}.act-dot.past{background:#d8dde6}
+.act-dot.overdue{background:#c23934}
+.act-connector{width:1px;background:#e5e5e5;flex:1;margin-top:3px}
+.act-body{flex:1;min-width:0}
+.act-title{font-size:12px;font-weight:500;color:#16325c;line-height:1.3}
+.act-sub{font-size:11px;color:#54698d;margin-top:2px}
+.act-date{font-size:10px;color:#54698d;white-space:nowrap;padding-top:2px;min-width:36px;text-align:right}
+.act-overdue{color:#c23934;font-weight:500}
+.act-refresh{padding:8px 0;text-align:center;font-size:11px;color:#0070d2;cursor:pointer;border-top:1px solid #e5e5e5;flex-shrink:0}
+.act-refresh:hover{text-decoration:underline}
+@media(max-width:900px){.opp-layout{grid-template-columns:1fr}.opp-main{border-right:none}.opp-rail{border-top:1px solid #e5e5e5}}
 @media(max-width:800px){.highlights{grid-template-columns:repeat(3,1fr)}.layout{grid-template-columns:1fr}}
 </style>
 </head>
@@ -684,7 +725,25 @@ function renderCommunities() {
 // ─────────────────────────────────────────────
 // COMMUNITY DETAIL
 // ─────────────────────────────────────────────
+function actItem(dotCls, icon, title, sub, dateStr, overdue=false) {
+  return `<div class="act-item">
+    <div class="act-dot-col"><div class="act-dot ${dotCls}"></div><div class="act-connector"></div></div>
+    <div class="act-body">
+      <div class="act-title">${icon} ${title}</div>
+      <div class="act-sub${overdue ? ' act-overdue' : ''}">${sub}</div>
+    </div>
+    <div class="act-date${overdue ? ' act-overdue' : ''}">${dateStr}</div>
+  </div>`;
+}
+
 const COMM_STAGES = ['Site Assessment','Contract Executed','HOA Setup','Active Selling','Fully Sold','Closed Out'];
+
+function toggleSection(btn) {
+  const body = btn.closest('.sec-header').nextElementSibling;
+  const arrow = btn.querySelector('.sec-toggle');
+  body.classList.toggle('hidden');
+  arrow.classList.toggle('open');
+}
 
 function renderCommunityDetail(id) {
   const c   = getCommunity(id);
@@ -717,100 +776,148 @@ function renderCommunityDetail(id) {
   const stageIdx = COMM_STAGES.indexOf(c.stage);
   document.getElementById('comm-stage-path').innerHTML = COMM_STAGES.map((s, i) => {
     const cls = i < stageIdx ? 'done' : i === stageIdx ? 'current' : 'future';
-    return `<div class="stage-step ${cls}">
+    return `<div class="stage-step ${cls}" onclick="if(this.classList.contains('done')||this.classList.contains('future')){showToast('Stage updated to ${s}')}">
       <div class="stage-step-label">${s}</div>
       <div class="stage-step-check">${i < stageIdx ? '✓' : i === stageIdx ? '▶' : ''}</div>
     </div>`;
   }).join('');
 
-  // Highlights
-  const activeLots = lots.filter(l => l.bucket !== 'closed').length;
+  // Highlights — Opportunity-style key fields
   document.getElementById('comm-highlights').innerHTML = `
-    <div><div class="hl-label">Total Lots</div><div class="hl-value">${c.totalLots}</div></div>
-    <div><div class="hl-label">Active Lots</div><div class="hl-value green">${c.activeLots}</div></div>
-    <div><div class="hl-label">Closed Lots</div><div class="hl-value">${c.closedLots}</div></div>
+    <div><div class="hl-label">Stage</div><div class="hl-value">${stageChip(c.stage)}</div></div>
+    <div><div class="hl-label">Close Date</div><div class="hl-value amber">${fmtDate(c.closeDate)}</div></div>
     <div><div class="hl-label">Field Manager</div><div class="hl-value">${c.fm}</div></div>
     <div><div class="hl-label">Std Package</div><div class="hl-value">${fmtMoney(c.stdPkg)}</div></div>
-    <div><div class="hl-label">Aqua Customer</div><div class="hl-value ${c.aqua ? 'green' : ''}">${c.aqua ? 'Yes' : 'No'}</div></div>`;
+    <div><div class="hl-label">Total Lots</div><div class="hl-value">${c.totalLots} <span style="font-size:10px;color:#54698d">(${c.activeLots} active)</span></div></div>
+    <div><div class="hl-label">Aqua Customer</div><div class="hl-value ${c.aqua ? 'green' : ''}">${c.aqua ? 'Yes — $' + c.aquaAddon + '/lot' : 'No'}</div></div>`;
 
   document.getElementById('cd-lots-count').textContent = lots.length;
 
-  // Details (editable fields)
-  const fieldSets = [
+  // ── Build activity feed entries from lots data ──
+  const activeLots  = lots.filter(l => l.bucket === 'active');
+  const schedLots   = lots.filter(l => l.bucket === 'scheduled');
+  const clearLots   = lots.filter(l => l.bucket === 'clear');
+  const overdueLots = lots.filter(l => l.bucket === '30' && l.eighty11 === 'Not Filed');
+  const closedLots  = lots.filter(l => l.bucket === 'closed');
+
+  let upcomingItems = '';
+  if (overdueLots.length) {
+    overdueLots.forEach(l => {
+      upcomingItems += actItem('overdue', '🚧', `811 not filed — ${l.lotId}`, `Required before Clear for Schedule · ${l.fm}`, 'Overdue', true);
+    });
+  }
+  schedLots.forEach(l => {
+    upcomingItems += actItem('task', '📅', `Install scheduled — ${l.lotId}`, `${fmtDate(l.reqInstall)} · ${l.crew || l.fm}`, fmtDate(l.reqInstall).replace(', 2026',''));
+  });
+  clearLots.forEach(l => {
+    upcomingItems += actItem('event', '✓', `Clear for Schedule — ${l.lotId}`, `Ready to assign crew · ${l.fm}`, fmtDate(l.reqInstall).replace(', 2026',''));
+  });
+  if (!upcomingItems) upcomingItems = `<div style="padding:12px 0;font-size:11px;color:#54698d">No upcoming items.</div>`;
+
+  let pastItems = '';
+  activeLots.forEach(l => {
+    pastItems += actItem('call', '🏗', `Install in progress — ${l.lotId}`, `${l.crew || 'Crew TBD'} · Active today`, 'Today');
+  });
+  closedLots.slice(0,3).forEach(l => {
+    pastItems += actItem('past', '✓', `Lot closed — ${l.lotId}`, `HO Owned · ${fmtDate(l.reqInstall)}`, fmtDate(l.reqInstall).replace(', 2026','').replace(', 2025',''));
+  });
+  pastItems += actItem('past', '📋', `Community contract executed`, `${bld?.name} · ${div?.name}`, fmtDate(c.startDate).replace(', 202','\'2'));
+  if (!pastItems) pastItems = `<div style="padding:12px 0;font-size:11px;color:#54698d">No past activity.</div>`;
+
+  // Build pipeline bucket summary for activity note
+  const buckets = ['active','scheduled','clear','takeoff','30','31','60+','90+','closed'];
+  let pipelineRows = '';
+  buckets.forEach(b => {
+    const cnt = lots.filter(l => l.bucket === b).length;
+    if (!cnt) return;
+    pipelineRows += `<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid #f4f6f9">
+      ${pipelineBadge(b)} <span class="rm-count has">${cnt}</span></div>`;
+  });
+
+  // ── Field sections (left column) ──
+  const sections = [
     {
-      title: 'Community Information', icon: '🏘', color: '#0070d2',
+      id: `cds-info-${id}`, title: 'Community Information', open: true,
       fields: [
         { label: 'Community Name',   key: 'name',       type: 'text' },
-        { label: 'Stage',            key: 'stage',      type: 'select', opts: COMM_STAGES },
+        { label: 'Stage',            key: 'stage',      type: 'select', opts: COMM_STAGES, display: () => stageChip(c.stage) },
         { label: 'Division Account', key: null,         val: `<a class="nl">${div?.name}</a>` },
         { label: 'Builder',          key: null,         val: `<a class="nl">${bld?.name}</a>` },
         { label: 'Field Manager',    key: 'fm',         type: 'select', opts: ['Tyler Kelly','Scott Spaulding','Jamie Hinson','Jersain Laris'] },
         { label: 'Phases',           key: 'phases',     type: 'text' },
         { label: 'Total Lots',       key: 'totalLots',  type: 'text' },
+        { label: 'Lot Size (avg)',   key: 'lotSize',    type: 'text' },
         { label: 'Address',          key: 'address',    type: 'text' },
         { label: 'Start Date',       key: 'startDate',  type: 'date', display: () => fmtDate(c.startDate) },
         { label: 'Projected Close',  key: 'closeDate',  type: 'date', display: () => fmtDate(c.closeDate) },
         { label: 'Aqua Customer',    key: 'aqua',       type: 'select', opts: ['true','false'], display: () => c.aqua ? '<span class="chip cg">Yes</span>' : '<span class="chip cgr">No</span>' },
-        { label: 'Lot Size (avg)',   key: 'lotSize',    type: 'text' },
       ]
     },
     {
-      title: 'Pricing & Standards', icon: '💰', color: '#04844b',
+      id: `cds-price-${id}`, title: 'Pricing & Standards', open: true,
       fields: [
         { label: 'Plant Package Code',  key: 'pkg',       type: 'text' },
-        { label: 'Spec Type',           key: 'specType',  type: 'select', opts: ['Average','Exact','Flexible'] },
-        { label: 'Std Package $',       key: 'stdPkg',    type: 'text', display: () => fmtMoney(c.stdPkg) },
+        { label: 'Spec Type',           key: 'specType',  type: 'select', opts: ['Average','Exact','Flexible'], display: () => `<span class="chip cgr">${c.specType}</span>` },
+        { label: 'Standard Package $',  key: 'stdPkg',    type: 'text', display: () => fmtMoney(c.stdPkg) },
         { label: 'Aqua Add-on $',       key: 'aquaAddon', type: 'text', display: () => fmtMoney(c.aquaAddon) },
         { label: 'Sod Rate ($/sf)',     key: 'sodRate',   type: 'text', display: () => `$${c.sodRate}/sf` },
         { label: 'Goal Hours',          key: 'goalHrs',   type: 'text', display: () => `${c.goalHrs} hrs` },
         { label: 'Pricebook',           key: null,        val: div?.pricebook || '—' },
         { label: 'Division Contact',    key: null,        val: `${div?.contact} · ${div?.phone}` },
       ]
+    },
+    {
+      id: `cds-pipeline-${id}`, title: 'Lot Pipeline Summary', open: false,
+      custom: `<div style="padding:4px 0">${pipelineRows || '<div style="color:#54698d;font-size:11px;padding:8px 0">No lots in demo data for this community.</div>'}</div>`
     }
   ];
 
-  let detailHtml = '<div class="sf-body"><div class="layout"><div class="layout-main">';
-  fieldSets.forEach((fs, fi) => {
-    detailHtml += `<div class="card ${fi === fieldSets.length-1 ? 'last' : ''}">
-      <div class="ch"><div class="ci" style="background:${fs.color}">${fs.icon}</div><h3>${fs.title}</h3></div>
-      <div class="fields-grid">`;
-    fs.fields.forEach(f => {
-      const valDisplay = f.display ? f.display() : (f.val !== undefined ? f.val : (c[f.key] || '—'));
-      const editId = f.key ? `cd-field-${id}-${f.key}` : '';
-      detailHtml += `<div class="field-row">
-        <div class="field-label">${f.label}</div>
-        <div class="field-value${f.key ? ' editable' : ''}" id="${editId}">${valDisplay}</div>
+  let leftHtml = '';
+  sections.forEach(sec => {
+    leftHtml += `<div>
+      <div class="sec-header" onclick="toggleSection(this)">
+        <span class="sec-toggle${sec.open ? ' open' : ''}">▶</span>
+        <span class="sec-title">${sec.title}</span>
       </div>`;
-    });
-    detailHtml += '</div></div>';
+    if (sec.custom) {
+      leftHtml += `<div class="sec-body${sec.open ? '' : ' hidden'}" style="grid-template-columns:1fr">${sec.custom}</div>`;
+    } else {
+      leftHtml += `<div class="sec-body${sec.open ? '' : ' hidden'}">`;
+      sec.fields.forEach(f => {
+        const display = f.display ? f.display() : (f.val !== undefined ? f.val : (c[f.key] != null ? String(c[f.key]) : '<span style="color:#c8cdd6">—</span>'));
+        const eid = f.key ? `cd-field-${id}-${f.key}` : '';
+        leftHtml += `<div class="opp-field">
+          <div class="opp-label">${f.label}</div>
+          <div class="opp-value${f.key ? ' editable' : ''}" id="${eid}">${display}</div>
+        </div>`;
+      });
+      leftHtml += '</div>';
+    }
+    leftHtml += '</div>';
   });
 
-  // Rail
-  detailHtml += `</div><div class="layout-rail">
-    <div class="card">
-      <div class="ch"><div class="ci" style="background:#534ab7">📈</div><h3>Pipeline Summary</h3></div>
-      <div style="padding:10px 14px">`;
-  const buckets = ['active','scheduled','clear','takeoff','30','31','60+','90+','closed'];
-  const bucketLabels = { active:'Active Today', scheduled:'Scheduled', clear:'Clear for Sched', takeoff:'Takeoff Sched', '30':'30 Days', '31':'31 Days', '60+':'60+ Days', '90+':'90+ Days', closed:'Closed' };
-  buckets.forEach(b => {
-    const cnt = lots.filter(l => l.bucket === b).length;
-    if (!cnt) return;
-    detailHtml += `<div style="display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid #f4f6f9;font-size:11px">
-      <span>${pipelineBadge(b)}</span>
-      <span class="rm-count has">${cnt}</span>
-    </div>`;
-  });
-  detailHtml += `</div></div>
-    <div class="card last">
-      <div class="ch"><div class="ci" style="background:#16325c">🔗</div><h3>Related</h3></div>
-      <div class="related-mini" onclick="navigate('lots')"><div style="font-size:12px">🏠 Lots</div><div class="rm-count has">${lots.length}</div></div>
-      <div class="related-mini"><div style="font-size:12px">📋 Work Orders</div><div class="rm-count has">—</div></div>
-      <div class="related-mini"><div style="font-size:12px">📷 Photos</div><div class="rm-count">—</div></div>
-      <div class="related-mini"><div style="font-size:12px">💧 Aqua Tickets</div><div class="rm-count ${c.aqua ? 'has' : ''}">${c.aqua ? '—' : '0'}</div></div>
+  // ── Activity feed (right column) ──
+  const activityHtml = `<div class="act-panel">
+    <div class="act-actions">
+      <button class="act-btn" onclick="showToast('Task added')"><div class="act-btn-icon">✏️</div>New Task</button>
+      <button class="act-btn" onclick="showToast('Call logged')"><div class="act-btn-icon">📞</div>Log a Call</button>
+      <button class="act-btn" onclick="showToast('Event created')"><div class="act-btn-icon">📅</div>New Event</button>
+      <button class="act-btn" onclick="showToast('Email drafted')"><div class="act-btn-icon">✉️</div>Email</button>
     </div>
-  </div></div></div>`;
+    <div class="act-feed">
+      <div class="act-section-hdr">Upcoming &amp; Overdue</div>
+      ${upcomingItems}
+      <div class="act-section-hdr">Past Activity</div>
+      ${pastItems}
+    </div>
+    <div class="act-refresh" onclick="showToast('Activity refreshed')">↻ Refresh Activity</div>
+  </div>`;
 
-  document.getElementById('comm-detail-fields').parentElement.innerHTML = '';
+  const detailHtml = `<div class="opp-layout">
+    <div class="opp-main">${leftHtml}</div>
+    <div class="opp-rail">${activityHtml}</div>
+  </div>`;
+
   document.getElementById('cd-info').innerHTML = detailHtml;
 
   // Attach inline edit listeners
