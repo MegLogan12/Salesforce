@@ -21,6 +21,11 @@ public without sharing class SchedulingConsoleService {
 
     // @TestVisible flag: when true, selected methods throw to exercise controller catch blocks in tests
     @TestVisible private static Boolean throwForCoverageTest = false;
+    // @TestVisible mock data: when non-null, replace SOQL results in tests (FSL blocks WO inserts in test context)
+    @TestVisible private static List<WorkOrder>            mockWorkOrders           = null;
+    @TestVisible private static List<Schedule_Stop__c>    mockScheduleStops        = null;
+    @TestVisible private static List<ServiceAppointment>  mockServiceAppointments  = null;
+    @TestVisible private static List<Schedule_Issue__c>   mockScheduleIssues       = null;
 
     // ─── KPIs ──────────────────────────────────────────────────────────────
     public static SchedulingConsoleController.ScheduleKpiDto buildKpis(Date schedDate, String division) {
@@ -95,7 +100,7 @@ public without sharing class SchedulingConsoleService {
 
         if (!days.isEmpty()) {
             board.scheduleDay = days[0];
-            List<Schedule_Stop__c> stops = [
+            List<Schedule_Stop__c> stops = mockScheduleStops != null ? mockScheduleStops : [
                 SELECT Id, Work_Order__c, Crew__c, Crew__r.Name, Field_Manager__c, Field_Manager__r.Name,
                        Stop_Number__c, Estimated_Duration_Minutes__c, Estimated_Drive_Time_Minutes__c,
                        Route_Status__c, GPS_Latitude__c, GPS_Longitude__c, Address__c,
@@ -111,7 +116,7 @@ public without sharing class SchedulingConsoleService {
             board = buildBoardFromStops(board, stops, division);
         } else {
             // Fallback: query WorkOrder directly
-            List<WorkOrder> wos = [
+            List<WorkOrder> wos = mockWorkOrders != null ? mockWorkOrders : [
                 SELECT Id, WorkOrderNumber, Crew__c, Crew__r.Name, Field_Manager__r.Name, Stop_Sequence__c,
                        Route_Distance_Miles__c, Status, Community__r.Name,
                        Sod_Sqft__c, Work_Order_Type__c,
@@ -262,6 +267,7 @@ public without sharing class SchedulingConsoleService {
 
     // ─── GPS ─────────────────────────────────────────────────────────────────
     public static List<SchedulingConsoleController.GpsMarkerDto> buildGpsMarkers(Date schedDate, String division) {
+        if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
         List<SchedulingConsoleController.GpsMarkerDto> markers = new List<SchedulingConsoleController.GpsMarkerDto>();
         try {
             // Charlotte metro service area map bounds.
@@ -543,6 +549,7 @@ public without sharing class SchedulingConsoleService {
     // ─── Crew utilization ────────────────────────────────────────────────────
     public static List<SchedulingConsoleController.CrewUtilizationDto> buildCrewUtilization(
             Date startDate, Date endDate, String division) {
+        if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
         List<SchedulingConsoleController.CrewUtilizationDto> rows = new List<SchedulingConsoleController.CrewUtilizationDto>();
         List<Crew__c> crews = [
             SELECT Id, Name, Foreman__r.Name, Weekly_Capacity_Hours__c, Active__c
@@ -600,6 +607,7 @@ public without sharing class SchedulingConsoleService {
 
     // ─── Rippling time off ───────────────────────────────────────────────────
     public static List<SchedulingConsoleController.TimeOffDto> buildTimeOff(Date startDate, Date endDate, String division) {
+        if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
         List<SchedulingConsoleController.TimeOffDto> rows = new List<SchedulingConsoleController.TimeOffDto>();
         try {
             for (Rippling_Time_Off__c rto : [
@@ -630,6 +638,7 @@ public without sharing class SchedulingConsoleService {
     // ─── Overtime risks ──────────────────────────────────────────────────────
     public static List<SchedulingConsoleController.OvertimeRiskDto> buildOvertimeRisks(
             Date startDate, Date endDate, String division) {
+        if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
         List<SchedulingConsoleController.OvertimeRiskDto> rows = new List<SchedulingConsoleController.OvertimeRiskDto>();
         List<SchedulingConsoleController.CrewUtilizationDto> utilRows = buildCrewUtilization(startDate, endDate, division);
         for (SchedulingConsoleController.CrewUtilizationDto u : utilRows) {
@@ -729,6 +738,7 @@ public without sharing class SchedulingConsoleService {
 
     // ─── Draft review ─────────────────────────────────────────────────────────
     public static SchedulingConsoleController.DraftReviewDto buildDraftReview(Date schedDate, String division) {
+        if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
         SchedulingConsoleController.DraftReviewDto dd = new SchedulingConsoleController.DraftReviewDto();
         dd.cleared  = new List<SchedulingConsoleController.DraftCrewDto>();
         dd.blocked  = new List<SchedulingConsoleController.DraftCrewDto>();
@@ -763,12 +773,13 @@ public without sharing class SchedulingConsoleService {
         }
 
         Map<String, List<WorkOrder>> crewMap = new Map<String, List<WorkOrder>>();
-        for (WorkOrder wo : [
+        List<WorkOrder> draftWos = mockWorkOrders != null ? mockWorkOrders : [
             SELECT Crew__c, Crew__r.Name, Sod_Sqft__c, Route_Distance_Miles__c, Field_Manager__r.Name
             FROM WorkOrder WHERE Schedule_Locked__c = true AND Scheduled_Date__c = :schedDate AND Crew__c != null
             LIMIT 200
-        ]) {
-            String crewKey = (String)wo.Crew__c;
+        ];
+        for (WorkOrder wo : draftWos) {
+            String crewKey = wo.Crew__c != null ? (String)wo.Crew__c : 'Unassigned';
             if (!crewMap.containsKey(crewKey)) crewMap.put(crewKey, new List<WorkOrder>());
             crewMap.get(crewKey).add(wo);
         }
@@ -935,6 +946,7 @@ public without sharing class SchedulingConsoleService {
     // ═══════════════════════════════════════════════════════════════════════════
 
     public static SchedulingConsoleController.TodayScheduleDto buildTodaySchedule(Date scheduleDate, String division) {
+        if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
         SchedulingConsoleController.TodayScheduleDto dto = new SchedulingConsoleController.TodayScheduleDto();
         dto.stops = new List<SchedulingConsoleController.TodayStopDto>();
 
@@ -995,6 +1007,7 @@ public without sharing class SchedulingConsoleService {
     }
 
     public static List<SchedulingConsoleController.UnscheduledWorkDto> buildUnscheduledWork(String division, String woType) {
+        if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
         List<SchedulingConsoleController.UnscheduledWorkDto> result = new List<SchedulingConsoleController.UnscheduledWorkDto>();
         String soql = 'SELECT Id, WorkOrderNumber, Status, Work_Order_Type__c, Pipeline_Bucket__c, '
                     + 'Community__r.Name, Lot__r.Name, Field_Manager__r.Name, '
@@ -1005,7 +1018,8 @@ public without sharing class SchedulingConsoleService {
             soql += 'AND Work_Order_Type__c = \'' + String.escapeSingleQuotes(woType) + '\' ';
         }
         soql += 'ORDER BY CreatedDate ASC LIMIT 500';
-        for (WorkOrder wo : Database.query(soql)) {
+        List<WorkOrder> unschedWos = mockWorkOrders != null ? mockWorkOrders : (List<WorkOrder>)Database.query(soql);
+        for (WorkOrder wo : unschedWos) {
             SchedulingConsoleController.UnscheduledWorkDto d = new SchedulingConsoleController.UnscheduledWorkDto();
             d.woId           = wo.Id;
             d.woName         = wo.WorkOrderNumber;
@@ -1023,17 +1037,19 @@ public without sharing class SchedulingConsoleService {
     }
 
     public static List<SchedulingConsoleController.ScheduledWorkDto> buildScheduledWork(Date scheduleDate, String division) {
+        if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
         List<SchedulingConsoleController.ScheduledWorkDto> result = new List<SchedulingConsoleController.ScheduledWorkDto>();
         Datetime weekStart = Datetime.newInstanceGmt(scheduleDate.toStartOfWeek().addDays(1), Time.newInstance(0,0,0,0));
         Datetime weekEnd   = Datetime.newInstanceGmt(scheduleDate.toStartOfWeek().addDays(5), Time.newInstance(23,59,59,999));
-        for (ServiceAppointment sa : [
+        List<ServiceAppointment> schedSAs = mockServiceAppointments != null ? mockServiceAppointments : [
             SELECT Id, AppointmentNumber, Status, SchedStartTime, Duration,
                    ServiceTerritoryId, ServiceTerritory.Name, FSL__Pinned__c, Subject
             FROM ServiceAppointment
             WHERE SchedStartTime >= :weekStart AND SchedStartTime <= :weekEnd
             ORDER BY SchedStartTime ASC
             LIMIT 500
-        ]) {
+        ];
+        for (ServiceAppointment sa : schedSAs) {
             SchedulingConsoleController.ScheduledWorkDto d = new SchedulingConsoleController.ScheduledWorkDto();
             d.saId                  = sa.Id;
             d.saNumber              = sa.AppointmentNumber;
@@ -1048,6 +1064,7 @@ public without sharing class SchedulingConsoleService {
     }
 
     public static List<SchedulingConsoleController.BlockedWorkDto> buildBlockedWork(String division) {
+        if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
         List<SchedulingConsoleController.BlockedWorkDto> result = new List<SchedulingConsoleController.BlockedWorkDto>();
         for (Schedule_Issue__c si : [
             SELECT Id, Standard_WorkOrder__c, Standard_WorkOrder__r.WorkOrderNumber,
@@ -1075,6 +1092,7 @@ public without sharing class SchedulingConsoleService {
     }
 
     public static List<SchedulingConsoleController.FieldManagerDto> buildFieldManagerSummary(Date scheduleDate, String division) {
+        if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
         List<SchedulingConsoleController.FieldManagerDto> result = new List<SchedulingConsoleController.FieldManagerDto>();
         for (Employee__c emp : [
             SELECT Id, Name
@@ -1099,6 +1117,7 @@ public without sharing class SchedulingConsoleService {
     }
 
     public static List<SchedulingConsoleController.TerritoryDto> buildServiceTerritorySummary(Date scheduleDate, String division) {
+        if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
         List<SchedulingConsoleController.TerritoryDto> result = new List<SchedulingConsoleController.TerritoryDto>();
         for (ServiceTerritory st : [
             SELECT Id, Name, OperatingHoursId
@@ -1122,6 +1141,7 @@ public without sharing class SchedulingConsoleService {
     }
 
     public static List<SchedulingConsoleController.WorkOrderSummaryDto> buildWorkOrderSummary(String division, String woType) {
+        if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
         List<SchedulingConsoleController.WorkOrderSummaryDto> result = new List<SchedulingConsoleController.WorkOrderSummaryDto>();
         String soql = 'SELECT Id, WorkOrderNumber, Status, Work_Order_Type__c, Pipeline_Bucket__c, '
                     + 'Priority, CreatedDate, Community__r.Name, Lot__r.Name, Field_Manager__r.Name '
@@ -1130,7 +1150,8 @@ public without sharing class SchedulingConsoleService {
             soql += 'WHERE Work_Order_Type__c = \'' + String.escapeSingleQuotes(woType) + '\' ';
         }
         soql += 'ORDER BY CreatedDate DESC LIMIT 500';
-        for (WorkOrder wo : Database.query(soql)) {
+        List<WorkOrder> woSumList = mockWorkOrders != null ? mockWorkOrders : (List<WorkOrder>)Database.query(soql);
+        for (WorkOrder wo : woSumList) {
             SchedulingConsoleController.WorkOrderSummaryDto d = new SchedulingConsoleController.WorkOrderSummaryDto();
             d.woId          = wo.Id;
             d.woName        = wo.WorkOrderNumber;
@@ -1147,6 +1168,7 @@ public without sharing class SchedulingConsoleService {
     }
 
     public static List<SchedulingConsoleController.ServiceAppointmentSummaryDto> buildServiceAppointmentSummary(Date scheduleDate, String division) {
+        if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
         List<SchedulingConsoleController.ServiceAppointmentSummaryDto> result = new List<SchedulingConsoleController.ServiceAppointmentSummaryDto>();
         for (ServiceAppointment sa : [
             SELECT Id, AppointmentNumber, Status, SchedStartTime, Duration,
@@ -1172,7 +1194,7 @@ public without sharing class SchedulingConsoleService {
     public static List<SchedulingConsoleController.ScheduleRequestDto> buildScheduleRequests(String division) {
         if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
         List<SchedulingConsoleController.ScheduleRequestDto> result = new List<SchedulingConsoleController.ScheduleRequestDto>();
-        for (Schedule_Issue__c si : [
+        List<Schedule_Issue__c> schedReqs = mockScheduleIssues != null ? mockScheduleIssues : [
             SELECT Id, Standard_WorkOrder__c, Standard_WorkOrder__r.WorkOrderNumber,
                    Standard_WorkOrder__r.Work_Order_Type__c, Standard_WorkOrder__r.Community__r.Name,
                    Standard_WorkOrder__r.Lot__r.Name, Standard_WorkOrder__r.Field_Manager__r.Name,
@@ -1181,7 +1203,8 @@ public without sharing class SchedulingConsoleService {
             WHERE Status__c = 'Pending_Approval'
             ORDER BY CreatedDate DESC
             LIMIT 200
-        ]) {
+        ];
+        for (Schedule_Issue__c si : schedReqs) {
             SchedulingConsoleController.ScheduleRequestDto d = new SchedulingConsoleController.ScheduleRequestDto();
             d.requestId           = si.Id;
             d.workOrderName       = si.Standard_WorkOrder__r != null ? si.Standard_WorkOrder__r.WorkOrderNumber : '—';
@@ -1198,8 +1221,9 @@ public without sharing class SchedulingConsoleService {
     }
 
     public static List<SchedulingConsoleController.DataIssueDto> buildDataIssues(String division) {
+        if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
         List<SchedulingConsoleController.DataIssueDto> result = new List<SchedulingConsoleController.DataIssueDto>();
-        for (WorkOrder wo : [
+        List<WorkOrder> issueWos = mockWorkOrders != null ? mockWorkOrders : [
             SELECT Id, WorkOrderNumber, Work_Order_Type__c, Community__c, Lot__c,
                    Field_Manager__c, ServiceTerritoryId, WorkTypeId, Priority
             FROM WorkOrder
@@ -1208,7 +1232,8 @@ public without sharing class SchedulingConsoleService {
                    OR ServiceTerritoryId = null OR WorkTypeId = null)
             ORDER BY CreatedDate DESC
             LIMIT 200
-        ]) {
+        ];
+        for (WorkOrder wo : issueWos) {
             if (wo.Community__c == null)        result.add(issueRow(wo.Id, wo.WorkOrderNumber, 'WorkOrder', 'Community__c',        'Missing Field', 'Community is required before scheduling', 'High',   'Set Community__c on the Work Order'));
             if (wo.Lot__c == null)              result.add(issueRow(wo.Id, wo.WorkOrderNumber, 'WorkOrder', 'Lot__c',              'Missing Field', 'Lot is required before scheduling',       'High',   'Set Lot__c on the Work Order'));
             if (wo.Field_Manager__c == null)    result.add(issueRow(wo.Id, wo.WorkOrderNumber, 'WorkOrder', 'Field_Manager__c',    'Missing Field', 'FM assignment required',                  'Medium', 'Assign Field Manager on the Work Order'));
