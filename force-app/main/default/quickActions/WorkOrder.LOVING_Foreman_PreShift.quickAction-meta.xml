@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Foreman completes pre-shift vehicle checklist before heading to job site.</description>
+    <label>Pre-Shift Check</label>
+    <lightningWebComponent>lovingForemanPreShiftAction</lightningWebComponent>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <targetObject>WorkOrder</targetObject>
+    <type>LightningWebComponent</type>
+</QuickAction>

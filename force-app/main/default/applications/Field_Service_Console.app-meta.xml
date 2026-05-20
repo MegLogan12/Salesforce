@@ -1731,6 +1731,7 @@
     <tabs>standard-Case</tabs>
     <tabs>standard-report</tabs>
     <tabs>standard-Dashboard</tabs>
+    <tabs>LOVING_Field_Manager_App</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>LOVING_Field_Service_UtilityBar</utilityBar>
     <workspaceConfig>
@@ -1786,6 +1787,9 @@
         </mappings>
         <mappings>
             <tab>standard-report</tab>
+        </mappings>
+        <mappings>
+            <tab>LOVING_Field_Manager_App</tab>
         </mappings>
     </workspaceConfig>
 </CustomApplication>
