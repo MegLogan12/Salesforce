@@ -37,7 +37,7 @@
         <locationY>200</locationY>
         <assignmentItems>
             <assignToReference>varSiteReadinessDueDate</assignToReference>
-            <operator>Add</operator>
+            <operator>Assign</operator>
             <value>
                 <elementReference>varWorkOrder.Scheduled_Date__c</elementReference>
             </value>

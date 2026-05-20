@@ -170,7 +170,6 @@
         <outputReference>varWO</outputReference>
         <queriedFields>Id</queriedFields>
         <queriedFields>FM__c</queriedFields>
-        <queriedFields>FM__r.ManagerId</queriedFields>
         <queriedFields>Lot_Address__c</queriedFields>
         <queriedFields>NFI_Count__c</queriedFields>
         <queriedFields>Need_Further_Info_Notes__c</queriedFields>

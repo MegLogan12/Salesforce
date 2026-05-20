@@ -31,7 +31,7 @@
         <name>Check_FJ_Required</name>
         <label>Finish Job Required?</label>
         <locationX>200</locationX>
-        <locationY>400</locationY>
+        <locationY>500</locationY>
         <defaultConnectorLabel>No Finish Job</defaultConnectorLabel>
         <rules>
             <name>FJ_Is_Required</name>
@@ -53,7 +53,7 @@
         <name>Create_Scheduling_Escalation</name>
         <label>Create Scheduling Escalation Task</label>
         <locationX>200</locationX>
-        <locationY>200</locationY>
+        <locationY>300</locationY>
         <connector>
             <targetReference>Create_Ops_Escalation</targetReference>
         </connector>
@@ -100,7 +100,7 @@
         <name>Create_Ops_Escalation</name>
         <label>Create Ops Manager Escalation Task</label>
         <locationX>200</locationX>
-        <locationY>300</locationY>
+        <locationY>400</locationY>
         <connector>
             <targetReference>Check_FJ_Required</targetReference>
         </connector>
@@ -113,7 +113,7 @@
         <inputAssignments>
             <field>OwnerId</field>
             <value>
-                <elementReference>varWO.FM__r.ManagerId</elementReference>
+                <elementReference>varFMUser.ManagerId</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -159,7 +159,7 @@ The Finish Job will be auto-created if FM marks Finish_Job_Required__c = true.</
         <name>Create_Finish_Job_Record</name>
         <label>Create Finish Job Record</label>
         <locationX>400</locationX>
-        <locationY>400</locationY>
+        <locationY>500</locationY>
         <inputAssignments>
             <field>Parent_Work_Order__c</field>
             <value>
@@ -200,7 +200,7 @@ The Finish Job will be auto-created if FM marks Finish_Job_Required__c = true.</
         <locationY>100</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Create_Scheduling_Escalation</targetReference>
+            <targetReference>Get_FM_User</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -215,12 +215,34 @@ The Finish Job will be auto-created if FM marks Finish_Job_Required__c = true.</
         <outputReference>varWO</outputReference>
         <queriedFields>Id</queriedFields>
         <queriedFields>FM__c</queriedFields>
-        <queriedFields>FM__r.ManagerId</queriedFields>
         <queriedFields>Lot_Address__c</queriedFields>
         <queriedFields>Lot_Number__c</queriedFields>
         <queriedFields>Red_Flag_Notes__c</queriedFields>
         <queriedFields>Finish_Job_Required__c</queriedFields>
         <queriedFields>Finish_Job_Reason__c</queriedFields>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_FM_User</name>
+        <label>Get FM User (for Manager lookup)</label>
+        <locationX>200</locationX>
+        <locationY>200</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Create_Scheduling_Escalation</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>varWO.FM__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>User</object>
+        <outputReference>varFMUser</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>ManagerId</queriedFields>
     </recordLookups>
     <variables>
         <name>varWorkOrderId</name>
@@ -257,5 +279,13 @@ The Finish Job will be auto-created if FM marks Finish_Job_Required__c = true.</
         <isInput>false</isInput>
         <isOutput>false</isOutput>
         <objectType>WorkOrder</objectType>
+    </variables>
+    <variables>
+        <name>varFMUser</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>User</objectType>
     </variables>
 </Flow>
