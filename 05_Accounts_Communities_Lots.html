@@ -209,6 +209,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 .act-overdue{color:#c23934;font-weight:500}
 .act-refresh{padding:8px 0;text-align:center;font-size:11px;color:#0070d2;cursor:pointer;border-top:1px solid #e5e5e5;flex-shrink:0}
 .act-refresh:hover{text-decoration:underline}
+/* Live / refresh indicators */
+.live-pill{display:inline-flex;align-items:center;gap:4px;background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7;border-radius:10px;font-size:10px;font-weight:600;padding:2px 8px;letter-spacing:.3px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#2e7d32;animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.refresh-row{display:flex;align-items:center;gap:8px;padding:7px 20px;background:#fafaf9;border-bottom:1px solid #e5e5e5;font-size:11px;color:#54698d}
+.refresh-btn{background:#fff;border:1px solid #d8dde6;border-radius:4px;padding:3px 10px;font-size:11px;color:#0070d2;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.refresh-btn:hover{background:#e3f0fb}
+.refresh-btn.spinning span{display:inline-block;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 @media(max-width:900px){.opp-layout{grid-template-columns:1fr}.opp-main{border-right:none}.opp-rail{border-top:1px solid #e5e5e5}}
 @media(max-width:800px){.highlights{grid-template-columns:repeat(3,1fr)}.layout{grid-template-columns:1fr}}
 </style>
@@ -227,6 +236,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
   <div class="sf-tab on" onclick="navigate('communities')" id="tab-communities">Communities <span class="num-badge">86</span></div>
   <div class="sf-tab" onclick="navigate('lots')" id="tab-lots">Lots <span class="num-badge">2,847</span></div>
   <div class="sf-tab" id="tab-detail" style="display:none"></div>
+  <div style="margin-left:auto;padding:0 12px;display:flex;align-items:center;gap:8px">
+    <span class="live-pill"><span class="live-dot"></span>LIVE</span>
+    <span id="nav-timestamp" style="font-size:10px;color:#54698d"></span>
+  </div>
 </div>
 
 <!-- ====== ACCOUNTS ====== -->
@@ -248,6 +261,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
     <option value="Division">Divisions</option>
   </select>
   <span style="margin-left:auto;font-size:11px;color:#54698d">Click ▸ to expand / collapse</span>
+</div>
+<div class="refresh-row" id="acct-refresh-row">
+  <button class="refresh-btn" onclick="doRefresh('accounts')"><span>↻</span> Refresh</button>
+  <span id="acct-ts"></span>
+  <span style="margin-left:auto;font-size:10px;color:#b0b7c3">Auto-refreshes every 30s</span>
 </div>
 <div class="sf-body"><div class="card last" id="acct-tree-container"></div></div>
 </div>
@@ -285,6 +303,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
   </select>
   <input class="list-search" id="comm-search" placeholder="Search communities…" oninput="renderCommunities()">
 </div>
+<div class="refresh-row" id="comm-refresh-row">
+  <button class="refresh-btn" onclick="doRefresh('communities')"><span>↻</span> Refresh</button>
+  <span id="comm-ts"></span>
+  <span style="margin-left:auto;font-size:10px;color:#b0b7c3">Auto-refreshes every 30s · Pipeline_Bucket__c recalculated nightly</span>
+</div>
 <div class="sf-body"><div class="card last"><table class="tbl" id="comm-table">
   <thead><tr>
     <th>Community</th><th>Builder / Division</th><th>FM</th>
@@ -311,7 +334,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
   <div class="subtab" onclick="subTab('cd','workorders',this)">Work Orders</div>
   <div class="subtab" onclick="subTab('cd','related',this)">Related</div>
 </div>
-<div id="cd-info" class="sub-tc on"><div class="sf-body" id="comm-detail-fields"></div></div>
+<div class="refresh-row" id="cd-refresh-row">
+  <button class="refresh-btn" onclick="doRefresh('community-detail')"><span>↻</span> Refresh</button>
+  <span id="cd-ts"></span>
+  <span style="margin-left:auto;font-size:10px;color:#b0b7c3">Activity feed updates on refresh</span>
+</div>
+<div id="cd-info" class="sub-tc on"></div>
 <div id="cd-lots" class="sub-tc"><div id="comm-lot-grid-wrap"></div></div>
 <div id="cd-workorders" class="sub-tc"><div class="sf-body"><div class="card last" id="comm-wo-table-wrap"></div></div></div>
 <div id="cd-related" class="sub-tc"><div class="sf-body"><div class="card last" id="comm-related-wrap"></div></div></div>
@@ -356,6 +384,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
   </select>
   <input class="list-search" id="lot-search" placeholder="Search lots, PO, address…" oninput="renderLots()">
 </div>
+<div class="refresh-row" id="lots-refresh-row">
+  <button class="refresh-btn" onclick="doRefresh('lots')"><span>↻</span> Refresh</button>
+  <span id="lots-ts"></span>
+  <span style="margin-left:auto;font-size:10px;color:#b0b7c3">Auto-refreshes every 30s · 811 status syncs from NC811 API nightly</span>
+</div>
 <div class="sf-body"><div class="card last">
   <table class="tbl" id="lots-table">
     <thead><tr>
@@ -383,6 +416,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
   <div class="subtab" onclick="subTab('ld','workorders',this)">Work Orders <span class="rm-count has" style="margin-left:4px">3</span></div>
   <div class="subtab" onclick="subTab('ld','photos',this)">Photos <span class="rm-count" style="margin-left:4px">—</span></div>
   <div class="subtab" onclick="subTab('ld','aqua',this)">Aqua</div>
+</div>
+<div class="refresh-row" id="ld-refresh-row">
+  <button class="refresh-btn" onclick="doRefresh('lot-detail')"><span>↻</span> Refresh</button>
+  <span id="ld-ts"></span>
+  <span style="margin-left:auto;font-size:10px;color:#b0b7c3">Syncs with FSL Mobile in real time</span>
 </div>
 <div id="ld-details" class="sub-tc on"><div class="sf-body" id="lot-detail-fields"></div></div>
 <div id="ld-pipeline" class="sub-tc"><div class="sf-body" id="lot-pipeline-content"></div></div>
@@ -797,31 +835,78 @@ function renderCommunityDetail(id) {
   const activeLots  = lots.filter(l => l.bucket === 'active');
   const schedLots   = lots.filter(l => l.bucket === 'scheduled');
   const clearLots   = lots.filter(l => l.bucket === 'clear');
+  const takeoffLots = lots.filter(l => l.bucket === 'takeoff');
   const overdueLots = lots.filter(l => l.bucket === '30' && l.eighty11 === 'Not Filed');
+  const thirtyLots  = lots.filter(l => l.bucket === '30' && l.eighty11 !== 'Not Filed');
+  const thirtyOneLots = lots.filter(l => l.bucket === '31');
+  const sixtyLots   = lots.filter(l => l.bucket === '60+');
+  const ninetyLots  = lots.filter(l => l.bucket === '90+');
   const closedLots  = lots.filter(l => l.bucket === 'closed');
 
   let upcomingItems = '';
-  if (overdueLots.length) {
-    overdueLots.forEach(l => {
-      upcomingItems += actItem('overdue', '🚧', `811 not filed — ${l.lotId}`, `Required before Clear for Schedule · ${l.fm}`, 'Overdue', true);
-    });
-  }
+
+  // Overdue 811s — highest priority, red
+  overdueLots.forEach(l => {
+    upcomingItems += actItem('overdue', '🚧', `811 not filed — ${l.lotId}`, `Must file before Clear for Schedule · ${l.fm}`, 'Overdue', true);
+  });
+
+  // Active installs today
+  activeLots.forEach(l => {
+    upcomingItems += actItem('task', '🏗', `Install active today — ${l.lotId}`, `${l.crew || l.fm} · ${l.address}`, 'Today');
+  });
+
+  // Scheduled installs
   schedLots.forEach(l => {
-    upcomingItems += actItem('task', '📅', `Install scheduled — ${l.lotId}`, `${fmtDate(l.reqInstall)} · ${l.crew || l.fm}`, fmtDate(l.reqInstall).replace(', 2026',''));
+    const d = fmtDate(l.reqInstall).replace(', 2026','').replace(', 2025','');
+    upcomingItems += actItem('event', '📅', `Install scheduled — ${l.lotId}`, `${l.crew || 'Crew TBD'} · ${l.address}`, d);
   });
+
+  // Lots clear for schedule — need crew assignment
   clearLots.forEach(l => {
-    upcomingItems += actItem('event', '✓', `Clear for Schedule — ${l.lotId}`, `Ready to assign crew · ${l.fm}`, fmtDate(l.reqInstall).replace(', 2026',''));
+    const d = fmtDate(l.reqInstall).replace(', 2026','');
+    upcomingItems += actItem('call', '✅', `Clear for Schedule — ${l.lotId}`, `Ready · Assign crew now · ${l.fm}`, d);
   });
-  if (!upcomingItems) upcomingItems = `<div style="padding:12px 0;font-size:11px;color:#54698d">No upcoming items.</div>`;
+
+  // Takeoff scheduled
+  takeoffLots.forEach(l => {
+    const d = fmtDate(l.reqInstall).replace(', 2026','');
+    upcomingItems += actItem('task', '📏', `Takeoff upcoming — ${l.lotId}`, `${l.takeoff} · ${l.fm}`, d);
+  });
+
+  // 30 Days with 811 filed — approaching
+  thirtyLots.forEach(l => {
+    const d = fmtDate(l.reqInstall).replace(', 2026','');
+    upcomingItems += actItem('task', '⏰', `30-day window — ${l.lotId}`, `811 ${l.eighty11} · Takeoff needed · ${l.fm}`, d);
+  });
+
+  // 31 Days
+  thirtyOneLots.slice(0,2).forEach(l => {
+    const d = fmtDate(l.reqInstall).replace(', 2026','');
+    upcomingItems += actItem('past', '📋', `31-day window — ${l.lotId}`, `Schedule takeoff · ${l.fm}`, d);
+  });
+
+  if (!upcomingItems) upcomingItems = `<div style="padding:12px 0;font-size:11px;color:#54698d">No upcoming items for this community.</div>`;
 
   let pastItems = '';
-  activeLots.forEach(l => {
-    pastItems += actItem('call', '🏗', `Install in progress — ${l.lotId}`, `${l.crew || 'Crew TBD'} · Active today`, 'Today');
+
+  // Closed lots
+  closedLots.forEach(l => {
+    const d = fmtDate(l.reqInstall).replace(', 2026','').replace(', 2025','');
+    pastItems += actItem('past', '🏡', `Lot closed — HO owned · ${l.lotId}`, `Aqua: ${l.aqua} · All WOs approved`, d);
   });
-  closedLots.slice(0,3).forEach(l => {
-    pastItems += actItem('past', '✓', `Lot closed — ${l.lotId}`, `HO Owned · ${fmtDate(l.reqInstall)}`, fmtDate(l.reqInstall).replace(', 2026','').replace(', 2025',''));
+
+  // 60+/90+ lots created (pipeline entries)
+  sixtyLots.slice(0,2).forEach(l => {
+    pastItems += actItem('past', '📬', `PO received — ${l.lotId}`, `${l.po} · ${fmtMoney(l.poAmt)} · ${l.fm}`, 'Recent');
   });
-  pastItems += actItem('past', '📋', `Community contract executed`, `${bld?.name} · ${div?.name}`, fmtDate(c.startDate).replace(', 202','\'2'));
+  ninetyLots.slice(0,1).forEach(l => {
+    pastItems += actItem('past', '📬', `PO received — ${l.lotId}`, `${l.po} · ${fmtMoney(l.poAmt)} · Backlog`, 'Earlier');
+  });
+
+  // Community milestone entries
+  pastItems += actItem('past', '📋', `Community setup complete`, `Pricebook linked · ${div?.pricebook} · ${div?.contact}`, fmtDate(c.startDate).replace(', 202','\'2'));
+  pastItems += actItem('past', '🤝', `Contract executed`, `${bld?.name} / ${div?.name} · MSA signed`, fmtDate(c.startDate).replace(', 202','\'2'));
+
   if (!pastItems) pastItems = `<div style="padding:12px 0;font-size:11px;color:#54698d">No past activity.</div>`;
 
   // Build pipeline bucket summary for activity note
@@ -910,7 +995,7 @@ function renderCommunityDetail(id) {
       <div class="act-section-hdr">Past Activity</div>
       ${pastItems}
     </div>
-    <div class="act-refresh" onclick="showToast('Activity refreshed')">↻ Refresh Activity</div>
+    <div class="act-refresh" onclick="doRefresh('community-detail')">↻ Refresh Activity &nbsp;·&nbsp; <span class="live-pill" style="font-size:9px"><span class="live-dot"></span>LIVE</span></div>
   </div>`;
 
   const detailHtml = `<div class="opp-layout">
@@ -1239,6 +1324,71 @@ function renderLotDetail(id) {
 }
 
 // ─────────────────────────────────────────────
+// REFRESH ENGINE
+// ─────────────────────────────────────────────
+let currentView = 'communities';
+const tsMap = { accounts:'acct-ts', communities:'comm-ts', lots:'lots-ts', 'community-detail':'cd-ts', 'lot-detail':'ld-ts' };
+const btnMap = { accounts:'acct-refresh-row', communities:'comm-refresh-row', lots:'lots-refresh-row', 'community-detail':'cd-refresh-row', 'lot-detail':'ld-refresh-row' };
+
+function fmtTs() {
+  return new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true });
+}
+
+function stampTs(view) {
+  const tsId = tsMap[view];
+  if (tsId) {
+    const el = document.getElementById(tsId);
+    if (el) el.textContent = `Last refreshed ${fmtTs()}`;
+  }
+  const navTs = document.getElementById('nav-timestamp');
+  if (navTs) navTs.textContent = `Updated ${fmtTs()}`;
+}
+
+function doRefresh(view) {
+  const rowId = btnMap[view];
+  const row = rowId ? document.getElementById(rowId) : null;
+  const btn = row?.querySelector('.refresh-btn');
+  if (btn) btn.classList.add('spinning');
+
+  setTimeout(() => {
+    if (view === 'accounts')          renderAccounts();
+    if (view === 'communities')        renderCommunities();
+    if (view === 'lots')               renderLots();
+    if (view === 'community-detail' && currentCommunityId) renderCommunityDetail(currentCommunityId);
+    if (view === 'lot-detail'       && currentLotId)       renderLotDetail(currentLotId);
+    stampTs(view);
+    if (btn) btn.classList.remove('spinning');
+    showToast('Refreshed');
+  }, 420);
+}
+
+// Override navigate to track current view and stamp timestamps
+const _navigate = navigate;
+// Patch navigate to stamp ts after render
+const _origNavigate = navigate;
+function navigate(view, id) {
+  currentView = view;
+  _origNavigate(view, id);
+  stampTs(view);
+}
+
+// Auto-refresh every 30s — refreshes active view only
+let autoRefreshInterval = setInterval(() => {
+  doRefresh(currentView);
+}, 30000);
+
+// Countdown display
+let countdown = 30;
+setInterval(() => {
+  countdown--;
+  if (countdown <= 0) countdown = 30;
+  const navTs = document.getElementById('nav-timestamp');
+  if (navTs && navTs.textContent) {
+    // append countdown inline only when not mid-refresh
+  }
+}, 1000);
+
+// ─────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
@@ -1246,6 +1396,9 @@ window.addEventListener('DOMContentLoaded', () => {
   renderCommunities();
   renderLots();
   navigate('communities');
+  stampTs('communities');
+  // stamp all on load
+  ['accounts','lots'].forEach(v => stampTs(v));
 });
 </script>
 </body>
