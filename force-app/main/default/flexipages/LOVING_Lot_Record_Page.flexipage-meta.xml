@@ -118,10 +118,4 @@
         <name>flexipage:recordHomeTemplateDesktop</name>
     </template>
     <type>RecordPage</type>
-    <activationContexts>
-    <activationContext>
-        <identifier>cef5aedf-3a0c-422d-a2d5-9cd45382fd63</identifier>
-        <type>OrgDefault</type>
-    </activationContext>
-    </activationContexts>
 </FlexiPage>

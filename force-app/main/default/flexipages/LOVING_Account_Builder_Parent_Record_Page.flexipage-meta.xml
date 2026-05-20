@@ -246,12 +246,4 @@
         <name>flexipage:recordHomeTemplateDesktop</name>
     </template>
     <type>RecordPage</type>
-    <activationContexts>
-    <activationContext>
-        <app>Customer_Care_Console</app>
-        <identifier>36a4f14e-dc9e-4379-ad20-39d6c7353c73</identifier>
-        <recordType>Builder_Parent</recordType>
-        <type>AppAndRecordType</type>
-    </activationContext>
-    </activationContexts>
 </FlexiPage>

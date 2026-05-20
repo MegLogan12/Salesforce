@@ -3,5 +3,6 @@
     <description>Foreman submits job closeout. Requires photos and quantity confirmation.</description>
     <label>Submit Closeout</label>
     <lightningWebComponent>lovingForemanCloseoutAction</lightningWebComponent>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
     <type>LightningWebComponent</type>
 </QuickAction>

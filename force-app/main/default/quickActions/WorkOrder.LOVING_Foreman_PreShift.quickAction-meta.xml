@@ -3,5 +3,6 @@
     <description>Foreman completes pre-shift vehicle checklist before heading to job site.</description>
     <label>Pre-Shift Check</label>
     <lightningWebComponent>lovingForemanPreShiftAction</lightningWebComponent>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
     <type>LightningWebComponent</type>
 </QuickAction>

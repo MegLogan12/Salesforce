@@ -26,11 +26,4 @@
         <name>flexipage:recordHomeTemplateDesktop</name>
     </template>
     <type>RecordPage</type>
-    <activationContexts>
-    <activationContext>
-        <app>Outdoor_Living_Console</app>
-        <identifier>b3c4d5e6-f7a8-4b9c-0d1e-2f3a4b5c6d7e</identifier>
-        <type>App</type>
-    </activationContext>
-    </activationContexts>
 </FlexiPage>

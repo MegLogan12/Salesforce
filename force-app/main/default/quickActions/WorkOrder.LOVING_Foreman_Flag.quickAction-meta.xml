@@ -3,5 +3,6 @@
     <description>Foreman flags a site issue or red flag. Requires notes.</description>
     <label>Flag Issue</label>
     <lightningWebComponent>lovingForemanFlagIssueAction</lightningWebComponent>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
     <type>LightningWebComponent</type>
 </QuickAction>
