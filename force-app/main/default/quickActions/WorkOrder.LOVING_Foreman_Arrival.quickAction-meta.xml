@@ -3,7 +3,5 @@
     <description>Foreman marks arrival at job site. Records GPS coordinates and Arrived_At__c timestamp.</description>
     <label>Log Arrival</label>
     <lightningWebComponent>lovingForemanArrivalAction</lightningWebComponent>
-    <optionsCreateFeedItem>false</optionsCreateFeedItem>
-    <targetObject>WorkOrder</targetObject>
     <type>LightningWebComponent</type>
 </QuickAction>

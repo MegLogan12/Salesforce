@@ -3,7 +3,5 @@
     <description>Foreman submits end-of-day status. Logs hours and crew headcount.</description>
     <label>End of Day</label>
     <lightningWebComponent>lovingForemanEODAction</lightningWebComponent>
-    <optionsCreateFeedItem>false</optionsCreateFeedItem>
-    <targetObject>WorkOrder</targetObject>
     <type>LightningWebComponent</type>
 </QuickAction>

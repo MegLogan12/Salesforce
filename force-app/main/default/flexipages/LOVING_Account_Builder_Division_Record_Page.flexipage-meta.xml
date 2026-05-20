@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activationContext>
+        <app>Customer_Care_Console</app>
+        <identifier>98610b83-63b4-4ca7-bb6a-ac2c328bafeb</identifier>
+        <recordType>Builder_Market</recordType>
+        <type>AppAndRecordType</type>
+    </activationContext>
+    <activationContext>
+        <app>Field_Service_Console</app>
+        <identifier>919e901b-66a9-47c4-9746-a2b16f6ca9db</identifier>
+        <recordType>Builder_Market</recordType>
+        <type>AppAndRecordType</type>
+    </activationContext>
+    <activationContext>
+        <app>Outdoor_Living_Console</app>
+        <identifier>b2c3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e</identifier>
+        <recordType>Builder_Market</recordType>
+        <type>AppAndRecordType</type>
+    </activationContext>
     <flexiPageRegions>
         <name>header</name>
         <type>Region</type>
@@ -342,16 +360,4 @@
         <name>flexipage:recordHomeTemplateDesktop</name>
     </template>
     <type>RecordPage</type>
-    <activationContext>
-        <app>Customer_Care_Console</app>
-        <identifier>98610b83-63b4-4ca7-bb6a-ac2c328bafeb</identifier>
-        <recordType>Builder_Market</recordType>
-        <type>AppAndRecordType</type>
-    </activationContext>
-    <activationContext>
-        <app>Field_Service_Console</app>
-        <identifier>919e901b-66a9-47c4-9746-a2b16f6ca9db</identifier>
-        <recordType>Builder_Market</recordType>
-        <type>AppAndRecordType</type>
-    </activationContext>
 </FlexiPage>

@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activationContext>
+        <app>Outdoor_Living_Console</app>
+        <identifier>f7a8b9c0-d1e2-4f3a-4b5c-6d7e8f9a0b1c</identifier>
+        <type>App</type>
+    </activationContext>
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -20,11 +25,6 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-    <activationContext>
-        <app>Outdoor_Living_Console</app>
-        <identifier>f7a8b9c0-d1e2-4f3a-4b5c-6d7e8f9a0b1c</identifier>
-        <type>App</type>
-    </activationContext>
     <masterLabel>Outdoor Living Payment Milestone Record Page</masterLabel>
     <sobjectType>Payment_Milestone__c</sobjectType>
     <template>

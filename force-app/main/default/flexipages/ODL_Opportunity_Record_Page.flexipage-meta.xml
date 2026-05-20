@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activationContext>
+        <app>Outdoor_Living_Console</app>
+        <identifier>e3a1f7b2-9c4d-4e8a-b5f6-2d3e4a5b6c7d</identifier>
+        <type>App</type>
+    </activationContext>
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -20,11 +25,6 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-    <activationContext>
-        <app>Outdoor_Living_Console</app>
-        <identifier>e3a1f7b2-9c4d-4e8a-b5f6-2d3e4a5b6c7d</identifier>
-        <type>App</type>
-    </activationContext>
     <masterLabel>ODL Opportunity Record Page</masterLabel>
     <sobjectType>Opportunity</sobjectType>
     <template>

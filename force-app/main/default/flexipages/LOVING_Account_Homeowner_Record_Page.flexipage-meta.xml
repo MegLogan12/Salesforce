@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <activationContext>
+        <app>Customer_Care_Console</app>
+        <identifier>84db462c-1abb-4e2f-9422-2d7294e6aa81</identifier>
+        <recordType>Home_Owner</recordType>
+        <type>AppAndRecordType</type>
+    </activationContext>
+    <activationContext>
+        <app>Outdoor_Living_Console</app>
+        <identifier>a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d</identifier>
+        <recordType>Home_Owner</recordType>
+        <type>AppAndRecordType</type>
+    </activationContext>
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -60,10 +72,4 @@
         <name>flexipage:recordHomeTemplateDesktop</name>
     </template>
     <type>RecordPage</type>
-    <activationContext>
-        <app>Customer_Care_Console</app>
-        <identifier>84db462c-1abb-4e2f-9422-2d7294e6aa81</identifier>
-        <recordType>Home_Owner</recordType>
-        <type>AppAndRecordType</type>
-    </activationContext>
 </FlexiPage>
