@@ -1,6 +1,16 @@
 @IsTest
 private class SchedulingConsoleControllerTest {
 
+    // ─── RecordType helper (same as LOVING_WorkOrderTriggerHandlerTest) ────────
+    private static Id getRT(String objectName, String devName) {
+        try {
+            Schema.RecordTypeInfo rti = Schema.getGlobalDescribe()
+                .get(objectName).getDescribe()
+                .getRecordTypeInfosByDeveloperName().get(devName);
+            return (rti != null && rti.isAvailable()) ? rti.getRecordTypeId() : null;
+        } catch (Exception e) { return null; }
+    }
+
     // ─── Test data setup ─────────────────────────────────────────────────────
     @TestSetup
     static void makeData() {
@@ -21,42 +31,74 @@ private class SchedulingConsoleControllerTest {
         insert crew;
 
         // Create OperatingHours + ServiceTerritory (for territory summary)
-        OperatingHours oh = new OperatingHours(Name='SC Test OH', TimeZone='America/New_York');
-        insert oh;
-        ServiceTerritory st = new ServiceTerritory(
-            Name='SC Test Territory', IsActive=true, OperatingHoursId=oh.Id);
-        insert st;
+        try {
+            OperatingHours oh = new OperatingHours(Name='SC Test OH', TimeZone='America/New_York');
+            insert oh;
+            ServiceTerritory st = new ServiceTerritory(
+                Name='SC Test Territory', IsActive=true, OperatingHoursId=oh.Id);
+            insert st;
+        } catch (Exception e) {}
 
-        // Account hierarchy for WorkOrder
+        // Account hierarchy with proper RecordTypes (same as LOVING_WorkOrderTriggerHandlerTest)
         Account natl = new Account(Name='SC Test National');
+        Id natlRt = getRT('Account', 'Builder_National');
+        if (natlRt != null) natl.RecordTypeId = natlRt;
         insert natl;
-        Account community = new Account(Name='SC Test Community', ParentId=natl.Id);
+
+        Account regional = new Account(Name='SC Test Regional', ParentId=natl.Id,
+            Spec_Type__c='Average (DR Horton)', Billing_Method__c='SupplyPro');
+        Id regRt = getRT('Account', 'Builder_Regional');
+        if (regRt != null) regional.RecordTypeId = regRt;
+        insert regional;
+
+        Account community = new Account(Name='SC Test Community', ParentId=regional.Id,
+            Zone__c=3, FM__c=UserInfo.getUserId());
+        Id commRt = getRT('Account', 'Community');
+        if (commRt != null) community.RecordTypeId = commRt;
         insert community;
-        Account lot = new Account(Name='SC Lot 1', ParentId=community.Id);
+
+        Account lot = new Account(Name='SC Lot 1', ParentId=community.Id,
+            Lot_Number__c='1', Lot_Status__c='Active',
+            Target_Start_Date__c=Date.today().addDays(30));
+        Id lotRt = getRT('Account', 'Lot');
+        if (lotRt != null) lot.RecordTypeId = lotRt;
         insert lot;
 
-        // WorkOrder 1: scheduled and locked, linked to crew
+        // WorkOrder 1: scheduled and locked (same minimal field set as working trigger test)
         WorkOrder wo1 = new WorkOrder();
+        wo1.Work_Order_Type__c = 'Production Install';
+        wo1.Status             = 'New';
         wo1.AccountId          = lot.Id;
         wo1.Community__c       = community.Id;
         wo1.Lot__c             = lot.Id;
-        wo1.Status             = 'New';
-        wo1.Schedule_Locked__c = true;
+        wo1.Lot_Address__c     = '1 Test Lane Charlotte NC';
+        wo1.Lot_Number__c      = '1';
+        wo1.FM__c              = UserInfo.getUserId();
+        wo1.Takeoff_Complete__c = true;
+        wo1.Takeoff_Status__c  = 'Confirmed';
         wo1.Scheduled_Date__c  = Date.today();
-        wo1.Crew__c            = crew.Id;
+        wo1.Zone__c            = 3;
+        wo1.Goal_Headcount__c  = 4;
+        wo1.Schedule_Locked__c = true;
         wo1.Sod_Sqft__c        = 4000;
-        wo1.Work_Order_Type__c = 'Production Install';
+        wo1.Crew__c            = crew.Id;
         insert wo1;
 
-        // WorkOrder 2: ready to schedule (pre-pipeline)
+        // WorkOrder 2: ready to schedule
         WorkOrder wo2 = new WorkOrder();
-        wo2.AccountId             = lot.Id;
-        wo2.Community__c          = community.Id;
-        wo2.Lot__c                = lot.Id;
-        wo2.Status                = 'Ready to Schedule';
-        wo2.Pipeline_Bucket__c    = 'Ready_to_Schedule';
-        wo2.Schedule_Locked__c    = false;
-        wo2.Work_Order_Type__c    = 'Production Install';
+        wo2.Work_Order_Type__c = 'Production Install';
+        wo2.Status             = 'New';
+        wo2.AccountId          = lot.Id;
+        wo2.Community__c       = community.Id;
+        wo2.Lot__c             = lot.Id;
+        wo2.Lot_Address__c     = '2 Test Lane Charlotte NC';
+        wo2.Lot_Number__c      = '2';
+        wo2.FM__c              = UserInfo.getUserId();
+        wo2.Takeoff_Complete__c = true;
+        wo2.Takeoff_Status__c  = 'Confirmed';
+        wo2.Zone__c            = 3;
+        wo2.Goal_Headcount__c  = 4;
+        wo2.Pipeline_Bucket__c = 'Ready_to_Schedule';
         insert wo2;
 
         // Schedule_Day for today (enables draft-review and release/hold actions)
