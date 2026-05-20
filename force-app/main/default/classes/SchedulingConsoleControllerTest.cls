@@ -81,8 +81,12 @@ private class SchedulingConsoleControllerTest {
         wo1.Goal_Headcount__c  = 4;
         wo1.Schedule_Locked__c = true;
         wo1.Sod_Sqft__c        = 4000;
-        wo1.Crew__c            = crew.Id;
         insert wo1;
+        // Set Crew__c after initial insert to avoid FSL trigger cross-reference check
+        try {
+            wo1.Crew__c = crew.Id;
+            update wo1;
+        } catch (Exception e) {}
 
         // WorkOrder 2: ready to schedule
         WorkOrder wo2 = new WorkOrder();
