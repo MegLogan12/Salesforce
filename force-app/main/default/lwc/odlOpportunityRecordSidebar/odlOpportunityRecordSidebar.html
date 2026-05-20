@@ -1,0 +1,40 @@
+<template>
+    <section class="stack">
+        <section class="card">
+            <div class="header">Next Action</div>
+            <ul class="list">
+                <template for:each={nextActions} for:item="item">
+                    <li key={item}>{item}</li>
+                </template>
+            </ul>
+        </section>
+
+        <section class="card">
+            <div class="header">Activity Health</div>
+            <template lwc:if={latestInteraction}>
+                <div class="body">
+                    <div class="row"><span>Last touch</span><span>{latestInteraction.dateText}</span></div>
+                    <div class="row"><span>Type</span><span>{latestInteraction.interactionType}</span></div>
+                    <div class="row"><span>Subject</span><span>{latestInteraction.label}</span></div>
+                </div>
+            </template>
+            <template lwc:else>
+                <div class="empty">No activity is logged on this opportunity.</div>
+            </template>
+        </section>
+
+        <section class="card">
+            <div class="header">Open Items</div>
+            <template lwc:if={hasOpenItems}>
+                <div class="body">
+                    <template for:each={openItems} for:item="item">
+                        <div class="issue" key={item}>{item}</div>
+                    </template>
+                </div>
+            </template>
+            <template lwc:else>
+                <div class="empty">No blocking data gaps are currently listed.</div>
+            </template>
+        </section>
+    </section>
+</template>

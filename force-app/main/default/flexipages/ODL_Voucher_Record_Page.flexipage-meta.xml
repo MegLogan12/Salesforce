@@ -20,6 +20,11 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
+    <activationContext>
+        <app>Outdoor_Living_Console</app>
+        <identifier>e6f7a8b9-c0d1-4e2f-3a4b-5c6d7e8f9a0b</identifier>
+        <type>App</type>
+    </activationContext>
     <masterLabel>Outdoor Living Voucher Record Page</masterLabel>
     <sobjectType>Voucher__c</sobjectType>
     <template>

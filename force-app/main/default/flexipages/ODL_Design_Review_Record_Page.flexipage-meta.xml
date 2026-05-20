@@ -20,6 +20,11 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
+    <activationContext>
+        <app>Outdoor_Living_Console</app>
+        <identifier>d5e6f7a8-b9c0-4d1e-2f3a-4b5c6d7e8f9a</identifier>
+        <type>App</type>
+    </activationContext>
     <masterLabel>Outdoor Living Design Review Record Page</masterLabel>
     <sobjectType>Design_Review__c</sobjectType>
     <template>

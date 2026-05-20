@@ -20,6 +20,11 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
+    <activationContext>
+        <app>Outdoor_Living_Console</app>
+        <identifier>c4d5e6f7-a8b9-4c0d-1e2f-3a4b5c6d7e8f</identifier>
+        <type>App</type>
+    </activationContext>
     <masterLabel>Outdoor Living Homeowner Property Record Page</masterLabel>
     <sobjectType>Homeowner_Property__c</sobjectType>
     <template>

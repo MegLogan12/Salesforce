@@ -20,6 +20,11 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
+    <activationContext>
+        <app>Outdoor_Living_Console</app>
+        <identifier>a2b3c4d5-e6f7-4a8b-9c0d-1e2f3a4b5c6d</identifier>
+        <type>App</type>
+    </activationContext>
     <masterLabel>ODL Lead Record Page</masterLabel>
     <sobjectType>Lead</sobjectType>
     <template>
