@@ -3,19 +3,22 @@ import { refreshApex } from '@salesforce/apex';
 import getTodayDispatch from '@salesforce/apex/DispatchMapController.getTodayDispatch';
 
 const STATUS_CLASSES = {
-    Scheduled:  'tc-status status-scheduled',
-    Dispatched: 'tc-status status-dispatched',
-    'In Progress': 'tc-status status-inprogress',
-    Completed:  'tc-status status-completed',
+    Active:   'tc-status status-dispatched',
+    Delayed:  'tc-status status-inprogress',
+    Offline:  'tc-status status-other',
+    Unknown:  'tc-status status-other',
 };
 
+const REFRESH_INTERVAL_MS = 60000; // 60 seconds
+
 export default class LovingDispatchMap extends LightningElement {
-    @track trucks = [];
+    @track trucks     = [];
     @track mapMarkers = [];
     @track error;
-    @track isLoading = true;
+    @track isLoading  = true;
 
     wiredResult;
+    _refreshTimer;
 
     mapCenter = {
         location: { Latitude: 35.13, Longitude: -80.82 }
@@ -28,25 +31,34 @@ export default class LovingDispatchMap extends LightningElement {
     get activeCount() { return this.trucks.length; }
     get hasTrucks()   { return this.trucks.length > 0; }
 
+    connectedCallback() {
+        this._refreshTimer = setInterval(() => {
+            refreshApex(this.wiredResult);
+        }, REFRESH_INTERVAL_MS);
+    }
+
+    disconnectedCallback() {
+        if (this._refreshTimer) clearInterval(this._refreshTimer);
+    }
+
     @wire(getTodayDispatch)
     wiredDispatch(result) {
         this.wiredResult = result;
-        this.isLoading = false;
+        this.isLoading   = false;
         if (result.data) {
-            const rows = result.data.filter(t => t.unitName && !t.unitName.startsWith('UAT'));
-
-            this.trucks = rows.map(t => ({
+            this.trucks = result.data.map(t => ({
                 ...t,
                 driverName:  t.driverName  || 'Unassigned',
                 statusClass: STATUS_CLASSES[t.status] || 'tc-status status-other',
+                schedTime:   t.lastSeen    || '—',
             }));
 
-            this.mapMarkers = rows
+            this.mapMarkers = this.trucks
                 .filter(t => t.lat != null && t.lng != null)
                 .map(t => ({
                     location:    { Latitude: t.lat, Longitude: t.lng },
-                    title:       `${t.unitName} — ${t.driverName || 'Unassigned'}`,
-                    description: `${t.subject || ''}\n${t.street || ''}, ${t.city || ''}\n${t.schedTime || ''} • ${t.status || ''}`,
+                    title:       `${t.unitName} — ${t.driverName}`,
+                    description: `${t.subject || ''}\n${t.street || ''}, ${t.city || ''}\nGPS: ${t.status} · Last seen ${t.lastSeen || '—'}`,
                 }));
 
             this.error = undefined;
