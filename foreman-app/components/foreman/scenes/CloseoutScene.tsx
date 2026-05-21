@@ -1,67 +1,56 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  TextInput,
-  Alert,
-  Platform,
-  ScrollView,
+  View, Text, TouchableOpacity, StyleSheet, TextInput, Alert, Platform,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useForeman } from '@/lib/foreman-store';
-import { C } from '@/constants/loving';
+import { C, Sh, R } from '@/constants/loving';
 
 type Step = 'inventory' | 'housekeeping' | 'photos' | 'review';
 
-async function openCamera(): Promise<boolean> {
+async function launchCamera(): Promise<boolean> {
   if (Platform.OS === 'web') return true;
   const { status } = await ImagePicker.requestCameraPermissionsAsync();
   if (status !== 'granted') {
-    Alert.alert('Camera Required', 'Enable camera access to take after photos.');
+    Alert.alert('Camera Required', 'Enable camera access to take closeout photos.');
     return false;
   }
-  const result = await ImagePicker.launchCameraAsync({ quality: 0.85 });
-  return !result.canceled;
+  const r = await ImagePicker.launchCameraAsync({ quality: 0.85 });
+  return !r.canceled;
 }
 
-function StepIndicator({ current }: { current: Step }) {
-  const steps: Step[] = ['inventory', 'housekeeping', 'photos', 'review'];
-  const labels = ['Inventory', 'Housekeeping', 'Photos', 'Review'];
-  const cur = steps.indexOf(current);
+const STEP_LIST: Step[] = ['inventory', 'housekeeping', 'photos', 'review'];
+const STEP_LABELS: Record<Step, string> = {
+  inventory: 'Inventory',
+  housekeeping: 'Housekeeping',
+  photos: 'After Photos',
+  review: 'Submit',
+};
+
+function Steps({ current }: { current: Step }) {
+  const cur = STEP_LIST.indexOf(current);
   return (
-    <View style={ind.row}>
-      {steps.map((s, i) => (
-        <React.Fragment key={s}>
-          <View style={[ind.dot, i <= cur && ind.dotActive]}>
-            <Text style={[ind.dotNum, i <= cur && ind.dotNumActive]}>{i + 1}</Text>
-          </View>
-          {i < steps.length - 1 && (
-            <View style={[ind.line, i < cur && ind.lineActive]} />
-          )}
-        </React.Fragment>
-      ))}
+    <View style={st.stepsRow}>
+      {STEP_LIST.map((step, i) => {
+        const done = i < cur;
+        const active = i === cur;
+        return (
+          <React.Fragment key={step}>
+            <View style={[st.stepDot, done && st.stepDotDone, active && st.stepDotActive]}>
+              {done
+                ? <Text style={st.stepDotCheck}>✓</Text>
+                : <Text style={[st.stepDotNum, active && st.stepDotNumActive]}>{i + 1}</Text>
+              }
+            </View>
+            {i < STEP_LIST.length - 1 && (
+              <View style={[st.stepLine, i < cur && st.stepLineDone]} />
+            )}
+          </React.Fragment>
+        );
+      })}
     </View>
   );
 }
-
-const ind = StyleSheet.create({
-  row: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8 },
-  dot: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: C.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  dotActive: { backgroundColor: C.blue },
-  dotNum: { fontSize: 12, fontWeight: '700', color: C.muted },
-  dotNumActive: { color: C.white },
-  line: { flex: 1, height: 2, backgroundColor: C.border },
-  lineActive: { backgroundColor: C.blue },
-});
 
 export function CloseoutScene() {
   const [step, setStep] = useState<Step>('inventory');
@@ -80,21 +69,21 @@ export function CloseoutScene() {
   const setInventoryUsed = useForeman(s => s.setInventoryUsed);
   const setInventoryReturned = useForeman(s => s.setInventoryReturned);
 
+  const wo = day.workOrders.find(w => w.id === day.selectedWorkOrderId);
   const heroAfter = day.photos.find(p => p.category === 'hero-after');
   const afterPhotos = day.photos.filter(p => p.category === 'after' || p.category === 'hero-after');
-  const wo = day.workOrders.find(w => w.id === day.selectedWorkOrderId);
 
   const requiredHk = housekeeping.filter(h => h.required);
   const doneRequiredHk = requiredHk.filter(h => h.done);
   const allHkDone = doneRequiredHk.length === requiredHk.length;
 
   async function handleExcessPhoto() {
-    const ok = await openCamera();
+    const ok = await launchCamera();
     if (ok) captureExcessPhoto();
   }
 
   async function handleAfterPhoto(hero: boolean) {
-    const ok = await openCamera();
+    const ok = await launchCamera();
     if (ok) capturePhoto(hero ? 'hero-after' : 'after');
   }
 
@@ -105,52 +94,60 @@ export function CloseoutScene() {
     }
     Alert.alert(
       'Submit Closeout',
-      'This will mark the job as Awaiting QI. Are you sure?',
+      'This will mark the job as Awaiting QI.',
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Submit', onPress: submitCloseout },
+        { text: 'Submit', style: 'default', onPress: submitCloseout },
       ]
     );
   }
 
-  const stepLabels: Record<Step, string> = {
-    inventory: 'Inventory & Excess',
-    housekeeping: 'Housekeeping',
-    photos: 'After Photos',
-    review: 'Review & Submit',
-  };
+  const canGoToHk = inventory.hasExcess !== null;
+  const canGoToPhotos = allHkDone || inventory.hasMissing !== null;
+  const canReview = !!heroAfter;
 
   return (
-    <View style={styles.root}>
+    <View style={st.root}>
       {/* Header */}
-      <View style={styles.headerCard}>
-        <Text style={styles.headerTitle}>Closeout</Text>
-        {wo && <Text style={styles.headerSub}>{wo.woNumber} · {wo.subject}</Text>}
+      <View style={st.header}>
+        <View>
+          <Text style={st.headerTitle}>Closeout</Text>
+          {wo && <Text style={st.headerSub}>{wo.woNumber}  ·  {wo.subject}</Text>}
+        </View>
+        <View style={st.stepLabel}>
+          <Text style={st.stepLabelText}>{STEP_LABELS[step]}</Text>
+          <Text style={st.stepLabelCount}>{STEP_LIST.indexOf(step) + 1} / {STEP_LIST.length}</Text>
+        </View>
       </View>
 
       {/* Step indicator */}
-      <View style={styles.card}>
-        <StepIndicator current={step} />
-        <Text style={styles.stepName}>{stepLabels[step]}</Text>
+      <View style={st.stepsCard}>
+        <Steps current={step} />
+        <View style={st.stepsLabelRow}>
+          {STEP_LIST.map((s2, i) => (
+            <Text key={s2} style={[st.stepNameLabel, i === STEP_LIST.indexOf(step) && st.stepNameLabelActive]}>
+              {STEP_LABELS[s2]}
+            </Text>
+          ))}
+        </View>
       </View>
 
-      {/* ─── STEP 1: Inventory & Excess ─── */}
+      {/* ── STEP 1: Inventory & Excess ── */}
       {step === 'inventory' && (
         <>
-          {/* Inventory items */}
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Material Reconciliation</Text>
+          <View style={st.card}>
+            <Text style={st.sectionLabel}>Material Reconciliation</Text>
             {inventory.items.map(item => (
-              <View key={item.id} style={styles.invRow}>
-                <View style={styles.invInfo}>
-                  <Text style={styles.invLabel}>{item.label}</Text>
-                  <Text style={styles.invLoaded}>Loaded: {item.loaded} {item.unit}</Text>
+              <View key={item.id} style={st.invRow}>
+                <View style={st.invInfo}>
+                  <Text style={st.invLabel}>{item.label}</Text>
+                  <Text style={st.invLoaded}>Loaded: {item.loaded} {item.unit}</Text>
                 </View>
-                <View style={styles.invInputs}>
-                  <View style={styles.invField}>
-                    <Text style={styles.invFieldLabel}>Used</Text>
+                <View style={st.invInputs}>
+                  <View style={st.invField}>
+                    <Text style={st.invFieldLabel}>Used</Text>
                     <TextInput
-                      style={styles.invInput}
+                      style={st.invInput}
                       keyboardType="numeric"
                       placeholder="—"
                       placeholderTextColor={C.muted}
@@ -158,10 +155,10 @@ export function CloseoutScene() {
                       onChangeText={t => setInventoryUsed(item.id, t === '' ? null : Number(t))}
                     />
                   </View>
-                  <View style={styles.invField}>
-                    <Text style={styles.invFieldLabel}>Return</Text>
+                  <View style={st.invField}>
+                    <Text style={st.invFieldLabel}>Return</Text>
                     <TextInput
-                      style={styles.invInput}
+                      style={st.invInput}
                       keyboardType="numeric"
                       placeholder="—"
                       placeholderTextColor={C.muted}
@@ -174,40 +171,40 @@ export function CloseoutScene() {
             ))}
           </View>
 
-          {/* Excess question */}
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Any excess inventory on site?</Text>
-            <Text style={styles.cardSub}>Leftover materials that weren't used or returned</Text>
-            <View style={styles.yesNoRow}>
+          <View style={st.card}>
+            <Text style={st.sectionLabel}>Excess Inventory on Site?</Text>
+            <Text style={st.sectionSub}>Any leftover materials not returned to truck</Text>
+            <View style={st.ynRow}>
               <TouchableOpacity
-                style={[styles.yesNoBtn, inventory.hasExcess === false && styles.yesNoBtnActive, { borderColor: C.green }]}
+                style={[st.ynBtn, st.ynBtnGreen, inventory.hasExcess === false && st.ynBtnGreenActive]}
                 onPress={() => setHasExcess(false)}
               >
-                <Text style={[styles.yesNoBtnText, inventory.hasExcess === false && { color: C.white }]}>No Excess</Text>
+                <Text style={[st.ynLabel, inventory.hasExcess === false && st.ynLabelActive]}>No Excess</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.yesNoBtn, inventory.hasExcess === true && styles.yesNoBtnActiveRed, { borderColor: C.orange }]}
+                style={[st.ynBtn, st.ynBtnOrange, inventory.hasExcess === true && st.ynBtnOrangeActive]}
                 onPress={() => setHasExcess(true)}
               >
-                <Text style={[styles.yesNoBtnText, inventory.hasExcess === true && { color: C.white }]}>Yes, Has Excess</Text>
+                <Text style={[st.ynLabel, inventory.hasExcess === true && st.ynLabelActive]}>Yes, Has Excess</Text>
               </TouchableOpacity>
             </View>
+
             {inventory.hasExcess === true && (
-              <View style={styles.excessForm}>
+              <View style={st.excessExpand}>
                 <TextInput
-                  style={styles.noteInput}
-                  placeholder="Describe excess (what, how much)..."
+                  style={st.textArea}
+                  placeholder="Describe excess — what and how much..."
                   placeholderTextColor={C.muted}
                   value={inventory.excessDetails}
                   onChangeText={setExcessDetails}
                   multiline
                 />
                 <TouchableOpacity
-                  style={[styles.photoBtn, inventory.excessPhotoCaptured && styles.photoBtnDone]}
+                  style={[st.photoBtn, inventory.excessPhotoCaptured && st.photoBtnDone]}
                   onPress={handleExcessPhoto}
                 >
-                  <Text style={[styles.photoBtnText, inventory.excessPhotoCaptured && styles.photoBtnTextDone]}>
-                    {inventory.excessPhotoCaptured ? '📷 Excess Photo Captured ✓' : '📷 Photo of Excess'}
+                  <Text style={[st.photoBtnText, inventory.excessPhotoCaptured && st.photoBtnTextDone]}>
+                    {inventory.excessPhotoCaptured ? '📷  Excess photo captured ✓' : '📷  Photo of excess'}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -215,59 +212,70 @@ export function CloseoutScene() {
           </View>
 
           <TouchableOpacity
-            style={[styles.nextBtn, inventory.hasExcess === null && styles.nextBtnDisabled]}
-            onPress={() => inventory.hasExcess !== null && setStep('housekeeping')}
-            disabled={inventory.hasExcess === null}
+            style={[st.nextBtn, !canGoToHk && st.nextBtnOff]}
+            onPress={() => canGoToHk && setStep('housekeeping')}
+            disabled={!canGoToHk}
           >
-            <Text style={styles.nextBtnText}>Next: Housekeeping →</Text>
+            <Text style={st.nextBtnText}>Next: Housekeeping →</Text>
           </TouchableOpacity>
         </>
       )}
 
-      {/* ─── STEP 2: Housekeeping ─── */}
+      {/* ── STEP 2: Housekeeping ── */}
       {step === 'housekeeping' && (
         <>
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Site Cleanup Checklist</Text>
-            <Text style={styles.cardSub}>{doneRequiredHk.length} / {requiredHk.length} required items done</Text>
+          <View style={st.card}>
+            <Text style={st.sectionLabel}>Site Cleanup</Text>
+            <Text style={st.sectionSub}>{doneRequiredHk.length} / {requiredHk.length} required items complete</Text>
+
+            <View style={st.hkProgressBar}>
+              <View
+                style={[st.hkProgressFill, {
+                  width: requiredHk.length > 0
+                    ? `${Math.round((doneRequiredHk.length / requiredHk.length) * 100)}%` as any
+                    : '100%',
+                  backgroundColor: allHkDone ? C.green : C.blue,
+                }]}
+              />
+            </View>
+
             {housekeeping.map(item => (
               <TouchableOpacity
                 key={item.id}
-                style={styles.hkRow}
+                style={st.hkRow}
                 onPress={() => toggleHousekeeping(item.id)}
                 activeOpacity={0.7}
               >
-                <View style={[styles.hkCheck, item.done && styles.hkCheckDone]}>
-                  {item.done && <Text style={styles.hkCheckMark}>✓</Text>}
+                <View style={[st.hkBox, item.done && st.hkBoxDone]}>
+                  {item.done && <Text style={st.hkCheck}>✓</Text>}
                 </View>
-                <Text style={[styles.hkLabel, item.done && styles.hkLabelDone]}>{item.label}</Text>
-                {item.required && !item.done && <Text style={styles.hkRequired}>*</Text>}
+                <Text style={[st.hkLabel, item.done && st.hkLabelDone]}>{item.label}</Text>
+                {item.required && !item.done && <View style={st.reqDot} />}
               </TouchableOpacity>
             ))}
           </View>
 
-          {/* Missing housekeeping question */}
           {!allHkDone && (
-            <View style={styles.card}>
-              <Text style={styles.cardTitle}>Incomplete housekeeping items?</Text>
-              <View style={styles.yesNoRow}>
+            <View style={st.card}>
+              <Text style={st.sectionLabel}>Incomplete housekeeping?</Text>
+              <View style={st.ynRow}>
                 <TouchableOpacity
-                  style={[styles.yesNoBtn, inventory.hasMissing === false && styles.yesNoBtnActive, { borderColor: C.green }]}
+                  style={[st.ynBtn, st.ynBtnGreen, inventory.hasMissing === false && st.ynBtnGreenActive]}
                   onPress={() => setHasMissing(false)}
                 >
-                  <Text style={[styles.yesNoBtnText, inventory.hasMissing === false && { color: C.white }]}>All Done</Text>
+                  <Text style={[st.ynLabel, inventory.hasMissing === false && st.ynLabelActive]}>All Done</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[styles.yesNoBtn, inventory.hasMissing === true && styles.yesNoBtnActiveRed, { borderColor: C.red }]}
+                  style={[st.ynBtn, st.ynBtnRed, inventory.hasMissing === true && st.ynBtnRedActive]}
                   onPress={() => setHasMissing(true)}
                 >
-                  <Text style={[styles.yesNoBtnText, inventory.hasMissing === true && { color: C.white }]}>Items Missing</Text>
+                  <Text style={[st.ynLabel, inventory.hasMissing === true && st.ynLabelActive]}>Some Missing</Text>
                 </TouchableOpacity>
               </View>
               {inventory.hasMissing === true && (
                 <TextInput
-                  style={styles.noteInput}
-                  placeholder="Explain what's missing or why..."
+                  style={st.textArea}
+                  placeholder="Explain what's incomplete and why..."
                   placeholderTextColor={C.muted}
                   value={inventory.missingDetails}
                   onChangeText={setMissingDetails}
@@ -277,129 +285,129 @@ export function CloseoutScene() {
             </View>
           )}
 
-          <View style={styles.navRow}>
-            <TouchableOpacity style={styles.prevBtn} onPress={() => setStep('inventory')}>
-              <Text style={styles.prevBtnText}>← Back</Text>
+          <View style={st.navRow}>
+            <TouchableOpacity style={st.backBtn} onPress={() => setStep('inventory')}>
+              <Text style={st.backBtnText}>← Back</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.nextBtn, styles.nextBtnFlex, (!allHkDone && inventory.hasMissing === null) && styles.nextBtnDisabled]}
-              onPress={() => (allHkDone || inventory.hasMissing !== null) && setStep('photos')}
-              disabled={!allHkDone && inventory.hasMissing === null}
+              style={[st.nextBtn, st.nextBtnFlex, !canGoToPhotos && st.nextBtnOff]}
+              onPress={() => canGoToPhotos && setStep('photos')}
+              disabled={!canGoToPhotos}
             >
-              <Text style={styles.nextBtnText}>Next: After Photos →</Text>
+              <Text style={st.nextBtnText}>After Photos →</Text>
             </TouchableOpacity>
           </View>
         </>
       )}
 
-      {/* ─── STEP 3: After Photos ─── */}
+      {/* ── STEP 3: After Photos ── */}
       {step === 'photos' && (
         <>
-          {/* Hero after */}
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Hero After Photo *</Text>
-            <Text style={styles.cardSub}>Best overall shot showing the completed work</Text>
+          <View style={st.card}>
+            <Text style={st.sectionLabel}>Hero After Photo  <Text style={{ color: C.red }}>*</Text></Text>
+            <Text style={st.sectionSub}>Best overall shot of the completed work</Text>
             <TouchableOpacity
-              style={[styles.heroPhotoBtn, heroAfter && styles.heroPhotoBtnDone]}
+              style={[st.heroPicBtn, heroAfter && st.heroPicBtnDone]}
               onPress={() => handleAfterPhoto(true)}
               activeOpacity={0.8}
             >
               {heroAfter ? (
-                <View style={styles.photoInner}>
-                  <Text style={styles.photoCheck}>✓</Text>
-                  <Text style={styles.photoCapturedLabel}>Hero photo captured</Text>
-                  <Text style={styles.photoCapturedTime}>
+                <View style={st.picInner}>
+                  <Text style={st.picCheck}>✓</Text>
+                  <Text style={st.picCapturedLabel}>Hero photo captured</Text>
+                  <Text style={st.picCapturedTime}>
                     {new Date(heroAfter.capturedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
                   </Text>
                 </View>
               ) : (
-                <View style={styles.photoInner}>
-                  <Text style={styles.photoCameraIcon}>📷</Text>
-                  <Text style={styles.photoCaptureLabel}>Tap to take hero photo</Text>
+                <View style={st.picInner}>
+                  <Text style={st.picCamera}>📷</Text>
+                  <Text style={st.picPlaceholder}>Tap to take hero photo</Text>
                 </View>
               )}
             </TouchableOpacity>
           </View>
 
-          {/* Additional after photos */}
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Additional After Photos</Text>
-            <Text style={styles.cardSub}>{afterPhotos.length - (heroAfter ? 1 : 0)} additional taken</Text>
-            <TouchableOpacity style={styles.addPhotoBtn} onPress={() => handleAfterPhoto(false)}>
-              <Text style={styles.addPhotoBtnText}>+ Add After Photo</Text>
+          <View style={st.card}>
+            <Text style={st.sectionLabel}>Additional Photos</Text>
+            <Text style={st.sectionSub}>{afterPhotos.filter(p => p.category === 'after').length} additional taken</Text>
+            <TouchableOpacity style={st.addPhotoBtn} onPress={() => handleAfterPhoto(false)}>
+              <Text style={st.addPhotoBtnText}>+ Add Photo</Text>
             </TouchableOpacity>
-            {afterPhotos.length > 1 && (
-              <View style={styles.photoStrip}>
+            {afterPhotos.filter(p => p.category === 'after').length > 0 && (
+              <View style={st.thumbStrip}>
                 {afterPhotos.filter(p => p.category === 'after').map((p, i) => (
-                  <View key={p.id} style={styles.photoThumb}>
-                    <Text style={styles.photoThumbIcon}>📷</Text>
-                    <Text style={styles.photoThumbNum}>#{i + 1}</Text>
+                  <View key={p.id} style={st.thumb}>
+                    <Text style={st.thumbIcon}>📷</Text>
+                    <Text style={st.thumbNum}>#{i + 1}</Text>
                   </View>
                 ))}
               </View>
             )}
           </View>
 
-          <View style={styles.navRow}>
-            <TouchableOpacity style={styles.prevBtn} onPress={() => setStep('housekeeping')}>
-              <Text style={styles.prevBtnText}>← Back</Text>
+          <View style={st.navRow}>
+            <TouchableOpacity style={st.backBtn} onPress={() => setStep('housekeeping')}>
+              <Text style={st.backBtnText}>← Back</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.nextBtn, styles.nextBtnFlex, !heroAfter && styles.nextBtnDisabled]}
-              onPress={() => heroAfter && setStep('review')}
-              disabled={!heroAfter}
+              style={[st.nextBtn, st.nextBtnFlex, !canReview && st.nextBtnOff]}
+              onPress={() => canReview && setStep('review')}
+              disabled={!canReview}
             >
-              <Text style={styles.nextBtnText}>Review →</Text>
+              <Text style={st.nextBtnText}>Review →</Text>
             </TouchableOpacity>
           </View>
         </>
       )}
 
-      {/* ─── STEP 4: Review & Submit ─── */}
+      {/* ── STEP 4: Review ── */}
       {step === 'review' && (
         <>
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Closeout Summary</Text>
+          <View style={st.card}>
+            <Text style={st.sectionLabel}>Closeout Summary</Text>
 
-            <View style={styles.reviewRow}>
-              <Text style={styles.reviewLabel}>Inventory</Text>
-              <Text style={[styles.reviewVal, { color: C.green }]}>
-                {inventory.hasExcess ? '⚠ Excess noted' : '✓ No excess'}
-              </Text>
-            </View>
-
-            <View style={styles.reviewRow}>
-              <Text style={styles.reviewLabel}>Housekeeping</Text>
-              <Text style={[styles.reviewVal, { color: allHkDone ? C.green : C.orange }]}>
-                {allHkDone ? `✓ All ${housekeeping.length} items done` : `${doneRequiredHk.length}/${requiredHk.length} required done`}
-              </Text>
-            </View>
-
-            <View style={styles.reviewRow}>
-              <Text style={styles.reviewLabel}>After Photos</Text>
-              <Text style={[styles.reviewVal, { color: heroAfter ? C.green : C.red }]}>
-                {heroAfter ? `✓ ${afterPhotos.length} photo${afterPhotos.length !== 1 ? 's' : ''}` : '✕ Hero photo missing'}
-              </Text>
-            </View>
-
-            {wo && (
-              <View style={[styles.reviewRow, { borderTopWidth: 1, borderTopColor: C.border, paddingTop: 10, marginTop: 4 }]}>
-                <Text style={styles.reviewLabel}>Work Order</Text>
-                <Text style={[styles.reviewVal, { color: C.blue }]}>→ Awaiting QI</Text>
+            <View style={st.reviewRow}>
+              <Text style={st.reviewKey}>Inventory</Text>
+              <View style={[st.reviewPill, { backgroundColor: inventory.hasExcess ? C.orange + '20' : C.green + '15' }]}>
+                <Text style={[st.reviewPillText, { color: inventory.hasExcess ? C.orange : C.green }]}>
+                  {inventory.hasExcess ? '⚠ Excess noted' : '✓ No excess'}
+                </Text>
               </View>
-            )}
+            </View>
+
+            <View style={st.reviewRow}>
+              <Text style={st.reviewKey}>Housekeeping</Text>
+              <View style={[st.reviewPill, { backgroundColor: allHkDone ? C.green + '15' : C.orange + '20' }]}>
+                <Text style={[st.reviewPillText, { color: allHkDone ? C.green : C.orange }]}>
+                  {allHkDone ? `✓ ${housekeeping.length} items done` : `${doneRequiredHk.length}/${requiredHk.length} required`}
+                </Text>
+              </View>
+            </View>
+
+            <View style={st.reviewRow}>
+              <Text style={st.reviewKey}>After Photos</Text>
+              <View style={[st.reviewPill, { backgroundColor: C.green + '15' }]}>
+                <Text style={[st.reviewPillText, { color: C.green }]}>
+                  ✓ {afterPhotos.length} photo{afterPhotos.length !== 1 ? 's' : ''}
+                </Text>
+              </View>
+            </View>
+
+            <View style={[st.reviewRow, st.reviewRowFinal]}>
+              <Text style={st.reviewKey}>Work Order Status</Text>
+              <View style={[st.reviewPill, { backgroundColor: C.blue + '15' }]}>
+                <Text style={[st.reviewPillText, { color: C.blue }]}>→ Awaiting QI</Text>
+              </View>
+            </View>
           </View>
 
-          <View style={styles.navRow}>
-            <TouchableOpacity style={styles.prevBtn} onPress={() => setStep('photos')}>
-              <Text style={styles.prevBtnText}>← Back</Text>
+          <View style={st.navRow}>
+            <TouchableOpacity style={st.backBtn} onPress={() => setStep('photos')}>
+              <Text style={st.backBtnText}>← Back</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.submitBtn, styles.nextBtnFlex]}
-              onPress={handleSubmit}
-              activeOpacity={0.85}
-            >
-              <Text style={styles.submitBtnText}>Submit Closeout ✓</Text>
+            <TouchableOpacity style={[st.submitBtn, st.nextBtnFlex]} onPress={handleSubmit} activeOpacity={0.88}>
+              <Text style={st.submitBtnText}>✓  Submit Closeout</Text>
             </TouchableOpacity>
           </View>
         </>
@@ -408,43 +416,64 @@ export function CloseoutScene() {
   );
 }
 
-const styles = StyleSheet.create({
+const st = StyleSheet.create({
   root: { gap: 12 },
 
-  headerCard: {
+  header: {
     backgroundColor: C.navy,
-    borderRadius: 14,
+    borderRadius: R.lg,
     padding: 20,
-    gap: 4,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    ...Sh.sm,
   },
   headerTitle: { fontSize: 24, fontWeight: '900', color: C.white },
-  headerSub: { fontSize: 13, color: 'rgba(255,255,255,0.6)' },
+  headerSub: { fontSize: 12, color: 'rgba(255,255,255,0.5)', marginTop: 3 },
+  stepLabel: { alignItems: 'flex-end' },
+  stepLabelText: { fontSize: 13, fontWeight: '700', color: C.orange },
+  stepLabelCount: { fontSize: 10, color: 'rgba(255,255,255,0.4)', marginTop: 2 },
+
+  stepsCard: {
+    backgroundColor: C.white,
+    borderRadius: R.md,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: C.border,
+    gap: 8,
+    ...Sh.xs,
+  },
+  stepsRow: { flexDirection: 'row', alignItems: 'center' },
+  stepDot: {
+    width: 28, height: 28, borderRadius: 14,
+    backgroundColor: C.border, alignItems: 'center', justifyContent: 'center',
+  },
+  stepDotDone: { backgroundColor: C.green },
+  stepDotActive: { backgroundColor: C.blue },
+  stepDotCheck: { fontSize: 12, fontWeight: '800', color: C.white },
+  stepDotNum: { fontSize: 12, fontWeight: '700', color: C.muted },
+  stepDotNumActive: { color: C.white },
+  stepLine: { flex: 1, height: 2, backgroundColor: C.border },
+  stepLineDone: { backgroundColor: C.green },
+  stepsLabelRow: { flexDirection: 'row', justifyContent: 'space-between' },
+  stepNameLabel: { fontSize: 9, color: C.muted, textAlign: 'center', flex: 1 },
+  stepNameLabelActive: { color: C.blue, fontWeight: '700' },
 
   card: {
     backgroundColor: C.white,
-    borderRadius: 14,
+    borderRadius: R.md,
     padding: 16,
     borderWidth: 1,
     borderColor: C.border,
     gap: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
+    ...Sh.xs,
   },
-  cardTitle: { fontSize: 14, fontWeight: '700', color: C.text },
-  cardSub: { fontSize: 12, color: C.muted, marginTop: -4 },
+  sectionLabel: { fontSize: 10, fontWeight: '700', color: C.muted, textTransform: 'uppercase', letterSpacing: 1.2 },
+  sectionSub: { fontSize: 12, color: C.muted, marginTop: -4 },
 
-  stepName: { fontSize: 13, fontWeight: '600', color: C.muted, textAlign: 'center', marginTop: 4 },
-
-  // Inventory
   invRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: C.border,
-    gap: 10,
+    flexDirection: 'row', alignItems: 'center',
+    paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: C.divider, gap: 10,
   },
   invInfo: { flex: 1, gap: 2 },
   invLabel: { fontSize: 13, fontWeight: '600', color: C.text },
@@ -453,152 +482,102 @@ const styles = StyleSheet.create({
   invField: { alignItems: 'center', gap: 3 },
   invFieldLabel: { fontSize: 9, fontWeight: '700', color: C.muted, textTransform: 'uppercase', letterSpacing: 0.5 },
   invInput: {
-    width: 60,
-    borderWidth: 1,
-    borderColor: C.border,
-    borderRadius: 8,
-    padding: 6,
-    fontSize: 14,
-    fontWeight: '700',
-    color: C.text,
-    textAlign: 'center',
-    backgroundColor: C.bg,
+    width: 64, borderWidth: 1, borderColor: C.border,
+    borderRadius: R.sm, padding: 8, fontSize: 15,
+    fontWeight: '700', color: C.text, textAlign: 'center', backgroundColor: C.bg,
   },
 
-  yesNoRow: { flexDirection: 'row', gap: 10 },
-  yesNoBtn: {
-    flex: 1,
-    borderRadius: 10,
-    paddingVertical: 12,
-    alignItems: 'center',
-    borderWidth: 2,
-    backgroundColor: C.bg,
-  },
-  yesNoBtnActive: { backgroundColor: C.green, borderColor: C.green },
-  yesNoBtnActiveRed: { backgroundColor: C.red, borderColor: C.red },
-  yesNoBtnText: { fontSize: 13, fontWeight: '700', color: C.text },
+  ynRow: { flexDirection: 'row', gap: 10 },
+  ynBtn: { flex: 1, borderRadius: R.sm, paddingVertical: 12, alignItems: 'center', borderWidth: 2 },
+  ynBtnGreen: { borderColor: C.green, backgroundColor: C.green + '0d' },
+  ynBtnGreenActive: { backgroundColor: C.green },
+  ynBtnOrange: { borderColor: C.orange, backgroundColor: C.orange + '0d' },
+  ynBtnOrangeActive: { backgroundColor: C.orange },
+  ynBtnRed: { borderColor: C.red, backgroundColor: C.red + '0d' },
+  ynBtnRedActive: { backgroundColor: C.red },
+  ynLabel: { fontSize: 13, fontWeight: '700', color: C.text2 },
+  ynLabelActive: { color: C.white },
 
-  excessForm: { gap: 8, marginTop: 4 },
-  noteInput: {
-    borderWidth: 1,
-    borderColor: C.border,
-    borderRadius: 10,
-    padding: 12,
-    fontSize: 14,
-    color: C.text,
-    backgroundColor: C.bg,
-    textAlignVertical: 'top',
-    minHeight: 80,
+  excessExpand: { gap: 8 },
+  textArea: {
+    borderWidth: 1, borderColor: C.border, borderRadius: R.sm,
+    padding: 12, fontSize: 14, color: C.text,
+    backgroundColor: C.bg, textAlignVertical: 'top', minHeight: 80,
   },
   photoBtn: {
-    borderRadius: 10,
-    paddingVertical: 12,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: C.border,
-    backgroundColor: C.white,
+    borderRadius: R.sm, paddingVertical: 11, alignItems: 'center',
+    borderWidth: 1, borderColor: C.border, backgroundColor: C.white,
   },
-  photoBtnDone: { borderColor: C.green, backgroundColor: C.green + '10' },
+  photoBtnDone: { borderColor: C.green, backgroundColor: C.green + '0d' },
   photoBtnText: { fontSize: 13, fontWeight: '600', color: C.muted },
   photoBtnTextDone: { color: C.green },
 
-  // Housekeeping
+  hkProgressBar: { height: 6, backgroundColor: C.divider, borderRadius: 3, overflow: 'hidden' },
+  hkProgressFill: { height: '100%', borderRadius: 3 },
   hkRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: C.border,
-    gap: 12,
+    flexDirection: 'row', alignItems: 'center',
+    paddingVertical: 11, borderBottomWidth: 1, borderBottomColor: C.divider, gap: 12,
   },
-  hkCheck: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
-    borderWidth: 2,
-    borderColor: C.border,
-    alignItems: 'center',
-    justifyContent: 'center',
+  hkBox: {
+    width: 24, height: 24, borderRadius: R.xs,
+    borderWidth: 2, borderColor: C.border,
+    alignItems: 'center', justifyContent: 'center',
   },
-  hkCheckDone: { backgroundColor: C.green, borderColor: C.green },
-  hkCheckMark: { fontSize: 13, fontWeight: '800', color: C.white },
+  hkBoxDone: { backgroundColor: C.green, borderColor: C.green },
+  hkCheck: { fontSize: 13, fontWeight: '800', color: C.white },
   hkLabel: { flex: 1, fontSize: 14, color: C.text, fontWeight: '500' },
   hkLabelDone: { color: C.muted, textDecorationLine: 'line-through' },
-  hkRequired: { fontSize: 16, fontWeight: '700', color: C.red },
+  reqDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: C.red },
 
-  // Photos
-  heroPhotoBtn: {
-    borderWidth: 2,
-    borderStyle: 'dashed',
-    borderColor: C.border,
-    borderRadius: 12,
-    paddingVertical: 36,
-    alignItems: 'center',
-    backgroundColor: C.bg,
+  heroPicBtn: {
+    borderWidth: 2, borderStyle: 'dashed', borderColor: C.border,
+    borderRadius: R.md, paddingVertical: 36, alignItems: 'center', backgroundColor: C.bg,
   },
-  heroPhotoBtnDone: { borderStyle: 'solid', borderColor: C.green, backgroundColor: C.green + '08' },
-  photoInner: { alignItems: 'center', gap: 6 },
-  photoCheck: { fontSize: 40, color: C.green },
-  photoCameraIcon: { fontSize: 40 },
-  photoCapturedLabel: { fontSize: 14, fontWeight: '600', color: C.green },
-  photoCaptureLabel: { fontSize: 14, fontWeight: '600', color: C.muted },
-  photoCapturedTime: { fontSize: 11, color: C.muted },
-
+  heroPicBtnDone: { borderStyle: 'solid', borderColor: C.green, backgroundColor: C.green + '08' },
+  picInner: { alignItems: 'center', gap: 6 },
+  picCamera: { fontSize: 40 },
+  picCheck: { fontSize: 42, color: C.green },
+  picCapturedLabel: { fontSize: 14, fontWeight: '700', color: C.green },
+  picCapturedTime: { fontSize: 11, color: C.muted },
+  picPlaceholder: { fontSize: 14, fontWeight: '600', color: C.muted },
   addPhotoBtn: {
-    borderWidth: 2,
-    borderStyle: 'dashed',
-    borderColor: C.blue + '60',
-    borderRadius: 10,
-    paddingVertical: 12,
-    alignItems: 'center',
+    borderWidth: 2, borderStyle: 'dashed', borderColor: C.blue + '60',
+    borderRadius: R.sm, paddingVertical: 12, alignItems: 'center',
   },
   addPhotoBtnText: { fontSize: 14, fontWeight: '600', color: C.blue },
-  photoStrip: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
-  photoThumb: {
-    width: 56,
-    height: 56,
-    borderRadius: 8,
-    backgroundColor: C.bg,
-    borderWidth: 1,
-    borderColor: C.border,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 2,
+  thumbStrip: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
+  thumb: {
+    width: 56, height: 56, borderRadius: R.sm,
+    backgroundColor: C.bg, borderWidth: 1, borderColor: C.border,
+    alignItems: 'center', justifyContent: 'center', gap: 2,
   },
-  photoThumbIcon: { fontSize: 18 },
-  photoThumbNum: { fontSize: 9, color: C.muted, fontWeight: '600' },
+  thumbIcon: { fontSize: 18 },
+  thumbNum: { fontSize: 9, color: C.muted, fontWeight: '600' },
 
-  // Review
-  reviewRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 6 },
-  reviewLabel: { fontSize: 13, color: C.muted, fontWeight: '500' },
-  reviewVal: { fontSize: 13, fontWeight: '700' },
+  reviewRow: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 8,
+    borderBottomWidth: 1, borderBottomColor: C.divider,
+  },
+  reviewRowFinal: { borderBottomWidth: 0 },
+  reviewKey: { fontSize: 13, color: C.muted },
+  reviewPill: { borderRadius: R.xs, paddingHorizontal: 8, paddingVertical: 4 },
+  reviewPillText: { fontSize: 12, fontWeight: '700' },
 
-  // Nav
   navRow: { flexDirection: 'row', gap: 10 },
-  prevBtn: {
-    backgroundColor: C.bg,
-    borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: C.border,
-    alignItems: 'center',
+  backBtn: {
+    backgroundColor: C.bg, borderRadius: R.md,
+    paddingVertical: 14, paddingHorizontal: 18,
+    borderWidth: 1, borderColor: C.border, alignItems: 'center',
   },
-  prevBtnText: { fontSize: 14, fontWeight: '600', color: C.muted },
+  backBtnText: { fontSize: 14, fontWeight: '600', color: C.muted },
   nextBtn: {
-    backgroundColor: C.blue,
-    borderRadius: 12,
-    padding: 14,
-    alignItems: 'center',
+    backgroundColor: C.blue, borderRadius: R.md,
+    paddingVertical: 14, alignItems: 'center',
+    paddingHorizontal: 18,
   },
   nextBtnFlex: { flex: 1 },
-  nextBtnDisabled: { backgroundColor: C.border },
+  nextBtnOff: { backgroundColor: C.border },
   nextBtnText: { fontSize: 15, fontWeight: '700', color: C.white },
-  submitBtn: {
-    backgroundColor: C.green,
-    borderRadius: 12,
-    padding: 14,
-    alignItems: 'center',
-  },
-  submitBtnText: { fontSize: 15, fontWeight: '800', color: C.white },
+  submitBtn: { backgroundColor: C.green, borderRadius: R.md, paddingVertical: 16, alignItems: 'center', ...Sh.sm },
+  submitBtnText: { fontSize: 16, fontWeight: '800', color: C.white, letterSpacing: 0.3 },
 });

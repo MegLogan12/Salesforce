@@ -6,7 +6,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useForeman } from '@/lib/foreman-store';
-import { C } from '@/constants/loving';
+import { C, Sh, R } from '@/constants/loving';
 import type { SfChecklistItem } from '@/lib/foreman-types';
 
 type Tab = 'vehicle' | 'loaded';
@@ -27,7 +27,7 @@ function ChecklistItemRow({
         {item.label}
       </Text>
       {item.required && !item.done && (
-        <Text style={styles.required}>*</Text>
+        <View style={styles.requiredPip} />
       )}
     </TouchableOpacity>
   );
@@ -43,64 +43,77 @@ export function MorningScene() {
   const checklist = activeTab === 'vehicle' ? vehicleChecklist : loadedChecklist;
   const totalRequired = checklist.filter(i => i.required).length;
   const doneRequired = checklist.filter(i => i.required && i.done).length;
-  const totalDone = checklist.filter(i => i.done).length;
-  const allRequiredDone = doneRequired === totalRequired;
+  const allTabDone = doneRequired === totalRequired;
 
-  const vehicleTotal = vehicleChecklist.length;
+  const vehicleRequired = vehicleChecklist.filter(i => i.required).length;
+  const vehicleDoneReq = vehicleChecklist.filter(i => i.required && i.done).length;
+  const loadedRequired = loadedChecklist.filter(i => i.required).length;
+  const loadedDoneReq = loadedChecklist.filter(i => i.required && i.done).length;
   const vehicleDone = vehicleChecklist.filter(i => i.done).length;
-  const loadedTotal = loadedChecklist.length;
   const loadedDone = loadedChecklist.filter(i => i.done).length;
+
+  const allBothDone =
+    vehicleDoneReq === vehicleRequired && loadedDoneReq === loadedRequired;
 
   const progressPct = totalRequired > 0 ? (doneRequired / totalRequired) * 100 : 0;
 
   return (
     <View style={styles.root}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.title}>Morning Checklist</Text>
-        <Text style={styles.subtitle}>Complete all required items before departing depot</Text>
+      <View style={styles.headerCard}>
+        <Text style={styles.headerTitle}>Morning Checklist</Text>
+        <Text style={styles.headerSub}>Complete all required items before departing depot</Text>
       </View>
 
-      {/* Progress bar */}
       <View style={styles.progressCard}>
-        <View style={styles.progressHeader}>
-          <Text style={styles.progressLabel}>Required Items</Text>
-          <Text style={styles.progressCount}>{doneRequired} / {totalRequired}</Text>
+        <View style={styles.progressTopRow}>
+          <Text style={styles.progressLabel}>
+            {activeTab === 'vehicle' ? 'Vehicle' : 'Load'} Progress
+          </Text>
+          <Text style={styles.progressFraction}>{doneRequired} / {totalRequired}</Text>
         </View>
         <View style={styles.progressTrack}>
-          <View style={[styles.progressFill, { width: `${progressPct}%` as any, backgroundColor: allRequiredDone ? C.green : C.blue }]} />
+          <View
+            style={[
+              styles.progressFill,
+              { width: `${progressPct}%` as any },
+              { backgroundColor: allTabDone ? C.green : C.blue },
+            ]}
+          />
         </View>
-        {allRequiredDone && (
+        {allTabDone && (
           <Text style={styles.progressComplete}>All required items complete ✓</Text>
         )}
       </View>
 
-      {/* Tabs */}
       <View style={styles.tabBar}>
         <TouchableOpacity
           style={[styles.tab, activeTab === 'vehicle' && styles.tabActive]}
           onPress={() => setActiveTab('vehicle')}
         >
+          {vehicleDoneReq === vehicleRequired && vehicleRequired > 0 && (
+            <View style={styles.tabCheckDot} />
+          )}
           <Text style={[styles.tabText, activeTab === 'vehicle' && styles.tabTextActive]}>
-            Vehicle ({vehicleDone}/{vehicleTotal})
+            Vehicle ({vehicleDone}/{vehicleChecklist.length})
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.tab, activeTab === 'loaded' && styles.tabActive]}
           onPress={() => setActiveTab('loaded')}
         >
+          {loadedDoneReq === loadedRequired && loadedRequired > 0 && (
+            <View style={styles.tabCheckDot} />
+          )}
           <Text style={[styles.tabText, activeTab === 'loaded' && styles.tabTextActive]}>
-            Loaded ({loadedDone}/{loadedTotal})
+            Loaded ({loadedDone}/{loadedChecklist.length})
           </Text>
         </TouchableOpacity>
       </View>
 
-      {/* Checklist */}
       <View style={styles.card}>
         <Text style={styles.sectionLabel}>
           {activeTab === 'vehicle' ? 'Vehicle Safety Check' : 'Load Verification'}
         </Text>
-        <Text style={styles.requiredNote}>* Required items must be completed</Text>
         {checklist.map(item => (
           <ChecklistItemRow
             key={item.id}
@@ -110,16 +123,13 @@ export function MorningScene() {
         ))}
       </View>
 
-      {/* Action */}
-      {allRequiredDone && vehicleChecklist.filter(i => i.required && i.done).length === vehicleChecklist.filter(i => i.required).length && loadedChecklist.filter(i => i.required && i.done).length === loadedChecklist.filter(i => i.required).length ? (
-        <TouchableOpacity style={styles.primaryBtn} onPress={() => goScene('drive')} activeOpacity={0.85}>
-          <Text style={styles.primaryBtnText}>Head to Job Site →</Text>
+      {allBothDone ? (
+        <TouchableOpacity style={styles.readyBtn} onPress={() => goScene('drive')} activeOpacity={0.85}>
+          <Text style={styles.readyBtnText}>Head to Site →</Text>
         </TouchableOpacity>
       ) : (
         <View style={styles.disabledBtn}>
-          <Text style={styles.disabledBtnText}>
-            Complete all required items to continue
-          </Text>
+          <Text style={styles.disabledBtnText}>Complete all required items to continue</Text>
         </View>
       )}
     </View>
@@ -128,87 +138,93 @@ export function MorningScene() {
 
 const styles = StyleSheet.create({
   root: { gap: 12 },
-  header: {
-    backgroundColor: C.white,
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: C.border,
+
+  headerCard: {
+    backgroundColor: C.navy,
+    borderRadius: R.md,
+    padding: 18,
     gap: 4,
+    ...Sh.sm,
   },
-  title: { fontSize: 20, fontWeight: '800', color: C.text },
-  subtitle: { fontSize: 13, color: C.muted },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: C.white },
+  headerSub: { fontSize: 13, color: 'rgba(255,255,255,0.55)' },
+
   progressCard: {
     backgroundColor: C.white,
-    borderRadius: 12,
+    borderRadius: R.md,
     padding: 16,
     borderWidth: 1,
     borderColor: C.border,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
     gap: 8,
+    ...Sh.xs,
   },
-  progressHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  progressTopRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   progressLabel: { fontSize: 12, fontWeight: '600', color: C.muted },
-  progressCount: { fontSize: 13, fontWeight: '700', color: C.text },
+  progressFraction: { fontSize: 14, fontWeight: '800', color: C.text },
   progressTrack: {
-    height: 8,
+    height: 10,
     backgroundColor: C.border,
-    borderRadius: 4,
+    borderRadius: 5,
     overflow: 'hidden',
   },
   progressFill: {
     height: '100%',
-    borderRadius: 4,
+    borderRadius: 5,
   },
-  progressComplete: { fontSize: 12, fontWeight: '600', color: C.green },
+  progressComplete: { fontSize: 12, fontWeight: '700', color: C.green },
+
   tabBar: {
     flexDirection: 'row',
     backgroundColor: C.white,
-    borderRadius: 12,
+    borderRadius: R.md,
     borderWidth: 1,
     borderColor: C.border,
     overflow: 'hidden',
   },
-  tab: { flex: 1, paddingVertical: 12, alignItems: 'center' },
+  tab: {
+    flex: 1,
+    paddingVertical: 13,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 6,
+  },
   tabActive: { backgroundColor: C.navy },
+  tabCheckDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: C.green },
   tabText: { fontSize: 13, fontWeight: '600', color: C.muted },
   tabTextActive: { color: C.white },
+
   card: {
     backgroundColor: C.white,
-    borderRadius: 12,
+    borderRadius: R.md,
     padding: 16,
     borderWidth: 1,
     borderColor: C.border,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
-    gap: 4,
+    gap: 2,
+    ...Sh.xs,
   },
   sectionLabel: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '700',
     color: C.muted,
     textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    marginBottom: 4,
+    letterSpacing: 1.2,
+    marginBottom: 6,
   },
-  requiredNote: { fontSize: 11, color: C.red, marginBottom: 8 },
+
   itemRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 10,
+    minHeight: 44,
+    paddingVertical: 8,
     gap: 12,
     borderBottomWidth: 1,
-    borderBottomColor: C.border,
+    borderBottomColor: C.divider,
   },
   checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
+    width: 26,
+    height: 26,
+    borderRadius: R.xs,
     borderWidth: 2,
     borderColor: C.border,
     alignItems: 'center',
@@ -219,22 +235,31 @@ const styles = StyleSheet.create({
     backgroundColor: C.green,
     borderColor: C.green,
   },
-  checkmark: { fontSize: 13, fontWeight: '800', color: C.white },
+  checkmark: { fontSize: 14, fontWeight: '900', color: C.white },
   itemLabel: { flex: 1, fontSize: 14, color: C.text, fontWeight: '500' },
-  itemLabelDone: { color: C.muted, textDecorationLine: 'line-through' },
-  required: { fontSize: 16, fontWeight: '700', color: C.red },
-  primaryBtn: {
-    backgroundColor: C.blue,
-    borderRadius: 10,
-    padding: 14,
-    alignItems: 'center',
+  itemLabelDone: { color: C.subtle, textDecorationLine: 'line-through' },
+  requiredPip: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: C.red,
   },
-  primaryBtnText: { fontSize: 15, fontWeight: '700', color: C.white },
+
+  readyBtn: {
+    backgroundColor: C.green,
+    borderRadius: R.md,
+    height: 52,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...Sh.sm,
+  },
+  readyBtnText: { fontSize: 16, fontWeight: '800', color: C.white },
   disabledBtn: {
     backgroundColor: C.border,
-    borderRadius: 10,
-    padding: 14,
+    borderRadius: R.md,
+    height: 52,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   disabledBtnText: { fontSize: 14, fontWeight: '600', color: C.muted },
 });

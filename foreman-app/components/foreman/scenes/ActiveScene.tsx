@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,13 +7,15 @@ import {
   Alert,
   Platform,
   Linking,
+  Animated,
+  ScrollView,
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useForeman } from '@/lib/foreman-store';
-import { C } from '@/constants/loving';
+import { C, Sh, R } from '@/constants/loving';
 import type { CrewStatus } from '@/lib/foreman-types';
 
-function statusColor(s: CrewStatus): string {
+function crewStatusColor(s: CrewStatus): string {
   switch (s) {
     case 'Clocked In': return C.green;
     case 'Confirmed': return C.orange;
@@ -25,7 +27,7 @@ function statusColor(s: CrewStatus): string {
 function useElapsed(startIso: string | null) {
   const [now, setNow] = useState(Date.now());
   useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 30_000);
+    const id = setInterval(() => setNow(Date.now()), 60_000);
     return () => clearInterval(id);
   }, []);
   if (!startIso) return '—';
@@ -55,13 +57,17 @@ export function ActiveScene() {
 
   const wo = selectedWorkOrder();
   const elapsed = useElapsed(day.jobStartedAt);
-
   const progressPhotos = day.photos.filter(p => p.category === 'progress');
-  const beforePhoto = day.photos.find(p => p.category === 'before');
 
-  const startedTime = day.jobStartedAt
-    ? new Date(day.jobStartedAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
-    : null;
+  const pulseAnim = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulseAnim, { toValue: 0.25, duration: 900, useNativeDriver: true }),
+        Animated.timing(pulseAnim, { toValue: 1, duration: 900, useNativeDriver: true }),
+      ])
+    ).start();
+  }, []);
 
   async function handleProgressPhoto() {
     const ok = await openCamera();
@@ -81,105 +87,109 @@ export function ActiveScene() {
 
   return (
     <View style={styles.root}>
-      {/* Job status card */}
       <View style={styles.statusCard}>
-        <View style={styles.statusRow}>
-          <View style={styles.statusPulse} />
-          <Text style={styles.statusLabel}>IN PROGRESS</Text>
-          {startedTime && <Text style={styles.startedTime}>since {startedTime}</Text>}
-        </View>
-        <View style={styles.elapsedRow}>
-          <Text style={styles.elapsedNum}>{elapsed}</Text>
-          <Text style={styles.elapsedSub}>on site</Text>
+        <View style={styles.statusTopRow}>
+          <View style={styles.statusLeftCol}>
+            <View style={styles.statusLabelRow}>
+              <Animated.View style={[styles.pulseDot, { opacity: pulseAnim }]} />
+              <Text style={styles.statusLabel}>IN PROGRESS</Text>
+            </View>
+            <Text style={styles.elapsedTimer}>{elapsed}</Text>
+            <Text style={styles.elapsedSub}>on site</Text>
+          </View>
           {wo && (
             <View style={styles.goalChip}>
-              <Text style={styles.goalText}>Goal: {wo.goalHours}h</Text>
+              <Text style={styles.goalChipLabel}>GOAL</Text>
+              <Text style={styles.goalChipValue}>{wo.goalHours}h</Text>
             </View>
           )}
         </View>
         {wo && (
-          <>
+          <View style={styles.woInfoRow}>
+            <Text style={styles.woNumber}>{wo.woNumber}</Text>
             <Text style={styles.woSubject}>{wo.subject}</Text>
-            <Text style={styles.woAddress}>📍 {wo.address}</Text>
-            <View style={styles.woSpecsRow}>
-              <Text style={styles.woSpec}>🌿 {wo.sodSqft.toLocaleString()} sq ft</Text>
-              <Text style={styles.woSpec}>🌱 {wo.sodSpecies}</Text>
-            </View>
-          </>
+          </View>
         )}
       </View>
 
-      {/* Crew */}
       <View style={styles.card}>
         <Text style={styles.sectionLabel}>Crew on Site</Text>
-        {day.crew.map(m => (
-          <View key={m.id} style={styles.crewRow}>
-            <View style={[styles.crewDot, { backgroundColor: statusColor(m.status) }]} />
-            <Text style={styles.crewName}>{m.name}</Text>
-            <Text style={[styles.crewStatus, { color: statusColor(m.status) }]}>{m.status}</Text>
-          </View>
-        ))}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.crewScroll}>
+          {day.crew.map(m => (
+            <View key={m.id} style={styles.crewAvatarCol}>
+              <View style={[styles.crewAvatar, { borderColor: crewStatusColor(m.status) }]}>
+                <Text style={styles.crewInitial}>{m.name.split(' ').map(p => p.charAt(0)).join('')}</Text>
+              </View>
+              <View style={[styles.crewStatusDot, { backgroundColor: crewStatusColor(m.status) }]} />
+              <Text style={styles.crewName}>{m.name.split(' ')[0]}</Text>
+              <Text style={[styles.crewStatusText, { color: crewStatusColor(m.status) }]}>{m.status}</Text>
+            </View>
+          ))}
+        </ScrollView>
       </View>
 
-      {/* Quick actions */}
       <View style={styles.actionsGrid}>
-        <TouchableOpacity style={styles.actionBtn} onPress={handleProgressPhoto}>
+        <TouchableOpacity style={styles.actionCard} onPress={handleProgressPhoto}>
           <Text style={styles.actionIcon}>📷</Text>
           <Text style={styles.actionLabel}>Progress Photo</Text>
           {progressPhotos.length > 0 && (
-            <Text style={styles.actionCount}>{progressPhotos.length}</Text>
+            <View style={styles.actionBadge}>
+              <Text style={styles.actionBadgeText}>{progressPhotos.length}</Text>
+            </View>
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.actionBtn} onPress={() => goScene('flag')}>
+        <TouchableOpacity style={styles.actionCard} onPress={() => goScene('flag')}>
           <Text style={styles.actionIcon}>🚩</Text>
           <Text style={styles.actionLabel}>Flag Issue</Text>
-          {day.flag.submitted && <Text style={[styles.actionCount, { backgroundColor: C.red }]}>!</Text>}
+          {day.flag.submitted && (
+            <View style={[styles.actionBadge, { backgroundColor: C.red }]}>
+              <Text style={styles.actionBadgeText}>!</Text>
+            </View>
+          )}
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.actionBtn} onPress={() => goScene('measuring')}>
+        <TouchableOpacity style={styles.actionCard} onPress={() => goScene('measuring')}>
           <Text style={styles.actionIcon}>📐</Text>
           <Text style={styles.actionLabel}>Measuring Cup</Text>
           {day.measurements.length > 0 && (
-            <Text style={styles.actionCount}>{day.measurements.length}</Text>
+            <View style={styles.actionBadge}>
+              <Text style={styles.actionBadgeText}>{day.measurements.length}</Text>
+            </View>
           )}
         </TouchableOpacity>
 
-        {wo?.fieldManager && (
-          <TouchableOpacity
-            style={styles.actionBtn}
-            onPress={() => Linking.openURL(`tel:${wo.fieldManager.phone.replace(/\s/g, '')}`)}
-          >
-            <Text style={styles.actionIcon}>📞</Text>
-            <Text style={styles.actionLabel}>Call FM</Text>
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity
+          style={styles.actionCard}
+          onPress={() => wo?.fieldManager && Linking.openURL(`tel:${wo.fieldManager.phone.replace(/\s/g, '')}`)}
+        >
+          <Text style={styles.actionIcon}>📞</Text>
+          <Text style={styles.actionLabel}>Call FM</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Progress photos strip */}
       {progressPhotos.length > 0 && (
         <View style={styles.card}>
           <Text style={styles.sectionLabel}>Progress Photos ({progressPhotos.length})</Text>
-          <View style={styles.photoStrip}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.photoStrip}>
             {progressPhotos.map((p, i) => (
               <View key={p.id} style={styles.photoThumb}>
                 <Text style={styles.photoThumbIcon}>📷</Text>
                 <Text style={styles.photoThumbNum}>#{i + 1}</Text>
               </View>
             ))}
-          </View>
+          </ScrollView>
         </View>
       )}
 
-      {/* Lunch break */}
-      <TouchableOpacity style={styles.lunchBtn} onPress={goLunch} activeOpacity={0.85}>
-        <Text style={styles.lunchBtnText}>☀ Start Lunch Break</Text>
-      </TouchableOpacity>
-
-      {/* Close job */}
-      <TouchableOpacity style={styles.closeBtn} onPress={handleCloseJob} activeOpacity={0.85}>
-        <Text style={styles.closeBtnText}>Close Job →</Text>
-      </TouchableOpacity>
+      <View style={styles.bottomRow}>
+        <TouchableOpacity style={styles.lunchBtn} onPress={goLunch} activeOpacity={0.85}>
+          <Text style={styles.lunchBtnText}>☀ Lunch</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.closeBtn} onPress={handleCloseJob} activeOpacity={0.85}>
+          <Text style={styles.closeBtnText}>Close Job →</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -189,81 +199,117 @@ const styles = StyleSheet.create({
 
   statusCard: {
     backgroundColor: C.navy,
-    borderRadius: 14,
+    borderRadius: R.md,
     padding: 20,
-    gap: 8,
+    gap: 12,
+    ...Sh.md,
   },
-  statusRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  statusPulse: {
+  statusTopRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+  },
+  statusLeftCol: { gap: 2 },
+  statusLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 7 },
+  pulseDot: {
     width: 10,
     height: 10,
     borderRadius: 5,
     backgroundColor: '#4ade80',
   },
-  statusLabel: { fontSize: 11, fontWeight: '800', color: '#4ade80', letterSpacing: 1.5 },
-  startedTime: { fontSize: 11, color: 'rgba(255,255,255,0.45)', marginLeft: 'auto' },
-  elapsedRow: { flexDirection: 'row', alignItems: 'baseline', gap: 8, marginTop: 4 },
-  elapsedNum: { fontSize: 42, fontWeight: '900', color: C.white },
-  elapsedSub: { fontSize: 13, color: 'rgba(255,255,255,0.5)', marginBottom: 4 },
-  goalChip: {
-    marginLeft: 'auto',
-    backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
+  statusLabel: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#4ade80',
+    letterSpacing: 1.8,
   },
-  goalText: { fontSize: 12, fontWeight: '600', color: 'rgba(255,255,255,0.7)' },
-  woSubject: { fontSize: 15, fontWeight: '700', color: C.white, marginTop: 4 },
-  woAddress: { fontSize: 12, color: 'rgba(255,255,255,0.55)' },
-  woSpecsRow: { flexDirection: 'row', gap: 16 },
-  woSpec: { fontSize: 12, color: 'rgba(255,255,255,0.65)', fontWeight: '500' },
+  elapsedTimer: {
+    fontSize: 60,
+    fontWeight: '900',
+    color: C.white,
+    lineHeight: 66,
+    marginTop: 4,
+  },
+  elapsedSub: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.45)',
+    marginTop: -2,
+  },
+  goalChip: {
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    borderRadius: R.sm,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    alignItems: 'center',
+    gap: 2,
+  },
+  goalChipLabel: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: 'rgba(255,255,255,0.4)',
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+  },
+  goalChipValue: { fontSize: 18, fontWeight: '900', color: C.white },
+  woInfoRow: { gap: 2, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.1)', paddingTop: 10 },
+  woNumber: { fontSize: 11, fontWeight: '700', color: 'rgba(255,255,255,0.4)', letterSpacing: 0.5 },
+  woSubject: { fontSize: 15, fontWeight: '700', color: C.white },
 
   card: {
     backgroundColor: C.white,
-    borderRadius: 14,
+    borderRadius: R.md,
     padding: 16,
     borderWidth: 1,
     borderColor: C.border,
-    gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
+    gap: 10,
+    ...Sh.xs,
   },
   sectionLabel: {
     fontSize: 10,
     fontWeight: '700',
     color: C.muted,
     textTransform: 'uppercase',
-    letterSpacing: 1,
+    letterSpacing: 1.2,
   },
 
-  crewRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 5 },
-  crewDot: { width: 10, height: 10, borderRadius: 5 },
-  crewName: { flex: 1, fontSize: 14, fontWeight: '500', color: C.text },
-  crewStatus: { fontSize: 12, fontWeight: '600' },
+  crewScroll: { gap: 16, paddingRight: 4 },
+  crewAvatarCol: { alignItems: 'center', gap: 4 },
+  crewAvatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: C.navy,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2.5,
+  },
+  crewInitial: { fontSize: 14, fontWeight: '800', color: C.white },
+  crewStatusDot: { width: 8, height: 8, borderRadius: 4 },
+  crewName: { fontSize: 11, fontWeight: '600', color: C.text },
+  crewStatusText: { fontSize: 10, fontWeight: '600' },
 
   actionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 10,
   },
-  actionBtn: {
+  actionCard: {
     flex: 1,
     minWidth: '45%',
     backgroundColor: C.white,
-    borderRadius: 12,
+    borderRadius: R.md,
     borderWidth: 1,
     borderColor: C.border,
-    paddingVertical: 16,
+    paddingVertical: 18,
     paddingHorizontal: 12,
     alignItems: 'center',
     gap: 6,
     position: 'relative',
+    ...Sh.xs,
   },
-  actionIcon: { fontSize: 28 },
-  actionLabel: { fontSize: 12, fontWeight: '600', color: C.text, textAlign: 'center' },
-  actionCount: {
+  actionIcon: { fontSize: 30 },
+  actionLabel: { fontSize: 12, fontWeight: '700', color: C.text, textAlign: 'center' },
+  actionBadge: {
     position: 'absolute',
     top: 8,
     right: 8,
@@ -271,17 +317,16 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 6,
     paddingVertical: 2,
-    fontSize: 10,
-    fontWeight: '700',
-    color: C.white,
-    overflow: 'hidden',
+    minWidth: 20,
+    alignItems: 'center',
   },
+  actionBadgeText: { fontSize: 10, fontWeight: '800', color: C.white },
 
-  photoStrip: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
+  photoStrip: { gap: 8 },
   photoThumb: {
-    width: 60,
-    height: 60,
-    borderRadius: 8,
+    width: 62,
+    height: 62,
+    borderRadius: R.sm,
     backgroundColor: C.bg,
     borderWidth: 1,
     borderColor: C.border,
@@ -292,19 +337,28 @@ const styles = StyleSheet.create({
   photoThumbIcon: { fontSize: 20 },
   photoThumbNum: { fontSize: 9, color: C.muted, fontWeight: '600' },
 
+  bottomRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
   lunchBtn: {
+    flex: 1,
     backgroundColor: C.orange,
-    borderRadius: 12,
-    padding: 14,
+    borderRadius: R.md,
+    height: 52,
     alignItems: 'center',
+    justifyContent: 'center',
+    ...Sh.xs,
   },
-  lunchBtnText: { fontSize: 15, fontWeight: '700', color: C.white },
-
+  lunchBtnText: { fontSize: 15, fontWeight: '800', color: C.white },
   closeBtn: {
+    flex: 1,
     backgroundColor: C.blue,
-    borderRadius: 12,
-    padding: 14,
+    borderRadius: R.md,
+    height: 52,
     alignItems: 'center',
+    justifyContent: 'center',
+    ...Sh.xs,
   },
-  closeBtnText: { fontSize: 15, fontWeight: '700', color: C.white },
+  closeBtnText: { fontSize: 15, fontWeight: '800', color: C.white },
 });

@@ -5,10 +5,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
-  ScrollView,
 } from 'react-native';
 import { useForeman } from '@/lib/foreman-store';
-import { C } from '@/constants/loving';
+import { C, Sh, R } from '@/constants/loving';
 import type { SfMeasurement } from '@/lib/foreman-types';
 
 function MeasRow({
@@ -25,12 +24,12 @@ function MeasRow({
   const sqft = m.lengthFt && m.widthFt ? Math.round(m.lengthFt * m.widthFt) : null;
 
   return (
-    <View style={styles.measRow}>
-      <View style={styles.measRowHeader}>
+    <View style={styles.measCard}>
+      <View style={styles.measCardHeader}>
         <TextInput
           style={styles.areaNameInput}
           placeholder={`Area ${index + 1}`}
-          placeholderTextColor={C.muted}
+          placeholderTextColor={C.subtle}
           value={m.label}
           onChangeText={t => onUpdate({ label: t })}
         />
@@ -45,7 +44,7 @@ function MeasRow({
             style={styles.dimInput}
             keyboardType="decimal-pad"
             placeholder="0"
-            placeholderTextColor={C.muted}
+            placeholderTextColor={C.subtle}
             value={m.lengthFt !== null ? String(m.lengthFt) : ''}
             onChangeText={t => onUpdate({ lengthFt: t === '' ? null : Number(t) })}
           />
@@ -57,7 +56,7 @@ function MeasRow({
             style={styles.dimInput}
             keyboardType="decimal-pad"
             placeholder="0"
-            placeholderTextColor={C.muted}
+            placeholderTextColor={C.subtle}
             value={m.widthFt !== null ? String(m.widthFt) : ''}
             onChangeText={t => onUpdate({ widthFt: t === '' ? null : Number(t) })}
           />
@@ -67,15 +66,13 @@ function MeasRow({
           <Text style={styles.resultVal}>{sqft !== null ? sqft.toLocaleString() : '—'}</Text>
         </View>
       </View>
-      {m.notes.length > 0 || true ? (
-        <TextInput
-          style={styles.notesInput}
-          placeholder="Notes (optional)"
-          placeholderTextColor={C.muted}
-          value={m.notes}
-          onChangeText={t => onUpdate({ notes: t })}
-        />
-      ) : null}
+      <TextInput
+        style={styles.notesInput}
+        placeholder="Notes (optional)"
+        placeholderTextColor={C.subtle}
+        value={m.notes}
+        onChangeText={t => onUpdate({ notes: t })}
+      />
     </View>
   );
 }
@@ -100,44 +97,46 @@ export function MeasuringScene() {
   const delta = totalMeasured - targetSqft;
   const pct = targetSqft > 0 ? Math.min(100, Math.round((totalMeasured / targetSqft) * 100)) : 0;
 
+  const deltaColor = delta === 0 ? C.green : delta > 0 ? C.orange : C.red;
+  const deltaLabel = delta === 0 ? '—' : (delta > 0 ? '+' : '') + delta.toLocaleString();
+
   return (
     <View style={styles.root}>
-      {/* Header */}
       <View style={styles.headerCard}>
-        <Text style={styles.heading}>📐 Measuring Cup</Text>
+        <Text style={styles.headerTitle}>📐 Measuring Cup</Text>
         {wo && (
-          <Text style={styles.subheading}>{wo.subject} · {wo.sodSpecies}</Text>
+          <Text style={styles.headerSub}>{wo.subject} · {wo.sodSpecies}</Text>
         )}
       </View>
 
-      {/* Summary */}
       <View style={styles.summaryCard}>
         <View style={styles.summaryRow}>
-          <View style={styles.summaryBlock}>
-            <Text style={styles.summaryNum}>{totalMeasured.toLocaleString()}</Text>
-            <Text style={styles.summarySub}>Measured sq ft</Text>
+          <View style={styles.summaryCell}>
+            <Text style={styles.summaryCellLabel}>MEASURED</Text>
+            <Text style={styles.summaryCellVal}>{totalMeasured.toLocaleString()}</Text>
+            <Text style={styles.summaryCellUnit}>sq ft</Text>
           </View>
-          <View style={styles.summaryDivider} />
-          <View style={styles.summaryBlock}>
-            <Text style={styles.summaryNum}>{targetSqft.toLocaleString()}</Text>
-            <Text style={styles.summarySub}>WO Target sq ft</Text>
+          <View style={styles.summaryCellDivider} />
+          <View style={styles.summaryCell}>
+            <Text style={styles.summaryCellLabel}>TARGET</Text>
+            <Text style={styles.summaryCellVal}>{targetSqft.toLocaleString()}</Text>
+            <Text style={styles.summaryCellUnit}>sq ft</Text>
           </View>
-          <View style={styles.summaryDivider} />
-          <View style={styles.summaryBlock}>
-            <Text style={[styles.summaryNum, delta > 0 ? { color: C.orange } : delta < 0 ? { color: C.red } : { color: C.green }]}>
-              {delta === 0 ? '—' : (delta > 0 ? '+' : '') + delta.toLocaleString()}
-            </Text>
-            <Text style={styles.summarySub}>Variance</Text>
+          <View style={styles.summaryCellDivider} />
+          <View style={styles.summaryCell}>
+            <Text style={styles.summaryCellLabel}>VARIANCE</Text>
+            <Text style={[styles.summaryCellVal, { color: deltaColor }]}>{deltaLabel}</Text>
+            <Text style={styles.summaryCellUnit}>sq ft</Text>
           </View>
         </View>
         {targetSqft > 0 && (
-          <View>
+          <View style={styles.progressGroup}>
             <View style={styles.progressTrack}>
               <View
                 style={[
                   styles.progressFill,
                   { width: `${pct}%` as any },
-                  pct >= 100 ? { backgroundColor: C.green } : { backgroundColor: C.blue },
+                  { backgroundColor: pct >= 100 ? C.green : C.blue },
                 ]}
               />
             </View>
@@ -146,10 +145,9 @@ export function MeasuringScene() {
         )}
       </View>
 
-      {/* Measurements */}
       {measurements.length > 0 && (
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>Areas</Text>
+          <Text style={styles.sectionLabel}>Areas</Text>
           {measurements.map((m, i) => (
             <MeasRow
               key={m.id}
@@ -162,12 +160,10 @@ export function MeasuringScene() {
         </View>
       )}
 
-      {/* Add area */}
       <TouchableOpacity style={styles.addBtn} onPress={addMeasurement} activeOpacity={0.8}>
         <Text style={styles.addBtnText}>+ Add Area</Text>
       </TouchableOpacity>
 
-      {/* Back */}
       <TouchableOpacity style={styles.backBtn} onPress={() => goScene('active')} activeOpacity={0.85}>
         <Text style={styles.backBtnText}>← Back to Job</Text>
       </TouchableOpacity>
@@ -180,54 +176,72 @@ const styles = StyleSheet.create({
 
   headerCard: {
     backgroundColor: C.navy,
-    borderRadius: 14,
+    borderRadius: R.md,
     padding: 20,
-    gap: 4,
+    gap: 5,
+    ...Sh.sm,
   },
-  heading: { fontSize: 22, fontWeight: '800', color: C.white },
-  subheading: { fontSize: 13, color: 'rgba(255,255,255,0.6)' },
+  headerTitle: { fontSize: 22, fontWeight: '900', color: C.white },
+  headerSub: { fontSize: 13, color: 'rgba(255,255,255,0.55)' },
 
   summaryCard: {
     backgroundColor: C.white,
-    borderRadius: 14,
+    borderRadius: R.md,
     padding: 16,
     borderWidth: 1,
     borderColor: C.border,
-    gap: 12,
+    gap: 14,
+    ...Sh.xs,
   },
   summaryRow: { flexDirection: 'row', alignItems: 'center' },
-  summaryBlock: { flex: 1, alignItems: 'center' },
-  summaryNum: { fontSize: 24, fontWeight: '800', color: C.text },
-  summarySub: { fontSize: 10, color: C.muted, marginTop: 2, textAlign: 'center' },
-  summaryDivider: { width: 1, height: 40, backgroundColor: C.border },
+  summaryCell: { flex: 1, alignItems: 'center', gap: 2 },
+  summaryCellLabel: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: C.muted,
+    textTransform: 'uppercase',
+    letterSpacing: 1.2,
+  },
+  summaryCellVal: { fontSize: 22, fontWeight: '900', color: C.text },
+  summaryCellUnit: { fontSize: 10, color: C.subtle },
+  summaryCellDivider: { width: 1, height: 44, backgroundColor: C.border },
+
+  progressGroup: { gap: 5 },
   progressTrack: {
-    height: 8,
+    height: 10,
     backgroundColor: C.border,
-    borderRadius: 4,
+    borderRadius: 5,
     overflow: 'hidden',
   },
-  progressFill: { height: '100%', borderRadius: 4 },
-  progressLabel: { fontSize: 11, color: C.muted, marginTop: 4, textAlign: 'right' },
+  progressFill: { height: '100%', borderRadius: 5 },
+  progressLabel: { fontSize: 11, color: C.muted, textAlign: 'right', fontWeight: '600' },
 
   card: {
     backgroundColor: C.white,
-    borderRadius: 14,
+    borderRadius: R.md,
     padding: 16,
     borderWidth: 1,
     borderColor: C.border,
     gap: 10,
+    ...Sh.xs,
   },
-  cardTitle: { fontSize: 13, fontWeight: '700', color: C.muted, textTransform: 'uppercase', letterSpacing: 0.8 },
+  sectionLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: C.muted,
+    textTransform: 'uppercase',
+    letterSpacing: 1.2,
+  },
 
-  measRow: {
+  measCard: {
     backgroundColor: C.bg,
-    borderRadius: 10,
+    borderRadius: R.sm,
     padding: 12,
     gap: 8,
     borderWidth: 1,
     borderColor: C.border,
   },
-  measRowHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  measCardHeader: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   areaNameInput: {
     flex: 1,
     fontSize: 14,
@@ -235,49 +249,60 @@ const styles = StyleSheet.create({
     color: C.text,
     borderBottomWidth: 1,
     borderBottomColor: C.border,
-    paddingBottom: 4,
+    paddingBottom: 5,
   },
   removeBtn: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: C.red + '20',
+    backgroundColor: C.red + '18',
     alignItems: 'center',
     justifyContent: 'center',
   },
   removeBtnText: { fontSize: 13, color: C.red, fontWeight: '700' },
 
   dimRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  dimField: { flex: 1, gap: 3 },
-  dimLabel: { fontSize: 10, fontWeight: '600', color: C.muted, textTransform: 'uppercase', letterSpacing: 0.5 },
+  dimField: { flex: 1, gap: 4 },
+  dimLabel: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: C.muted,
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
   dimInput: {
     borderWidth: 1,
     borderColor: C.border,
-    borderRadius: 8,
+    borderRadius: R.sm,
     padding: 8,
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
     color: C.text,
     backgroundColor: C.white,
     textAlign: 'center',
   },
-  dimX: { fontSize: 20, color: C.muted, fontWeight: '300', marginTop: 12 },
+  dimX: { fontSize: 20, color: C.muted, fontWeight: '300', marginTop: 14 },
   resultBox: {
     backgroundColor: C.navy,
-    borderRadius: 8,
+    borderRadius: R.sm,
     paddingHorizontal: 10,
     paddingVertical: 8,
     alignItems: 'center',
-    minWidth: 72,
+    minWidth: 74,
     gap: 2,
   },
-  resultLabel: { fontSize: 9, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: 0.5 },
-  resultVal: { fontSize: 18, fontWeight: '800', color: C.white },
+  resultLabel: {
+    fontSize: 9,
+    color: 'rgba(255,255,255,0.45)',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
+  resultVal: { fontSize: 18, fontWeight: '900', color: C.white },
 
   notesInput: {
     borderWidth: 1,
     borderColor: C.border,
-    borderRadius: 8,
+    borderRadius: R.sm,
     padding: 8,
     fontSize: 13,
     color: C.text,
@@ -288,17 +313,19 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderStyle: 'dashed',
     borderColor: C.blue,
-    borderRadius: 12,
-    padding: 14,
+    borderRadius: R.md,
+    height: 50,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   addBtnText: { fontSize: 15, fontWeight: '700', color: C.blue },
 
   backBtn: {
     backgroundColor: C.bg,
-    borderRadius: 12,
-    padding: 14,
+    borderRadius: R.md,
+    height: 50,
     alignItems: 'center',
+    justifyContent: 'center',
     borderWidth: 1,
     borderColor: C.border,
   },

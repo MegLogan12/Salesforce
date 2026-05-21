@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,19 @@ import {
   Linking,
 } from 'react-native';
 import { useForeman } from '@/lib/foreman-store';
-import { C } from '@/constants/loving';
+import { C, Sh, R } from '@/constants/loving';
+
+function useEta(scheduledStartIso: string | null): string {
+  const [now] = useState(Date.now());
+  if (!scheduledStartIso) return '—';
+  const diff = new Date(scheduledStartIso).getTime() - now;
+  if (diff <= 0) return 'Arriving now';
+  const mins = Math.round(diff / 60_000);
+  if (mins < 60) return `~${mins} min`;
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return m > 0 ? `~${h}h ${m}m` : `~${h}h`;
+}
 
 export function DriveScene() {
   const day = useForeman(s => s.day);
@@ -18,25 +30,28 @@ export function DriveScene() {
   const address = wo?.address ?? day.workOrders[0]?.address ?? 'Job Site';
   const fm = wo?.fieldManager ?? day.workOrders[0]?.fieldManager;
 
-  const sa = day.serviceAppointments.find(a => a.parentWorkOrderId === (wo?.id ?? day.selectedWorkOrderId));
+  const sa = day.serviceAppointments.find(
+    a => a.parentWorkOrderId === (wo?.id ?? day.selectedWorkOrderId)
+  );
+
   const scheduledStart = sa
     ? new Date(sa.scheduledStartIso).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
     : null;
 
+  const eta = useEta(sa?.scheduledStartIso ?? null);
+
   return (
     <View style={styles.root}>
-      {/* Header */}
       <View style={styles.heroCard}>
-        <Text style={styles.sectionLabel}>Navigating To</Text>
-        <Text style={styles.addressText}>{address}</Text>
+        <Text style={styles.heroLabel}>NAVIGATING TO</Text>
+        <Text style={styles.heroAddress}>{address}</Text>
         {wo && (
-          <Text style={styles.woLabel}>{wo.woNumber} · {wo.subject}</Text>
+          <Text style={styles.heroWoLabel}>{wo.woNumber} · {wo.subject}</Text>
         )}
         {scheduledStart && (
-          <View style={styles.schedRow}>
-            <View style={styles.schedBadge}>
-              <Text style={styles.schedText}>🕐 Scheduled arrival: {scheduledStart}</Text>
-            </View>
+          <View style={styles.schedBadge}>
+            <Text style={styles.schedBadgeLabel}>SCHEDULED ARRIVAL</Text>
+            <Text style={styles.schedBadgeTime}>{scheduledStart}</Text>
           </View>
         )}
         {fm && (
@@ -50,11 +65,21 @@ export function DriveScene() {
         )}
       </View>
 
-      {/* Directions */}
+      <View style={styles.etaCard}>
+        <View style={styles.etaLeft}>
+          <Text style={styles.etaLabel}>Estimated Drive Time</Text>
+          <Text style={styles.etaSub}>Based on scheduled start</Text>
+        </View>
+        <Text style={styles.etaValue}>{eta}</Text>
+      </View>
+
       <View style={styles.card}>
         <Text style={styles.sectionLabel}>Turn-by-Turn</Text>
         {day.directions.map((step, idx) => (
-          <View key={idx} style={[styles.stepRow, idx < day.directions.length - 1 && styles.stepRowBorder]}>
+          <View
+            key={idx}
+            style={[styles.stepRow, idx < day.directions.length - 1 && styles.stepRowBorder]}
+          >
             <View style={styles.stepIconWrap}>
               <Text style={styles.stepIcon}>{step.icon}</Text>
             </View>
@@ -71,16 +96,12 @@ export function DriveScene() {
         ))}
       </View>
 
-      {/* Estimated time */}
-      <View style={styles.etaCard}>
-        <Text style={styles.etaLabel}>Estimated Drive Time</Text>
-        <Text style={styles.etaValue}>~22 min</Text>
-        <Text style={styles.etaSub}>Based on current traffic</Text>
-      </View>
-
-      {/* Arrived button */}
-      <TouchableOpacity style={styles.arrivedBtn} onPress={() => goScene('arriving')} activeOpacity={0.85}>
-        <Text style={styles.arrivedBtnText}>Mark Arrived 📍</Text>
+      <TouchableOpacity
+        style={styles.arrivedBtn}
+        onPress={() => goScene('arriving')}
+        activeOpacity={0.85}
+      >
+        <Text style={styles.arrivedBtnText}>I've Arrived 📍</Text>
       </TouchableOpacity>
     </View>
   );
@@ -88,61 +109,94 @@ export function DriveScene() {
 
 const styles = StyleSheet.create({
   root: { gap: 12 },
+
   heroCard: {
     backgroundColor: C.navy,
-    borderRadius: 12,
+    borderRadius: R.md,
     padding: 20,
     gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
+    ...Sh.md,
   },
-  sectionLabel: {
-    fontSize: 11,
+  heroLabel: {
+    fontSize: 10,
     fontWeight: '700',
-    color: 'rgba(255,255,255,0.5)',
+    color: 'rgba(255,255,255,0.4)',
+    letterSpacing: 1.5,
     textTransform: 'uppercase',
-    letterSpacing: 0.8,
   },
-  addressText: {
-    fontSize: 20,
-    fontWeight: '800',
+  heroAddress: {
+    fontSize: 22,
+    fontWeight: '900',
     color: C.white,
-    lineHeight: 26,
+    lineHeight: 28,
   },
-  woLabel: {
+  heroWoLabel: {
     fontSize: 13,
-    color: 'rgba(255,255,255,0.65)',
+    color: 'rgba(255,255,255,0.55)',
   },
-  schedRow: { flexDirection: 'row' },
   schedBadge: {
     backgroundColor: 'rgba(255,255,255,0.1)',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    borderRadius: R.sm,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    alignSelf: 'flex-start',
+    gap: 1,
+    marginTop: 2,
   },
-  schedText: { fontSize: 12, color: 'rgba(255,255,255,0.8)', fontWeight: '600' },
+  schedBadgeLabel: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: 'rgba(255,255,255,0.45)',
+    letterSpacing: 1.2,
+    textTransform: 'uppercase',
+  },
+  schedBadgeTime: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: C.white,
+  },
   callFmBtn: {
     backgroundColor: C.blue,
-    borderRadius: 8,
+    borderRadius: R.sm,
     paddingHorizontal: 14,
     paddingVertical: 10,
     alignItems: 'center',
     marginTop: 4,
   },
   callFmText: { fontSize: 14, fontWeight: '700', color: C.white },
-  card: {
+
+  etaCard: {
     backgroundColor: C.white,
-    borderRadius: 12,
+    borderRadius: R.md,
     padding: 16,
     borderWidth: 1,
     borderColor: C.border,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    ...Sh.xs,
+  },
+  etaLeft: { flex: 1 },
+  etaLabel: { fontSize: 13, fontWeight: '600', color: C.text },
+  etaSub: { fontSize: 11, color: C.muted, marginTop: 2 },
+  etaValue: { fontSize: 26, fontWeight: '900', color: C.navy },
+
+  card: {
+    backgroundColor: C.white,
+    borderRadius: R.md,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: C.border,
     gap: 4,
+    ...Sh.xs,
+  },
+  sectionLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: C.muted,
+    textTransform: 'uppercase',
+    letterSpacing: 1.2,
+    marginBottom: 6,
   },
   stepRow: {
     flexDirection: 'row',
@@ -152,47 +206,39 @@ const styles = StyleSheet.create({
   },
   stepRowBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: C.border,
+    borderBottomColor: C.divider,
   },
   stepIconWrap: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     backgroundColor: C.bg,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: C.border,
   },
-  stepIcon: { fontSize: 18 },
+  stepIcon: { fontSize: 17 },
   stepBody: { flex: 1, gap: 2 },
   stepInstruction: { fontSize: 14, fontWeight: '500', color: C.text },
   stepDistance: { fontSize: 12, color: C.muted },
   destBadge: {
-    backgroundColor: C.green + '22',
-    borderRadius: 6,
+    backgroundColor: C.green + '20',
+    borderRadius: R.xs,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderWidth: 1,
-    borderColor: C.green + '55',
+    borderColor: C.green + '50',
   },
   destBadgeText: { fontSize: 10, fontWeight: '700', color: C.green },
-  etaCard: {
-    backgroundColor: C.white,
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: C.border,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  etaLabel: { flex: 1, fontSize: 13, fontWeight: '600', color: C.muted },
-  etaValue: { fontSize: 22, fontWeight: '800', color: C.text },
-  etaSub: { fontSize: 11, color: C.muted },
+
   arrivedBtn: {
     backgroundColor: C.green,
-    borderRadius: 10,
-    padding: 14,
+    borderRadius: R.md,
+    height: 52,
     alignItems: 'center',
+    justifyContent: 'center',
+    ...Sh.sm,
   },
-  arrivedBtnText: { fontSize: 15, fontWeight: '700', color: C.white },
+  arrivedBtnText: { fontSize: 16, fontWeight: '800', color: C.white },
 });

@@ -7,7 +7,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { useForeman } from '@/lib/foreman-store';
-import { C } from '@/constants/loving';
+import { C, Sh, R } from '@/constants/loving';
 
 function getGreeting(): string {
   const h = new Date().getHours();
@@ -31,12 +31,10 @@ export function LoginScene() {
     weekday: 'long',
     month: 'long',
     day: 'numeric',
-    year: 'numeric',
   });
 
   return (
     <View style={styles.root}>
-      {/* Language toggle */}
       <View style={styles.langRow}>
         <TouchableOpacity
           style={[styles.langBtn, lang === 'en' && styles.langBtnActive]}
@@ -52,20 +50,23 @@ export function LoginScene() {
         </TouchableOpacity>
       </View>
 
-      {/* Greeting */}
       <View style={styles.greetingArea}>
         <Text style={styles.greeting}>{greeting},</Text>
         <Text style={styles.foremanName}>{foremanName}</Text>
         <Text style={styles.dateText}>{todayFormatted}</Text>
       </View>
 
-      {/* SF Connected badge */}
       <View style={styles.sfBadge}>
-        <View style={styles.sfDot} />
-        <Text style={styles.sfText}>Salesforce Connected · LOVING Production</Text>
+        <View style={styles.sfDotOuter}>
+          <View style={styles.sfDot} />
+        </View>
+        <View style={styles.sfBadgeBody}>
+          <Text style={styles.sfBadgeTitle}>Salesforce Connected</Text>
+          <Text style={styles.sfBadgeSub}>LOVING Production Org · Synced</Text>
+        </View>
+        <Text style={styles.sfBadgeIcon}>☁</Text>
       </View>
 
-      {/* Today's summary card */}
       <View style={styles.summaryCard}>
         <Text style={styles.sectionLabel}>Today's Assignment</Text>
 
@@ -77,7 +78,7 @@ export function LoginScene() {
           <View style={styles.statDivider} />
           <View style={styles.statBlock}>
             <Text style={styles.statNum}>{crew.length}</Text>
-            <Text style={styles.statLabel}>{lang === 'en' ? 'Crew Members' : 'Tripulantes'}</Text>
+            <Text style={styles.statLabel}>{lang === 'en' ? 'Crew' : 'Tripulantes'}</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statBlock}>
@@ -88,7 +89,7 @@ export function LoginScene() {
 
         {firstWO && (
           <View style={styles.firstJobRow}>
-            <Text style={styles.firstJobLabel}>📍 First Job</Text>
+            <Text style={styles.firstJobLabel}>FIRST JOB</Text>
             <Text style={styles.firstJobAddr}>{firstWO.address}</Text>
             <View style={styles.woTypePill}>
               <Text style={styles.woTypeText}>{firstWO.workOrderType}</Text>
@@ -101,7 +102,7 @@ export function LoginScene() {
 
         {day.clockedInAt && (
           <View style={styles.clockRow}>
-            <Text style={styles.clockLabel}>⏰ Clocked in (Rippling)</Text>
+            <Text style={styles.clockLabel}>Clock In</Text>
             <Text style={styles.clockTime}>
               {new Date(day.clockedInAt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
             </Text>
@@ -109,13 +110,14 @@ export function LoginScene() {
         )}
       </View>
 
-      {/* Depot */}
       <View style={styles.depotCard}>
-        <Text style={styles.depotLabel}>🏭 Depot</Text>
-        <Text style={styles.depotAddr}>{day.depot}</Text>
+        <Text style={styles.depotEmoji}>🏭</Text>
+        <View style={styles.depotBody}>
+          <Text style={styles.depotLabel}>Depot</Text>
+          <Text style={styles.depotAddr}>{day.depot}</Text>
+        </View>
       </View>
 
-      {/* CTA */}
       <TouchableOpacity
         style={styles.startBtn}
         onPress={() => goScene('myDay')}
@@ -132,7 +134,7 @@ export function LoginScene() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: C.bg,
+    backgroundColor: C.navy,
     padding: 20,
     paddingTop: 16,
   },
@@ -140,112 +142,132 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     gap: 6,
-    marginBottom: 20,
+    marginBottom: 24,
   },
   langBtn: {
     paddingHorizontal: 14,
     paddingVertical: 6,
-    borderRadius: 8,
+    borderRadius: R.sm,
     borderWidth: 1,
-    borderColor: C.border,
-    backgroundColor: C.white,
+    borderColor: 'rgba(255,255,255,0.18)',
+    backgroundColor: 'rgba(255,255,255,0.08)',
   },
   langBtnActive: {
-    backgroundColor: C.navy,
-    borderColor: C.navy,
+    backgroundColor: C.blue,
+    borderColor: C.blue,
   },
-  langText: { fontSize: 12, fontWeight: '700', color: C.muted },
+  langText: { fontSize: 12, fontWeight: '700', color: 'rgba(255,255,255,0.5)' },
   langTextActive: { color: C.white },
-  greetingArea: { marginBottom: 16 },
-  greeting: { fontSize: 20, fontWeight: '400', color: C.muted },
-  foremanName: { fontSize: 32, fontWeight: '800', color: C.text, marginTop: 2 },
-  dateText: { fontSize: 13, color: C.muted, marginTop: 4 },
+  greetingArea: { marginBottom: 20 },
+  greeting: { fontSize: 18, fontWeight: '400', color: 'rgba(255,255,255,0.55)' },
+  foremanName: { fontSize: 34, fontWeight: '900', color: C.white, marginTop: 2, letterSpacing: -0.5 },
+  dateText: { fontSize: 13, color: 'rgba(255,255,255,0.4)', marginTop: 4 },
   sfBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    backgroundColor: 'rgba(4,132,75,0.08)',
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    alignSelf: 'flex-start',
+    gap: 10,
+    backgroundColor: 'rgba(46,132,74,0.18)',
+    borderRadius: R.md,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: 'rgba(4,132,75,0.2)',
+    borderColor: 'rgba(46,132,74,0.35)',
   },
-  sfDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: C.green },
-  sfText: { fontSize: 11, color: C.green, fontWeight: '600' },
+  sfDotOuter: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: 'rgba(46,132,74,0.3)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  sfDot: { width: 9, height: 9, borderRadius: 5, backgroundColor: C.green },
+  sfBadgeBody: { flex: 1 },
+  sfBadgeTitle: { fontSize: 13, color: C.green, fontWeight: '700' },
+  sfBadgeSub: { fontSize: 11, color: 'rgba(46,132,74,0.8)', marginTop: 1 },
+  sfBadgeIcon: { fontSize: 18, opacity: 0.6 },
   summaryCard: {
-    backgroundColor: C.card,
-    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    borderRadius: R.md,
     padding: 16,
     borderWidth: 1,
-    borderColor: C.border,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.06,
-    shadowRadius: 3,
+    borderColor: 'rgba(255,255,255,0.1)',
     marginBottom: 12,
+    gap: 12,
   },
   sectionLabel: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '700',
-    color: C.muted,
+    color: 'rgba(255,255,255,0.4)',
     textTransform: 'uppercase',
-    letterSpacing: 0.8,
-    marginBottom: 12,
+    letterSpacing: 1.2,
   },
   summaryRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 14,
   },
   statBlock: { flex: 1, alignItems: 'center' },
-  statNum: { fontSize: 28, fontWeight: '800', color: C.text },
-  statLabel: { fontSize: 11, color: C.muted, marginTop: 2 },
-  statDivider: { width: 1, height: 36, backgroundColor: C.border },
-  firstJobRow: { gap: 4, borderTopWidth: 1, borderTopColor: C.border, paddingTop: 12 },
-  firstJobLabel: { fontSize: 11, fontWeight: '700', color: C.muted },
-  firstJobAddr: { fontSize: 15, fontWeight: '600', color: C.text },
+  statNum: { fontSize: 30, fontWeight: '900', color: C.white },
+  statLabel: { fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 2 },
+  statDivider: { width: 1, height: 36, backgroundColor: 'rgba(255,255,255,0.12)' },
+  firstJobRow: {
+    gap: 4,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.1)',
+    paddingTop: 12,
+  },
+  firstJobLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: 'rgba(255,255,255,0.4)',
+    letterSpacing: 1.2,
+  },
+  firstJobAddr: { fontSize: 15, fontWeight: '600', color: C.white },
   woTypePill: {
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(0,112,210,0.1)',
-    borderRadius: 8,
+    backgroundColor: 'rgba(1,118,211,0.25)',
+    borderRadius: R.sm,
     paddingHorizontal: 8,
     paddingVertical: 3,
     marginTop: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(1,118,211,0.4)',
   },
-  woTypeText: { fontSize: 10, fontWeight: '700', color: C.blue },
-  sqftText: { fontSize: 12, color: C.muted, marginTop: 2 },
+  woTypeText: { fontSize: 10, fontWeight: '700', color: '#7EC8FF' },
+  sqftText: { fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 2 },
   clockRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 10,
     borderTopWidth: 1,
-    borderTopColor: C.border,
+    borderTopColor: 'rgba(255,255,255,0.1)',
     paddingTop: 10,
   },
-  clockLabel: { fontSize: 12, color: C.muted },
-  clockTime: { fontSize: 13, fontWeight: '700', color: C.green },
+  clockLabel: { fontSize: 12, color: 'rgba(255,255,255,0.45)' },
+  clockTime: { fontSize: 14, fontWeight: '800', color: C.green },
   depotCard: {
-    backgroundColor: C.card,
-    borderRadius: 12,
+    backgroundColor: 'rgba(255,255,255,0.06)',
+    borderRadius: R.md,
     padding: 12,
     borderWidth: 1,
-    borderColor: C.border,
+    borderColor: 'rgba(255,255,255,0.1)',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 24,
+    gap: 10,
+    marginBottom: 28,
   },
-  depotLabel: { fontSize: 12, color: C.muted, fontWeight: '600' },
-  depotAddr: { fontSize: 13, fontWeight: '600', color: C.text, flex: 1 },
+  depotEmoji: { fontSize: 20 },
+  depotBody: { flex: 1 },
+  depotLabel: { fontSize: 10, fontWeight: '700', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: 1 },
+  depotAddr: { fontSize: 13, fontWeight: '600', color: 'rgba(255,255,255,0.8)', marginTop: 2 },
   startBtn: {
-    backgroundColor: C.blue,
-    borderRadius: 10,
-    padding: 16,
+    backgroundColor: C.orange,
+    borderRadius: R.md,
+    height: 52,
     alignItems: 'center',
+    justifyContent: 'center',
+    ...Sh.md,
   },
-  startBtnText: { fontSize: 16, fontWeight: '700', color: C.white, letterSpacing: 0.3 },
+  startBtnText: { fontSize: 16, fontWeight: '800', color: C.white, letterSpacing: 0.3 },
 });

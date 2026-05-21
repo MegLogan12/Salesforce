@@ -5,10 +5,9 @@ import {
   TouchableOpacity,
   StyleSheet,
   Animated,
-  Platform,
 } from 'react-native';
 import { useForeman } from '@/lib/foreman-store';
-import { C } from '@/constants/loving';
+import { C, Sh, R } from '@/constants/loving';
 
 const PIN_LENGTH = 4;
 
@@ -29,12 +28,10 @@ export function PinScene() {
   const shakeAnim = useRef(new Animated.Value(0)).current;
   const dotAnims = useRef(Array.from({ length: PIN_LENGTH }, () => new Animated.Value(0))).current;
 
-  // Auto-submit when PIN_LENGTH digits entered
   useEffect(() => {
     if (pinEntered.length === PIN_LENGTH) {
       const ok = submitPin();
       if (!ok) {
-        // Shake animation on wrong PIN
         Animated.sequence([
           Animated.timing(shakeAnim, { toValue: 10, duration: 60, useNativeDriver: true }),
           Animated.timing(shakeAnim, { toValue: -10, duration: 60, useNativeDriver: true }),
@@ -46,7 +43,6 @@ export function PinScene() {
     }
   }, [pinEntered]);
 
-  // Animate dot fill when digit entered
   useEffect(() => {
     dotAnims.forEach((anim, idx) => {
       Animated.timing(anim, {
@@ -82,26 +78,25 @@ export function PinScene() {
 
   return (
     <View style={styles.root}>
-      {/* Logo */}
       <View style={styles.logoArea}>
+        <View style={styles.logoMark}>
+          <Text style={styles.logoMarkText}>L</Text>
+        </View>
         <Text style={styles.logoText}>LOVING</Text>
-        <Text style={styles.logoSub}>Field App</Text>
+        <Text style={styles.logoSub}>FIELD APP</Text>
       </View>
 
-      {/* PIN prompt */}
-      <Text style={styles.prompt}>Enter PIN</Text>
+      <Text style={styles.prompt}>Enter your PIN to continue</Text>
 
-      {/* Attempts warning */}
       {pinAuth.attemptsRemaining < 5 && (
         <Text style={styles.attemptsWarning}>
           {pinAuth.attemptsRemaining} attempt{pinAuth.attemptsRemaining !== 1 ? 's' : ''} remaining
         </Text>
       )}
 
-      {/* Dot indicators */}
       <Animated.View style={[styles.dotsRow, { transform: [{ translateX: shakeAnim }] }]}>
         {dotAnims.map((anim, idx) => {
-          const bg = anim.interpolate({ inputRange: [0, 1], outputRange: ['rgba(255,255,255,0.25)', C.white] });
+          const bg = anim.interpolate({ inputRange: [0, 1], outputRange: ['rgba(255,255,255,0.18)', C.white] });
           const scale = anim.interpolate({ inputRange: [0, 1], outputRange: [1, 1.15] });
           return (
             <Animated.View
@@ -112,7 +107,6 @@ export function PinScene() {
         })}
       </Animated.View>
 
-      {/* Keypad */}
       <View style={styles.keypad}>
         {KEYPAD.map((row, ri) => (
           <View key={ri} style={styles.keyRow}>
@@ -121,7 +115,7 @@ export function PinScene() {
                 key={ki}
                 style={[styles.keyBtn, key === '' && styles.keyBtnEmpty]}
                 onPress={() => handleKey(key)}
-                activeOpacity={key === '' ? 1 : 0.65}
+                activeOpacity={key === '' ? 1 : 0.6}
                 disabled={key === '' || pinEntered.length >= PIN_LENGTH}
               >
                 <Text style={[styles.keyText, key === '⌫' && styles.deleteText]}>{key}</Text>
@@ -131,7 +125,10 @@ export function PinScene() {
         ))}
       </View>
 
-      <Text style={styles.hint}>PIN: 1421 (demo)</Text>
+      <View style={styles.sfFooter}>
+        <View style={styles.sfFooterDot} />
+        <Text style={styles.sfFooterText}>Salesforce Connected · LOVING Production</Text>
+      </View>
     </View>
   );
 }
@@ -144,54 +141,65 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingHorizontal: 32,
   },
-  logoArea: { alignItems: 'center', marginBottom: 40 },
+  logoArea: { alignItems: 'center', marginBottom: 44 },
+  logoMark: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    backgroundColor: C.blue,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 14,
+    ...Sh.md,
+  },
+  logoMarkText: { fontSize: 28, fontWeight: '900', color: C.white },
   logoText: {
-    fontSize: 42,
+    fontSize: 36,
     fontWeight: '900',
     color: C.white,
-    letterSpacing: 6,
+    letterSpacing: 7,
   },
   logoSub: {
-    fontSize: 13,
-    color: 'rgba(255,255,255,0.5)',
-    letterSpacing: 3,
-    marginTop: 4,
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.4)',
+    letterSpacing: 3.5,
+    marginTop: 5,
     textTransform: 'uppercase',
   },
   prompt: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: 'rgba(255,255,255,0.8)',
-    marginBottom: 8,
-    letterSpacing: 0.5,
+    fontSize: 15,
+    fontWeight: '500',
+    color: 'rgba(255,255,255,0.65)',
+    marginBottom: 6,
+    letterSpacing: 0.3,
   },
   attemptsWarning: {
     fontSize: 12,
     color: C.orange,
-    fontWeight: '600',
-    marginBottom: 12,
+    fontWeight: '700',
+    marginBottom: 10,
   },
   dotsRow: {
     flexDirection: 'row',
-    gap: 18,
-    marginVertical: 28,
+    gap: 20,
+    marginVertical: 30,
   },
   dot: {
-    width: 18,
-    height: 18,
+    width: 17,
+    height: 17,
     borderRadius: 9,
     borderWidth: 2,
-    borderColor: 'rgba(255,255,255,0.5)',
+    borderColor: 'rgba(255,255,255,0.4)',
   },
-  keypad: { width: '100%', maxWidth: 280, gap: 12 },
+  keypad: { width: '100%', maxWidth: 288, gap: 12 },
   keyRow: { flexDirection: 'row', justifyContent: 'center', gap: 12 },
   keyBtn: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    backgroundColor: 'rgba(255,255,255,0.1)',
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(255,255,255,0.12)',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.15)',
+    borderColor: 'rgba(255,255,255,0.16)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -206,17 +214,21 @@ const styles = StyleSheet.create({
   },
   deleteText: {
     fontSize: 22,
-    color: 'rgba(255,255,255,0.7)',
+    color: 'rgba(255,255,255,0.65)',
   },
-  hint: {
-    marginTop: 32,
-    fontSize: 11,
-    color: 'rgba(255,255,255,0.3)',
+  sfFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 40,
+    opacity: 0.55,
   },
+  sfFooterDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: C.green },
+  sfFooterText: { fontSize: 11, color: 'rgba(255,255,255,0.7)', fontWeight: '500' },
   lockCard: {
     alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.06)',
-    borderRadius: 16,
+    borderRadius: R.lg,
     padding: 32,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.1)',
@@ -228,7 +240,7 @@ const styles = StyleSheet.create({
   lockSub: { fontSize: 14, color: 'rgba(255,255,255,0.6)', textAlign: 'center', marginBottom: 20 },
   lockContact: {
     backgroundColor: 'rgba(255,255,255,0.08)',
-    borderRadius: 8,
+    borderRadius: R.sm,
     paddingHorizontal: 16,
     paddingVertical: 10,
   },

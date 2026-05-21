@@ -10,9 +10,9 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useForeman } from '@/lib/foreman-store';
-import { C } from '@/constants/loving';
+import { C, Sh, R } from '@/constants/loving';
 
-const COMMON_FLAGS = [
+const ISSUE_TYPES = [
   'Wrong species delivered',
   'Short delivery count',
   'Soil grade issue',
@@ -73,23 +73,21 @@ export function FlagScene() {
 
   return (
     <View style={styles.root}>
-      {/* Header */}
-      <View style={styles.header}>
+      <View style={styles.headerCard}>
         <Text style={styles.headerTitle}>🚩 Flag Issue</Text>
         <Text style={styles.headerSub}>Report a site or delivery problem to your FM</Text>
       </View>
 
-      {/* Quick select */}
       <View style={styles.card}>
         <Text style={styles.cardLabel}>Issue Type</Text>
-        <View style={styles.flagGrid}>
-          {COMMON_FLAGS.map(f => (
+        <View style={styles.chipsGrid}>
+          {ISSUE_TYPES.map(f => (
             <TouchableOpacity
               key={f}
-              style={[styles.flagChip, flag.speciesDiscovered === f && styles.flagChipActive]}
+              style={[styles.chip, flag.speciesDiscovered === f && styles.chipActive]}
               onPress={() => setSpecies(f)}
             >
-              <Text style={[styles.flagChipText, flag.speciesDiscovered === f && styles.flagChipTextActive]}>
+              <Text style={[styles.chipText, flag.speciesDiscovered === f && styles.chipTextActive]}>
                 {f}
               </Text>
             </TouchableOpacity>
@@ -97,7 +95,6 @@ export function FlagScene() {
         </View>
       </View>
 
-      {/* Custom note */}
       <View style={styles.card}>
         <Text style={styles.cardLabel}>Details</Text>
         <TextInput
@@ -105,26 +102,25 @@ export function FlagScene() {
           multiline
           numberOfLines={4}
           placeholder="Describe the issue in detail..."
-          placeholderTextColor={C.muted}
+          placeholderTextColor={C.subtle}
           value={customNote}
           onChangeText={setCustomNote}
+          textAlignVertical="top"
         />
       </View>
 
-      {/* Extra sqft */}
       <View style={styles.card}>
         <Text style={styles.cardLabel}>Additional Sq Ft (if applicable)</Text>
         <TextInput
           style={styles.sqftInput}
           keyboardType="numeric"
           placeholder="0"
-          placeholderTextColor={C.muted}
+          placeholderTextColor={C.subtle}
           value={flag.extraSqft !== null ? String(flag.extraSqft) : ''}
           onChangeText={t => setSqft(t === '' ? null : Number(t))}
         />
       </View>
 
-      {/* Photo */}
       <TouchableOpacity
         style={[styles.photoBtn, photoTaken && styles.photoBtnDone]}
         onPress={handlePhoto}
@@ -135,7 +131,6 @@ export function FlagScene() {
         </Text>
       </TouchableOpacity>
 
-      {/* Actions */}
       <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit} activeOpacity={0.85}>
         <Text style={styles.submitBtnText}>Submit Flag</Text>
       </TouchableOpacity>
@@ -150,27 +145,35 @@ export function FlagScene() {
 const styles = StyleSheet.create({
   root: { gap: 12 },
 
-  header: {
+  headerCard: {
     backgroundColor: C.red,
-    borderRadius: 14,
+    borderRadius: R.md,
     padding: 20,
-    gap: 4,
+    gap: 5,
+    ...Sh.sm,
   },
-  headerTitle: { fontSize: 22, fontWeight: '800', color: C.white },
-  headerSub: { fontSize: 13, color: 'rgba(255,255,255,0.75)' },
+  headerTitle: { fontSize: 22, fontWeight: '900', color: C.white },
+  headerSub: { fontSize: 13, color: 'rgba(255,255,255,0.7)' },
 
   card: {
     backgroundColor: C.white,
-    borderRadius: 14,
+    borderRadius: R.md,
     padding: 16,
     borderWidth: 1,
     borderColor: C.border,
     gap: 10,
+    ...Sh.xs,
   },
-  cardLabel: { fontSize: 11, fontWeight: '700', color: C.muted, textTransform: 'uppercase', letterSpacing: 0.8 },
+  cardLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: C.muted,
+    textTransform: 'uppercase',
+    letterSpacing: 1.2,
+  },
 
-  flagGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  flagChip: {
+  chipsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  chip: {
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 7,
@@ -178,28 +181,27 @@ const styles = StyleSheet.create({
     borderColor: C.border,
     backgroundColor: C.bg,
   },
-  flagChipActive: { borderColor: C.red, backgroundColor: C.red + '10' },
-  flagChipText: { fontSize: 13, color: C.muted, fontWeight: '500' },
-  flagChipTextActive: { color: C.red, fontWeight: '700' },
+  chipActive: { borderColor: C.red, backgroundColor: C.red + '0E' },
+  chipText: { fontSize: 13, color: C.muted, fontWeight: '500' },
+  chipTextActive: { color: C.red, fontWeight: '700' },
 
   noteInput: {
     borderWidth: 1,
     borderColor: C.border,
-    borderRadius: 10,
+    borderRadius: R.sm,
     padding: 12,
     fontSize: 14,
     color: C.text,
     backgroundColor: C.bg,
-    textAlignVertical: 'top',
     minHeight: 100,
   },
 
   sqftInput: {
     borderWidth: 1,
     borderColor: C.border,
-    borderRadius: 10,
+    borderRadius: R.sm,
     padding: 12,
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
     color: C.text,
     backgroundColor: C.bg,
@@ -209,34 +211,57 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderStyle: 'dashed',
     borderColor: C.border,
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: R.md,
+    height: 52,
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: C.white,
   },
   photoBtnDone: { borderStyle: 'solid', borderColor: C.green, backgroundColor: C.green + '08' },
   photoBtnText: { fontSize: 14, fontWeight: '600', color: C.muted },
-  photoBtnTextDone: { color: C.green },
+  photoBtnTextDone: { color: C.green, fontWeight: '700' },
 
-  submitBtn: { backgroundColor: C.red, borderRadius: 12, padding: 16, alignItems: 'center' },
-  submitBtnText: { fontSize: 16, fontWeight: '800', color: C.white },
+  submitBtn: {
+    backgroundColor: C.red,
+    borderRadius: R.md,
+    height: 52,
+    alignItems: 'center',
+    justifyContent: 'center',
+    ...Sh.xs,
+  },
+  submitBtnText: { fontSize: 16, fontWeight: '900', color: C.white },
 
-  cancelBtn: { backgroundColor: C.bg, borderRadius: 12, padding: 14, alignItems: 'center', borderWidth: 1, borderColor: C.border },
+  cancelBtn: {
+    backgroundColor: C.bg,
+    borderRadius: R.md,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: C.border,
+  },
   cancelBtnText: { fontSize: 14, fontWeight: '600', color: C.muted },
 
   submittedCard: {
     backgroundColor: C.white,
-    borderRadius: 14,
+    borderRadius: R.md,
     padding: 28,
     borderWidth: 1,
-    borderColor: C.red + '40',
+    borderColor: C.red + '35',
     alignItems: 'center',
     gap: 10,
+    ...Sh.sm,
   },
   submittedIcon: { fontSize: 48 },
   submittedTitle: { fontSize: 22, fontWeight: '800', color: C.text },
   submittedText: { fontSize: 14, color: C.text, textAlign: 'center', lineHeight: 20 },
   submittedNote: { fontSize: 12, color: C.muted, fontStyle: 'italic' },
-  backBtn: { backgroundColor: C.blue, borderRadius: 10, paddingHorizontal: 24, paddingVertical: 12, marginTop: 8 },
+  backBtn: {
+    backgroundColor: C.blue,
+    borderRadius: R.sm,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    marginTop: 8,
+  },
   backBtnText: { fontSize: 14, fontWeight: '700', color: C.white },
 });
