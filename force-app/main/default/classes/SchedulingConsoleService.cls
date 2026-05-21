@@ -896,6 +896,39 @@ public without sharing class SchedulingConsoleService {
                 Resolution_Notes__c = 'Released at ' + DateTime.now().format()
             );
         } catch (Exception e) { /* graceful if table not yet deployed */ }
+
+        // Push locked WOs into FSL as ServiceAppointments (non-blocking)
+        try { syncFslAppointments(schedDate); } catch (Exception e) { /* FSL not blocking release */ }
+    }
+
+    // Creates FSL ServiceAppointment + AssignedResource for every locked WorkOrder
+    // on schedDate that has a Crew with a ServiceResource but no SA yet.
+    @TestVisible
+    static void syncFslAppointments(Date schedDate) {
+        List<WorkOrder> wos = [SELECT Id, WorkOrderNumber, Subject, Street, City, State,
+            PostalCode, Latitude, Longitude, Crew__r.ServiceResource__c FROM WorkOrder
+            WHERE Schedule_Locked__c = true AND Scheduled_Date__c = :schedDate
+            AND Crew__c != null AND Crew__r.ServiceResource__c != null LIMIT 200];
+        if (wos.isEmpty()) return;
+        Set<Id> woIds = (new Map<Id, WorkOrder>(wos)).keySet();
+        Set<Id> done = new Set<Id>();
+        for (AggregateResult r : [SELECT ParentRecordId i FROM ServiceAppointment WHERE ParentRecordId IN :woIds GROUP BY ParentRecordId]) done.add((Id)r.get('i'));
+        List<WorkOrder> tp = new List<WorkOrder>();
+        for (WorkOrder w : wos) if (!done.contains(w.Id)) tp.add(w);
+        if (tp.isEmpty()) return;
+        Datetime ds = Datetime.newInstance(schedDate, Time.newInstance(7,0,0,0));
+        Datetime de = Datetime.newInstance(schedDate, Time.newInstance(16,0,0,0));
+        List<ServiceAppointment> sas = new List<ServiceAppointment>();
+        for (WorkOrder w : tp) sas.add(new ServiceAppointment(ParentRecordId=w.Id,
+            Subject=String.isNotBlank(w.Subject)?w.Subject:w.WorkOrderNumber,
+            SchedStartTime=ds, SchedEndTime=de, Duration=540, DurationType='Minutes',
+            Street=w.Street, City=w.City, State=w.State, PostalCode=w.PostalCode,
+            Latitude=w.Latitude, Longitude=w.Longitude));
+        Database.SaveResult[] res = Database.insert(sas, false);
+        List<AssignedResource> ars = new List<AssignedResource>();
+        for (Integer i = 0; i < res.size(); i++) if (res[i].isSuccess())
+            ars.add(new AssignedResource(ServiceAppointmentId=sas[i].Id, ServiceResourceId=tp[i].Crew__r.ServiceResource__c));
+        if (!ars.isEmpty()) Database.insert(ars, false);
     }
 
     public static void holdSchedule(Date schedDate, String division, String reason) {
