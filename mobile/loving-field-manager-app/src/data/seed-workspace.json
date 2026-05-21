@@ -1,0 +1,2425 @@
+{
+  "currentUser": {
+    "id": "user-fm-jordan",
+    "name": "Jordan Ellis",
+    "role": "Field Manager"
+  },
+  "selectedJobId": "lot118",
+  "workQueue": [
+    {
+      "jobId": "lot118",
+      "priority": 2
+    },
+    {
+      "jobId": "lot204",
+      "priority": 3
+    },
+    {
+      "jobId": "lot077",
+      "priority": 1
+    },
+    {
+      "jobId": "lot044",
+      "priority": 4
+    }
+  ],
+  "priorities": [
+    {
+      "id": "p1",
+      "title": "Review 2 PM health checks",
+      "note": "1 red, 3 green",
+      "status": "Done",
+      "pill": "1 red",
+      "tone": "red"
+    },
+    {
+      "id": "p2",
+      "title": "Approve pending closeouts",
+      "note": "3 jobs waiting",
+      "status": "Open",
+      "pill": "Due",
+      "tone": "amber"
+    },
+    {
+      "id": "p3",
+      "title": "Clear Aqua issue",
+      "note": "Riverbend dry spot",
+      "status": "Open",
+      "pill": "Same-Day",
+      "tone": "red"
+    },
+    {
+      "id": "p4",
+      "title": "Review tomorrow schedule",
+      "note": "Crew assignments locked",
+      "status": "Done",
+      "pill": "Done",
+      "tone": "green"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "lot118",
+      "queueTitle": "Lot 118, Oak Ridge",
+      "queueSubtitle": "Production Install, scheduled tomorrow",
+      "queuePill": {
+        "label": "QI review pending",
+        "tone": "aqua"
+      },
+      "title": "Lot 118, Oak Ridge | Production Install",
+      "recordKicker": "Field Manager Execution View",
+      "breadcrumbs": [
+        "Parent: DR Horton",
+        "Division: DR Horton Charlotte",
+        "Community: Oak Ridge",
+        "Lot: 118",
+        "WorkOrder: WO-004291"
+      ],
+      "meta": [
+        "1248 Willow Bend Dr, Charlotte NC",
+        "Package: Oak Ridge Standard",
+        "FM: Jordan Ellis",
+        "Foreman: Luis Martinez",
+        "Service Territory: Charlotte North"
+      ],
+      "stageIndex": 4,
+      "stageLabels": [
+        "PO Reviewed",
+        "Takeoff Complete",
+        "Ready to Schedule",
+        "Scheduled",
+        "Field Complete",
+        "QI Review",
+        "Closeout",
+        "Invoice"
+      ],
+      "kpis": [
+        {
+          "id": "health",
+          "label": "Job Health",
+          "value": "Green",
+          "sub": "Foreman submitted field complete"
+        },
+        {
+          "id": "takeoff",
+          "label": "Takeoff Match",
+          "value": "Validated",
+          "sub": "PO, field verified, and package comparison"
+        },
+        {
+          "id": "siteReadiness",
+          "label": "Site Readiness",
+          "value": "Ready",
+          "sub": "48-hour pre-start checklist"
+        },
+        {
+          "id": "photos",
+          "label": "Photo Gate",
+          "value": "6 / 6",
+          "sub": "Required categories received"
+        },
+        {
+          "id": "hours",
+          "label": "Goal vs Actual",
+          "value": "7.5 / 8.1",
+          "sub": "+0.6 hrs, within tolerance"
+        },
+        {
+          "id": "aqua",
+          "label": "Aqua",
+          "value": "Active",
+          "sub": "Install ticket complete, checks pending"
+        },
+        {
+          "id": "qi",
+          "label": "QI",
+          "value": "Pending",
+          "sub": "FM review required before closeout"
+        },
+        {
+          "id": "invoice",
+          "label": "Invoice",
+          "value": "Blocked",
+          "sub": "Waits for FM closeout approval"
+        }
+      ],
+      "nextBestActions": [
+        {
+          "step": "1",
+          "tone": "aqua",
+          "title": "Review closeout photo package",
+          "note": "All 6 required photo categories are present. Check quality and confirm no missing scope.",
+          "time": "3 min"
+        },
+        {
+          "step": "2",
+          "tone": "aqua",
+          "title": "Complete QI scoring",
+          "note": "Score sod install, plant install, cleanup, site condition, and Aqua if applicable.",
+          "time": "7 min"
+        },
+        {
+          "step": "3",
+          "tone": "gray",
+          "title": "Approve closeout or create Finished Job",
+          "note": "If all gates pass, approve closeout. If not, create a child Finished Job.",
+          "time": "Decision"
+        },
+        {
+          "step": "4",
+          "tone": "gray",
+          "title": "Release invoice path",
+          "note": "Invoice is created only after closeout approval and bills the Division, not Parent.",
+          "time": "Auto"
+        }
+      ],
+      "ownership": [
+        {
+          "label": "Parent",
+          "value": "DR Horton, roll-up only"
+        },
+        {
+          "label": "Division",
+          "value": "DR Horton Charlotte, BMG and services"
+        },
+        {
+          "label": "Community",
+          "value": "Oak Ridge, packages and service rules"
+        },
+        {
+          "label": "Lot",
+          "value": "Lot 118, execution history"
+        },
+        {
+          "label": "Work Execution",
+          "value": "Standard WorkOrder and Field Service"
+        },
+        {
+          "label": "Billing",
+          "value": "Invoice to Division Account"
+        }
+      ],
+      "gateStatus": [
+        {
+          "title": "PO reviewed",
+          "note": "CSM approved package match",
+          "done": true,
+          "pill": "Done",
+          "tone": "green"
+        },
+        {
+          "title": "Takeoff complete",
+          "note": "811, measurements, photos",
+          "done": true,
+          "pill": "Done",
+          "tone": "green"
+        },
+        {
+          "title": "Field complete",
+          "note": "Foreman submitted closeout",
+          "done": true,
+          "pill": "Done",
+          "tone": "green"
+        },
+        {
+          "title": "FM QI approval",
+          "note": "Required before invoice",
+          "done": false,
+          "pill": "Open",
+          "tone": "amber"
+        }
+      ],
+      "takeoff": {
+        "statusPill": {
+          "label": "Complete",
+          "tone": "green"
+        },
+        "fields": [
+          {
+            "label": "Takeoff Status",
+            "value": "Locked, CSM Approved"
+          },
+          {
+            "label": "811 Utility Mark",
+            "value": "Complete, ticket 811-55921"
+          },
+          {
+            "label": "Site Readiness",
+            "value": "Ready, no access issue"
+          },
+          {
+            "label": "Measurements",
+            "value": "Sod 6,420 SF, 8 trees, 64 shrubs"
+          },
+          {
+            "label": "Photos",
+            "value": "4 takeoff photos received"
+          },
+          {
+            "label": "Package Match",
+            "value": "Matches Oak Ridge Standard"
+          }
+        ],
+        "tasks": [
+          {
+            "title": "Complete 811 Utility Call",
+            "note": "Utility locate call completed and documented before scheduling",
+            "done": true,
+            "id": "811",
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "title": "Site measurements",
+            "note": "Quantities entered",
+            "done": true,
+            "id": "takeoff-2",
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "title": "Access notes",
+            "note": "Gate code and staging area recorded",
+            "done": true,
+            "id": "takeoff-3",
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "title": "Scope verification",
+            "note": "No mismatch found",
+            "done": true,
+            "id": "takeoff-4",
+            "pill": "Done",
+            "tone": "green"
+          }
+        ],
+        "packageComparison": [
+          {
+            "item": "Sod",
+            "package": "4,600 SQFT",
+            "takeoff": "4,600 SQFT",
+            "result": "Match",
+            "tone": "green"
+          },
+          {
+            "item": "Street Tree",
+            "package": "6 EA",
+            "takeoff": "6 EA",
+            "result": "Match",
+            "tone": "green"
+          },
+          {
+            "item": "Shrubs",
+            "package": "64 EA",
+            "takeoff": "64 EA",
+            "result": "Match",
+            "tone": "green"
+          },
+          {
+            "item": "Mulch",
+            "package": "18 CY",
+            "takeoff": "18 CY",
+            "result": "Match",
+            "tone": "green"
+          }
+        ],
+        "lineItems": [
+          {
+            "id": "po-sod",
+            "poLineItem": "Sod",
+            "uom": "SQFT",
+            "poQuantity": 4600,
+            "verifiedQuantity": 4600,
+            "communityPackageQuantity": 4600,
+            "tolerance": 50,
+            "status": "Match",
+            "notes": "Measured turf area from field takeoff"
+          },
+          {
+            "id": "po-street-tree",
+            "poLineItem": "Street Tree",
+            "uom": "EA",
+            "poQuantity": 6,
+            "verifiedQuantity": 6,
+            "communityPackageQuantity": 6,
+            "tolerance": 0,
+            "status": "Match",
+            "notes": "Street trees per plan"
+          },
+          {
+            "id": "po-shrubs",
+            "poLineItem": "Shrubs",
+            "uom": "EA",
+            "poQuantity": 64,
+            "verifiedQuantity": 64,
+            "communityPackageQuantity": 64,
+            "tolerance": 0,
+            "status": "Match",
+            "notes": "Foundation package"
+          },
+          {
+            "id": "po-mulch",
+            "poLineItem": "Mulch",
+            "uom": "CY",
+            "poQuantity": 18,
+            "verifiedQuantity": 18,
+            "communityPackageQuantity": 18,
+            "tolerance": 0,
+            "status": "Match",
+            "notes": "Package mulch quantity"
+          }
+        ],
+        "matchStatus": "Validated",
+        "siteReadiness": [
+          {
+            "id": "sr-grading",
+            "title": "Grading complete",
+            "note": "Lot is not rutted, too wet, blocked, or unsafe",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "sr-access",
+            "title": "Access and staging clear",
+            "note": "Crew can access driveway, yard, and material staging area",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "sr-utilities",
+            "title": "Utilities marked and visible",
+            "note": "811 marks still visible before crew arrives",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "sr-builder",
+            "title": "Builder conflicts checked",
+            "note": "No active trades blocking landscape install",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          }
+        ],
+        "siteVisits": [
+          {
+            "id": "sv-warranty",
+            "purpose": "Warranty Determination",
+            "status": "Scheduled",
+            "decision": "Pending",
+            "notes": "Used when builder/homeowner claims warranty. FM determines if it is true warranty, Finished Job, or billable work.",
+            "checklist": [
+              {
+                "id": "svw-photo",
+                "title": "Take site photos",
+                "note": "Capture issue close-up and whole-yard context",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              },
+              {
+                "id": "svw-cause",
+                "title": "Determine cause",
+                "note": "Install quality, maintenance, builder damage, homeowner damage, water issue, or weather",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              },
+              {
+                "id": "svw-decision",
+                "title": "Select decision",
+                "note": "Warranty, Finished Job, Proposal Needed, or No LOVING action",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              }
+            ]
+          },
+          {
+            "id": "sv-proposal",
+            "purpose": "Proposal Scope",
+            "status": "Scheduled",
+            "decision": "Pending",
+            "notes": "Used when FM scopes proposed work before quote/proposal creation.",
+            "checklist": [
+              {
+                "id": "svp-measure",
+                "title": "Measure proposed work",
+                "note": "Capture quantity, UOM, access, and photos",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              },
+              {
+                "id": "svp-scope",
+                "title": "Write scope notes",
+                "note": "Enough detail for CS/estimating to create proposal",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              }
+            ]
+          }
+        ]
+      },
+      "workOrder": {
+        "number": "WO-004291",
+        "status": "Pending Closeout",
+        "serviceAppointment": "SA-008811, Completed",
+        "assignedResource": "Crew C-12, Luis Martinez",
+        "scheduledDate": "May 13, 2026",
+        "routeSequence": "Stop 3 of 7",
+        "territory": "Charlotte North",
+        "lineItems": [
+          {
+            "line": "Bermuda Sod",
+            "planned": "6,420 SF",
+            "actual": "6,420 SF",
+            "goal": "3.2",
+            "actualHours": "3.4",
+            "status": "Complete"
+          },
+          {
+            "line": "Trees, 15 gal",
+            "planned": "8 EA",
+            "actual": "8 EA",
+            "goal": "1.4",
+            "actualHours": "1.5",
+            "status": "Complete"
+          },
+          {
+            "line": "Shrub package",
+            "planned": "64 EA",
+            "actual": "64 EA",
+            "goal": "1.8",
+            "actualHours": "1.9",
+            "status": "Complete"
+          },
+          {
+            "line": "Mulch install",
+            "planned": "18 CY",
+            "actual": "18 CY",
+            "goal": "1.1",
+            "actualHours": "1.3",
+            "status": "Complete"
+          }
+        ],
+        "scheduleControls": [
+          {
+            "label": "Released",
+            "value": "May 12, 4:00 PM"
+          },
+          {
+            "label": "PTO Conflict",
+            "value": "None"
+          },
+          {
+            "label": "Inventory",
+            "value": "Loaded"
+          },
+          {
+            "label": "Weather",
+            "value": "Clear"
+          }
+        ],
+        "healthChecks": [
+          {
+            "id": "hc-2pm",
+            "dueTime": "2:00 PM",
+            "crew": "Crew C-12, Luis Martinez",
+            "foreman": "Luis Martinez",
+            "status": "Green",
+            "scopeRemainingPct": 10,
+            "canFixTomorrow": true,
+            "notes": "Crew says scope is on track."
+          }
+        ]
+      },
+      "aqua": {
+        "installTicket": "AIT-000118",
+        "tech": "Marcos Rivera",
+        "deviceInstalled": "Yes",
+        "coverageVerified": "Yes",
+        "inventoryRecorded": "Controller 1, Heads 12, Flags 8",
+        "photos": "Controller, water source, system running",
+        "checks": [
+          {
+            "date": "May 14",
+            "tech": "Marcos",
+            "status": "Scheduled",
+            "tone": "blue",
+            "issue": "None"
+          },
+          {
+            "date": "May 15",
+            "tech": "Marcos",
+            "status": "Planned",
+            "tone": "gray",
+            "issue": "None"
+          },
+          {
+            "date": "May 16",
+            "tech": "Backup Tech",
+            "status": "Planned",
+            "tone": "gray",
+            "issue": "None"
+          }
+        ],
+        "gates": [
+          {
+            "title": "Device installed",
+            "note": "Controller and timer installed",
+            "done": true
+          },
+          {
+            "title": "Timer tested",
+            "note": "Run time confirmed",
+            "done": true
+          },
+          {
+            "title": "Coverage verified",
+            "note": "All zones observed",
+            "done": true
+          },
+          {
+            "title": "Inventory recorded",
+            "note": "On-site inventory assigned to Lot 118",
+            "done": true
+          }
+        ],
+        "checkChecklist": [
+          {
+            "id": "ac-device",
+            "title": "Device present and functioning",
+            "note": "Controller/timer still on site and running",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "ac-coverage",
+            "title": "Coverage check",
+            "note": "Worst patch, heads, hose route, and water source checked",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "ac-score",
+            "title": "Sod condition score entered",
+            "note": "Record turf condition and flag dry spots",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          },
+          {
+            "id": "ac-photo",
+            "title": "Check photos uploaded",
+            "note": "System running, issue close-up if any, and whole-yard photo",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          }
+        ],
+        "pickupChecklist": [
+          {
+            "id": "ap-device",
+            "title": "Device retrieved",
+            "note": "Controller/timer removed from lot",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          },
+          {
+            "id": "ap-inventory",
+            "title": "Inventory reconciled",
+            "note": "Expected vs retrieved heads, flags, cups, hoses, and controller",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          },
+          {
+            "id": "ap-variance",
+            "title": "Variance reviewed",
+            "note": "Missing/damaged items trigger billing or warranty workflow",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          },
+          {
+            "id": "ap-photo",
+            "title": "Pickup photos uploaded",
+            "note": "Removed equipment and final secured water source",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          }
+        ]
+      },
+      "photos": [
+        {
+          "category": "Takeoff",
+          "caption": "Site overview and measurement proof",
+          "status": "complete"
+        },
+        {
+          "category": "Before",
+          "caption": "Site overview, timestamped",
+          "status": "complete"
+        },
+        {
+          "category": "Sod Installed",
+          "caption": "Full front yard view",
+          "status": "complete"
+        },
+        {
+          "category": "Trees and Shrubs",
+          "caption": "Plant package proof",
+          "status": "complete"
+        },
+        {
+          "category": "Aqua Controller",
+          "caption": "Serial and timer proof",
+          "status": "complete"
+        },
+        {
+          "category": "System Running",
+          "caption": "Water coverage proof",
+          "status": "complete"
+        },
+        {
+          "category": "After",
+          "caption": "Final clean area",
+          "status": "complete"
+        },
+        {
+          "category": "Issue Photo",
+          "caption": "Not required, none submitted",
+          "status": "issue"
+        },
+        {
+          "category": "Add Photo",
+          "caption": "Upload or mobile camera",
+          "status": "add"
+        }
+      ],
+      "qi": {
+        "overallScore": null,
+        "status": "Pending",
+        "closeoutStatus": "Waiting",
+        "invoiceStatus": "Locked",
+        "categories": [
+          {
+            "category": "Sod Install",
+            "score": 9,
+            "finding": "Edges clean, seams acceptable",
+            "result": "Pass",
+            "theme": "Rooted and Ready"
+          },
+          {
+            "category": "Plant Install",
+            "score": 8,
+            "finding": "Package matches takeoff",
+            "result": "Pass",
+            "theme": "Garden Glow"
+          },
+          {
+            "category": "Cleanup",
+            "score": 8,
+            "finding": "Driveway clean, minor pine straw touchup noted",
+            "result": "Pass",
+            "theme": "Clean Sweep"
+          },
+          {
+            "category": "Aqua",
+            "score": 9,
+            "finding": "Coverage verified",
+            "result": "Pass",
+            "theme": "Water Wizard"
+          }
+        ],
+        "dueWindow": "24-48 hours after Foreman marks Field Complete"
+      },
+      "invoicePreview": [
+        {
+          "label": "Bill To",
+          "value": "DR Horton Charlotte"
+        },
+        {
+          "label": "Parent",
+          "value": "DR Horton roll-up only"
+        },
+        {
+          "label": "Revenue",
+          "value": "$4,850"
+        },
+        {
+          "label": "GP Status",
+          "value": "Green"
+        }
+      ],
+      "activity": []
+    },
+    {
+      "id": "lot204",
+      "queueTitle": "Lot 204, Pine Hollow",
+      "queueSubtitle": "Takeoff returned, missing access photo",
+      "queuePill": {
+        "label": "NFI",
+        "tone": "amber"
+      },
+      "title": "Lot 204, Pine Hollow | Production Install",
+      "recordKicker": "Field Manager Execution View",
+      "breadcrumbs": [
+        "Parent: Lennar",
+        "Division: Lennar Greenville",
+        "Community: Pine Hollow",
+        "Lot: 204",
+        "WorkOrder: WO-004315"
+      ],
+      "meta": [
+        "918 Red Cedar Ln, Greenville SC",
+        "Package: Pine Hollow Standard",
+        "FM: Jordan Ellis",
+        "Foreman: Ana Reyes",
+        "Service Territory: Greenville-Spartanburg"
+      ],
+      "stageIndex": 1,
+      "stageLabels": [
+        "PO Reviewed",
+        "Takeoff Complete",
+        "Ready to Schedule",
+        "Scheduled",
+        "Field Complete",
+        "QI Review",
+        "Closeout",
+        "Invoice"
+      ],
+      "kpis": [
+        {
+          "id": "health",
+          "label": "Job Health",
+          "value": "Amber",
+          "sub": "Access proof missing"
+        },
+        {
+          "id": "takeoff",
+          "label": "Takeoff Match",
+          "value": "Not Checked",
+          "sub": "PO, field verified, and package comparison"
+        },
+        {
+          "id": "siteReadiness",
+          "label": "Site Readiness",
+          "value": "Ready",
+          "sub": "48-hour pre-start checklist"
+        },
+        {
+          "id": "photos",
+          "label": "Photo Gate",
+          "value": "3 / 4",
+          "sub": "Access photo missing"
+        },
+        {
+          "id": "hours",
+          "label": "Goal vs Actual",
+          "value": "0 / 0",
+          "sub": "Not released to field"
+        },
+        {
+          "id": "aqua",
+          "label": "Aqua",
+          "value": "Pending",
+          "sub": "Waits for takeoff lock"
+        },
+        {
+          "id": "qi",
+          "label": "QI",
+          "value": "Not Ready",
+          "sub": "Blocked until field complete"
+        },
+        {
+          "id": "invoice",
+          "label": "Invoice",
+          "value": "Blocked",
+          "sub": "No closeout path yet"
+        }
+      ],
+      "nextBestActions": [
+        {
+          "step": "1",
+          "tone": "amber",
+          "title": "Return takeoff for access photo",
+          "note": "Field needs to submit the missing gate/access proof before CS can approve.",
+          "time": "Now"
+        }
+      ],
+      "ownership": [
+        {
+          "label": "Parent",
+          "value": "Lennar, roll-up only"
+        },
+        {
+          "label": "Division",
+          "value": "Lennar Greenville, operational"
+        },
+        {
+          "label": "Community",
+          "value": "Pine Hollow"
+        },
+        {
+          "label": "Lot",
+          "value": "Lot 204"
+        },
+        {
+          "label": "Work Execution",
+          "value": "Blocked before scheduling"
+        },
+        {
+          "label": "Billing",
+          "value": "Invoice to Division Account"
+        }
+      ],
+      "gateStatus": [
+        {
+          "title": "PO reviewed",
+          "note": "CSM reviewed",
+          "done": true,
+          "pill": "Done",
+          "tone": "green"
+        },
+        {
+          "title": "Takeoff complete",
+          "note": "Missing access photo",
+          "done": false,
+          "pill": "Open",
+          "tone": "amber"
+        },
+        {
+          "title": "Field complete",
+          "note": "Not started",
+          "done": false,
+          "pill": "Locked",
+          "tone": "gray"
+        },
+        {
+          "title": "FM QI approval",
+          "note": "Not ready",
+          "done": false,
+          "pill": "Locked",
+          "tone": "gray"
+        }
+      ],
+      "takeoff": {
+        "statusPill": {
+          "label": "NFI",
+          "tone": "amber"
+        },
+        "fields": [
+          {
+            "label": "Takeoff Status",
+            "value": "Returned"
+          },
+          {
+            "label": "811 Utility Mark",
+            "value": "Pending"
+          },
+          {
+            "label": "Site Readiness",
+            "value": "NFI"
+          },
+          {
+            "label": "Measurements",
+            "value": "Sod 5,980 SF, 6 trees, 52 shrubs"
+          },
+          {
+            "label": "Photos",
+            "value": "3 takeoff photos received"
+          },
+          {
+            "label": "Package Match",
+            "value": "Pending CSM review"
+          }
+        ],
+        "tasks": [
+          {
+            "title": "Complete 811 Utility Call",
+            "note": "Utility locate call completed and documented before scheduling",
+            "done": false,
+            "id": "811",
+            "pill": "Open",
+            "tone": "amber"
+          },
+          {
+            "title": "Site measurements",
+            "note": "Quantities entered",
+            "done": true,
+            "id": "takeoff-2",
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "title": "Access notes",
+            "note": "Access photo missing",
+            "done": false,
+            "id": "takeoff-3",
+            "pill": "Open",
+            "tone": "amber"
+          },
+          {
+            "title": "Scope verification",
+            "note": "Pending",
+            "done": false,
+            "id": "takeoff-4",
+            "pill": "Open",
+            "tone": "amber"
+          }
+        ],
+        "packageComparison": [
+          {
+            "item": "Sod",
+            "package": "3,800 SQFT",
+            "takeoff": "Not entered",
+            "result": "Not Verified",
+            "tone": "amber"
+          },
+          {
+            "item": "Street Tree",
+            "package": "4 EA",
+            "takeoff": "Not entered",
+            "result": "Not Verified",
+            "tone": "amber"
+          },
+          {
+            "item": "Shrubs",
+            "package": "52 EA",
+            "takeoff": "Not entered",
+            "result": "Not Verified",
+            "tone": "amber"
+          }
+        ],
+        "lineItems": [
+          {
+            "id": "po-sod",
+            "poLineItem": "Sod",
+            "uom": "SQFT",
+            "poQuantity": 3800,
+            "verifiedQuantity": null,
+            "communityPackageQuantity": 3800,
+            "tolerance": 50,
+            "status": "Not Verified",
+            "notes": "Needs FM measurement"
+          },
+          {
+            "id": "po-street-tree",
+            "poLineItem": "Street Tree",
+            "uom": "EA",
+            "poQuantity": 4,
+            "verifiedQuantity": null,
+            "communityPackageQuantity": 4,
+            "tolerance": 0,
+            "status": "Not Verified",
+            "notes": "Needs field verification"
+          },
+          {
+            "id": "po-shrubs",
+            "poLineItem": "Shrubs",
+            "uom": "EA",
+            "poQuantity": 52,
+            "verifiedQuantity": null,
+            "communityPackageQuantity": 52,
+            "tolerance": 0,
+            "status": "Not Verified",
+            "notes": "Needs field verification"
+          }
+        ],
+        "matchStatus": "Not Checked",
+        "siteReadiness": [
+          {
+            "id": "sr-grading",
+            "title": "Grading complete",
+            "note": "Lot is not rutted, too wet, blocked, or unsafe",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "sr-access",
+            "title": "Access and staging clear",
+            "note": "Crew can access driveway, yard, and material staging area",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "sr-utilities",
+            "title": "Utilities marked and visible",
+            "note": "811 marks still visible before crew arrives",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "sr-builder",
+            "title": "Builder conflicts checked",
+            "note": "No active trades blocking landscape install",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          }
+        ],
+        "siteVisits": [
+          {
+            "id": "sv-warranty",
+            "purpose": "Warranty Determination",
+            "status": "Scheduled",
+            "decision": "Pending",
+            "notes": "Used when builder/homeowner claims warranty. FM determines if it is true warranty, Finished Job, or billable work.",
+            "checklist": [
+              {
+                "id": "svw-photo",
+                "title": "Take site photos",
+                "note": "Capture issue close-up and whole-yard context",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              },
+              {
+                "id": "svw-cause",
+                "title": "Determine cause",
+                "note": "Install quality, maintenance, builder damage, homeowner damage, water issue, or weather",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              },
+              {
+                "id": "svw-decision",
+                "title": "Select decision",
+                "note": "Warranty, Finished Job, Proposal Needed, or No LOVING action",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              }
+            ]
+          },
+          {
+            "id": "sv-proposal",
+            "purpose": "Proposal Scope",
+            "status": "Scheduled",
+            "decision": "Pending",
+            "notes": "Used when FM scopes proposed work before quote/proposal creation.",
+            "checklist": [
+              {
+                "id": "svp-measure",
+                "title": "Measure proposed work",
+                "note": "Capture quantity, UOM, access, and photos",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              },
+              {
+                "id": "svp-scope",
+                "title": "Write scope notes",
+                "note": "Enough detail for CS/estimating to create proposal",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              }
+            ]
+          }
+        ]
+      },
+      "workOrder": {
+        "number": "WO-004315",
+        "status": "NFI",
+        "serviceAppointment": "Not created",
+        "assignedResource": "Unassigned",
+        "scheduledDate": "Not scheduled",
+        "routeSequence": "None",
+        "territory": "Greenville-Spartanburg",
+        "lineItems": [],
+        "scheduleControls": [
+          {
+            "label": "Released",
+            "value": "No"
+          },
+          {
+            "label": "PTO Conflict",
+            "value": "Unknown"
+          },
+          {
+            "label": "Inventory",
+            "value": "Not reserved"
+          },
+          {
+            "label": "Weather",
+            "value": "Not checked"
+          }
+        ],
+        "healthChecks": [
+          {
+            "id": "hc-2pm",
+            "dueTime": "2:00 PM",
+            "crew": "Unassigned",
+            "foreman": "Assigned Foreman",
+            "status": "Green",
+            "scopeRemainingPct": 10,
+            "canFixTomorrow": true,
+            "notes": "Crew says scope is on track."
+          }
+        ]
+      },
+      "aqua": {
+        "installTicket": "Not created",
+        "tech": "Unassigned",
+        "deviceInstalled": "No",
+        "coverageVerified": "No",
+        "inventoryRecorded": "No",
+        "photos": "None",
+        "checks": [],
+        "gates": [],
+        "checkChecklist": [
+          {
+            "id": "ac-device",
+            "title": "Device present and functioning",
+            "note": "Controller/timer still on site and running",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "ac-coverage",
+            "title": "Coverage check",
+            "note": "Worst patch, heads, hose route, and water source checked",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "ac-score",
+            "title": "Sod condition score entered",
+            "note": "Record turf condition and flag dry spots",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          },
+          {
+            "id": "ac-photo",
+            "title": "Check photos uploaded",
+            "note": "System running, issue close-up if any, and whole-yard photo",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          }
+        ],
+        "pickupChecklist": [
+          {
+            "id": "ap-device",
+            "title": "Device retrieved",
+            "note": "Controller/timer removed from lot",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          },
+          {
+            "id": "ap-inventory",
+            "title": "Inventory reconciled",
+            "note": "Expected vs retrieved heads, flags, cups, hoses, and controller",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          },
+          {
+            "id": "ap-variance",
+            "title": "Variance reviewed",
+            "note": "Missing/damaged items trigger billing or warranty workflow",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          },
+          {
+            "id": "ap-photo",
+            "title": "Pickup photos uploaded",
+            "note": "Removed equipment and final secured water source",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          }
+        ]
+      },
+      "photos": [
+        {
+          "category": "Takeoff",
+          "caption": "Site overview and measurement proof",
+          "status": "complete"
+        },
+        {
+          "category": "Before",
+          "caption": "Received",
+          "status": "complete"
+        },
+        {
+          "category": "Measurements",
+          "caption": "Received",
+          "status": "complete"
+        },
+        {
+          "category": "Issue Photo",
+          "caption": "Access photo missing",
+          "status": "issue"
+        },
+        {
+          "category": "Add Photo",
+          "caption": "Upload or mobile camera",
+          "status": "add"
+        }
+      ],
+      "qi": {
+        "overallScore": null,
+        "status": "Not Ready",
+        "closeoutStatus": "Locked",
+        "invoiceStatus": "Locked",
+        "categories": [],
+        "dueWindow": "24-48 hours after Foreman marks Field Complete"
+      },
+      "invoicePreview": [
+        {
+          "label": "Bill To",
+          "value": "Lennar Greenville"
+        },
+        {
+          "label": "Parent",
+          "value": "Lennar roll-up only"
+        },
+        {
+          "label": "Revenue",
+          "value": "TBD"
+        },
+        {
+          "label": "GP Status",
+          "value": "N/A"
+        }
+      ],
+      "activity": []
+    },
+    {
+      "id": "lot077",
+      "queueTitle": "Lot 77, Riverbend",
+      "queueSubtitle": "Aqua check issue, same-day review",
+      "queuePill": {
+        "label": "Same-Day",
+        "tone": "red"
+      },
+      "title": "Lot 77, Riverbend | Aqua Same-Day Repair",
+      "recordKicker": "Field Manager Execution View",
+      "breadcrumbs": [
+        "Parent: Ryan Homes",
+        "Division: Ryan Charlotte",
+        "Community: Riverbend",
+        "Lot: 77",
+        "WorkOrder: WO-004280"
+      ],
+      "meta": [
+        "77 Riverbend Way, Charlotte NC",
+        "Package: Riverbend Standard",
+        "FM: Jordan Ellis",
+        "Aqua Tech: Marcos Rivera",
+        "Service Territory: Charlotte North"
+      ],
+      "stageIndex": 5,
+      "stageLabels": [
+        "PO Reviewed",
+        "Takeoff Complete",
+        "Ready to Schedule",
+        "Scheduled",
+        "Field Complete",
+        "QI Review",
+        "Closeout",
+        "Invoice"
+      ],
+      "kpis": [
+        {
+          "id": "health",
+          "label": "Job Health",
+          "value": "Red",
+          "sub": "Aqua dry spot reported"
+        },
+        {
+          "id": "takeoff",
+          "label": "Takeoff Match",
+          "value": "Validated",
+          "sub": "PO, field verified, and package comparison"
+        },
+        {
+          "id": "siteReadiness",
+          "label": "Site Readiness",
+          "value": "Ready",
+          "sub": "48-hour pre-start checklist"
+        },
+        {
+          "id": "photos",
+          "label": "Photo Gate",
+          "value": "5 / 6",
+          "sub": "Issue close-up received"
+        },
+        {
+          "id": "hours",
+          "label": "Goal vs Actual",
+          "value": "Repair",
+          "sub": "Same-day dispatch needed"
+        },
+        {
+          "id": "aqua",
+          "label": "Aqua",
+          "value": "Issue",
+          "sub": "Dry spot front left turf"
+        },
+        {
+          "id": "qi",
+          "label": "QI",
+          "value": "Held",
+          "sub": "Aqua repair required"
+        },
+        {
+          "id": "invoice",
+          "label": "Invoice",
+          "value": "Blocked",
+          "sub": "Waits for issue resolution"
+        }
+      ],
+      "nextBestActions": [
+        {
+          "step": "1",
+          "tone": "red",
+          "title": "Dispatch Aqua same-day repair",
+          "note": "Dry spot on front left turf must be repaired or verified before closeout.",
+          "time": "Same-Day"
+        }
+      ],
+      "ownership": [
+        {
+          "label": "Parent",
+          "value": "Ryan Homes, roll-up only"
+        },
+        {
+          "label": "Division",
+          "value": "Ryan Charlotte"
+        },
+        {
+          "label": "Community",
+          "value": "Riverbend"
+        },
+        {
+          "label": "Lot",
+          "value": "Lot 77"
+        },
+        {
+          "label": "Work Execution",
+          "value": "Aqua same-day repair"
+        },
+        {
+          "label": "Billing",
+          "value": "No parent billing"
+        }
+      ],
+      "gateStatus": [
+        {
+          "title": "PO reviewed",
+          "note": "Complete",
+          "done": true,
+          "pill": "Done",
+          "tone": "green"
+        },
+        {
+          "title": "Takeoff complete",
+          "note": "Complete",
+          "done": true,
+          "pill": "Done",
+          "tone": "green"
+        },
+        {
+          "title": "Field complete",
+          "note": "Aqua issue found",
+          "done": true,
+          "pill": "Done",
+          "tone": "green"
+        },
+        {
+          "title": "FM QI approval",
+          "note": "Held for repair",
+          "done": false,
+          "pill": "Held",
+          "tone": "red"
+        }
+      ],
+      "takeoff": {
+        "statusPill": {
+          "label": "Complete",
+          "tone": "green"
+        },
+        "fields": [
+          {
+            "label": "Takeoff Status",
+            "value": "Locked"
+          },
+          {
+            "label": "811 Utility Mark",
+            "value": "Complete"
+          },
+          {
+            "label": "Site Readiness",
+            "value": "Ready"
+          },
+          {
+            "label": "Measurements",
+            "value": "Sod 6,100 SF"
+          },
+          {
+            "label": "Photos",
+            "value": "4 received"
+          },
+          {
+            "label": "Package Match",
+            "value": "Matches"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "811",
+            "title": "Complete 811 Utility Call",
+            "note": "Utility locate call completed and documented before scheduling",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          }
+        ],
+        "packageComparison": [
+          {
+            "item": "Sod",
+            "package": "5,200 SQFT",
+            "takeoff": "5,200 SQFT",
+            "result": "Match",
+            "tone": "green"
+          },
+          {
+            "item": "Street Tree",
+            "package": "7 EA",
+            "takeoff": "7 EA",
+            "result": "Match",
+            "tone": "green"
+          }
+        ],
+        "lineItems": [
+          {
+            "id": "po-sod",
+            "poLineItem": "Sod",
+            "uom": "SQFT",
+            "poQuantity": 5200,
+            "verifiedQuantity": 5200,
+            "communityPackageQuantity": 5200,
+            "tolerance": 50,
+            "status": "Match",
+            "notes": "Aqua issue not takeoff variance"
+          },
+          {
+            "id": "po-street-tree",
+            "poLineItem": "Street Tree",
+            "uom": "EA",
+            "poQuantity": 7,
+            "verifiedQuantity": 7,
+            "communityPackageQuantity": 7,
+            "tolerance": 0,
+            "status": "Match",
+            "notes": "Verified"
+          }
+        ],
+        "matchStatus": "Validated",
+        "siteReadiness": [
+          {
+            "id": "sr-grading",
+            "title": "Grading complete",
+            "note": "Lot is not rutted, too wet, blocked, or unsafe",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "sr-access",
+            "title": "Access and staging clear",
+            "note": "Crew can access driveway, yard, and material staging area",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "sr-utilities",
+            "title": "Utilities marked and visible",
+            "note": "811 marks still visible before crew arrives",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "sr-builder",
+            "title": "Builder conflicts checked",
+            "note": "No active trades blocking landscape install",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          }
+        ],
+        "siteVisits": [
+          {
+            "id": "sv-warranty",
+            "purpose": "Warranty Determination",
+            "status": "Scheduled",
+            "decision": "Pending",
+            "notes": "Used when builder/homeowner claims warranty. FM determines if it is true warranty, Finished Job, or billable work.",
+            "checklist": [
+              {
+                "id": "svw-photo",
+                "title": "Take site photos",
+                "note": "Capture issue close-up and whole-yard context",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              },
+              {
+                "id": "svw-cause",
+                "title": "Determine cause",
+                "note": "Install quality, maintenance, builder damage, homeowner damage, water issue, or weather",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              },
+              {
+                "id": "svw-decision",
+                "title": "Select decision",
+                "note": "Warranty, Finished Job, Proposal Needed, or No LOVING action",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              }
+            ]
+          },
+          {
+            "id": "sv-proposal",
+            "purpose": "Proposal Scope",
+            "status": "Scheduled",
+            "decision": "Pending",
+            "notes": "Used when FM scopes proposed work before quote/proposal creation.",
+            "checklist": [
+              {
+                "id": "svp-measure",
+                "title": "Measure proposed work",
+                "note": "Capture quantity, UOM, access, and photos",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              },
+              {
+                "id": "svp-scope",
+                "title": "Write scope notes",
+                "note": "Enough detail for CS/estimating to create proposal",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              }
+            ]
+          }
+        ]
+      },
+      "workOrder": {
+        "number": "WO-004280",
+        "status": "Aqua Same-Day",
+        "serviceAppointment": "SA-008799, Repair Needed",
+        "assignedResource": "Aqua Tech Marcos Rivera",
+        "scheduledDate": "May 14, 2026",
+        "routeSequence": "Urgent Insert",
+        "territory": "Charlotte North",
+        "lineItems": [
+          {
+            "line": "Aqua Same-Day Repair",
+            "planned": "1 EA",
+            "actual": "0 EA",
+            "goal": "0.8",
+            "actualHours": "0",
+            "status": "In Progress"
+          }
+        ],
+        "scheduleControls": [
+          {
+            "label": "Released",
+            "value": "Manual dispatch pending"
+          },
+          {
+            "label": "PTO Conflict",
+            "value": "None"
+          },
+          {
+            "label": "Inventory",
+            "value": "2 heads, 4 flags needed"
+          },
+          {
+            "label": "Weather",
+            "value": "Clear"
+          }
+        ],
+        "healthChecks": [
+          {
+            "id": "hc-2pm",
+            "dueTime": "2:00 PM",
+            "crew": "Aqua Tech Marcos Rivera",
+            "foreman": "Assigned Foreman",
+            "status": "Red",
+            "scopeRemainingPct": 45,
+            "canFixTomorrow": false,
+            "notes": "Dry spot and incomplete front corner need FM decision."
+          }
+        ]
+      },
+      "aqua": {
+        "installTicket": "AIT-000077",
+        "tech": "Marcos Rivera",
+        "deviceInstalled": "Yes",
+        "coverageVerified": "No",
+        "inventoryRecorded": "Controller 1, Heads 10, Flags 8",
+        "photos": "Issue close-up received",
+        "checks": [
+          {
+            "date": "May 14",
+            "tech": "Marcos",
+            "status": "Same-Day Repair",
+            "tone": "red",
+            "issue": "Dry spot"
+          }
+        ],
+        "gates": [
+          {
+            "title": "Device installed",
+            "note": "Controller present",
+            "done": true
+          },
+          {
+            "title": "Timer tested",
+            "note": "Needs retest",
+            "done": false
+          },
+          {
+            "title": "Coverage verified",
+            "note": "Dry spot open",
+            "done": false
+          },
+          {
+            "title": "Inventory recorded",
+            "note": "Pending repair parts",
+            "done": false
+          }
+        ],
+        "checkChecklist": [
+          {
+            "id": "ac-device",
+            "title": "Device present and functioning",
+            "note": "Controller/timer still on site and running",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "ac-coverage",
+            "title": "Coverage check",
+            "note": "Worst patch, heads, hose route, and water source checked",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "ac-score",
+            "title": "Sod condition score entered",
+            "note": "Record turf condition and flag dry spots",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          },
+          {
+            "id": "ac-photo",
+            "title": "Check photos uploaded",
+            "note": "System running, issue close-up if any, and whole-yard photo",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          }
+        ],
+        "pickupChecklist": [
+          {
+            "id": "ap-device",
+            "title": "Device retrieved",
+            "note": "Controller/timer removed from lot",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          },
+          {
+            "id": "ap-inventory",
+            "title": "Inventory reconciled",
+            "note": "Expected vs retrieved heads, flags, cups, hoses, and controller",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          },
+          {
+            "id": "ap-variance",
+            "title": "Variance reviewed",
+            "note": "Missing/damaged items trigger billing or warranty workflow",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          },
+          {
+            "id": "ap-photo",
+            "title": "Pickup photos uploaded",
+            "note": "Removed equipment and final secured water source",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          }
+        ]
+      },
+      "photos": [
+        {
+          "category": "Takeoff",
+          "caption": "Site overview and measurement proof",
+          "status": "complete"
+        },
+        {
+          "category": "Issue Photo",
+          "caption": "Dry spot front left turf",
+          "status": "issue"
+        },
+        {
+          "category": "Before",
+          "caption": "Received",
+          "status": "complete"
+        },
+        {
+          "category": "Aqua Controller",
+          "caption": "Received",
+          "status": "complete"
+        },
+        {
+          "category": "Add Photo",
+          "caption": "Upload repair complete proof",
+          "status": "add"
+        }
+      ],
+      "qi": {
+        "overallScore": null,
+        "status": "Held",
+        "closeoutStatus": "Waiting",
+        "invoiceStatus": "Locked",
+        "categories": [
+          {
+            "category": "Aqua",
+            "score": 6,
+            "finding": "Dry spot reported",
+            "result": "Hold",
+            "theme": "Water Wizard"
+          }
+        ],
+        "dueWindow": "24-48 hours after Foreman marks Field Complete"
+      },
+      "invoicePreview": [
+        {
+          "label": "Bill To",
+          "value": "Ryan Charlotte"
+        },
+        {
+          "label": "Parent",
+          "value": "Ryan Homes roll-up only"
+        },
+        {
+          "label": "Revenue",
+          "value": "TBD"
+        },
+        {
+          "label": "GP Status",
+          "value": "N/A"
+        }
+      ],
+      "activity": []
+    },
+    {
+      "id": "lot044",
+      "queueTitle": "Lot 44, Ashton Park",
+      "queueSubtitle": "Closeout ready, invoice pending approval",
+      "queuePill": {
+        "label": "Ready",
+        "tone": "green"
+      },
+      "title": "Lot 44, Ashton Park | Production Install",
+      "recordKicker": "Field Manager Execution View",
+      "breadcrumbs": [
+        "Parent: DR Horton",
+        "Division: DR Horton Charlotte",
+        "Community: Ashton Park",
+        "Lot: 44",
+        "WorkOrder: WO-004252"
+      ],
+      "meta": [
+        "44 Ashton Park Dr, Charlotte NC",
+        "Package: Ashton Park Standard",
+        "FM: Jordan Ellis",
+        "Foreman: Luis Martinez",
+        "Service Territory: Charlotte North"
+      ],
+      "stageIndex": 6,
+      "stageLabels": [
+        "PO Reviewed",
+        "Takeoff Complete",
+        "Ready to Schedule",
+        "Scheduled",
+        "Field Complete",
+        "QI Review",
+        "Closeout",
+        "Invoice"
+      ],
+      "kpis": [
+        {
+          "id": "health",
+          "label": "Job Health",
+          "value": "Green",
+          "sub": "Ready for approval"
+        },
+        {
+          "id": "takeoff",
+          "label": "Takeoff Match",
+          "value": "Validated",
+          "sub": "PO, field verified, and package comparison"
+        },
+        {
+          "id": "siteReadiness",
+          "label": "Site Readiness",
+          "value": "Ready",
+          "sub": "48-hour pre-start checklist"
+        },
+        {
+          "id": "photos",
+          "label": "Photo Gate",
+          "value": "6 / 6",
+          "sub": "Accepted"
+        },
+        {
+          "id": "hours",
+          "label": "Goal vs Actual",
+          "value": "6.2 / 6.1",
+          "sub": "Under goal"
+        },
+        {
+          "id": "aqua",
+          "label": "Aqua",
+          "value": "N/A",
+          "sub": "Not included"
+        },
+        {
+          "id": "qi",
+          "label": "QI",
+          "value": "8.9",
+          "sub": "Passed"
+        },
+        {
+          "id": "invoice",
+          "label": "Invoice",
+          "value": "Ready",
+          "sub": "Closeout approval unlocks invoice"
+        }
+      ],
+      "nextBestActions": [
+        {
+          "step": "1",
+          "tone": "green",
+          "title": "Approve closeout",
+          "note": "All gates are complete and QI has passed.",
+          "time": "Now"
+        }
+      ],
+      "ownership": [
+        {
+          "label": "Parent",
+          "value": "DR Horton, roll-up only"
+        },
+        {
+          "label": "Division",
+          "value": "DR Horton Charlotte"
+        },
+        {
+          "label": "Community",
+          "value": "Ashton Park"
+        },
+        {
+          "label": "Lot",
+          "value": "Lot 44"
+        },
+        {
+          "label": "Work Execution",
+          "value": "Ready for closeout"
+        },
+        {
+          "label": "Billing",
+          "value": "Invoice to Division Account"
+        }
+      ],
+      "gateStatus": [
+        {
+          "title": "PO reviewed",
+          "note": "Done",
+          "done": true,
+          "pill": "Done",
+          "tone": "green"
+        },
+        {
+          "title": "Takeoff complete",
+          "note": "Done",
+          "done": true,
+          "pill": "Done",
+          "tone": "green"
+        },
+        {
+          "title": "Field complete",
+          "note": "Done",
+          "done": true,
+          "pill": "Done",
+          "tone": "green"
+        },
+        {
+          "title": "FM QI approval",
+          "note": "Passed",
+          "done": true,
+          "pill": "Done",
+          "tone": "green"
+        }
+      ],
+      "takeoff": {
+        "statusPill": {
+          "label": "Complete",
+          "tone": "green"
+        },
+        "fields": [
+          {
+            "label": "Takeoff Status",
+            "value": "Locked"
+          },
+          {
+            "label": "811 Utility Mark",
+            "value": "Complete"
+          },
+          {
+            "label": "Site Readiness",
+            "value": "Ready"
+          },
+          {
+            "label": "Measurements",
+            "value": "Sod 5,400 SF, 5 trees"
+          },
+          {
+            "label": "Photos",
+            "value": "4 received"
+          },
+          {
+            "label": "Package Match",
+            "value": "Matches"
+          }
+        ],
+        "tasks": [
+          {
+            "id": "811",
+            "title": "Complete 811 Utility Call",
+            "note": "Utility locate call completed and documented before scheduling",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          }
+        ],
+        "packageComparison": [
+          {
+            "item": "Sod",
+            "package": "4,100 SQFT",
+            "takeoff": "4,100 SQFT",
+            "result": "Match",
+            "tone": "green"
+          },
+          {
+            "item": "Street Tree",
+            "package": "5 EA",
+            "takeoff": "5 EA",
+            "result": "Match",
+            "tone": "green"
+          }
+        ],
+        "lineItems": [
+          {
+            "id": "po-sod",
+            "poLineItem": "Sod",
+            "uom": "SQFT",
+            "poQuantity": 4100,
+            "verifiedQuantity": 4100,
+            "communityPackageQuantity": 4100,
+            "tolerance": 50,
+            "status": "Match",
+            "notes": "Verified"
+          },
+          {
+            "id": "po-street-tree",
+            "poLineItem": "Street Tree",
+            "uom": "EA",
+            "poQuantity": 5,
+            "verifiedQuantity": 5,
+            "communityPackageQuantity": 5,
+            "tolerance": 0,
+            "status": "Match",
+            "notes": "Verified"
+          }
+        ],
+        "matchStatus": "Validated",
+        "siteReadiness": [
+          {
+            "id": "sr-grading",
+            "title": "Grading complete",
+            "note": "Lot is not rutted, too wet, blocked, or unsafe",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "sr-access",
+            "title": "Access and staging clear",
+            "note": "Crew can access driveway, yard, and material staging area",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "sr-utilities",
+            "title": "Utilities marked and visible",
+            "note": "811 marks still visible before crew arrives",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "sr-builder",
+            "title": "Builder conflicts checked",
+            "note": "No active trades blocking landscape install",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          }
+        ],
+        "siteVisits": [
+          {
+            "id": "sv-warranty",
+            "purpose": "Warranty Determination",
+            "status": "Scheduled",
+            "decision": "Pending",
+            "notes": "Used when builder/homeowner claims warranty. FM determines if it is true warranty, Finished Job, or billable work.",
+            "checklist": [
+              {
+                "id": "svw-photo",
+                "title": "Take site photos",
+                "note": "Capture issue close-up and whole-yard context",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              },
+              {
+                "id": "svw-cause",
+                "title": "Determine cause",
+                "note": "Install quality, maintenance, builder damage, homeowner damage, water issue, or weather",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              },
+              {
+                "id": "svw-decision",
+                "title": "Select decision",
+                "note": "Warranty, Finished Job, Proposal Needed, or No LOVING action",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              }
+            ]
+          },
+          {
+            "id": "sv-proposal",
+            "purpose": "Proposal Scope",
+            "status": "Scheduled",
+            "decision": "Pending",
+            "notes": "Used when FM scopes proposed work before quote/proposal creation.",
+            "checklist": [
+              {
+                "id": "svp-measure",
+                "title": "Measure proposed work",
+                "note": "Capture quantity, UOM, access, and photos",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              },
+              {
+                "id": "svp-scope",
+                "title": "Write scope notes",
+                "note": "Enough detail for CS/estimating to create proposal",
+                "done": false,
+                "pill": "Open",
+                "tone": "amber"
+              }
+            ]
+          }
+        ]
+      },
+      "workOrder": {
+        "number": "WO-004252",
+        "status": "Approved",
+        "serviceAppointment": "SA-008760, Completed",
+        "assignedResource": "Crew C-12, Luis Martinez",
+        "scheduledDate": "May 12, 2026",
+        "routeSequence": "Stop 2 of 6",
+        "territory": "Charlotte North",
+        "lineItems": [
+          {
+            "line": "Bermuda Sod",
+            "planned": "5,400 SF",
+            "actual": "5,400 SF",
+            "goal": "2.8",
+            "actualHours": "2.7",
+            "status": "Complete"
+          }
+        ],
+        "scheduleControls": [
+          {
+            "label": "Released",
+            "value": "May 11, 4:00 PM"
+          },
+          {
+            "label": "PTO Conflict",
+            "value": "None"
+          },
+          {
+            "label": "Inventory",
+            "value": "Complete"
+          },
+          {
+            "label": "Weather",
+            "value": "Clear"
+          }
+        ],
+        "healthChecks": [
+          {
+            "id": "hc-2pm",
+            "dueTime": "2:00 PM",
+            "crew": "Crew C-12, Luis Martinez",
+            "foreman": "Assigned Foreman",
+            "status": "Green",
+            "scopeRemainingPct": 10,
+            "canFixTomorrow": true,
+            "notes": "Crew says scope is on track."
+          }
+        ]
+      },
+      "aqua": {
+        "installTicket": "N/A",
+        "tech": "N/A",
+        "deviceInstalled": "N/A",
+        "coverageVerified": "N/A",
+        "inventoryRecorded": "N/A",
+        "photos": "N/A",
+        "checks": [],
+        "gates": [],
+        "checkChecklist": [
+          {
+            "id": "ac-device",
+            "title": "Device present and functioning",
+            "note": "Controller/timer still on site and running",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "ac-coverage",
+            "title": "Coverage check",
+            "note": "Worst patch, heads, hose route, and water source checked",
+            "done": true,
+            "pill": "Done",
+            "tone": "green"
+          },
+          {
+            "id": "ac-score",
+            "title": "Sod condition score entered",
+            "note": "Record turf condition and flag dry spots",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          },
+          {
+            "id": "ac-photo",
+            "title": "Check photos uploaded",
+            "note": "System running, issue close-up if any, and whole-yard photo",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          }
+        ],
+        "pickupChecklist": [
+          {
+            "id": "ap-device",
+            "title": "Device retrieved",
+            "note": "Controller/timer removed from lot",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          },
+          {
+            "id": "ap-inventory",
+            "title": "Inventory reconciled",
+            "note": "Expected vs retrieved heads, flags, cups, hoses, and controller",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          },
+          {
+            "id": "ap-variance",
+            "title": "Variance reviewed",
+            "note": "Missing/damaged items trigger billing or warranty workflow",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          },
+          {
+            "id": "ap-photo",
+            "title": "Pickup photos uploaded",
+            "note": "Removed equipment and final secured water source",
+            "done": false,
+            "pill": "Open",
+            "tone": "amber"
+          }
+        ]
+      },
+      "photos": [
+        {
+          "category": "Takeoff",
+          "caption": "Site overview and measurement proof",
+          "status": "complete"
+        },
+        {
+          "category": "Before",
+          "caption": "Accepted",
+          "status": "complete"
+        },
+        {
+          "category": "Sod Installed",
+          "caption": "Accepted",
+          "status": "complete"
+        },
+        {
+          "category": "Trees and Shrubs",
+          "caption": "Accepted",
+          "status": "complete"
+        },
+        {
+          "category": "After",
+          "caption": "Accepted",
+          "status": "complete"
+        }
+      ],
+      "qi": {
+        "overallScore": 8.9,
+        "status": "Passed",
+        "closeoutStatus": "Ready",
+        "invoiceStatus": "Ready",
+        "categories": [
+          {
+            "category": "Sod Install",
+            "score": 9,
+            "finding": "Clean install",
+            "result": "Pass",
+            "theme": "Rooted and Ready"
+          },
+          {
+            "category": "Cleanup",
+            "score": 9,
+            "finding": "Site clean",
+            "result": "Pass",
+            "theme": "Clean Sweep"
+          }
+        ],
+        "dueWindow": "24-48 hours after Foreman marks Field Complete"
+      },
+      "invoicePreview": [
+        {
+          "label": "Bill To",
+          "value": "DR Horton Charlotte"
+        },
+        {
+          "label": "Parent",
+          "value": "DR Horton roll-up only"
+        },
+        {
+          "label": "Revenue",
+          "value": "$3,950"
+        },
+        {
+          "label": "GP Status",
+          "value": "Green"
+        }
+      ],
+      "activity": []
+    }
+  ],
+  "forms": {
+    "returnReasons": [
+      "Missing required photo",
+      "Scope incomplete",
+      "Closeout notes incomplete",
+      "QI issue",
+      "Aqua issue"
+    ],
+    "returnOwners": [
+      "Foreman",
+      "Aqua Tech",
+      "CSM",
+      "Scheduler"
+    ],
+    "fjReasons": [
+      "Incomplete Scope",
+      "QI Red",
+      "Missing Material",
+      "Cleanup Required"
+    ],
+    "rescheduleReasons": [
+      "Site Not Ready",
+      "Weather Hold",
+      "Access Issue",
+      "Material Issue",
+      "Builder Request"
+    ],
+    "aquaIssues": [
+      "Dry Spot",
+      "Broken Head",
+      "Timer Issue",
+      "Device Missing",
+      "Runoff"
+    ],
+    "aquaPriorities": [
+      "Same-Day",
+      "Next Route",
+      "Monitor"
+    ],
+    "siteVisitPurposes": [
+      "Warranty Determination",
+      "Finished Job Determination",
+      "Proposal Scope"
+    ]
+  }
+}

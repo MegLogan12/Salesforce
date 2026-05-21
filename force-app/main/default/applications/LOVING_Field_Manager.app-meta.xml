@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningApp xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Field Manager execution console. WorkOrder QI, takeoff, site readiness, closeout, and Aqua management for LOVING Field Managers.</description>
+    <formFactors>Large</formFactors>
+    <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
+    <label>LOVING Field Manager</label>
+    <navItems>
+        <name>LovingFMApp</name>
+    </navItems>
+    <navType>Console</navType>
+    <uiType>Lightning</uiType>
+</LightningApp>

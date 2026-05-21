@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOVING FSL Mobile — What J. Reyes Sees on His Phone</title>
+<style>
+:root {
+  --sf-blue: #0070d2;
+  --sf-blue-dark: #16325c;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { font-family: var(--font-sans); font-size: 13px; color: #16325c; background: #1a1a2e; }
+.wrap { background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%); min-height: 100vh; }
+
+.app-header { background: rgba(255,255,255,.04); backdrop-filter: blur(10px); padding: 16px 24px; border-bottom: 1px solid rgba(255,255,255,.08); color: #fff; }
+.app-header-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; gap: 16px; }
+.app-icon { width: 44px; height: 44px; border-radius: 10px; background: linear-gradient(135deg, #0070d2 0%, #16325c 100%); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; box-shadow: 0 4px 12px rgba(0,112,210,.4); }
+.app-title { font-size: 18px; font-weight: 600; }
+.app-sub { font-size: 12px; opacity: .7; margin-top: 2px; }
+
+.day-nav { background: rgba(255,255,255,.06); border-bottom: 1px solid rgba(255,255,255,.08); padding: 0; overflow-x: auto; }
+.day-nav-inner { max-width: 1400px; margin: 0 auto; display: flex; align-items: center; gap: 0; padding: 0 16px; }
+.scene-tab { padding: 14px 16px; cursor: pointer; color: rgba(255,255,255,.6); font-size: 12px; border-bottom: 3px solid transparent; white-space: nowrap; display: flex; align-items: center; gap: 8px; flex-shrink: 0; transition: all .15s; }
+.scene-tab:hover { color: rgba(255,255,255,.9); background: rgba(255,255,255,.04); }
+.scene-tab.on { color: #fff; border-bottom-color: #00a1e0; background: rgba(0,161,224,.08); }
+.scene-time { font-family: 'SF Mono', Monaco, monospace; font-weight: 600; font-size: 11px; opacity: .9; }
+.scene-name { font-weight: 500; }
+.scene-tab .scene-icon { font-size: 14px; }
+.scene-tab.urgent { border-left: 1px solid rgba(255,107,107,.2); }
+.scene-tab.urgent .scene-icon { color: #ff6b6b; }
+
+.main-area { max-width: 1400px; margin: 0 auto; padding: 30px 24px; }
+.scene { display: none; }
+.scene.on { display: block; }
+.scene-row { display: grid; grid-template-columns: auto 1fr; gap: 40px; align-items: start; }
+
+.phone-stack { display: flex; gap: 24px; align-items: flex-start; }
+.phone-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.phone-label { color: rgba(255,255,255,.7); font-size: 11px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+.phone { width: 360px; height: 740px; background: #1a1a1a; border-radius: 36px; padding: 12px; box-shadow: 0 25px 60px rgba(0,0,0,.6), inset 0 0 0 2px #2a2a2a; position: relative; flex-shrink: 0; }
+.phone-screen { width: 100%; height: 100%; background: #f3f3f3; border-radius: 26px; overflow: hidden; position: relative; }
+.phone-notch { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: 110px; height: 24px; background: #1a1a1a; border-radius: 0 0 14px 14px; z-index: 10; }
+.phone-home { position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); width: 110px; height: 4px; background: #2a2a2a; border-radius: 2px; z-index: 10; }
+
+.statusbar { background: #fff; padding: 14px 24px 6px 24px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 600; color: #1a1a1a; height: 38px; }
+.statusbar-icons { display: flex; gap: 4px; align-items: center; font-size: 11px; }
+
+.fsl-header { background: #16325c; color: #fff; padding: 10px 14px; display: flex; align-items: center; gap: 10px; }
+.fsl-back { font-size: 18px; cursor: pointer; }
+.fsl-title { font-size: 14px; font-weight: 600; flex: 1; }
+.fsl-title-sub { font-size: 10px; opacity: .8; font-weight: 400; }
+.fsl-action { font-size: 12px; cursor: pointer; }
+
+.phone-content { background: #f3f3f3; height: calc(100% - 38px - 50px - 56px); overflow-y: auto; padding: 12px; }
+
+.pcard { background: #fff; border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+.pcard.alert { border-left: 4px solid #c23934; background: #fef9f9; }
+.pcard.warn { border-left: 4px solid #fe9339; background: #fffbeb; }
+.pcard.ok { border-left: 4px solid #04844b; background: #f8fdf9; }
+.pcard.gate { border-left: 4px solid #fe9339; background: #fffbeb; }
+.pcard-title { font-size: 12px; font-weight: 600; color: #16325c; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+.pcard-sub { font-size: 11px; color: #54698d; line-height: 1.5; }
+
+.pchip { display: inline-flex; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; align-items: center; gap: 3px; }
+.pchip.green { background: #e8f5e9; color: #2e7d32; }
+.pchip.red { background: #fce8e8; color: #991b1b; }
+.pchip.blue { background: #e3f0fb; color: #0c447c; }
+.pchip.amber { background: #fef3c7; color: #92400e; }
+.pchip.purple { background: #ede9fe; color: #5b21b6; }
+.pchip.gray { background: #f4f6f9; color: #54698d; }
+
+.pbtn { display: block; width: 100%; padding: 14px; border-radius: 10px; border: none; font-size: 14px; font-weight: 600; cursor: pointer; text-align: center; margin-bottom: 8px; }
+.pbtn.primary { background: #0070d2; color: #fff; }
+.pbtn.success { background: #04844b; color: #fff; }
+.pbtn.danger { background: #c23934; color: #fff; }
+.pbtn.warn { background: #fe9339; color: #fff; }
+.pbtn.outline { background: #fff; color: #0070d2; border: 1px solid #0070d2; }
+.pbtn.disabled { background: #e5e5e5; color: #b4b2a9; cursor: not-allowed; }
+.pbtn.huge { padding: 18px; font-size: 16px; }
+
+.fsl-tabbar { position: absolute; bottom: 0; left: 0; right: 0; background: #fff; border-top: 1px solid #e0e0e0; height: 56px; display: flex; padding: 6px 0 12px 0; }
+.fsl-tab { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; cursor: pointer; padding: 4px 0; }
+.fsl-tab-ic { font-size: 18px; color: #54698d; }
+.fsl-tab-lb { font-size: 9px; color: #54698d; font-weight: 500; }
+.fsl-tab.on .fsl-tab-ic, .fsl-tab.on .fsl-tab-lb { color: #0070d2; }
+
+/* Sync indicator badge - new for Rippling */
+.sync-badge { display: flex; align-items: center; gap: 6px; background: #e8f5e9; border-radius: 6px; padding: 6px 10px; margin-bottom: 8px; font-size: 10px; color: #2e7d32; font-weight: 500; }
+.sync-dot { width: 6px; height: 6px; background: #04844b; border-radius: 50%; animation: pulse 2s infinite; }
+.sync-badge.amber { background: #fef3c7; color: #92400e; }
+.sync-badge.amber .sync-dot { background: #fe9339; }
+
+.timeclock { padding: 14px; border-radius: 10px; text-align: center; margin-bottom: 10px; color: #fff; }
+.timeclock.in { background: linear-gradient(135deg, #04844b 0%, #2e844a 100%); }
+.timeclock.out { background: linear-gradient(135deg, #c23934 0%, #991b1b 100%); }
+.timeclock.break { background: linear-gradient(135deg, #fe9339 0%, #ba7517 100%); }
+.timeclock.driving { background: linear-gradient(135deg, #0070d2 0%, #16325c 100%); }
+.timeclock-label { font-size: 10px; opacity: .9; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: 600; }
+.timeclock-time { font-family: monospace; font-size: 24px; font-weight: 700; }
+.timeclock-sub { font-size: 10px; opacity: .85; margin-top: 2px; }
+.timeclock-source { font-size: 9px; opacity: .75; margin-top: 4px; padding-top: 4px; border-top: 1px solid rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; gap: 4px; }
+
+.sa-card { background: #fff; border-radius: 10px; padding: 0; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,.06); overflow: hidden; }
+.sa-card-header { padding: 10px 14px; background: #16325c; color: #fff; display: flex; justify-content: space-between; align-items: center; }
+.sa-card-num { font-size: 11px; font-weight: 600; opacity: .9; }
+.sa-card-status { font-size: 9px; padding: 2px 7px; background: rgba(255,255,255,.2); border-radius: 8px; font-weight: 600; }
+.sa-card-body { padding: 12px 14px; }
+.sa-card-lot { font-size: 14px; font-weight: 600; color: #16325c; margin-bottom: 4px; }
+.sa-card-comm { font-size: 11px; color: #54698d; margin-bottom: 8px; }
+.sa-card-meta { display: flex; justify-content: space-between; font-size: 11px; padding-top: 8px; border-top: 1px solid #f0f0f0; }
+.sa-card-meta-item { color: #54698d; }
+.sa-card-meta-item strong { color: #16325c; font-weight: 600; }
+.sa-card-drive { background: #e3f0fb; padding: 6px 10px; font-size: 10px; color: #0c447c; display: flex; align-items: center; gap: 6px; border-top: 1px solid #b5d4f4; }
+
+.photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+.photo-tile { aspect-ratio: 1; border-radius: 8px; background: #e0e0e0; border: 2px dashed #b4b2a9; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #54698d; font-size: 10px; gap: 4px; cursor: pointer; }
+.photo-tile.captured { background: linear-gradient(135deg, #92583a 0%, #6b3e29 100%); border-style: solid; border-color: transparent; color: #fff; }
+.photo-tile.captured.sod { background: linear-gradient(135deg, #6ba84f 0%, #4a7536 100%); }
+.photo-tile.captured.tree { background: linear-gradient(135deg, #4a7c2c 0%, #2d4d1a 100%); }
+.photo-tile.captured.after { background: linear-gradient(135deg, #5a8a4a 0%, #3d6332 100%); }
+.photo-icon { font-size: 22px; }
+.photo-label { font-weight: 600; font-size: 10px; }
+.photo-tag { background: rgba(0,0,0,.5); padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 600; }
+
+/* Vehicle Checklist + Loaded Checklist items */
+.checkitem { display: flex; align-items: center; gap: 10px; padding: 7px 10px; background: #fff; border-radius: 6px; margin-bottom: 4px; border: 1px solid #f0f0f0; }
+.checkitem.done { background: #f8fdf9; border-color: #a5d6a7; }
+.checkitem-box { width: 22px; height: 22px; border: 2px solid #d8dde6; border-radius: 5px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 12px; }
+.checkitem-box.done { background: #04844b; border-color: #04844b; color: #fff; font-size: 14px; }
+.checkitem-name { font-size: 11px; color: #16325c; flex: 1; }
+.checkitem-name.done { color: #2e844a; }
+.checkitem-photo { font-size: 14px; color: #b4b2a9; }
+.checkitem-photo.has { color: #04844b; }
+
+/* Job line items */
+.line-check { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #fff; border-radius: 8px; margin-bottom: 6px; }
+.line-checkbox { width: 22px; height: 22px; border: 2px solid #d8dde6; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.line-checkbox.checked { background: #04844b; border-color: #04844b; color: #fff; font-size: 14px; }
+.line-checkbox.unchecked { background: #fff; }
+.line-checkbox.cant { background: #c23934; border-color: #c23934; color: #fff; font-size: 14px; }
+.line-info { flex: 1; }
+.line-name { font-size: 12px; color: #16325c; font-weight: 500; }
+.line-qty { font-size: 10px; color: #54698d; margin-top: 2px; }
+
+/* Right narrative panel */
+.narrative-panel { background: rgba(255,255,255,.04); border-radius: 16px; padding: 24px; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.08); color: #fff; min-width: 0; }
+.np-time-badge { display: inline-block; background: rgba(0,161,224,.2); color: #66c5e8; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 8px; }
+.np-time-badge.urgent { background: rgba(255,107,107,.2); color: #ff8585; }
+.np-title { font-size: 22px; font-weight: 600; color: #fff; margin-bottom: 8px; line-height: 1.3; }
+.np-actor { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,.08); padding: 4px 10px; border-radius: 12px; font-size: 11px; color: rgba(255,255,255,.8); margin-bottom: 16px; }
+.np-actor-avatar { width: 18px; height: 18px; border-radius: 50%; background: #0070d2; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; }
+.np-section { margin-bottom: 18px; }
+.np-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,.5); margin-bottom: 8px; }
+.np-section p { font-size: 13px; line-height: 1.6; color: rgba(255,255,255,.85); }
+.np-section p strong { color: #fff; font-weight: 600; }
+.np-section ul { list-style: none; padding: 0; }
+.np-section li { font-size: 12px; line-height: 1.7; color: rgba(255,255,255,.75); padding-left: 18px; position: relative; }
+.np-section li::before { content: '→'; position: absolute; left: 0; color: rgba(0,161,224,.7); }
+
+.np-data-flow { background: rgba(0,0,0,.2); border-radius: 12px; padding: 14px; border-left: 3px solid #00a1e0; }
+.np-data-flow-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #66c5e8; margin-bottom: 8px; }
+.np-data-flow-item { display: flex; align-items: flex-start; gap: 8px; padding: 6px 0; font-size: 11px; color: rgba(255,255,255,.8); line-height: 1.5; }
+.np-data-flow-item .arrow { color: rgba(0,161,224,.7); flex-shrink: 0; }
+
+.np-systems { display: flex; flex-wrap: wrap; gap: 6px; }
+.np-system-chip { background: rgba(255,255,255,.08); padding: 4px 10px; border-radius: 12px; font-size: 11px; color: rgba(255,255,255,.85); border: 1px solid rgba(255,255,255,.1); }
+
+.np-callout { background: rgba(255,107,107,.1); border-left: 3px solid #ff6b6b; padding: 12px 14px; border-radius: 0 8px 8px 0; margin-top: 12px; }
+.np-callout-title { font-size: 11px; color: #ff8585; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 4px; }
+.np-callout p { font-size: 12px; color: rgba(255,255,255,.85); line-height: 1.5; }
+
+.health-check-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0; }
+.health-btn { padding: 24px 12px; border-radius: 12px; border: none; font-size: 15px; font-weight: 700; cursor: pointer; text-align: center; }
+.health-btn.green { background: linear-gradient(135deg, #04844b 0%, #2e844a 100%); color: #fff; box-shadow: 0 4px 12px rgba(4,132,75,.3); }
+.health-btn.red { background: linear-gradient(135deg, #c23934 0%, #ef4444 100%); color: #fff; box-shadow: 0 4px 12px rgba(194,57,52,.3); }
+
+.push-notif { background: rgba(255,255,255,.95); backdrop-filter: blur(10px); border-radius: 12px; padding: 12px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+.push-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.push-app-icon { width: 18px; height: 18px; border-radius: 4px; background: #0070d2; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+.push-app-name { font-size: 10px; font-weight: 600; color: #54698d; text-transform: uppercase; letter-spacing: .5px; }
+.push-time { font-size: 9px; color: #b4b2a9; margin-left: auto; }
+.push-title { font-size: 13px; font-weight: 600; color: #16325c; margin-bottom: 2px; }
+.push-body { font-size: 11px; color: #54698d; line-height: 1.4; }
+
+.footer { padding: 30px 24px; text-align: center; color: rgba(255,255,255,.4); font-size: 11px; }
+
+.crew-list { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.crew-chip { display: flex; align-items: center; gap: 4px; background: #f4f6f9; padding: 3px 7px; border-radius: 10px; font-size: 10px; color: #16325c; }
+.crew-dot { width: 5px; height: 5px; border-radius: 50%; background: #04844b; }
+
+.progress-track { height: 6px; background: #e5e5e5; border-radius: 3px; overflow: hidden; margin: 6px 0; }
+.progress-fill { height: 100%; background: #04844b; border-radius: 3px; }
+.progress-fill.warn { background: #fe9339; }
+.progress-fill.danger { background: #c23934; }
+
+/* Map for navigation scene */
+.fsl-map { height: 220px; border-radius: 10px; background: linear-gradient(135deg, #d4e3f0 0%, #b5d4f4 100%); position: relative; overflow: hidden; margin-bottom: 10px; }
+.fsl-map svg { display: block; width: 100%; height: 100%; }
+
+/* Drive directions list */
+.dir-step { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #fff; border-radius: 6px; margin-bottom: 4px; border: 1px solid #f0f0f0; }
+.dir-icon { width: 28px; height: 28px; border-radius: 6px; background: #e3f0fb; color: #0070d2; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; font-weight: 700; }
+.dir-info { flex: 1; }
+.dir-instruction { font-size: 12px; color: #16325c; font-weight: 500; }
+.dir-distance { font-size: 10px; color: #54698d; margin-top: 2px; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Job type badge */
+.jt-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; }
+.jt-badge.install { background: #ede9fe; color: #5b21b6; }
+.jt-badge.aqua { background: #e6f4f7; color: #0a8aa6; }
+.jt-badge.lc { background: #e8f5e9; color: #2e7d32; }
+.jt-badge.fj { background: #fce8e8; color: #991b1b; }
+.jt-badge.cc { background: #fef3c7; color: #92400e; }
+.jt-badge.warranty { background: #e1f5ee; color: #0f6e56; }
+
+/* Time captured display */
+.time-capture { background: #f8fafc; border: 1px solid #e3f0fb; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
+.time-capture-row { display: flex; justify-content: space-between; align-items: center; font-size: 11px; padding: 3px 0; }
+.time-capture-label { color: #54698d; }
+.time-capture-value { color: #16325c; font-weight: 600; font-family: monospace; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- App Header -->
+<div class="app-header">
+  <div class="app-header-inner">
+    <div class="app-icon">📱</div>
+    <div>
+      <div class="app-title">FSL Mobile — A Day in J. Reyes' Phone</div>
+      <div class="app-sub">Crew A foreman · Pines L07 install · Friday, April 25, 2026 · Click any moment to see what he's looking at</div>
+    </div>
+  </div>
+</div>
+
+<!-- Day Timeline Tabs -->
+<div class="day-nav">
+  <div class="day-nav-inner">
+    <div class="scene-tab on" onclick="sw('login',this)">
+      <span class="scene-icon">🔐</span>
+      <div><div class="scene-time">6:25 AM</div><div class="scene-name">Login &amp; Language</div></div>
+    </div>
+    <div class="scene-tab" onclick="sw('myday',this)">
+      <span class="scene-icon">📅</span>
+      <div><div class="scene-time">6:28 AM</div><div class="scene-name">My Day (EN/ES)</div></div>
+    </div>
+    <div class="scene-tab" onclick="sw('morning',this)">
+      <span class="scene-icon">🌅</span>
+      <div><div class="scene-time">6:30 AM</div><div class="scene-name">Pre-shift checks</div></div>
+    </div>
+    <div class="scene-tab" onclick="sw('drive',this)">
+      <span class="scene-icon">🚚</span>
+      <div><div class="scene-time">6:55 AM</div><div class="scene-name">Drive to site</div></div>
+    </div>
+    <div class="scene-tab" onclick="sw('arriving',this)">
+      <span class="scene-icon">🏃</span>
+      <div><div class="scene-time">7:09 AM</div><div class="scene-name">Arriving</div></div>
+    </div>
+    <div class="scene-tab" onclick="sw('active',this)">
+      <span class="scene-icon">📋</span>
+      <div><div class="scene-time">10:00 AM</div><div class="scene-name">Active job</div></div>
+    </div>
+    <div class="scene-tab" onclick="sw('lunch',this)">
+      <span class="scene-icon">🍔</span>
+      <div><div class="scene-time">12:00 PM</div><div class="scene-name">Lunch break</div></div>
+    </div>
+    <div class="scene-tab urgent" onclick="sw('health',this)">
+      <span class="scene-icon">🚨</span>
+      <div><div class="scene-time">2:00 PM</div><div class="scene-name">Health Check</div></div>
+    </div>
+    <div class="scene-tab urgent" onclick="sw('flag',this)">
+      <span class="scene-icon">⚠</span>
+      <div><div class="scene-time">2:07 PM</div><div class="scene-name">Flag &amp; submit</div></div>
+    </div>
+    <div class="scene-tab" onclick="sw('closeout',this)">
+      <span class="scene-icon">✅</span>
+      <div><div class="scene-time">3:30 PM</div><div class="scene-name">Closeout L07</div></div>
+    </div>
+    <div class="scene-tab" onclick="sw('eod',this)">
+      <span class="scene-icon">🌙</span>
+      <div><div class="scene-time">5:30 PM</div><div class="scene-name">End of day</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="main-area">
+
+<!-- ==================== SCENE 1: LOGIN &amp; LANGUAGE ==================== -->
+<div id="scene-login" class="scene on">
+<div class="scene-row">
+<div class="phone-stack">
+
+<div class="phone-wrap">
+<div class="phone-label">6:25 AM · App opens · Language picker</div>
+<div class="phone">
+  <div class="phone-screen">
+    <div class="phone-notch"></div>
+    <div class="statusbar"><span>6:25</span><div class="statusbar-icons"><span>📶</span><span>📡</span><span>🔋 95%</span></div></div>
+
+    <div class="fsl-header" style="background:linear-gradient(135deg,#16325c 0%,#0070d2 100%);justify-content:center;text-align:center;padding:18px 14px">
+      <div style="text-align:center;flex:1">
+        <div style="font-size:18px;font-weight:700">LOVING FSL</div>
+        <div style="font-size:11px;opacity:.85;margin-top:2px">Truck T-007 · Field Service</div>
+      </div>
+    </div>
+
+    <div class="phone-content" style="background:linear-gradient(180deg,#f8fafc 0%,#e3f0fb 100%)">
+      <div style="padding:30px 20px 20px 20px;text-align:center">
+        <div style="font-size:60px;margin-bottom:14px">🌍</div>
+        <div style="font-size:18px;font-weight:600;color:#16325c;margin-bottom:6px">Choose your language</div>
+        <div style="font-size:18px;font-weight:600;color:#16325c;margin-bottom:6px;font-style:italic">Elija su idioma</div>
+        <div style="font-size:11px;color:#54698d;margin-bottom:30px">You can change this anytime in Settings · Puede cambiarlo en Configuración</div>
+      </div>
+
+      <button class="pbtn primary huge" style="display:flex;align-items:center;justify-content:center;gap:14px;font-size:17px">
+        <span style="font-size:24px">🇺🇸</span>
+        <div style="text-align:left">
+          <div>English</div>
+          <div style="font-size:10px;font-weight:400;opacity:.85">United States</div>
+        </div>
+      </button>
+
+      <button class="pbtn outline huge" style="display:flex;align-items:center;justify-content:center;gap:14px;font-size:17px;border:2px solid #0070d2">
+        <span style="font-size:24px">🇲🇽</span>
+        <div style="text-align:left">
+          <div>Español</div>
+          <div style="font-size:10px;font-weight:400;opacity:.85">México · United States</div>
+        </div>
+      </button>
+
+      <div style="text-align:center;margin-top:30px;font-size:10px;color:#b4b2a9">LOVING Group · v2.4.1</div>
+    </div>
+
+    <div class="phone-home"></div>
+  </div>
+</div>
+</div>
+
+<div class="phone-wrap">
+<div class="phone-label">6:26 AM · Truck login (English chosen)</div>
+<div class="phone">
+  <div class="phone-screen">
+    <div class="phone-notch"></div>
+    <div class="statusbar"><span>6:26</span><div class="statusbar-icons"><span>📶</span><span>📡</span><span>🔋 95%</span></div></div>
+
+    <div class="fsl-header" style="background:#16325c">
+      <div></div>
+      <div class="fsl-title" style="text-align:center">Sign in to Truck T-007<div class="fsl-title-sub">Crew A · 309 Morningside Rd depot</div></div>
+      <div></div>
+    </div>
+
+    <div class="phone-content" style="background:#fff">
+      <div style="padding:24px 20px 16px 20px;text-align:center">
+        <div style="width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,#0070d2 0%,#16325c 100%);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:28px;color:#fff;box-shadow:0 4px 12px rgba(0,112,210,.25)">🚚</div>
+        <div style="font-size:17px;font-weight:600;color:#16325c;margin-bottom:4px">Welcome back</div>
+        <div style="font-size:12px;color:#54698d">Last sign-in: yesterday 5:32 PM (J. Reyes)</div>
+      </div>
+
+      <div style="padding:0 16px">
+        <div style="font-size:11px;color:#54698d;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Foreman</div>
+        <select class="form-select" style="width:100%;padding:12px;border:1px solid #d8dde6;border-radius:8px;font-size:14px;color:#16325c;background:#fff;margin-bottom:14px">
+          <option selected>J. Reyes (Crew A · usual)</option>
+          <option>T. Barnes (Crew C foreman · backup)</option>
+          <option>D. Kim (Crew B foreman · backup)</option>
+          <option>K. Rodriguez (Crew D foreman · backup)</option>
+        </select>
+
+        <div style="font-size:11px;color:#54698d;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">4-digit PIN</div>
+        <div style="display:flex;gap:8px;margin-bottom:20px">
+          <input type="text" maxlength="1" value="●" style="flex:1;padding:14px;text-align:center;font-size:20px;border:1px solid #d8dde6;border-radius:8px;background:#fff" readonly>
+          <input type="text" maxlength="1" value="●" style="flex:1;padding:14px;text-align:center;font-size:20px;border:1px solid #d8dde6;border-radius:8px;background:#fff" readonly>
+          <input type="text" maxlength="1" value="●" style="flex:1;padding:14px;text-align:center;font-size:20px;border:1px solid #d8dde6;border-radius:8px;background:#fff" readonly>
+          <input type="text" maxlength="1" value="●" style="flex:1;padding:14px;text-align:center;font-size:20px;border:1px solid #d8dde6;border-radius:8px;background:#fff" readonly>
+        </div>
+
+        <button class="pbtn primary huge">Sign In</button>
+
+        <div style="text-align:center;margin-top:14px;font-size:11px;color:#54698d">
+          Forgot your PIN? <span style="color:#0070d2;font-weight:600">Call Jim Howie · 704-555-0142</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="phone-home"></div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<div class="narrative-panel">
+  <div class="np-time-badge">6:25 AM · App launch · Truck T-007</div>
+  <div class="np-title">Phone belongs to the truck. Foreman signs in for the day.</div>
+  <div class="np-actor"><div class="np-actor-avatar">JR</div>J. Reyes signing in to Crew A's truck phone</div>
+
+  <div class="np-section">
+    <div class="np-section-title">Why per-truck phones (not per-person)</div>
+    <p>Each crew truck (T-007 = Crew A, T-009 = Crew B, etc.) has a <strong>dedicated mounted phone</strong>. The phone stays with the truck. Whoever's the foreman that day signs in. Field crews rotate, foremen swap, but the phone-to-truck mapping stays stable. Saves the cost of issuing per-person devices and ensures GPS + WEX vehicle data lines up cleanly with the right truck.</p>
+  </div>
+
+  <div class="np-section">
+    <div class="np-section-title">Step 1 — Language picker</div>
+    <p>First screen on app open: <strong>English</strong> or <strong>Español</strong>. Setting is sticky to the phone but can be changed anytime in Settings. Most LOVING crew speak Spanish at home, English at work, or both. Letting them pick reduces friction and errors when reading WO scope or Sarah Mitchell's CM notes.</p>
+  </div>
+
+  <div class="np-section">
+    <div class="np-section-title">Step 2 — Sign in to truck</div>
+    <p>App prompts: "Sign in to Truck T-007." Foreman dropdown defaults to <strong>J. Reyes (Crew A · usual)</strong>. Other foremen are listed as backup options for cases where someone's filling in. PIN is 4 digits, set up by Jim Howie when phone was provisioned.</p>
+  </div>
+
+  <div class="np-data-flow">
+    <div class="np-data-flow-title">⚡ Data flow when Sign In tapped</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Session created:</strong> J. Reyes signed in to Truck T-007 · 6:26 AM</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>WEX GPS: vehicle ID T-007 confirmed paired with foreman J. Reyes</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Salesforce Service Resource: Crew A active · J. Reyes as foreman of record</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>App lands on <strong>My Day</strong> home screen (next scene)</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Session expires: 8 PM auto-logout (or on Clock Out)</div>
+  </div>
+
+  <div class="np-callout">
+    <div class="np-callout-title">⚡ Recovery flow</div>
+    <p>If the foreman forgets their PIN, the screen shows "Call Jim Howie · 704-555-0142." Jim resets the PIN remotely from his admin console — no waiting for IT.</p>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SCENE 2: MY DAY (EN + ES) ==================== -->
+<div id="scene-myday" class="scene">
+<div class="scene-row">
+<div class="phone-stack">
+
+<div class="phone-wrap">
+<div class="phone-label">6:28 AM · My Day · English</div>
+<div class="phone">
+  <div class="phone-screen">
+    <div class="phone-notch"></div>
+    <div class="statusbar"><span>6:28</span><div class="statusbar-icons"><span>📶</span><span>📡</span><span>🔋 94%</span></div></div>
+
+    <div class="fsl-header">
+      <div style="font-size:18px">☰</div>
+      <div class="fsl-title">My Day<div class="fsl-title-sub">Welcome back, J. Reyes · Friday, Apr 25</div></div>
+      <div style="font-size:16px">🔔</div>
+    </div>
+
+    <div class="phone-content">
+      <div class="sync-badge">
+        <div class="sync-dot"></div>
+        Synced from Rippling at 6:30 AM · next sync 7:30 AM
+      </div>
+
+      <!-- Today at a glance card -->
+      <div class="pcard ok" style="background:linear-gradient(135deg,#f8fdf9 0%,#e8f5e9 100%)">
+        <div class="pcard-title">📅 Today at a glance</div>
+        <div class="time-capture" style="margin-top:6px;background:#fff;border-color:#a5d6a7">
+          <div class="time-capture-row"><span class="time-capture-label">Stops scheduled</span><span class="time-capture-value">2 jobs</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">Goal hours (Measuring Cup)</span><span class="time-capture-value" style="color:#2e844a">8.5 hr</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">First job start</span><span class="time-capture-value">7:00 AM · Pines L07</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">Expected return</span><span class="time-capture-value">5:30 PM · depot</span></div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-title">👥 Your crew today</div>
+        <div class="crew-list">
+          <span class="crew-chip"><span class="crew-dot"></span>J. Reyes (you)</span>
+          <span class="crew-chip"><span class="crew-dot"></span>R. Valle</span>
+          <span class="crew-chip"><span class="crew-dot"></span>E. Valentine</span>
+          <span class="crew-chip"><span class="crew-dot"></span>C. Ortiz</span>
+        </div>
+        <div style="font-size:10px;color:#54698d;margin-top:6px">Truck T-007 · all crew confirmed via Rippling clock-in</div>
+      </div>
+
+      <div style="font-size:11px;color:#54698d;font-weight:600;margin:10px 0 6px 2px;text-transform:uppercase;letter-spacing:.5px">Today's Schedule · 2 stops</div>
+
+      <div class="sa-card">
+        <div class="sa-card-header">
+          <div class="sa-card-num">SA-2026-0612-1</div>
+          <div class="sa-card-status">SCHEDULED</div>
+        </div>
+        <div class="sa-card-body">
+          <div class="sa-card-lot">Pines L07 · <span class="jt-badge install">Install</span></div>
+          <div class="sa-card-comm">8412 Berewick Pine Dr · DRH Charlotte</div>
+          <div class="sa-card-meta">
+            <span class="sa-card-meta-item"><strong>7:00 AM</strong> start</span>
+            <span class="sa-card-meta-item"><strong>6.5 hr</strong> goal</span>
+            <span class="sa-card-meta-item"><strong>$4,820</strong></span>
+          </div>
+        </div>
+        <div class="sa-card-drive">🚚 Drive from depot · 5.2 mi · 9 min</div>
+      </div>
+
+      <div class="sa-card">
+        <div class="sa-card-header">
+          <div class="sa-card-num">SA-2026-0613-1</div>
+          <div class="sa-card-status">SCHEDULED</div>
+        </div>
+        <div class="sa-card-body">
+          <div class="sa-card-lot">Pines L08 · <span class="jt-badge install">Install</span></div>
+          <div class="sa-card-comm">8414 Berewick Pine Dr · DRH Charlotte</div>
+          <div class="sa-card-meta">
+            <span class="sa-card-meta-item"><strong>3:35 PM</strong> start</span>
+            <span class="sa-card-meta-item"><strong>2.0 hr</strong> goal</span>
+            <span class="sa-card-meta-item"><strong>$3,200</strong></span>
+          </div>
+        </div>
+        <div class="sa-card-drive">🚚 Drive from L07 · 0.1 mi · 1 min</div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-title">☀ Weather today</div>
+        <div class="pcard-sub">Clear · 72°F high · 20% rain · light wind</div>
+      </div>
+
+      <button class="pbtn primary huge">▶ Start Pre-shift Checks</button>
+    </div>
+
+    <div class="fsl-tabbar">
+      <div class="fsl-tab on"><div class="fsl-tab-ic">🏠</div><div class="fsl-tab-lb">My Day</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">📅</div><div class="fsl-tab-lb">Schedule</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">🗺</div><div class="fsl-tab-lb">Map</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⏱</div><div class="fsl-tab-lb">Time</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⋯</div><div class="fsl-tab-lb">More</div></div>
+    </div>
+
+    <div class="phone-home"></div>
+  </div>
+</div>
+</div>
+
+<div class="phone-wrap">
+<div class="phone-label">6:28 AM · Mi Día · Español</div>
+<div class="phone">
+  <div class="phone-screen">
+    <div class="phone-notch"></div>
+    <div class="statusbar"><span>6:28</span><div class="statusbar-icons"><span>📶</span><span>📡</span><span>🔋 94%</span></div></div>
+
+    <div class="fsl-header">
+      <div style="font-size:18px">☰</div>
+      <div class="fsl-title">Mi Día<div class="fsl-title-sub">Bienvenido, J. Reyes · Viernes, 25 Abr</div></div>
+      <div style="font-size:16px">🔔</div>
+    </div>
+
+    <div class="phone-content">
+      <div class="sync-badge">
+        <div class="sync-dot"></div>
+        Sincronizado de Rippling a las 6:30 AM · próximo 7:30 AM
+      </div>
+
+      <div class="pcard ok" style="background:linear-gradient(135deg,#f8fdf9 0%,#e8f5e9 100%)">
+        <div class="pcard-title">📅 Resumen de hoy</div>
+        <div class="time-capture" style="margin-top:6px;background:#fff;border-color:#a5d6a7">
+          <div class="time-capture-row"><span class="time-capture-label">Paradas programadas</span><span class="time-capture-value">2 trabajos</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">Meta de horas (Medidor)</span><span class="time-capture-value" style="color:#2e844a">8.5 hr</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">Inicio primer trabajo</span><span class="time-capture-value">7:00 AM · Pines L07</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">Hora de regreso</span><span class="time-capture-value">5:30 PM · taller</span></div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-title">👥 Su cuadrilla hoy</div>
+        <div class="crew-list">
+          <span class="crew-chip"><span class="crew-dot"></span>J. Reyes (usted)</span>
+          <span class="crew-chip"><span class="crew-dot"></span>R. Valle</span>
+          <span class="crew-chip"><span class="crew-dot"></span>E. Valentine</span>
+          <span class="crew-chip"><span class="crew-dot"></span>C. Ortiz</span>
+        </div>
+        <div style="font-size:10px;color:#54698d;margin-top:6px">Camión T-007 · cuadrilla confirmada en Rippling</div>
+      </div>
+
+      <div style="font-size:11px;color:#54698d;font-weight:600;margin:10px 0 6px 2px;text-transform:uppercase;letter-spacing:.5px">Horario de hoy · 2 paradas</div>
+
+      <div class="sa-card">
+        <div class="sa-card-header">
+          <div class="sa-card-num">SA-2026-0612-1</div>
+          <div class="sa-card-status">PROGRAMADO</div>
+        </div>
+        <div class="sa-card-body">
+          <div class="sa-card-lot">Pines L07 · <span class="jt-badge install">Instalación</span></div>
+          <div class="sa-card-comm">8412 Berewick Pine Dr · DRH Charlotte</div>
+          <div class="sa-card-meta">
+            <span class="sa-card-meta-item"><strong>7:00 AM</strong> inicio</span>
+            <span class="sa-card-meta-item"><strong>6.5 hr</strong> meta</span>
+            <span class="sa-card-meta-item"><strong>$4,820</strong></span>
+          </div>
+        </div>
+        <div class="sa-card-drive">🚚 Manejar desde taller · 5.2 mi · 9 min</div>
+      </div>
+
+      <div class="sa-card">
+        <div class="sa-card-header">
+          <div class="sa-card-num">SA-2026-0613-1</div>
+          <div class="sa-card-status">PROGRAMADO</div>
+        </div>
+        <div class="sa-card-body">
+          <div class="sa-card-lot">Pines L08 · <span class="jt-badge install">Instalación</span></div>
+          <div class="sa-card-comm">8414 Berewick Pine Dr · DRH Charlotte</div>
+          <div class="sa-card-meta">
+            <span class="sa-card-meta-item"><strong>3:35 PM</strong> inicio</span>
+            <span class="sa-card-meta-item"><strong>2.0 hr</strong> meta</span>
+            <span class="sa-card-meta-item"><strong>$3,200</strong></span>
+          </div>
+        </div>
+        <div class="sa-card-drive">🚚 Manejar desde L07 · 0.1 mi · 1 min</div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-title">☀ Clima hoy</div>
+        <div class="pcard-sub">Despejado · 72°F máximo · 20% lluvia · viento ligero</div>
+      </div>
+
+      <button class="pbtn primary huge">▶ Empezar Inspección Pre-turno</button>
+    </div>
+
+    <div class="fsl-tabbar">
+      <div class="fsl-tab on"><div class="fsl-tab-ic">🏠</div><div class="fsl-tab-lb">Mi Día</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">📅</div><div class="fsl-tab-lb">Horario</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">🗺</div><div class="fsl-tab-lb">Mapa</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⏱</div><div class="fsl-tab-lb">Tiempo</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⋯</div><div class="fsl-tab-lb">Más</div></div>
+    </div>
+
+    <div class="phone-home"></div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<div class="narrative-panel">
+  <div class="np-time-badge">6:28 AM · My Day home screen</div>
+  <div class="np-title">After login, the foreman lands here. Schedule, MC goal, return time front and center.</div>
+  <div class="np-actor"><div class="np-actor-avatar">JR</div>J. Reyes · Crew A Foreman</div>
+
+  <div class="np-section">
+    <div class="np-section-title">English vs Español — same content, full translation</div>
+    <p>Whatever language J. Reyes picked at first launch is the one he sees here. Tab labels translate (My Day → Mi Día), section headers translate (Today's Schedule → Horario de hoy), and most importantly <strong>job scope language and CM notes display in his chosen language</strong>. WO scope items translate (Install → Instalación, Production Install → Instalación de Producción).</p>
+  </div>
+
+  <div class="np-section">
+    <div class="np-section-title">The 4 things at top — what matters most</div>
+    <ul>
+      <li><strong>Stops scheduled:</strong> 2 jobs (he can see his whole day at a glance)</li>
+      <li><strong>Goal hours / Measuring Cup:</strong> 8.5 hr — what he's expected to deliver today</li>
+      <li><strong>First job start:</strong> 7:00 AM at Pines L07 (gives him his next deadline)</li>
+      <li><strong>Expected return:</strong> 5:30 PM back at depot (so his family knows when to expect him)</li>
+    </ul>
+    <p style="margin-top:10px"><strong>This is the contract</strong> — the foreman knows what success looks like before he turns the key.</p>
+  </div>
+
+  <div class="np-section">
+    <div class="np-section-title">Then the day's stops</div>
+    <p>SA cards stacked in order. Each one shows the lot, job type, address, builder, scheduled start time, goal hours, dollar value, AND <strong>drive time from the previous stop</strong> in the blue strip at the bottom of each card. So J. Reyes can see "Drive from depot · 5.2 mi · 9 min" before L07 and "Drive from L07 · 0.1 mi · 1 min" before L08.</p>
+  </div>
+
+  <div class="np-data-flow">
+    <div class="np-data-flow-title">⚡ What loads when "My Day" opens</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Salesforce: today's SAs assigned to Crew A · J. Reyes</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Rippling: clock status (already clocked in via Rippling at 6:30)</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Measuring Cup: today's goal hours (8.5)</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Salesforce Maps: route distances + drive times between SAs</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>NOAA: today's weather pulled at 6 AM overnight refresh</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Translation layer: applies based on phone language setting</div>
+  </div>
+
+  <div class="np-callout">
+    <div class="np-callout-title">⚡ Bilingual scope</div>
+    <p>WO line items are translated <strong>at the data layer</strong>, not just UI strings. So when J. Reyes opens a Lennar WO with extended sod warranty terms in the scope notes, those terms display in Spanish — accurate translation, not Google Translate. Reduces ambiguity in the field.</p>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- (existing scenes follow) -->
+<div id="scene-morning" class="scene">
+<div class="scene-row">
+<div class="phone-stack">
+<div class="phone-wrap">
+<div class="phone-label">6:30 AM · Pre-shift at depot</div>
+<div class="phone">
+  <div class="phone-screen">
+    <div class="phone-notch"></div>
+    <div class="statusbar"><span>6:30</span><div class="statusbar-icons"><span>📶</span><span>📡</span><span>🔋 92%</span></div></div>
+
+    <div class="fsl-header">
+      <div style="font-size:18px">☰</div>
+      <div class="fsl-title">My Day<div class="fsl-title-sub">Friday, Apr 25</div></div>
+      <div style="font-size:16px">🔔</div>
+    </div>
+
+    <div class="phone-content">
+      <div class="sync-badge">
+        <div class="sync-dot"></div>
+        Synced from Rippling at 6:30 AM · next sync 7:30 AM
+      </div>
+
+      <div class="timeclock in">
+        <div class="timeclock-label">✓ Clocked In</div>
+        <div class="timeclock-time">06:30 AM</div>
+        <div class="timeclock-sub">309 Morningside Rd · Depot</div>
+        <div class="timeclock-source">⚡ Source: Rippling</div>
+      </div>
+
+      <div class="pcard gate">
+        <div class="pcard-title">⚠ Required before leaving depot</div>
+        <div class="pcard-sub">Vehicle Checklist + Loaded Checklist must both be ✓ before SAs can be marked In Route</div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-title">🚚 Vehicle Checklist · Truck T-007 <span class="pchip amber" style="margin-left:auto">3 of 10</span></div>
+        <div style="margin-top:6px">
+          <div class="checkitem done"><div class="checkitem-box done">✓</div><div class="checkitem-name done">Tires (pressure + tread)</div></div>
+          <div class="checkitem done"><div class="checkitem-box done">✓</div><div class="checkitem-name done">Lights (head, tail, signals)</div></div>
+          <div class="checkitem done"><div class="checkitem-box done">✓</div><div class="checkitem-name done">Fluids (oil, coolant, washer)</div></div>
+          <div class="checkitem"><div class="checkitem-box">○</div><div class="checkitem-name">Brakes</div></div>
+          <div class="checkitem"><div class="checkitem-box">○</div><div class="checkitem-name">Mirrors + windshield</div></div>
+          <div class="checkitem"><div class="checkitem-box">○</div><div class="checkitem-name">Wipers + horn</div></div>
+          <div class="checkitem"><div class="checkitem-box">○</div><div class="checkitem-name">Fuel level (≥ ½)</div></div>
+          <div class="checkitem"><div class="checkitem-box">○</div><div class="checkitem-name">Trailer hitch + safety chains</div></div>
+          <div class="checkitem"><div class="checkitem-box">○</div><div class="checkitem-name">Fire extinguisher present</div></div>
+          <div class="checkitem"><div class="checkitem-box">○</div><div class="checkitem-name">First aid kit present</div></div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-title">📦 Loaded Checklist · Today's materials <span class="pchip amber" style="margin-left:auto">0 of 7</span></div>
+        <div style="font-size:10px;color:#54698d;margin-bottom:6px">For Pines L07 + Pines L08 (auto-pulled from WO scopes)</div>
+        <div>
+          <div class="checkitem"><div class="checkitem-box">○</div><div class="checkitem-name">Crepe Myrtle 7gal (3 trees)</div></div>
+          <div class="checkitem"><div class="checkitem-box">○</div><div class="checkitem-name">Willow Oak 2.5" (2 trees)</div></div>
+          <div class="checkitem"><div class="checkitem-box">○</div><div class="checkitem-name">Loropetalum 3gal (16 shrubs)</div></div>
+          <div class="checkitem"><div class="checkitem-box">○</div><div class="checkitem-name">Triple-shred mulch (5 cy)</div></div>
+          <div class="checkitem"><div class="checkitem-box">○</div><div class="checkitem-name">Tools (shovels, rakes, edgers)</div></div>
+          <div class="checkitem"><div class="checkitem-box">○</div><div class="checkitem-name">Wheelbarrows (2)</div></div>
+          <div class="checkitem"><div class="checkitem-box">○</div><div class="checkitem-name">Water cooler + PPE</div></div>
+        </div>
+      </div>
+
+      <button class="pbtn disabled huge">Start First Job (locked · 2 checklists incomplete)</button>
+    </div>
+
+    <div class="fsl-tabbar">
+      <div class="fsl-tab on"><div class="fsl-tab-ic">🏠</div><div class="fsl-tab-lb">My Day</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">📅</div><div class="fsl-tab-lb">Schedule</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">🗺</div><div class="fsl-tab-lb">Map</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⏱</div><div class="fsl-tab-lb">Time</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⋯</div><div class="fsl-tab-lb">More</div></div>
+    </div>
+
+    <div class="phone-home"></div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="narrative-panel">
+  <div class="np-time-badge">6:30 AM · Pre-shift at depot</div>
+  <div class="np-title">J. Reyes opens the app at the depot. Two gating checklists before he can roll.</div>
+  <div class="np-actor"><div class="np-actor-avatar">JR</div>J. Reyes · Crew A Foreman</div>
+
+  <div class="np-section">
+    <div class="np-section-title">What he sees at the top</div>
+    <p>The <strong>green sync indicator</strong> at top tells him the app pulled from Rippling at 6:30 AM. He's already clocked in (over in Rippling) — FSL Mobile reflects that status. He didn't tap a button in this app to clock in; that happens in Rippling and syncs over.</p>
+  </div>
+
+  <div class="np-section">
+    <div class="np-section-title">Two required checklists before leaving</div>
+    <p><strong>Vehicle Checklist (10 items)</strong> — tires, lights, fluids, brakes, mirrors, wipers, fuel, hitch, fire extinguisher, first aid kit. Each item gets a tap to confirm. Truck (T-007) is logged. No photos needed — quick visual check, tap, move on.</p>
+    <p style="margin-top:8px"><strong>Loaded Checklist (7 items)</strong> — auto-pulled from today's WO scopes. The system already knows he needs 5 trees, 16 Loropetalum, 5 cy mulch, plus tools, wheelbarrows, PPE. Each gets a tap as it's loaded. <strong>Sod is NOT on this list</strong> — sod is delivered directly to the job site by the supplier, and quality is verified on arrival (next scenes).</p>
+  </div>
+
+  <div class="np-section">
+    <div class="np-section-title">The big disabled button</div>
+    <p>"Start First Job" is grayed out until both checklists hit 100%. <strong>The system won't let him mark an SA In Route to Pines L07 until safety + materials are confirmed.</strong> No checklist, no work.</p>
+  </div>
+
+  <div class="np-data-flow">
+    <div class="np-data-flow-title">⚡ Rippling sync schedule</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>6:30 AM:</strong> Initial sync · pulls clock-in events, today's expected hours, PTO</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Hourly:</strong> 7:30, 8:30, 9:30… keeps clock status fresh</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>On break / out:</strong> immediate push from Rippling when foreman taps in Rippling app</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Bidirectional:</strong> SA actual start/end times push back to Rippling for payroll matching</div>
+  </div>
+
+  <div class="np-callout">
+    <div class="np-callout-title">⚠ Governance: clock-in lives in Rippling</div>
+    <p>FSL Mobile <strong>displays</strong> time clock status — it doesn't replace Rippling. Foremen clock in/out via Rippling (their existing process). FSL Mobile is the ops layer on top: checklists, jobs, photos, status. Single source of truth for time = Rippling.</p>
+  </div>
+
+  <div class="np-section" style="margin-top:18px">
+    <div class="np-section-title">Connected systems</div>
+    <div class="np-systems">
+      <span class="np-system-chip">Rippling time clock</span>
+      <span class="np-system-chip">WEX GPS (vehicle ID)</span>
+      <span class="np-system-chip">Salesforce Schedule Board</span>
+      <span class="np-system-chip">Vehicle Inspection Log</span>
+      <span class="np-system-chip">Material Pull List</span>
+    </div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SCENE 2: DRIVE TO SITE (NEW) ==================== -->
+<div id="scene-drive" class="scene">
+<div class="scene-row">
+<div class="phone-stack">
+<div class="phone-wrap">
+<div class="phone-label">6:55 AM · Driving to Pines L07</div>
+<div class="phone">
+  <div class="phone-screen">
+    <div class="phone-notch"></div>
+    <div class="statusbar"><span>6:55</span><div class="statusbar-icons"><span>📶</span><span>📡</span><span>🔋 91%</span></div></div>
+
+    <div class="fsl-header" style="background:#0070d2">
+      <div class="fsl-back">‹</div>
+      <div class="fsl-title">In Route<div class="fsl-title-sub">Depot → Pines L07 · 5.2 mi</div></div>
+      <div class="fsl-action">⋯</div>
+    </div>
+
+    <div class="phone-content">
+      <div class="timeclock driving">
+        <div class="timeclock-label">🚚 Driving</div>
+        <div class="timeclock-time">9 min ETA</div>
+        <div class="timeclock-sub">Arriving 7:04 AM · 5.2 mi remaining</div>
+        <div class="timeclock-source">⚡ WEX GPS · live</div>
+      </div>
+
+      <div class="fsl-map">
+        <svg viewBox="0 0 340 220" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+          <rect x="0" y="0" width="340" height="220" fill="#d4e3f0"/>
+          <line x1="0" y1="60" x2="340" y2="60" stroke="#a5b8c9" stroke-width="3"/>
+          <line x1="0" y1="140" x2="340" y2="140" stroke="#a5b8c9" stroke-width="3"/>
+          <line x1="100" y1="0" x2="100" y2="220" stroke="#a5b8c9" stroke-width="3"/>
+          <line x1="220" y1="0" x2="220" y2="220" stroke="#a5b8c9" stroke-width="3"/>
+
+          <!-- Route polyline -->
+          <path d="M 50,100 L 100,100 L 100,140 L 220,140 L 220,180 L 280,180" stroke="#0070d2" stroke-width="5" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+
+          <!-- Start: depot -->
+          <circle cx="50" cy="100" r="8" fill="#16325c" stroke="#fff" stroke-width="2"/>
+          <text x="50" y="86" font-size="9" fill="#16325c" font-weight="bold" text-anchor="middle" font-family="sans-serif">Depot</text>
+
+          <!-- Current position pulsing -->
+          <circle cx="160" cy="140" r="10" fill="#0070d2" stroke="#fff" stroke-width="3"/>
+          <circle cx="160" cy="140" r="14" fill="none" stroke="#0070d2" stroke-width="2" opacity="0.5"/>
+
+          <!-- End: Pines L07 -->
+          <circle cx="280" cy="180" r="8" fill="#c23934" stroke="#fff" stroke-width="2"/>
+          <text x="280" y="200" font-size="9" fill="#c23934" font-weight="bold" text-anchor="middle" font-family="sans-serif">Pines L07</text>
+
+          <text x="170" y="14" font-size="10" fill="#54698d" text-anchor="middle" font-family="sans-serif">Charlotte South · Z3</text>
+        </svg>
+      </div>
+
+      <button class="pbtn primary">🧭 Open in Apple Maps</button>
+
+      <div class="pcard">
+        <div class="pcard-title">📍 Turn-by-turn directions</div>
+        <div class="dir-step">
+          <div class="dir-icon">↑</div>
+          <div class="dir-info"><div class="dir-instruction">Head south on Morningside Rd</div><div class="dir-distance">0.8 mi · 2 min</div></div>
+        </div>
+        <div class="dir-step">
+          <div class="dir-icon">↰</div>
+          <div class="dir-info"><div class="dir-instruction">Turn left onto W Tyvola Rd</div><div class="dir-distance">1.2 mi · 3 min</div></div>
+        </div>
+        <div class="dir-step">
+          <div class="dir-icon">↱</div>
+          <div class="dir-info"><div class="dir-instruction">Take ramp to I-485 W</div><div class="dir-distance">2.4 mi · 3 min</div></div>
+        </div>
+        <div class="dir-step">
+          <div class="dir-icon">↰</div>
+          <div class="dir-info"><div class="dir-instruction">Take exit 4 to Steele Creek Rd</div><div class="dir-distance">0.6 mi · 1 min</div></div>
+        </div>
+        <div class="dir-step">
+          <div class="dir-icon">📍</div>
+          <div class="dir-info"><div class="dir-instruction">Arrive at Pines L07 · 8412 Berewick Pine Dr</div><div class="dir-distance">0.2 mi · destination on right</div></div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-title">📋 Next up at Pines L07</div>
+        <div class="pcard-sub">SA-2026-0612-1 · <span class="jt-badge install">Production Install</span></div>
+        <div class="pcard-sub" style="margin-top:4px">Goal 6.5 hr · 7:00 AM scheduled · 4 Before photos required on arrival</div>
+      </div>
+    </div>
+
+    <div class="fsl-tabbar">
+      <div class="fsl-tab"><div class="fsl-tab-ic">🏠</div><div class="fsl-tab-lb">My Day</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">📅</div><div class="fsl-tab-lb">Schedule</div></div>
+      <div class="fsl-tab on"><div class="fsl-tab-ic">🗺</div><div class="fsl-tab-lb">Map</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⏱</div><div class="fsl-tab-lb">Time</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⋯</div><div class="fsl-tab-lb">More</div></div>
+    </div>
+
+    <div class="phone-home"></div>
+  </div>
+</div>
+</div>
+
+<!-- Second phone showing notifications going out -->
+<div class="phone-wrap">
+<div class="phone-label" style="color:#ff8585">⚡ Same moment · FM Jimbo's phone</div>
+<div class="phone">
+  <div class="phone-screen" style="background:#000">
+    <div class="phone-notch"></div>
+
+    <!-- Phone lock screen with notifications -->
+    <div style="background:linear-gradient(180deg,#1a1a2e 0%,#16213e 100%);height:100%;padding:50px 14px 14px 14px;display:flex;flex-direction:column;color:#fff">
+      <div style="text-align:center;margin-bottom:24px">
+        <div style="font-size:48px;font-weight:300;letter-spacing:-2px">6:55</div>
+        <div style="font-size:13px;opacity:.85">Friday, April 25</div>
+      </div>
+
+      <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding-left:4px">Notifications · just now</div>
+
+      <!-- Push notif 1: to Jimbo (FM) -->
+      <div class="push-notif" style="background:rgba(255,255,255,.97);margin-bottom:8px">
+        <div class="push-header">
+          <div class="push-app-icon" style="background:#0070d2">L</div>
+          <div class="push-app-name">LOVING FM Mobile</div>
+          <div class="push-time">now</div>
+        </div>
+        <div class="push-title">🚚 Crew A (J. Reyes) started their day</div>
+        <div class="push-body">Departed depot 6:55 AM · headed to Pines L07 (9 min ETA) · Truck T-007 · 4 crew confirmed</div>
+      </div>
+
+      <!-- Push notif 2: to Jim Howie -->
+      <div class="push-notif" style="background:rgba(255,255,255,.97);margin-bottom:14px">
+        <div class="push-header">
+          <div class="push-app-icon" style="background:#534ab7">L</div>
+          <div class="push-app-name">LOVING Fleet Ops</div>
+          <div class="push-time">now</div>
+        </div>
+        <div class="push-title">🚚 Truck T-007 left depot</div>
+        <div class="push-body">Crew A · J. Reyes · Vehicle checklist 10/10 ✓ · Loaded checklist 8/8 ✓ · WEX tracking active</div>
+      </div>
+
+      <!-- Earlier notifications -->
+      <div style="font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;padding-left:4px">Earlier this morning</div>
+
+      <div class="push-notif" style="background:rgba(255,255,255,.85);margin-bottom:6px;opacity:.85">
+        <div class="push-header">
+          <div class="push-app-icon" style="background:#04844b">R</div>
+          <div class="push-app-name">Rippling</div>
+          <div class="push-time">6:30 AM</div>
+        </div>
+        <div class="push-title">Crew A clocked in</div>
+        <div class="push-body">J. Reyes · R. Valle · E. Valentine · C. Ortiz</div>
+      </div>
+
+      <div class="push-notif" style="background:rgba(255,255,255,.85);margin-bottom:14px;opacity:.85">
+        <div class="push-header">
+          <div class="push-app-icon" style="background:#fe9339">L</div>
+          <div class="push-app-name">LOVING FM Mobile</div>
+          <div class="push-time">6:00 AM</div>
+        </div>
+        <div class="push-title">Today's roster ready</div>
+        <div class="push-body">4 crews · 18 SAs · 112.5 goal hr · clear weather · no PTO disruptions</div>
+      </div>
+
+      <div style="margin-top:auto;text-align:center;font-size:10px;color:rgba(255,255,255,.4)">Swipe up to unlock</div>
+    </div>
+
+    <div class="phone-home" style="background:rgba(255,255,255,.4)"></div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<div class="narrative-panel">
+  <div class="np-time-badge">6:55 AM · In route · notifications firing</div>
+  <div class="np-title">Truck rolling. WEX GPS knows. FM Jimbo + Jim Howie both get pinged instantly.</div>
+  <div class="np-actor"><div class="np-actor-avatar">JR</div>J. Reyes · Crew A Foreman</div>
+
+  <div class="np-section">
+    <div class="np-section-title">What J. Reyes sees (left phone)</div>
+    <p>Live <strong>ETA card</strong> at top updates every 30 seconds based on traffic. Map shows his blue dot pulsing along the route. <strong>Open in Apple Maps</strong> button hands off to native nav app for voice guidance. Turn-by-turn list in-app for quick reference.</p>
+  </div>
+
+  <div class="np-section">
+    <div class="np-section-title">What FM Jimbo + Jim Howie see (right phone)</div>
+    <p>The second the truck leaves the depot geofence, <strong>two push notifications fire in parallel</strong>:</p>
+    <ul>
+      <li><strong>To Jimbo (FM):</strong> "🚚 Crew A (J. Reyes) started their day · departed depot 6:55 AM · headed to Pines L07 (9 min ETA) · 4 crew confirmed"</li>
+      <li><strong>To Jim Howie (Fleet Ops):</strong> "🚚 Truck T-007 left depot · Vehicle checklist 10/10 ✓ · Loaded checklist 8/8 ✓ · WEX tracking active"</li>
+    </ul>
+    <p style="margin-top:8px">Both get it on their phone lock screen — no app open needed. Jimbo tracks the 4 crews under him, Jim Howie tracks every truck in the fleet.</p>
+  </div>
+
+  <div class="np-data-flow">
+    <div class="np-data-flow-title">⚡ Drive time tracked end-to-end</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Departure trigger:</strong> 6:55 AM (truck exits depot geofence)</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>SA-0612-1 status:</strong> Dispatched → <strong>In Route</strong></div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Parallel push notifications:</strong> FM Jimbo + Jim Howie (Fleet Ops)</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>WEX GPS ping every 3 min:</strong> location + speed + heading</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Arrival:</strong> 7:09 AM (geofence trigger at Pines L07 lot pin)</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Drive time captured:</strong> 14 min · 5.2 mi (logged on WO + Measuring Cup)</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Excluded from active job time:</strong> drive ≠ work for variance calculation</div>
+  </div>
+
+  <div class="np-callout">
+    <div class="np-callout-title">⚡ Why ping both FM + Fleet Ops</div>
+    <p><strong>Jimbo (FM)</strong> cares about crew productivity — is Crew A on time, are they on the way? <strong>Jim Howie (Fleet Ops)</strong> cares about vehicle status — did the checklists pass, is the truck moving, is WEX tracking. Two different lenses on the same event. Splitting the notification means each person gets what matters to them without noise.</p>
+  </div>
+
+  <div class="np-section" style="margin-top:18px">
+    <div class="np-section-title">Why drive time matters</div>
+    <p>Captured separately from active work time so Measuring Cup variance is honest. If a crew drives 45 min between scattered communities, that's a routing problem — not a productivity problem. Operations sees the drive time roll-up weekly and rebalances territories accordingly.</p>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SCENE 3: ARRIVING ==================== -->
+<div id="scene-arriving" class="scene">
+<div class="scene-row">
+<div class="phone-stack">
+<div class="phone-wrap">
+<div class="phone-label">7:09 AM · Just pulled up to Pines L07</div>
+<div class="phone">
+  <div class="phone-screen">
+    <div class="phone-notch"></div>
+    <div class="statusbar"><span>7:09</span><div class="statusbar-icons"><span>📶</span><span>📡</span><span>🔋 90%</span></div></div>
+
+    <div class="fsl-header">
+      <div class="fsl-back">‹</div>
+      <div class="fsl-title">SA-2026-0612-1<div class="fsl-title-sub">Pines L07 · <span class="jt-badge install" style="background:rgba(255,255,255,.15);color:#fff">Install</span></div></div>
+      <div class="fsl-action">Map</div>
+    </div>
+
+    <div class="phone-content">
+      <div class="timeclock driving" style="background:linear-gradient(135deg,#0070d2 0%,#16325c 100%)">
+        <div class="timeclock-label">📍 Arrived (geofence detected)</div>
+        <div class="timeclock-time">07:09 AM</div>
+        <div class="timeclock-sub">8412 Berewick Pine Dr · drive 14 min · 5.2 mi</div>
+      </div>
+
+      <button class="pbtn primary huge">▶ Start Job · Confirm Arrival</button>
+
+      <div class="pcard warn">
+        <div class="pcard-title">📋 Required: Before photos (4)</div>
+        <div class="pcard-sub">Front yard, back yard, side L, side R · take all 4 to start the job</div>
+      </div>
+
+      <div class="photo-grid">
+        <div class="photo-tile"><div class="photo-icon">📷</div><div class="photo-label">Front Yard</div></div>
+        <div class="photo-tile"><div class="photo-icon">📷</div><div class="photo-label">Back Yard</div></div>
+        <div class="photo-tile"><div class="photo-icon">📷</div><div class="photo-label">Side Left</div></div>
+        <div class="photo-tile"><div class="photo-icon">📷</div><div class="photo-label">Side Right</div></div>
+      </div>
+
+      <div class="pcard alert" style="background:#fef9f9">
+        <div class="pcard-title" style="color:#991b1b">🌱 Required: Sod Quality Photo</div>
+        <div class="pcard-sub" style="color:#991b1b">WO scope includes sod (3,200 sf Bermuda 419) — sod was delivered to site by Super Sod. <strong>Photograph the pallets before laying.</strong> If quality is bad, tap "Flag Sod Issue" instead.</div>
+      </div>
+
+      <div class="photo-grid" style="grid-template-columns:1fr 1fr">
+        <div class="photo-tile"><div class="photo-icon">🌱</div><div class="photo-label">Sod Pallets</div><div style="font-size:9px;opacity:.7">tap to capture</div></div>
+        <div class="photo-tile" style="background:#fff;border:2px solid #c23934;color:#991b1b">
+          <div class="photo-icon">🚩</div>
+          <div class="photo-label" style="color:#991b1b">Flag Sod Issue</div>
+          <div style="font-size:9px;color:#991b1b;opacity:.85">Brown · dry · pest · damaged</div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-title">📝 CM Notes from Sarah Mitchell</div>
+        <div class="pcard-sub" style="font-style:italic">"Construction debris stacked on side yard will be cleared by Monday. Please plant what you can today."</div>
+        <div class="pcard-sub" style="margin-top:6px;font-size:10px">Sent yesterday 11:30 AM</div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-title">🌱 Today's scope</div>
+        <div class="pcard-sub">3,200 sf Bermuda 419 · 5 trees (3 Crepe + 2 Willow Oak) · 8 Loropetalum · 3 cy mulch</div>
+        <div style="font-size:10px;color:#54698d;margin-top:4px">Per DRH Charlotte MSA std package · $4,820 · 6.5 hr goal</div>
+      </div>
+    </div>
+
+    <div class="fsl-tabbar">
+      <div class="fsl-tab"><div class="fsl-tab-ic">🏠</div><div class="fsl-tab-lb">My Day</div></div>
+      <div class="fsl-tab on"><div class="fsl-tab-ic">📋</div><div class="fsl-tab-lb">Active Job</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">🗺</div><div class="fsl-tab-lb">Map</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⏱</div><div class="fsl-tab-lb">Time</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⋯</div><div class="fsl-tab-lb">More</div></div>
+    </div>
+
+    <div class="phone-home"></div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="narrative-panel">
+  <div class="np-time-badge">7:09 AM · On site</div>
+  <div class="np-title">Pulls into 8412 Berewick Pine Dr. Geofence triggers. App knows he's here.</div>
+  <div class="np-actor"><div class="np-actor-avatar">JR</div>J. Reyes · Crew A Foreman</div>
+
+  <div class="np-section">
+    <div class="np-section-title">What he sees</div>
+    <p>Big blue <strong>Start Job · Confirm Arrival</strong> button. Drive time is already captured (14 min, 5.2 mi from depot). Below: 4 empty Before Photo slots — required to start. Sarah Mitchell's note about debris is right there. Today's scope summarized below.</p>
+  </div>
+
+  <div class="np-section">
+    <div class="np-section-title">Why the sod quality photo</div>
+    <p>Sod is delivered to the site by the supplier (typically Super Sod) in pallets. <strong>If the WO scope includes sod, the foreman MUST photograph the pallets before laying.</strong> This protects LOVING — if the sod is bad (brown, dry, pest-damaged, broken pallets), the foreman taps <strong>Flag Sod Issue</strong> and the system routes the issue to the supplier for replacement, not to LOVING for warranty. Photo evidence at delivery is the difference between supplier accountability and LOVING eating the cost.</p>
+  </div>
+
+  <div class="np-section">
+    <div class="np-section-title">What he does</div>
+    <ul>
+      <li>Taps <strong>Start Job · Confirm Arrival</strong> → SA flips to <strong>In Progress</strong></li>
+      <li><strong>Job start time captured: 7:09 AM</strong> (this is the official start of work)</li>
+      <li>Walks the perimeter taking 4 Before photos (front, back, side L, side R)</li>
+      <li>Walks to the sod pallets · takes the Sod Quality photo</li>
+      <li>Sod looks fine today · skips the Flag Sod Issue button</li>
+      <li>Reads Sarah's note about side yard debris</li>
+      <li>Mental note: 2 Willow Oaks may not get planted today</li>
+    </ul>
+  </div>
+
+  <div class="np-data-flow">
+    <div class="np-data-flow-title">⚡ Job clock starts here</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>SA-0612-1 status:</strong> In Route → <strong>In Progress</strong></div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Job Start Time:</strong> 7:09 AM (logged on WO + SA)</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Job Type stamp:</strong> Production Install · DRH Charlotte</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Before photos auto-tagged + GPS coordinates + timestamp</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Sod Quality photo:</strong> auto-tagged "Sod-Pre-Install" · supplier match (Super Sod batch ID)</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Photos uploaded to Salesforce Files (parent: WO-0612)</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Jimbo's FM Mobile: push notification "Crew A on site at Pines L07"</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Measuring Cup: 6.5-hr goal clock starts <strong>now</strong> (not at 7:00)</div>
+  </div>
+
+  <div class="np-callout">
+    <div class="np-callout-title">⚠ If foreman taps "Flag Sod Issue"</div>
+    <p>SA pauses · system creates a Sod Issue ticket · routed to <strong>Jimbo (FM)</strong> + <strong>Customer Care</strong> simultaneously · supplier (Super Sod) gets emailed with the photo · replacement sod is dispatched same day · this WO's clock pauses until replacement arrives. The foreman doesn't lay bad sod and doesn't get blamed for it.</p>
+  </div>
+
+  <div class="np-section" style="margin-top:18px">
+    <div class="np-section-title">Why start time per job matters</div>
+    <p>Every job stamps a <strong>Job Start</strong> and <strong>Job End</strong> time. This lets us measure <strong>actual duration by Job Type</strong>: how long does an average DRH Install take vs a Lennar Install? Aqua install? Customer Care site visit? The Measuring Cup uses these timestamps for variance, and the analytics layer rolls them up by builder, by community, by FM, by job type.</p>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SCENE 4: ACTIVE JOB ==================== -->
+<div id="scene-active" class="scene">
+<div class="scene-row">
+<div class="phone-stack">
+<div class="phone-wrap">
+<div class="phone-label">10:00 AM · Mid-job, sod down</div>
+<div class="phone">
+  <div class="phone-screen">
+    <div class="phone-notch"></div>
+    <div class="statusbar"><span>10:00</span><div class="statusbar-icons"><span>📶</span><span>📡</span><span>🔋 84%</span></div></div>
+
+    <div class="fsl-header">
+      <div class="fsl-back">‹</div>
+      <div class="fsl-title">Pines L07<div class="fsl-title-sub">SA-0612-1 · <span class="jt-badge install" style="background:rgba(255,255,255,.15);color:#fff">Install</span> · In Progress</div></div>
+      <div class="fsl-action">⋯</div>
+    </div>
+
+    <div class="phone-content">
+      <div class="time-capture">
+        <div class="time-capture-row"><span class="time-capture-label">Job Start</span><span class="time-capture-value">7:09 AM</span></div>
+        <div class="time-capture-row"><span class="time-capture-label">Elapsed (active)</span><span class="time-capture-value">2h 51m</span></div>
+        <div class="time-capture-row"><span class="time-capture-label">Goal</span><span class="time-capture-value">6h 30m</span></div>
+        <div class="time-capture-row"><span class="time-capture-label">Projected end</span><span class="time-capture-value" style="color:#2e844a">1:18 PM (12 min early)</span></div>
+      </div>
+
+      <div class="pcard ok">
+        <div class="pcard-title">⏱ On track · -0.2 hr</div>
+        <div class="progress-track"><div class="progress-fill" style="width:45%"></div></div>
+      </div>
+
+      <div style="font-size:11px;color:#54698d;font-weight:600;margin:8px 0 6px 2px;text-transform:uppercase;letter-spacing:.5px">Job checklist</div>
+
+      <div class="line-check">
+        <div class="line-checkbox checked">✓</div>
+        <div class="line-info">
+          <div class="line-name">Site prep + grading</div>
+          <div class="line-qty">Complete · 7:30 AM</div>
+        </div>
+      </div>
+      <div class="line-check">
+        <div class="line-checkbox checked">✓</div>
+        <div class="line-info">
+          <div class="line-name">Bermuda 419 sod</div>
+          <div class="line-qty">3,200 sf · Complete · 9:42 AM</div>
+        </div>
+      </div>
+      <div class="line-check">
+        <div class="line-checkbox checked">✓</div>
+        <div class="line-info">
+          <div class="line-name">Crepe Myrtle (3)</div>
+          <div class="line-qty">3 of 3 planted · 9:55 AM</div>
+        </div>
+      </div>
+      <div class="line-check" style="background:#fffbeb;border:1px solid #f9c725">
+        <div class="line-checkbox unchecked">○</div>
+        <div class="line-info">
+          <div class="line-name" style="color:#92400e">Willow Oak (2)</div>
+          <div class="line-qty" style="color:#92400e">⚠ Side yard blocked by debris</div>
+        </div>
+      </div>
+      <div class="line-check">
+        <div class="line-checkbox unchecked">○</div>
+        <div class="line-info">
+          <div class="line-name">Loropetalum (8)</div>
+          <div class="line-qty">In progress</div>
+        </div>
+      </div>
+      <div class="line-check">
+        <div class="line-checkbox unchecked">○</div>
+        <div class="line-info">
+          <div class="line-name">Mulch beds (3 cy)</div>
+          <div class="line-qty">Pending</div>
+        </div>
+      </div>
+
+      <button class="pbtn outline" style="margin-top:10px">📷 Add progress photo</button>
+      <button class="pbtn outline">📝 Add note</button>
+    </div>
+
+    <div class="fsl-tabbar">
+      <div class="fsl-tab"><div class="fsl-tab-ic">🏠</div><div class="fsl-tab-lb">My Day</div></div>
+      <div class="fsl-tab on"><div class="fsl-tab-ic">📋</div><div class="fsl-tab-lb">Active Job</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">🗺</div><div class="fsl-tab-lb">Map</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⏱</div><div class="fsl-tab-lb">Time</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⋯</div><div class="fsl-tab-lb">More</div></div>
+    </div>
+
+    <div class="phone-home"></div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="narrative-panel">
+  <div class="np-time-badge">10:00 AM · Mid-job</div>
+  <div class="np-title">Sod is down. Crepe Myrtles in. Working on shrubs. Willow Oaks blocked.</div>
+  <div class="np-actor"><div class="np-actor-avatar">JR</div>J. Reyes · Crew A Foreman</div>
+
+  <div class="np-section">
+    <div class="np-section-title">What he sees</div>
+    <p>Top: a <strong>time capture box</strong> showing Job Start (7:09 AM), elapsed time, goal, and projected end. He's tracking 12 min ahead of goal. Below: the job checklist with each line item. He taps each one as the crew completes it. Willow Oak line is amber because the side yard is still blocked.</p>
+  </div>
+
+  <div class="np-section">
+    <div class="np-section-title">What he does</div>
+    <ul>
+      <li>Taps line items as crew completes them — each tap stamps a timestamp</li>
+      <li>Snaps a quick "sod laid" photo when sod's down</li>
+      <li>Tags the Willow Oak line "blocked" with reason "side yard debris"</li>
+      <li>Mental note for the 2PM Health Check coming in 4 hours</li>
+    </ul>
+  </div>
+
+  <div class="np-data-flow">
+    <div class="np-data-flow-title">⚡ Per-line-item time tracking</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Site prep started 7:09 · ended 7:30 = 21 min</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Sod started 7:30 · ended 9:42 = 2h 12m (3,200 sf · 2.5 sec/sf)</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Crepe Myrtle started 9:42 · ended 9:55 = 13 min (3 trees · ~4 min each)</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Each timestamp rolls up to <strong>Job Type analytics</strong></div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Sarah Mitchell can see live status from her CM portal</div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SCENE 5: LUNCH BREAK ==================== -->
+<div id="scene-lunch" class="scene">
+<div class="scene-row">
+<div class="phone-stack">
+<div class="phone-wrap">
+<div class="phone-label">12:00 PM · Lunch break</div>
+<div class="phone">
+  <div class="phone-screen">
+    <div class="phone-notch"></div>
+    <div class="statusbar"><span>12:00</span><div class="statusbar-icons"><span>📶</span><span>📡</span><span>🔋 78%</span></div></div>
+
+    <div class="fsl-header">
+      <div class="fsl-back">‹</div>
+      <div class="fsl-title">On Break<div class="fsl-title-sub">Pines L07 · paused · synced from Rippling</div></div>
+      <div class="fsl-action"></div>
+    </div>
+
+    <div class="phone-content">
+      <div class="sync-badge amber">
+        <div class="sync-dot"></div>
+        Last Rippling sync: 11:30 AM · break detected
+      </div>
+
+      <div class="timeclock break">
+        <div class="timeclock-label">⏸ On Lunch Break</div>
+        <div class="timeclock-time">12:00 PM</div>
+        <div class="timeclock-sub">SA timer paused · Rippling tracking</div>
+        <div class="timeclock-source">⚡ Source: Rippling</div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-title">⏱ Today's time so far</div>
+        <div class="time-capture" style="margin-bottom:0">
+          <div class="time-capture-row"><span class="time-capture-label">Clocked in (Rippling)</span><span class="time-capture-value">6:30 AM</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">Drive time (depot → L07)</span><span class="time-capture-value">14 min</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">Job 1 active (L07)</span><span class="time-capture-value">4h 51m</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">Lunch break (current)</span><span class="time-capture-value">0 min</span></div>
+          <div class="time-capture-row" style="border-top:1px solid #e3f0fb;padding-top:6px;margin-top:4px"><span class="time-capture-label" style="font-weight:600">Total worked</span><span class="time-capture-value">5h 5m</span></div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-title">📋 Job status — Pines L07</div>
+        <div class="pcard-sub">3 of 6 line items complete · 1 blocked (Willow Oaks) · projected 6.2 hr finish (under 6.5 goal)</div>
+        <div class="progress-track"><div class="progress-fill" style="width:55%"></div></div>
+      </div>
+
+      <div class="pcard warn">
+        <div class="pcard-title">⏰ Coming up after lunch</div>
+        <div class="pcard-sub">12:30 — Resume Pines L07 (Loropetalum + mulch)</div>
+        <div class="pcard-sub" style="margin-top:4px"><strong style="color:#c23934">2:00 — 2PM Health Check (required)</strong></div>
+        <div class="pcard-sub" style="margin-top:4px">3:30 — Finish L07, drive 1 min to L08</div>
+        <div class="pcard-sub" style="margin-top:4px">3:35 — Start Pines L08 (2 hr)</div>
+      </div>
+    </div>
+
+    <div class="fsl-tabbar">
+      <div class="fsl-tab"><div class="fsl-tab-ic">🏠</div><div class="fsl-tab-lb">My Day</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">📋</div><div class="fsl-tab-lb">Active Job</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">🗺</div><div class="fsl-tab-lb">Map</div></div>
+      <div class="fsl-tab on"><div class="fsl-tab-ic">⏱</div><div class="fsl-tab-lb">Time</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⋯</div><div class="fsl-tab-lb">More</div></div>
+    </div>
+
+    <div class="phone-home"></div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="narrative-panel">
+  <div class="np-time-badge">12:00 PM · Break</div>
+  <div class="np-title">Crew sits in the truck with sandwiches. Lunch was started in Rippling. FSL Mobile reflects it.</div>
+  <div class="np-actor"><div class="np-actor-avatar">JR</div>J. Reyes · Crew A Foreman</div>
+
+  <div class="np-section">
+    <div class="np-section-title">What he sees</div>
+    <p>Amber sync indicator at top — last sync 11:30 AM, break detected from Rippling at 12:00 PM. Big amber <strong>On Lunch Break</strong> card. Today's time breakdown so he knows exactly where he stands. Job progress at 55%. Heads-up about the 2 PM Health Check in capital letters so he doesn't get caught off guard.</p>
+  </div>
+
+  <div class="np-section">
+    <div class="np-section-title">What he does</div>
+    <ul>
+      <li>Tapped <strong>Start Lunch</strong> in Rippling app at 12:00 PM</li>
+      <li>FSL Mobile picked it up on the next sync (or via real-time push)</li>
+      <li>SA timer auto-pauses</li>
+      <li>Eats lunch in the truck</li>
+      <li>Around 12:30, taps <strong>End Lunch</strong> in Rippling — FSL Mobile auto-resumes</li>
+    </ul>
+  </div>
+
+  <div class="np-data-flow">
+    <div class="np-data-flow-title">⚡ How the break syncs</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>12:00 PM:</strong> JR taps Lunch in Rippling app · time entry split begins</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Within 30 sec:</strong> Rippling pushes break event to FSL Mobile</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>SA-0612-1:</strong> active job timer pauses · "On Break" status</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Measuring Cup:</strong> excludes break from variance calc (accurate)</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>NC labor compliance:</strong> 30-min break logged after 6 hr work · auto-tracked</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>If break &lt; 25 min:</strong> system flags for FM review</div>
+  </div>
+
+  <div class="np-callout">
+    <div class="np-callout-title">⚠ Why Rippling owns the time</div>
+    <p>Single source of truth = Rippling. Foremen already use it for time. Building a competing time clock in FSL Mobile would create reconciliation headaches and double-entry. FSL Mobile <strong>reflects</strong> what Rippling says.</p>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SCENE 6: 2PM HEALTH CHECK ==================== -->
+<div id="scene-health" class="scene">
+<div class="scene-row">
+<div class="phone-stack">
+<div class="phone-wrap">
+<div class="phone-label">2:00 PM · The big moment</div>
+<div class="phone">
+  <div class="phone-screen">
+    <div class="phone-notch"></div>
+    <div class="statusbar"><span>2:00</span><div class="statusbar-icons"><span>📶</span><span>📡</span><span>🔋 71%</span></div></div>
+
+    <div style="padding:8px 12px;background:#f3f3f3">
+      <div class="push-notif">
+        <div class="push-header">
+          <div class="push-app-icon">L</div>
+          <div class="push-app-name">LOVING FSL</div>
+          <div class="push-time">now</div>
+        </div>
+        <div class="push-title">⏰ 2 PM Health Check</div>
+        <div class="push-body">Required: flag every active SA Green or Red. You have 1 active job: Pines L07.</div>
+      </div>
+    </div>
+
+    <div class="fsl-header" style="background:#c23934">
+      <div class="fsl-back">‹</div>
+      <div class="fsl-title">Health Check<div class="fsl-title-sub">SA-0612-1 · Pines L07 · Required</div></div>
+      <div class="fsl-action"></div>
+    </div>
+
+    <div class="phone-content">
+      <div class="pcard alert">
+        <div class="pcard-title" style="color:#991b1b">🚨 Required action</div>
+        <div class="pcard-sub" style="color:#991b1b">Flag your active job. <strong>Green</strong> = on track or ahead. <strong>Red</strong> = behind, needs intervention, or items can't complete.</div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-title">📋 Pines L07 · Current status</div>
+        <div class="time-capture" style="margin-bottom:0">
+          <div class="time-capture-row"><span class="time-capture-label">Job started</span><span class="time-capture-value">7:09 AM</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">Elapsed (active)</span><span class="time-capture-value">6h 21m</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">Goal</span><span class="time-capture-value">6h 30m</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">Projected end</span><span class="time-capture-value" style="color:#2e844a">2:48 PM (under goal)</span></div>
+          <div class="time-capture-row" style="color:#92400e"><span class="time-capture-label">Items at risk</span><span class="time-capture-value">2 Willow Oaks</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">Items complete</span><span class="time-capture-value">4 of 6</span></div>
+        </div>
+      </div>
+
+      <div class="health-check-buttons">
+        <button class="health-btn green">🟢<br><br>GREEN<br><span style="font-size:11px;font-weight:500;opacity:.9">On track</span></button>
+        <button class="health-btn red">🔴<br><br>RED<br><span style="font-size:11px;font-weight:500;opacity:.9">Items can't finish</span></button>
+      </div>
+
+      <div class="pcard warn" style="margin-top:8px">
+        <div class="pcard-title">💡 If you tap Red</div>
+        <div class="pcard-sub">You'll flag which line items can't complete + add a note. <strong>Submits to Jimbo (FM)</strong> who reviews and creates the FJ.</div>
+      </div>
+    </div>
+
+    <div class="fsl-tabbar">
+      <div class="fsl-tab"><div class="fsl-tab-ic">🏠</div><div class="fsl-tab-lb">My Day</div></div>
+      <div class="fsl-tab on"><div class="fsl-tab-ic">📋</div><div class="fsl-tab-lb">Active Job</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">🗺</div><div class="fsl-tab-lb">Map</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⏱</div><div class="fsl-tab-lb">Time</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⋯</div><div class="fsl-tab-lb">More</div></div>
+    </div>
+
+    <div class="phone-home"></div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="narrative-panel">
+  <div class="np-time-badge urgent">⏱ 2:00 PM · MOST IMPORTANT MOMENT</div>
+  <div class="np-title">The 2PM Health Check pings every foreman across the company.</div>
+  <div class="np-actor"><div class="np-actor-avatar">JR</div>J. Reyes · Crew A Foreman</div>
+
+  <div class="np-section">
+    <div class="np-section-title">Why 2 PM</div>
+    <p>By 2 PM, foremen know what's actually going to happen. There's still <strong>3 hours of daylight</strong> to fix problems if they catch them now. Catching at 5 PM is too late — the day is over and any FJ scrambling has to happen tomorrow.</p>
+  </div>
+
+  <div class="np-section">
+    <div class="np-section-title">What he sees</div>
+    <p>Two giant buttons. <strong>GREEN</strong> means on track. <strong>RED</strong> means something can't finish — debris, weather, missing material, blocked access. The bottom card explicitly tells him what happens next: <strong>he'll flag items, then it submits to Jimbo (FM) who creates the FJ</strong>. The foreman doesn't create the FJ himself.</p>
+  </div>
+
+  <div class="np-section">
+    <div class="np-section-title">What he does</div>
+    <ul>
+      <li>Looks at the 2 Willow Oaks line — debris still there, won't move today</li>
+      <li>Taps <strong>RED</strong> for SA-0612-1</li>
+      <li>Next screen: required to flag items + add notes</li>
+      <li>Submits to Jimbo</li>
+    </ul>
+  </div>
+
+  <div class="np-callout">
+    <div class="np-callout-title">⚠ Governance: foremen don't create FJs</div>
+    <p>Foremen flag items that can't complete. That submission goes to the <strong>Field Manager (Jimbo)</strong>, who reviews, creates the FJ work order, decides scheduling, and assigns the crew. This protects against scope decisions made in the field without FM oversight.</p>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SCENE 7: FLAG & SUBMIT (NOT FJ) ==================== -->
+<div id="scene-flag" class="scene">
+<div class="scene-row">
+<div class="phone-stack">
+<div class="phone-wrap">
+<div class="phone-label">2:07 PM · After tapping Red</div>
+<div class="phone">
+  <div class="phone-screen">
+    <div class="phone-notch"></div>
+    <div class="statusbar"><span>2:07</span><div class="statusbar-icons"><span>📶</span><span>📡</span><span>🔋 70%</span></div></div>
+
+    <div class="fsl-header" style="background:#c23934">
+      <div class="fsl-back">‹</div>
+      <div class="fsl-title">Flag Items + Submit<div class="fsl-title-sub">SA-0612-1 · Routes to FM Jimbo</div></div>
+      <div class="fsl-action">Submit</div>
+    </div>
+
+    <div class="phone-content">
+      <div class="pcard alert">
+        <div class="pcard-title" style="color:#991b1b">🚨 Required: notes + flag items</div>
+        <div class="pcard-sub" style="color:#991b1b">Tag items that can't complete + add notes. Jimbo (FM) reviews + creates the FJ.</div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-title">📝 Notes (required)</div>
+        <div style="background:#f4f6f9;padding:10px;border-radius:6px;font-size:12px;color:#16325c;font-style:italic;margin-top:4px;line-height:1.5">
+          "2 Willow Oaks blocked by construction debris on side yard. Sarah Mitchell said debris will be cleared by Monday. Recommend Tuesday return for FJ."
+        </div>
+        <div style="font-size:10px;color:#54698d;margin-top:4px">Auto-attached: photo of debris + Sarah's earlier note + GPS</div>
+      </div>
+
+      <div style="font-size:11px;color:#54698d;font-weight:600;margin:8px 0 6px 2px;text-transform:uppercase;letter-spacing:.5px">Tap items that can't complete</div>
+
+      <div class="line-check">
+        <div class="line-checkbox checked">✓</div>
+        <div class="line-info"><div class="line-name">Bermuda 419 sod</div><div class="line-qty">3,200 sf · Done</div></div>
+      </div>
+      <div class="line-check">
+        <div class="line-checkbox checked">✓</div>
+        <div class="line-info"><div class="line-name">Crepe Myrtle (3)</div><div class="line-qty">3 of 3 · Done</div></div>
+      </div>
+      <div class="line-check" style="background:#fce8e8;border:1px solid #c23934">
+        <div class="line-checkbox cant">✗</div>
+        <div class="line-info"><div class="line-name" style="color:#991b1b">Willow Oak (2)</div><div class="line-qty" style="color:#991b1b">CANNOT COMPLETE · debris blocking</div></div>
+      </div>
+      <div class="line-check">
+        <div class="line-checkbox checked">✓</div>
+        <div class="line-info"><div class="line-name">Loropetalum (8)</div><div class="line-qty">8 of 8 · Done</div></div>
+      </div>
+      <div class="line-check">
+        <div class="line-checkbox checked">✓</div>
+        <div class="line-info"><div class="line-name">Mulch beds (3 cy)</div><div class="line-qty">3 cy · Done</div></div>
+      </div>
+
+      <div class="pcard warn" style="margin-top:8px">
+        <div class="pcard-title">⚠ When you tap Submit</div>
+        <div class="pcard-sub" style="font-size:11px;line-height:1.5">→ <strong>FM Jimbo</strong> gets push notification with your notes + flagged items<br>→ Jimbo reviews, creates FJ work order, schedules + assigns crew<br>→ You don't create the FJ · Jimbo does<br>→ This SA closes with line-item-level Cannot Complete data</div>
+      </div>
+
+      <button class="pbtn warn huge">Submit to FM Jimbo</button>
+    </div>
+
+    <div class="fsl-tabbar">
+      <div class="fsl-tab"><div class="fsl-tab-ic">🏠</div><div class="fsl-tab-lb">My Day</div></div>
+      <div class="fsl-tab on"><div class="fsl-tab-ic">📋</div><div class="fsl-tab-lb">Active Job</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">🗺</div><div class="fsl-tab-lb">Map</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⏱</div><div class="fsl-tab-lb">Time</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⋯</div><div class="fsl-tab-lb">More</div></div>
+    </div>
+
+    <div class="phone-home"></div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="narrative-panel">
+  <div class="np-time-badge urgent">2:07 PM · Foreman flags. FM creates the FJ.</div>
+  <div class="np-title">90 seconds: type a note, tap which items can't complete, submit to Jimbo. Done.</div>
+  <div class="np-actor"><div class="np-actor-avatar">JR</div>J. Reyes · Crew A Foreman</div>
+
+  <div class="np-section">
+    <div class="np-section-title">What he sees</div>
+    <p>The job checklist again, but now he taps the red ✗ on items that won't finish. The 2 Willow Oaks line goes red. Notes field is required — he types two sentences explaining why and recommending a date. Photo of debris already auto-attached. The yellow card at bottom previews exactly what will happen: <strong>routes to Jimbo who creates the FJ</strong>.</p>
+  </div>
+
+  <div class="np-section">
+    <div class="np-section-title">What he does</div>
+    <ul>
+      <li>Types a short note explaining + recommending a return date</li>
+      <li>Taps the ✗ on the Willow Oak line</li>
+      <li>Confirms the other line items as ✓ Done</li>
+      <li>Taps the orange <strong>Submit to FM Jimbo</strong> button</li>
+      <li>Continues finishing the rest of the install (sod, shrubs, mulch)</li>
+    </ul>
+  </div>
+
+  <div class="np-callout">
+    <div class="np-callout-title">⚠ Critical governance: foreman ≠ FJ creator</div>
+    <p>Foremen <strong>identify</strong> what can't complete. Field Managers <strong>decide</strong> what to do about it. Jimbo gets the submission, looks at it from a portfolio view (his other lots, crew availability, builder priorities), then creates the FJ with the right scope/date/crew. This split prevents scope creep and FJ scheduling chaos.</p>
+  </div>
+
+  <div class="np-data-flow" style="margin-top:14px">
+    <div class="np-data-flow-title">⚡ Cascading actions when Submit is tapped</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>FM Jimbo:</strong> push notification + email · "Crew A flagged Pines L07 Red"</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Jimbo opens FM Mobile · sees flagged items + JR's notes + photo</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Jimbo reviews and taps "Create FJ" → fills date + crew assignment</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>FJ-2026-0633</strong> created by Jimbo · scheduled Apr 28 · Crew A</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Customer Care notified:</strong> Erica's queue picks up FJ · Sarah Mitchell gets notification</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Megan's dashboard:</strong> Crew A status → 🔴 with FJ link</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Measuring Cup:</strong> WO-0612 hours adjusted (won't penalize for Cannot Complete)</div>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SCENE 8: CLOSEOUT ==================== -->
+<div id="scene-closeout" class="scene">
+<div class="scene-row">
+<div class="phone-stack">
+<div class="phone-wrap">
+<div class="phone-label">3:30 PM · Closing Pines L07</div>
+<div class="phone">
+  <div class="phone-screen">
+    <div class="phone-notch"></div>
+    <div class="statusbar"><span>3:30</span><div class="statusbar-icons"><span>📶</span><span>📡</span><span>🔋 58%</span></div></div>
+
+    <div class="fsl-header" style="background:#04844b">
+      <div class="fsl-back">‹</div>
+      <div class="fsl-title">Closeout<div class="fsl-title-sub">SA-0612-1 · Pines L07 · <span class="jt-badge install" style="background:rgba(255,255,255,.15);color:#fff">Install</span></div></div>
+      <div class="fsl-action"></div>
+    </div>
+
+    <div class="phone-content">
+      <div class="time-capture">
+        <div class="time-capture-row"><span class="time-capture-label">Job Type</span><span class="time-capture-value"><span class="jt-badge install">Production Install</span></span></div>
+        <div class="time-capture-row"><span class="time-capture-label">Job Started</span><span class="time-capture-value">7:09 AM</span></div>
+        <div class="time-capture-row"><span class="time-capture-label">Job Ended</span><span class="time-capture-value">3:30 PM</span></div>
+        <div class="time-capture-row"><span class="time-capture-label">Active duration</span><span class="time-capture-value">7h 51m</span></div>
+        <div class="time-capture-row"><span class="time-capture-label">Goal</span><span class="time-capture-value">6h 30m</span></div>
+        <div class="time-capture-row" style="border-top:1px solid #e3f0fb;padding-top:6px;margin-top:4px"><span class="time-capture-label" style="font-weight:600">Variance</span><span class="time-capture-value" style="color:#2e844a">+1h 21m (over · acceptable due to flag)</span></div>
+      </div>
+
+      <div class="pcard ok">
+        <div class="pcard-title">✅ Ready to close</div>
+        <div class="pcard-sub">5 of 6 items complete · 1 flagged for Jimbo's FJ review</div>
+      </div>
+
+      <div style="font-size:11px;color:#54698d;font-weight:600;margin:8px 0 6px 2px;text-transform:uppercase;letter-spacing:.5px">Required photos · 4 of 4 ✓</div>
+
+      <div class="photo-grid">
+        <div class="photo-tile captured"><div class="photo-icon">🏠</div><div class="photo-label">Front Yard</div><span class="photo-tag">BEFORE</span></div>
+        <div class="photo-tile captured sod"><div class="photo-icon">🌱</div><div class="photo-label">Sod laid</div><span class="photo-tag">SOD</span></div>
+        <div class="photo-tile captured tree"><div class="photo-icon">🌳</div><div class="photo-label">Trees in</div><span class="photo-tag">TREE</span></div>
+        <div class="photo-tile captured after"><div class="photo-icon">✨</div><div class="photo-label">Final after</div><span class="photo-tag">AFTER</span></div>
+      </div>
+
+      <div style="font-size:11px;color:#54698d;font-weight:600;margin:8px 0 6px 2px;text-transform:uppercase;letter-spacing:.5px">Material check</div>
+
+      <div class="pcard">
+        <div style="font-size:11px;line-height:1.8;color:#16325c">
+          <div style="display:flex;justify-content:space-between"><span>Bermuda 419 sod</span><strong style="color:#2e844a">3,200 sf ✓</strong></div>
+          <div style="display:flex;justify-content:space-between"><span>Crepe Myrtle</span><strong style="color:#2e844a">3 of 3 ✓</strong></div>
+          <div style="display:flex;justify-content:space-between;color:#991b1b"><span>Willow Oak</span><strong>0 of 2 (FJ pending Jimbo)</strong></div>
+          <div style="display:flex;justify-content:space-between"><span>Loropetalum</span><strong style="color:#2e844a">8 of 8 ✓</strong></div>
+          <div style="display:flex;justify-content:space-between"><span>Mulch</span><strong style="color:#2e844a">3 cy ✓</strong></div>
+        </div>
+      </div>
+
+      <div class="pcard warn">
+        <div class="pcard-title">🚚 Drive to next job</div>
+        <div class="pcard-sub"><strong>Pines L08</strong> · 0.1 mi · 1 min · scheduled 3:35 PM start</div>
+      </div>
+
+      <button class="pbtn success huge">✅ Close Pines L07 · Drive to L08</button>
+    </div>
+
+    <div class="fsl-tabbar">
+      <div class="fsl-tab"><div class="fsl-tab-ic">🏠</div><div class="fsl-tab-lb">My Day</div></div>
+      <div class="fsl-tab on"><div class="fsl-tab-ic">📋</div><div class="fsl-tab-lb">Active Job</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">🗺</div><div class="fsl-tab-lb">Map</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⏱</div><div class="fsl-tab-lb">Time</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⋯</div><div class="fsl-tab-lb">More</div></div>
+    </div>
+
+    <div class="phone-home"></div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="narrative-panel">
+  <div class="np-time-badge">3:30 PM · Closing</div>
+  <div class="np-title">Sod down, trees in, shrubs planted, mulch fresh. Close L07 + drive to L08.</div>
+  <div class="np-actor"><div class="np-actor-avatar">JR</div>J. Reyes · Crew A Foreman</div>
+
+  <div class="np-section">
+    <div class="np-section-title">What he sees</div>
+    <p>The closeout screen captures <strong>Job Start, Job End, Job Type</strong> at the very top. This data feeds the analytics layer for time-by-job-type measurement. <strong>4 photos</strong> shown in the grid (all captured throughout the day). <strong>Material check</strong> pre-filled. The Willow Oak row shows "0 of 2 (FJ pending Jimbo)" — system tracks the flag as Jimbo's responsibility. Bottom card shows the next drive (1 min to L08).</p>
+  </div>
+
+  <div class="np-section">
+    <div class="np-section-title">What he does</div>
+    <ul>
+      <li>Reviews the photos (already there)</li>
+      <li>Confirms material quantities (system pre-fills, he just verifies)</li>
+      <li>Taps <strong>Close Pines L07 · Drive to L08</strong></li>
+      <li>App auto-routes to L08 with directions</li>
+      <li>Drives 1 min to next job</li>
+    </ul>
+  </div>
+
+  <div class="np-data-flow">
+    <div class="np-data-flow-title">⚡ What gets captured</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Job Type:</strong> Production Install (DRH Charlotte standard package)</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Job Start:</strong> 7:09 AM (when he tapped Confirm Arrival)</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Job End:</strong> 3:30 PM (when he taps Close)</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Active duration:</strong> 7h 51m (excludes 30 min lunch)</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Variance:</strong> +1h 21m over goal (acceptable — flag noted)</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Drive time to next:</strong> 1 min · 0.1 mi (captured separately)</div>
+  </div>
+
+  <div class="np-section" style="margin-top:18px">
+    <div class="np-section-title">Why per-job-type measurement matters</div>
+    <p>Once we have <strong>thousands of jobs stamped by type</strong>, we can answer questions like: "What's the average DRH Install duration vs Lennar Install?" "Are Aqua installs tracking to 2.0 hr goal?" "Why are Davidson Customer Care visits running 3.5 hr instead of 2.0?" The data feeds margin analysis, MSA renegotiations, and crew capacity planning.</p>
+  </div>
+</div>
+</div>
+</div>
+
+<!-- ==================== SCENE 9: END OF DAY ==================== -->
+<div id="scene-eod" class="scene">
+<div class="scene-row">
+<div class="phone-stack">
+<div class="phone-wrap">
+<div class="phone-label">5:30 PM · Back at depot</div>
+<div class="phone">
+  <div class="phone-screen">
+    <div class="phone-notch"></div>
+    <div class="statusbar"><span>5:30</span><div class="statusbar-icons"><span>📶</span><span>📡</span><span>🔋 52%</span></div></div>
+
+    <div class="fsl-header">
+      <div style="font-size:18px">☰</div>
+      <div class="fsl-title">End of Day · Wrap up<div class="fsl-title-sub">Friday, Apr 25</div></div>
+      <div style="font-size:16px">🔔</div>
+    </div>
+
+    <div class="phone-content">
+      <div class="sync-badge">
+        <div class="sync-dot"></div>
+        Synced from Rippling at 5:30 PM · clock-out detected
+      </div>
+
+      <div class="timeclock out">
+        <div class="timeclock-label">✓ Clocked Out</div>
+        <div class="timeclock-time">05:30 PM</div>
+        <div class="timeclock-sub">309 Morningside Rd · Back at depot</div>
+        <div class="timeclock-source">⚡ Source: Rippling</div>
+      </div>
+
+      <div class="pcard ok">
+        <div class="pcard-title">✅ Today's summary</div>
+        <div class="time-capture" style="margin-bottom:0">
+          <div class="time-capture-row"><span class="time-capture-label">Clocked in (Rippling)</span><span class="time-capture-value">6:30 AM</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">Clocked out (Rippling)</span><span class="time-capture-value">5:30 PM</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">Total time</span><span class="time-capture-value">11h 0m</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">— Active job time</span><span class="time-capture-value">9h 51m</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">— Drive time</span><span class="time-capture-value">39 min</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">— Lunch break</span><span class="time-capture-value">30 min</span></div>
+          <div class="time-capture-row"><span class="time-capture-label">— Setup / wrap</span><span class="time-capture-value">~ 30 min</span></div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-title">📋 Jobs completed today (with start/end)</div>
+        <div style="font-size:11px;line-height:1.6;color:#16325c;margin-top:4px">
+          <div style="padding:6px 0;border-bottom:1px solid #f0f0f0">
+            <strong>SA-0612-1 · Pines L07</strong> <span class="jt-badge install" style="margin-left:4px">Install</span><br>
+            <span style="color:#54698d">7:09 AM → 3:30 PM · 7h 51m active · flagged for Jimbo (FJ)</span>
+          </div>
+          <div style="padding:6px 0">
+            <strong>SA-0613-1 · Pines L08</strong> <span class="jt-badge install" style="margin-left:4px">Install</span><br>
+            <span style="color:#54698d">3:36 PM → 5:00 PM · 1h 24m active · clean close</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-title">📅 Tomorrow's preview</div>
+        <div class="pcard-sub" style="font-size:11px;line-height:1.5">
+          3 SAs scheduled · 8.0 hr goal<br>
+          Pines L09 install (6.5 hr) · Pines L09 Aqua (2 hr) · Berewick Park L42 prep (1 hr)<br>
+          <strong>Push notification at 6 AM</strong>
+        </div>
+      </div>
+
+      <div class="pcard">
+        <div class="pcard-title">💰 Bonus tracker (April MTD)</div>
+        <div style="font-size:11px;line-height:1.6;color:#16325c;margin-top:4px">
+          <div style="display:flex;justify-content:space-between"><span>Rudi Valle</span><span style="color:#2e844a">+16.4 hr eligible</span></div>
+          <div style="display:flex;justify-content:space-between"><span>Erick Valentine</span><span style="color:#2e844a">+14.2 hr eligible</span></div>
+          <div style="display:flex;justify-content:space-between"><span>Cesar Ortiz</span><span style="color:#2e844a">+12.8 hr eligible</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fsl-tabbar">
+      <div class="fsl-tab on"><div class="fsl-tab-ic">🏠</div><div class="fsl-tab-lb">My Day</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">📅</div><div class="fsl-tab-lb">Schedule</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">🗺</div><div class="fsl-tab-lb">Map</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⏱</div><div class="fsl-tab-lb">Time</div></div>
+      <div class="fsl-tab"><div class="fsl-tab-ic">⋯</div><div class="fsl-tab-lb">More</div></div>
+    </div>
+
+    <div class="phone-home"></div>
+  </div>
+</div>
+</div>
+</div>
+
+<div class="narrative-panel">
+  <div class="np-time-badge">5:30 PM · End of day</div>
+  <div class="np-title">Crew rolls back into depot. Clock out via Rippling. App reflects it.</div>
+  <div class="np-actor"><div class="np-actor-avatar">JR</div>J. Reyes · Crew A Foreman</div>
+
+  <div class="np-section">
+    <div class="np-section-title">What he sees</div>
+    <p>Green sync indicator at top — Rippling synced at 5:30 PM, clock-out detected. Red <strong>Clocked Out</strong> card. Today's full summary in his ledger: 11.0 total hr (9.9 active + 0.6 drive + 0.5 break + ~0.5 setup). Both jobs listed with <strong>Job Start + Job End</strong> times so he can see his day at a glance. Tomorrow's preview already loaded.</p>
+  </div>
+
+  <div class="np-section">
+    <div class="np-section-title">What he does</div>
+    <ul>
+      <li>Crew unloads tools at the depot</li>
+      <li>Quick scan of the summary — looks fine</li>
+      <li>Taps <strong>Clock Out in Rippling app</strong> at 5:30 PM</li>
+      <li>FSL Mobile syncs within 30 sec, shows the new status</li>
+      <li>Goes home</li>
+    </ul>
+  </div>
+
+  <div class="np-data-flow">
+    <div class="np-data-flow-title">⚡ End-of-day data flow</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Rippling:</strong> time entry closes · 11.0 total hr</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>WEX GPS:</strong> depot return confirmed · vehicle parked</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>Vehicle Inspection:</strong> end-of-day check (any damage?) optional</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>FM Jimbo push:</strong> "Crew A wrapped · 1 FJ pending review"</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>6 PM:</strong> Measuring Cup roll-up triggers automatically</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>6 PM:</strong> Per-job-type analytics updated · Install avg refreshed</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span><strong>9 PM:</strong> Erica reviews closeout queue · DBSync to QuickBooks</div>
+    <div class="np-data-flow-item"><span class="arrow">→</span>Tomorrow's SAs already loaded in his My Day view</div>
+  </div>
+
+  <div class="np-section" style="margin-top:18px">
+    <div class="np-section-title">The bigger picture</div>
+    <p>From J. Reyes' perspective, the day was: clock in (Rippling) · 2 checklists (vehicle + loaded) · arrive · work · 2 PM Health Check · close · drive · close · clock out (Rippling). Plus photos, notes, and material confirmations as he went. <strong>The FJ creation, the FM rollups, the customer notifications, the analytics — all happen in the background.</strong> Foremen don't write emails. They don't create FJs. They don't reconcile time. They just do the work and confirm it.</p>
+  </div>
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="footer">
+  FSL Mobile mockup · J. Reyes Crew A foreman day · Friday, April 25, 2026 · LOVING Group Salesforce build · For internal review only
+</div>
+
+</div>
+
+<script>
+function sw(id, el) {
+  document.querySelectorAll('.scene').forEach(function(t) { t.classList.remove('on'); });
+  document.querySelectorAll('.scene-tab').forEach(function(t) { t.classList.remove('on'); });
+  var sc = document.getElementById('scene-' + id);
+  if (sc) sc.classList.add('on');
+  if (el) el.classList.add('on');
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "name": "LOVING Field Manager Workspace",
+  "short_name": "LOVING FM",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f3f3f3",
+  "theme_color": "#16325c",
+  "icons": []
+}
