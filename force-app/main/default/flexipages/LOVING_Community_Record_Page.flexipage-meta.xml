@@ -279,16 +279,6 @@
         <type>Region</type>
     </flexiPageRegions>
     <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>cardSubtitle</name>
-                    <value>Related builder, field, customer care, and work order communications</value>
-                </componentInstanceProperties>
-                <componentName>odlEmailViewCard</componentName>
-                <identifier>community_email_history</identifier>
-            </componentInstance>
-        </itemInstances>
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
