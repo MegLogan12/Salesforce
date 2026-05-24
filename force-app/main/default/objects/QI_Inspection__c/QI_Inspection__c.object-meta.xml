@@ -25,7 +25,7 @@
     </nameField>
     <pluralLabel>QI Inspections</pluralLabel>
     <searchLayouts/>
-    <sharingModel>ReadWrite</sharingModel>
+    <sharingModel>ControlledByParent</sharingModel>
     <visibility>Public</visibility>
     <fields>
         <fullName>Work_Order__c</fullName>
@@ -60,9 +60,6 @@
     </fields>
     <fields>
         <fullName>Overall_Score__c</fullName>
-        <formula>IF(ISBLANK(Work_Order__c), 0,
-            AVERAGE(QI_Line_Items__r.FM_Score__c))</formula>
-        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
         <label>Overall Score (0-10)</label>
         <precision>4</precision>
         <required>false</required>
@@ -113,7 +110,6 @@
     </fields>
     <fields>
         <fullName>Score_Flag__c</fullName>
-        <defaultValue>false</defaultValue>
         <formula>Overall_Score__c &lt; 5</formula>
         <label>Score Flag (Below 5.0)</label>
         <trackHistory>false</trackHistory>

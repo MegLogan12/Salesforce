@@ -370,11 +370,6 @@ public without sharing class LOVING_WorkOrderTriggerHandler {
     private static void handleStatusToNFI(List<WorkOrder> wos) {
         List<Task> tasks = new List<Task>();
 
-        Map<Id, WorkOrder> woMap = new Map<Id, WorkOrder>([
-            SELECT Id, FM__c, Lot_Address__c, Need_Further_Info_Notes__c, NFI_Count__c
-            FROM WorkOrder WHERE Id IN :wos.stream().map(w -> w.Id).toList()
-        ]);
-        // Note: above SOQL style won't work — use explicit loop
         Set<Id> woIds = new Set<Id>();
         for (WorkOrder wo : wos) woIds.add(wo.Id);
         Map<Id, WorkOrder> woFullMap = new Map<Id, WorkOrder>([
@@ -494,7 +489,7 @@ public without sharing class LOVING_WorkOrderTriggerHandler {
         for (WorkOrder wo : wos) {
             if (wo.Lunch_Minutes__c == null)   wo.Lunch_Minutes__c = 60;
             if (wo.Cushion_Minutes__c == null) wo.Cushion_Minutes__c = 15;
-            if (wo.Shift_Start_Time__c == null) wo.Shift_Start_Time__c = '06:30';
+            if (wo.Shift_Start_Time__c == null) wo.Shift_Start_Time__c = Time.newInstance(6, 30, 0, 0);
             if (wo.NFI_Count__c == null)       wo.NFI_Count__c = 0;
         }
     }

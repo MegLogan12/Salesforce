@@ -9,5 +9,5 @@
         NOT(ISBLANK(Gross_Margin_Pct__c)),
         Gross_Margin_Pct__c &lt; 22
     )</errorConditionFormula>
-    <errorMessage>Invoice cannot be created. Gross Margin is below the 22% hard floor. Review line item costs and revenue on this Work Order. COO approval required to override this block. Contact your COO and document the approval in the Closeout Notes field before proceeding.</errorMessage>
+    <errorMessage>Invoice cannot be created: GP below 22% floor. Review line item costs and revenue. COO approval required — document approval in Closeout Notes before proceeding.</errorMessage>
 </ValidationRule>

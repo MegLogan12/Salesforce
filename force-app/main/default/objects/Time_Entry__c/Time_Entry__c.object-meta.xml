@@ -16,7 +16,7 @@
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Time Entries</pluralLabel>
-    <sharingModel>ReadWrite</sharingModel>
+    <sharingModel>ControlledByParent</sharingModel>
     <visibility>Public</visibility>
     <fields>
         <fullName>Work_Order__c</fullName>
@@ -35,6 +35,7 @@
         <referenceTo>User</referenceTo>
         <relationshipLabel>Time Entries</relationshipLabel>
         <relationshipName>Technician_Time_Entries</relationshipName>
+        <deleteConstraint>Restrict</deleteConstraint>
         <required>true</required>
         <type>Lookup</type>
     </fields>

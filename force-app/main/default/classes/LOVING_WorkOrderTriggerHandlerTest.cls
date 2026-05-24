@@ -114,7 +114,7 @@ private class LOVING_WorkOrderTriggerHandlerTest {
             Shift_Start_Time__c, NFI_Count__c FROM WorkOrder WHERE Id = :wo.Id];
         System.assertEquals(60,    result.Lunch_Minutes__c,   'Lunch default');
         System.assertEquals(15,    result.Cushion_Minutes__c, 'Cushion default');
-        System.assertEquals('06:30', result.Shift_Start_Time__c, 'Shift start default');
+        System.assertEquals(Time.newInstance(6, 30, 0, 0), result.Shift_Start_Time__c, 'Shift start default');
         System.assertEquals(0,     result.NFI_Count__c,       'NFI count default');
     }
 
@@ -444,7 +444,7 @@ private class LOVING_WorkOrderTriggerHandlerTest {
         wo.Travel_Minutes_Planned__c = 30;
         wo.Lunch_Minutes__c       = 60;
         wo.Cushion_Minutes__c     = 15;
-        wo.Shift_Start_Time__c    = '06:30';
+        wo.Shift_Start_Time__c    = Time.newInstance(6, 30, 0, 0);
         insert wo;
 
         Test.startTest();

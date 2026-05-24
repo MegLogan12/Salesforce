@@ -3,6 +3,6 @@
     <fullName>FM__c</fullName><label>Field Manager</label>
     <referenceTo>User</referenceTo>
     <relationshipLabel>Field Manager</relationshipLabel>
-    <relationshipName>WO_FM</relationshipName>
+    <relationshipName>WO_Field_Manager</relationshipName>
     <required>false</required><type>Lookup</type>
 </CustomField>

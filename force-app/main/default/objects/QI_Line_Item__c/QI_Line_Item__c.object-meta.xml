@@ -68,7 +68,6 @@
     </fields>
     <fields>
         <fullName>Score_Flag__c</fullName>
-        <defaultValue>false</defaultValue>
         <formula>FM_Score__c &lt;= 3</formula>
         <label>Score Flag (3 or Below)</label>
         <trackHistory>false</trackHistory>

@@ -16,7 +16,7 @@
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Finish Jobs</pluralLabel>
-    <sharingModel>ReadWrite</sharingModel>
+    <sharingModel>ControlledByParent</sharingModel>
     <visibility>Public</visibility>
     <fields>
         <fullName>Parent_Work_Order__c</fullName>
@@ -61,7 +61,7 @@
         <fullName>Accountability_Notes__c</fullName>
         <label>Accountability Notes</label>
         <length>2000</length>
-        <required>true</required>
+        <required>false</required>
         <type>LongTextArea</type>
         <visibleLines>4</visibleLines>
     </fields>
