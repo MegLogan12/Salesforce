@@ -66,7 +66,7 @@
         <iterationOrder>Asc</iterationOrder>
         <nextValueConnector><targetReference>Check_HC_Not_Submitted_Today</targetReference></nextValueConnector>
         <noMoreValuesConnector><targetReference>Create_All_HC_Tasks</targetReference></noMoreValuesConnector>
-        <outputReference>varCurrentWO</outputReference>
+        <assignNextValueToReference>varCurrentWO</assignNextValueToReference>
     </loops>
 
     <decisions>

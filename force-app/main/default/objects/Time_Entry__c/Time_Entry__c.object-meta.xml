@@ -35,7 +35,6 @@
         <referenceTo>User</referenceTo>
         <relationshipLabel>Time Entries</relationshipLabel>
         <relationshipName>Technician_Time_Entries</relationshipName>
-        <deleteConstraint>Restrict</deleteConstraint>
         <required>true</required>
         <type>Lookup</type>
     </fields>

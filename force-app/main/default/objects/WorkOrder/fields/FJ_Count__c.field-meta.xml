@@ -3,7 +3,6 @@
     <fullName>FJ_Count__c</fullName>
     <label>Finish Job Count</label>
     <required>false</required>
-    <scale>0</scale>
     <summarizedField>Finish_Job__c.Id</summarizedField>
     <summaryForeignKey>Finish_Job__c.Parent_Work_Order__c</summaryForeignKey>
     <summaryOperation>count</summaryOperation>

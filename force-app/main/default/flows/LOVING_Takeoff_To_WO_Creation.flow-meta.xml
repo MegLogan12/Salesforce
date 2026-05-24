@@ -101,6 +101,57 @@
     </decisions>
 
     <!-- ═══════════════════════════════════════════════════════
+         CHECK VARIANCE — Determines Takeoff_Status__c
+    ═══════════════════════════════════════════════════════ -->
+    <decisions>
+        <name>Check_Variance_Rule</name>
+        <label>Package Variance Present?</label>
+        <locationX>200</locationX>
+        <locationY>400</locationY>
+        <defaultConnectorLabel>No Variance — Confirmed</defaultConnectorLabel>
+        <defaultConnector>
+            <targetReference>Create_Work_Order</targetReference>
+        </defaultConnector>
+        <rules>
+            <name>Has_Package_Variance</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Package_Variance__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><booleanValue>true</booleanValue></rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_Lennar_Hard_Block</targetReference>
+            </connector>
+            <label>Has Variance</label>
+        </rules>
+    </decisions>
+
+    <decisions>
+        <name>Check_Lennar_Hard_Block</name>
+        <label>Is Lennar (Hard Block)?</label>
+        <locationX>400</locationX>
+        <locationY>400</locationY>
+        <defaultConnectorLabel>Not Lennar — Flag and Continue</defaultConnectorLabel>
+        <defaultConnector>
+            <targetReference>Create_Work_Order_With_Variance</targetReference>
+        </defaultConnector>
+        <rules>
+            <name>Is_Lennar_Spec</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varBuilderRegional.Spec_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><stringValue>Exact (Lennar)</stringValue></rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Create_Lennar_Block_Task</targetReference>
+            </connector>
+            <label>Lennar — Hard Block</label>
+        </rules>
+    </decisions>
+
+    <!-- ═══════════════════════════════════════════════════════
          GET COMMUNITY RECORD (parent of Lot)
     ═══════════════════════════════════════════════════════ -->
     <recordLookups>
@@ -162,57 +213,6 @@
     </recordLookups>
 
     <!-- ═══════════════════════════════════════════════════════
-         CHECK VARIANCE — Determines Takeoff_Status__c
-    ═══════════════════════════════════════════════════════ -->
-    <decisions>
-        <name>Check_Variance_Rule</name>
-        <label>Package Variance Present?</label>
-        <locationX>200</locationX>
-        <locationY>400</locationY>
-        <defaultConnectorLabel>No Variance — Confirmed</defaultConnectorLabel>
-        <defaultConnector>
-            <targetReference>Create_Work_Order</targetReference>
-        </defaultConnector>
-        <rules>
-            <name>Has_Package_Variance</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record.Package_Variance__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue><booleanValue>true</booleanValue></rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Check_Lennar_Hard_Block</targetReference>
-            </connector>
-            <label>Has Variance</label>
-        </rules>
-    </decisions>
-
-    <decisions>
-        <name>Check_Lennar_Hard_Block</name>
-        <label>Is Lennar (Hard Block)?</label>
-        <locationX>400</locationX>
-        <locationY>400</locationY>
-        <defaultConnectorLabel>Not Lennar — Flag and Continue</defaultConnectorLabel>
-        <defaultConnector>
-            <targetReference>Create_Work_Order_With_Variance</targetReference>
-        </defaultConnector>
-        <rules>
-            <name>Is_Lennar_Spec</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>varBuilderRegional.Spec_Type__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue><stringValue>Exact (Lennar)</stringValue></rightValue>
-            </conditions>
-            <connector>
-                <targetReference>Create_Lennar_Block_Task</targetReference>
-            </connector>
-            <label>Lennar — Hard Block</label>
-        </rules>
-    </decisions>
-
-    <!-- ═══════════════════════════════════════════════════════
          CREATE WORK ORDER — Confirmed (no variance)
     ═══════════════════════════════════════════════════════ -->
     <recordCreates>
@@ -221,7 +221,7 @@
         <locationX>200</locationX>
         <locationY>500</locationY>
         <connector>
-            <targetReference>Mark_Lot_WO_Created</targetReference>
+            <targetReference>Set_WO_Id_Confirmed</targetReference>
         </connector>
         <faultConnector>
             <targetReference>Handle_WO_Create_Error</targetReference>
@@ -352,11 +352,7 @@
             <value><elementReference>$Record.Takeoff_Confirmed_Lighting__c</elementReference></value>
         </inputAssignments>
         <object>WorkOrder</object>
-        <outputAssignments>
-            <assignToReference>varNewWOId</assignToReference>
-            <field>Id</field>
-        </outputAssignments>
-        <storeOutputAutomatically>false</storeOutputAutomatically>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordCreates>
 
     <!-- Create Work Order WITH variance flag -->
@@ -366,7 +362,7 @@
         <locationX>400</locationX>
         <locationY>500</locationY>
         <connector>
-            <targetReference>Create_Variance_Review_Task</targetReference>
+            <targetReference>Set_WO_Id_Variance</targetReference>
         </connector>
         <faultConnector>
             <targetReference>Handle_WO_Create_Error</targetReference>
@@ -452,11 +448,7 @@
             <value><stringValue>06:30</stringValue></value>
         </inputAssignments>
         <object>WorkOrder</object>
-        <outputAssignments>
-            <assignToReference>varNewWOId</assignToReference>
-            <field>Id</field>
-        </outputAssignments>
-        <storeOutputAutomatically>false</storeOutputAutomatically>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordCreates>
 
     <!-- Lennar Hard Block: create task for Operations Manager, do NOT create WO -->
@@ -531,6 +523,71 @@
     </recordCreates>
 
     <!-- ═══════════════════════════════════════════════════════
+         ERROR HANDLING (kept with recordCreates to avoid XML ordering issues)
+    ═══════════════════════════════════════════════════════ -->
+    <recordCreates>
+        <name>Handle_WO_Create_Error</name>
+        <label>Log WO Creation Error</label>
+        <locationX>800</locationX>
+        <locationY>500</locationY>
+        <inputAssignments>
+            <field>Subject</field>
+            <value><stringValue>ERROR — Work Order Creation Failed from Takeoff</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhatId</field>
+            <value><elementReference>$Record.Id</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value><stringValue>High</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ActivityDate</field>
+            <value><elementReference>$Flow.CurrentDate</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type</field>
+            <value><stringValue>System Error</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Description</field>
+            <value><elementReference>$Flow.FaultMessage</elementReference></value>
+        </inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+
+    <!-- ═══════════════════════════════════════════════════════
+         CAPTURE CREATED WO IDs INTO varNewWOId
+    ═══════════════════════════════════════════════════════ -->
+    <assignments>
+        <name>Set_WO_Id_Confirmed</name>
+        <label>Capture Confirmed WO Id</label>
+        <locationX>200</locationX>
+        <locationY>550</locationY>
+        <assignmentItems>
+            <assignToReference>varNewWOId</assignToReference>
+            <operator>Assign</operator>
+            <value><elementReference>Create_Work_Order</elementReference></value>
+        </assignmentItems>
+        <connector><targetReference>Mark_Lot_WO_Created</targetReference></connector>
+    </assignments>
+
+    <assignments>
+        <name>Set_WO_Id_Variance</name>
+        <label>Capture Variance WO Id</label>
+        <locationX>400</locationX>
+        <locationY>550</locationY>
+        <assignmentItems>
+            <assignToReference>varNewWOId</assignToReference>
+            <operator>Assign</operator>
+            <value><elementReference>Create_Work_Order_With_Variance</elementReference></value>
+        </assignmentItems>
+        <connector><targetReference>Create_Variance_Review_Task</targetReference></connector>
+    </assignments>
+
+    <!-- ═══════════════════════════════════════════════════════
          MARK LOT AS WO CREATED
     ═══════════════════════════════════════════════════════ -->
     <recordUpdates>
@@ -573,40 +630,5 @@
         <inputReference>$Record</inputReference>
     </recordUpdates>
 
-    <!-- ═══════════════════════════════════════════════════════
-         ERROR HANDLING
-    ═══════════════════════════════════════════════════════ -->
-    <recordCreates>
-        <name>Handle_WO_Create_Error</name>
-        <label>Log WO Creation Error</label>
-        <locationX>800</locationX>
-        <locationY>500</locationY>
-        <inputAssignments>
-            <field>Subject</field>
-            <value><stringValue>ERROR — Work Order Creation Failed from Takeoff</stringValue></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>WhatId</field>
-            <value><elementReference>$Record.Id</elementReference></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Priority</field>
-            <value><stringValue>High</stringValue></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>ActivityDate</field>
-            <value><elementReference>$Flow.CurrentDate</elementReference></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Type</field>
-            <value><stringValue>System Error</stringValue></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Description</field>
-            <value><elementReference>$Flow.FaultMessage</elementReference></value>
-        </inputAssignments>
-        <object>Task</object>
-        <storeOutputAutomatically>false</storeOutputAutomatically>
-    </recordCreates>
 
 </Flow>

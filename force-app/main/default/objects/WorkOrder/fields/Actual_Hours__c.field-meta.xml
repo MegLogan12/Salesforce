@@ -3,7 +3,6 @@
     <fullName>Actual_Hours__c</fullName>
     <label>Actual Hours</label>
     <required>false</required>
-    <scale>2</scale>
     <summarizedField>Time_Entry__c.Hours_Worked__c</summarizedField>
     <summaryFilterItems>
         <field>Time_Entry__c.Source__c</field>

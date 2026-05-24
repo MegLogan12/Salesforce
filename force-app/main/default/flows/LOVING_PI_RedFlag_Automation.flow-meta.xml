@@ -147,25 +147,6 @@ The Finish Job will be auto-created if FM marks Finish_Job_Required__c = true.</
         <storeOutputAutomatically>false</storeOutputAutomatically>
     </recordCreates>
 
-    <!-- CHECK IF FINISH JOB REQUIRED -->
-    <decisions>
-        <name>Check_FJ_Required</name>
-        <label>Finish Job Required?</label>
-        <locationX>200</locationX><locationY>400</locationY>
-        <defaultConnectorLabel>No Finish Job</defaultConnectorLabel>
-        <rules>
-            <name>FJ_Is_Required</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>varFJRequired</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue><booleanValue>true</booleanValue></rightValue>
-            </conditions>
-            <connector><targetReference>Create_Finish_Job_Record</targetReference></connector>
-            <label>Finish Job Required</label>
-        </rules>
-    </decisions>
-
     <!-- CREATE FINISH JOB RECORD -->
     <recordCreates>
         <name>Create_Finish_Job_Record</name>
@@ -194,5 +175,24 @@ The Finish Job will be auto-created if FM marks Finish_Job_Required__c = true.</
         <object>Finish_Job__c</object>
         <storeOutputAutomatically>false</storeOutputAutomatically>
     </recordCreates>
+
+    <!-- CHECK IF FINISH JOB REQUIRED -->
+    <decisions>
+        <name>Check_FJ_Required</name>
+        <label>Finish Job Required?</label>
+        <locationX>200</locationX><locationY>400</locationY>
+        <defaultConnectorLabel>No Finish Job</defaultConnectorLabel>
+        <rules>
+            <name>FJ_Is_Required</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varFJRequired</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><booleanValue>true</booleanValue></rightValue>
+            </conditions>
+            <connector><targetReference>Create_Finish_Job_Record</targetReference></connector>
+            <label>Finish Job Required</label>
+        </rules>
+    </decisions>
 
 </Flow>

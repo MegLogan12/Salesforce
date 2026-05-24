@@ -74,7 +74,6 @@
         <members>WorkOrder.Cushion_Minutes__c</members>
         <members>WorkOrder.Goal_Headcount__c</members>
         <members>WorkOrder.Actual_Headcount__c</members>
-        <members>WorkOrder.Goal_Hours__c</members>
         <members>WorkOrder.Actual_Hours__c</members>
         <members>WorkOrder.Variance_Hours__c</members>
         <members>WorkOrder.Travel_Minutes_Planned__c</members>

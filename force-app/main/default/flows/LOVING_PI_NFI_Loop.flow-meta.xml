@@ -67,6 +67,25 @@
         <queriedFields>Need_Further_Info_Notes__c</queriedFields>
     </recordLookups>
 
+    <!-- CHECK IF NFI COUNT > 2 -->
+    <decisions>
+        <name>Check_NFI_Escalation</name>
+        <label>NFI Count Greater Than 2?</label>
+        <locationX>200</locationX><locationY>300</locationY>
+        <defaultConnectorLabel>NFI Count OK</defaultConnectorLabel>
+        <rules>
+            <name>NFI_Exceeds_Threshold</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varWO.NFI_Count__c</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue><numberValue>2</numberValue></rightValue>
+            </conditions>
+            <connector><targetReference>Create_COO_Escalation_Task</targetReference></connector>
+            <label>NFI &gt; 2 — Escalate to COO</label>
+        </rules>
+    </decisions>
+
     <!-- FM TASK -->
     <recordCreates>
         <name>Create_FM_NFI_Task</name>
@@ -104,25 +123,6 @@
         <object>Task</object>
         <storeOutputAutomatically>false</storeOutputAutomatically>
     </recordCreates>
-
-    <!-- CHECK IF NFI COUNT > 2 -->
-    <decisions>
-        <name>Check_NFI_Escalation</name>
-        <label>NFI Count Greater Than 2?</label>
-        <locationX>200</locationX><locationY>300</locationY>
-        <defaultConnectorLabel>NFI Count OK</defaultConnectorLabel>
-        <rules>
-            <name>NFI_Exceeds_Threshold</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>varWO.NFI_Count__c</leftValueReference>
-                <operator>GreaterThan</operator>
-                <rightValue><numberValue>2</numberValue></rightValue>
-            </conditions>
-            <connector><targetReference>Create_COO_Escalation_Task</targetReference></connector>
-            <label>NFI &gt; 2 — Escalate to COO</label>
-        </rules>
-    </decisions>
 
     <!-- COO ESCALATION TASK -->
     <recordCreates>

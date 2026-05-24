@@ -253,27 +253,6 @@ WAIVER: Only a COO can waive a failed readiness check. Do not override without C
         <storeOutputAutomatically>false</storeOutputAutomatically>
     </recordCreates>
 
-    <!-- CHECK IF AQUA COMMUNITY -->
-    <decisions>
-        <name>Check_Aqua_Community</name>
-        <label>Is Aqua Community?</label>
-        <locationX>200</locationX>
-        <locationY>600</locationY>
-        <defaultConnectorLabel>Not Aqua — Update Lot Bucket</defaultConnectorLabel>
-        <defaultConnector><targetReference>Update_Lot_To_Scheduled</targetReference></defaultConnector>
-        <rules>
-            <name>Is_Aqua_Community</name>
-            <conditionLogic>and</conditionLogic>
-            <conditions>
-                <leftValueReference>varWorkOrder.Aqua_Community__c</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue><booleanValue>true</booleanValue></rightValue>
-            </conditions>
-            <connector><targetReference>Create_Aqua_Install_WO</targetReference></connector>
-            <label>Aqua Community</label>
-        </rules>
-    </decisions>
-
     <!-- CREATE AQUA INSTALL WORK ORDER -->
     <recordCreates>
         <name>Create_Aqua_Install_WO</name>
@@ -332,6 +311,27 @@ WAIVER: Only a COO can waive a failed readiness check. Do not override without C
         <object>WorkOrder</object>
         <storeOutputAutomatically>false</storeOutputAutomatically>
     </recordCreates>
+
+    <!-- CHECK IF AQUA COMMUNITY -->
+    <decisions>
+        <name>Check_Aqua_Community</name>
+        <label>Is Aqua Community?</label>
+        <locationX>200</locationX>
+        <locationY>600</locationY>
+        <defaultConnectorLabel>Not Aqua — Update Lot Bucket</defaultConnectorLabel>
+        <defaultConnector><targetReference>Update_Lot_To_Scheduled</targetReference></defaultConnector>
+        <rules>
+            <name>Is_Aqua_Community</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varWorkOrder.Aqua_Community__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><booleanValue>true</booleanValue></rightValue>
+            </conditions>
+            <connector><targetReference>Create_Aqua_Install_WO</targetReference></connector>
+            <label>Aqua Community</label>
+        </rules>
+    </decisions>
 
     <!-- UPDATE LOT PIPELINE BUCKET TO SCHEDULED -->
     <recordUpdates>

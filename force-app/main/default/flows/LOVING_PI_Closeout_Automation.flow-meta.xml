@@ -12,8 +12,6 @@
 
     <variables><name>varWorkOrderId</name><dataType>String</dataType><isCollection>false</isCollection><isInput>true</isInput><isOutput>false</isOutput></variables>
     <variables><name>varWO</name><dataType>SObject</dataType><isCollection>false</isCollection><isInput>false</isInput><isOutput>false</isOutput><objectType>WorkOrder</objectType></variables>
-    <variables><name>varNewQIId</name><dataType>String</dataType><isCollection>false</isCollection><isInput>false</isInput><isOutput>false</isOutput></variables>
-
     <recordLookups>
         <name>Get_Closeout_WO</name><label>Get Work Order</label>
         <locationX>200</locationX><locationY>100</locationY>
@@ -38,7 +36,6 @@
         <inputAssignments><field>FM__c</field><value><elementReference>varWO.FM__c</elementReference></value></inputAssignments>
         <inputAssignments><field>Status__c</field><value><stringValue>Scheduled</stringValue></value></inputAssignments>
         <object>QI_Inspection__c</object>
-        <outputAssignments><assignToReference>varNewQIId</assignToReference><field>Id</field></outputAssignments>
         <storeOutputAutomatically>false</storeOutputAutomatically>
     </recordCreates>
 
