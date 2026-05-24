@@ -270,6 +270,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
   <div class="kpi-card amber"><div class="kpi-label">Open FJs</div><div class="kpi-value">12</div><div class="kpi-sub">All DRH divisions</div><div class="kpi-delta dn">↑ 3 this week</div></div>
 </div>
 
+<div class="subtabs">
+  <div class="subtab on" onclick="sub('drh','divisions',this)">Divisions <span class="rm-count has" style="margin-left:4px">4</span></div>
+  <div class="subtab" onclick="sub('drh','details',this)">Details</div>
+  <div class="subtab" onclick="sub('drh','pricing',this)">Pricing / MSA</div>
+  <div class="subtab" onclick="sub('drh','contacts',this)">Contacts <span class="rm-count has" style="margin-left:4px">6</span></div>
+  <div class="subtab" onclick="sub('drh','files',this)">Files <span class="rm-count has" style="margin-left:4px">8</span></div>
+  <div class="subtab" onclick="sub('drh','photos',this)">Photos <span class="rm-count has" style="margin-left:4px">14</span></div>
+</div>
+
+<!-- DIVISIONS subtab -->
+<div id="drh-divisions" class="sub-tc on">
 <div class="sf-body" style="padding-top:0">
 <div class="card last">
   <div class="ch"><div class="ci" style="background:#0070d2">🏙</div><h3>DR Horton — Division Revenue Rollup</h3></div>
@@ -308,6 +319,195 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
   </table>
 </div>
 </div>
+</div><!-- end drh-divisions subtab -->
+
+<!-- DETAILS subtab -->
+<div id="drh-details" class="sub-tc">
+<div class="sf-body">
+<div class="layout"><div class="layout-main">
+<div class="card info">
+  <div class="ch"><div class="ci" style="background:#0070d2">📋</div><h3>Builder Information</h3></div>
+  <div class="fields-grid">
+    <div><div class="field-label">Account Name</div><div class="field-value">DR Horton, Inc.</div></div>
+    <div><div class="field-label">Account Type</div><div class="field-value"><span class="chip cb2">Parent Builder</span></div></div>
+    <div><div class="field-label">Headquarters</div><div class="field-value">Fort Worth, TX 76102</div></div>
+    <div><div class="field-label">Region</div><div class="field-value">Southeast / Carolinas</div></div>
+    <div><div class="field-label">Account Status</div><div class="field-value"><span class="chip cg">Active</span></div></div>
+    <div><div class="field-label">Builder Tier</div><div class="field-value"><span class="chip cp">National Builder</span></div></div>
+    <div><div class="field-label">MSA Signed</div><div class="field-value"><span class="chip cg">Yes · Jan 1, 2024</span></div></div>
+    <div><div class="field-label">MSA Renewal Date</div><div class="field-value">Dec 31, 2026</div></div>
+    <div><div class="field-label">Salesforce Account ID</div><div class="field-value">0010g00000XxDRH01</div></div>
+    <div><div class="field-label">Parent Account</div><div class="field-value">None (top-level)</div></div>
+  </div>
+</div>
+<div class="card last">
+  <div class="ch"><div class="ci" style="background:#534ab7">📝</div><h3>Account Notes</h3></div>
+  <div style="padding:12px 14px;font-size:12px;color:#16325c;line-height:1.6">
+    National production builder. Charlotte market launched 2019. Carolinas division covers Charlotte, Raleigh, Greenville SC, and Columbia SC. Pricebook locked annually in Q4 — next review Nov 2026. Aqua auto-trigger enabled on all Charlotte and Raleigh communities per 2024 MSA addendum. FJ credit policy: Loving absorbs cost if fault found within 14 days of install.
+  </div>
+</div>
+</div>
+<div class="layout-rail">
+<div class="card">
+  <div class="ch"><div class="ci" style="background:#534ab7">🌳</div><h3>Hierarchy</h3></div>
+  <div class="hier-tree">
+    <div class="hier-node parent cur"><div class="hier-bullet"></div><a>DR Horton</a></div>
+    <div class="hier-node div"><div class="hier-bullet"></div><a onclick="sw('communities',document.querySelectorAll('.sf-tab')[2])">DRH Charlotte</a><span class="hier-meta">18 comm</span></div>
+    <div class="hier-node div"><div class="hier-bullet"></div><a>DRH Raleigh</a><span class="hier-meta">11 comm</span></div>
+    <div class="hier-node div"><div class="hier-bullet"></div><a>DRH Greenville</a><span class="hier-meta">6 comm</span></div>
+    <div class="hier-node div"><div class="hier-bullet"></div><a>DRH Columbia</a><span class="hier-meta">3 comm</span></div>
+  </div>
+</div>
+<div class="card last">
+  <div class="ch"><div class="ci" style="background:#0070d2">🔗</div><h3>Related</h3></div>
+  <div class="related-mini"><div style="font-size:12px;color:#16325c">🏙 Divisions</div><div class="rm-count has">4</div></div>
+  <div class="related-mini"><div style="font-size:12px;color:#16325c">🏘 Communities</div><div class="rm-count has">38</div></div>
+  <div class="related-mini"><div style="font-size:12px;color:#16325c">🏠 Active Lots</div><div class="rm-count has">182</div></div>
+  <div class="related-mini"><div style="font-size:12px;color:#16325c">👤 Contacts</div><div class="rm-count has">6</div></div>
+  <div class="related-mini"><div style="font-size:12px;color:#16325c">📁 Files</div><div class="rm-count has">8</div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- PRICING / MSA subtab -->
+<div id="drh-pricing" class="sub-tc">
+<div class="sf-body">
+<div class="ab ab-b"><div class="ab-ic">💲</div><div>All lot pricing is inherited from the Division-level Pricebook assigned via Division_Account__c.Pricebook2Id. Rates below are the DRH-CLT standard pricebook. Per-community overrides shown on the Community record.</div></div>
+<div class="card">
+  <div class="ch"><div class="ci" style="background:#0070d2">📋</div><h3>MSA Terms — DR Horton Carolinas</h3><span class="chip cg" style="margin-left:auto">Active · Signed Jan 1, 2024</span></div>
+  <div class="fields-grid">
+    <div><div class="field-label">MSA Effective Date</div><div class="field-value">January 1, 2024</div></div>
+    <div><div class="field-label">MSA Expiration</div><div class="field-value">December 31, 2026</div></div>
+    <div><div class="field-label">Payment Terms</div><div class="field-value">Net 30 from invoice date</div></div>
+    <div><div class="field-label">Invoicing Trigger</div><div class="field-value">Closeout approval in Salesforce</div></div>
+    <div><div class="field-label">FJ Warranty Period</div><div class="field-value">14 days post-install (Loving absorbs)</div></div>
+    <div><div class="field-label">Aqua Policy</div><div class="field-value">Auto-trigger all DRH Charlotte + Raleigh communities</div></div>
+    <div><div class="field-label">Takeoff Required</div><div class="field-value">Yes — before schedule (Takeoff_Status__c = Locked)</div></div>
+    <div><div class="field-label">811 Required</div><div class="field-value">Yes — must be Cleared before Scheduled bucket</div></div>
+  </div>
+</div>
+<div class="card last">
+  <div class="ch"><div class="ci" style="background:#534ab7">💲</div><h3>Pricebook Entries — DRH Charlotte Standard</h3></div>
+  <table class="tbl">
+    <thead><tr><th>Service / Item</th><th>Unit</th><th class="num">Unit Price</th><th>Pricebook</th><th>Effective</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Standard Install Package</td><td>Per Lot</td><td class="num">$4,820</td><td>DRH-CLT 2024</td><td>Jan 1, 2024</td><td><span class="chip cg">Active</span></td></tr>
+      <tr><td>Aqua Irrigation Install</td><td>Per Lot</td><td class="num">$485</td><td>DRH-CLT 2024</td><td>Jan 1, 2024</td><td><span class="chip cg">Auto-trigger</span></td></tr>
+      <tr><td>Sod — Centipede</td><td>Per sqft</td><td class="num">$1.42</td><td>DRH-CLT 2024</td><td>Jan 1, 2024</td><td></td></tr>
+      <tr><td>Sod — Zoysia</td><td>Per sqft</td><td class="num">$1.68</td><td>DRH-CLT 2024</td><td>Jan 1, 2024</td><td><span class="chip ca">Premium comm only</span></td></tr>
+      <tr><td>Crepe Myrtle 7gal</td><td>Each</td><td class="num">$88</td><td>DRH-CLT 2024</td><td>Jan 1, 2024</td><td></td></tr>
+      <tr><td>Willow Oak 2.5"</td><td>Each</td><td class="num">$142</td><td>DRH-CLT 2024</td><td>Jan 1, 2024</td><td></td></tr>
+      <tr><td>Loropetalum 3gal</td><td>Each</td><td class="num">$24</td><td>DRH-CLT 2024</td><td>Jan 1, 2024</td><td></td></tr>
+      <tr><td>Mulch — Triple Shred</td><td>Per cy</td><td class="num">$68</td><td>DRH-CLT 2024</td><td>Jan 1, 2024</td><td></td></tr>
+      <tr><td>Finish Job / Punch</td><td>Per WO</td><td class="num">$0</td><td>DRH-CLT 2024</td><td>Jan 1, 2024</td><td><span class="chip cgr">Internal only</span></td></tr>
+      <tr><td>Raleigh Exact-Spec Premium</td><td>Per Lot</td><td class="num">$5,140</td><td>DRH-RAL 2024</td><td>Jan 1, 2024</td><td><span class="chip cb2">Raleigh only</span></td></tr>
+    </tbody>
+  </table>
+</div>
+</div>
+</div>
+
+<!-- CONTACTS subtab -->
+<div id="drh-contacts" class="sub-tc">
+<div class="sf-body">
+<div class="card last">
+  <div class="ch"><div class="ci" style="background:#0070d2">👤</div><h3>Contacts — DR Horton</h3><button class="sf-btn primary" style="font-size:11px;padding:4px 10px">+ New Contact</button></div>
+  <table class="tbl">
+    <thead><tr><th>Name</th><th>Title</th><th>Division</th><th>Phone</th><th>Email</th><th>Role</th><th>Primary</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><a class="nl">Sarah Mitchell</a></td>
+        <td>Division President</td><td>DRH Charlotte</td>
+        <td>(704) 555-0142</td><td>smitchell@drhorton.com</td>
+        <td><span class="chip cp">Decision Maker</span></td><td><span class="chip cg">✓ Primary</span></td>
+      </tr>
+      <tr>
+        <td><a class="nl">Marcus Webb</a></td>
+        <td>VP Construction</td><td>DRH Charlotte</td>
+        <td>(704) 555-0188</td><td>mwebb@drhorton.com</td>
+        <td><span class="chip cb2">Construction Lead</span></td><td></td>
+      </tr>
+      <tr>
+        <td><a class="nl">Linda Cho</a></td>
+        <td>Purchasing Manager</td><td>DRH Charlotte</td>
+        <td>(704) 555-0211</td><td>lcho@drhorton.com</td>
+        <td><span class="chip ca">PO / Invoicing</span></td><td></td>
+      </tr>
+      <tr>
+        <td><a class="nl">Brett Farris</a></td>
+        <td>Division President</td><td>DRH Raleigh</td>
+        <td>(919) 555-0077</td><td>bfarris@drhorton.com</td>
+        <td><span class="chip cp">Decision Maker</span></td><td></td>
+      </tr>
+      <tr>
+        <td><a class="nl">Dana Pruitt</a></td>
+        <td>Field Superintendent</td><td>DRH Raleigh</td>
+        <td>(919) 555-0144</td><td>dpruitt@drhorton.com</td>
+        <td><span class="chip cb2">Field Coord</span></td><td></td>
+      </tr>
+      <tr>
+        <td><a class="nl">Jim Howie</a></td>
+        <td>Regional VP</td><td>All DRH Carolinas</td>
+        <td>(704) 555-0300</td><td>jhowie@drhorton.com</td>
+        <td><span class="chip cp">Exec Sponsor</span></td><td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+</div>
+
+<!-- FILES subtab -->
+<div id="drh-files" class="sub-tc">
+<div class="sf-body">
+<div class="card last">
+  <div class="ch"><div class="ci" style="background:#534ab7">📁</div><h3>Files — DR Horton</h3><button class="sf-btn primary" style="font-size:11px;padding:4px 10px">Upload File</button></div>
+  <table class="tbl">
+    <thead><tr><th>File Name</th><th>Type</th><th>Division</th><th>Uploaded By</th><th>Date</th><th>Size</th></tr></thead>
+    <tbody>
+      <tr><td><a class="nl">DRH-CLT-MSA-2024-Signed.pdf</a></td><td><span class="chip cp">MSA</span></td><td>All Charlotte</td><td>Meg Logan</td><td>Jan 3, 2024</td><td>1.2 MB</td></tr>
+      <tr><td><a class="nl">DRH-CLT-Pricebook-2024.xlsx</a></td><td><span class="chip cb2">Pricing</span></td><td>DRH Charlotte</td><td>Meg Logan</td><td>Jan 3, 2024</td><td>84 KB</td></tr>
+      <tr><td><a class="nl">DRH-RAL-MSA-2024-Signed.pdf</a></td><td><span class="chip cp">MSA</span></td><td>DRH Raleigh</td><td>Meg Logan</td><td>Jan 3, 2024</td><td>1.1 MB</td></tr>
+      <tr><td><a class="nl">DRH-RAL-Pricebook-2024.xlsx</a></td><td><span class="chip cb2">Pricing</span></td><td>DRH Raleigh</td><td>Meg Logan</td><td>Jan 3, 2024</td><td>76 KB</td></tr>
+      <tr><td><a class="nl">DRH-Aqua-Addendum-2024.pdf</a></td><td><span class="chip cg">Addendum</span></td><td>CLT + RAL</td><td>Meg Logan</td><td>Mar 15, 2024</td><td>320 KB</td></tr>
+      <tr><td><a class="nl">DRH-Plant-Spec-Sheet-2024.pdf</a></td><td><span class="chip cgr">Spec</span></td><td>All DRH</td><td>Tyler Kelly</td><td>Feb 1, 2024</td><td>2.4 MB</td></tr>
+      <tr><td><a class="nl">DRH-CLT-Insurance-COI-2026.pdf</a></td><td><span class="chip ca">Insurance</span></td><td>DRH Charlotte</td><td>Meg Logan</td><td>Jan 2, 2026</td><td>188 KB</td></tr>
+      <tr><td><a class="nl">DRH-Pricebook-Renewal-Notes-2026.docx</a></td><td><span class="chip cgr">Notes</span></td><td>All DRH</td><td>Meg Logan</td><td>Oct 14, 2025</td><td>42 KB</td></tr>
+    </tbody>
+  </table>
+</div>
+</div>
+</div>
+
+<!-- PHOTOS subtab -->
+<div id="drh-photos" class="sub-tc">
+<div class="sf-body">
+<div class="card last">
+  <div class="ch"><div class="ci" style="background:#0070d2">📷</div><h3>Photos — DR Horton Communities</h3><button class="sf-btn" style="font-size:11px;padding:4px 10px">Upload Photo</button></div>
+  <div style="padding:8px 14px;background:#fafaf9;border-bottom:1px solid #f0f0f0;font-size:11px;color:#54698d;font-weight:500">Pines at Berewick</div>
+  <div class="photo-grid">
+    <div class="photo-tile sod"><div class="photo-meta"><strong>Community entrance</strong> · Pines · Apr 2026</div></div>
+    <div class="photo-tile tree"><div class="photo-meta"><strong>Model home landscaping</strong> · Pines · Mar 2026</div></div>
+    <div class="photo-tile after"><div class="photo-meta"><strong>Phase 1 complete</strong> · Pines · Feb 2026</div></div>
+  </div>
+  <div style="padding:8px 14px;background:#fafaf9;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;font-size:11px;color:#54698d;font-weight:500">Reserve at Mallard Creek</div>
+  <div class="photo-grid">
+    <div class="photo-tile before"><div class="photo-meta"><strong>Community entrance</strong> · Mallard · Apr 2026</div></div>
+    <div class="photo-tile tree"><div class="photo-meta"><strong>Model tree placement</strong> · Mallard · Mar 2026</div></div>
+    <div class="photo-tile aqua"><div class="photo-meta"><strong>Aqua install — model</strong> · Mallard · Mar 2026</div></div>
+  </div>
+  <div style="padding:8px 14px;background:#fafaf9;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;font-size:11px;color:#54698d;font-weight:500">Hampton Creek &amp; Others</div>
+  <div class="photo-grid">
+    <div class="photo-tile after"><div class="photo-meta"><strong>Hampton completed lot</strong> · Apr 2026</div></div>
+    <div class="photo-tile sod"><div class="photo-meta"><strong>Heritage Oaks model</strong> · Mar 2026</div></div>
+    <div class="photo-tile tree"><div class="photo-meta"><strong>Bay Pointe entrance</strong> · Apr 2026</div></div>
+    <div class="photo-tile issue"><div class="photo-meta"><strong>Heritage FJ — drainage</strong> · Apr 2026</div></div>
+    <div class="photo-tile aqua"><div class="photo-meta"><strong>Bay Pointe aqua zone test</strong> · Apr 2026</div></div>
+  </div>
+</div>
+</div>
 </div>
 
 <!-- ====================================================== -->
@@ -337,6 +537,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
   <div class="kpi-card navy"><div class="kpi-label">Avg GP%</div><div class="kpi-value">39.4%</div><div class="kpi-sub">DRH Charlotte pricebook</div><div class="kpi-delta up">↑ 0.8% vs last year</div></div>
 </div>
 
+<div class="subtabs">
+  <div class="subtab on" onclick="sub('div','communities',this)">Communities <span class="rm-count has" style="margin-left:4px">18</span></div>
+  <div class="subtab" onclick="sub('div','details',this)">Details</div>
+  <div class="subtab" onclick="sub('div','pricing',this)">Pricing / MSA</div>
+  <div class="subtab" onclick="sub('div','contacts',this)">Contacts <span class="rm-count has" style="margin-left:4px">4</span></div>
+  <div class="subtab" onclick="sub('div','files',this)">Files <span class="rm-count has" style="margin-left:4px">6</span></div>
+  <div class="subtab" onclick="sub('div','photos',this)">Photos <span class="rm-count has" style="margin-left:4px">9</span></div>
+</div>
+
+<!-- COMMUNITIES subtab -->
+<div id="div-communities" class="sub-tc on">
 <div class="list-toolbar">
   <span style="font-size:11px;color:#54698d;font-weight:500;text-transform:uppercase;letter-spacing:.4px">Filter:</span>
   <span class="filter-chip on" onclick="fc(this)">All</span>
@@ -466,6 +677,174 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
     <div class="legend-item"><div class="legend-sw" style="background:#fef3c7;border-color:#f9c725"></div>30/31 Day</div>
     <div class="legend-item"><div class="legend-sw" style="background:#fce8e8;border-color:#f09595;border-style:dashed"></div>FJ Open</div>
     <div class="legend-item"><div class="legend-sw" style="background:#f4f6f9;border-color:#e5e5e5"></div>Available / Backlog</div>
+  </div>
+</div>
+</div>
+</div>
+</div><!-- end div-communities subtab -->
+
+<!-- DIVISION DETAILS subtab -->
+<div id="div-details" class="sub-tc">
+<div class="sf-body">
+<div class="layout"><div class="layout-main">
+<div class="card info">
+  <div class="ch"><div class="ci" style="background:#0070d2">📋</div><h3>Division Information</h3></div>
+  <div class="fields-grid">
+    <div><div class="field-label">Division Name</div><div class="field-value">DR Horton Charlotte</div></div>
+    <div><div class="field-label">Parent Builder</div><div class="field-value"><a class="nl" onclick="sw('divisions',document.querySelectorAll('.sf-tab')[1])">DR Horton, Inc.</a></div></div>
+    <div><div class="field-label">Division Type</div><div class="field-value"><span class="chip cb2">Division Account</span></div></div>
+    <div><div class="field-label">FM Lead</div><div class="field-value">Tyler Kelly</div></div>
+    <div><div class="field-label">Office Address</div><div class="field-value">4725 Piedmont Row Dr, Charlotte NC 28210</div></div>
+    <div><div class="field-label">Territory</div><div class="field-value">Mecklenburg, Cabarrus, Union, Iredell Counties</div></div>
+    <div><div class="field-label">Active Communities</div><div class="field-value">18</div></div>
+    <div><div class="field-label">Total Lots Managed</div><div class="field-value">488</div></div>
+    <div><div class="field-label">Pricebook</div><div class="field-value">DRH-CLT 2024 Standard</div></div>
+    <div><div class="field-label">Aqua Auto-Trigger</div><div class="field-value"><span class="chip cg">Yes — all communities</span></div></div>
+    <div><div class="field-label">Account Status</div><div class="field-value"><span class="chip cg">Active</span></div></div>
+    <div><div class="field-label">MSA Reference</div><div class="field-value">DRH-CLT-MSA-2024</div></div>
+  </div>
+</div>
+<div class="card last">
+  <div class="ch"><div class="ci" style="background:#534ab7">📝</div><h3>Division Notes</h3></div>
+  <div style="padding:12px 14px;font-size:12px;color:#16325c;line-height:1.6">Charlotte is DRH's highest-volume Loving division. 18 active communities spanning 4 counties. Average lot size trending up (3,200–3,800 sf sod). Sarah Mitchell (Division President) approved Aqua auto-trigger expansion in Mar 2024 MSA addendum. Monthly production calls first Tuesday — Tyler Kelly attends. Heritage Oaks currently has elevated FJ rate — drainage issue under investigation with DRH field super Marcus Webb.</div>
+</div>
+</div>
+<div class="layout-rail">
+<div class="card">
+  <div class="ch"><div class="ci" style="background:#534ab7">🌳</div><h3>Hierarchy</h3></div>
+  <div class="hier-tree">
+    <div class="hier-node parent"><div class="hier-bullet"></div><a onclick="sw('divisions',document.querySelectorAll('.sf-tab')[1])">DR Horton</a></div>
+    <div class="hier-node div cur"><div class="hier-bullet"></div><a>DRH Charlotte</a></div>
+    <div class="hier-node com"><div class="hier-bullet"></div><a>Pines at Berewick</a><span class="hier-meta">48 lots</span></div>
+    <div class="hier-node com"><div class="hier-bullet"></div><a>Mallard Creek</a><span class="hier-meta">62 lots</span></div>
+    <div class="hier-node com"><div class="hier-bullet"></div><span style="color:#54698d;font-style:italic">+16 more…</span></div>
+  </div>
+</div>
+<div class="card last">
+  <div class="ch"><div class="ci" style="background:#0070d2">🔗</div><h3>Related</h3></div>
+  <div class="related-mini"><div style="font-size:12px;color:#16325c">🏘 Communities</div><div class="rm-count has">18</div></div>
+  <div class="related-mini"><div style="font-size:12px;color:#16325c">🏠 Active Lots</div><div class="rm-count has">88</div></div>
+  <div class="related-mini"><div style="font-size:12px;color:#16325c">👤 Contacts</div><div class="rm-count has">4</div></div>
+  <div class="related-mini"><div style="font-size:12px;color:#16325c">📁 Files</div><div class="rm-count has">6</div></div>
+  <div class="related-mini"><div style="font-size:12px;color:#16325c">⚠ Open FJs</div><div class="rm-count" style="background:#fce8e8;color:#c23934">7</div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- DIVISION PRICING subtab -->
+<div id="div-pricing" class="sub-tc">
+<div class="sf-body">
+<div class="ab ab-b"><div class="ab-ic">💲</div><div>DRH Charlotte pricing from Pricebook2: <strong>DRH-CLT 2024 Standard</strong>. Assigned at Division_Account__c level. All communities in this division inherit this pricebook unless a community-level override is set.</div></div>
+<div class="card">
+  <div class="ch"><div class="ci" style="background:#0070d2">📋</div><h3>Division MSA Terms — DRH Charlotte</h3><span class="chip cg" style="margin-left:auto">Active</span></div>
+  <div class="fields-grid">
+    <div><div class="field-label">Standard Package $/Lot</div><div class="field-value" style="font-size:14px;font-weight:600;color:#16325c">$4,820</div></div>
+    <div><div class="field-label">Aqua Add-on $/Lot</div><div class="field-value" style="font-size:14px;font-weight:600;color:#0a8aa6">$485</div></div>
+    <div><div class="field-label">Sod Rate</div><div class="field-value">$1.42 / sqft (Centipede) · $1.68 (Zoysia premium)</div></div>
+    <div><div class="field-label">Std Goal Hours / Lot</div><div class="field-value">6.5 hrs (Charlotte time standard)</div></div>
+    <div><div class="field-label">Payment Terms</div><div class="field-value">Net 30 from invoice</div></div>
+    <div><div class="field-label">Invoice Trigger</div><div class="field-value">Closeout_Status__c = Approved</div></div>
+    <div><div class="field-label">FJ Policy</div><div class="field-value">Loving absorbs ≤14 days post-install</div></div>
+    <div><div class="field-label">Pricebook Renewal</div><div class="field-value">Nov 2026 (annual review)</div></div>
+  </div>
+</div>
+<div class="card last">
+  <div class="ch"><div class="ci" style="background:#534ab7">💲</div><h3>Pricebook Entries — DRH Charlotte Standard 2024</h3></div>
+  <table class="tbl">
+    <thead><tr><th>Item</th><th>Unit</th><th class="num">Price</th><th>Category</th></tr></thead>
+    <tbody>
+      <tr><td>Standard Install Package</td><td>Per Lot</td><td class="num" style="font-weight:600">$4,820</td><td><span class="chip cp">Package</span></td></tr>
+      <tr><td>Aqua Irrigation System</td><td>Per Lot</td><td class="num" style="font-weight:600">$485</td><td><span class="chip cb2">Add-On</span></td></tr>
+      <tr><td>Sod — Centipede</td><td>Per sqft</td><td class="num">$1.42</td><td><span class="chip cg">Sod</span></td></tr>
+      <tr><td>Sod — Zoysia (premium)</td><td>Per sqft</td><td class="num">$1.68</td><td><span class="chip cg">Sod</span></td></tr>
+      <tr><td>Crepe Myrtle 7gal</td><td>Each</td><td class="num">$88</td><td><span class="chip cgr">Plant</span></td></tr>
+      <tr><td>Willow Oak 2.5"</td><td>Each</td><td class="num">$142</td><td><span class="chip cgr">Tree</span></td></tr>
+      <tr><td>Loropetalum 3gal</td><td>Each</td><td class="num">$24</td><td><span class="chip cgr">Shrub</span></td></tr>
+      <tr><td>Mulch — Triple Shred</td><td>Per cy</td><td class="num">$68</td><td><span class="chip cgr">Material</span></td></tr>
+    </tbody>
+  </table>
+</div>
+</div>
+</div>
+
+<!-- DIVISION CONTACTS subtab -->
+<div id="div-contacts" class="sub-tc">
+<div class="sf-body">
+<div class="card last">
+  <div class="ch"><div class="ci" style="background:#0070d2">👤</div><h3>Contacts — DRH Charlotte</h3><button class="sf-btn primary" style="font-size:11px;padding:4px 10px">+ New Contact</button></div>
+  <table class="tbl">
+    <thead><tr><th>Name</th><th>Title</th><th>Phone</th><th>Email</th><th>Role</th><th>Primary</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><a class="nl">Sarah Mitchell</a></td><td>Division President</td>
+        <td>(704) 555-0142</td><td>smitchell@drhorton.com</td>
+        <td><span class="chip cp">Decision Maker</span></td><td><span class="chip cg">✓ Primary</span></td>
+      </tr>
+      <tr>
+        <td><a class="nl">Marcus Webb</a></td><td>VP Construction</td>
+        <td>(704) 555-0188</td><td>mwebb@drhorton.com</td>
+        <td><span class="chip cb2">Construction Lead</span></td><td></td>
+      </tr>
+      <tr>
+        <td><a class="nl">Linda Cho</a></td><td>Purchasing Manager</td>
+        <td>(704) 555-0211</td><td>lcho@drhorton.com</td>
+        <td><span class="chip ca">PO / Invoicing</span></td><td></td>
+      </tr>
+      <tr>
+        <td><a class="nl">Greg Tanner</a></td><td>Field Superintendent</td>
+        <td>(704) 555-0394</td><td>gtanner@drhorton.com</td>
+        <td><span class="chip cb2">Field Coord</span></td><td></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+</div>
+
+<!-- DIVISION FILES subtab -->
+<div id="div-files" class="sub-tc">
+<div class="sf-body">
+<div class="card last">
+  <div class="ch"><div class="ci" style="background:#534ab7">📁</div><h3>Files — DRH Charlotte</h3><button class="sf-btn primary" style="font-size:11px;padding:4px 10px">Upload File</button></div>
+  <table class="tbl">
+    <thead><tr><th>File Name</th><th>Type</th><th>Uploaded By</th><th>Date</th><th>Size</th></tr></thead>
+    <tbody>
+      <tr><td><a class="nl">DRH-CLT-MSA-2024-Signed.pdf</a></td><td><span class="chip cp">MSA</span></td><td>Meg Logan</td><td>Jan 3, 2024</td><td>1.2 MB</td></tr>
+      <tr><td><a class="nl">DRH-CLT-Pricebook-2024.xlsx</a></td><td><span class="chip cb2">Pricing</span></td><td>Meg Logan</td><td>Jan 3, 2024</td><td>84 KB</td></tr>
+      <tr><td><a class="nl">DRH-Aqua-Addendum-2024.pdf</a></td><td><span class="chip cg">Addendum</span></td><td>Meg Logan</td><td>Mar 15, 2024</td><td>320 KB</td></tr>
+      <tr><td><a class="nl">DRH-CLT-Plant-Specs-2024.pdf</a></td><td><span class="chip cgr">Spec</span></td><td>Tyler Kelly</td><td>Feb 1, 2024</td><td>2.4 MB</td></tr>
+      <tr><td><a class="nl">DRH-CLT-Insurance-COI-2026.pdf</a></td><td><span class="chip ca">Insurance</span></td><td>Meg Logan</td><td>Jan 2, 2026</td><td>188 KB</td></tr>
+      <tr><td><a class="nl">Heritage-Oaks-Drainage-Issue-Notes.docx</a></td><td><span class="chip cr">FJ / Issue</span></td><td>Tyler Kelly</td><td>Apr 18, 2026</td><td>38 KB</td></tr>
+    </tbody>
+  </table>
+</div>
+</div>
+</div>
+
+<!-- DIVISION PHOTOS subtab -->
+<div id="div-photos" class="sub-tc">
+<div class="sf-body">
+<div class="card last">
+  <div class="ch"><div class="ci" style="background:#0070d2">📷</div><h3>Photos — DRH Charlotte Communities</h3><button class="sf-btn" style="font-size:11px;padding:4px 10px">Upload Photo</button></div>
+  <div style="padding:8px 14px;background:#fafaf9;border-bottom:1px solid #f0f0f0;font-size:11px;color:#54698d;font-weight:500">Pines at Berewick</div>
+  <div class="photo-grid">
+    <div class="photo-tile sod"><div class="photo-meta"><strong>Community entrance</strong> · Pines · Apr 2026</div></div>
+    <div class="photo-tile tree"><div class="photo-meta"><strong>Model home landscaping</strong> · Pines · Mar 2026</div></div>
+    <div class="photo-tile after"><div class="photo-meta"><strong>Phase 1 complete view</strong> · Pines · Feb 2026</div></div>
+  </div>
+  <div style="padding:8px 14px;background:#fafaf9;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;font-size:11px;color:#54698d;font-weight:500">Heritage Oaks</div>
+  <div class="photo-grid">
+    <div class="photo-tile before"><div class="photo-meta"><strong>Model lot — before</strong> · Heritage · Mar 2026</div></div>
+    <div class="photo-tile issue"><div class="photo-meta"><strong>Drainage FJ area</strong> · Heritage · Apr 2026</div></div>
+    <div class="photo-tile after"><div class="photo-meta"><strong>Completed lot 22</strong> · Heritage · Apr 2026</div></div>
+  </div>
+  <div style="padding:8px 14px;background:#fafaf9;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;font-size:11px;color:#54698d;font-weight:500">Bay Pointe &amp; Hampton Creek</div>
+  <div class="photo-grid">
+    <div class="photo-tile tree"><div class="photo-meta"><strong>Bay Pointe entrance trees</strong> · Apr 2026</div></div>
+    <div class="photo-tile aqua"><div class="photo-meta"><strong>Aqua zone test — Bay Pointe</strong></div></div>
+    <div class="photo-tile sod"><div class="photo-meta"><strong>Hampton Creek lot 18</strong> · Apr 2026</div></div>
   </div>
 </div>
 </div>
