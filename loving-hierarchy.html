@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>LOVING — Builder Hierarchy</title>
+<style>
+  :root {
+    --green:   #2d6a4f;
+    --green-lt:#52b788;
+    --green-bg:#d8f3dc;
+    --sand:    #f4a261;
+    --sand-lt: #fde8d1;
+    --sky:     #118ab2;
+    --sky-lt:  #d0eaf5;
+    --plum:    #6d4c8c;
+    --plum-lt: #e8dff5;
+    --lot:     #e76f51;
+    --lot-lt:  #fde8e2;
+    --white:   #ffffff;
+    --gray:    #6c757d;
+    --gray-lt: #f8f9fa;
+    --border:  #dee2e6;
+    --shadow:  0 2px 12px rgba(0,0,0,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: #f0f4f2;
+    color: #1a1a1a;
+    min-height: 100vh;
+  }
+
+  /* ── TOP NAV ─────────────────────────────── */
+  header {
+    background: var(--green);
+    color: #fff;
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    box-shadow: var(--shadow);
+    position: sticky; top: 0; z-index: 100;
+  }
+  header h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: .04em; }
+  header span { font-size: .8rem; opacity: .75; }
+  .nav-pills { display: flex; gap: .5rem; }
+  .nav-pill {
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.3);
+    color: #fff;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: .78rem;
+    cursor: pointer;
+    transition: background .2s;
+  }
+  .nav-pill:hover, .nav-pill.active { background: rgba(255,255,255,.3); }
+
+  /* ── BREADCRUMB ──────────────────────────── */
+  #breadcrumb {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: .55rem 2rem;
+    font-size: .82rem;
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    flex-wrap: wrap;
+  }
+  .bc-item { cursor: pointer; color: var(--green); font-weight: 500; }
+  .bc-item:hover { text-decoration: underline; }
+  .bc-sep { color: #ccc; }
+
+  /* ── LAYOUT ──────────────────────────────── */
+  .layout {
+    display: flex;
+    gap: 0;
+    min-height: calc(100vh - 100px);
+  }
+
+  /* ── SIDEBAR ─────────────────────────────── */
+  aside {
+    width: 260px;
+    min-width: 220px;
+    background: #fff;
+    border-right: 1px solid var(--border);
+    padding: 1.2rem 0;
+    overflow-y: auto;
+  }
+  .sidebar-title {
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--gray);
+    padding: 0 1.2rem .6rem;
+  }
+  .tree-item {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .45rem 1.2rem;
+    cursor: pointer;
+    font-size: .85rem;
+    transition: background .15s;
+    border-left: 3px solid transparent;
+  }
+  .tree-item:hover { background: var(--gray-lt); }
+  .tree-item.active {
+    background: var(--green-bg);
+    border-left-color: var(--green);
+    color: var(--green);
+    font-weight: 600;
+  }
+  .tree-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .tree-item.l0 .tree-dot { background: var(--green); }
+  .tree-item.l1 { padding-left: 2.2rem; }
+  .tree-item.l1 .tree-dot { background: var(--sky); }
+  .tree-item.l2 { padding-left: 3.2rem; }
+  .tree-item.l2 .tree-dot { background: var(--plum); }
+  .tree-item.l3 { padding-left: 4.2rem; }
+  .tree-item.l3 .tree-dot { background: var(--lot); width:8px; height:8px; }
+  .tree-toggle {
+    margin-left: auto;
+    font-size: .7rem;
+    color: var(--gray);
+  }
+
+  /* ── MAIN CONTENT ────────────────────────── */
+  main {
+    flex: 1;
+    padding: 1.8rem 2rem;
+    overflow-y: auto;
+  }
+
+  /* ── SECTION HEADER ──────────────────────── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.4rem;
+  }
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: .7rem;
+  }
+  .level-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    border-radius: 6px;
+    padding: .3rem .9rem;
+    font-size: .75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .badge-builder  { background: var(--green-bg); color: var(--green); }
+  .badge-division { background: var(--sky-lt);   color: var(--sky);   }
+  .badge-community{ background: var(--plum-lt);  color: var(--plum);  }
+  .badge-lot      { background: var(--lot-lt);   color: var(--lot);   }
+
+  .section-header h2 { font-size: 1.4rem; font-weight: 700; }
+
+  /* ── BUTTONS ─────────────────────────────── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    border: none;
+    border-radius: 6px;
+    padding: .5rem 1rem;
+    font-size: .82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter .18s, transform .1s;
+  }
+  .btn:hover  { filter: brightness(1.08); }
+  .btn:active { transform: scale(.97); }
+  .btn-primary   { background: var(--green);  color: #fff; }
+  .btn-sky       { background: var(--sky);    color: #fff; }
+  .btn-plum      { background: var(--plum);   color: #fff; }
+  .btn-lot       { background: var(--lot);    color: #fff; }
+  .btn-outline   { background: #fff; border: 1.5px solid var(--border); color: #444; }
+  .btn-outline:hover { background: var(--gray-lt); }
+  .btn-danger    { background: #dc3545; color: #fff; }
+  .btn-sm { padding: .3rem .7rem; font-size: .75rem; }
+  .btn-group { display: flex; gap: .5rem; flex-wrap: wrap; }
+
+  /* ── STATS BAR ───────────────────────────── */
+  .stats-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.6rem;
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    flex: 1;
+    min-width: 120px;
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    padding: 1rem 1.2rem;
+    box-shadow: var(--shadow);
+  }
+  .stat-card .stat-num {
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: .25rem;
+  }
+  .stat-card .stat-lbl { font-size: .75rem; color: var(--gray); text-transform: uppercase; letter-spacing: .05em; }
+  .stat-green  { border-top: 3px solid var(--green); }
+  .stat-sky    { border-top: 3px solid var(--sky); }
+  .stat-plum   { border-top: 3px solid var(--plum); }
+  .stat-lot    { border-top: 3px solid var(--lot); }
+
+  /* ── CARDS GRID ──────────────────────────── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: box-shadow .2s, transform .15s;
+  }
+  .card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.13); transform: translateY(-2px); }
+
+  .card-header {
+    padding: .9rem 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-header-name {
+    font-weight: 700;
+    font-size: .95rem;
+  }
+  .card-body { padding: 1rem 1.1rem; }
+  .card-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .28rem 0;
+    font-size: .82rem;
+    border-bottom: 1px solid #f2f2f2;
+  }
+  .card-field:last-child { border-bottom: none; }
+  .card-field label { color: var(--gray); flex-shrink: 0; margin-right: .5rem; }
+  .card-field span  { font-weight: 600; text-align: right; }
+  .card-footer {
+    padding: .75rem 1.1rem;
+    background: var(--gray-lt);
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: .4rem;
+    flex-wrap: wrap;
+  }
+
+  /* ── STATUS PILL ─────────────────────────── */
+  .status-pill {
+    display: inline-block;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: .72rem;
+    font-weight: 700;
+  }
+  .s-active     { background: #d4edda; color: #155724; }
+  .s-hold       { background: #fff3cd; color: #856404; }
+  .s-complete   { background: #cce5ff; color: #004085; }
+  .s-pending    { background: #f8d7da; color: #721c24; }
+  .s-scheduled  { background: #e2d9f3; color: #4a1e8c; }
+
+  /* ── DETAIL PANEL ────────────────────────── */
+  #detail-panel {
+    display: none;
+    position: fixed;
+    top: 0; right: 0;
+    width: 420px;
+    height: 100vh;
+    background: #fff;
+    border-left: 1px solid var(--border);
+    box-shadow: -4px 0 24px rgba(0,0,0,.13);
+    z-index: 200;
+    overflow-y: auto;
+    transition: transform .25s;
+  }
+  .detail-hdr {
+    padding: 1.2rem 1.4rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .detail-hdr h3 { font-size: 1.1rem; font-weight: 700; }
+  .detail-close  { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--gray); line-height: 1; }
+  .detail-body   { padding: 1.2rem 1.4rem; }
+  .detail-section { margin-bottom: 1.4rem; }
+  .detail-section h4 {
+    font-size: .72rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--gray);
+    margin-bottom: .6rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: .4rem;
+  }
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: .45rem 0;
+    font-size: .85rem;
+    border-bottom: 1px solid #f5f5f5;
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-row label { color: var(--gray); flex-shrink: 0; margin-right: .8rem; max-width: 45%; }
+  .detail-row span  { font-weight: 600; text-align: right; }
+  .detail-actions   { padding: 1rem 1.4rem; border-top: 1px solid var(--border); display: flex; gap: .5rem; }
+
+  /* ── MODAL ───────────────────────────────── */
+  #modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.45);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+  }
+  #modal-overlay.open { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 12px;
+    width: 500px;
+    max-width: 95vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  }
+  .modal-hdr {
+    padding: 1.2rem 1.4rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-hdr h3 { font-size: 1rem; font-weight: 700; }
+  .modal-body   { padding: 1.4rem; }
+  .modal-footer {
+    padding: 1rem 1.4rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: flex-end;
+    gap: .6rem;
+  }
+  .form-group { margin-bottom: 1rem; }
+  .form-group label {
+    display: block;
+    font-size: .8rem;
+    font-weight: 600;
+    color: #444;
+    margin-bottom: .35rem;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%;
+    padding: .5rem .75rem;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    font-size: .85rem;
+    transition: border-color .2s;
+    font-family: inherit;
+  }
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--green-lt);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+
+  /* ── TOAST ───────────────────────────────── */
+  #toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: #1a1a1a;
+    color: #fff;
+    padding: .75rem 1.5rem;
+    border-radius: 8px;
+    font-size: .85rem;
+    font-weight: 600;
+    box-shadow: var(--shadow);
+    z-index: 500;
+    transition: transform .3s;
+    white-space: nowrap;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── PIPELINE PROGRESS ───────────────────── */
+  .pipeline-bar {
+    display: flex;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 28px;
+    margin-bottom: .5rem;
+    font-size: .72rem;
+    font-weight: 700;
+  }
+  .pipeline-seg {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: flex .4s;
+    cursor: default;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .seg-takeoff  { background: #6c757d; color: #fff; }
+  .seg-sched    { background: var(--plum); color: #fff; }
+  .seg-inprog   { background: var(--sky); color: #fff; }
+  .seg-complete { background: var(--green); color: #fff; }
+  .seg-hold     { background: var(--sand); color: #fff; }
+
+  /* ── EMPTY STATE ─────────────────────────── */
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--gray);
+  }
+  .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
+  .empty-state p { font-size: .9rem; margin-bottom: 1.2rem; }
+
+  /* ── SEARCH ──────────────────────────────── */
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    margin-bottom: 1.4rem;
+  }
+  .search-bar input {
+    flex: 1;
+    padding: .5rem .9rem;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: .85rem;
+  }
+  .search-bar input:focus { outline: none; border-color: var(--green-lt); }
+
+  /* ── RESPONSIVE ──────────────────────────── */
+  @media (max-width: 768px) {
+    aside { display: none; }
+    .cards-grid { grid-template-columns: 1fr; }
+    #detail-panel { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ─────────────────────────────────── -->
+<header>
+  <h1>🌿 LOVING Outdoor Living — Builder Hierarchy</h1>
+  <div class="nav-pills">
+    <button class="nav-pill active" onclick="showView('builders')">Parent Builders</button>
+    <button class="nav-pill" onclick="showView('divisions')">Divisions</button>
+    <button class="nav-pill" onclick="showView('communities')">Communities</button>
+    <button class="nav-pill" onclick="showView('lots')">Lots</button>
+  </div>
+</header>
+
+<!-- ── BREADCRUMB ──────────────────────────────── -->
+<div id="breadcrumb">
+  <span class="bc-item" onclick="showView('builders')">🏗 All Builders</span>
+</div>
+
+<div class="layout">
+
+  <!-- ── SIDEBAR ──────────────────────────────── -->
+  <aside id="sidebar">
+    <div class="sidebar-title">Hierarchy</div>
+    <div id="tree"></div>
+  </aside>
+
+  <!-- ── MAIN ─────────────────────────────────── -->
+  <main id="main-content"></main>
+</div>
+
+<!-- ── DETAIL PANEL ───────────────────────────── -->
+<div id="detail-panel">
+  <div class="detail-hdr">
+    <div>
+      <div id="dp-badge"></div>
+      <h3 id="dp-name"></h3>
+    </div>
+    <button class="detail-close" onclick="closeDetail()">✕</button>
+  </div>
+  <div class="detail-body" id="dp-body"></div>
+  <div class="detail-actions" id="dp-actions"></div>
+</div>
+
+<!-- ── MODAL ──────────────────────────────────── -->
+<div id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hdr">
+      <h3 id="modal-title">Add Record</h3>
+      <button class="detail-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="modal-save" onclick="saveModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ──────────────────────────────────── -->
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════════
+//  DATA MODEL
+// ══════════════════════════════════════════════════
+const DB = {
+  builders: [
+    { id:'b1', name:'D.R. Horton', specType:'Exact (Lennar)', billingMethod:'PO-Based', paymentTerms:'Net 30', msaNumber:'MSA-2021-001', divisions:['d1','d2'] },
+    { id:'b2', name:'Lennar Corporation', specType:'Exact (Lennar)', billingMethod:'Invoice', paymentTerms:'Net 45', msaNumber:'MSA-2022-003', divisions:['d3'] },
+    { id:'b3', name:'Taylor Morrison', specType:'Flexible', billingMethod:'PO-Based', paymentTerms:'Net 30', msaNumber:'MSA-2023-007', divisions:['d4'] },
+  ],
+  divisions: [
+    { id:'d1', builderId:'b1', name:'D.R. Horton – Austin', zone:'Central TX', fm:'Jake Torres', communities:['c1','c2','c3'] },
+    { id:'d2', builderId:'b1', name:'D.R. Horton – San Antonio', zone:'South TX', fm:'Maria Reyes', communities:['c4'] },
+    { id:'d3', builderId:'b2', name:'Lennar – Houston', zone:'Houston Metro', fm:'Sam Patel', communities:['c5','c6'] },
+    { id:'d4', builderId:'b3', name:'Taylor Morrison – DFW', zone:'North TX', fm:'Chris Webb', communities:['c7'] },
+  ],
+  communities: [
+    { id:'c1', divId:'d1', name:'Brushy Creek Estates', zone:'Cedar Park', aqua:true, sodSpecies:'Bermuda 419', bmgPackage:'Standard', lots:['l1','l2','l3','l4','l5'] },
+    { id:'c2', divId:'d1', name:'Lakeway Reserve', zone:'Lakeway', aqua:false, sodSpecies:'St. Augustine', bmgPackage:'Premium', lots:['l6','l7','l8'] },
+    { id:'c3', divId:'d1', name:'Steiner Ranch Phase 4', zone:'NW Austin', aqua:true, sodSpecies:'Zoysia', bmgPackage:'Standard', lots:['l9','l10'] },
+    { id:'c4', divId:'d2', name:'Hill Country Village', zone:'San Antonio NW', aqua:false, sodSpecies:'Bermuda 419', bmgPackage:'Economy', lots:['l11','l12','l13'] },
+    { id:'c5', divId:'d3', name:'Riverstone Landing', zone:'Sugar Land', aqua:true, sodSpecies:'Bermuda 419', bmgPackage:'Premium', lots:['l14','l15'] },
+    { id:'c6', divId:'d3', name:'Sienna Plantation', zone:'Missouri City', aqua:false, sodSpecies:'St. Augustine', bmgPackage:'Standard', lots:['l16'] },
+    { id:'c7', divId:'d4', name:'Pecan Square', zone:'Northlake', aqua:false, sodSpecies:'Bermuda 419', bmgPackage:'Standard', lots:['l17','l18'] },
+  ],
+  lots: [
+    { id:'l1',  commId:'c1', lotNum:'101', address:'101 Brushy Creek Blvd', status:'In Progress', poNum:'PO-24-1101', target:'2025-06-10', bucket:'In Progress', takeoff:true, woCreated:true },
+    { id:'l2',  commId:'c1', lotNum:'102', address:'102 Brushy Creek Blvd', status:'Scheduled',  poNum:'PO-24-1102', target:'2025-06-17', bucket:'Scheduled',  takeoff:true, woCreated:true },
+    { id:'l3',  commId:'c1', lotNum:'103', address:'103 Brushy Creek Blvd', status:'On Hold',    poNum:'PO-24-1103', target:'2025-06-24', bucket:'On Hold',    takeoff:false, woCreated:false },
+    { id:'l4',  commId:'c1', lotNum:'104', address:'104 Brushy Creek Blvd', status:'Complete',   poNum:'PO-24-1104', target:'2025-05-20', bucket:'Complete',   takeoff:true, woCreated:true },
+    { id:'l5',  commId:'c1', lotNum:'105', address:'105 Brushy Creek Blvd', status:'Takeoff',    poNum:'PO-24-1105', target:'2025-06-30', bucket:'Takeoff',    takeoff:false, woCreated:false },
+    { id:'l6',  commId:'c2', lotNum:'201', address:'201 Lakeway Dr',        status:'Complete',   poNum:'PO-24-2001', target:'2025-05-01', bucket:'Complete',   takeoff:true, woCreated:true },
+    { id:'l7',  commId:'c2', lotNum:'202', address:'202 Lakeway Dr',        status:'Scheduled',  poNum:'PO-24-2002', target:'2025-06-14', bucket:'Scheduled',  takeoff:true, woCreated:true },
+    { id:'l8',  commId:'c2', lotNum:'203', address:'203 Lakeway Dr',        status:'Takeoff',    poNum:'PO-24-2003', target:'2025-07-01', bucket:'Takeoff',    takeoff:false, woCreated:false },
+    { id:'l9',  commId:'c3', lotNum:'301', address:'301 Steiner Ranch Pkwy', status:'In Progress',poNum:'PO-24-3001', target:'2025-06-11', bucket:'In Progress',takeoff:true, woCreated:true },
+    { id:'l10', commId:'c3', lotNum:'302', address:'302 Steiner Ranch Pkwy', status:'Scheduled',  poNum:'PO-24-3002', target:'2025-06-18', bucket:'Scheduled',  takeoff:true, woCreated:true },
+    { id:'l11', commId:'c4', lotNum:'401', address:'401 Hill Country Ln',   status:'Complete',   poNum:'PO-24-4001', target:'2025-05-05', bucket:'Complete',   takeoff:true, woCreated:true },
+    { id:'l12', commId:'c4', lotNum:'402', address:'402 Hill Country Ln',   status:'On Hold',    poNum:'PO-24-4002', target:'2025-06-25', bucket:'On Hold',    takeoff:false, woCreated:false },
+    { id:'l13', commId:'c4', lotNum:'403', address:'403 Hill Country Ln',   status:'Takeoff',    poNum:'PO-24-4003', target:'2025-07-08', bucket:'Takeoff',    takeoff:false, woCreated:false },
+    { id:'l14', commId:'c5', lotNum:'501', address:'501 Riverstone Way',    status:'Scheduled',  poNum:'PO-24-5001', target:'2025-06-20', bucket:'Scheduled',  takeoff:true, woCreated:true },
+    { id:'l15', commId:'c5', lotNum:'502', address:'502 Riverstone Way',    status:'In Progress',poNum:'PO-24-5002', target:'2025-06-12', bucket:'In Progress',takeoff:true, woCreated:true },
+    { id:'l16', commId:'c6', lotNum:'601', address:'601 Sienna Dr',         status:'Complete',   poNum:'PO-24-6001', target:'2025-05-28', bucket:'Complete',   takeoff:true, woCreated:true },
+    { id:'l17', commId:'c7', lotNum:'701', address:'701 Pecan Square Blvd', status:'Takeoff',    poNum:'PO-24-7001', target:'2025-07-15', bucket:'Takeoff',    takeoff:false, woCreated:false },
+    { id:'l18', commId:'c7', lotNum:'702', address:'702 Pecan Square Blvd', status:'Scheduled',  poNum:'PO-24-7002', target:'2025-06-28', bucket:'Scheduled',  takeoff:true, woCreated:true },
+  ]
+};
+
+// ══════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════
+let state = {
+  view: 'builders',
+  selectedBuilderId: null,
+  selectedDivId: null,
+  selectedCommId: null,
+  searchQuery: '',
+};
+
+let modalCallback = null;
+
+// ══════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════
+function uid() { return '_' + Math.random().toString(36).slice(2,9); }
+
+function statusPill(s) {
+  const map = {
+    'In Progress':'s-active', 'Scheduled':'s-scheduled', 'Complete':'s-complete',
+    'On Hold':'s-hold', 'Takeoff':'s-pending'
+  };
+  return `<span class="status-pill ${map[s]||''}">${s}</span>`;
+}
+
+function toast(msg, color='#1a1a1a') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = color;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function closeDetail() {
+  document.getElementById('detail-panel').style.display = 'none';
+}
+
+function openModal(title, bodyHTML, onSave) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = bodyHTML;
+  document.getElementById('modal-overlay').classList.add('open');
+  modalCallback = onSave;
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modal-overlay')) return;
+  document.getElementById('modal-overlay').classList.remove('open');
+  modalCallback = null;
+}
+
+function saveModal() {
+  if (modalCallback) modalCallback();
+}
+
+// ══════════════════════════════════════════════════
+//  BREADCRUMB
+// ══════════════════════════════════════════════════
+function renderBreadcrumb() {
+  let html = `<span class="bc-item" onclick="showView('builders')">🏗 All Builders</span>`;
+  if (state.selectedBuilderId) {
+    const b = DB.builders.find(x=>x.id===state.selectedBuilderId);
+    html += `<span class="bc-sep">›</span><span class="bc-item" onclick="drillBuilder('${b.id}')">${b.name}</span>`;
+  }
+  if (state.selectedDivId) {
+    const d = DB.divisions.find(x=>x.id===state.selectedDivId);
+    html += `<span class="bc-sep">›</span><span class="bc-item" onclick="drillDivision('${d.id}')">${d.name}</span>`;
+  }
+  if (state.selectedCommId) {
+    const c = DB.communities.find(x=>x.id===state.selectedCommId);
+    html += `<span class="bc-sep">›</span><span class="bc-item">${c.name}</span>`;
+  }
+  document.getElementById('breadcrumb').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════
+//  SIDEBAR TREE
+// ══════════════════════════════════════════════════
+function renderTree() {
+  let html = '';
+  DB.builders.forEach(b => {
+    const activeB = state.selectedBuilderId === b.id ? 'active' : '';
+    html += `<div class="tree-item l0 ${activeB}" onclick="drillBuilder('${b.id}')">
+      <div class="tree-dot"></div><span>${b.name}</span>
+      <span class="tree-toggle">▾</span>
+    </div>`;
+    if (state.selectedBuilderId === b.id) {
+      DB.divisions.filter(d=>d.builderId===b.id).forEach(d => {
+        const activeD = state.selectedDivId === d.id ? 'active' : '';
+        html += `<div class="tree-item l1 ${activeD}" onclick="drillDivision('${d.id}')">
+          <div class="tree-dot"></div><span>${d.name}</span>
+          <span class="tree-toggle">▾</span>
+        </div>`;
+        if (state.selectedDivId === d.id) {
+          DB.communities.filter(c=>c.divId===d.id).forEach(c => {
+            const activeC = state.selectedCommId === c.id ? 'active' : '';
+            html += `<div class="tree-item l2 ${activeC}" onclick="drillCommunity('${c.id}')">
+              <div class="tree-dot"></div><span>${c.name}</span>
+              <span class="tree-toggle">▾</span>
+            </div>`;
+            if (state.selectedCommId === c.id) {
+              DB.lots.filter(l=>l.commId===c.id).forEach(l => {
+                html += `<div class="tree-item l3" onclick="showLotDetail('${l.id}')">
+                  <div class="tree-dot"></div><span>Lot ${l.lotNum}</span>
+                </div>`;
+              });
+            }
+          });
+        }
+      });
+    }
+  });
+  document.getElementById('tree').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════
+//  NAVIGATION DRILLS
+// ══════════════════════════════════════════════════
+function showView(view) {
+  state.view = view;
+  state.searchQuery = '';
+  // Set nav pills active
+  document.querySelectorAll('.nav-pill').forEach((p,i)=>{
+    p.classList.toggle('active', ['builders','divisions','communities','lots'][i] === view);
+  });
+  if (view==='builders') { state.selectedBuilderId=null; state.selectedDivId=null; state.selectedCommId=null; }
+  if (view==='divisions') { state.selectedDivId=null; state.selectedCommId=null; }
+  if (view==='communities') { state.selectedCommId=null; }
+  render();
+}
+
+function drillBuilder(id) {
+  state.selectedBuilderId = id;
+  state.selectedDivId = null;
+  state.selectedCommId = null;
+  state.view = 'divisions';
+  setNavActive('divisions');
+  render();
+}
+
+function drillDivision(id) {
+  const d = DB.divisions.find(x=>x.id===id);
+  state.selectedBuilderId = d.builderId;
+  state.selectedDivId = id;
+  state.selectedCommId = null;
+  state.view = 'communities';
+  setNavActive('communities');
+  render();
+}
+
+function drillCommunity(id) {
+  const c = DB.communities.find(x=>x.id===id);
+  const d = DB.divisions.find(x=>x.id===c.divId);
+  state.selectedBuilderId = d.builderId;
+  state.selectedDivId = c.divId;
+  state.selectedCommId = id;
+  state.view = 'lots';
+  setNavActive('lots');
+  render();
+}
+
+function setNavActive(view) {
+  document.querySelectorAll('.nav-pill').forEach((p,i)=>{
+    p.classList.toggle('active', ['builders','divisions','communities','lots'][i] === view);
+  });
+}
+
+// ══════════════════════════════════════════════════
+//  MASTER RENDER
+// ══════════════════════════════════════════════════
+function render() {
+  renderBreadcrumb();
+  renderTree();
+  closeDetail();
+  const v = state.view;
+  if (v==='builders')    renderBuilders();
+  if (v==='divisions')   renderDivisions();
+  if (v==='communities') renderCommunities();
+  if (v==='lots')        renderLots();
+}
+
+// ══════════════════════════════════════════════════
+//  BUILDERS VIEW
+// ══════════════════════════════════════════════════
+function renderBuilders() {
+  const totalDivs  = DB.divisions.length;
+  const totalComms = DB.communities.length;
+  const totalLots  = DB.lots.length;
+  const totalComplete = DB.lots.filter(l=>l.status==='Complete').length;
+
+  let html = `
+    <div class="section-header">
+      <div class="section-title">
+        <span class="level-badge badge-builder">🏗 Parent Builders</span>
+        <h2>All Builder Accounts</h2>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-outline btn-sm" onclick="exportData()">⬇ Export</button>
+        <button class="btn btn-primary" onclick="openAddBuilder()">+ Add Builder</button>
+      </div>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-card stat-green"><div class="stat-num">${DB.builders.length}</div><div class="stat-lbl">Builders</div></div>
+      <div class="stat-card stat-sky"><div class="stat-num">${totalDivs}</div><div class="stat-lbl">Divisions</div></div>
+      <div class="stat-card stat-plum"><div class="stat-num">${totalComms}</div><div class="stat-lbl">Communities</div></div>
+      <div class="stat-card stat-lot"><div class="stat-num">${totalLots}</div><div class="stat-lbl">Total Lots</div></div>
+    </div>
+    <div class="search-bar">
+      <input id="search-input" placeholder="🔍  Search builders…" oninput="filterSearch(this.value)" value="${state.searchQuery}">
+      <button class="btn btn-outline btn-sm" onclick="clearSearch()">Clear</button>
+    </div>
+    <div class="cards-grid">`;
+
+  const filtered = DB.builders.filter(b => !state.searchQuery || b.name.toLowerCase().includes(state.searchQuery.toLowerCase()));
+
+  if (filtered.length===0) {
+    html += `</div><div class="empty-state"><div class="icon">🏗</div><p>No builders match your search.</p><button class="btn btn-outline" onclick="clearSearch()">Clear Search</button></div>`;
+  } else {
+    filtered.forEach(b => {
+      const divCount  = DB.divisions.filter(d=>d.builderId===b.id).length;
+      const commCount = DB.communities.filter(c=>DB.divisions.find(d=>d.id===c.divId&&d.builderId===b.id)).length;
+      const lotCount  = DB.lots.filter(l=>DB.communities.find(c=>c.id===l.commId&&DB.divisions.find(d=>d.id===c.divId&&d.builderId===b.id))).length;
+      const doneCount = DB.lots.filter(l=>l.status==='Complete'&&DB.communities.find(c=>c.id===l.commId&&DB.divisions.find(d=>d.id===c.divId&&d.builderId===b.id))).length;
+      html += `
+        <div class="card">
+          <div class="card-header" style="background:var(--green-bg)">
+            <span class="card-header-name" style="color:var(--green)">🏗 ${b.name}</span>
+            <span class="level-badge badge-builder" style="font-size:.65rem">${b.specType}</span>
+          </div>
+          <div class="card-body">
+            <div class="card-field"><label>MSA #</label><span>${b.msaNumber}</span></div>
+            <div class="card-field"><label>Billing</label><span>${b.billingMethod}</span></div>
+            <div class="card-field"><label>Terms</label><span>${b.paymentTerms}</span></div>
+            <div class="card-field"><label>Divisions</label><span>${divCount}</span></div>
+            <div class="card-field"><label>Communities</label><span>${commCount}</span></div>
+            <div class="card-field"><label>Lots</label><span>${lotCount} total · ${doneCount} complete</span></div>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-primary btn-sm" onclick="drillBuilder('${b.id}')">▶ View Divisions</button>
+            <button class="btn btn-outline btn-sm" onclick="showBuilderDetail('${b.id}')">🔍 Details</button>
+            <button class="btn btn-outline btn-sm" onclick="editBuilder('${b.id}')">✏ Edit</button>
+          </div>
+        </div>`;
+    });
+    html += `</div>`;
+  }
+  document.getElementById('main-content').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════
+//  DIVISIONS VIEW
+// ══════════════════════════════════════════════════
+function renderDivisions() {
+  const divs = state.selectedBuilderId
+    ? DB.divisions.filter(d=>d.builderId===state.selectedBuilderId)
+    : DB.divisions;
+  const builder = state.selectedBuilderId ? DB.builders.find(b=>b.id===state.selectedBuilderId) : null;
+
+  let html = `
+    <div class="section-header">
+      <div class="section-title">
+        <span class="level-badge badge-division">🏢 Divisions</span>
+        <h2>${builder ? builder.name : 'All Divisions'}</h2>
+      </div>
+      <div class="btn-group">
+        ${builder ? `<button class="btn btn-outline btn-sm" onclick="showView('builders')">← Builders</button>` : ''}
+        <button class="btn btn-sky" onclick="openAddDivision()">+ Add Division</button>
+      </div>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-card stat-sky"><div class="stat-num">${divs.length}</div><div class="stat-lbl">Divisions</div></div>
+      <div class="stat-card stat-plum"><div class="stat-num">${divs.reduce((a,d)=>a+DB.communities.filter(c=>c.divId===d.id).length,0)}</div><div class="stat-lbl">Communities</div></div>
+      <div class="stat-card stat-lot"><div class="stat-num">${divs.reduce((a,d)=>a+DB.lots.filter(l=>DB.communities.find(c=>c.id===l.commId&&c.divId===d.id)).length,0)}</div><div class="stat-lbl">Lots</div></div>
+    </div>
+    <div class="search-bar">
+      <input id="search-input" placeholder="🔍  Search divisions…" oninput="filterSearch(this.value)" value="${state.searchQuery}">
+      <button class="btn btn-outline btn-sm" onclick="clearSearch()">Clear</button>
+    </div>
+    <div class="cards-grid">`;
+
+  const filtered = divs.filter(d=> !state.searchQuery || d.name.toLowerCase().includes(state.searchQuery.toLowerCase()));
+  filtered.forEach(d => {
+    const b = DB.builders.find(x=>x.id===d.builderId);
+    const comms = DB.communities.filter(c=>c.divId===d.id);
+    const lots  = DB.lots.filter(l=>comms.find(c=>c.id===l.commId));
+    const done  = lots.filter(l=>l.status==='Complete').length;
+    html += `
+      <div class="card">
+        <div class="card-header" style="background:var(--sky-lt)">
+          <span class="card-header-name" style="color:var(--sky)">🏢 ${d.name}</span>
+        </div>
+        <div class="card-body">
+          <div class="card-field"><label>Builder</label><span>${b.name}</span></div>
+          <div class="card-field"><label>Zone</label><span>${d.zone}</span></div>
+          <div class="card-field"><label>Field Manager</label><span>${d.fm}</span></div>
+          <div class="card-field"><label>Communities</label><span>${comms.length}</span></div>
+          <div class="card-field"><label>Lots</label><span>${lots.length} total · ${done} complete</span></div>
+        </div>
+        <div class="card-footer">
+          <button class="btn btn-sky btn-sm" onclick="drillDivision('${d.id}')">▶ View Communities</button>
+          <button class="btn btn-outline btn-sm" onclick="showDivDetail('${d.id}')">🔍 Details</button>
+          <button class="btn btn-outline btn-sm" onclick="editDivision('${d.id}')">✏ Edit</button>
+        </div>
+      </div>`;
+  });
+  html += `</div>`;
+  document.getElementById('main-content').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════
+//  COMMUNITIES VIEW
+// ══════════════════════════════════════════════════
+function renderCommunities() {
+  const comms = state.selectedDivId
+    ? DB.communities.filter(c=>c.divId===state.selectedDivId)
+    : DB.communities;
+  const div = state.selectedDivId ? DB.divisions.find(d=>d.id===state.selectedDivId) : null;
+
+  let html = `
+    <div class="section-header">
+      <div class="section-title">
+        <span class="level-badge badge-community">🏘 Communities</span>
+        <h2>${div ? div.name : 'All Communities'}</h2>
+      </div>
+      <div class="btn-group">
+        ${div ? `<button class="btn btn-outline btn-sm" onclick="drillBuilder('${div.builderId}')">← Divisions</button>` : ''}
+        <button class="btn btn-plum" onclick="openAddCommunity()">+ Add Community</button>
+      </div>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-card stat-plum"><div class="stat-num">${comms.length}</div><div class="stat-lbl">Communities</div></div>
+      <div class="stat-card stat-lot"><div class="stat-num">${comms.reduce((a,c)=>a+DB.lots.filter(l=>l.commId===c.id).length,0)}</div><div class="stat-lbl">Total Lots</div></div>
+      <div class="stat-card stat-green"><div class="stat-num">${comms.filter(c=>c.aqua).length}</div><div class="stat-lbl">Aqua Communities</div></div>
+    </div>
+    <div class="search-bar">
+      <input id="search-input" placeholder="🔍  Search communities…" oninput="filterSearch(this.value)" value="${state.searchQuery}">
+      <button class="btn btn-outline btn-sm" onclick="clearSearch()">Clear</button>
+    </div>
+    <div class="cards-grid">`;
+
+  const filtered = comms.filter(c=> !state.searchQuery || c.name.toLowerCase().includes(state.searchQuery.toLowerCase()));
+  filtered.forEach(c => {
+    const d = DB.divisions.find(x=>x.id===c.divId);
+    const lots = DB.lots.filter(l=>l.commId===c.id);
+    const buckets = {};
+    lots.forEach(l => { buckets[l.bucket]=(buckets[l.bucket]||0)+1; });
+    const done = lots.filter(l=>l.status==='Complete').length;
+
+    // Pipeline bar
+    const total = lots.length || 1;
+    const seg = (key,cls,lbl) => {
+      const n = buckets[key]||0;
+      const pct = Math.round(n/total*100);
+      return n ? `<div class="pipeline-seg ${cls}" style="flex:${n}" title="${n} ${lbl}">${pct}%</div>` : '';
+    };
+
+    html += `
+      <div class="card">
+        <div class="card-header" style="background:var(--plum-lt)">
+          <span class="card-header-name" style="color:var(--plum)">🏘 ${c.name}</span>
+          ${c.aqua ? '<span style="font-size:.7rem;background:#cce5ff;color:#004085;border-radius:12px;padding:2px 8px;">💧 Aqua</span>' : ''}
+        </div>
+        <div class="card-body">
+          <div class="card-field"><label>Zone</label><span>${c.zone}</span></div>
+          <div class="card-field"><label>Sod Species</label><span>${c.sodSpecies}</span></div>
+          <div class="card-field"><label>BMG Package</label><span>${c.bmgPackage}</span></div>
+          <div class="card-field"><label>Division</label><span>${d.name}</span></div>
+          <div class="card-field"><label>Lots</label><span>${lots.length} total · ${done} complete</span></div>
+          <div style="margin-top:.6rem">
+            <div style="font-size:.7rem;color:var(--gray);margin-bottom:.3rem">Pipeline</div>
+            <div class="pipeline-bar">
+              ${seg('Takeoff','seg-takeoff','Takeoff')}
+              ${seg('Scheduled','seg-sched','Scheduled')}
+              ${seg('In Progress','seg-inprog','In Progress')}
+              ${seg('Complete','seg-complete','Complete')}
+              ${seg('On Hold','seg-hold','On Hold')}
+            </div>
+          </div>
+        </div>
+        <div class="card-footer">
+          <button class="btn btn-plum btn-sm" onclick="drillCommunity('${c.id}')">▶ View Lots</button>
+          <button class="btn btn-outline btn-sm" onclick="showCommDetail('${c.id}')">🔍 Details</button>
+          <button class="btn btn-outline btn-sm" onclick="editCommunity('${c.id}')">✏ Edit</button>
+        </div>
+      </div>`;
+  });
+  html += `</div>`;
+  document.getElementById('main-content').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════
+//  LOTS VIEW
+// ══════════════════════════════════════════════════
+function renderLots() {
+  const lots = state.selectedCommId
+    ? DB.lots.filter(l=>l.commId===state.selectedCommId)
+    : DB.lots;
+  const comm = state.selectedCommId ? DB.communities.find(c=>c.id===state.selectedCommId) : null;
+  const div  = comm ? DB.divisions.find(d=>d.id===comm.divId) : null;
+
+  const buckets = {};
+  lots.forEach(l => { buckets[l.bucket]=(buckets[l.bucket]||0)+1; });
+  const total = lots.length || 1;
+
+  let html = `
+    <div class="section-header">
+      <div class="section-title">
+        <span class="level-badge badge-lot">🏡 Lots</span>
+        <h2>${comm ? comm.name : 'All Lots'}</h2>
+      </div>
+      <div class="btn-group">
+        ${comm ? `<button class="btn btn-outline btn-sm" onclick="drillDivision('${div.id}')">← Communities</button>` : ''}
+        <button class="btn btn-lot" onclick="openAddLot()">+ Add Lot</button>
+      </div>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-card stat-lot">   <div class="stat-num">${lots.length}</div><div class="stat-lbl">Total Lots</div></div>
+      <div class="stat-card stat-green"> <div class="stat-num">${buckets['Complete']||0}</div><div class="stat-lbl">Complete</div></div>
+      <div class="stat-card stat-sky">   <div class="stat-num">${(buckets['In Progress']||0)+(buckets['Scheduled']||0)}</div><div class="stat-lbl">Active</div></div>
+      <div class="stat-card" style="border-top:3px solid var(--sand)"><div class="stat-num">${buckets['On Hold']||0}</div><div class="stat-lbl">On Hold</div></div>
+    </div>`;
+
+  // Pipeline bar (full width)
+  const seg = (key,cls,lbl) => {
+    const n = buckets[key]||0;
+    return n ? `<div class="pipeline-seg ${cls}" style="flex:${n}" title="${n} ${lbl} (${Math.round(n/total*100)}%)">${lbl}: ${n}</div>` : '';
+  };
+  html += `
+    <div style="margin-bottom:1.4rem">
+      <div style="font-size:.75rem;color:var(--gray);margin-bottom:.4rem;font-weight:600">PIPELINE OVERVIEW</div>
+      <div class="pipeline-bar" style="height:36px;font-size:.78rem;border-radius:10px">
+        ${seg('Takeoff','seg-takeoff','Takeoff')}
+        ${seg('Scheduled','seg-sched','Scheduled')}
+        ${seg('In Progress','seg-inprog','In Progress')}
+        ${seg('Complete','seg-complete','Complete')}
+        ${seg('On Hold','seg-hold','On Hold')}
+      </div>
+    </div>`;
+
+  html += `
+    <div class="search-bar">
+      <input id="search-input" placeholder="🔍  Search lots by address or number…" oninput="filterSearch(this.value)" value="${state.searchQuery}">
+      <select onchange="filterByStatus(this.value)" style="padding:.45rem .7rem;border:1.5px solid var(--border);border-radius:8px;font-size:.85rem">
+        <option value="">All Statuses</option>
+        <option>Takeoff</option><option>Scheduled</option>
+        <option>In Progress</option><option>Complete</option><option>On Hold</option>
+      </select>
+      <button class="btn btn-outline btn-sm" onclick="clearSearch()">Clear</button>
+    </div>
+    <div class="cards-grid">`;
+
+  const filtered = lots.filter(l => {
+    const q = state.searchQuery.toLowerCase();
+    return !q || l.address.toLowerCase().includes(q) || l.lotNum.includes(q);
+  });
+
+  if (filtered.length===0) {
+    html += `</div><div class="empty-state"><div class="icon">🏡</div><p>No lots match your filter.</p><button class="btn btn-outline" onclick="clearSearch()">Clear</button></div>`;
+  } else {
+    filtered.forEach(l => {
+      const c = DB.communities.find(x=>x.id===l.commId);
+      html += `
+        <div class="card">
+          <div class="card-header" style="background:var(--lot-lt)">
+            <span class="card-header-name" style="color:var(--lot)">🏡 Lot ${l.lotNum}</span>
+            ${statusPill(l.status)}
+          </div>
+          <div class="card-body">
+            <div class="card-field"><label>Address</label><span>${l.address}</span></div>
+            <div class="card-field"><label>PO Number</label><span>${l.poNum}</span></div>
+            <div class="card-field"><label>Target Date</label><span>${l.target}</span></div>
+            <div class="card-field"><label>Community</label><span>${c.name}</span></div>
+            <div class="card-field"><label>Takeoff</label><span>${l.takeoff ? '✅ Complete' : '⏳ Pending'}</span></div>
+            <div class="card-field"><label>WO Created</label><span>${l.woCreated ? '✅ Yes' : '—'}</span></div>
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-lot btn-sm" onclick="showLotDetail('${l.id}')">🔍 Open Lot</button>
+            <button class="btn btn-outline btn-sm" onclick="editLot('${l.id}')">✏ Edit</button>
+            <button class="btn btn-outline btn-sm" onclick="changeLotStatus('${l.id}')">↕ Status</button>
+          </div>
+        </div>`;
+    });
+    html += `</div>`;
+  }
+  document.getElementById('main-content').innerHTML = html;
+}
+
+// ══════════════════════════════════════════════════
+//  DETAIL PANELS
+// ══════════════════════════════════════════════════
+function showBuilderDetail(id) {
+  const b = DB.builders.find(x=>x.id===id);
+  const divs = DB.divisions.filter(d=>d.builderId===id);
+  const lots = DB.lots.filter(l=>DB.communities.find(c=>c.id===l.commId&&DB.divisions.find(d=>d.id===c.divId&&d.builderId===id)));
+
+  document.getElementById('dp-badge').innerHTML = '<span class="level-badge badge-builder">🏗 Parent Builder</span>';
+  document.getElementById('dp-name').textContent = b.name;
+  document.getElementById('dp-body').innerHTML = `
+    <div class="detail-section">
+      <h4>Contract Info</h4>
+      <div class="detail-row"><label>MSA Number</label><span>${b.msaNumber}</span></div>
+      <div class="detail-row"><label>Spec Type</label><span>${b.specType}</span></div>
+      <div class="detail-row"><label>Billing Method</label><span>${b.billingMethod}</span></div>
+      <div class="detail-row"><label>Payment Terms</label><span>${b.paymentTerms}</span></div>
+    </div>
+    <div class="detail-section">
+      <h4>Hierarchy Summary</h4>
+      <div class="detail-row"><label>Divisions</label><span>${divs.length}</span></div>
+      <div class="detail-row"><label>Communities</label><span>${DB.communities.filter(c=>divs.find(d=>d.id===c.divId)).length}</span></div>
+      <div class="detail-row"><label>Total Lots</label><span>${lots.length}</span></div>
+      <div class="detail-row"><label>Complete Lots</label><span>${lots.filter(l=>l.status==='Complete').length}</span></div>
+    </div>
+    <div class="detail-section">
+      <h4>Divisions</h4>
+      ${divs.map(d=>`<div class="detail-row"><label>${d.name}</label><span><button class="btn btn-outline btn-sm" onclick="drillDivision('${d.id}')">Open ▶</button></span></div>`).join('')}
+    </div>`;
+  document.getElementById('dp-actions').innerHTML = `
+    <button class="btn btn-primary btn-sm" onclick="drillBuilder('${id}')">▶ View Divisions</button>
+    <button class="btn btn-outline btn-sm" onclick="editBuilder('${id}')">✏ Edit</button>`;
+  document.getElementById('detail-panel').style.display = 'block';
+}
+
+function showDivDetail(id) {
+  const d = DB.divisions.find(x=>x.id===id);
+  const b = DB.builders.find(x=>x.id===d.builderId);
+  const comms = DB.communities.filter(c=>c.divId===id);
+  const lots  = DB.lots.filter(l=>comms.find(c=>c.id===l.commId));
+
+  document.getElementById('dp-badge').innerHTML = '<span class="level-badge badge-division">🏢 Division</span>';
+  document.getElementById('dp-name').textContent = d.name;
+  document.getElementById('dp-body').innerHTML = `
+    <div class="detail-section">
+      <h4>Division Info</h4>
+      <div class="detail-row"><label>Parent Builder</label><span>${b.name}</span></div>
+      <div class="detail-row"><label>Zone</label><span>${d.zone}</span></div>
+      <div class="detail-row"><label>Field Manager</label><span>${d.fm}</span></div>
+    </div>
+    <div class="detail-section">
+      <h4>Portfolio</h4>
+      <div class="detail-row"><label>Communities</label><span>${comms.length}</span></div>
+      <div class="detail-row"><label>Total Lots</label><span>${lots.length}</span></div>
+      <div class="detail-row"><label>In Progress</label><span>${lots.filter(l=>l.status==='In Progress').length}</span></div>
+      <div class="detail-row"><label>Complete</label><span>${lots.filter(l=>l.status==='Complete').length}</span></div>
+    </div>
+    <div class="detail-section">
+      <h4>Communities</h4>
+      ${comms.map(c=>`<div class="detail-row"><label>${c.name}</label><span><button class="btn btn-outline btn-sm" onclick="drillCommunity('${c.id}')">Open ▶</button></span></div>`).join('')}
+    </div>`;
+  document.getElementById('dp-actions').innerHTML = `
+    <button class="btn btn-sky btn-sm" onclick="drillDivision('${id}')">▶ Communities</button>
+    <button class="btn btn-outline btn-sm" onclick="editDivision('${id}')">✏ Edit</button>`;
+  document.getElementById('detail-panel').style.display = 'block';
+}
+
+function showCommDetail(id) {
+  const c  = DB.communities.find(x=>x.id===id);
+  const d  = DB.divisions.find(x=>x.id===c.divId);
+  const b  = DB.builders.find(x=>x.id===d.builderId);
+  const lots = DB.lots.filter(l=>l.commId===id);
+
+  document.getElementById('dp-badge').innerHTML = '<span class="level-badge badge-community">🏘 Community</span>';
+  document.getElementById('dp-name').textContent = c.name;
+  document.getElementById('dp-body').innerHTML = `
+    <div class="detail-section">
+      <h4>Community Info</h4>
+      <div class="detail-row"><label>Builder</label><span>${b.name}</span></div>
+      <div class="detail-row"><label>Division</label><span>${d.name}</span></div>
+      <div class="detail-row"><label>Zone</label><span>${c.zone}</span></div>
+      <div class="detail-row"><label>Sod Species</label><span>${c.sodSpecies}</span></div>
+      <div class="detail-row"><label>BMG Package</label><span>${c.bmgPackage}</span></div>
+      <div class="detail-row"><label>Aqua Community</label><span>${c.aqua?'✅ Yes':'No'}</span></div>
+    </div>
+    <div class="detail-section">
+      <h4>Lot Summary</h4>
+      <div class="detail-row"><label>Total Lots</label><span>${lots.length}</span></div>
+      <div class="detail-row"><label>Takeoff Pending</label><span>${lots.filter(l=>l.bucket==='Takeoff').length}</span></div>
+      <div class="detail-row"><label>Scheduled</label><span>${lots.filter(l=>l.bucket==='Scheduled').length}</span></div>
+      <div class="detail-row"><label>In Progress</label><span>${lots.filter(l=>l.bucket==='In Progress').length}</span></div>
+      <div class="detail-row"><label>Complete</label><span>${lots.filter(l=>l.bucket==='Complete').length}</span></div>
+      <div class="detail-row"><label>On Hold</label><span>${lots.filter(l=>l.bucket==='On Hold').length}</span></div>
+    </div>`;
+  document.getElementById('dp-actions').innerHTML = `
+    <button class="btn btn-plum btn-sm" onclick="drillCommunity('${id}')">▶ View Lots</button>
+    <button class="btn btn-outline btn-sm" onclick="editCommunity('${id}')">✏ Edit</button>`;
+  document.getElementById('detail-panel').style.display = 'block';
+}
+
+function showLotDetail(id) {
+  const l = DB.lots.find(x=>x.id===id);
+  const c = DB.communities.find(x=>x.id===l.commId);
+  const d = DB.divisions.find(x=>x.id===c.divId);
+  const b = DB.builders.find(x=>x.id===d.builderId);
+
+  document.getElementById('dp-badge').innerHTML = '<span class="level-badge badge-lot">🏡 Lot</span>';
+  document.getElementById('dp-name').textContent = `Lot ${l.lotNum} — ${l.address}`;
+  document.getElementById('dp-body').innerHTML = `
+    <div class="detail-section">
+      <h4>Lot Info</h4>
+      <div class="detail-row"><label>Status</label><span>${statusPill(l.status)}</span></div>
+      <div class="detail-row"><label>Address</label><span>${l.address}</span></div>
+      <div class="detail-row"><label>PO Number</label><span>${l.poNum}</span></div>
+      <div class="detail-row"><label>Target Date</label><span>${l.target}</span></div>
+      <div class="detail-row"><label>Pipeline Bucket</label><span>${l.bucket}</span></div>
+    </div>
+    <div class="detail-section">
+      <h4>Hierarchy</h4>
+      <div class="detail-row"><label>Builder</label><span>${b.name}</span></div>
+      <div class="detail-row"><label>Division</label><span>${d.name}</span></div>
+      <div class="detail-row"><label>Community</label><span>${c.name}</span></div>
+    </div>
+    <div class="detail-section">
+      <h4>Workflow</h4>
+      <div class="detail-row"><label>Takeoff Complete</label><span>${l.takeoff?'✅ Yes':'⏳ Pending'}</span></div>
+      <div class="detail-row"><label>Work Order Created</label><span>${l.woCreated?'✅ Yes':'—'}</span></div>
+    </div>`;
+  document.getElementById('dp-actions').innerHTML = `
+    <button class="btn btn-lot btn-sm" onclick="changeLotStatus('${id}')">↕ Change Status</button>
+    <button class="btn btn-outline btn-sm" onclick="editLot('${id}')">✏ Edit</button>
+    <button class="btn btn-danger btn-sm" onclick="confirmDelete('lot','${id}')">🗑</button>`;
+  document.getElementById('detail-panel').style.display = 'block';
+}
+
+// ══════════════════════════════════════════════════
+//  ADD MODALS
+// ══════════════════════════════════════════════════
+function openAddBuilder() {
+  openModal('Add Parent Builder', `
+    <div class="form-group"><label>Builder Name *</label><input id="f-name" placeholder="e.g. Pulte Homes"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Spec Type</label>
+        <select id="f-spec"><option>Exact (Lennar)</option><option>Flexible</option><option>Standard</option></select>
+      </div>
+      <div class="form-group"><label>Billing Method</label>
+        <select id="f-bill"><option>PO-Based</option><option>Invoice</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Payment Terms</label><input id="f-terms" placeholder="Net 30"></div>
+      <div class="form-group"><label>MSA Number</label><input id="f-msa" placeholder="MSA-2024-XXX"></div>
+    </div>`, () => {
+    const name = document.getElementById('f-name').value.trim();
+    if (!name) { toast('Builder name is required','#dc3545'); return; }
+    const b = { id:uid(), name, specType:document.getElementById('f-spec').value, billingMethod:document.getElementById('f-bill').value,
+      paymentTerms:document.getElementById('f-terms').value||'Net 30', msaNumber:document.getElementById('f-msa').value||'TBD', divisions:[] };
+    DB.builders.push(b);
+    closeModal();
+    render();
+    toast(`✅ Builder "${name}" added`,'#2d6a4f');
+  });
+}
+
+function openAddDivision() {
+  const builderOpts = DB.builders.map(b=>`<option value="${b.id}"${b.id===state.selectedBuilderId?' selected':''}>${b.name}</option>`).join('');
+  openModal('Add Division', `
+    <div class="form-group"><label>Parent Builder *</label><select id="f-builder">${builderOpts}</select></div>
+    <div class="form-group"><label>Division Name *</label><input id="f-name" placeholder="e.g. D.R. Horton – Houston"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Zone</label><input id="f-zone" placeholder="e.g. Houston Metro"></div>
+      <div class="form-group"><label>Field Manager</label><input id="f-fm" placeholder="Name"></div>
+    </div>`, () => {
+    const name = document.getElementById('f-name').value.trim();
+    if (!name) { toast('Division name is required','#dc3545'); return; }
+    const d = { id:uid(), builderId:document.getElementById('f-builder').value, name,
+      zone:document.getElementById('f-zone').value||'—', fm:document.getElementById('f-fm').value||'Unassigned', communities:[] };
+    DB.divisions.push(d);
+    const b = DB.builders.find(x=>x.id===d.builderId);
+    b.divisions.push(d.id);
+    closeModal();
+    render();
+    toast(`✅ Division "${name}" added`,'#118ab2');
+  });
+}
+
+function openAddCommunity() {
+  const divOpts = DB.divisions.map(d=>`<option value="${d.id}"${d.id===state.selectedDivId?' selected':''}>${d.name}</option>`).join('');
+  openModal('Add Community', `
+    <div class="form-group"><label>Division *</label><select id="f-div">${divOpts}</select></div>
+    <div class="form-group"><label>Community Name *</label><input id="f-name" placeholder="e.g. Sunset Ridge"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Zone</label><input id="f-zone" placeholder="e.g. NW Austin"></div>
+      <div class="form-group"><label>Sod Species</label>
+        <select id="f-sod"><option>Bermuda 419</option><option>St. Augustine</option><option>Zoysia</option><option>Fescue</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>BMG Package</label>
+        <select id="f-bmg"><option>Standard</option><option>Premium</option><option>Economy</option></select>
+      </div>
+      <div class="form-group"><label>Aqua Community</label>
+        <select id="f-aqua"><option value="0">No</option><option value="1">Yes</option></select>
+      </div>
+    </div>`, () => {
+    const name = document.getElementById('f-name').value.trim();
+    if (!name) { toast('Community name is required','#dc3545'); return; }
+    const c = { id:uid(), divId:document.getElementById('f-div').value, name,
+      zone:document.getElementById('f-zone').value||'—',
+      sodSpecies:document.getElementById('f-sod').value,
+      bmgPackage:document.getElementById('f-bmg').value,
+      aqua:document.getElementById('f-aqua').value==='1', lots:[] };
+    DB.communities.push(c);
+    closeModal();
+    render();
+    toast(`✅ Community "${name}" added`,'#6d4c8c');
+  });
+}
+
+function openAddLot() {
+  const commOpts = DB.communities.map(c=>`<option value="${c.id}"${c.id===state.selectedCommId?' selected':''}>${c.name}</option>`).join('');
+  openModal('Add Lot', `
+    <div class="form-group"><label>Community *</label><select id="f-comm">${commOpts}</select></div>
+    <div class="form-row">
+      <div class="form-group"><label>Lot Number *</label><input id="f-num" placeholder="e.g. 123"></div>
+      <div class="form-group"><label>PO Number</label><input id="f-po" placeholder="PO-24-XXXX"></div>
+    </div>
+    <div class="form-group"><label>Street Address</label><input id="f-addr" placeholder="123 Main St"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Target Date</label><input id="f-target" type="date"></div>
+      <div class="form-group"><label>Pipeline Bucket</label>
+        <select id="f-bucket"><option>Takeoff</option><option>Scheduled</option><option>In Progress</option><option>Complete</option><option>On Hold</option></select>
+      </div>
+    </div>`, () => {
+    const num = document.getElementById('f-num').value.trim();
+    if (!num) { toast('Lot number is required','#dc3545'); return; }
+    const bucket = document.getElementById('f-bucket').value;
+    const l = { id:uid(), commId:document.getElementById('f-comm').value,
+      lotNum:num, address:document.getElementById('f-addr').value||`Lot ${num}`,
+      status:bucket, poNum:document.getElementById('f-po').value||'TBD',
+      target:document.getElementById('f-target').value||'TBD',
+      bucket, takeoff:false, woCreated:false };
+    DB.lots.push(l);
+    closeModal();
+    render();
+    toast(`✅ Lot ${num} added`,'#e76f51');
+  });
+}
+
+// ══════════════════════════════════════════════════
+//  EDIT MODALS
+// ══════════════════════════════════════════════════
+function editBuilder(id) {
+  const b = DB.builders.find(x=>x.id===id);
+  openModal(`Edit — ${b.name}`, `
+    <div class="form-group"><label>Builder Name</label><input id="f-name" value="${b.name}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Spec Type</label>
+        <select id="f-spec">
+          ${['Exact (Lennar)','Flexible','Standard'].map(s=>`<option${s===b.specType?' selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group"><label>Billing Method</label>
+        <select id="f-bill">
+          ${['PO-Based','Invoice'].map(s=>`<option${s===b.billingMethod?' selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Payment Terms</label><input id="f-terms" value="${b.paymentTerms}"></div>
+      <div class="form-group"><label>MSA Number</label><input id="f-msa" value="${b.msaNumber}"></div>
+    </div>`, () => {
+    b.name = document.getElementById('f-name').value || b.name;
+    b.specType = document.getElementById('f-spec').value;
+    b.billingMethod = document.getElementById('f-bill').value;
+    b.paymentTerms = document.getElementById('f-terms').value;
+    b.msaNumber = document.getElementById('f-msa').value;
+    closeModal(); render(); toast(`✅ Builder updated`,'#2d6a4f');
+  });
+}
+
+function editDivision(id) {
+  const d = DB.divisions.find(x=>x.id===id);
+  openModal(`Edit — ${d.name}`, `
+    <div class="form-group"><label>Division Name</label><input id="f-name" value="${d.name}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Zone</label><input id="f-zone" value="${d.zone}"></div>
+      <div class="form-group"><label>Field Manager</label><input id="f-fm" value="${d.fm}"></div>
+    </div>`, () => {
+    d.name = document.getElementById('f-name').value || d.name;
+    d.zone = document.getElementById('f-zone').value;
+    d.fm   = document.getElementById('f-fm').value;
+    closeModal(); render(); toast(`✅ Division updated`,'#118ab2');
+  });
+}
+
+function editCommunity(id) {
+  const c = DB.communities.find(x=>x.id===id);
+  openModal(`Edit — ${c.name}`, `
+    <div class="form-group"><label>Community Name</label><input id="f-name" value="${c.name}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Zone</label><input id="f-zone" value="${c.zone}"></div>
+      <div class="form-group"><label>Sod Species</label>
+        <select id="f-sod">
+          ${['Bermuda 419','St. Augustine','Zoysia','Fescue'].map(s=>`<option${s===c.sodSpecies?' selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>BMG Package</label>
+        <select id="f-bmg">
+          ${['Standard','Premium','Economy'].map(s=>`<option${s===c.bmgPackage?' selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group"><label>Aqua Community</label>
+        <select id="f-aqua">
+          <option value="0"${!c.aqua?' selected':''}>No</option>
+          <option value="1"${c.aqua?' selected':''}>Yes</option>
+        </select>
+      </div>
+    </div>`, () => {
+    c.name = document.getElementById('f-name').value || c.name;
+    c.zone = document.getElementById('f-zone').value;
+    c.sodSpecies = document.getElementById('f-sod').value;
+    c.bmgPackage = document.getElementById('f-bmg').value;
+    c.aqua = document.getElementById('f-aqua').value === '1';
+    closeModal(); render(); toast(`✅ Community updated`,'#6d4c8c');
+  });
+}
+
+function editLot(id) {
+  const l = DB.lots.find(x=>x.id===id);
+  openModal(`Edit — Lot ${l.lotNum}`, `
+    <div class="form-group"><label>Street Address</label><input id="f-addr" value="${l.address}"></div>
+    <div class="form-row">
+      <div class="form-group"><label>PO Number</label><input id="f-po" value="${l.poNum}"></div>
+      <div class="form-group"><label>Target Date</label><input id="f-target" type="date" value="${l.target}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Status</label>
+        <select id="f-status">
+          ${['Takeoff','Scheduled','In Progress','Complete','On Hold'].map(s=>`<option${s===l.status?' selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group"><label>Takeoff Complete</label>
+        <select id="f-to">
+          <option value="0"${!l.takeoff?' selected':''}>No</option>
+          <option value="1"${l.takeoff?' selected':''}>Yes</option>
+        </select>
+      </div>
+    </div>`, () => {
+    l.address = document.getElementById('f-addr').value || l.address;
+    l.poNum   = document.getElementById('f-po').value;
+    l.target  = document.getElementById('f-target').value;
+    l.status  = document.getElementById('f-status').value;
+    l.bucket  = l.status;
+    l.takeoff = document.getElementById('f-to').value === '1';
+    closeModal(); render(); toast(`✅ Lot updated`,'#e76f51');
+  });
+}
+
+// ══════════════════════════════════════════════════
+//  STATUS CHANGE
+// ══════════════════════════════════════════════════
+function changeLotStatus(id) {
+  const l = DB.lots.find(x=>x.id===id);
+  openModal(`Change Status — Lot ${l.lotNum}`, `
+    <p style="font-size:.85rem;color:var(--gray);margin-bottom:1rem">Current: ${statusPill(l.status)}</p>
+    <div class="form-group"><label>New Status</label>
+      <select id="f-status">
+        ${['Takeoff','Scheduled','In Progress','Complete','On Hold'].map(s=>`<option${s===l.status?' selected':''}>${s}</option>`).join('')}
+      </select>
+    </div>`, () => {
+    const prev = l.status;
+    l.status = document.getElementById('f-status').value;
+    l.bucket = l.status;
+    if (l.status==='Complete') l.woCreated = true;
+    closeModal(); render();
+    toast(`↕ Lot ${l.lotNum}: ${prev} → ${l.status}`,'#2d6a4f');
+  });
+}
+
+// ══════════════════════════════════════════════════
+//  DELETE
+// ══════════════════════════════════════════════════
+function confirmDelete(type, id) {
+  openModal('Confirm Delete', `<p style="color:#721c24">Are you sure you want to delete this ${type}? This cannot be undone.</p>`, () => {
+    if (type==='lot') {
+      const i = DB.lots.findIndex(x=>x.id===id);
+      if (i>-1) DB.lots.splice(i,1);
+    }
+    closeModal(); closeDetail(); render();
+    toast(`🗑 ${type} deleted`,'#dc3545');
+  });
+  document.getElementById('modal-save').textContent = 'Delete';
+  document.getElementById('modal-save').className = 'btn btn-danger';
+}
+
+// ══════════════════════════════════════════════════
+//  SEARCH / FILTER
+// ══════════════════════════════════════════════════
+function filterSearch(q) {
+  state.searchQuery = q;
+  render();
+  // Keep focus in search box
+  setTimeout(() => {
+    const inp = document.getElementById('search-input');
+    if (inp) { inp.focus(); inp.setSelectionRange(q.length, q.length); }
+  }, 50);
+}
+
+function filterByStatus(s) {
+  state.searchQuery = s;
+  render();
+}
+
+function clearSearch() {
+  state.searchQuery = '';
+  render();
+}
+
+function exportData() {
+  const data = JSON.stringify(DB, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'loving-hierarchy.json';
+  a.click();
+  toast('⬇ Exported hierarchy data');
+}
+
+// ══════════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════════
+render();
+</script>
+</body>
+</html>
