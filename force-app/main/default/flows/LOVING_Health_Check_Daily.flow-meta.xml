@@ -52,10 +52,10 @@
         <getFirstRecordOnly>false</getFirstRecordOnly>
         <object>WorkOrder</object>
         <outputReference>varActiveWOs</outputReference>
-        <queriedFields><field>Id</field></queriedFields>
-        <queriedFields><field>FM__c</field></queriedFields>
-        <queriedFields><field>Lot_Address__c</field></queriedFields>
-        <queriedFields><field>Health_Check_Date__c</field></queriedFields>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>FM__c</queriedFields>
+        <queriedFields>Lot_Address__c</queriedFields>
+        <queriedFields>Health_Check_Date__c</queriedFields>
     </recordLookups>
 
     <loops>

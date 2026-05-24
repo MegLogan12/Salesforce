@@ -59,14 +59,14 @@
         <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>WorkOrder</object>
         <outputReference>varWO</outputReference>
-        <queriedFields><field>Id</field></queriedFields>
-        <queriedFields><field>FM__c</field></queriedFields>
-        <queriedFields><field>FM__r.ManagerId</field></queriedFields>
-        <queriedFields><field>Lot_Address__c</field></queriedFields>
-        <queriedFields><field>Lot_Number__c</field></queriedFields>
-        <queriedFields><field>Red_Flag_Notes__c</field></queriedFields>
-        <queriedFields><field>Finish_Job_Required__c</field></queriedFields>
-        <queriedFields><field>Finish_Job_Reason__c</field></queriedFields>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>FM__c</queriedFields>
+        <queriedFields>FM__r.ManagerId</queriedFields>
+        <queriedFields>Lot_Address__c</queriedFields>
+        <queriedFields>Lot_Number__c</queriedFields>
+        <queriedFields>Red_Flag_Notes__c</queriedFields>
+        <queriedFields>Finish_Job_Required__c</queriedFields>
+        <queriedFields>Finish_Job_Reason__c</queriedFields>
     </recordLookups>
 
     <!-- SCHEDULING ESCALATION TASK -->
