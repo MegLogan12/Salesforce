@@ -15,8 +15,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 .sf-ico{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:11px}
 .sf-avatar{width:28px;height:28px;border-radius:50%;background:#7f77dd;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
 .sf-icons{display:flex;gap:10px;align-items:center;margin-left:auto}
-.sf-nav{background:#fff;padding:0 16px;height:38px;display:flex;align-items:center;border-bottom:1px solid #e0e0e0;overflow-x:auto}
-.sf-tab{padding:9px 13px;font-size:12px;color:#181818;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;height:38px;display:flex;align-items:center;gap:5px;flex-shrink:0}
+.sf-nav{background:#fff;padding:0 16px;min-height:38px;display:flex;align-items:center;border-bottom:1px solid #e0e0e0;overflow-x:auto;flex-wrap:wrap}
+.sf-tab{padding:9px 13px;font-size:12px;color:#181818;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;height:38px;display:flex;align-items:center;gap:5px;flex-shrink:0;text-decoration:none}
 .sf-tab.on{color:#0070d2;border-bottom-color:#0070d2;font-weight:500}
 .sf-tab:hover:not(.on){background:#f4f6f9}
 .sf-tab .num-badge{background:#f4f6f9;color:#54698d;font-size:10px;padding:1px 6px;border-radius:8px}
@@ -172,11 +172,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 </div>
 
 <div class="sf-nav">
-  <div class="sf-tab on" onclick="sw('builders',this)">Parent Builders <span class="num-badge">4</span></div>
+  <div class="sf-tab on" onclick="sw('builders',this)">Builders <span class="num-badge">4</span></div>
   <div class="sf-tab" onclick="sw('divisions',this)">Divisions <span class="num-badge">12</span></div>
   <div class="sf-tab" onclick="sw('communities',this)">Communities <span class="num-badge">86</span></div>
   <div class="sf-tab" onclick="sw('lots',this)">Lots <span class="num-badge">2,847</span></div>
-  <div class="sf-tab" onclick="sw('lot07',this)">Lot 07 · Pines</div>
+  <div class="sf-tab" onclick="sw('lot07',this)">Lot 07</div>
 </div>
 
 <!-- ====================================================== -->
