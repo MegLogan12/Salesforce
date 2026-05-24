@@ -16,7 +16,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 .sf-avatar{width:28px;height:28px;border-radius:50%;background:#7f77dd;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600}
 .sf-icons{display:flex;gap:10px;align-items:center;margin-left:auto}
 .sf-nav{background:#fff;padding:0 16px;height:38px;display:flex;align-items:center;border-bottom:1px solid #e0e0e0;overflow-x:auto}
-.sf-tab{padding:9px 13px;font-size:12px;color:#181818;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;height:38px;display:flex;align-items:center;gap:5px;flex-shrink:0;text-decoration:none}
+.sf-tab{padding:9px 13px;font-size:12px;color:#181818;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;height:38px;display:flex;align-items:center;gap:5px;flex-shrink:0}
 .sf-tab.on{color:#0070d2;border-bottom-color:#0070d2;font-weight:500}
 .sf-tab:hover:not(.on){background:#f4f6f9}
 .sf-tab .num-badge{background:#f4f6f9;color:#54698d;font-size:10px;padding:1px 6px;border-radius:8px}
@@ -39,17 +39,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 .hl-label{font-size:10px;color:#54698d;text-transform:uppercase;letter-spacing:.4px;font-weight:500;margin-bottom:3px}
 .hl-value{font-size:13px;font-weight:500;color:#16325c;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hl-value.green{color:#2e844a}.hl-value.amber{color:#ba7517}.hl-value.red{color:#c23934}
-/* KPI rollup cards */
-.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:14px 20px}
-.kpi-card{background:#fff;border:1px solid #d8dde6;border-radius:6px;padding:14px;box-shadow:0 1px 0 rgba(0,0,0,.04)}
-.kpi-label{font-size:10px;color:#54698d;text-transform:uppercase;letter-spacing:.4px;font-weight:500;margin-bottom:6px}
-.kpi-value{font-size:22px;font-weight:600;color:#16325c;line-height:1.1}
-.kpi-sub{font-size:11px;color:#54698d;margin-top:4px}
-.kpi-delta{font-size:11px;font-weight:500;margin-top:4px}
-.kpi-delta.up{color:#2e844a}.kpi-delta.dn{color:#c23934}
-.kpi-card.blue{border-top:3px solid #0070d2}.kpi-card.green{border-top:3px solid #04844b}
-.kpi-card.purple{border-top:3px solid #534ab7}.kpi-card.amber{border-top:3px solid #fe9339}
-.kpi-card.navy{border-top:3px solid #16325c}
 .subtabs{background:#fff;padding:0 20px;height:38px;display:flex;align-items:center;border-bottom:1px solid #e5e5e5;overflow-x:auto}
 .subtab{padding:9px 16px;font-size:12px;color:#181818;cursor:pointer;border-bottom:3px solid transparent;height:38px;display:flex;align-items:center;gap:6px;white-space:nowrap}
 .subtab.on{color:#0070d2;border-bottom-color:#0070d2;font-weight:500}
@@ -62,7 +51,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 .sf-btn.danger{background:#c23934;border-color:#c23934;color:#fff}
 .sf-body{padding:14px 20px}
 .tc{display:none}.tc.on{display:block}
-.layout{display:grid;grid-template-columns:1fr 300px;gap:14px}
+.layout{display:grid;grid-template-columns:1fr 320px;gap:14px}
 .layout-main{min-width:0}.layout-rail{min-width:0}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
@@ -102,20 +91,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 .filter-chip.on{background:#534ab7;color:#fff;border-color:#534ab7}
 .list-search{background:#fff;border:1px solid #d8dde6;border-radius:4px;padding:5px 10px;font-size:12px;color:#16325c;flex:1;max-width:280px}
 .list-toolbar select{background:#fff;border:1px solid #d8dde6;border-radius:4px;padding:5px 10px;font-size:12px;color:#16325c}
-/* Lot grid */
 .lot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:8px;padding:14px}
-.lot-tile{padding:10px 4px;text-align:center;border-radius:5px;border:2px solid;font-size:11px;font-weight:500;cursor:pointer;transition:opacity .15s}
+.lot-tile{padding:10px 4px;text-align:center;border-radius:5px;border:2px solid;font-size:11px;font-weight:500;cursor:pointer}
 .lot-tile.complete{background:#e8f5e9;border-color:#a5d6a7;color:#2e7d32}
 .lot-tile.in-prog{background:#ede9fe;border-color:#c5bef7;color:#534ab7}
 .lot-tile.scheduled{background:#e3f0fb;border-color:#b5d4f4;color:#0c447c}
 .lot-tile.pending{background:#fef3c7;border-color:#f9c725;color:#92400e}
 .lot-tile.fj{background:#fce8e8;border-color:#f09595;border-style:dashed;color:#991b1b}
 .lot-tile.available{background:#f4f6f9;border-color:#e5e5e5;color:#54698d}
-.lot-tile:hover{opacity:.8}
+.lot-tile:hover{opacity:.85}
 .legend{display:flex;gap:12px;flex-wrap:wrap;padding:8px 14px;border-top:1px solid #f0f0f0;font-size:10px;color:#54698d}
 .legend-item{display:flex;align-items:center;gap:5px}
 .legend-sw{width:12px;height:12px;border-radius:2px;border:2px solid}
-/* Pipeline badge */
 .pipeline-badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:12px;font-size:10px;font-weight:500;gap:4px}
 .pb-90{background:#f4f6f9;color:#54698d;border:1px solid #d8dde6}
 .pb-60{background:#e3f0fb;color:#0c447c;border:1px solid #b5d4f4}
@@ -125,24 +112,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 .pb-clear{background:#e8f5e9;color:#2e7d32;border:1px solid #a5d6a7}
 .pb-sched{background:#e3f0fb;color:#0070d2;border:1px solid #b5d4f4}
 .pb-closed{background:#f4f6f9;color:#54698d;border:1px solid #d8dde6}
-/* Timeline */
 .timeline{padding:10px 14px;font-size:11px;line-height:1.7}
 .timeline-item{display:flex;align-items:center;gap:8px}
 .tl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .tl-done{color:#2e844a}.tl-cur{color:#0070d2}.tl-fut{color:#54698d}
-/* 811 status bar */
 .status-bar{display:flex;align-items:center;gap:0;padding:10px 14px}
 .sb-step{flex:1;text-align:center;font-size:10px;padding:6px 4px;border-top:3px solid #d8dde6;color:#54698d}
 .sb-step.done{border-color:#04844b;color:#2e844a;font-weight:500}
 .sb-step.cur{border-color:#534ab7;color:#534ab7;font-weight:600}
 .sb-step.req{border-color:#c23934;color:#c23934}
-/* Related mini */
 .related-mini{padding:8px 14px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #f0f0f0;cursor:pointer}
 .related-mini:last-child{border-bottom:none}
 .related-mini:hover{background:#f4f6f9}
 .rm-count{background:#f4f6f9;color:#54698d;font-size:10px;padding:1px 7px;border-radius:8px;font-weight:500}
 .rm-count.has{background:#e3f0fb;color:#0070d2}
-/* Hier tree */
 .hier-tree{padding:8px 14px}
 .hier-node{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12px}
 .hier-bullet{width:6px;height:6px;border-radius:50%;background:#d8dde6;flex-shrink:0}
@@ -153,12 +136,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 .hier-node.cur a{font-weight:600;color:#16325c}
 .hier-node a{color:#0070d2;cursor:pointer}
 .hier-meta{font-size:10px;color:#54698d;margin-left:auto}
-/* Job type chips */
 .jt-chip{display:inline-flex;align-items:center;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:500}
 .jt-install{background:#ede9fe;color:#534ab7}.jt-fj{background:#fce8e8;color:#c23934}
 .jt-warranty{background:#e1f5ee;color:#0f6e56}.jt-aqua{background:#e6f4f7;color:#0a8aa6}
 .jt-lc{background:#e8f5e9;color:#2e7d32}
-/* Photo grid */
 .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:14px}
 .photo-tile{height:80px;border-radius:6px;display:flex;align-items:flex-end;overflow:hidden;cursor:pointer}
 .photo-meta{background:rgba(0,0,0,.55);color:#fff;padding:4px 8px;font-size:9px;width:100%}
@@ -168,598 +149,263 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 .photo-tile.after{background:linear-gradient(135deg,#e8eaf6,#c5cae9)}
 .photo-tile.issue{background:linear-gradient(135deg,#fce4ec,#f48fb1)}
 .photo-tile.aqua{background:linear-gradient(135deg,#e0f7fa,#80deea)}
-/* Revenue band */
-.rev-band{display:flex;gap:0;margin:14px 20px;border-radius:6px;overflow:hidden;border:1px solid #d8dde6}
-.rev-seg{flex:1;padding:8px 12px;text-align:center;font-size:11px}
-.rev-seg-label{font-size:9px;color:#54698d;text-transform:uppercase;letter-spacing:.4px;margin-bottom:3px}
-.rev-seg-val{font-size:13px;font-weight:600;color:#16325c}
-.rev-seg:not(:last-child){border-right:1px solid #d8dde6}
-.rev-seg.ytd{background:#e3f0fb}.rev-seg.active{background:#e8f5e9}.rev-seg.pipeline{background:#ede9fe}.rev-seg.avg{background:#fef3c7}
-/* Rollup summary bar */
-.rollup-bar{background:#fff;border:1px solid #d8dde6;border-radius:6px;display:flex;align-items:center;gap:0;overflow:hidden;margin-bottom:14px}
-.rb-seg{flex:1;padding:10px 14px;border-right:1px solid #f0f0f0;text-align:center}
-.rb-seg:last-child{border-right:none}
-.rb-label{font-size:9px;color:#54698d;text-transform:uppercase;letter-spacing:.4px;font-weight:500;margin-bottom:4px}
-.rb-val{font-size:16px;font-weight:600;color:#16325c}
-.rb-sub{font-size:10px;color:#54698d;margin-top:2px}
-/* Mini progress bar */
-.prog-bar{height:4px;background:#e5e5e5;border-radius:2px;margin-top:6px;overflow:hidden}
-.prog-fill{height:100%;border-radius:2px;background:#0070d2}
-/* Division row expansion */
-.div-expand{background:#f9f9fb;border-left:3px solid #0070d2;display:none}
-.div-expand.open{display:table-row}
-.comm-row{background:#f5f3ff}
+/* KPI row */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:14px 20px}
+.kpi-card{background:#fff;border:1px solid #d8dde6;border-radius:6px;padding:14px;box-shadow:0 1px 0 rgba(0,0,0,.04)}
+.kpi-card.blue{border-top:3px solid #0070d2}.kpi-card.green{border-top:3px solid #04844b}
+.kpi-card.purple{border-top:3px solid #534ab7}.kpi-card.amber{border-top:3px solid #fe9339}
+.kpi-card.navy{border-top:3px solid #16325c}
+.kpi-label{font-size:10px;color:#54698d;text-transform:uppercase;letter-spacing:.4px;font-weight:500;margin-bottom:6px}
+.kpi-value{font-size:22px;font-weight:600;color:#16325c;line-height:1.1}
+.kpi-sub{font-size:11px;color:#54698d;margin-top:4px}
+.kpi-delta{font-size:11px;font-weight:500;margin-top:4px}
+.kpi-delta.up{color:#2e844a}.kpi-delta.dn{color:#c23934}
 </style>
 </head>
 <body>
 
-<!-- ===== TOP BAR ===== -->
 <div class="sf-top">
   <div class="sf-waffle"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
-  <div class="sf-app"><div class="sf-app-icon">🏗</div>Loving Home Builder — Hierarchy</div>
+  <div class="sf-app"><div class="sf-app-icon">🏗</div>Loving Home Builder</div>
   <div class="sf-search">🔍 Search builders, divisions, communities, lots…</div>
   <div class="sf-icons"><div class="sf-ico">⚙</div><div class="sf-ico">?</div><div class="sf-ico">🔔</div><div class="sf-avatar">ML</div></div>
 </div>
 
-<!-- ===== MAIN NAV ===== -->
 <div class="sf-nav">
-  <div class="sf-tab on" onclick="showView('parent')">Parent Builders <span class="num-badge">4</span></div>
-  <div class="sf-tab" onclick="showView('division')">Divisions <span class="num-badge">12</span></div>
-  <div class="sf-tab" onclick="showView('community')">Communities <span class="num-badge">86</span></div>
-  <div class="sf-tab" onclick="showView('lots-list')">Lots <span class="num-badge">2,847</span></div>
-  <div class="sf-tab" id="tab-lot-record" style="display:none" onclick="showView('lot-record')">Lot 07 · Pines</div>
+  <div class="sf-tab on" onclick="sw('builders',this)">Parent Builders <span class="num-badge">4</span></div>
+  <div class="sf-tab" onclick="sw('divisions',this)">Divisions <span class="num-badge">12</span></div>
+  <div class="sf-tab" onclick="sw('communities',this)">Communities <span class="num-badge">86</span></div>
+  <div class="sf-tab" onclick="sw('lots',this)">Lots <span class="num-badge">2,847</span></div>
+  <div class="sf-tab" onclick="sw('lot07',this)">Lot 07 · Pines</div>
 </div>
 
-<!-- ========================================================= -->
-<!-- VIEW 1: PARENT BUILDER                                      -->
-<!-- ========================================================= -->
-<div id="view-parent" class="tc on">
-
-<div class="rec-header">
-  <div class="rec-top-row">
-    <div class="rec-icon" style="background:#16325c">🏗</div>
-    <div class="rec-title-block">
-      <div class="rec-breadcrumb">Account Hierarchy</div>
-      <div class="rec-title">Parent Builders <span class="chip cgr" style="margin-left:6px;font-size:10px">4 builders · 12 divisions · 86 communities · 2,847 lots</span></div>
-    </div>
-    <div class="rec-actions">
-      <button class="sf-btn">Export</button>
-      <button class="sf-btn primary">+ New Builder</button>
-    </div>
+<!-- ====================================================== -->
+<!-- PARENT BUILDERS                                         -->
+<!-- ====================================================== -->
+<div id="view-builders" class="tc on">
+<div class="rec-header"><div class="rec-top-row">
+  <div class="rec-icon" style="background:#16325c">🏗</div>
+  <div class="rec-title-block">
+    <div class="rec-breadcrumb">Account Hierarchy</div>
+    <div class="rec-title">Parent Builders <span class="chip cgr" style="margin-left:6px">4 builders · 12 divisions · 86 communities · 2,847 lots</span></div>
   </div>
-</div>
+  <div class="rec-actions"><button class="sf-btn">Export</button><button class="sf-btn primary">+ New Builder</button></div>
+</div></div>
 
-<!-- Revenue KPI Row -->
 <div class="kpi-row">
-  <div class="kpi-card navy">
-    <div class="kpi-label">Total YTD Revenue</div>
-    <div class="kpi-value">$14.2M</div>
-    <div class="kpi-sub">All builders · Jan–May 2026</div>
-    <div class="kpi-delta up">↑ 18% vs same period 2025</div>
-  </div>
-  <div class="kpi-card blue">
-    <div class="kpi-label">Active Lots (Pipeline)</div>
-    <div class="kpi-value">412</div>
-    <div class="kpi-sub">Across 86 communities</div>
-    <div class="kpi-delta up">↑ 34 from last month</div>
-  </div>
-  <div class="kpi-card green">
-    <div class="kpi-label">Installed YTD</div>
-    <div class="kpi-value">1,847</div>
-    <div class="kpi-sub">Closed lots, billed</div>
-    <div class="kpi-delta up">↑ 22% vs 2025</div>
-  </div>
-  <div class="kpi-card purple">
-    <div class="kpi-label">Avg Revenue / Lot</div>
-    <div class="kpi-value">$4,920</div>
-    <div class="kpi-sub">Blended all builders</div>
-    <div class="kpi-delta up">↑ $180 from pricebook update</div>
-  </div>
-  <div class="kpi-card amber">
-    <div class="kpi-label">Open Work Orders</div>
-    <div class="kpi-value">38</div>
-    <div class="kpi-sub">FJ + Active WOs today</div>
-    <div class="kpi-delta dn">↓ 5 from yesterday</div>
-  </div>
-</div>
-
-<!-- Revenue band -->
-<div class="rev-band">
-  <div class="rev-seg ytd"><div class="rev-seg-label">YTD Invoiced</div><div class="rev-seg-val">$14.2M</div></div>
-  <div class="rev-seg active"><div class="rev-seg-label">In Pipeline</div><div class="rev-seg-val">$2.03M</div></div>
-  <div class="rev-seg pipeline"><div class="rev-seg-label">90+ Day Backlog</div><div class="rev-seg-val">$6.1M</div></div>
-  <div class="rev-seg avg"><div class="rev-seg-label">Avg GP%</div><div class="rev-seg-val">38.4%</div></div>
+  <div class="kpi-card navy"><div class="kpi-label">Total YTD Revenue</div><div class="kpi-value">$14.2M</div><div class="kpi-sub">All builders · Jan–May 2026</div><div class="kpi-delta up">↑ 18% vs 2025</div></div>
+  <div class="kpi-card blue"><div class="kpi-label">Active Lots</div><div class="kpi-value">412</div><div class="kpi-sub">In pipeline now</div><div class="kpi-delta up">↑ 34 from last month</div></div>
+  <div class="kpi-card green"><div class="kpi-label">Installed YTD</div><div class="kpi-value">1,847</div><div class="kpi-sub">Closed · billed</div><div class="kpi-delta up">↑ 22% vs 2025</div></div>
+  <div class="kpi-card purple"><div class="kpi-label">Avg Revenue / Lot</div><div class="kpi-value">$4,920</div><div class="kpi-sub">Blended all builders</div><div class="kpi-delta up">↑ $180 pricebook update</div></div>
+  <div class="kpi-card amber"><div class="kpi-label">Open FJs</div><div class="kpi-value">38</div><div class="kpi-sub">Across all builders</div><div class="kpi-delta dn">↑ 5 this week</div></div>
 </div>
 
 <div class="sf-body" style="padding-top:0">
 <div class="card last">
-  <div class="ch"><div class="ci" style="background:#16325c">🏗</div><h3>Parent Builders — Revenue Rollup</h3><span class="ch-link" style="margin-left:auto">View all divisions ↗</span></div>
+  <div class="ch"><div class="ci" style="background:#16325c">🏗</div><h3>Builder Revenue Rollup</h3></div>
   <table class="tbl">
-    <thead>
-      <tr>
-        <th>Builder</th>
-        <th class="num">YTD Revenue</th>
-        <th class="num">Active Lots</th>
-        <th class="num">Installed</th>
-        <th class="num">Avg $/Lot</th>
-        <th class="num">Avg GP%</th>
-        <th>Divisions</th>
-        <th>Communities</th>
-        <th>FJs Open</th>
-        <th>Action</th>
-      </tr>
-    </thead>
+    <thead><tr><th>Builder</th><th class="num">YTD Revenue</th><th class="num">Active Lots</th><th class="num">Installed</th><th class="num">Avg $/Lot</th><th class="num">GP%</th><th>Divisions</th><th>Communities</th><th>FJs</th><th></th></tr></thead>
     <tbody>
       <tr>
-        <td><a class="nl" onclick="showView('division')">DR Horton</a></td>
-        <td class="num">$7,840,200</td>
-        <td class="num">182</td>
-        <td class="num">842</td>
-        <td class="num">$4,820</td>
+        <td><a class="nl" onclick="sw('divisions',document.querySelectorAll('.sf-tab')[1])">DR Horton</a></td>
+        <td class="num">$7,840,200</td><td class="num">182</td><td class="num">842</td><td class="num">$4,820</td>
         <td class="num"><span class="chip cg">39.1%</span></td>
-        <td><span class="chip cb2">4 divs</span></td>
-        <td><span class="chip cb2">38 communities</span></td>
-        <td><span class="chip ca">12</span></td>
-        <td><button class="sf-btn" onclick="showView('division')" style="font-size:10px;padding:3px 8px">Drill In ›</button></td>
+        <td><span class="chip cb2">4</span></td><td><span class="chip cb2">38</span></td><td><span class="chip ca">12</span></td>
+        <td><button class="sf-btn" onclick="sw('divisions',document.querySelectorAll('.sf-tab')[1])" style="font-size:10px;padding:3px 8px">Divisions ›</button></td>
       </tr>
       <tr>
-        <td><a class="nl" onclick="showView('division')">Lennar</a></td>
-        <td class="num">$3,920,400</td>
-        <td class="num">134</td>
-        <td class="num">612</td>
-        <td class="num">$5,140</td>
+        <td><a class="nl" onclick="sw('divisions',document.querySelectorAll('.sf-tab')[1])">Lennar</a></td>
+        <td class="num">$3,920,400</td><td class="num">134</td><td class="num">612</td><td class="num">$5,140</td>
         <td class="num"><span class="chip cg">37.8%</span></td>
-        <td><span class="chip cb2">3 divs</span></td>
-        <td><span class="chip cb2">24 communities</span></td>
-        <td><span class="chip ca">8</span></td>
-        <td><button class="sf-btn" onclick="showView('division')" style="font-size:10px;padding:3px 8px">Drill In ›</button></td>
+        <td><span class="chip cb2">3</span></td><td><span class="chip cb2">24</span></td><td><span class="chip ca">8</span></td>
+        <td><button class="sf-btn" onclick="sw('divisions',document.querySelectorAll('.sf-tab')[1])" style="font-size:10px;padding:3px 8px">Divisions ›</button></td>
       </tr>
       <tr>
-        <td><a class="nl" onclick="showView('division')">Davidson Homes</a></td>
-        <td class="num">$1,648,800</td>
-        <td class="num">62</td>
-        <td class="num">288</td>
-        <td class="num">$3,840</td>
+        <td><a class="nl" onclick="sw('divisions',document.querySelectorAll('.sf-tab')[1])">Davidson Homes</a></td>
+        <td class="num">$1,648,800</td><td class="num">62</td><td class="num">288</td><td class="num">$3,840</td>
         <td class="num"><span class="chip ca">36.2%</span></td>
-        <td><span class="chip cb2">3 divs</span></td>
-        <td><span class="chip cb2">16 communities</span></td>
-        <td><span class="chip cr">14</span></td>
-        <td><button class="sf-btn" onclick="showView('division')" style="font-size:10px;padding:3px 8px">Drill In ›</button></td>
+        <td><span class="chip cb2">3</span></td><td><span class="chip cb2">16</span></td><td><span class="chip cr">14</span></td>
+        <td><button class="sf-btn" onclick="sw('divisions',document.querySelectorAll('.sf-tab')[1])" style="font-size:10px;padding:3px 8px">Divisions ›</button></td>
       </tr>
       <tr>
-        <td><a class="nl" onclick="showView('division')">Ryan Homes</a></td>
-        <td class="num">$792,600</td>
-        <td class="num">34</td>
-        <td class="num">105</td>
-        <td class="num">$4,420</td>
+        <td><a class="nl" onclick="sw('divisions',document.querySelectorAll('.sf-tab')[1])">Ryan Homes</a></td>
+        <td class="num">$792,600</td><td class="num">34</td><td class="num">105</td><td class="num">$4,420</td>
         <td class="num"><span class="chip cg">40.1%</span></td>
-        <td><span class="chip cb2">2 divs</span></td>
-        <td><span class="chip cb2">8 communities</span></td>
-        <td><span class="chip cgr">4</span></td>
-        <td><button class="sf-btn" onclick="showView('division')" style="font-size:10px;padding:3px 8px">Drill In ›</button></td>
+        <td><span class="chip cb2">2</span></td><td><span class="chip cb2">8</span></td><td><span class="chip cgr">4</span></td>
+        <td><button class="sf-btn" onclick="sw('divisions',document.querySelectorAll('.sf-tab')[1])" style="font-size:10px;padding:3px 8px">Divisions ›</button></td>
       </tr>
     </tbody>
-    <tfoot>
-      <tr style="background:#f4f6f9;font-weight:600">
-        <td><strong>All Builders</strong></td>
-        <td class="num">$14,202,000</td>
-        <td class="num">412</td>
-        <td class="num">1,847</td>
-        <td class="num">$4,920</td>
-        <td class="num"><span class="chip cg">38.4%</span></td>
-        <td><span class="chip cgr">12</span></td>
-        <td><span class="chip cgr">86</span></td>
-        <td><span class="chip ca">38</span></td>
-        <td></td>
-      </tr>
-    </tfoot>
+    <tfoot><tr style="background:#f4f6f9;font-weight:600">
+      <td><strong>All Builders</strong></td><td class="num">$14,202,000</td><td class="num">412</td><td class="num">1,847</td><td class="num">$4,920</td>
+      <td class="num"><span class="chip cg">38.4%</span></td><td class="num">12</td><td class="num">86</td><td class="num"><span class="chip ca">38</span></td><td></td>
+    </tr></tfoot>
   </table>
 </div>
 </div>
 </div>
 
-<!-- ========================================================= -->
-<!-- VIEW 2: DIVISION (DR Horton example)                        -->
-<!-- ========================================================= -->
-<div id="view-division" class="tc">
-
+<!-- ====================================================== -->
+<!-- DIVISIONS (DR Horton)                                   -->
+<!-- ====================================================== -->
+<div id="view-divisions" class="tc">
 <div class="hier-strip">
   <span class="hier-label">Hierarchy:</span>
-  <span class="hier-link" onclick="showView('parent')">All Builders</span><span class="hier-sep">›</span>
-  <span class="hier-link cur">DR Horton (Parent)</span>
+  <span class="hier-link" onclick="sw('builders',document.querySelectorAll('.sf-tab')[0])">All Builders</span><span class="hier-sep">›</span>
+  <span class="hier-link cur">DR Horton</span>
 </div>
-
-<div class="rec-header">
-  <div class="rec-top-row">
-    <div class="rec-icon" style="background:#16325c">🏗</div>
-    <div class="rec-title-block">
-      <div class="rec-breadcrumb"><a onclick="showView('parent')">Parent Builders</a> › DR Horton</div>
-      <div class="rec-title">DR Horton — Divisions <span class="chip cgr" style="margin-left:6px;font-size:10px">4 divisions · 38 communities · 1,024 lots</span></div>
-    </div>
-    <div class="rec-actions">
-      <button class="sf-btn">Edit Builder</button>
-      <button class="sf-btn primary">+ New Division</button>
-    </div>
+<div class="rec-header"><div class="rec-top-row">
+  <div class="rec-icon" style="background:#16325c">🏗</div>
+  <div class="rec-title-block">
+    <div class="rec-breadcrumb"><a onclick="sw('builders',document.querySelectorAll('.sf-tab')[0])">Parent Builders</a> › DR Horton</div>
+    <div class="rec-title">DR Horton — Divisions <span class="chip cgr" style="margin-left:6px">4 divisions · 38 communities · 1,024 lots</span></div>
   </div>
-</div>
+  <div class="rec-actions"><button class="sf-btn">Edit Builder</button><button class="sf-btn primary">+ New Division</button></div>
+</div></div>
 
-<!-- Division KPI Row -->
 <div class="kpi-row">
-  <div class="kpi-card navy">
-    <div class="kpi-label">DR Horton YTD Revenue</div>
-    <div class="kpi-value">$7.84M</div>
-    <div class="kpi-sub">Jan–May 2026 · all divisions</div>
-    <div class="kpi-delta up">↑ 21% vs 2025</div>
-  </div>
-  <div class="kpi-card blue">
-    <div class="kpi-label">Active Lots</div>
-    <div class="kpi-value">182</div>
-    <div class="kpi-sub">In pipeline now</div>
-    <div class="kpi-delta up">↑ 18 this month</div>
-  </div>
-  <div class="kpi-card green">
-    <div class="kpi-label">Installed YTD</div>
-    <div class="kpi-value">842</div>
-    <div class="kpi-sub">Closed · billed to DRH</div>
-    <div class="kpi-delta up">↑ 19% vs 2025</div>
-  </div>
-  <div class="kpi-card purple">
-    <div class="kpi-label">Avg $/Lot</div>
-    <div class="kpi-value">$4,820</div>
-    <div class="kpi-sub">DRH pricebook average</div>
-    <div class="kpi-delta up">↑ $120 pricebook update</div>
-  </div>
-  <div class="kpi-card amber">
-    <div class="kpi-label">Open FJs</div>
-    <div class="kpi-value">12</div>
-    <div class="kpi-sub">Across all DRH divisions</div>
-    <div class="kpi-delta dn">↑ 3 from last week</div>
-  </div>
-</div>
-
-<div class="rev-band">
-  <div class="rev-seg ytd"><div class="rev-seg-label">YTD Invoiced</div><div class="rev-seg-val">$7.84M</div></div>
-  <div class="rev-seg active"><div class="rev-seg-label">In Pipeline</div><div class="rev-seg-val">$878K</div></div>
-  <div class="rev-seg pipeline"><div class="rev-seg-label">Backlog (90+d)</div><div class="rev-seg-val">$3.1M</div></div>
-  <div class="rev-seg avg"><div class="rev-seg-label">Avg GP%</div><div class="rev-seg-val">39.1%</div></div>
+  <div class="kpi-card navy"><div class="kpi-label">DR Horton YTD Revenue</div><div class="kpi-value">$7.84M</div><div class="kpi-sub">All DRH divisions</div><div class="kpi-delta up">↑ 21% vs 2025</div></div>
+  <div class="kpi-card blue"><div class="kpi-label">Active Lots</div><div class="kpi-value">182</div><div class="kpi-sub">In pipeline</div><div class="kpi-delta up">↑ 18 this month</div></div>
+  <div class="kpi-card green"><div class="kpi-label">Installed YTD</div><div class="kpi-value">842</div><div class="kpi-sub">Closed · billed to DRH</div><div class="kpi-delta up">↑ 19% vs 2025</div></div>
+  <div class="kpi-card purple"><div class="kpi-label">Avg $/Lot</div><div class="kpi-value">$4,820</div><div class="kpi-sub">DRH pricebook</div><div class="kpi-delta up">↑ $120 pricebook update</div></div>
+  <div class="kpi-card amber"><div class="kpi-label">Open FJs</div><div class="kpi-value">12</div><div class="kpi-sub">All DRH divisions</div><div class="kpi-delta dn">↑ 3 this week</div></div>
 </div>
 
 <div class="sf-body" style="padding-top:0">
 <div class="card last">
-  <div class="ch"><div class="ci" style="background:#0070d2">🏙</div><h3>DR Horton — Divisions &amp; Revenue Rollup</h3></div>
+  <div class="ch"><div class="ci" style="background:#0070d2">🏙</div><h3>DR Horton — Division Revenue Rollup</h3></div>
   <table class="tbl">
-    <thead>
-      <tr>
-        <th>Division</th>
-        <th>FM Lead</th>
-        <th class="num">YTD Revenue</th>
-        <th class="num">Active Lots</th>
-        <th class="num">Installed</th>
-        <th class="num">Avg $/Lot</th>
-        <th class="num">GP%</th>
-        <th>Communities</th>
-        <th>FJs</th>
-        <th>Action</th>
-      </tr>
-    </thead>
+    <thead><tr><th>Division</th><th>FM Lead</th><th class="num">YTD Revenue</th><th class="num">Active Lots</th><th class="num">Installed</th><th class="num">Avg $/Lot</th><th class="num">GP%</th><th>Communities</th><th>FJs</th><th></th></tr></thead>
     <tbody>
-      <tr>
-        <td><a class="nl" onclick="showView('community')">DRH Charlotte</a></td>
-        <td>Tyler Kelly</td>
-        <td class="num">$3,841,200</td>
-        <td class="num">88</td>
-        <td class="num">412</td>
-        <td class="num">$4,820</td>
-        <td class="num"><span class="chip cg">39.4%</span></td>
-        <td><span class="chip cb2">18 comm</span></td>
-        <td><span class="chip ca">7</span></td>
-        <td><button class="sf-btn" onclick="showView('community')" style="font-size:10px;padding:3px 8px">Communities ›</button></td>
+      <tr style="background:#f5f3ff">
+        <td><a class="nl" onclick="sw('communities',document.querySelectorAll('.sf-tab')[2])">DRH Charlotte</a></td>
+        <td>Tyler Kelly</td><td class="num">$3,841,200</td><td class="num">88</td><td class="num">412</td><td class="num">$4,820</td>
+        <td class="num"><span class="chip cg">39.4%</span></td><td><span class="chip cb2">18</span></td><td><span class="chip ca">7</span></td>
+        <td><button class="sf-btn" onclick="sw('communities',document.querySelectorAll('.sf-tab')[2])" style="font-size:10px;padding:3px 8px">Communities ›</button></td>
       </tr>
       <tr>
-        <td><a class="nl" onclick="showView('community')">DRH Raleigh</a></td>
-        <td>Scott Spaulding</td>
-        <td class="num">$2,088,400</td>
-        <td class="num">52</td>
-        <td class="num">228</td>
-        <td class="num">$4,820</td>
-        <td class="num"><span class="chip cg">38.9%</span></td>
-        <td><span class="chip cb2">11 comm</span></td>
-        <td><span class="chip cgr">3</span></td>
-        <td><button class="sf-btn" onclick="showView('community')" style="font-size:10px;padding:3px 8px">Communities ›</button></td>
+        <td><a class="nl" onclick="sw('communities',document.querySelectorAll('.sf-tab')[2])">DRH Raleigh</a></td>
+        <td>Scott Spaulding</td><td class="num">$2,088,400</td><td class="num">52</td><td class="num">228</td><td class="num">$4,820</td>
+        <td class="num"><span class="chip cg">38.9%</span></td><td><span class="chip cb2">11</span></td><td><span class="chip cgr">3</span></td>
+        <td><button class="sf-btn" onclick="sw('communities',document.querySelectorAll('.sf-tab')[2])" style="font-size:10px;padding:3px 8px">Communities ›</button></td>
       </tr>
       <tr>
-        <td><a class="nl" onclick="showView('community')">DRH Greenville</a></td>
-        <td>Jamie Hinson</td>
-        <td class="num">$1,182,600</td>
-        <td class="num">30</td>
-        <td class="num">148</td>
-        <td class="num">$4,820</td>
-        <td class="num"><span class="chip ca">37.8%</span></td>
-        <td><span class="chip cb2">6 comm</span></td>
-        <td><span class="chip cgr">2</span></td>
-        <td><button class="sf-btn" onclick="showView('community')" style="font-size:10px;padding:3px 8px">Communities ›</button></td>
+        <td><a class="nl" onclick="sw('communities',document.querySelectorAll('.sf-tab')[2])">DRH Greenville</a></td>
+        <td>Jamie Hinson</td><td class="num">$1,182,600</td><td class="num">30</td><td class="num">148</td><td class="num">$4,820</td>
+        <td class="num"><span class="chip ca">37.8%</span></td><td><span class="chip cb2">6</span></td><td><span class="chip cgr">2</span></td>
+        <td><button class="sf-btn" onclick="sw('communities',document.querySelectorAll('.sf-tab')[2])" style="font-size:10px;padding:3px 8px">Communities ›</button></td>
       </tr>
       <tr>
-        <td><a class="nl" onclick="showView('community')">DRH Columbia</a></td>
-        <td>Jersain Laris</td>
-        <td class="num">$728,000</td>
-        <td class="num">12</td>
-        <td class="num">54</td>
-        <td class="num">$4,820</td>
-        <td class="num"><span class="chip cg">39.8%</span></td>
-        <td><span class="chip cb2">3 comm</span></td>
-        <td><span class="chip cgr">0</span></td>
-        <td><button class="sf-btn" onclick="showView('community')" style="font-size:10px;padding:3px 8px">Communities ›</button></td>
+        <td><a class="nl" onclick="sw('communities',document.querySelectorAll('.sf-tab')[2])">DRH Columbia</a></td>
+        <td>Jersain Laris</td><td class="num">$728,000</td><td class="num">12</td><td class="num">54</td><td class="num">$4,820</td>
+        <td class="num"><span class="chip cg">39.8%</span></td><td><span class="chip cb2">3</span></td><td><span class="chip cgr">0</span></td>
+        <td><button class="sf-btn" onclick="sw('communities',document.querySelectorAll('.sf-tab')[2])" style="font-size:10px;padding:3px 8px">Communities ›</button></td>
       </tr>
     </tbody>
-    <tfoot>
-      <tr style="background:#f4f6f9;font-weight:600">
-        <td><strong>DR Horton Total</strong></td>
-        <td></td>
-        <td class="num">$7,840,200</td>
-        <td class="num">182</td>
-        <td class="num">842</td>
-        <td class="num">$4,820</td>
-        <td class="num"><span class="chip cg">39.1%</span></td>
-        <td><span class="chip cgr">38</span></td>
-        <td><span class="chip ca">12</span></td>
-        <td></td>
-      </tr>
-    </tfoot>
+    <tfoot><tr style="background:#f4f6f9;font-weight:600">
+      <td><strong>DR Horton Total</strong></td><td></td><td class="num">$7,840,200</td><td class="num">182</td><td class="num">842</td><td class="num">$4,820</td>
+      <td class="num"><span class="chip cg">39.1%</span></td><td class="num">38</td><td class="num"><span class="chip ca">12</span></td><td></td>
+    </tr></tfoot>
   </table>
 </div>
 </div>
 </div>
 
-<!-- ========================================================= -->
-<!-- VIEW 3: COMMUNITY (DRH Charlotte example)                  -->
-<!-- ========================================================= -->
-<div id="view-community" class="tc">
-
+<!-- ====================================================== -->
+<!-- COMMUNITIES (DRH Charlotte)                             -->
+<!-- ====================================================== -->
+<div id="view-communities" class="tc">
 <div class="hier-strip">
   <span class="hier-label">Hierarchy:</span>
-  <span class="hier-link" onclick="showView('parent')">All Builders</span><span class="hier-sep">›</span>
-  <span class="hier-link" onclick="showView('division')">DR Horton</span><span class="hier-sep">›</span>
+  <span class="hier-link" onclick="sw('builders',document.querySelectorAll('.sf-tab')[0])">All Builders</span><span class="hier-sep">›</span>
+  <span class="hier-link" onclick="sw('divisions',document.querySelectorAll('.sf-tab')[1])">DR Horton</span><span class="hier-sep">›</span>
   <span class="hier-link cur">DRH Charlotte</span>
 </div>
-
-<div class="rec-header">
-  <div class="rec-top-row">
-    <div class="rec-icon" style="background:#0070d2">🏙</div>
-    <div class="rec-title-block">
-      <div class="rec-breadcrumb"><a onclick="showView('parent')">Builders</a> › <a onclick="showView('division')">DR Horton</a> › DRH Charlotte</div>
-      <div class="rec-title">DRH Charlotte — Communities <span class="chip cgr" style="margin-left:6px;font-size:10px">18 communities · 488 lots</span></div>
-    </div>
-    <div class="rec-actions">
-      <button class="sf-btn">Edit Division</button>
-      <button class="sf-btn primary">+ New Community</button>
-    </div>
+<div class="rec-header"><div class="rec-top-row">
+  <div class="rec-icon" style="background:#0070d2">🏙</div>
+  <div class="rec-title-block">
+    <div class="rec-breadcrumb"><a onclick="sw('builders',document.querySelectorAll('.sf-tab')[0])">Builders</a> › <a onclick="sw('divisions',document.querySelectorAll('.sf-tab')[1])">DR Horton</a> › DRH Charlotte</div>
+    <div class="rec-title">DRH Charlotte — Communities <span class="chip cgr" style="margin-left:6px">18 communities · 488 lots</span></div>
   </div>
-</div>
+  <div class="rec-actions"><button class="sf-btn">Edit Division</button><button class="sf-btn primary">+ New Community</button></div>
+</div></div>
 
-<!-- Community KPI Row -->
 <div class="kpi-row">
-  <div class="kpi-card blue">
-    <div class="kpi-label">Division YTD Revenue</div>
-    <div class="kpi-value">$3.84M</div>
-    <div class="kpi-sub">DRH Charlotte · all communities</div>
-    <div class="kpi-delta up">↑ 24% vs 2025</div>
-  </div>
-  <div class="kpi-card green">
-    <div class="kpi-label">Installed YTD</div>
-    <div class="kpi-value">412</div>
-    <div class="kpi-sub">Closed + invoiced lots</div>
-    <div class="kpi-delta up">↑ 22% vs 2025</div>
-  </div>
-  <div class="kpi-card purple">
-    <div class="kpi-label">Active in Pipeline</div>
-    <div class="kpi-value">88</div>
-    <div class="kpi-sub">Scheduled, Clear, Takeoff</div>
-    <div class="kpi-delta up">↑ 8 from last week</div>
-  </div>
-  <div class="kpi-card amber">
-    <div class="kpi-label">Open FJs</div>
-    <div class="kpi-value">7</div>
-    <div class="kpi-sub">Needs re-work or punch</div>
-    <div class="kpi-delta dn">↑ 2 this week</div>
-  </div>
-  <div class="kpi-card navy">
-    <div class="kpi-label">Avg GP%</div>
-    <div class="kpi-value">39.4%</div>
-    <div class="kpi-sub">DRH Charlotte pricebook</div>
-    <div class="kpi-delta up">↑ 0.8% from last year</div>
-  </div>
+  <div class="kpi-card blue"><div class="kpi-label">Division YTD Revenue</div><div class="kpi-value">$3.84M</div><div class="kpi-sub">DRH Charlotte all communities</div><div class="kpi-delta up">↑ 24% vs 2025</div></div>
+  <div class="kpi-card green"><div class="kpi-label">Installed YTD</div><div class="kpi-value">412</div><div class="kpi-sub">Closed + invoiced lots</div><div class="kpi-delta up">↑ 22% vs 2025</div></div>
+  <div class="kpi-card purple"><div class="kpi-label">Active Pipeline</div><div class="kpi-value">88</div><div class="kpi-sub">Sched, Clear, Takeoff</div><div class="kpi-delta up">↑ 8 this week</div></div>
+  <div class="kpi-card amber"><div class="kpi-label">Open FJs</div><div class="kpi-value">7</div><div class="kpi-sub">Need re-work or punch</div><div class="kpi-delta dn">↑ 2 this week</div></div>
+  <div class="kpi-card navy"><div class="kpi-label">Avg GP%</div><div class="kpi-value">39.4%</div><div class="kpi-sub">DRH Charlotte pricebook</div><div class="kpi-delta up">↑ 0.8% vs last year</div></div>
 </div>
-
-<div class="sf-body" style="padding-top:4px">
 
 <div class="list-toolbar">
   <span style="font-size:11px;color:#54698d;font-weight:500;text-transform:uppercase;letter-spacing:.4px">Filter:</span>
-  <span class="filter-chip on">All Communities</span>
-  <span class="filter-chip">Active Lots</span>
-  <span class="filter-chip">FJ Open</span>
-  <span class="filter-chip">811 Pending</span>
+  <span class="filter-chip on" onclick="fc(this)">All</span>
+  <span class="filter-chip" onclick="fc(this)">Active Lots</span>
+  <span class="filter-chip" onclick="fc(this)">FJ Open</span>
+  <span class="filter-chip" onclick="fc(this)">811 Pending</span>
   <span style="margin-left:auto"></span>
   <input class="list-search" placeholder="Search communities…">
 </div>
 
+<div class="sf-body" style="padding-top:4px">
 <div class="card last">
-  <div class="ch"><div class="ci" style="background:#0070d2">🏘</div><h3>Communities — Revenue &amp; Lot Status Rollup</h3><span class="ch-link" style="margin-left:auto" onclick="showView('lots-list')">View Lots List ↗</span></div>
+  <div class="ch"><div class="ci" style="background:#534ab7">🏘</div><h3>Communities — Lot Grid + Revenue Rollup</h3><span class="ch-link" style="margin-left:auto" onclick="sw('lots',document.querySelectorAll('.sf-tab')[3])">All Lots ↗</span></div>
   <table class="tbl">
-    <thead>
-      <tr>
-        <th>Community</th>
-        <th>FM</th>
-        <th class="num">Total Lots</th>
-        <th class="num">Active</th>
-        <th class="num">Installed</th>
-        <th class="num">YTD Rev</th>
-        <th class="num">Avg $/Lot</th>
-        <th class="num">GP%</th>
-        <th>811 Pending</th>
-        <th>FJs</th>
-        <th>Lot View</th>
-      </tr>
-    </thead>
+    <thead><tr><th>Community</th><th>FM</th><th class="num">Total Lots</th><th class="num">Complete</th><th class="num">Active</th><th class="num">YTD Rev</th><th class="num">Avg $/Lot</th><th class="num">GP%</th><th>811 Pending</th><th>FJs</th><th>Lot Grid</th></tr></thead>
     <tbody>
       <tr style="background:#f5f3ff">
-        <td><a class="nl" onclick="showView('community-detail','Pines at Berewick')">Pines at Berewick</a></td>
-        <td>Tyler Kelly</td>
-        <td class="num">48</td>
-        <td class="num">12</td>
-        <td class="num">28</td>
-        <td class="num">$134,960</td>
-        <td class="num">$4,820</td>
+        <td><a class="nl" onclick="sw('lots',document.querySelectorAll('.sf-tab')[3])">Pines at Berewick</a></td>
+        <td>Tyler Kelly</td><td class="num">48</td><td class="num">28</td><td class="num">12</td>
+        <td class="num">$134,960</td><td class="num">$4,820</td>
         <td class="num"><span class="chip cg">39.8%</span></td>
-        <td><span class="chip cg">All Clear</span></td>
-        <td><span class="chip ca">2</span></td>
-        <td><button class="sf-btn" onclick="showCommunityDetail('pines')" style="font-size:10px;padding:3px 8px">Lots Grid ›</button></td>
+        <td><span class="chip cg">All Clear</span></td><td><span class="chip ca">2</span></td>
+        <td><button class="sf-btn" onclick="sw('lots',document.querySelectorAll('.sf-tab')[3])" style="font-size:10px;padding:3px 8px">Lot Grid ›</button></td>
       </tr>
       <tr>
-        <td><a class="nl" onclick="showCommunityDetail('mallard')">Reserve at Mallard Creek</a></td>
-        <td>Jamie Hinson</td>
-        <td class="num">62</td>
-        <td class="num">18</td>
-        <td class="num">36</td>
-        <td class="num">$184,800</td>
-        <td class="num">$5,140</td>
+        <td><a class="nl">Reserve at Mallard Creek</a></td>
+        <td>Jamie Hinson</td><td class="num">62</td><td class="num">36</td><td class="num">18</td>
+        <td class="num">$184,800</td><td class="num">$5,140</td>
         <td class="num"><span class="chip cg">40.2%</span></td>
-        <td><span class="chip cr">3 pending</span></td>
-        <td><span class="chip ca">1</span></td>
-        <td><button class="sf-btn" onclick="showCommunityDetail('mallard')" style="font-size:10px;padding:3px 8px">Lots Grid ›</button></td>
+        <td><span class="chip cr">3 pending</span></td><td><span class="chip ca">1</span></td>
+        <td><button class="sf-btn" style="font-size:10px;padding:3px 8px">Lot Grid ›</button></td>
       </tr>
       <tr>
-        <td><a class="nl" onclick="showCommunityDetail('hampton')">Hampton Creek</a></td>
-        <td>Scott Spaulding</td>
-        <td class="num">36</td>
-        <td class="num">8</td>
-        <td class="num">22</td>
-        <td class="num">$106,040</td>
-        <td class="num">$4,820</td>
+        <td><a class="nl">Hampton Creek</a></td>
+        <td>Scott Spaulding</td><td class="num">36</td><td class="num">22</td><td class="num">8</td>
+        <td class="num">$106,040</td><td class="num">$4,820</td>
         <td class="num"><span class="chip ca">37.1%</span></td>
-        <td><span class="chip cgr">1 pending</span></td>
-        <td><span class="chip cgr">0</span></td>
-        <td><button class="sf-btn" onclick="showCommunityDetail('hampton')" style="font-size:10px;padding:3px 8px">Lots Grid ›</button></td>
-      </tr>
-      <tr>
-        <td><a class="nl" onclick="showCommunityDetail('waverly')">Waverly Reserve</a></td>
-        <td>Jamie Hinson</td>
-        <td class="num">54</td>
-        <td class="num">14</td>
-        <td class="num">30</td>
-        <td class="num">$154,200</td>
-        <td class="num">$5,140</td>
-        <td class="num"><span class="chip cg">38.9%</span></td>
-        <td><span class="chip cgr">2 pending</span></td>
-        <td><span class="chip ca">1</span></td>
-        <td><button class="sf-btn" onclick="showCommunityDetail('waverly')" style="font-size:10px;padding:3px 8px">Lots Grid ›</button></td>
+        <td><span class="chip cgr">1 pending</span></td><td><span class="chip cgr">0</span></td>
+        <td><button class="sf-btn" style="font-size:10px;padding:3px 8px">Lot Grid ›</button></td>
       </tr>
       <tr>
         <td><a class="nl">Heritage Oaks</a></td>
-        <td>Tyler Kelly</td>
-        <td class="num">40</td>
-        <td class="num">10</td>
-        <td class="num">24</td>
-        <td class="num">$92,160</td>
-        <td class="num">$3,840</td>
+        <td>Tyler Kelly</td><td class="num">40</td><td class="num">24</td><td class="num">10</td>
+        <td class="num">$92,160</td><td class="num">$3,840</td>
         <td class="num"><span class="chip ca">36.4%</span></td>
-        <td><span class="chip cr">5 pending</span></td>
-        <td><span class="chip cr">3</span></td>
-        <td><button class="sf-btn" style="font-size:10px;padding:3px 8px">Lots Grid ›</button></td>
+        <td><span class="chip cr">5 pending</span></td><td><span class="chip cr">3</span></td>
+        <td><button class="sf-btn" style="font-size:10px;padding:3px 8px">Lot Grid ›</button></td>
       </tr>
       <tr>
         <td><a class="nl">Bay Pointe at Paw Creek</a></td>
-        <td>Scott Spaulding</td>
-        <td class="num">72</td>
-        <td class="num">22</td>
-        <td class="num">44</td>
-        <td class="num">$212,080</td>
-        <td class="num">$4,820</td>
+        <td>Scott Spaulding</td><td class="num">72</td><td class="num">44</td><td class="num">22</td>
+        <td class="num">$212,080</td><td class="num">$4,820</td>
         <td class="num"><span class="chip cg">40.1%</span></td>
-        <td><span class="chip cg">All Clear</span></td>
-        <td><span class="chip cgr">0</span></td>
-        <td><button class="sf-btn" style="font-size:10px;padding:3px 8px">Lots Grid ›</button></td>
+        <td><span class="chip cg">All Clear</span></td><td><span class="chip cgr">0</span></td>
+        <td><button class="sf-btn" style="font-size:10px;padding:3px 8px">Lot Grid ›</button></td>
       </tr>
     </tbody>
-    <tfoot>
-      <tr style="background:#f4f6f9;font-weight:600">
-        <td><strong>DRH Charlotte Total</strong></td>
-        <td></td>
-        <td class="num">488</td>
-        <td class="num">88</td>
-        <td class="num">412</td>
-        <td class="num">$3,841,200</td>
-        <td class="num">$4,820</td>
-        <td class="num"><span class="chip cg">39.4%</span></td>
-        <td><span class="chip ca">11</span></td>
-        <td><span class="chip ca">7</span></td>
-        <td></td>
-      </tr>
-    </tfoot>
+    <tfoot><tr style="background:#f4f6f9;font-weight:600">
+      <td><strong>DRH Charlotte Total</strong></td><td></td><td class="num">488</td><td class="num">412</td><td class="num">88</td>
+      <td class="num">$3,841,200</td><td class="num">$4,820</td><td class="num"><span class="chip cg">39.4%</span></td>
+      <td><span class="chip ca">11</span></td><td><span class="chip ca">7</span></td><td></td>
+    </tr></tfoot>
   </table>
 </div>
-</div>
-</div>
 
-<!-- ========================================================= -->
-<!-- VIEW 3b: COMMUNITY DETAIL w/ LOT GRID (Pines at Berewick) -->
-<!-- ========================================================= -->
-<div id="view-community-detail" class="tc">
-
-<div class="hier-strip">
-  <span class="hier-label">Hierarchy:</span>
-  <span class="hier-link" onclick="showView('parent')">All Builders</span><span class="hier-sep">›</span>
-  <span class="hier-link" onclick="showView('division')">DR Horton</span><span class="hier-sep">›</span>
-  <span class="hier-link" onclick="showView('community')">DRH Charlotte</span><span class="hier-sep">›</span>
-  <span class="hier-link cur">Pines at Berewick</span>
-</div>
-
-<div class="rec-header">
-  <div class="rec-top-row">
-    <div class="rec-icon" style="background:#534ab7">🏘</div>
-    <div class="rec-title-block">
-      <div class="rec-breadcrumb"><a onclick="showView('community')">DRH Charlotte</a> › Community</div>
-      <div class="rec-title">The Pines at Berewick <span class="chip cb2" style="font-size:10px">Active</span></div>
-    </div>
-    <div class="rec-actions">
-      <button class="sf-btn">Edit</button>
-      <button class="sf-btn" onclick="showView('lots-list')">Lots Table</button>
-      <button class="sf-btn primary">+ New Lot</button>
-    </div>
-  </div>
-</div>
-
-<div class="highlights">
-  <div><div class="hl-label">Total Lots</div><div class="hl-value">48</div></div>
-  <div><div class="hl-label">Active Pipeline</div><div class="hl-value green">12</div></div>
-  <div><div class="hl-label">Installed YTD</div><div class="hl-value">28</div></div>
-  <div><div class="hl-label">YTD Revenue</div><div class="hl-value">$134,960</div></div>
-  <div><div class="hl-label">Avg $/Lot</div><div class="hl-value">$4,820</div></div>
-  <div><div class="hl-label">GP%</div><div class="hl-value green">39.8%</div></div>
-</div>
-
-<div class="subtabs">
-  <div class="subtab on" onclick="subx('cd','lot-grid-tab',this)">Lots Grid</div>
-  <div class="subtab" onclick="subx('cd','community-detail-tab',this)">Community Info</div>
-  <div class="subtab" onclick="subx('cd','community-revenue-tab',this)">Revenue &amp; Rollup</div>
-</div>
-
-<!-- LOT GRID TAB -->
-<div id="cd-lot-grid-tab" class="sub-tc on">
-<div class="list-toolbar">
-  <span style="font-size:11px;color:#54698d;font-weight:500;text-transform:uppercase;letter-spacing:.4px">Status:</span>
-  <span class="filter-chip on">All</span>
-  <span class="filter-chip">Scheduled</span>
-  <span class="filter-chip">In Progress</span>
-  <span class="filter-chip">Pending 811</span>
-  <span class="filter-chip">Complete</span>
-  <span class="filter-chip">FJ Open</span>
-  <span style="margin-left:auto;font-size:11px;color:#54698d">48 lots · click tile to open record</span>
-</div>
-<div class="sf-body" style="padding-top:4px;padding-bottom:0">
-<div class="card last">
-  <div class="ch"><div class="ci" style="background:#534ab7">🏠</div><h3>The Pines at Berewick — Lot Grid</h3><span style="font-size:11px;color:#54698d;margin-left:auto">Phase 1: Lots 1–24 · Phase 2: Lots 25–48</span></div>
-  <div style="padding:8px 14px;background:#fafaf9;border-bottom:1px solid #f0f0f0;font-size:11px;color:#54698d;font-weight:500">Phase 1</div>
+<!-- Lot Grid for Pines -->
+<div class="card" style="margin-top:14px">
+  <div class="ch"><div class="ci" style="background:#534ab7">🏠</div><h3>The Pines at Berewick — Lot Grid</h3><span style="font-size:11px;color:#54698d;margin-left:auto">48 lots · click to open lot record</span></div>
+  <div style="padding:6px 14px;background:#fafaf9;border-bottom:1px solid #f0f0f0;font-size:11px;color:#54698d;font-weight:500">Phase 1 — Lots 1–24</div>
   <div class="lot-grid">
     <div class="lot-tile complete">01<br><span style="font-size:8px">Done</span></div>
     <div class="lot-tile complete">02<br><span style="font-size:8px">Done</span></div>
@@ -767,7 +413,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
     <div class="lot-tile complete">04<br><span style="font-size:8px">Done</span></div>
     <div class="lot-tile fj">05<br><span style="font-size:8px">FJ</span></div>
     <div class="lot-tile complete">06<br><span style="font-size:8px">Done</span></div>
-    <div class="lot-tile in-prog" onclick="showView('lot-record')">07<br><span style="font-size:8px">Active</span></div>
+    <div class="lot-tile in-prog" onclick="sw('lot07',document.querySelectorAll('.sf-tab')[4])">07<br><span style="font-size:8px">Active</span></div>
     <div class="lot-tile complete">08<br><span style="font-size:8px">Done</span></div>
     <div class="lot-tile scheduled">09<br><span style="font-size:8px">Sched</span></div>
     <div class="lot-tile complete">10<br><span style="font-size:8px">Done</span></div>
@@ -786,7 +432,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
     <div class="lot-tile complete">23<br><span style="font-size:8px">Done</span></div>
     <div class="lot-tile complete">24<br><span style="font-size:8px">Done</span></div>
   </div>
-  <div style="padding:8px 14px;background:#fafaf9;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;font-size:11px;color:#54698d;font-weight:500">Phase 2</div>
+  <div style="padding:6px 14px;background:#fafaf9;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;font-size:11px;color:#54698d;font-weight:500">Phase 2 — Lots 25–48</div>
   <div class="lot-grid">
     <div class="lot-tile pending">25<br><span style="font-size:8px">30d</span></div>
     <div class="lot-tile pending">26<br><span style="font-size:8px">31d</span></div>
@@ -794,8 +440,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
     <div class="lot-tile available">28<br><span style="font-size:8px">60d</span></div>
     <div class="lot-tile available">29<br><span style="font-size:8px">90d</span></div>
     <div class="lot-tile available">30<br><span style="font-size:8px">90d</span></div>
-    <div class="lot-tile available">31<br><span style="font-size:8px">90d</span></div>
-    <div class="lot-tile available">32<br><span style="font-size:8px">90d</span></div>
+    <div class="lot-tile available">31<br><span style="font-size:8px">Open</span></div>
+    <div class="lot-tile available">32<br><span style="font-size:8px">Open</span></div>
     <div class="lot-tile available">33<br><span style="font-size:8px">Open</span></div>
     <div class="lot-tile available">34<br><span style="font-size:8px">Open</span></div>
     <div class="lot-tile available">35<br><span style="font-size:8px">Open</span></div>
@@ -825,252 +471,117 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 </div>
 </div>
 
-<!-- COMMUNITY INFO TAB -->
-<div id="cd-community-detail-tab" class="sub-tc">
-<div class="sf-body">
-<div class="layout">
-<div class="layout-main">
-<div class="card info">
-  <div class="ch"><div class="ci" style="background:#0070d2">📋</div><h3>Community Details</h3></div>
-  <div class="fields-grid">
-    <div><div class="field-label">Community Name</div><div class="field-value">The Pines at Berewick</div></div>
-    <div><div class="field-label">Division</div><div class="field-value"><a class="nl">DR Horton Charlotte</a></div></div>
-    <div><div class="field-label">Parent Builder</div><div class="field-value"><a class="nl">DR Horton</a></div></div>
-    <div><div class="field-label">Field Manager</div><div class="field-value">Tyler Kelly</div></div>
-    <div><div class="field-label">Total Lots</div><div class="field-value">48 (Phase 1: 24 · Phase 2: 24)</div></div>
-    <div><div class="field-label">Pricebook</div><div class="field-value">DRH-CLT Standard Pricebook</div></div>
-    <div><div class="field-label">BMG Package Code</div><div class="field-value">DRH-CLT-Standard</div></div>
-    <div><div class="field-label">Aqua Customer</div><div class="field-value"><span class="chip cg">Yes — auto-trigger</span></div></div>
-    <div><div class="field-label">Std Install $/Lot</div><div class="field-value">$4,820</div></div>
-    <div><div class="field-label">Aqua Add-on $/Lot</div><div class="field-value">$485</div></div>
-    <div><div class="field-label">Community Address</div><div class="field-value">Berewick, Charlotte NC 28278</div></div>
-    <div><div class="field-label">Status</div><div class="field-value"><span class="chip cg">Active</span></div></div>
-  </div>
-</div>
-</div>
-<div class="layout-rail">
-<div class="card">
-  <div class="ch"><div class="ci" style="background:#534ab7">🌳</div><h3>Hierarchy</h3></div>
-  <div class="hier-tree">
-    <div class="hier-node parent"><div class="hier-bullet"></div><a onclick="showView('parent')">DR Horton (Parent)</a></div>
-    <div class="hier-node div"><div class="hier-bullet"></div><a onclick="showView('division')">DRH Charlotte</a></div>
-    <div class="hier-node com cur"><div class="hier-bullet"></div><a>The Pines at Berewick</a></div>
-    <div class="hier-node lot"><div class="hier-bullet"></div><span style="color:#54698d">Lot 01</span><span class="hier-meta">Done</span></div>
-    <div class="hier-node lot"><div class="hier-bullet"></div><a onclick="showView('lot-record')">Lot 07</a><span class="hier-meta" style="color:#534ab7">Active</span></div>
-    <div class="hier-node lot"><div class="hier-bullet"></div><span style="color:#54698d">Lot 09</span><span class="hier-meta">Sched</span></div>
-    <div class="hier-node lot"><div class="hier-bullet"></div><span style="color:#54698d;font-style:italic">+45 more…</span></div>
-  </div>
-</div>
-<div class="card last">
-  <div class="ch"><div class="ci" style="background:#0070d2">📊</div><h3>Quick Stats</h3></div>
-  <div style="padding:12px 14px;display:grid;gap:10px">
-    <div>
-      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span style="color:#54698d">Complete</span><span style="font-weight:500">28 / 48</span></div>
-      <div class="prog-bar"><div class="prog-fill" style="width:58%;background:#04844b"></div></div>
-    </div>
-    <div>
-      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span style="color:#54698d">Active Pipeline</span><span style="font-weight:500">12 / 48</span></div>
-      <div class="prog-bar"><div class="prog-fill" style="width:25%;background:#534ab7"></div></div>
-    </div>
-    <div>
-      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px"><span style="color:#54698d">Available</span><span style="font-weight:500">8 / 48</span></div>
-      <div class="prog-bar"><div class="prog-fill" style="width:17%;background:#d8dde6"></div></div>
-    </div>
-  </div>
-</div>
-</div>
-</div>
-</div>
-</div>
-
-<!-- COMMUNITY REVENUE TAB -->
-<div id="cd-community-revenue-tab" class="sub-tc">
-<div class="sf-body">
-<div class="rollup-bar">
-  <div class="rb-seg"><div class="rb-label">YTD Revenue</div><div class="rb-val">$134,960</div><div class="rb-sub">28 lots closed</div></div>
-  <div class="rb-seg"><div class="rb-label">Pipeline Value</div><div class="rb-val">$57,840</div><div class="rb-sub">12 active lots × $4,820</div></div>
-  <div class="rb-seg"><div class="rb-label">Backlog</div><div class="rb-val">$38,560</div><div class="rb-sub">8 lots · 31-90d out</div></div>
-  <div class="rb-seg"><div class="rb-label">Total Potential</div><div class="rb-val">$231,360</div><div class="rb-sub">48 lots × $4,820</div></div>
-  <div class="rb-seg"><div class="rb-label">GP%</div><div class="rb-val" style="color:#2e844a">39.8%</div><div class="rb-sub">Above target 38%</div></div>
-</div>
-<div class="card last">
-  <div class="ch"><div class="ci" style="background:#04844b">💰</div><h3>Revenue by Pipeline Stage</h3></div>
-  <table class="tbl">
-    <thead><tr><th>Stage</th><th class="num">Lots</th><th class="num">Revenue</th><th class="num">% of Total</th></tr></thead>
-    <tbody>
-      <tr><td><span class="pipeline-badge pb-closed">Closed / Installed</span></td><td class="num">28</td><td class="num">$134,960</td><td class="num">58%</td></tr>
-      <tr><td><span class="pipeline-badge pb-sched">Scheduled</span></td><td class="num">3</td><td class="num">$14,460</td><td class="num">6%</td></tr>
-      <tr><td><span class="pipeline-badge pb-clear">Clear for Schedule</span></td><td class="num">2</td><td class="num">$9,640</td><td class="num">4%</td></tr>
-      <tr><td><span class="pipeline-badge pb-takeoff">Takeoff Scheduled</span></td><td class="num">4</td><td class="num">$19,280</td><td class="num">8%</td></tr>
-      <tr><td><span class="pipeline-badge pb-30">30 Days</span></td><td class="num">3</td><td class="num">$14,460</td><td class="num">6%</td></tr>
-      <tr><td><span class="pipeline-badge pb-31">31 Days</span></td><td class="num">2</td><td class="num">$9,640</td><td class="num">4%</td></tr>
-      <tr><td><span class="pipeline-badge pb-60">60+ Days</span></td><td class="num">3</td><td class="num">$14,460</td><td class="num">6%</td></tr>
-      <tr><td><span class="pipeline-badge pb-90">90+ Days / Open</span></td><td class="num">3</td><td class="num">$14,460</td><td class="num">6%</td></tr>
-    </tbody>
-    <tfoot><tr style="background:#f4f6f9;font-weight:600"><td><strong>Total</strong></td><td class="num">48</td><td class="num">$231,360</td><td class="num">100%</td></tr></tfoot>
-  </table>
-</div>
-</div>
-</div>
-</div>
-
-<!-- ========================================================= -->
-<!-- VIEW 4: LOTS LIST                                           -->
-<!-- ========================================================= -->
-<div id="view-lots-list" class="tc">
-
+<!-- ====================================================== -->
+<!-- LOTS LIST                                               -->
+<!-- ====================================================== -->
+<div id="view-lots" class="tc">
 <div class="hier-strip">
   <span class="hier-label">Hierarchy:</span>
-  <span class="hier-link" onclick="showView('parent')">All Builders</span><span class="hier-sep">›</span>
-  <span class="hier-link" onclick="showView('division')">DR Horton</span><span class="hier-sep">›</span>
-  <span class="hier-link" onclick="showView('community')">DRH Charlotte</span><span class="hier-sep">›</span>
+  <span class="hier-link" onclick="sw('builders',document.querySelectorAll('.sf-tab')[0])">All Builders</span><span class="hier-sep">›</span>
+  <span class="hier-link" onclick="sw('divisions',document.querySelectorAll('.sf-tab')[1])">DR Horton</span><span class="hier-sep">›</span>
+  <span class="hier-link" onclick="sw('communities',document.querySelectorAll('.sf-tab')[2])">DRH Charlotte</span><span class="hier-sep">›</span>
   <span class="hier-link cur">Lots</span>
 </div>
-
-<div class="rec-header">
-  <div class="rec-top-row">
-    <div class="rec-icon" style="background:#534ab7">🏠</div>
-    <div class="rec-title-block">
-      <div class="rec-breadcrumb">Lots</div>
-      <div class="rec-title">All Lots <span class="chip cgr" style="margin-left:6px">2,847 total · 412 active</span></div>
-    </div>
-    <div class="rec-actions"><button class="sf-btn">List Settings</button><button class="sf-btn">Export</button><button class="sf-btn primary">+ New Lot</button></div>
+<div class="rec-header"><div class="rec-top-row">
+  <div class="rec-icon" style="background:#534ab7">🏠</div>
+  <div class="rec-title-block">
+    <div class="rec-breadcrumb">Lots</div>
+    <div class="rec-title">All Lots <span class="chip cgr" style="margin-left:6px">2,847 total · 412 active</span></div>
   </div>
-</div>
-
+  <div class="rec-actions"><button class="sf-btn">List Settings</button><button class="sf-btn">Export</button><button class="sf-btn primary">+ New Lot</button></div>
+</div></div>
 <div class="list-toolbar">
   <span style="font-size:11px;color:#54698d;font-weight:500;text-transform:uppercase;letter-spacing:.4px">Pipeline:</span>
-  <span class="filter-chip on">All</span>
-  <span class="filter-chip">90+ Days</span>
-  <span class="filter-chip">60+ Days</span>
-  <span class="filter-chip">31 Days</span>
-  <span class="filter-chip">30 Days</span>
-  <span class="filter-chip">Takeoff Scheduled</span>
-  <span class="filter-chip">Clear for Schedule</span>
-  <span class="filter-chip">Scheduled</span>
-  <span class="filter-chip">Closed</span>
+  <span class="filter-chip on" onclick="fc(this)">All</span>
+  <span class="filter-chip" onclick="fc(this)">90+ Days</span>
+  <span class="filter-chip" onclick="fc(this)">60+ Days</span>
+  <span class="filter-chip" onclick="fc(this)">31 Days</span>
+  <span class="filter-chip" onclick="fc(this)">30 Days</span>
+  <span class="filter-chip" onclick="fc(this)">Takeoff Scheduled</span>
+  <span class="filter-chip" onclick="fc(this)">Clear for Schedule</span>
+  <span class="filter-chip" onclick="fc(this)">Scheduled</span>
+  <span class="filter-chip" onclick="fc(this)">Active Today</span>
+  <span class="filter-chip" onclick="fc(this)">Closed</span>
   <span style="margin-left:auto"></span>
   <select><option>All builders</option><option>DR Horton</option><option>Lennar</option><option>Davidson</option><option>Ryan Homes</option></select>
   <select><option>All FMs</option><option>Tyler Kelly</option><option>Scott Spaulding</option><option>Jamie Hinson</option><option>Jersain Laris</option></select>
   <input class="list-search" placeholder="Search lots, PO, address…">
 </div>
-
 <div class="sf-body">
 <div class="card last">
   <table class="tbl">
-    <thead>
-      <tr>
-        <th>Lot #</th><th>Community</th><th>Builder / Division</th><th>FM</th><th>Address</th>
-        <th>Req. Install</th><th>Pipeline Bucket</th><th>Lot Status</th><th>811</th><th>Takeoff</th><th>Aqua</th><th>PO #</th><th class="num">PO $</th><th>Spec Type</th>
-      </tr>
-    </thead>
+    <thead><tr><th>Lot #</th><th>Community</th><th>Builder / Division</th><th>FM</th><th>Address</th><th>Req. Install</th><th>Pipeline Bucket</th><th>Lot Status</th><th>811</th><th>Takeoff</th><th>Aqua</th><th>PO #</th><th class="num">PO $</th><th>Spec Type</th></tr></thead>
     <tbody>
       <tr style="background:#f5f3ff">
-        <td><a class="nl" onclick="showView('lot-record')">L-PINES-07</a></td>
-        <td><a class="nl" onclick="showCommunityDetail('pines')">Pines at Berewick</a></td>
-        <td>DR Horton Charlotte</td><td>Tyler Kelly</td><td>8412 Berewick Pine Dr</td>
-        <td>Apr 25, 2026</td>
-        <td><span class="pipeline-badge pb-sched">Scheduled</span></td>
-        <td><span class="chip cb2">In Production</span></td>
-        <td><span class="chip cg">Cleared</span></td>
-        <td><span class="chip cg">Locked</span></td>
-        <td><span class="chip cb2">Auto</span></td>
+        <td><a class="nl" onclick="sw('lot07',document.querySelectorAll('.sf-tab')[4])">L-PINES-07</a></td>
+        <td><a class="nl" onclick="sw('communities',document.querySelectorAll('.sf-tab')[2])">Pines at Berewick</a></td>
+        <td>DR Horton Charlotte</td><td>Tyler Kelly</td><td>8412 Berewick Pine Dr</td><td>Apr 25, 2026</td>
+        <td><span class="pipeline-badge pb-sched">Scheduled</span></td><td><span class="chip cb2">In Production</span></td>
+        <td><span class="chip cg">Cleared</span></td><td><span class="chip cg">Locked</span></td><td><span class="chip cb2">Auto</span></td>
         <td>DRH-2026-8847</td><td class="num">$4,820</td><td><span class="chip cgr">Average</span></td>
       </tr>
       <tr style="background:#fff8f8">
         <td><a class="nl">L-PINES-05</a></td>
-        <td><a class="nl" onclick="showCommunityDetail('pines')">Pines at Berewick</a></td>
-        <td>DR Horton Charlotte</td><td>Tyler Kelly</td><td>8404 Berewick Pine Dr</td>
-        <td>Apr 20, 2026</td>
-        <td><span class="pipeline-badge pb-sched">Scheduled</span></td>
-        <td><span class="chip cb2">Installed</span></td>
-        <td><span class="chip cg">Cleared</span></td>
-        <td><span class="chip cg">Locked</span></td>
-        <td><span class="chip cb2">Auto</span></td>
+        <td><a class="nl">Pines at Berewick</a></td>
+        <td>DR Horton Charlotte</td><td>Tyler Kelly</td><td>8404 Berewick Pine Dr</td><td>Apr 20, 2026</td>
+        <td><span class="pipeline-badge pb-sched">Scheduled</span></td><td><span class="chip cb2">Installed</span></td>
+        <td><span class="chip cg">Cleared</span></td><td><span class="chip cg">Locked</span></td><td><span class="chip cb2">Auto</span></td>
         <td>DRH-2026-8845</td><td class="num">$4,820</td><td><span class="chip cgr">Average</span></td>
       </tr>
       <tr>
         <td><a class="nl">L-PINES-09</a></td>
-        <td><a class="nl" onclick="showCommunityDetail('pines')">Pines at Berewick</a></td>
-        <td>DR Horton Charlotte</td><td>Tyler Kelly</td><td>8420 Berewick Pine Dr</td>
-        <td>Apr 28, 2026</td>
-        <td><span class="pipeline-badge pb-takeoff">Takeoff Scheduled</span></td>
-        <td><span class="chip ca">Under Construction</span></td>
-        <td><span class="chip cb2">Filed</span></td>
-        <td><span class="chip cp">Scheduled May 1</span></td>
-        <td><span class="chip cb2">Auto</span></td>
+        <td><a class="nl">Pines at Berewick</a></td>
+        <td>DR Horton Charlotte</td><td>Tyler Kelly</td><td>8420 Berewick Pine Dr</td><td>Apr 28, 2026</td>
+        <td><span class="pipeline-badge pb-takeoff">Takeoff Scheduled</span></td><td><span class="chip ca">Under Construction</span></td>
+        <td><span class="chip cb2">Filed</span></td><td><span class="chip cp">Scheduled May 1</span></td><td><span class="chip cb2">Auto</span></td>
         <td>DRH-2026-8849</td><td class="num">$4,820</td><td><span class="chip cgr">Average</span></td>
       </tr>
       <tr>
         <td><a class="nl">L-MALLARD-79</a></td>
-        <td><a class="nl" onclick="showCommunityDetail('mallard')">Reserve at Mallard Creek</a></td>
-        <td>Lennar Charlotte</td><td>Jamie Hinson</td><td>14732 Mallard Cove Dr</td>
-        <td>Apr 27, 2026</td>
-        <td><span class="pipeline-badge pb-clear">Clear for Schedule</span></td>
-        <td><span class="chip ca">Under Construction</span></td>
-        <td><span class="chip cg">Cleared</span></td>
-        <td><span class="chip cg">Locked</span></td>
-        <td><span class="chip cgr">N/A</span></td>
+        <td><a class="nl">Reserve at Mallard Creek</a></td>
+        <td>Lennar Charlotte</td><td>Jamie Hinson</td><td>14732 Mallard Cove Dr</td><td>Apr 27, 2026</td>
+        <td><span class="pipeline-badge pb-clear">Clear for Schedule</span></td><td><span class="chip ca">Under Construction</span></td>
+        <td><span class="chip cg">Cleared</span></td><td><span class="chip cg">Locked</span></td><td><span class="chip cgr">N/A</span></td>
         <td>LEN-2026-4421</td><td class="num">$5,140</td><td><span class="chip cb2">Exact</span></td>
       </tr>
       <tr style="background:#fff8f8">
         <td><a class="nl">L-HERITAGE-156</a></td>
         <td><a class="nl">Heritage Oaks</a></td>
-        <td>Davidson Homes</td><td>Tyler Kelly</td><td>2218 Heritage Oaks Pkwy</td>
-        <td>May 22, 2026</td>
-        <td><span class="pipeline-badge pb-30">30 Days</span></td>
-        <td><span class="chip ca">Under Construction</span></td>
-        <td><span class="chip cr">Not Filed</span></td>
-        <td><span class="chip cgr">Not Started</span></td>
-        <td><span class="chip cgr">—</span></td>
+        <td>Davidson Homes</td><td>Tyler Kelly</td><td>2218 Heritage Oaks Pkwy</td><td>May 22, 2026</td>
+        <td><span class="pipeline-badge pb-30">30 Days</span></td><td><span class="chip ca">Under Construction</span></td>
+        <td><span class="chip cr">Not Filed</span></td><td><span class="chip cgr">Not Started</span></td><td><span class="chip cgr">—</span></td>
         <td>DAV-2026-1156</td><td class="num">$3,840</td><td><span class="chip cgr">Flexible</span></td>
       </tr>
       <tr>
         <td><a class="nl">L-WAVERLY-25</a></td>
-        <td><a class="nl" onclick="showCommunityDetail('waverly')">Waverly Reserve</a></td>
-        <td>Lennar Charlotte</td><td>Jamie Hinson</td><td>814 Waverly Reserve Ln</td>
-        <td>May 26, 2026</td>
-        <td><span class="pipeline-badge pb-31">31 Days</span></td>
-        <td><span class="chip ca">Under Construction</span></td>
-        <td><span class="chip cgr">Not Filed</span></td>
-        <td><span class="chip cgr">Not Started</span></td>
-        <td><span class="chip cb2">Auto</span></td>
+        <td><a class="nl">Waverly Reserve</a></td>
+        <td>Lennar Charlotte</td><td>Jamie Hinson</td><td>814 Waverly Reserve Ln</td><td>May 26, 2026</td>
+        <td><span class="pipeline-badge pb-31">31 Days</span></td><td><span class="chip ca">Under Construction</span></td>
+        <td><span class="chip cgr">Not Filed</span></td><td><span class="chip cgr">Not Started</span></td><td><span class="chip cb2">Auto</span></td>
         <td>LEN-2026-4425</td><td class="num">$5,140</td><td><span class="chip cb2">Exact</span></td>
       </tr>
       <tr>
         <td><a class="nl">L-HAMPTON-88</a></td>
-        <td><a class="nl" onclick="showCommunityDetail('hampton')">Hampton Creek</a></td>
-        <td>DR Horton Charlotte</td><td>Scott Spaulding</td><td>144 Hampton Creek Ct</td>
-        <td>Jun 15, 2026</td>
-        <td><span class="pipeline-badge pb-60">60+ Days</span></td>
-        <td><span class="chip ca">Under Construction</span></td>
-        <td><span class="chip cgr">—</span></td>
-        <td><span class="chip cgr">Not Started</span></td>
-        <td><span class="chip cb2">Auto</span></td>
+        <td><a class="nl">Hampton Creek</a></td>
+        <td>DR Horton Charlotte</td><td>Scott Spaulding</td><td>144 Hampton Creek Ct</td><td>Jun 15, 2026</td>
+        <td><span class="pipeline-badge pb-60">60+ Days</span></td><td><span class="chip ca">Under Construction</span></td>
+        <td><span class="chip cgr">—</span></td><td><span class="chip cgr">Not Started</span></td><td><span class="chip cb2">Auto</span></td>
         <td>DRH-2026-9012</td><td class="num">$4,820</td><td><span class="chip cgr">Average</span></td>
       </tr>
       <tr>
         <td><a class="nl">L-BAYPTE-42</a></td>
         <td><a class="nl">Bay Pointe at Paw Creek</a></td>
-        <td>DR Horton Charlotte</td><td>Scott Spaulding</td><td>502 Paw Creek Rdg</td>
-        <td>Aug 10, 2026</td>
-        <td><span class="pipeline-badge pb-90">90+ Days</span></td>
-        <td><span class="chip cgr">Open</span></td>
-        <td><span class="chip cgr">—</span></td>
-        <td><span class="chip cgr">—</span></td>
-        <td><span class="chip cb2">Auto</span></td>
+        <td>DR Horton Charlotte</td><td>Scott Spaulding</td><td>502 Paw Creek Rdg</td><td>Aug 10, 2026</td>
+        <td><span class="pipeline-badge pb-90">90+ Days</span></td><td><span class="chip cgr">Open</span></td>
+        <td><span class="chip cgr">—</span></td><td><span class="chip cgr">—</span></td><td><span class="chip cb2">Auto</span></td>
         <td>DRH-2026-9088</td><td class="num">$4,820</td><td><span class="chip cgr">Average</span></td>
       </tr>
       <tr style="opacity:.6">
         <td><a class="nl">L-PINES-01</a></td>
-        <td><a class="nl" onclick="showCommunityDetail('pines')">Pines at Berewick</a></td>
-        <td>DR Horton Charlotte</td><td>Tyler Kelly</td><td>8400 Berewick Pine Dr</td>
-        <td>Jan 15, 2026</td>
-        <td><span class="pipeline-badge pb-closed">Closed</span></td>
-        <td><span class="chip cgr">Closed (HO Owned)</span></td>
-        <td><span class="chip cg">Cleared</span></td>
-        <td><span class="chip cg">Locked</span></td>
-        <td><span class="chip cg">Installed</span></td>
+        <td><a class="nl">Pines at Berewick</a></td>
+        <td>DR Horton Charlotte</td><td>Tyler Kelly</td><td>8400 Berewick Pine Dr</td><td>Jan 15, 2026</td>
+        <td><span class="pipeline-badge pb-closed">Closed</span></td><td><span class="chip cgr">Closed (HO Owned)</span></td>
+        <td><span class="chip cg">Cleared</span></td><td><span class="chip cg">Locked</span></td><td><span class="chip cg">Installed</span></td>
         <td>DRH-2025-8801</td><td class="num">$4,820</td><td><span class="chip cgr">Average</span></td>
       </tr>
     </tbody>
@@ -1080,50 +591,46 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 </div>
 </div>
 
-<!-- ========================================================= -->
-<!-- VIEW 5: LOT RECORD (Lot 07 — Pines at Berewick)            -->
-<!-- ========================================================= -->
-<div id="view-lot-record" class="tc">
-
+<!-- ====================================================== -->
+<!-- LOT 07 RECORD — FULL                                    -->
+<!-- ====================================================== -->
+<div id="view-lot07" class="tc">
 <div class="hier-strip">
   <span class="hier-label">Hierarchy:</span>
-  <span class="hier-link" onclick="showView('parent')">DR Horton (Parent)</span><span class="hier-sep">›</span>
-  <span class="hier-link" onclick="showView('division')">DRH Charlotte</span><span class="hier-sep">›</span>
-  <span class="hier-link" onclick="showCommunityDetail('pines')">The Pines at Berewick</span><span class="hier-sep">›</span>
+  <span class="hier-link" onclick="sw('builders',document.querySelectorAll('.sf-tab')[0])">DR Horton (Parent)</span><span class="hier-sep">›</span>
+  <span class="hier-link" onclick="sw('divisions',document.querySelectorAll('.sf-tab')[1])">DRH Charlotte</span><span class="hier-sep">›</span>
+  <span class="hier-link" onclick="sw('communities',document.querySelectorAll('.sf-tab')[2])">The Pines at Berewick</span><span class="hier-sep">›</span>
   <span class="hier-link cur">Lot 07</span>
 </div>
-
-<div class="rec-header">
-  <div class="rec-top-row">
-    <div class="rec-icon" style="background:#534ab7">🏠</div>
-    <div class="rec-title-block">
-      <div class="rec-breadcrumb"><a onclick="showView('lots-list')">Lots</a> › L-PINES-07 · <a onclick="showCommunityDetail('pines')">The Pines at Berewick</a></div>
-      <div class="rec-title">Lot 07 — The Pines at Berewick <span class="chip cb2" style="font-size:10px">In Production</span></div>
-    </div>
-    <div class="rec-actions">
-      <button class="sf-btn">Edit</button>
-      <button class="sf-btn">Open in Maps</button>
-      <button class="sf-btn">View WOs</button>
-      <button class="sf-btn primary">+ New Work Order</button>
-    </div>
+<div class="rec-header"><div class="rec-top-row">
+  <div class="rec-icon" style="background:#534ab7">🏠</div>
+  <div class="rec-title-block">
+    <div class="rec-breadcrumb"><a onclick="sw('lots',document.querySelectorAll('.sf-tab')[3])">Lots</a> › L-PINES-07 · The Pines at Berewick</div>
+    <div class="rec-title">Lot 07 — The Pines at Berewick <span class="chip cb2" style="font-size:10px">In Production</span></div>
   </div>
-</div>
+  <div class="rec-actions">
+    <button class="sf-btn">Edit</button>
+    <button class="sf-btn">Open in Maps</button>
+    <button class="sf-btn">View WOs</button>
+    <button class="sf-btn primary">+ New Work Order</button>
+  </div>
+</div></div>
 
 <div class="highlights">
   <div><div class="hl-label">Pipeline Bucket</div><div class="hl-value"><span class="pipeline-badge pb-sched" style="display:inline-flex">Scheduled</span></div></div>
   <div><div class="hl-label">Lot Status</div><div class="hl-value"><span class="chip cb2">In Production</span></div></div>
-  <div><div class="hl-label">Community</div><div class="hl-value"><a class="nl" onclick="showCommunityDetail('pines')">Pines at Berewick</a></div></div>
-  <div><div class="hl-label">Division</div><div class="hl-value"><a class="nl" onclick="showView('division')">DRH Charlotte</a></div></div>
+  <div><div class="hl-label">Community</div><div class="hl-value"><a class="nl" onclick="sw('communities',document.querySelectorAll('.sf-tab')[2])">Pines at Berewick</a></div></div>
+  <div><div class="hl-label">Division</div><div class="hl-value"><a class="nl" onclick="sw('divisions',document.querySelectorAll('.sf-tab')[1])">DRH Charlotte</a></div></div>
   <div><div class="hl-label">FM</div><div class="hl-value">Tyler Kelly</div></div>
   <div><div class="hl-label">Scheduled Close</div><div class="hl-value amber">May 14, 2026</div></div>
 </div>
 
 <div class="subtabs">
-  <div class="subtab on" onclick="subx('lot','details',this)">Details</div>
-  <div class="subtab" onclick="subx('lot','pipeline',this)">Pipeline &amp; Tasks</div>
-  <div class="subtab" onclick="subx('lot','workorders',this)">Work Orders <span class="rm-count has" style="margin-left:4px">3</span></div>
-  <div class="subtab" onclick="subx('lot','photos',this)">Photos <span class="rm-count has" style="margin-left:4px">12</span></div>
-  <div class="subtab" onclick="subx('lot','aqua',this)">Aqua</div>
+  <div class="subtab on" onclick="sub('lot','details',this)">Details</div>
+  <div class="subtab" onclick="sub('lot','pipeline',this)">Pipeline &amp; Tasks</div>
+  <div class="subtab" onclick="sub('lot','workorders',this)">Work Orders <span class="rm-count has" style="margin-left:4px">3</span></div>
+  <div class="subtab" onclick="sub('lot','photos',this)">Photos <span class="rm-count has" style="margin-left:4px">12</span></div>
+  <div class="subtab" onclick="sub('lot','aqua',this)">Aqua</div>
 </div>
 
 <!-- DETAILS -->
@@ -1131,14 +638,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 <div class="sf-body">
 <div class="ab ab-g"><div class="ab-ic">✓</div><div>Active install today (Crew A · J. Reyes) under WO-2026-0612. Pricing from DR Horton Charlotte MSA: $4,820 std package · 6.5 hr goal · Aqua $485 auto-triggered. QI scheduled for Apr 26.</div></div>
 <div class="layout"><div class="layout-main">
+
 <div class="card info">
   <div class="ch"><div class="ci" style="background:#0070d2">📋</div><h3>Lot Information</h3></div>
   <div class="fields-grid">
     <div><div class="field-label">Lot Record ID</div><div class="field-value">L-PINES-07</div></div>
     <div><div class="field-label">Lot Number (Builder)</div><div class="field-value">07</div></div>
-    <div><div class="field-label">Community</div><div class="field-value"><a class="nl" onclick="showCommunityDetail('pines')">The Pines at Berewick</a></div></div>
-    <div><div class="field-label">Division Account</div><div class="field-value"><a class="nl" onclick="showView('division')">DR Horton Charlotte</a></div></div>
-    <div><div class="field-label">Parent Builder</div><div class="field-value"><a class="nl" onclick="showView('parent')">DR Horton</a> (roll-up only)</div></div>
+    <div><div class="field-label">Community</div><div class="field-value"><a class="nl" onclick="sw('communities',document.querySelectorAll('.sf-tab')[2])">The Pines at Berewick</a></div></div>
+    <div><div class="field-label">Division Account</div><div class="field-value"><a class="nl" onclick="sw('divisions',document.querySelectorAll('.sf-tab')[1])">DR Horton Charlotte</a></div></div>
+    <div><div class="field-label">Parent Builder</div><div class="field-value"><a class="nl" onclick="sw('builders',document.querySelectorAll('.sf-tab')[0])">DR Horton</a> (roll-up only)</div></div>
     <div><div class="field-label">Phase</div><div class="field-value">Phase 1</div></div>
     <div><div class="field-label">Street Address</div><div class="field-value">8412 Berewick Pine Dr, Charlotte, NC 28278</div></div>
     <div><div class="field-label">GPS</div><div class="field-value">35.1112, -81.0368</div></div>
@@ -1148,49 +656,58 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
     <div><div class="field-label">Requested Install Date</div><div class="field-value">April 25, 2026</div></div>
   </div>
 </div>
+
 <div class="card">
   <div class="ch"><div class="ci" style="background:#534ab7">📐</div><h3>Property Details (inherited from Division MSA)</h3></div>
   <div class="fields-grid">
-    <div><div class="field-label">Sod Square Footage</div><div class="field-value">3,200 sf · $1.42/sf = $4,544</div></div>
-    <div><div class="field-label">Plant Package</div><div class="field-value">DRH-CLT-Standard</div></div>
+    <div><div class="field-label">Sod Square Footage</div><div class="field-value">3,200 sf · $1.42/sf = $4,544 (from PricebookEntry)</div></div>
+    <div><div class="field-label">Plant Package</div><div class="field-value">DRH-CLT-Standard (BMG_Package_Code from Community)</div></div>
     <div><div class="field-label">Trees</div><div class="field-value">5 (3 Crepe Myrtle 7gal + 2 Willow Oak 2.5")</div></div>
     <div><div class="field-label">Shrubs</div><div class="field-value">8 Loropetalum 3gal</div></div>
     <div><div class="field-label">Mulch</div><div class="field-value">3 cy Triple-shred</div></div>
-    <div><div class="field-label">Std Goal Hours</div><div class="field-value">6.5 hrs</div></div>
-    <div><div class="field-label">Standard Package $</div><div class="field-value">$4,820 / lot</div></div>
-    <div><div class="field-label">Aqua Add-on $</div><div class="field-value">$485 (auto-triggered)</div></div>
+    <div><div class="field-label">Std Goal Hours</div><div class="field-value">6.5 hrs (from Division time standard 7.28 hrs/SF)</div></div>
+    <div><div class="field-label">Standard Package $</div><div class="field-value">$4,820 / lot (from PricebookEntry — DRH-CLT Pricebook)</div></div>
+    <div><div class="field-label">Aqua Add-on $</div><div class="field-value">$485 (auto-triggered per Community.Aqua_Customer__c)</div></div>
   </div>
+  <div style="padding:8px 14px;background:#fafaf9;border-top:1px solid #f0f0f0;font-size:11px;color:#54698d">All pricing from PricebookEntry via Division_Account__c.Pricebook2Id — not hardcoded on this record.</div>
 </div>
+
 <div class="card">
   <div class="ch"><div class="ci" style="background:#04844b">📏</div><h3>Takeoff Data</h3><span class="chip cg" style="margin-left:auto">Locked · Approved</span></div>
   <div class="fields-grid">
     <div><div class="field-label">Takeoff Status</div><div class="field-value"><span class="chip cg">Locked</span></div></div>
     <div><div class="field-label">Approved By</div><div class="field-value">Jim Howie · Apr 22, 2026 2:14 PM</div></div>
-    <div><div class="field-label">Sod Measured</div><div class="field-value">3,200 sf (matches PO)</div></div>
+    <div><div class="field-label">Sod Measured (sqft)</div><div class="field-value">3,200 sf (matches PO)</div></div>
+    <div><div class="field-label">Plants by Species</div><div class="field-value">Loropetalum 3gal ×8, Crepe Myrtle 7gal ×3, Willow Oak 2.5" ×2</div></div>
     <div><div class="field-label">Trees Count</div><div class="field-value">5 trees</div></div>
+    <div><div class="field-label">Photo Count</div><div class="field-value">4 photos captured (min 1 required)</div></div>
     <div><div class="field-label">GPS at Takeoff</div><div class="field-value">35.1113, -81.0369 · Within 150m ✓</div></div>
-    <div><div class="field-label">Variance Status</div><div class="field-value"><span class="chip cg">No Variance</span></div></div>
+    <div><div class="field-label">Submitted</div><div class="field-value">Apr 22, 2026 · Tyler Kelly (FSL Mobile)</div></div>
+    <div><div class="field-label">MPO Flag</div><div class="field-value">No</div></div>
+    <div><div class="field-label">Variance Status</div><div class="field-value"><span class="chip cg">No Variance — auto-confirmed</span></div></div>
   </div>
 </div>
+
 <div class="card last">
   <div class="ch"><div class="ci" style="background:#fe9339">✓</div><h3>Closeout Data</h3><span class="chip cg" style="margin-left:auto">Approved</span></div>
   <div class="fields-grid">
     <div><div class="field-label">Closeout Status</div><div class="field-value"><span class="chip cg">Approved</span></div></div>
     <div><div class="field-label">Approved By</div><div class="field-value">Jim Howie · Apr 25, 2026 5:48 PM</div></div>
-    <div><div class="field-label">Photo Count</div><div class="field-value">6 photos (4 required)</div></div>
+    <div><div class="field-label">Photo Count</div><div class="field-value">6 photos (4 required, 6 submitted)</div></div>
+    <div><div class="field-label">Closeout Notes</div><div class="field-value">All scope complete. Sod down, trees placed and staked. Aqua system tested — zones 1–3 all firing. Side yard held per Sarah Mitchell — debris pickup Mon Apr 28.</div></div>
     <div><div class="field-label">QI Status</div><div class="field-value"><span class="chip cb2">Scheduled · Apr 26, 9AM</span></div></div>
     <div><div class="field-label">Invoice Status</div><div class="field-value"><span class="chip cb2">Invoiced · Apr 25, 2026</span></div></div>
-    <div><div class="field-label">Closeout Notes</div><div class="field-value">All scope complete. Aqua zones 1–3 firing. Side yard debris pickup Mon Apr 28.</div></div>
   </div>
 </div>
+
 </div>
 <div class="layout-rail">
 <div class="card">
   <div class="ch"><div class="ci" style="background:#534ab7">🌳</div><h3>Hierarchy</h3></div>
   <div class="hier-tree">
-    <div class="hier-node parent"><div class="hier-bullet"></div><a onclick="showView('parent')">DR Horton</a></div>
-    <div class="hier-node div"><div class="hier-bullet"></div><a onclick="showView('division')">DRH Charlotte</a></div>
-    <div class="hier-node com"><div class="hier-bullet"></div><a onclick="showCommunityDetail('pines')">The Pines at Berewick</a></div>
+    <div class="hier-node parent"><div class="hier-bullet"></div><a onclick="sw('builders',document.querySelectorAll('.sf-tab')[0])">DR Horton</a></div>
+    <div class="hier-node div"><div class="hier-bullet"></div><a onclick="sw('divisions',document.querySelectorAll('.sf-tab')[1])">DRH Charlotte</a></div>
+    <div class="hier-node com"><div class="hier-bullet"></div><a onclick="sw('communities',document.querySelectorAll('.sf-tab')[2])">The Pines at Berewick</a></div>
     <div class="hier-node lot cur"><div class="hier-bullet"></div><a>Lot 07</a></div>
   </div>
 </div>
@@ -1201,9 +718,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
     <div class="timeline-item tl-done"><div class="tl-dot" style="background:#2e844a"></div><span>✓ <strong>Frame complete</strong> · Feb 12, 2026</span></div>
     <div class="timeline-item tl-done"><div class="tl-dot" style="background:#2e844a"></div><span>✓ <strong>811 cleared</strong> · Mar 28, 2026</span></div>
     <div class="timeline-item tl-done"><div class="tl-dot" style="background:#2e844a"></div><span>✓ <strong>Takeoff approved</strong> · Apr 22, 2026</span></div>
+    <div class="timeline-item tl-done"><div class="tl-dot" style="background:#2e844a"></div><span>✓ <strong>Final inspection</strong> · Apr 14, 2026</span></div>
     <div class="timeline-item tl-done"><div class="tl-dot" style="background:#2e844a"></div><span>✓ <strong>Installed</strong> · Apr 25, 2026</span></div>
     <div class="timeline-item tl-cur"><div class="tl-dot" style="background:#0070d2"></div><span>→ <strong>QI tomorrow</strong> · Apr 26, 9AM</span></div>
     <div class="timeline-item tl-fut"><div class="tl-dot" style="background:#d8dde6"></div><span>○ Aqua check cycle begins</span></div>
+    <div class="timeline-item tl-fut"><div class="tl-dot" style="background:#d8dde6"></div><span>○ Lawn Care begins · May 9</span></div>
     <div class="timeline-item tl-fut"><div class="tl-dot" style="background:#d8dde6"></div><span>○ Closing · May 14, 2026</span></div>
   </div>
 </div>
@@ -1214,7 +733,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
   <div class="related-mini"><div style="font-size:12px;color:#16325c">💧 Aqua Install Ticket</div><div class="rm-count has">1</div></div>
   <div class="related-mini"><div style="font-size:12px;color:#16325c">✓ QI Inspection</div><div class="rm-count has">1</div></div>
   <div class="related-mini"><div style="font-size:12px;color:#16325c">💵 Invoice</div><div class="rm-count has">1</div></div>
-  <div class="related-mini"><div style="font-size:12px;color:#16325c">⚠ Open FJ</div><div class="rm-count" style="background:#fce8e8;color:#c23934">1</div></div>
+  <div class="related-mini"><div style="font-size:12px;color:#16325c">📋 Open FJ</div><div class="rm-count has">1</div></div>
 </div>
 </div>
 </div>
@@ -1226,79 +745,43 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 <div class="sf-body">
 <div class="card">
   <div class="ch"><div class="ci" style="background:#0070d2">📍</div><h3>Pipeline Bucket — Status Path</h3></div>
-  <div style="display:flex;gap:0;overflow-x:auto;padding:4px 14px 14px">
-    <div style="text-align:center;flex:1;min-width:80px;padding:8px 4px;border-top:4px solid #04844b;background:#f9fff9">
-      <div style="font-size:9px;color:#2e844a;font-weight:600">90+ Days</div><div style="font-size:8px;color:#54698d">Backlog</div>
-      <div style="margin-top:4px;font-size:9px;color:#2e844a">✓</div>
-    </div>
-    <div style="text-align:center;flex:1;min-width:80px;padding:8px 4px;border-top:4px solid #04844b;background:#f9fff9">
-      <div style="font-size:9px;color:#2e844a;font-weight:600">60+ Days</div><div style="font-size:8px;color:#54698d">Takeoff task</div>
-      <div style="margin-top:4px;font-size:9px;color:#2e844a">✓</div>
-    </div>
-    <div style="text-align:center;flex:1;min-width:80px;padding:8px 4px;border-top:4px solid #04844b;background:#f9fff9">
-      <div style="font-size:9px;color:#2e844a;font-weight:600">31 Days</div><div style="font-size:8px;color:#54698d">Reminder</div>
-      <div style="margin-top:4px;font-size:9px;color:#2e844a">✓</div>
-    </div>
-    <div style="text-align:center;flex:1;min-width:80px;padding:8px 4px;border-top:4px solid #04844b;background:#f9fff9">
-      <div style="font-size:9px;color:#2e844a;font-weight:600">30 Days</div><div style="font-size:8px;color:#54698d">Takeoff + 811</div>
-      <div style="margin-top:4px;font-size:9px;color:#2e844a">✓</div>
-    </div>
-    <div style="text-align:center;flex:1;min-width:80px;padding:8px 4px;border-top:4px solid #04844b;background:#f9fff9">
-      <div style="font-size:9px;color:#2e844a;font-weight:600">Takeoff Sched</div><div style="font-size:8px;color:#54698d">Outlook sent</div>
-      <div style="margin-top:4px;font-size:9px;color:#2e844a">✓</div>
-    </div>
-    <div style="text-align:center;flex:1;min-width:80px;padding:8px 4px;border-top:4px solid #04844b;background:#f9fff9">
-      <div style="font-size:9px;color:#2e844a;font-weight:600">Clear for Sched</div><div style="font-size:8px;color:#54698d">Locked + 811</div>
-      <div style="margin-top:4px;font-size:9px;color:#2e844a">✓</div>
-    </div>
-    <div style="text-align:center;flex:1;min-width:80px;padding:8px 4px;border-top:4px solid #534ab7;background:#f5f3ff">
-      <div style="font-size:9px;color:#534ab7;font-weight:700">SCHEDULED</div><div style="font-size:8px;color:#54698d">Current</div>
-      <div style="margin-top:4px;font-size:9px;color:#534ab7">→</div>
-    </div>
-    <div style="text-align:center;flex:1;min-width:80px;padding:8px 4px;border-top:4px solid #d8dde6;background:#fff">
-      <div style="font-size:9px;color:#54698d">Closed</div><div style="font-size:8px;color:#54698d">HO Owned</div>
+  <div style="padding:12px 14px">
+    <div style="display:flex;gap:0;overflow-x:auto">
+      <div style="text-align:center;flex:1;min-width:80px;padding:8px 4px;border-top:4px solid #04844b;background:#f9fff9"><div style="font-size:9px;color:#2e844a;font-weight:600">90+ Days</div><div style="font-size:8px;color:#54698d">Backlog</div><div style="margin-top:4px;font-size:9px;color:#2e844a">✓</div></div>
+      <div style="text-align:center;flex:1;min-width:80px;padding:8px 4px;border-top:4px solid #04844b;background:#f9fff9"><div style="font-size:9px;color:#2e844a;font-weight:600">60+ Days</div><div style="font-size:8px;color:#54698d">Takeoff task</div><div style="margin-top:4px;font-size:9px;color:#2e844a">✓</div></div>
+      <div style="text-align:center;flex:1;min-width:80px;padding:8px 4px;border-top:4px solid #04844b;background:#f9fff9"><div style="font-size:9px;color:#2e844a;font-weight:600">31 Days</div><div style="font-size:8px;color:#54698d">Reminder</div><div style="margin-top:4px;font-size:9px;color:#2e844a">✓</div></div>
+      <div style="text-align:center;flex:1;min-width:80px;padding:8px 4px;border-top:4px solid #04844b;background:#f9fff9"><div style="font-size:9px;color:#2e844a;font-weight:600">30 Days</div><div style="font-size:8px;color:#54698d">Takeoff + 811</div><div style="margin-top:4px;font-size:9px;color:#2e844a">✓</div></div>
+      <div style="text-align:center;flex:1;min-width:80px;padding:8px 4px;border-top:4px solid #04844b;background:#f9fff9"><div style="font-size:9px;color:#2e844a;font-weight:600">Takeoff Sched</div><div style="font-size:8px;color:#54698d">Outlook sent</div><div style="margin-top:4px;font-size:9px;color:#2e844a">✓</div></div>
+      <div style="text-align:center;flex:1;min-width:80px;padding:8px 4px;border-top:4px solid #04844b;background:#f9fff9"><div style="font-size:9px;color:#2e844a;font-weight:600">Clear for Sched</div><div style="font-size:8px;color:#54698d">Locked + 811</div><div style="margin-top:4px;font-size:9px;color:#2e844a">✓</div></div>
+      <div style="text-align:center;flex:1;min-width:80px;padding:8px 4px;border-top:4px solid #534ab7;background:#f5f3ff"><div style="font-size:9px;color:#534ab7;font-weight:700">SCHEDULED</div><div style="font-size:8px;color:#54698d">Current</div><div style="margin-top:4px;font-size:9px;color:#534ab7">→</div></div>
+      <div style="text-align:center;flex:1;min-width:80px;padding:8px 4px;border-top:4px solid #d8dde6;background:#fff"><div style="font-size:9px;color:#54698d">Closed</div><div style="font-size:8px;color:#54698d">HO Owned</div></div>
     </div>
   </div>
 </div>
+
 <div class="card">
   <div class="ch"><div class="ci" style="background:#04844b">🚧</div><h3>811 Utility Marking Task</h3><span class="chip cg" style="margin-left:auto">Cleared</span></div>
-  <div class="status-bar">
+  <div style="display:flex;gap:0;overflow-x:auto;padding:4px 0">
     <div class="sb-step done">Not Filed</div>
     <div class="sb-step done">Filed</div>
-    <div class="sb-step done">Pending Clear</div>
-    <div class="sb-step cur">Cleared ✓</div>
-    <div class="sb-step">Expired</div>
+    <div class="sb-step done">Pending Locate</div>
+    <div class="sb-step done">Marked</div>
+    <div class="sb-step done" style="border-color:#534ab7;color:#534ab7;font-weight:700">CLEARED ✓</div>
   </div>
-  <div class="fields-grid" style="padding-bottom:12px">
-    <div><div class="field-label">811 Status</div><div class="field-value"><span class="chip cg">Cleared</span></div></div>
-    <div><div class="field-label">Filed Date</div><div class="field-value">Mar 14, 2026</div></div>
-    <div><div class="field-label">Cleared Date</div><div class="field-value">Mar 28, 2026</div></div>
-    <div><div class="field-label">Expiry</div><div class="field-value">Jun 26, 2026 (89 days remaining)</div></div>
+  <div style="padding:8px 14px;font-size:11px;color:#54698d">
+    Filed: Mar 25, 2026 · Locate confirmation: NC811-2026-88421 · Marked: Mar 28 · Cleared by: 811 Coordinator · Apr 1, 2026
   </div>
 </div>
+
 <div class="card last">
-  <div class="ch"><div class="ci" style="background:#534ab7">✅</div><h3>Open Tasks</h3></div>
+  <div class="ch"><div class="ci" style="background:#0070d2">📋</div><h3>Auto-created Tasks</h3></div>
   <table class="tbl">
-    <thead><tr><th>Task</th><th>Due</th><th>Owner</th><th>Status</th></tr></thead>
+    <thead><tr><th>Task</th><th>Created</th><th>Assigned</th><th>Due</th><th>Status</th></tr></thead>
     <tbody>
-      <tr>
-        <td>QI — Final Quality Inspection</td>
-        <td>Apr 26, 2026</td>
-        <td>Tyler Kelly</td>
-        <td><span class="chip cb2">Scheduled</span></td>
-      </tr>
-      <tr>
-        <td>FJ Punch — Lot 05 side yard debris</td>
-        <td>Apr 28, 2026</td>
-        <td>J. Reyes (Crew A)</td>
-        <td><span class="chip ca">Open</span></td>
-      </tr>
-      <tr>
-        <td>Aqua cycle verification — zones 1-3</td>
-        <td>May 9, 2026</td>
-        <td>Tyler Kelly</td>
-        <td><span class="chip cgr">Not Started</span></td>
-      </tr>
+      <tr><td>Takeoff required — Pines L07</td><td>Nov 27, 2025</td><td>Tyler Kelly</td><td>Mar 26, 2026</td><td><span class="chip cg">Done</span></td></tr>
+      <tr><td>811 Utility Marking — Pines L07</td><td>Mar 26, 2026</td><td>811 Coordinator</td><td>Apr 11, 2026</td><td><span class="chip cg">Cleared</span></td></tr>
+      <tr><td>Site Readiness Check — T-48hrs</td><td>Apr 23, 2026</td><td>Tyler Kelly</td><td>Apr 24, 2026</td><td><span class="chip cg">Ready</span></td></tr>
+      <tr><td>QI Inspection — Pines L07</td><td>Apr 25, 2026</td><td>QI Inspector</td><td>Apr 26, 2026</td><td><span class="chip cb2">Scheduled</span></td></tr>
     </tbody>
   </table>
 </div>
@@ -1307,156 +790,92 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-s
 
 <!-- WORK ORDERS -->
 <div id="lot-workorders" class="sub-tc">
-<div class="sf-body">
-<div class="card last">
-  <div class="ch"><div class="ci" style="background:#534ab7">🔧</div><h3>Work Orders — Lot 07</h3><button class="sf-btn primary" style="font-size:11px;padding:4px 10px">+ New WO</button></div>
+<div class="sf-body"><div class="card last">
+  <div class="ch"><div class="ci" style="background:#0070d2">📋</div><h3>Work Orders — Lot 07 · Pines at Berewick</h3></div>
   <table class="tbl">
-    <thead><tr><th>WO #</th><th>Type</th><th>Status</th><th>Crew</th><th>Date</th><th class="num">Goal Hrs</th><th class="num">Actual Hrs</th><th class="num">Revenue</th></tr></thead>
+    <thead><tr><th>WO #</th><th>Type</th><th>FM</th><th>Crew</th><th>Status</th><th>Scheduled</th><th class="num">PO Amount</th><th>Variance</th></tr></thead>
     <tbody>
-      <tr style="background:#f5f3ff">
-        <td><a class="nl">WO-2026-0612</a></td>
-        <td><span class="jt-chip jt-install">Install</span></td>
-        <td><span class="chip cb2">In Progress</span></td>
-        <td>Crew A · J. Reyes</td>
-        <td>Apr 25, 2026</td>
-        <td class="num">6.5</td>
-        <td class="num">5.2 (so far)</td>
-        <td class="num">$4,820</td>
-      </tr>
-      <tr>
-        <td><a class="nl">WO-2026-0598</a></td>
-        <td><span class="jt-chip jt-aqua">Aqua</span></td>
-        <td><span class="chip cg">Complete</span></td>
-        <td>Aqua Tech · M. Torres</td>
-        <td>Apr 25, 2026</td>
-        <td class="num">1.5</td>
-        <td class="num">1.5</td>
-        <td class="num">$485</td>
-      </tr>
-      <tr style="background:#fff8f8">
-        <td><a class="nl">WO-2026-0621</a></td>
-        <td><span class="jt-chip jt-fj">FJ Punch</span></td>
-        <td><span class="chip ca">Open</span></td>
-        <td>Crew A · J. Reyes</td>
-        <td>Apr 28, 2026</td>
-        <td class="num">0.5</td>
-        <td class="num">—</td>
-        <td class="num">$0</td>
-      </tr>
+      <tr><td class="nl">WO-2026-0612</td><td><span class="jt-chip jt-install">Install</span></td><td>Tyler Kelly</td><td>Crew A · J. Reyes</td><td><span class="chip cg">Approved</span></td><td>Apr 25, 2026</td><td class="num">$4,820</td><td style="color:#2e844a;font-size:11px">-0.3 hrs under</td></tr>
+      <tr><td class="nl">WO-2026-0618</td><td><span class="jt-chip jt-aqua">Aqua Install</span></td><td>Scott (Trent)</td><td>Aqua Crew</td><td><span class="chip cg">Approved</span></td><td>Apr 25, 2026</td><td class="num">$485</td><td style="color:#2e844a;font-size:11px">On time</td></tr>
+      <tr style="background:#fff8f8"><td class="nl">WO-2026-0589</td><td><span class="jt-chip jt-fj">Finish Job</span></td><td>Tyler Kelly</td><td>TBD</td><td><span class="chip cb2">Scheduled</span></td><td>Apr 28, 2026</td><td class="num">—</td><td style="color:#54698d;font-size:11px">Side yard willows</td></tr>
     </tbody>
-    <tfoot>
-      <tr style="background:#f4f6f9;font-weight:600">
-        <td colspan="7"><strong>Lot 07 Total</strong></td>
-        <td class="num">$5,305</td>
-      </tr>
-    </tfoot>
   </table>
-</div>
-</div>
+</div></div>
 </div>
 
 <!-- PHOTOS -->
 <div id="lot-photos" class="sub-tc">
-<div class="sf-body">
-<div class="card last">
-  <div class="ch"><div class="ci" style="background:#0070d2">📷</div><h3>Photos — Lot 07 (12 total)</h3><button class="sf-btn" style="font-size:11px;padding:4px 10px">Upload Photo</button></div>
-  <div style="padding:8px 14px;background:#fafaf9;border-bottom:1px solid #f0f0f0;font-size:11px;color:#54698d">Takeoff Photos (4)</div>
+<div class="sf-body"><div class="card last">
+  <div class="ch"><div class="ci" style="background:#534ab7">📷</div><h3>Photos (12) — ContentDocumentLink on Lot__c + Work_Order__c</h3></div>
   <div class="photo-grid">
-    <div class="photo-tile before"><div class="photo-meta">Before — Front yard · Apr 22</div></div>
-    <div class="photo-tile sod"><div class="photo-meta">Sod area marked · Apr 22</div></div>
-    <div class="photo-tile tree"><div class="photo-meta">Tree placements · Apr 22</div></div>
-    <div class="photo-tile before"><div class="photo-meta">Side yard · Apr 22</div></div>
+    <div class="photo-tile before"><div class="photo-meta"><strong>Before — front</strong> · WO-0612 · Apr 25 6:58 AM</div></div>
+    <div class="photo-tile before"><div class="photo-meta"><strong>Before — back</strong> · WO-0612</div></div>
+    <div class="photo-tile before" style="background:linear-gradient(135deg,#e3f2fd,#b3e5fc)"><div class="photo-meta"><strong>Sod quality (delivery)</strong> · WO-0612</div></div>
+    <div class="photo-tile sod"><div class="photo-meta"><strong>Sod laid — front</strong> · WO-0612</div></div>
+    <div class="photo-tile tree"><div class="photo-meta"><strong>Trees placed + staked</strong> · WO-0612</div></div>
+    <div class="photo-tile after"><div class="photo-meta"><strong>Closeout — full front</strong> · WO-0612</div></div>
+    <div class="photo-tile issue"><div class="photo-meta"><strong>Side yard — debris (builder)</strong> · WO-0612</div></div>
+    <div class="photo-tile aqua"><div class="photo-meta"><strong>Aqua zone 1 controller</strong> · WO-0618</div></div>
+    <div class="photo-tile aqua"><div class="photo-meta"><strong>Aqua zones 2–3 test</strong> · WO-0618</div></div>
   </div>
-  <div style="padding:8px 14px;background:#fafaf9;border-top:1px solid #f0f0f0;border-bottom:1px solid #f0f0f0;font-size:11px;color:#54698d">Closeout Photos (6)</div>
-  <div class="photo-grid">
-    <div class="photo-tile sod"><div class="photo-meta">Sod installed · Apr 25</div></div>
-    <div class="photo-tile tree"><div class="photo-meta">Trees staked · Apr 25</div></div>
-    <div class="photo-tile after"><div class="photo-meta">Front complete · Apr 25</div></div>
-    <div class="photo-tile aqua"><div class="photo-meta">Aqua zones tested · Apr 25</div></div>
-    <div class="photo-tile after"><div class="photo-meta">Side yard · Apr 25</div></div>
-    <div class="photo-tile issue"><div class="photo-meta">FJ noted — debris · Apr 25</div></div>
-  </div>
-  <div style="padding:8px 14px;background:#fafaf9;border-top:1px solid #f0f0f0;font-size:11px;color:#54698d">2 additional photos — Aqua inspection pending</div>
-</div>
-</div>
+</div></div>
 </div>
 
 <!-- AQUA -->
 <div id="lot-aqua" class="sub-tc">
 <div class="sf-body">
-<div class="ab ab-b"><div class="ab-ic">💧</div><div>Aqua irrigation installed Apr 25, 2026 · Auto-triggered from Community.Aqua_Customer__c = true. 3 zones configured. Next cycle check May 9, 2026.</div></div>
-<div class="card last">
-  <div class="ch"><div class="ci" style="background:#0a8aa6">💧</div><h3>Aqua Install Details</h3><span class="chip cb2" style="margin-left:auto">Active</span></div>
+<div class="card">
+  <div class="ch"><div class="ci" style="background:#0a8aa6">💧</div><h3>Aqua Install Ticket — AIT-2026-0618</h3><span class="chip cg" style="margin-left:auto">Approved</span></div>
   <div class="fields-grid">
-    <div><div class="field-label">Aqua Status</div><div class="field-value"><span class="chip cg">Installed</span></div></div>
-    <div><div class="field-label">Install Date</div><div class="field-value">April 25, 2026</div></div>
-    <div><div class="field-label">Technician</div><div class="field-value">M. Torres</div></div>
-    <div><div class="field-label">Zones</div><div class="field-value">3 (Front, Side, Back)</div></div>
-    <div><div class="field-label">Work Order</div><div class="field-value"><a class="nl">WO-2026-0598</a></div></div>
-    <div><div class="field-label">Revenue</div><div class="field-value">$485</div></div>
-    <div><div class="field-label">Zone 1 — Front</div><div class="field-value"><span class="chip cg">Firing ✓</span> · 8 heads</div></div>
-    <div><div class="field-label">Zone 2 — Side</div><div class="field-value"><span class="chip cg">Firing ✓</span> · 4 heads</div></div>
-    <div><div class="field-label">Zone 3 — Back</div><div class="field-value"><span class="chip cg">Firing ✓</span> · 6 heads</div></div>
-    <div><div class="field-label">Next Cycle Check</div><div class="field-value">May 9, 2026</div></div>
+    <div><div class="field-label">Zones Installed</div><div class="field-value">3</div></div>
+    <div><div class="field-label">Controller Serial</div><div class="field-value">CTRL-2026-88421</div></div>
+    <div><div class="field-label">Head Count</div><div class="field-value">Zone 1: 4 · Zone 2: 4 · Zone 3: 3</div></div>
+    <div><div class="field-label">Hose Footage</div><div class="field-value">142 ft</div></div>
+    <div><div class="field-label">Backflow Installed</div><div class="field-value">Yes</div></div>
+    <div><div class="field-label">System Test</div><div class="field-value"><span class="chip cg">Passed</span></div></div>
+    <div><div class="field-label">Tech</div><div class="field-value">Trent Kinard</div></div>
+    <div><div class="field-label">Aqua_Installed__c</div><div class="field-value"><span class="chip cg">True</span></div></div>
   </div>
 </div>
+<div class="card last">
+  <div class="ch"><div class="ci" style="background:#0a8aa6">📋</div><h3>Current Watering Schedule — Week 1 of New Install Ramp</h3></div>
+  <div class="fields-grid">
+    <div><div class="field-label">Schedule Type</div><div class="field-value">New Install Ramp</div></div>
+    <div><div class="field-label">Week Number</div><div class="field-value">Week 1</div></div>
+    <div><div class="field-label">Run Frequency</div><div class="field-value">3x/day</div></div>
+    <div><div class="field-label">Run Duration</div><div class="field-value">10 min/zone</div></div>
+    <div><div class="field-label">April Seasonal %</div><div class="field-value">110% → 11 min effective</div></div>
+    <div><div class="field-label">Computed Instruction</div><div class="field-value" style="color:#0a8aa6;font-weight:500">3x/day · 11 min/zone (Week 1 ramp × Apr 110%)</div></div>
+  </div>
+  <div style="padding:8px 14px;background:#e3f0fb;border-top:1px solid #b5d4f4;font-size:11px;color:#0c447c">Schedule auto-computed from Aqua_Watering_Schedule__c. Tech reads this ticket — no call to FM required.</div>
+</div>
 </div>
 </div>
 
-</div><!-- end view-lot-record -->
+</div><!-- end lot07 -->
 
 <script>
-// ---- Main view navigation ----
-const views = ['parent','division','community','community-detail','lots-list','lot-record'];
-function showView(v,ctx){
-  views.forEach(id=>{
-    const el=document.getElementById('view-'+id);
-    if(el) el.classList.remove('on');
-  });
-  const target=document.getElementById('view-'+v);
-  if(target) target.classList.add('on');
-  // update top tabs
-  document.querySelectorAll('.sf-nav .sf-tab').forEach(t=>{
-    t.classList.remove('on');
-  });
-  const tabMap={'parent':0,'division':1,'community':2,'community-detail':2,'lots-list':3,'lot-record':4};
-  const tabs=document.querySelectorAll('.sf-nav .sf-tab');
-  if(tabMap[v]!==undefined && tabs[tabMap[v]]) tabs[tabMap[v]].classList.add('on');
-  // show lot tab if going to lot record
-  const lotTab=document.getElementById('tab-lot-record');
-  if(lotTab) lotTab.style.display=(v==='lot-record')?'flex':'none';
-  if(v==='lot-record' && lotTab) lotTab.classList.add('on');
+function sw(id,el){
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.sf-tab').forEach(t=>t.classList.remove('on'));
+  var tc=document.getElementById('view-'+id);
+  if(tc)tc.classList.add('on');
+  if(el)el.classList.add('on');
+  window.scrollTo(0,0);
 }
-
-function showCommunityDetail(comm){
-  showView('community-detail');
-  // could update title based on comm param if needed
+function sub(rec,tab,el){
+  var allTcs=document.querySelectorAll('[id^="'+rec+'-"]');
+  allTcs.forEach(t=>{if(t.classList.contains('sub-tc'))t.classList.remove('on')});
+  var parentTabs=el.parentElement.querySelectorAll('.subtab');
+  parentTabs.forEach(t=>t.classList.remove('on'));
+  var target=document.getElementById(rec+'-'+tab);
+  if(target)target.classList.add('on');
+  el.classList.add('on');
 }
-
-// ---- Subtab switching ----
-function subx(prefix, id, el){
-  // hide all sub-tc in this section
-  const view=document.getElementById('view-lot-record')||document.getElementById('view-community-detail');
-  const allSubs=document.querySelectorAll('#view-'+prefix==null?'lot-record':prefix+' .sub-tc, #view-community-detail .sub-tc');
-  // simpler approach: hide by prefix
-  document.querySelectorAll('[id^="'+prefix+'-"]').forEach(s=>s.classList.remove('on'));
-  const target=document.getElementById(prefix+'-'+id);
-  if(target) target.classList.add('on');
-  // update subtab active state
-  if(el){
-    el.closest('.subtabs').querySelectorAll('.subtab').forEach(t=>t.classList.remove('on'));
-    el.classList.add('on');
-  }
+function fc(el){
+  el.closest('.list-toolbar').querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
 }
-
-// ---- Filter chip toggle ----
-document.querySelectorAll('.filter-chip').forEach(chip=>{
-  chip.addEventListener('click',function(){
-    const siblings=this.parentElement.querySelectorAll('.filter-chip');
-    siblings.forEach(s=>s.classList.remove('on'));
-    this.classList.add('on');
-  });
-});
 </script>
 </body>
 </html>
