@@ -177,20 +177,16 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <template for:each={tasks} for:item="task">
-                                    <tr key={task.Id}>
-                                        <td>{task.Subject}</td>
-                                        <td>{task.activityDateFormatted}</td>
+                                <template if:false={noTasks}>
+                                    <tr>
+                                        <td>{lastActivityLabel}</td>
+                                        <td>{lastTouchFormatted}</td>
                                         <td>
-                                            <template if:true={lead.Voicemail_Left__c}>
-                                                <span class="chip ca">Yes</span>
-                                            </template>
-                                            <template if:false={lead.Voicemail_Left__c}>
-                                                <span class="chip cgr">No</span>
-                                            </template>
+                                            <template if:true={lead.Voicemail_Left__c}><span class="chip ca">Yes</span></template>
+                                            <template if:false={lead.Voicemail_Left__c}><span class="chip cgr">No</span></template>
                                         </td>
-                                        <td>{task.Subject}</td>
-                                        <td>{task.activityDateFormatted}</td>
+                                        <td>{nextTaskLabel}</td>
+                                        <td>{nextFollowUpFormatted}</td>
                                         <td>{lead.Owner.Name}</td>
                                     </tr>
                                 </template>

@@ -52,7 +52,7 @@ public with sharing class ODL_DashboardController {
     @AuraEnabled(cacheable=true)
     public static Map<String, Object> getCampaignMetrics() {
         List<Campaign> campaigns = [
-            SELECT Id, Name, Type, Status, NumberOfLeads, NumberOfOpportunities,
+            SELECT Id, Name, Type, Status, NumberOfLeads, NumberOfContacts, NumberOfOpportunities,
                    ExpectedRevenue, OwnerId, Owner.Name
             FROM Campaign
             WHERE IsActive = true

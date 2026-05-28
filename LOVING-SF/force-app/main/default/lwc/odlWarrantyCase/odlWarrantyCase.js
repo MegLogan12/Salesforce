@@ -36,6 +36,7 @@ export default class OdlWarrantyCase extends LightningElement {
     }
 
     get createdDateFormatted() { return this.caseRecord.CreatedDate ? new Date(this.caseRecord.CreatedDate).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) : '—'; }
+    get accountName() { return this.caseRecord.Account ? this.caseRecord.Account.Name : '—'; }
     get priorityChipClass() {
         const p = this.caseRecord.Priority;
         if (p === 'High') return 'chip cr';

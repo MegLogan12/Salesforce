@@ -72,6 +72,16 @@ export default class OdlUmbRecord extends LightningElement {
     get entertainerChipClass() { return this.opp.Selected_Package__c === 'Entertainer' ? 'chip co' : 'chip cg'; }
     get signatureChipClass() { return this.opp.Selected_Package__c === 'Signature' ? 'chip co' : 'chip cg'; }
     get noTasks() { return this.tasks.length === 0; }
+    get lastActivityLabel() {
+        if (this.tasks.length === 0) return '—';
+        const sorted = [...this.tasks].sort((a, b) => (b.ActivityDate || '') > (a.ActivityDate || '') ? 1 : -1);
+        return sorted[0].Subject || '—';
+    }
+    get nextTaskLabel() {
+        const today = new Date().toISOString().slice(0, 10);
+        const future = this.tasks.filter(t => t.ActivityDate && t.ActivityDate >= today).sort((a, b) => a.ActivityDate > b.ActivityDate ? 1 : -1);
+        return future.length > 0 ? (future[0].Subject || '—') : '—';
+    }
 
     get nextFollowUpFormatted() {
         const today = new Date();

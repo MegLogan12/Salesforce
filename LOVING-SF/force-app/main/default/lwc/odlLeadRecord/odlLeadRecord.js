@@ -31,7 +31,7 @@ export default class OdlLeadRecord extends LightningElement {
         }
     }
 
-    get isUmb() { return this.lead.ODL_Path__c === 'UMB'; }
+    get isUmb() { return !this.lead.ODL_Path__c || this.lead.ODL_Path__c === 'UMB'; }
     get isCustomBuild() { return this.lead.ODL_Path__c === 'Custom Build'; }
     get isLawnCare() { return this.lead.ODL_Path__c === 'Lawn Care'; }
 
@@ -61,6 +61,16 @@ export default class OdlLeadRecord extends LightningElement {
     get voicemailLabel() { return this.lead.Voicemail_Left__c ? 'Left ' + (this.lead.Last_Voicemail_Date__c ? new Date(this.lead.Last_Voicemail_Date__c).toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '') : 'None'; }
     get vmChipClass() { return this.lead.Voicemail_Left__c ? 'chip ca' : 'chip cgr'; }
     get noTasks() { return this.tasks.length === 0; }
+    get lastActivityLabel() {
+        if (this.tasks.length === 0) return '—';
+        const sorted = [...this.tasks].sort((a, b) => (b.ActivityDate || '') > (a.ActivityDate || '') ? 1 : -1);
+        return sorted[0].Subject || '—';
+    }
+    get nextTaskLabel() {
+        const today = new Date().toISOString().slice(0, 10);
+        const future = this.tasks.filter(t => t.ActivityDate && t.ActivityDate >= today).sort((a, b) => a.ActivityDate > b.ActivityDate ? 1 : -1);
+        return future.length > 0 ? (future[0].Subject || '—') : '—';
+    }
 
     get nextFollowUpFormatted() {
         const today = new Date();

@@ -25,11 +25,11 @@
                         </div>
                         <div class="fields-grid">
                             <div><div class="field-label">Work Order</div><div class="field-value">{workOrder.WorkOrderNumber}</div></div>
-                            <div><div class="field-label">Opportunity</div><div class="field-value nl">{workOrder.ODL_Opportunity__r.Name}</div></div>
+                            <div><div class="field-label">Opportunity</div><div class="field-value nl">{opportunityName}</div></div>
                             <div><div class="field-label">Division</div><div class="field-value">{workOrder.Division__c}</div></div>
                             <div><div class="field-label">Job Type</div><div class="field-value">{workOrder.Job_Type__c}</div></div>
                             <div><div class="field-label">Customer Visible Status</div><div class="field-value">{workOrder.Customer_Visible_Status__c}</div></div>
-                            <div><div class="field-label">Property</div><div class="field-value nl">{workOrder.Homeowner_Property__r.Name}</div></div>
+                            <div><div class="field-label">Property</div><div class="field-value nl">{propertyName}</div></div>
                         </div>
                     </div>
 
@@ -41,7 +41,7 @@
                                 <h3>Crew and Schedule</h3>
                             </div>
                             <div class="fields-grid">
-                                <div><div class="field-label">Crew</div><div class="field-value">{workOrder.Owner.Name}</div></div>
+                                <div><div class="field-label">Crew</div><div class="field-value">{crewName}</div></div>
                                 <div><div class="field-label">Field Manager</div><div class="field-value">—</div></div>
                                 <div><div class="field-label">Start Date</div><div class="field-value">{startDateFormatted}</div></div>
                                 <div><div class="field-label">Target Completion</div><div class="field-value">{endDateFormatted}</div></div>

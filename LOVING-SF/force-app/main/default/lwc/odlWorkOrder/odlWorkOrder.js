@@ -50,6 +50,9 @@ export default class OdlWorkOrder extends LightningElement {
         if (s === 'In Progress') return 'chip ca';
         return 'chip cb2';
     }
+    get opportunityName() { return this.workOrder.ODL_Opportunity__r ? this.workOrder.ODL_Opportunity__r.Name : '—'; }
+    get propertyName() { return this.workOrder.Homeowner_Property__r ? this.workOrder.Homeowner_Property__r.Name : '—'; }
+    get crewName() { return this.workOrder.Owner ? this.workOrder.Owner.Name : '—'; }
     get noLineItems() { return this.lineItems.length === 0; }
     get openPunchCount() { return this.lineItems.filter(li => li.Status !== 'Completed').length; }
 }
