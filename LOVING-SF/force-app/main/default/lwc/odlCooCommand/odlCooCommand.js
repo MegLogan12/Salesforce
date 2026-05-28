@@ -28,7 +28,7 @@ export default class OdlCooCommand extends LightningElement {
             this.atRiskOpps = (data.atRiskOpps || []).map(o => ({
                 ...o,
                 lobChipClass: o.ODL_Path__c === 'UMB' ? 'chip co' : o.ODL_Path__c === 'Custom Build' ? 'chip cp' : o.ODL_Path__c === 'Lawn Care' ? 'chip ct' : 'chip cgr',
-                lastActivityFormatted: o.LastActivityDate ? new Date(o.LastActivityDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Never',
+                lastActivityFormatted: o.LastActivityDate ? new Date(o.LastActivityDate).toLocaleDateString('en-US', {month:'short', day:'numeric'}) : 'Never',
                 amountFormatted: o.Amount ? '$' + Number(o.Amount).toLocaleString() : '—'
             }));
         }
