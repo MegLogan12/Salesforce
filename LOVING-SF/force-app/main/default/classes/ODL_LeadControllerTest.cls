@@ -8,6 +8,7 @@ private class ODL_LeadControllerTest {
             LastName = 'Homeowner',
             Company = 'Test Co',
             Status = 'New',
+            LeadSource = 'Web',
             ODL_Path__c = 'UMB',
             Phone = '555-0100',
             Community_Name__c = 'Test Community'
