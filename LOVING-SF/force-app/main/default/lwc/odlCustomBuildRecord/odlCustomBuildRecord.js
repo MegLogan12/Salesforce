@@ -1,11 +1,13 @@
 import { LightningElement, api, wire, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
+import { encodeDefaultFieldValues } from 'lightning/pageReferenceUtils';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import homeownerStyles from '@salesforce/resourceUrl/homeownerStyles';
 import getCustomBuildRecord from '@salesforce/apex/ODL_OpportunityController.getCustomBuildRecord';
 
 const CB_STAGES = ['Inquiry', 'Discovery', 'Site Visit', 'Concept', 'Estimate', 'Proposal', 'Contract', 'Deposit', 'Pre-Con', 'Construction', 'Punch', 'Final Paid'];
 
-export default class OdlCustomBuildRecord extends LightningElement {
+export default class OdlCustomBuildRecord extends NavigationMixin(LightningElement) {
     @api recordId;
     @track opp = {};
     @track tasks = [];
@@ -73,5 +75,26 @@ export default class OdlCustomBuildRecord extends LightningElement {
             .filter(t => t.ActivityDate && new Date(t.ActivityDate) >= today)
             .sort((a, b) => new Date(a.ActivityDate) - new Date(b.ActivityDate));
         return future.length > 0 ? future[0].activityDateFormatted : '—';
+    }
+    createTask() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Task', actionName: 'new' },
+            state: { defaultFieldValues: encodeDefaultFieldValues({ WhatId: this.recordId, Subject: 'Follow Up' }) }
+        });
+    }
+    draftEmail() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordRelationshipPage',
+            attributes: { recordId: this.recordId, objectApiName: 'Opportunity', relationshipApiName: 'ActivityHistories', actionName: 'view' }
+        });
+    }
+    viewActivity() { this.draftEmail(); }
+    viewTasks() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Task', actionName: 'list' },
+            state: { filterName: 'Recent' }
+        });
     }
 }

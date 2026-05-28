@@ -1,11 +1,13 @@
 import { LightningElement, api, wire, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
+import { encodeDefaultFieldValues } from 'lightning/pageReferenceUtils';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import homeownerStyles from '@salesforce/resourceUrl/homeownerStyles';
 import getWorkOrderRecord from '@salesforce/apex/ODL_WorkController.getWorkOrderRecord';
 
 const WO_STAGES = ['Created', 'Scheduled', 'In Progress', 'Punch', 'Closeout', 'Closed'];
 
-export default class OdlWorkOrder extends LightningElement {
+export default class OdlWorkOrder extends NavigationMixin(LightningElement) {
     @api recordId;
     @track workOrder = {};
     @track lineItems = [];
@@ -53,6 +55,26 @@ export default class OdlWorkOrder extends LightningElement {
     get opportunityName() { return this.workOrder.ODL_Opportunity__r ? this.workOrder.ODL_Opportunity__r.Name : '—'; }
     get propertyName() { return this.workOrder.Homeowner_Property__r ? this.workOrder.Homeowner_Property__r.Name : '—'; }
     get crewName() { return this.workOrder.Owner ? this.workOrder.Owner.Name : '—'; }
+    get fieldManagerName() { return this.workOrder.Field_Manager__r ? this.workOrder.Field_Manager__r.Name : '—'; }
     get noLineItems() { return this.lineItems.length === 0; }
     get openPunchCount() { return this.lineItems.filter(li => li.Status !== 'Completed').length; }
+    createTask() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Task', actionName: 'new' },
+            state: { defaultFieldValues: encodeDefaultFieldValues({ WhatId: this.recordId, Subject: 'Follow Up' }) }
+        });
+    }
+    viewFiles() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordRelationshipPage',
+            attributes: { recordId: this.recordId, objectApiName: 'WorkOrder', relationshipApiName: 'AttachedContentDocuments', actionName: 'view' }
+        });
+    }
+    viewActivity() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordRelationshipPage',
+            attributes: { recordId: this.recordId, objectApiName: 'WorkOrder', relationshipApiName: 'ActivityHistories', actionName: 'view' }
+        });
+    }
 }

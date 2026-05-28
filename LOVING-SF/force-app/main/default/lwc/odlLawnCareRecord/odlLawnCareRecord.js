@@ -1,11 +1,13 @@
 import { LightningElement, api, wire, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
+import { encodeDefaultFieldValues } from 'lightning/pageReferenceUtils';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import homeownerStyles from '@salesforce/resourceUrl/homeownerStyles';
 import getLawnCareRecord from '@salesforce/apex/ODL_OpportunityController.getLawnCareRecord';
 
 const LC_STAGES = ['Inquiry', 'Estimate', 'Service Plan', 'Contract', 'First Service', 'Active'];
 
-export default class OdlLawnCareRecord extends LightningElement {
+export default class OdlLawnCareRecord extends NavigationMixin(LightningElement) {
     @api recordId;
     @track opp = {};
     @track tasks = [];
@@ -66,5 +68,26 @@ export default class OdlLawnCareRecord extends LightningElement {
             .filter(t => t.ActivityDate && new Date(t.ActivityDate) >= today)
             .sort((a, b) => new Date(a.ActivityDate) - new Date(b.ActivityDate));
         return future.length > 0 ? future[0].activityDateFormatted : '—';
+    }
+    createTask() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Task', actionName: 'new' },
+            state: { defaultFieldValues: encodeDefaultFieldValues({ WhatId: this.recordId, Subject: 'Follow Up' }) }
+        });
+    }
+    draftEmail() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordRelationshipPage',
+            attributes: { recordId: this.recordId, objectApiName: 'Opportunity', relationshipApiName: 'ActivityHistories', actionName: 'view' }
+        });
+    }
+    viewActivity() { this.draftEmail(); }
+    viewTasks() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Task', actionName: 'list' },
+            state: { filterName: 'Recent' }
+        });
     }
 }

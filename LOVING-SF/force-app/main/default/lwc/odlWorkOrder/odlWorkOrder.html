@@ -42,7 +42,7 @@
                             </div>
                             <div class="fields-grid">
                                 <div><div class="field-label">Crew</div><div class="field-value">{crewName}</div></div>
-                                <div><div class="field-label">Field Manager</div><div class="field-value">—</div></div>
+                                <div><div class="field-label">Field Manager</div><div class="field-value">{fieldManagerName}</div></div>
                                 <div><div class="field-label">Start Date</div><div class="field-value">{startDateFormatted}</div></div>
                                 <div><div class="field-label">Target Completion</div><div class="field-value">{endDateFormatted}</div></div>
                             </div>
@@ -94,10 +94,10 @@
                             <h3>Foreman Mobile Actions</h3>
                         </div>
                         <div class="qa-list">
-                            <div class="qa-item">Upload progress photos</div>
-                            <div class="qa-item">Log labor</div>
-                            <div class="qa-item">Update materials used</div>
-                            <div class="qa-item">Submit punch notes</div>
+                            <div class="qa-item" onclick={viewFiles}>Upload progress photos</div>
+                            <div class="qa-item" onclick={createTask}>Log labor</div>
+                            <div class="qa-item" onclick={createTask}>Update materials used</div>
+                            <div class="qa-item" onclick={createTask}>Submit punch notes</div>
                         </div>
                     </div>
                     <div class="card">
@@ -106,9 +106,9 @@
                             <h3>Assistant Panel</h3>
                         </div>
                         <div class="qa-list">
-                            <div class="qa-item">Summarize work order status</div>
-                            <div class="qa-item">Draft customer update</div>
-                            <div class="qa-item">Show open punch items</div>
+                            <div class="qa-item" onclick={viewActivity}>Summarize work order status</div>
+                            <div class="qa-item" onclick={viewActivity}>Draft customer update</div>
+                            <div class="qa-item" onclick={createTask}>Show open punch items</div>
                         </div>
                     </div>
                     <div class="card">

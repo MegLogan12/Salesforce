@@ -1,4 +1,6 @@
 import { LightningElement, api, wire, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
+import { encodeDefaultFieldValues } from 'lightning/pageReferenceUtils';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import homeownerStyles from '@salesforce/resourceUrl/homeownerStyles';
 import getLeadRecord from '@salesforce/apex/ODL_LeadController.getLeadRecord';
@@ -7,7 +9,7 @@ const UMB_STAGES = ['New', 'Contacted', 'Qualified', 'Converted', 'Closed'];
 const CB_STAGES = ['New', 'Contacted', 'Site Visit Needed', 'Qualified', 'Converted', 'Closed'];
 const LC_STAGES = ['New', 'Contacted', 'Qualified', 'Converted', 'Closed'];
 
-export default class OdlLeadRecord extends LightningElement {
+export default class OdlLeadRecord extends NavigationMixin(LightningElement) {
     @api recordId;
     @track lead = {};
     @track tasks = [];
@@ -78,5 +80,32 @@ export default class OdlLeadRecord extends LightningElement {
             .filter(t => t.ActivityDate && new Date(t.ActivityDate) >= today)
             .sort((a, b) => new Date(a.ActivityDate) - new Date(b.ActivityDate));
         return future.length > 0 ? future[0].activityDateFormatted : '—';
+    }
+
+    createTask() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Task', actionName: 'new' },
+            state: { defaultFieldValues: encodeDefaultFieldValues({ WhoId: this.recordId, Subject: 'Follow Up' }) }
+        });
+    }
+    draftEmail() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordRelationshipPage',
+            attributes: { recordId: this.recordId, objectApiName: 'Lead', relationshipApiName: 'ActivityHistories', actionName: 'view' }
+        });
+    }
+    viewActivity() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordRelationshipPage',
+            attributes: { recordId: this.recordId, objectApiName: 'Lead', relationshipApiName: 'ActivityHistories', actionName: 'view' }
+        });
+    }
+    viewTasks() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Task', actionName: 'list' },
+            state: { filterName: 'Recent' }
+        });
     }
 }

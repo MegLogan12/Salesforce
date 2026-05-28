@@ -8,6 +8,7 @@ public with sharing class ODL_WorkController {
                    Homeowner_Property__c, Homeowner_Property__r.Name,
                    ODL_Opportunity__c, ODL_Opportunity__r.Name,
                    StartDate, EndDate, OwnerId, Owner.Name,
+                   Field_Manager__c, Field_Manager__r.Name,
                    Description, Subject
             FROM WorkOrder
             WHERE Id = :workOrderId

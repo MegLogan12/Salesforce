@@ -1,11 +1,13 @@
 import { LightningElement, api, wire, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
+import { encodeDefaultFieldValues } from 'lightning/pageReferenceUtils';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import homeownerStyles from '@salesforce/resourceUrl/homeownerStyles';
 import getWarrantyCase from '@salesforce/apex/ODL_DashboardController.getWarrantyCase';
 
 const CASE_STAGES = ['New', 'Review', 'Scheduled', 'Resolved', 'Closed'];
 
-export default class OdlWarrantyCase extends LightningElement {
+export default class OdlWarrantyCase extends NavigationMixin(LightningElement) {
     @api recordId;
     @track caseRecord = {};
     isLoaded = false;
@@ -51,4 +53,25 @@ export default class OdlWarrantyCase extends LightningElement {
         ];
     }
     get noCoverageItems() { return false; }
+
+    createTask() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Task', actionName: 'new' },
+            state: { defaultFieldValues: encodeDefaultFieldValues({ WhatId: this.recordId, Subject: 'Follow Up' }) }
+        });
+    }
+    viewActivity() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordRelationshipPage',
+            attributes: { recordId: this.recordId, objectApiName: 'Case', relationshipApiName: 'ActivityHistories', actionName: 'view' }
+        });
+    }
+    viewTasks() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Task', actionName: 'list' },
+            state: { filterName: 'Recent' }
+        });
+    }
 }
