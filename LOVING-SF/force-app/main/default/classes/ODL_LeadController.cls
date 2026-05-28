@@ -22,7 +22,7 @@ public with sharing class ODL_LeadController {
                    Desired_Timeline__c, Project_Vision__c, Decision_Makers__c,
                    Property_Size__c, Preferred_Frequency__c, Start_Window__c,
                    Voicemail_Left__c, Last_Voicemail_Date__c,
-                   Phone, Email, Company, CampaignMemberStatus,
+                   Phone, Email, Company,
                    OwnerId, Owner.Name, CreatedDate, LastActivityDate
             FROM Lead
             WHERE Id = :leadId

@@ -15,15 +15,14 @@ public with sharing class ODL_WorkController {
         ];
 
         List<WorkOrderLineItem> lineItems = [
-            SELECT Id, Subject, Status, Duration, DurationType, OwnerId
+            SELECT Id, Subject, Status, Duration, DurationType
             FROM WorkOrderLineItem
             WHERE WorkOrderId = :workOrderId
             LIMIT 20
         ];
 
         List<ServiceAppointment> appointments = [
-            SELECT Id, AppointmentNumber, Status, SchedStartTime, SchedEndTime,
-                   AssignedResources
+            SELECT Id, AppointmentNumber, Status, SchedStartTime, SchedEndTime
             FROM ServiceAppointment
             WHERE ParentRecordId = :workOrderId
             ORDER BY SchedStartTime ASC NULLS LAST

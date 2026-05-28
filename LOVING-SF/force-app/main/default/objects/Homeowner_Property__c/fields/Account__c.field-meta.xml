@@ -5,9 +5,7 @@
     <referenceTo>Account</referenceTo>
     <relationshipLabel>Properties</relationshipLabel>
     <relationshipName>Homeowner_Properties</relationshipName>
-    <relationshipOrder>0</relationshipOrder>
-    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <required>false</required>
     <trackTrending>false</trackTrending>
-    <type>MasterDetail</type>
-    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    <type>Lookup</type>
 </CustomField>

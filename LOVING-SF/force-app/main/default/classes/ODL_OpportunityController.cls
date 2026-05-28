@@ -80,7 +80,7 @@ public with sharing class ODL_OpportunityController {
     public static Map<String, Object> getLawnCareRecord(Id opportunityId) {
         Opportunity opp = [
             SELECT Id, Name, AccountId, Account.Name, StageName, Amount, CloseDate,
-                   ODL_Path__c, Service_Interest__c, Billing_Frequency__c, Monthly_Billing__c,
+                   ODL_Path__c, Billing_Frequency__c, Monthly_Billing__c,
                    Contract_Term__c, Estimate_Status__c,
                    Voicemail_Left__c, Last_Voicemail_Date__c,
                    Homeowner_Property__c, Homeowner_Property__r.Name,
