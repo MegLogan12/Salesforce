@@ -1,0 +1,187 @@
+<template>
+    <template if:true={isLoaded}>
+        <div class="sf-body">
+            <!-- Path -->
+            <div class="card">
+                <div class="ch">
+                    <div class="ci" style="background:#fe9339">PATH</div>
+                    <h3>Opportunity Path</h3>
+                    <span class="chip co">UMB</span>
+                </div>
+                <div class="path">
+                    <template for:each={pathSteps} for:item="step">
+                        <div key={step.label} class={step.cssClass}>{step.label}</div>
+                    </template>
+                </div>
+            </div>
+
+            <div class="layout">
+                <div class="layout-main">
+                    <!-- Snapshot -->
+                    <div class="card info">
+                        <div class="ch">
+                            <div class="ci" style="background:#0070d2">SUM</div>
+                            <h3>Opportunity Snapshot</h3>
+                        </div>
+                        <div class="fields-grid">
+                            <div><div class="field-label">Opportunity Name</div><div class="field-value">{opp.Name}</div></div>
+                            <div><div class="field-label">Account</div><div class="field-value nl">{opp.Account.Name}</div></div>
+                            <div><div class="field-label">Record Type</div><div class="field-value"><span class="chip co">UMB</span></div></div>
+                            <div><div class="field-label">Stage</div><div class="field-value">{opp.StageName}</div></div>
+                            <div><div class="field-label">Amount</div><div class="field-value"><strong>{amountFormatted}</strong></div></div>
+                            <div><div class="field-label">Close Date</div><div class="field-value">{closeDateFormatted}</div></div>
+                        </div>
+                    </div>
+
+                    <!-- Package Selection -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#fe9339">PKG</div>
+                            <h3>Package Selection</h3>
+                        </div>
+                        <table class="tbl">
+                            <thead><tr><th>Package</th><th>Status</th><th class="num">Price</th><th>Primary Features</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td>Retreat</td>
+                                    <td><span class={retreatChipClass}>{retreatStatus}</span></td>
+                                    <td class="num">$18,500</td>
+                                    <td>Patio, planting refresh, sod repair</td>
+                                </tr>
+                                <tr>
+                                    <td>Entertainer</td>
+                                    <td><span class={entertainerChipClass}>{entertainerStatus}</span></td>
+                                    <td class="num">$34,000</td>
+                                    <td>Paver patio, grill island, lighting, privacy planting</td>
+                                </tr>
+                                <tr>
+                                    <td>Signature</td>
+                                    <td><span class={signatureChipClass}>{signatureStatus}</span></td>
+                                    <td class="num">$58,000</td>
+                                    <td>Full backyard transformation</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Activity -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#534ab7">ACT</div>
+                            <h3>Activity and Next Follow-Up</h3>
+                        </div>
+                        <table class="tbl">
+                            <thead><tr><th>Last Activity</th><th>Date</th><th>Voicemail</th><th>Next Task</th><th>Due</th><th>Owner</th></tr></thead>
+                            <tbody>
+                                <template for:each={tasks} for:item="task">
+                                    <tr key={task.Id}>
+                                        <td>{task.Subject}</td>
+                                        <td>{task.activityDateFormatted}</td>
+                                        <td>
+                                            <template if:true={opp.Voicemail_Left__c}>
+                                                <span class="chip ca">Yes</span>
+                                            </template>
+                                            <template if:false={opp.Voicemail_Left__c}>
+                                                <span class="chip cgr">No</span>
+                                            </template>
+                                        </td>
+                                        <td>{task.Subject}</td>
+                                        <td>{task.activityDateFormatted}</td>
+                                        <td>{task.Owner.Name}</td>
+                                    </tr>
+                                </template>
+                                <template if:true={noTasks}>
+                                    <tr><td colspan="6" style="text-align:center;color:#54698d;padding:12px">No activity yet</td></tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Design Review + Quote side by side -->
+                    <div class="g2">
+                        <div class="card">
+                            <div class="ch">
+                                <div class="ci" style="background:#04844b">DR</div>
+                                <h3>Design Review</h3>
+                            </div>
+                            <div class="fields-grid">
+                                <div><div class="field-label">Design Status</div><div class="field-value"><span class={designChipClass}>{opp.Design_Status__c}</span></div></div>
+                                <div><div class="field-label">Portal Published</div><div class="field-value"><span class={portalChipClass}>{portalPublishedLabel}</span></div></div>
+                                <div><div class="field-label">Selected Package</div><div class="field-value">{opp.Selected_Package__c}</div></div>
+                                <div><div class="field-label">Customer Viewed</div><div class="field-value">{customerViewedFormatted}</div></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="ch">
+                                <div class="ci" style="background:#0070d2">$</div>
+                                <h3>Quote, Contract, Payment</h3>
+                            </div>
+                            <div class="fields-grid">
+                                <div><div class="field-label">Quote Status</div><div class="field-value">{opp.Quote_Status__c}</div></div>
+                                <div><div class="field-label">Deposit Due</div><div class="field-value">{depositDueFormatted}</div></div>
+                                <div><div class="field-label">Contract Status</div><div class="field-value">{opp.Contract_Status__c}</div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Property -->
+                    <template if:true={hasProperty}>
+                        <div class="card">
+                            <div class="ch">
+                                <div class="ci" style="background:#04844b">PROP</div>
+                                <h3>Related Property</h3>
+                            </div>
+                            <div class="fields-grid">
+                                <div><div class="field-label">Property</div><div class="field-value">{opp.Homeowner_Property__r.Name}</div></div>
+                                <div><div class="field-label">Access Type</div><div class="field-value">{opp.Homeowner_Property__r.Access_Type__c}</div></div>
+                                <div><div class="field-label">Drainage Risk</div><div class="field-value"><span class={drainageChipClass}>{opp.Homeowner_Property__r.Drainage_Risk__c}</span></div></div>
+                                <div><div class="field-label">Utility Review</div><div class="field-value"><span class={utilityChipClass}>{opp.Homeowner_Property__r.Utility_Review_Status__c}</span></div></div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Rail -->
+                <div class="layout-rail">
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#fe9339">NEXT</div>
+                            <h3>Next Action</h3>
+                        </div>
+                        <div class="qa-list">
+                            <template for:each={nextActions} for:item="action">
+                                <div key={action} class="qa-item">{action}</div>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#534ab7">AI</div>
+                            <h3>Assistant Panel</h3>
+                        </div>
+                        <div class="qa-list">
+                            <div class="qa-item">Summarize latest customer activity</div>
+                            <div class="qa-item">Draft follow-up email</div>
+                            <div class="qa-item">Create next task</div>
+                            <div class="qa-item">Show overdue items</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#0070d2">SLA</div>
+                            <h3>Activity Health</h3>
+                        </div>
+                        <div style="padding:10px 14px">
+                            <div class="rail-row"><span>Last touch</span><span>{lastTouchFormatted}</span></div>
+                            <div class="rail-row"><span>Voicemail</span><span class={vmChipClass}>{voicemailLabel}</span></div>
+                            <div class="rail-row"><span>Open tasks</span><span>{tasks.length}</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template if:false={isLoaded}>
+        <div style="padding:20px;text-align:center;color:#54698d">Loading...</div>
+    </template>
+</template>

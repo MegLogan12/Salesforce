@@ -1,0 +1,138 @@
+<template>
+    <template if:true={isLoaded}>
+        <div class="sf-body">
+            <div class="card">
+                <div class="ch">
+                    <div class="ci" style="background:#fe9339">PATH</div>
+                    <h3>Opportunity Path</h3>
+                    <span class="chip ct">Lawn Care</span>
+                </div>
+                <div class="path">
+                    <template for:each={pathSteps} for:item="step">
+                        <div key={step.label} class={step.cssClass}>{step.label}</div>
+                    </template>
+                </div>
+            </div>
+
+            <div class="layout">
+                <div class="layout-main">
+                    <!-- Snapshot -->
+                    <div class="card aqua">
+                        <div class="ch">
+                            <div class="ci" style="background:#1d9e75">SUM</div>
+                            <h3>Opportunity Snapshot</h3>
+                        </div>
+                        <div class="fields-grid">
+                            <div><div class="field-label">Opportunity Name</div><div class="field-value">{opp.Name}</div></div>
+                            <div><div class="field-label">Account</div><div class="field-value nl">{opp.Account.Name}</div></div>
+                            <div><div class="field-label">Record Type</div><div class="field-value"><span class="chip ct">Lawn Care</span></div></div>
+                            <div><div class="field-label">Stage</div><div class="field-value">{opp.StageName}</div></div>
+                            <div><div class="field-label">Annual Value</div><div class="field-value"><strong>{amountFormatted}</strong></div></div>
+                            <div><div class="field-label">Close Date</div><div class="field-value">{closeDateFormatted}</div></div>
+                        </div>
+                    </div>
+
+                    <!-- Service Plan -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#1d9e75">SVC</div>
+                            <h3>Service Plan</h3>
+                        </div>
+                        <div class="fields-grid">
+                            <div><div class="field-label">Service Interest</div><div class="field-value">{opp.Service_Interest__c}</div></div>
+                            <div><div class="field-label">Billing Frequency</div><div class="field-value">{opp.Billing_Frequency__c}</div></div>
+                            <div><div class="field-label">Monthly Billing</div><div class="field-value">{monthlyBillingFormatted}</div></div>
+                            <div><div class="field-label">Contract Term</div><div class="field-value">{opp.Contract_Term__c}</div></div>
+                            <div><div class="field-label">Estimate Status</div><div class="field-value">{opp.Estimate_Status__c}</div></div>
+                        </div>
+                    </div>
+
+                    <!-- Activity -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#534ab7">ACT</div>
+                            <h3>Activity and Next Follow-Up</h3>
+                        </div>
+                        <table class="tbl">
+                            <thead><tr><th>Last Activity</th><th>Date</th><th>Voicemail</th><th>Owner</th><th>Status</th></tr></thead>
+                            <tbody>
+                                <template for:each={tasks} for:item="task">
+                                    <tr key={task.Id}>
+                                        <td>{task.Subject}</td>
+                                        <td>{task.activityDateFormatted}</td>
+                                        <td>
+                                            <template if:true={opp.Voicemail_Left__c}><span class="chip ca">Yes</span></template>
+                                            <template if:false={opp.Voicemail_Left__c}><span class="chip cgr">No</span></template>
+                                        </td>
+                                        <td>{task.Owner.Name}</td>
+                                        <td><span class="chip ca">{task.Status}</span></td>
+                                    </tr>
+                                </template>
+                                <template if:true={noTasks}>
+                                    <tr><td colspan="5" style="text-align:center;color:#54698d;padding:12px">No activity yet</td></tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Property -->
+                    <template if:true={hasProperty}>
+                        <div class="card">
+                            <div class="ch">
+                                <div class="ci" style="background:#1d9e75">PROP</div>
+                                <h3>Related Property</h3>
+                            </div>
+                            <div class="fields-grid">
+                                <div><div class="field-label">Property</div><div class="field-value">{opp.Homeowner_Property__r.Name}</div></div>
+                                <div><div class="field-label">Lot Size</div><div class="field-value">{opp.Homeowner_Property__r.Lot_Size__c} sqft</div></div>
+                                <div><div class="field-label">Irrigation</div><div class="field-value">{opp.Homeowner_Property__r.Irrigation__c}</div></div>
+                                <div><div class="field-label">Gate Access</div><div class="field-value">{opp.Homeowner_Property__r.Gate_Access__c}</div></div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Rail -->
+                <div class="layout-rail">
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#1d9e75">NEXT</div>
+                            <h3>Next Action</h3>
+                        </div>
+                        <div class="qa-list">
+                            <div class="qa-item">Finalize service plan</div>
+                            <div class="qa-item">Send estimate to customer</div>
+                            <div class="qa-item">Schedule first service date</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#534ab7">AI</div>
+                            <h3>Assistant Panel</h3>
+                        </div>
+                        <div class="qa-list">
+                            <div class="qa-item">Summarize latest customer activity</div>
+                            <div class="qa-item">Draft follow-up email</div>
+                            <div class="qa-item">Create next task</div>
+                            <div class="qa-item">Show overdue items</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#0070d2">SLA</div>
+                            <h3>Activity Health</h3>
+                        </div>
+                        <div style="padding:10px 14px">
+                            <div class="rail-row"><span>Last touch</span><span>{lastTouchFormatted}</span></div>
+                            <div class="rail-row"><span>Voicemail</span><span class={vmChipClass}>{voicemailLabel}</span></div>
+                            <div class="rail-row"><span>Open tasks</span><span>{tasks.length}</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template if:false={isLoaded}>
+        <div style="padding:20px;text-align:center;color:#54698d">Loading...</div>
+    </template>
+</template>

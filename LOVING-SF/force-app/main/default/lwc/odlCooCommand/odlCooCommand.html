@@ -1,0 +1,100 @@
+<template>
+    <div class="sf-body">
+        <div class="g4">
+            <div class="kpi kb">
+                <div class="kn big">{totalPipelineFormatted}</div>
+                <div class="kl">Total pipeline</div>
+            </div>
+            <div class="kpi ka">
+                <div class="kn big">{overdueCount}</div>
+                <div class="kl">Follow-ups due</div>
+            </div>
+            <div class="kpi kr">
+                <div class="kn big">{atRiskCount}</div>
+                <div class="kl">At risk</div>
+            </div>
+        </div>
+
+        <div class="layout">
+            <div class="layout-main">
+                <!-- Pipeline by LOB -->
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci" style="background:#0070d2">PIPE</div>
+                        <h3>Pipeline by LOB</h3>
+                    </div>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>LOB</th>
+                                <th class="num">Open Opps</th>
+                                <th class="num">Pipeline</th>
+                                <th>Follow-Ups Due</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={lobMetrics} for:item="lob">
+                                <tr key={lob.lob}>
+                                    <td><span class={lob.chipClass}>{lob.lob}</span></td>
+                                    <td class="num">{lob.count}</td>
+                                    <td class="num">{lob.totalFormatted}</td>
+                                    <td>—</td>
+                                </tr>
+                            </template>
+                            <template if:true={noMetrics}>
+                                <tr><td colspan="4" style="text-align:center;color:#54698d;padding:12px">No pipeline data</td></tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- At Risk -->
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci" style="background:#c23934">RISK</div>
+                        <h3>Activity Risk</h3>
+                    </div>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Record</th>
+                                <th>LOB</th>
+                                <th>Last Activity</th>
+                                <th>Amount</th>
+                                <th>Stage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={atRiskOpps} for:item="opp">
+                                <tr key={opp.Id}>
+                                    <td><span class="nl">{opp.Name}</span></td>
+                                    <td><span class={opp.lobChipClass}>{opp.ODL_Path__c}</span></td>
+                                    <td>{opp.lastActivityFormatted}</td>
+                                    <td class="num">{opp.amountFormatted}</td>
+                                    <td>{opp.StageName}</td>
+                                </tr>
+                            </template>
+                            <template if:true={noAtRisk}>
+                                <tr><td colspan="5" style="text-align:center;color:#04844b;padding:12px">No at-risk opportunities</td></tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="layout-rail">
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci" style="background:#16325c">COO</div>
+                        <h3>COO Actions</h3>
+                    </div>
+                    <div class="qa-list">
+                        <div class="qa-item">Review at-risk opportunities</div>
+                        <div class="qa-item">Check overdue follow-ups</div>
+                        <div class="qa-item">Open pipeline reports</div>
+                        <div class="qa-item">Review team activity</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

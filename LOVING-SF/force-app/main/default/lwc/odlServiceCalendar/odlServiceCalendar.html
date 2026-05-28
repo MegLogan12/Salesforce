@@ -1,0 +1,74 @@
+<template>
+    <div class="sf-body">
+        <div class="g4">
+            <div class="kpi kb">
+                <div class="kn big">{consultCount}</div>
+                <div class="kl">Consults this week</div>
+            </div>
+            <div class="kpi ka">
+                <div class="kn big">{siteVisitCount}</div>
+                <div class="kl">Site visits</div>
+            </div>
+            <div class="kpi kg">
+                <div class="kn big">{installCount}</div>
+                <div class="kl">Install visits</div>
+            </div>
+            <div class="kpi kp">
+                <div class="kn big">{totalCount}</div>
+                <div class="kl">Total appointments</div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="ch">
+                <div class="ci" style="background:#0070d2">CAL</div>
+                <h3>Service Appointment Calendar</h3>
+            </div>
+            <div class="calendar-grid" style="padding:12px 14px">
+                <template for:each={calendarDays} for:item="day">
+                    <div key={day.dayName} class="day">
+                        <div class="day-head">
+                            <span>{day.dayName}</span>
+                            <span>{day.count}</span>
+                        </div>
+                        <template for:each={day.events} for:item="evt">
+                            <div key={evt.id} class={evt.cssClass}>{evt.label}</div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </div>
+        <div class="card">
+            <div class="ch">
+                <div class="ci" style="background:#fe9339">APPT</div>
+                <h3>Upcoming Appointments</h3>
+            </div>
+            <table class="tbl">
+                <thead>
+                    <tr>
+                        <th>Appointment #</th>
+                        <th>Subject</th>
+                        <th>Status</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Owner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={appointments} for:item="appt">
+                        <tr key={appt.Id}>
+                            <td>{appt.AppointmentNumber}</td>
+                            <td>{appt.Subject}</td>
+                            <td><span class="chip cb2">{appt.Status}</span></td>
+                            <td>{appt.startFormatted}</td>
+                            <td>{appt.endFormatted}</td>
+                            <td>{appt.Owner.Name}</td>
+                        </tr>
+                    </template>
+                    <template if:true={noAppts}>
+                        <tr><td colspan="6" style="text-align:center;color:#54698d;padding:16px">No appointments scheduled</td></tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,77 @@
+<template>
+    <div class="list-toolbar">
+        <span class={allChipClass} onclick={showAll}>Today</span>
+        <span class={overdueChipClass} onclick={showOverdue}>Overdue</span>
+        <span class={upcomingChipClass} onclick={showUpcoming}>Upcoming</span>
+        <input class="list-search" placeholder="Search tasks..." value={searchTerm} onchange={handleSearch} />
+    </div>
+    <div class="sf-body">
+        <div class="g4">
+            <div class="kpi kr">
+                <div class="kn big">{overdueCount}</div>
+                <div class="kl">Overdue tasks</div>
+            </div>
+            <div class="kpi ka">
+                <div class="kn big">{todayCount}</div>
+                <div class="kl">Due today</div>
+            </div>
+            <div class="kpi kb">
+                <div class="kn big">{upcomingCount}</div>
+                <div class="kl">Upcoming</div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="ch">
+                <div class="ci" style="background:#fe9339">TASK</div>
+                <h3>Task Queue</h3>
+                <span style="margin-left:auto;font-size:11px;color:#54698d">{visibleTasks.length} records</span>
+            </div>
+            <table class="tbl">
+                <thead>
+                    <tr>
+                        <th>Task</th>
+                        <th>Related To</th>
+                        <th>Type</th>
+                        <th>Due</th>
+                        <th>Owner</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={visibleTasks} for:item="task">
+                        <tr key={task.Id}>
+                            <td>{task.Subject}</td>
+                            <td>{task.whatName}</td>
+                            <td>{task.Type}</td>
+                            <td>{task.dueDateFormatted}</td>
+                            <td>{task.Owner.Name}</td>
+                            <td><span class={task.statusChipClass}>{task.Status}</span></td>
+                        </tr>
+                    </template>
+                    <template if:true={noTasks}>
+                        <tr><td colspan="6" style="text-align:center;color:#54698d;padding:16px">No tasks in this view</td></tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+        <div class="card">
+            <div class="ch">
+                <div class="ci" style="background:#0070d2">CAL</div>
+                <h3>Sales Activity Calendar</h3>
+            </div>
+            <div class="calendar-grid" style="padding:12px 14px">
+                <template for:each={calendarDays} for:item="day">
+                    <div key={day.label} class="day">
+                        <div class="day-head">
+                            <span>{day.dayName}</span>
+                            <span>{day.count}</span>
+                        </div>
+                        <template for:each={day.events} for:item="evt">
+                            <div key={evt.label} class={evt.cssClass}>{evt.label}</div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+</template>

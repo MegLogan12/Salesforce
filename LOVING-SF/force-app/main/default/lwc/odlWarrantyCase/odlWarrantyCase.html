@@ -1,0 +1,72 @@
+<template>
+    <template if:true={isLoaded}>
+        <div class="sf-body">
+            <!-- Path -->
+            <div class="card">
+                <div class="ch">
+                    <div class="ci" style="background:#fe9339">PATH</div>
+                    <h3>Case Status</h3>
+                    <span class="chip cb2">Warranty</span>
+                </div>
+                <div class="path">
+                    <template for:each={pathSteps} for:item="step">
+                        <div key={step.label} class={step.cssClass}>{step.label}</div>
+                    </template>
+                </div>
+            </div>
+
+            <div class="layout">
+                <div class="layout-main">
+                    <!-- Case Summary -->
+                    <div class="card info">
+                        <div class="ch">
+                            <div class="ci" style="background:#0070d2">CASE</div>
+                            <h3>Case Summary</h3>
+                        </div>
+                        <div class="fields-grid">
+                            <div><div class="field-label">Case Number</div><div class="field-value">{caseRecord.CaseNumber}</div></div>
+                            <div><div class="field-label">Account</div><div class="field-value nl">{caseRecord.Account.Name}</div></div>
+                            <div><div class="field-label">Case Type</div><div class="field-value"><span class="chip cb2">{caseRecord.Type}</span></div></div>
+                            <div><div class="field-label">Priority</div><div class="field-value"><span class={priorityChipClass}>{caseRecord.Priority}</span></div></div>
+                            <div><div class="field-label">Status</div><div class="field-value">{caseRecord.Status}</div></div>
+                            <div><div class="field-label">Created</div><div class="field-value">{createdDateFormatted}</div></div>
+                        </div>
+                    </div>
+
+                    <!-- Subject/Description -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#534ab7">DESC</div>
+                            <h3>Issue Description</h3>
+                        </div>
+                        <div style="padding:12px 14px;font-size:12px;color:#16325c;line-height:1.5">
+                            <div class="field-label" style="margin-bottom:4px">Subject</div>
+                            <div style="margin-bottom:12px">{caseRecord.Subject}</div>
+                            <div class="field-label" style="margin-bottom:4px">Description</div>
+                            <div>{caseRecord.Description}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rail -->
+                <div class="layout-rail">
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#534ab7">AI</div>
+                            <h3>Assistant Panel</h3>
+                        </div>
+                        <div class="qa-list">
+                            <div class="qa-item">Email customer update</div>
+                            <div class="qa-item">Schedule inspection</div>
+                            <div class="qa-item">Review warranty coverage</div>
+                            <div class="qa-item">Create follow-up task</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template if:false={isLoaded}>
+        <div style="padding:20px;text-align:center;color:#54698d">Loading...</div>
+    </template>
+</template>

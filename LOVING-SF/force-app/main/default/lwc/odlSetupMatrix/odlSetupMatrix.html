@@ -1,0 +1,53 @@
+<template>
+    <div class="sf-body">
+        <div class="card">
+            <div class="ch">
+                <div class="ci" style="background:#16325c">SETUP</div>
+                <h3>Homeowner Outdoor Living — Setup Matrix</h3>
+            </div>
+            <div style="padding:12px 14px">
+                <p class="setup-note">Build order: Standard Salesforce field first → existing LOVING field → new custom field last.</p>
+            </div>
+            <table class="tbl">
+                <thead>
+                    <tr>
+                        <th>Object</th>
+                        <th>Field / Component</th>
+                        <th>Type</th>
+                        <th>Source</th>
+                        <th>LOB Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Account</td><td>Customer_Health__c</td><td>Picklist</td><td><span class="chip cb2">Custom</span></td><td>All LOBs</td></tr>
+                    <tr><td>Account</td><td>Preferred_Contact_Method__c</td><td>Picklist</td><td><span class="chip cb2">Custom</span></td><td>All LOBs</td></tr>
+                    <tr><td>Account</td><td>Portal_Status__c</td><td>Picklist</td><td><span class="chip cb2">Custom</span></td><td>UMB, Custom Build</td></tr>
+                    <tr><td>Lead / Opportunity</td><td>ODL_Path__c</td><td>Picklist</td><td><span class="chip cb2">Custom</span></td><td>UMB | Custom Build | Lawn Care</td></tr>
+                    <tr><td>Opportunity</td><td>Design_Status__c</td><td>Picklist</td><td><span class="chip cb2">Custom</span></td><td>UMB</td></tr>
+                    <tr><td>Opportunity</td><td>Selected_Package__c</td><td>Picklist</td><td><span class="chip cb2">Custom</span></td><td>UMB</td></tr>
+                    <tr><td>Opportunity</td><td>Project_Vision__c</td><td>LongTextArea</td><td><span class="chip cb2">Custom</span></td><td>Custom Build</td></tr>
+                    <tr><td>Opportunity</td><td>Homeowner_Property__c</td><td>Lookup</td><td><span class="chip cb2">Custom</span></td><td>All LOBs</td></tr>
+                    <tr><td>Homeowner_Property__c</td><td>Drainage_Risk__c</td><td>Picklist</td><td><span class="chip co">Custom Object</span></td><td>All LOBs</td></tr>
+                    <tr><td>WorkOrder</td><td>Division__c</td><td>Picklist</td><td><span class="chip cb2">Custom</span></td><td>All LOBs</td></tr>
+                    <tr><td>WorkOrder</td><td>Takeoff_*</td><td>Various</td><td><span class="chip cg">Existing</span></td><td>Landscape Measuring Tool</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="card">
+            <div class="ch">
+                <div class="ci" style="background:#fe9339">LOB</div>
+                <h3>LOB-Specific Stage Values</h3>
+            </div>
+            <table class="tbl">
+                <thead>
+                    <tr><th>LOB</th><th>Opportunity Stages</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td><span class="chip co">UMB</span></td><td>Intake → Design Review → Consult → Quote Review → Contract Sent → Deposit Paid → Scheduled → Final Paid</td></tr>
+                    <tr><td><span class="chip cp">Custom Build</span></td><td>Inquiry → Discovery → Site Visit → Concept → Estimate → Proposal → Contract → Deposit → Pre-Con → Construction → Punch → Final Paid</td></tr>
+                    <tr><td><span class="chip ct">Lawn Care</span></td><td>Inquiry → Estimate → Service Plan → Contract → First Service → Active</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,55 @@
+<template>
+    <div class="sf-body">
+        <div class="g4">
+            <div class="kpi kb">
+                <div class="kn big">{activeCount}</div>
+                <div class="kl">Active campaigns</div>
+            </div>
+            <div class="kpi kg">
+                <div class="kn big">{totalMembers}</div>
+                <div class="kl">Campaign members</div>
+            </div>
+            <div class="kpi ka">
+                <div class="kn big">{totalRevenue}</div>
+                <div class="kl">Expected revenue</div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="ch">
+                <div class="ci" style="background:#0070d2">CAMP</div>
+                <h3>Active Campaigns</h3>
+            </div>
+            <table class="tbl">
+                <thead>
+                    <tr>
+                        <th>Campaign</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th class="num">Members</th>
+                        <th class="num">Leads</th>
+                        <th class="num">Opportunities</th>
+                        <th class="num">Expected Revenue</th>
+                        <th>Owner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={campaigns} for:item="camp">
+                        <tr key={camp.Id}>
+                            <td><span class="nl">{camp.Name}</span></td>
+                            <td>{camp.Type}</td>
+                            <td><span class="chip cg">{camp.Status}</span></td>
+                            <td class="num">{camp.NumberOfLeads}</td>
+                            <td class="num">{camp.NumberOfLeads}</td>
+                            <td class="num">{camp.NumberOfOpportunities}</td>
+                            <td class="num">{camp.revenueFormatted}</td>
+                            <td>{camp.Owner.Name}</td>
+                        </tr>
+                    </template>
+                    <template if:true={noCampaigns}>
+                        <tr><td colspan="8" style="text-align:center;color:#54698d;padding:16px">No active campaigns</td></tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</template>

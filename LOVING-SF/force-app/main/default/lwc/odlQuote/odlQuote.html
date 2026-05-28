@@ -1,0 +1,84 @@
+<template>
+    <template if:true={isLoaded}>
+        <div class="sf-body">
+            <div class="layout">
+                <div class="layout-main">
+                    <!-- Snapshot -->
+                    <div class="card info">
+                        <div class="ch">
+                            <div class="ci" style="background:#0070d2">QUOT</div>
+                            <h3>Quote Summary</h3>
+                        </div>
+                        <div class="fields-grid">
+                            <div><div class="field-label">Opportunity</div><div class="field-value nl">{opp.Name}</div></div>
+                            <div><div class="field-label">Quote Status</div><div class="field-value"><span class={quoteStatusChipClass}>{opp.Quote_Status__c}</span></div></div>
+                            <div><div class="field-label">Amount</div><div class="field-value"><strong>{amountFormatted}</strong></div></div>
+                            <div><div class="field-label">Deposit Due</div><div class="field-value">{depositFormatted}</div></div>
+                            <div><div class="field-label">Contract Status</div><div class="field-value"><span class={contractChipClass}>{opp.Contract_Status__c}</span></div></div>
+                        </div>
+                    </div>
+
+                    <!-- Payment Milestones -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#04844b">PAY</div>
+                            <h3>Payment Milestones</h3>
+                        </div>
+                        <table class="tbl">
+                            <thead>
+                                <tr>
+                                    <th>Milestone</th>
+                                    <th class="num">Amount</th>
+                                    <th>Status</th>
+                                    <th>Due Trigger</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Deposit</td>
+                                    <td class="num">{depositFormatted}</td>
+                                    <td><span class={depositStatusChipClass}>{depositStatus}</span></td>
+                                    <td>At contract signing</td>
+                                </tr>
+                                <tr>
+                                    <td>Final Payment</td>
+                                    <td class="num">{finalPaymentFormatted}</td>
+                                    <td><span class="chip cgr">Pending</span></td>
+                                    <td>At project completion</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="layout-rail">
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#fe9339">ACTIONS</div>
+                            <h3>Quote Actions</h3>
+                        </div>
+                        <div class="qa-list">
+                            <div class="qa-item">Preview quote</div>
+                            <div class="qa-item">Send quote to customer</div>
+                            <div class="qa-item">Generate contract</div>
+                            <div class="qa-item">Record deposit payment</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#534ab7">AI</div>
+                            <h3>Assistant Panel</h3>
+                        </div>
+                        <div class="qa-list">
+                            <div class="qa-item">Summarize latest customer activity</div>
+                            <div class="qa-item">Draft follow-up email</div>
+                            <div class="qa-item">Create next task</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template if:false={isLoaded}>
+        <div style="padding:20px;text-align:center;color:#54698d">Loading...</div>
+    </template>
+</template>
