@@ -3,11 +3,7 @@ private class ODL_WorkControllerTest {
 
     @TestSetup
     static void setup() {
-        Account acc = new Account(Name = 'ODL Work Test Account');
-        insert acc;
-
         WorkOrder wo = new WorkOrder(
-            AccountId = acc.Id,
             Status = 'New',
             Subject = 'ODL Test Work Order',
             Division__c = 'Outdoor Living',
