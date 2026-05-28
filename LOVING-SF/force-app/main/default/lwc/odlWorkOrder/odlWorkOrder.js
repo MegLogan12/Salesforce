@@ -65,6 +65,13 @@ export default class OdlWorkOrder extends NavigationMixin(LightningElement) {
             state: { defaultFieldValues: encodeDefaultFieldValues({ WhatId: this.recordId, Subject: 'Follow Up' }) }
         });
     }
+    logCall() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Task', actionName: 'new' },
+            state: { defaultFieldValues: encodeDefaultFieldValues({ WhatId: this.recordId, Subject: 'Call', TaskSubtype: 'Call' }) }
+        });
+    }
     viewFiles() {
         this[NavigationMixin.Navigate]({
             type: 'standard__recordRelationshipPage',

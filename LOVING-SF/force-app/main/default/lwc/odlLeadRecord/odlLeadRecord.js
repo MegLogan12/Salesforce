@@ -89,6 +89,13 @@ export default class OdlLeadRecord extends NavigationMixin(LightningElement) {
             state: { defaultFieldValues: encodeDefaultFieldValues({ WhoId: this.recordId, Subject: 'Follow Up' }) }
         });
     }
+    logCall() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Task', actionName: 'new' },
+            state: { defaultFieldValues: encodeDefaultFieldValues({ WhoId: this.recordId, Subject: 'Call', TaskSubtype: 'Call' }) }
+        });
+    }
     draftEmail() {
         this[NavigationMixin.Navigate]({
             type: 'standard__recordRelationshipPage',
