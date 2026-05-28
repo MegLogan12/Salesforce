@@ -5,14 +5,19 @@ import { loadStyle } from 'lightning/platformResourceLoader';
 import homeownerStyles from '@salesforce/resourceUrl/homeownerStyles';
 import getLeadRecord from '@salesforce/apex/ODL_LeadController.getLeadRecord';
 
-const UMB_STAGES = ['New', 'Contacted', 'Qualified', 'Converted', 'Closed'];
-const CB_STAGES = ['New', 'Contacted', 'Site Visit Needed', 'Qualified', 'Converted', 'Closed'];
-const LC_STAGES = ['New', 'Contacted', 'Qualified', 'Converted', 'Closed'];
+const STAGES = ['New', 'Contacted', 'Qualified', 'Converted', 'Closed'];
+const FMT = { month: 'short', day: 'numeric' };
+
+function fmtDate(d) {
+    if (!d) return '—';
+    return new Date(d + 'T12:00:00').toLocaleDateString('en-US', FMT);
+}
 
 export default class OdlLeadRecord extends NavigationMixin(LightningElement) {
     @api recordId;
     @track lead = {};
     @track tasks = [];
+    @track campaignName = null;
     isLoaded = false;
 
     connectedCallback() {
@@ -23,19 +28,17 @@ export default class OdlLeadRecord extends NavigationMixin(LightningElement) {
     wiredData({ error, data }) {
         if (data) {
             this.lead = data.lead || {};
-            this.tasks = (data.tasks || []).map(t => ({
-                ...t,
-                activityDateFormatted: t.ActivityDate ? new Date(t.ActivityDate).toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '—'
-            }));
+            this.tasks = data.tasks || [];
+            this.campaignName = data.campaignName || null;
             this.isLoaded = true;
         } else if (error) {
             this.isLoaded = true;
         }
     }
 
-    get isUmb() { return !this.lead.ODL_Path__c || this.lead.ODL_Path__c === 'UMB'; }
+    get isUmb()         { return this.lead.ODL_Path__c === 'UMB'; }
     get isCustomBuild() { return this.lead.ODL_Path__c === 'Custom Build'; }
-    get isLawnCare() { return this.lead.ODL_Path__c === 'Lawn Care'; }
+    get isLawnCare()    { return this.lead.ODL_Path__c === 'Lawn Care'; }
 
     get lobChipClass() {
         if (this.isUmb) return 'chip co';
@@ -44,42 +47,68 @@ export default class OdlLeadRecord extends NavigationMixin(LightningElement) {
         return 'chip cgr';
     }
 
+    get leadSubtitle() {
+        if (this.isCustomBuild) return 'Custom Build homeowner lead. Discovery, site complexity, and site visit readiness.';
+        if (this.isLawnCare)    return 'Lawn Care homeowner lead. Maintenance and recurring service qualification.';
+        return 'UMB homeowner lead. Packaged backyard upgrade with package-fit and conversion cards.';
+    }
+
+    get conversionTarget() {
+        if (this.isCustomBuild) return 'Homeowner Account, Contact, Property, Custom Build Opportunity';
+        if (this.isLawnCare)    return 'Homeowner Account, Contact, Property, Lawn Care Opportunity';
+        return 'Homeowner Account, Contact, Property, UMB Opportunity';
+    }
+
+    get campaignDisplay() { return this.campaignName || '—'; }
+
     get pathSteps() {
-        const stages = this.isCustomBuild ? CB_STAGES : UMB_STAGES;
         const current = this.lead.Status || '';
         let found = false;
-        return stages.map(s => {
+        return STAGES.map(s => {
             let cssClass = 'path-step';
-            if (s === current) { cssClass = 'path-step on'; found = true; }
-            else if (!found) { cssClass = 'path-step done'; }
+            if (s === current)  { cssClass = 'path-step on'; found = true; }
+            else if (!found)    { cssClass = 'path-step done'; }
             return { label: s, cssClass };
         });
     }
 
-    get lastTouchFormatted() {
-        return this.lead.LastActivityDate ? new Date(this.lead.LastActivityDate).toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '—';
+    get taskRows() {
+        if (!this.tasks || this.tasks.length === 0) return [];
+        const sorted = [...this.tasks].sort((a, b) => {
+            const da = a.ActivityDate || '9999', db = b.ActivityDate || '9999';
+            return da < db ? -1 : da > db ? 1 : 0;
+        });
+        return sorted.map((t, i) => ({
+            ...t,
+            activityLabel: t.TaskSubtype || t.Subject || '—',
+            dateFormatted: fmtDate(t.ActivityDate),
+            outcome: t.CallDisposition || (t.Description ? t.Description.substring(0, 60) : '—'),
+            nextTask: i < sorted.length - 1 ? (sorted[i + 1].Subject || '—') : '—',
+            nextDue:  (i < sorted.length - 1 && sorted[i + 1].ActivityDate)
+                          ? fmtDate(sorted[i + 1].ActivityDate) : '—'
+        }));
     }
 
-    get voicemailLabel() { return this.lead.Voicemail_Left__c ? 'Left ' + (this.lead.Last_Voicemail_Date__c ? new Date(this.lead.Last_Voicemail_Date__c).toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '') : 'None'; }
-    get vmChipClass() { return this.lead.Voicemail_Left__c ? 'chip ca' : 'chip cgr'; }
     get noTasks() { return this.tasks.length === 0; }
-    get lastActivityLabel() {
-        if (this.tasks.length === 0) return '—';
-        const sorted = [...this.tasks].sort((a, b) => (b.ActivityDate || '') > (a.ActivityDate || '') ? 1 : -1);
-        return sorted[0].Subject || '—';
+
+    get openTaskCount() {
+        return this.tasks.filter(t => t.Status !== 'Completed').length;
     }
-    get nextTaskLabel() {
-        const today = new Date().toISOString().slice(0, 10);
-        const future = this.tasks.filter(t => t.ActivityDate && t.ActivityDate >= today).sort((a, b) => a.ActivityDate > b.ActivityDate ? 1 : -1);
-        return future.length > 0 ? (future[0].Subject || '—') : '—';
+
+    get lastTouchFormatted() { return fmtDate(this.lead.LastActivityDate); }
+
+    get voicemailLabel() {
+        if (!this.lead.Voicemail_Left__c) return 'None';
+        const d = fmtDate(this.lead.Last_Voicemail_Date__c);
+        return d !== '—' ? 'Left ' + d : 'Yes';
     }
+    get vmChipClass() { return this.lead.Voicemail_Left__c ? 'chip ca' : 'chip cgr'; }
 
     get nextFollowUpFormatted() {
-        const today = new Date();
-        const future = this.tasks
-            .filter(t => t.ActivityDate && new Date(t.ActivityDate) >= today)
-            .sort((a, b) => new Date(a.ActivityDate) - new Date(b.ActivityDate));
-        return future.length > 0 ? future[0].activityDateFormatted : '—';
+        const open = this.tasks
+            .filter(t => t.ActivityDate && t.Status !== 'Completed')
+            .sort((a, b) => (a.ActivityDate > b.ActivityDate ? 1 : -1));
+        return open.length > 0 ? fmtDate(open[0].ActivityDate) : '—';
     }
 
     createTask() {
@@ -89,6 +118,7 @@ export default class OdlLeadRecord extends NavigationMixin(LightningElement) {
             state: { defaultFieldValues: encodeDefaultFieldValues({ WhoId: this.recordId, Subject: 'Follow Up' }) }
         });
     }
+
     logCall() {
         this[NavigationMixin.Navigate]({
             type: 'standard__objectPage',
@@ -96,18 +126,36 @@ export default class OdlLeadRecord extends NavigationMixin(LightningElement) {
             state: { defaultFieldValues: encodeDefaultFieldValues({ WhoId: this.recordId, Subject: 'Call', TaskSubtype: 'Call' }) }
         });
     }
+
+    sendText() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Task', actionName: 'new' },
+            state: { defaultFieldValues: encodeDefaultFieldValues({ WhoId: this.recordId, Subject: 'Send Text', TaskSubtype: 'Email' }) }
+        });
+    }
+
+    convertLead() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: { recordId: this.recordId, objectApiName: 'Lead', actionName: 'convert' }
+        });
+    }
+
     draftEmail() {
         this[NavigationMixin.Navigate]({
             type: 'standard__recordRelationshipPage',
             attributes: { recordId: this.recordId, objectApiName: 'Lead', relationshipApiName: 'ActivityHistories', actionName: 'view' }
         });
     }
+
     viewActivity() {
         this[NavigationMixin.Navigate]({
             type: 'standard__recordRelationshipPage',
             attributes: { recordId: this.recordId, objectApiName: 'Lead', relationshipApiName: 'ActivityHistories', actionName: 'view' }
         });
     }
+
     viewTasks() {
         this[NavigationMixin.Navigate]({
             type: 'standard__objectPage',

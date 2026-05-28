@@ -1,12 +1,30 @@
 <template>
     <template if:true={isLoaded}>
+
+        <!-- Record Header -->
+        <div class="rec-header">
+            <div class="rec-top-row">
+                <div class="rec-icon" style="background:linear-gradient(135deg,#fe9339,#c57617)">LD</div>
+                <div class="rec-title-block">
+                    <div class="rec-breadcrumb">Lead</div>
+                    <div class="rec-title">{lead.Name}</div>
+                    <div class="rec-subtitle">{leadSubtitle}</div>
+                </div>
+                <div class="rec-actions">
+                    <button class="sf-btn" onclick={logCall}>Log Call</button>
+                    <button class="sf-btn" onclick={sendText}>Send Text</button>
+                    <button class="sf-btn primary" onclick={convertLead}>Convert Lead</button>
+                </div>
+            </div>
+        </div>
+
         <div class="sf-body">
-            <!-- Lead Path -->
+            <!-- Lead Status Path -->
             <div class="card">
                 <div class="ch">
                     <div class="ci" style="background:#fe9339">PATH</div>
-                    <h3>Lead Path</h3>
-                    <span class={lobChipClass}>{lead.ODL_Path__c}</span>
+                    <h3>Lead Status Path</h3>
+                    <span class={lobChipClass} style="margin-left:8px">{lead.ODL_Path__c}</span>
                 </div>
                 <div class="path">
                     <template for:each={pathSteps} for:item="step">
@@ -17,45 +35,12 @@
 
             <div class="layout">
                 <div class="layout-main">
-                    <!-- Lead Snapshot -->
-                    <div class="card info">
-                        <div class="ch">
-                            <div class="ci" style="background:#0070d2">SUM</div>
-                            <h3>Lead Snapshot</h3>
-                        </div>
-                        <div class="fields-grid">
-                            <div>
-                                <div class="field-label">Name</div>
-                                <div class="field-value">{lead.Name}</div>
-                            </div>
-                            <div>
-                                <div class="field-label">ODL Path</div>
-                                <div class="field-value"><span class={lobChipClass}>{lead.ODL_Path__c}</span></div>
-                            </div>
-                            <div>
-                                <div class="field-label">Lead Source</div>
-                                <div class="field-value">{lead.LeadSource}</div>
-                            </div>
-                            <div>
-                                <div class="field-label">Status</div>
-                                <div class="field-value"><span class="chip cgr">{lead.Status}</span></div>
-                            </div>
-                            <div>
-                                <div class="field-label">Phone</div>
-                                <div class="field-value">{lead.Phone}</div>
-                            </div>
-                            <div>
-                                <div class="field-label">Email</div>
-                                <div class="field-value">{lead.Email}</div>
-                            </div>
-                        </div>
-                    </div>
 
                     <!-- UMB Qualification -->
                     <template if:true={isUmb}>
-                        <div class="card">
+                        <div class="card info">
                             <div class="ch">
-                                <div class="ci" style="background:#fe9339">UMB</div>
+                                <div class="ci" style="background:#0070d2">Q</div>
                                 <h3>UMB Qualification</h3>
                             </div>
                             <div class="fields-grid">
@@ -73,7 +58,7 @@
                                 </div>
                                 <div>
                                     <div class="field-label">Package Fit</div>
-                                    <div class="field-value">{lead.Package_Fit__c}</div>
+                                    <div class="field-value"><span class="chip co">{lead.Package_Fit__c}</span></div>
                                 </div>
                                 <div>
                                     <div class="field-label">Desired Timeline</div>
@@ -81,6 +66,35 @@
                                 </div>
                                 <div>
                                     <div class="field-label">Conversion Target</div>
+                                    <div class="field-value">{conversionTarget}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Source and Campaign (UMB only) -->
+                        <div class="card">
+                            <div class="ch">
+                                <div class="ci" style="background:#04844b">SRC</div>
+                                <h3>Source and Campaign</h3>
+                            </div>
+                            <div class="fields-grid">
+                                <div>
+                                    <div class="field-label">Lead Source</div>
+                                    <div class="field-value">
+                                        {lead.LeadSource}
+                                        <span class="source-pill">Standard LeadSource</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="field-label">Campaign</div>
+                                    <div class="field-value">{campaignDisplay}</div>
+                                </div>
+                                <div>
+                                    <div class="field-label">Voucher Code</div>
+                                    <div class="field-value">—</div>
+                                </div>
+                                <div>
+                                    <div class="field-label">UTM Source</div>
                                     <div class="field-value">—</div>
                                 </div>
                             </div>
@@ -113,13 +127,40 @@
                                 </div>
                                 <div>
                                     <div class="field-label">Site Visit Needed</div>
-                                    <div class="field-value">—</div>
+                                    <div class="field-value">
+                                        <template if:true={lead.Site_Visit_Needed__c}>
+                                            <span class="chip ca">Yes</span>
+                                        </template>
+                                        <template if:false={lead.Site_Visit_Needed__c}>
+                                            <span class="chip cgr">No</span>
+                                        </template>
+                                    </div>
                                 </div>
                                 <div>
                                     <div class="field-label">Conversion Target</div>
-                                    <div class="field-value">—</div>
+                                    <div class="field-value">{conversionTarget}</div>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Scope Complexity (Custom Build only) -->
+                        <div class="card">
+                            <div class="ch">
+                                <div class="ci" style="background:#0070d2">FIT</div>
+                                <h3>Scope Complexity</h3>
+                            </div>
+                            <table class="tbl">
+                                <thead>
+                                    <tr><th>Scope Area</th><th>Need</th><th>Risk</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="3" style="text-align:center;color:#54698d;padding:12px">
+                                            No scope items recorded
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </template>
 
@@ -141,7 +182,7 @@
                                 </div>
                                 <div>
                                     <div class="field-label">Property Size</div>
-                                    <div class="field-value">{lead.Property_Size__c} sqft</div>
+                                    <div class="field-value">{lead.Property_Size__c}</div>
                                 </div>
                                 <div>
                                     <div class="field-label">Preferred Frequency</div>
@@ -153,47 +194,48 @@
                                 </div>
                                 <div>
                                     <div class="field-label">Conversion Target</div>
-                                    <div class="field-value">—</div>
+                                    <div class="field-value">{conversionTarget}</div>
                                 </div>
                             </div>
                         </div>
                     </template>
 
-                    <!-- Activity and Next Follow-Up -->
+                    <!-- Activity and Follow-Up -->
                     <div class="card">
                         <div class="ch">
                             <div class="ci" style="background:#534ab7">ACT</div>
-                            <h3>Activity and Next Follow-Up</h3>
+                            <h3>Activity and Follow-Up</h3>
                             <lightning-button label="New Task" onclick={createTask} style="margin-left:auto"></lightning-button>
                             <lightning-button label="Log Call" onclick={logCall} style="margin-left:8px"></lightning-button>
                         </div>
                         <table class="tbl">
                             <thead>
                                 <tr>
-                                    <th>Last Activity</th>
+                                    <th>Activity</th>
                                     <th>Date</th>
-                                    <th>Voicemail</th>
+                                    <th>Outcome</th>
                                     <th>Next Task</th>
                                     <th>Due</th>
-                                    <th>Owner</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <template if:false={noTasks}>
-                                    <tr>
-                                        <td>{lastActivityLabel}</td>
-                                        <td>{lastTouchFormatted}</td>
-                                        <td>
-                                            <template if:true={lead.Voicemail_Left__c}><span class="chip ca">Yes</span></template>
-                                            <template if:false={lead.Voicemail_Left__c}><span class="chip cgr">No</span></template>
-                                        </td>
-                                        <td>{nextTaskLabel}</td>
-                                        <td>{nextFollowUpFormatted}</td>
-                                        <td>{lead.Owner.Name}</td>
-                                    </tr>
+                                    <template for:each={taskRows} for:item="row">
+                                        <tr key={row.Id}>
+                                            <td>{row.activityLabel}</td>
+                                            <td>{row.dateFormatted}</td>
+                                            <td>{row.outcome}</td>
+                                            <td>{row.nextTask}</td>
+                                            <td>{row.nextDue}</td>
+                                        </tr>
+                                    </template>
                                 </template>
                                 <template if:true={noTasks}>
-                                    <tr><td colspan="6" style="text-align:center;color:#54698d;padding:12px">No activity yet</td></tr>
+                                    <tr>
+                                        <td colspan="5" style="text-align:center;color:#54698d;padding:12px">
+                                            No activity yet
+                                        </td>
+                                    </tr>
                                 </template>
                             </tbody>
                         </table>
@@ -234,7 +276,7 @@
                             </div>
                             <div class="rail-row">
                                 <span>Open tasks</span>
-                                <span>{tasks.length}</span>
+                                <span>{openTaskCount}</span>
                             </div>
                         </div>
                     </div>
