@@ -1,18 +1,19 @@
 <template>
     <!-- Filter toolbar -->
     <div class="list-toolbar">
-        <span class={allChipClass} onclick={filterAll}>All Leads</span>
+        <span class={allChipClass} onclick={filterAll}>All Homeowner Leads</span>
         <span class={umbChipClass} onclick={filterUmb}>UMB</span>
         <span class={cbChipClass} onclick={filterCb}>Custom Build</span>
         <span class={lcChipClass} onclick={filterLc}>Lawn Care</span>
         <span class="filter-chip" onclick={filterVoicemail}>Voicemail Left</span>
+        <span class="filter-chip" onclick={filterFollowUp}>Follow-Up Due</span>
         <input class="list-search" placeholder="Search leads..." value={searchTerm} onchange={handleSearch} />
     </div>
     <div class="sf-body">
         <div class="card">
             <div class="ch">
                 <div class="ci" style="background:#0070d2">LEAD</div>
-                <h3>Homeowner Leads</h3>
+                <h3>Lead Operating List</h3>
                 <span style="margin-left:auto;font-size:11px;color:#54698d">{filteredLeads.length} records</span>
             </div>
             <table class="tbl">
@@ -20,11 +21,14 @@
                     <tr>
                         <th>Name</th>
                         <th>LOB</th>
-                        <th>Source</th>
+                        <th>Lead Source</th>
                         <th>Status</th>
-                        <th>Budget</th>
+                        <th>Interest</th>
                         <th>Last Activity</th>
+                        <th>Last Activity Date</th>
                         <th>Voicemail</th>
+                        <th>Follow-Up Task</th>
+                        <th>Follow-Up Due</th>
                         <th>Owner</th>
                     </tr>
                 </thead>
@@ -35,7 +39,8 @@
                             <td><span class={lead.lobChipClass}>{lead.ODL_Path__c}</span></td>
                             <td>{lead.LeadSource}</td>
                             <td><span class="chip cgr">{lead.Status}</span></td>
-                            <td>{lead.Budget_Range__c}</td>
+                            <td>{lead.Service_Interest__c}</td>
+                            <td>{lead.lastActivityLabel}</td>
                             <td>{lead.lastActivityFormatted}</td>
                             <td>
                                 <template if:true={lead.Voicemail_Left__c}>
@@ -45,11 +50,13 @@
                                     <span class="chip cgr">No</span>
                                 </template>
                             </td>
+                            <td>—</td>
+                            <td>—</td>
                             <td>{lead.Owner.Name}</td>
                         </tr>
                     </template>
                     <template if:true={noLeads}>
-                        <tr><td colspan="8" style="text-align:center;color:#54698d;padding:16px">No leads found</td></tr>
+                        <tr><td colspan="11" style="text-align:center;color:#54698d;padding:16px">No leads found</td></tr>
                     </template>
                 </tbody>
             </table>

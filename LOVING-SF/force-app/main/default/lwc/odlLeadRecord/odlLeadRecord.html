@@ -1,7 +1,7 @@
 <template>
     <template if:true={isLoaded}>
         <div class="sf-body">
-            <!-- Opportunity Path -->
+            <!-- Lead Path -->
             <div class="card">
                 <div class="ch">
                     <div class="ci" style="background:#fe9339">PATH</div>
@@ -51,42 +51,54 @@
                         </div>
                     </div>
 
-                    <!-- UMB-specific: Package Interest -->
+                    <!-- UMB Qualification -->
                     <template if:true={isUmb}>
                         <div class="card">
                             <div class="ch">
                                 <div class="ci" style="background:#fe9339">UMB</div>
-                                <h3>UMB Interest Details</h3>
+                                <h3>UMB Qualification</h3>
                             </div>
                             <div class="fields-grid">
                                 <div>
-                                    <div class="field-label">Budget Range</div>
-                                    <div class="field-value">{lead.Budget_Range__c}</div>
+                                    <div class="field-label">ODL Path</div>
+                                    <div class="field-value"><span class="chip co">{lead.ODL_Path__c}</span></div>
                                 </div>
                                 <div>
-                                    <div class="field-label">Package Fit</div>
-                                    <div class="field-value">{lead.Package_Fit__c}</div>
+                                    <div class="field-label">Budget Range</div>
+                                    <div class="field-value">{lead.Budget_Range__c}</div>
                                 </div>
                                 <div>
                                     <div class="field-label">Service Interest</div>
                                     <div class="field-value">{lead.Service_Interest__c}</div>
                                 </div>
                                 <div>
+                                    <div class="field-label">Package Fit</div>
+                                    <div class="field-value">{lead.Package_Fit__c}</div>
+                                </div>
+                                <div>
                                     <div class="field-label">Desired Timeline</div>
                                     <div class="field-value">{lead.Desired_Timeline__c}</div>
+                                </div>
+                                <div>
+                                    <div class="field-label">Conversion Target</div>
+                                    <div class="field-value">—</div>
                                 </div>
                             </div>
                         </div>
                     </template>
 
-                    <!-- Custom Build-specific -->
+                    <!-- Custom Build Discovery -->
                     <template if:true={isCustomBuild}>
                         <div class="card purple">
                             <div class="ch">
                                 <div class="ci" style="background:#534ab7">DISC</div>
-                                <h3>Discovery Details</h3>
+                                <h3>Custom Build Discovery</h3>
                             </div>
                             <div class="fields-grid">
+                                <div>
+                                    <div class="field-label">ODL Path</div>
+                                    <div class="field-value"><span class="chip cp">{lead.ODL_Path__c}</span></div>
+                                </div>
                                 <div>
                                     <div class="field-label">Project Vision</div>
                                     <div class="field-value">{lead.Project_Vision__c}</div>
@@ -100,21 +112,29 @@
                                     <div class="field-value">{lead.Decision_Makers__c}</div>
                                 </div>
                                 <div>
-                                    <div class="field-label">Desired Timeline</div>
-                                    <div class="field-value">{lead.Desired_Timeline__c}</div>
+                                    <div class="field-label">Site Visit Needed</div>
+                                    <div class="field-value">—</div>
+                                </div>
+                                <div>
+                                    <div class="field-label">Conversion Target</div>
+                                    <div class="field-value">—</div>
                                 </div>
                             </div>
                         </div>
                     </template>
 
-                    <!-- Lawn Care-specific -->
+                    <!-- Lawn Care Qualification -->
                     <template if:true={isLawnCare}>
                         <div class="card aqua">
                             <div class="ch">
                                 <div class="ci" style="background:#1d9e75">LC</div>
-                                <h3>Lawn Care Interest</h3>
+                                <h3>Lawn Care Qualification</h3>
                             </div>
                             <div class="fields-grid">
+                                <div>
+                                    <div class="field-label">ODL Path</div>
+                                    <div class="field-value"><span class="chip ct">{lead.ODL_Path__c}</span></div>
+                                </div>
                                 <div>
                                     <div class="field-label">Service Interest</div>
                                     <div class="field-value">{lead.Service_Interest__c}</div>
@@ -131,11 +151,15 @@
                                     <div class="field-label">Start Window</div>
                                     <div class="field-value">{lead.Start_Window__c}</div>
                                 </div>
+                                <div>
+                                    <div class="field-label">Conversion Target</div>
+                                    <div class="field-value">—</div>
+                                </div>
                             </div>
                         </div>
                     </template>
 
-                    <!-- Activity Table -->
+                    <!-- Activity and Next Follow-Up -->
                     <div class="card">
                         <div class="ch">
                             <div class="ci" style="background:#534ab7">ACT</div>
@@ -147,8 +171,9 @@
                                     <th>Last Activity</th>
                                     <th>Date</th>
                                     <th>Voicemail</th>
+                                    <th>Next Task</th>
+                                    <th>Due</th>
                                     <th>Owner</th>
-                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -164,12 +189,13 @@
                                                 <span class="chip cgr">No</span>
                                             </template>
                                         </td>
-                                        <td>{task.Owner.Name}</td>
-                                        <td><span class="chip ca">{task.Status}</span></td>
+                                        <td>{task.Subject}</td>
+                                        <td>{task.activityDateFormatted}</td>
+                                        <td>{lead.Owner.Name}</td>
                                     </tr>
                                 </template>
                                 <template if:true={noTasks}>
-                                    <tr><td colspan="5" style="text-align:center;color:#54698d;padding:12px">No activity yet</td></tr>
+                                    <tr><td colspan="6" style="text-align:center;color:#54698d;padding:12px">No activity yet</td></tr>
                                 </template>
                             </tbody>
                         </table>
@@ -203,6 +229,10 @@
                             <div class="rail-row">
                                 <span>Voicemail</span>
                                 <span class={vmChipClass}>{voicemailLabel}</span>
+                            </div>
+                            <div class="rail-row">
+                                <span>Next follow-up</span>
+                                <span class="chip cb2">{nextFollowUpFormatted}</span>
                             </div>
                             <div class="rail-row">
                                 <span>Open tasks</span>

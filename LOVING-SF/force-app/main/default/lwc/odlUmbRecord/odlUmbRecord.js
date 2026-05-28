@@ -72,6 +72,14 @@ export default class OdlUmbRecord extends LightningElement {
     get entertainerChipClass() { return this.opp.Selected_Package__c === 'Entertainer' ? 'chip co' : 'chip cg'; }
     get signatureChipClass() { return this.opp.Selected_Package__c === 'Signature' ? 'chip co' : 'chip cg'; }
     get noTasks() { return this.tasks.length === 0; }
+
+    get nextFollowUpFormatted() {
+        const today = new Date();
+        const future = this.tasks
+            .filter(t => t.ActivityDate && new Date(t.ActivityDate) >= today)
+            .sort((a, b) => new Date(a.ActivityDate) - new Date(b.ActivityDate));
+        return future.length > 0 ? future[0].activityDateFormatted : '—';
+    }
     get nextActions() {
         const actions = [];
         if (this.opp.StageName === 'Quote Review') actions.push('Call homeowner to review quote', 'If no response, send text reminder', 'Move to Contract Sent after acceptance');

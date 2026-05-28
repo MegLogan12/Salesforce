@@ -35,26 +35,33 @@
                     <!-- Service Plan -->
                     <div class="card">
                         <div class="ch">
-                            <div class="ci" style="background:#1d9e75">SVC</div>
+                            <div class="ci" style="background:#1d9e75">PLAN</div>
                             <h3>Service Plan</h3>
                         </div>
-                        <div class="fields-grid">
-                            <div><div class="field-label">Service Interest</div><div class="field-value">{opp.Service_Interest__c}</div></div>
-                            <div><div class="field-label">Billing Frequency</div><div class="field-value">{opp.Billing_Frequency__c}</div></div>
-                            <div><div class="field-label">Monthly Billing</div><div class="field-value">{monthlyBillingFormatted}</div></div>
-                            <div><div class="field-label">Contract Term</div><div class="field-value">{opp.Contract_Term__c}</div></div>
-                            <div><div class="field-label">Estimate Status</div><div class="field-value">{opp.Estimate_Status__c}</div></div>
-                        </div>
+                        <table class="tbl">
+                            <thead><tr><th>Service</th><th>Frequency</th><th>Billing</th><th>Status</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td>{opp.Service_Interest__c}</td>
+                                    <td>{opp.Billing_Frequency__c}</td>
+                                    <td>{monthlyBillingFormatted} / mo</td>
+                                    <td><span class="chip ct">{opp.Estimate_Status__c}</span></td>
+                                </tr>
+                                <template if:true={noServicePlan}>
+                                    <tr><td colspan="4" style="text-align:center;color:#54698d;padding:12px">No service plan data</td></tr>
+                                </template>
+                            </tbody>
+                        </table>
                     </div>
 
-                    <!-- Activity -->
+                    <!-- Activity and Next Follow-Up -->
                     <div class="card">
                         <div class="ch">
                             <div class="ci" style="background:#534ab7">ACT</div>
                             <h3>Activity and Next Follow-Up</h3>
                         </div>
                         <table class="tbl">
-                            <thead><tr><th>Last Activity</th><th>Date</th><th>Voicemail</th><th>Owner</th><th>Status</th></tr></thead>
+                            <thead><tr><th>Last Activity</th><th>Date</th><th>Voicemail</th><th>Next Task</th><th>Due</th><th>Owner</th></tr></thead>
                             <tbody>
                                 <template for:each={tasks} for:item="task">
                                     <tr key={task.Id}>
@@ -64,32 +71,47 @@
                                             <template if:true={opp.Voicemail_Left__c}><span class="chip ca">Yes</span></template>
                                             <template if:false={opp.Voicemail_Left__c}><span class="chip cgr">No</span></template>
                                         </td>
-                                        <td>{task.Owner.Name}</td>
-                                        <td><span class="chip ca">{task.Status}</span></td>
+                                        <td>{task.Subject}</td>
+                                        <td>{task.activityDateFormatted}</td>
+                                        <td>{opp.Owner.Name}</td>
                                     </tr>
                                 </template>
                                 <template if:true={noTasks}>
-                                    <tr><td colspan="5" style="text-align:center;color:#54698d;padding:12px">No activity yet</td></tr>
+                                    <tr><td colspan="6" style="text-align:center;color:#54698d;padding:12px">No activity yet</td></tr>
                                 </template>
                             </tbody>
                         </table>
                     </div>
 
-                    <!-- Property -->
-                    <template if:true={hasProperty}>
+                    <!-- Estimate and Billing + Property -->
+                    <div class="g2">
                         <div class="card">
                             <div class="ch">
-                                <div class="ci" style="background:#1d9e75">PROP</div>
-                                <h3>Related Property</h3>
+                                <div class="ci" style="background:#04844b">$</div>
+                                <h3>Estimate and Billing</h3>
                             </div>
                             <div class="fields-grid">
-                                <div><div class="field-label">Property</div><div class="field-value">{opp.Homeowner_Property__r.Name}</div></div>
-                                <div><div class="field-label">Lot Size</div><div class="field-value">{opp.Homeowner_Property__r.Lot_Size__c} sqft</div></div>
-                                <div><div class="field-label">Irrigation</div><div class="field-value">{opp.Homeowner_Property__r.Irrigation__c}</div></div>
-                                <div><div class="field-label">Gate Access</div><div class="field-value">{opp.Homeowner_Property__r.Gate_Access__c}</div></div>
+                                <div><div class="field-label">Estimate Status</div><div class="field-value">{opp.Estimate_Status__c}</div></div>
+                                <div><div class="field-label">Monthly Billing</div><div class="field-value">{monthlyBillingFormatted}</div></div>
+                                <div><div class="field-label">Contract Term</div><div class="field-value">{opp.Contract_Term__c}</div></div>
+                                <div><div class="field-label">Billing Frequency</div><div class="field-value">{opp.Billing_Frequency__c}</div></div>
                             </div>
                         </div>
-                    </template>
+                        <template if:true={hasProperty}>
+                            <div class="card">
+                                <div class="ch">
+                                    <div class="ci" style="background:#1d9e75">PROP</div>
+                                    <h3>Related Property</h3>
+                                </div>
+                                <div class="fields-grid">
+                                    <div><div class="field-label">Property</div><div class="field-value">{opp.Homeowner_Property__r.Name}</div></div>
+                                    <div><div class="field-label">Lot Size</div><div class="field-value">{opp.Homeowner_Property__r.Lot_Size__c} sqft</div></div>
+                                    <div><div class="field-label">Irrigation</div><div class="field-value">{opp.Homeowner_Property__r.Irrigation__c}</div></div>
+                                    <div><div class="field-label">Gate Access</div><div class="field-value">{opp.Homeowner_Property__r.Gate_Access__c}</div></div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
                 </div>
 
                 <!-- Rail -->
@@ -100,9 +122,9 @@
                             <h3>Next Action</h3>
                         </div>
                         <div class="qa-list">
-                            <div class="qa-item">Finalize service plan</div>
-                            <div class="qa-item">Send estimate to customer</div>
-                            <div class="qa-item">Schedule first service date</div>
+                            <div class="qa-item">Send final service plan</div>
+                            <div class="qa-item">Collect contract approval</div>
+                            <div class="qa-item">Create recurring service schedule</div>
                         </div>
                     </div>
                     <div class="card">
@@ -125,6 +147,7 @@
                         <div style="padding:10px 14px">
                             <div class="rail-row"><span>Last touch</span><span>{lastTouchFormatted}</span></div>
                             <div class="rail-row"><span>Voicemail</span><span class={vmChipClass}>{voicemailLabel}</span></div>
+                            <div class="rail-row"><span>Next follow-up</span><span class="chip cb2">{nextFollowUpFormatted}</span></div>
                             <div class="rail-row"><span>Open tasks</span><span>{tasks.length}</span></div>
                         </div>
                     </div>

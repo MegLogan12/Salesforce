@@ -19,7 +19,8 @@ export default class OdlLeadList extends LightningElement {
             this.leads = data.map(l => ({
                 ...l,
                 lobChipClass: l.ODL_Path__c === 'UMB' ? 'chip co' : l.ODL_Path__c === 'Custom Build' ? 'chip cp' : l.ODL_Path__c === 'Lawn Care' ? 'chip ct' : 'chip cgr',
-                lastActivityFormatted: l.LastActivityDate ? new Date(l.LastActivityDate).toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '—'
+                lastActivityFormatted: l.LastActivityDate ? new Date(l.LastActivityDate).toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '—',
+                lastActivityLabel: l.Voicemail_Left__c ? 'Voicemail left' : (l.LastActivityDate ? 'Activity' : '—')
             }));
         } else if (error) {
             this.error = error;
@@ -28,7 +29,11 @@ export default class OdlLeadList extends LightningElement {
 
     get filteredLeads() {
         let result = this.leads;
-        if (this.activeFilter !== 'All') {
+        if (this.activeFilter === 'Voicemail') {
+            result = result.filter(l => l.Voicemail_Left__c);
+        } else if (this.activeFilter === 'FollowUp') {
+            result = result.filter(l => l.Last_Voicemail_Date__c);
+        } else if (this.activeFilter !== 'All') {
             result = result.filter(l => l.ODL_Path__c === this.activeFilter);
         }
         if (this.searchTerm) {
@@ -48,6 +53,7 @@ export default class OdlLeadList extends LightningElement {
     filterCb() { this.activeFilter = 'Custom Build'; }
     filterLc() { this.activeFilter = 'Lawn Care'; }
     filterVoicemail() { this.activeFilter = 'Voicemail'; }
+    filterFollowUp() { this.activeFilter = 'FollowUp'; }
 
     handleSearch(e) { this.searchTerm = e.target.value; }
     get noLeads() { return this.filteredLeads.length === 0; }

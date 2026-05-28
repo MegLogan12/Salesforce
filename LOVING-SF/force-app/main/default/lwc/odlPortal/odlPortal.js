@@ -8,4 +8,10 @@ export default class OdlPortal extends LightningElement {
     connectedCallback() {
         loadStyle(this, homeownerStyles).catch(() => {});
     }
+
+    get contactName() { return 'Sarah'; }
+    get propertyAddress() { return '—'; }
+    get propertyAccessNotes() { return '—'; }
+    get propertyUtilityReview() { return '—'; }
+    get propertyCustomerPrep() { return '—'; }
 }

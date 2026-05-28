@@ -3,25 +3,64 @@
         <div class="sf-body">
             <div class="layout">
                 <div class="layout-main">
-                    <!-- Snapshot -->
+                    <!-- Quote Header -->
                     <div class="card info">
                         <div class="ch">
-                            <div class="ci" style="background:#0070d2">QUOT</div>
-                            <h3>Quote Summary</h3>
+                            <div class="ci" style="background:#0070d2">Q</div>
+                            <h3>Quote Header</h3>
                         </div>
                         <div class="fields-grid">
+                            <div><div class="field-label">Quote Number</div><div class="field-value">Q-{quoteNumber}</div></div>
                             <div><div class="field-label">Opportunity</div><div class="field-value nl">{opp.Name}</div></div>
-                            <div><div class="field-label">Quote Status</div><div class="field-value"><span class={quoteStatusChipClass}>{opp.Quote_Status__c}</span></div></div>
-                            <div><div class="field-label">Amount</div><div class="field-value"><strong>{amountFormatted}</strong></div></div>
-                            <div><div class="field-label">Deposit Due</div><div class="field-value">{depositFormatted}</div></div>
-                            <div><div class="field-label">Contract Status</div><div class="field-value"><span class={contractChipClass}>{opp.Contract_Status__c}</span></div></div>
+                            <div><div class="field-label">Status</div><div class="field-value"><span class={quoteStatusChipClass}>{opp.Quote_Status__c}</span></div></div>
+                            <div><div class="field-label">Quote Amount</div><div class="field-value"><strong>{amountFormatted}</strong></div></div>
+                            <div><div class="field-label">Deposit</div><div class="field-value">{depositFormatted}</div></div>
+                            <div><div class="field-label">Final Payment</div><div class="field-value">{finalPaymentFormatted}</div></div>
                         </div>
+                    </div>
+
+                    <!-- Quote Lines -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#fe9339">LI</div>
+                            <h3>Quote Lines</h3>
+                        </div>
+                        <table class="tbl">
+                            <thead>
+                                <tr>
+                                    <th>Line</th>
+                                    <th>Product</th>
+                                    <th class="num">Quantity</th>
+                                    <th>Unit</th>
+                                    <th class="num">Price</th>
+                                    <th>Billable Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>{opp.Selected_Package__c}</td>
+                                    <td class="num">1</td>
+                                    <td>Package</td>
+                                    <td class="num">{amountFormatted}</td>
+                                    <td>Billable</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Voucher Credit</td>
+                                    <td class="num">0</td>
+                                    <td>Credit</td>
+                                    <td class="num">$0</td>
+                                    <td>No Charge</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
 
                     <!-- Payment Milestones -->
                     <div class="card">
                         <div class="ch">
-                            <div class="ci" style="background:#04844b">PAY</div>
+                            <div class="ci" style="background:#04844b">$</div>
                             <h3>Payment Milestones</h3>
                         </div>
                         <table class="tbl">
@@ -38,13 +77,13 @@
                                     <td>Deposit</td>
                                     <td class="num">{depositFormatted}</td>
                                     <td><span class={depositStatusChipClass}>{depositStatus}</span></td>
-                                    <td>At contract signing</td>
+                                    <td>Contract acceptance</td>
                                 </tr>
                                 <tr>
                                     <td>Final Payment</td>
                                     <td class="num">{finalPaymentFormatted}</td>
-                                    <td><span class="chip cgr">Pending</span></td>
-                                    <td>At project completion</td>
+                                    <td><span class="chip cgr">Not Due</span></td>
+                                    <td>Substantial completion</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -53,14 +92,14 @@
                 <div class="layout-rail">
                     <div class="card">
                         <div class="ch">
-                            <div class="ci" style="background:#fe9339">ACTIONS</div>
+                            <div class="ci" style="background:#fe9339">A</div>
                             <h3>Quote Actions</h3>
                         </div>
                         <div class="qa-list">
-                            <div class="qa-item">Preview quote</div>
-                            <div class="qa-item">Send quote to customer</div>
-                            <div class="qa-item">Generate contract</div>
-                            <div class="qa-item">Record deposit payment</div>
+                            <div class="qa-item">Preview customer quote</div>
+                            <div class="qa-item">Send reminder</div>
+                            <div class="qa-item">Create contract</div>
+                            <div class="qa-item">Create payment link</div>
                         </div>
                     </div>
                     <div class="card">
@@ -72,6 +111,18 @@
                             <div class="qa-item">Summarize latest customer activity</div>
                             <div class="qa-item">Draft follow-up email</div>
                             <div class="qa-item">Create next task</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#0070d2">SLA</div>
+                            <h3>Activity Health</h3>
+                        </div>
+                        <div style="padding:10px 14px">
+                            <div class="rail-row"><span>Last touch</span><span>—</span></div>
+                            <div class="rail-row"><span>Voicemail</span><span class="chip cgr">None</span></div>
+                            <div class="rail-row"><span>Next follow-up</span><span class="chip cb2">—</span></div>
+                            <div class="rail-row"><span>Open tasks</span><span>—</span></div>
                         </div>
                     </div>
                 </div>

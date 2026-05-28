@@ -5,9 +5,11 @@ import getCampaignMetrics from '@salesforce/apex/ODL_DashboardController.getCamp
 
 export default class OdlCampaigns extends LightningElement {
     @track campaigns = [];
+    @track campaignMembers = [];
     activeCount = 0;
     totalMembers = 0;
-    totalRevenue = '—';
+    conversionRate = '—';
+    voucherPending = 0;
 
     connectedCallback() {
         loadStyle(this, homeownerStyles).catch(() => {});
@@ -18,13 +20,19 @@ export default class OdlCampaigns extends LightningElement {
         if (data) {
             this.campaigns = (data.campaigns || []).map(c => ({
                 ...c,
-                revenueFormatted: c.ExpectedRevenue ? '$' + Number(c.ExpectedRevenue).toLocaleString() : '—'
+                revenueFormatted: c.ExpectedRevenue ? '$' + Number(c.ExpectedRevenue).toLocaleString() : '—',
+                lobLabel: c.Description || '—',
+                lobChipClass: 'chip cgr'
             }));
             this.activeCount = data.activeCount || 0;
             this.totalMembers = data.totalMembers || 0;
-            this.totalRevenue = data.totalRevenue ? '$' + Number(data.totalRevenue).toLocaleString() : '—';
+            const leads = data.totalLeads || 0;
+            const converted = data.convertedLeads || 0;
+            this.conversionRate = leads > 0 ? Math.round((converted / leads) * 100) + '%' : '—';
+            this.voucherPending = data.voucherPending || 0;
         }
     }
 
     get noCampaigns() { return this.campaigns.length === 0; }
+    get noMembers() { return this.campaignMembers.length === 0; }
 }

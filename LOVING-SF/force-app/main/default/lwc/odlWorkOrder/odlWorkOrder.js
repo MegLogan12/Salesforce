@@ -21,7 +21,9 @@ export default class OdlWorkOrder extends LightningElement {
             this.workOrder = data.workOrder || {};
             this.lineItems = (data.lineItems || []).map(li => ({
                 ...li,
-                statusChipClass: li.Status === 'Completed' ? 'chip cg' : li.Status === 'In Progress' ? 'chip ca' : 'chip cgr'
+                statusChipClass: li.Status === 'Completed' ? 'chip cg' : li.Status === 'In Progress' ? 'chip ca' : 'chip cgr',
+                ownerName: li.Owner ? li.Owner.Name : '—',
+                dueDateFormatted: li.EndDate ? new Date(li.EndDate + 'T12:00:00').toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '—'
             }));
             this.isLoaded = true;
         } else if (error) {
@@ -49,4 +51,5 @@ export default class OdlWorkOrder extends LightningElement {
         return 'chip cb2';
     }
     get noLineItems() { return this.lineItems.length === 0; }
+    get openPunchCount() { return this.lineItems.filter(li => li.Status !== 'Completed').length; }
 }

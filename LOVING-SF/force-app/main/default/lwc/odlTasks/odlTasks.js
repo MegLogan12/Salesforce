@@ -15,6 +15,8 @@ export default class OdlTasks extends LightningElement {
     overdueCount = 0;
     todayCount = 0;
     upcomingCount = 0;
+    voicemailCount = 0;
+    completedTodayCount = 0;
 
     connectedCallback() {
         loadStyle(this, homeownerStyles).catch(() => {});
@@ -35,6 +37,9 @@ export default class OdlTasks extends LightningElement {
             this.overdueCount = data.overdueCount || 0;
             this.todayCount = data.todayCount || 0;
             this.upcomingCount = this.upcomingTasks.length;
+            const allMapped = [...this.overdueTasks, ...this.todayTasks, ...this.upcomingTasks];
+            this.voicemailCount = allMapped.filter(t => t.Subject && t.Subject.toLowerCase().includes('voicemail')).length;
+            this.completedTodayCount = (data.completedTodayTasks || []).length;
         }
     }
 
@@ -50,10 +55,17 @@ export default class OdlTasks extends LightningElement {
     get allChipClass() { return this.activeView === 'today' ? 'filter-chip on' : 'filter-chip'; }
     get overdueChipClass() { return this.activeView === 'overdue' ? 'filter-chip on' : 'filter-chip'; }
     get upcomingChipClass() { return this.activeView === 'upcoming' ? 'filter-chip on' : 'filter-chip'; }
+    get umbChipClass() { return this.activeView === 'UMB' ? 'filter-chip on' : 'filter-chip'; }
+    get cbChipClass() { return this.activeView === 'Custom Build' ? 'filter-chip on' : 'filter-chip'; }
+    get lcChipClass() { return this.activeView === 'Lawn Care' ? 'filter-chip on' : 'filter-chip'; }
 
     showAll() { this.activeView = 'today'; }
+    showVoicemail() { this.activeView = 'voicemail'; }
     showOverdue() { this.activeView = 'overdue'; }
     showUpcoming() { this.activeView = 'upcoming'; }
+    filterUmb() { this.activeView = 'UMB'; }
+    filterCb() { this.activeView = 'Custom Build'; }
+    filterLc() { this.activeView = 'Lawn Care'; }
     handleSearch(e) { this.searchTerm = e.target.value; }
 
     get calendarDays() {

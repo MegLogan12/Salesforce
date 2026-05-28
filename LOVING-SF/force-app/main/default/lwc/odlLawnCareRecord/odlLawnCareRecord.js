@@ -48,4 +48,13 @@ export default class OdlLawnCareRecord extends LightningElement {
     get vmChipClass() { return this.opp.Voicemail_Left__c ? 'chip ca' : 'chip cgr'; }
     get hasProperty() { return this.opp.Homeowner_Property__c != null; }
     get noTasks() { return this.tasks.length === 0; }
+    get noServicePlan() { return !this.opp.Service_Interest__c && !this.opp.Billing_Frequency__c; }
+
+    get nextFollowUpFormatted() {
+        const today = new Date();
+        const future = this.tasks
+            .filter(t => t.ActivityDate && new Date(t.ActivityDate) >= today)
+            .sort((a, b) => new Date(a.ActivityDate) - new Date(b.ActivityDate));
+        return future.length > 0 ? future[0].activityDateFormatted : '—';
+    }
 }

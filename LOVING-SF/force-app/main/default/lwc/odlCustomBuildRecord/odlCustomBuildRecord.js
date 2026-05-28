@@ -56,4 +56,12 @@ export default class OdlCustomBuildRecord extends LightningElement {
         return (u === 'Review Needed' || u === 'Likely Required') ? 'chip cb2' : u === 'Complete' ? 'chip cg' : 'chip cgr';
     }
     get noTasks() { return this.tasks.length === 0; }
+
+    get nextFollowUpFormatted() {
+        const today = new Date();
+        const future = this.tasks
+            .filter(t => t.ActivityDate && new Date(t.ActivityDate) >= today)
+            .sort((a, b) => new Date(a.ActivityDate) - new Date(b.ActivityDate));
+        return future.length > 0 ? future[0].activityDateFormatted : '—';
+    }
 }

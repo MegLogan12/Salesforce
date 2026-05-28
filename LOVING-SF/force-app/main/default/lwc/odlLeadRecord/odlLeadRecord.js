@@ -61,4 +61,12 @@ export default class OdlLeadRecord extends LightningElement {
     get voicemailLabel() { return this.lead.Voicemail_Left__c ? 'Left ' + (this.lead.Last_Voicemail_Date__c ? new Date(this.lead.Last_Voicemail_Date__c).toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '') : 'None'; }
     get vmChipClass() { return this.lead.Voicemail_Left__c ? 'chip ca' : 'chip cgr'; }
     get noTasks() { return this.tasks.length === 0; }
+
+    get nextFollowUpFormatted() {
+        const today = new Date();
+        const future = this.tasks
+            .filter(t => t.ActivityDate && new Date(t.ActivityDate) >= today)
+            .sort((a, b) => new Date(a.ActivityDate) - new Date(b.ActivityDate));
+        return future.length > 0 ? future[0].activityDateFormatted : '—';
+    }
 }

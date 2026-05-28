@@ -42,4 +42,12 @@ export default class OdlWarrantyCase extends LightningElement {
         if (p === 'Medium') return 'chip ca';
         return 'chip cgr';
     }
+
+    get coverageItems() {
+        return [
+            { id: '1', claimArea: 'Paver settling', coverage: 'Workmanship', action: 'Schedule inspection', status: 'Review', chipClass: 'chip cb2' },
+            { id: '2', claimArea: 'Lighting fixture', coverage: 'Manufacturer', action: 'Request replacement part', status: 'Pending', chipClass: 'chip ca' }
+        ];
+    }
+    get noCoverageItems() { return false; }
 }

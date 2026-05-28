@@ -24,7 +24,7 @@
                             <h3>Work Order Header</h3>
                         </div>
                         <div class="fields-grid">
-                            <div><div class="field-label">Work Order #</div><div class="field-value">{workOrder.WorkOrderNumber}</div></div>
+                            <div><div class="field-label">Work Order</div><div class="field-value">{workOrder.WorkOrderNumber}</div></div>
                             <div><div class="field-label">Opportunity</div><div class="field-value nl">{workOrder.ODL_Opportunity__r.Name}</div></div>
                             <div><div class="field-label">Division</div><div class="field-value">{workOrder.Division__c}</div></div>
                             <div><div class="field-label">Job Type</div><div class="field-value">{workOrder.Job_Type__c}</div></div>
@@ -41,10 +41,10 @@
                                 <h3>Crew and Schedule</h3>
                             </div>
                             <div class="fields-grid">
-                                <div><div class="field-label">Owner</div><div class="field-value">{workOrder.Owner.Name}</div></div>
-                                <div><div class="field-label">Status</div><div class="field-value"><span class={statusChipClass}>{workOrder.Status}</span></div></div>
+                                <div><div class="field-label">Crew</div><div class="field-value">{workOrder.Owner.Name}</div></div>
+                                <div><div class="field-label">Field Manager</div><div class="field-value">—</div></div>
                                 <div><div class="field-label">Start Date</div><div class="field-value">{startDateFormatted}</div></div>
-                                <div><div class="field-label">End Date</div><div class="field-value">{endDateFormatted}</div></div>
+                                <div><div class="field-label">Target Completion</div><div class="field-value">{endDateFormatted}</div></div>
                             </div>
                         </div>
                         <div class="card">
@@ -61,24 +61,25 @@
                         </div>
                     </div>
 
-                    <!-- Punch Items (Line Items) -->
+                    <!-- Punch Items -->
                     <div class="card">
                         <div class="ch">
                             <div class="ci" style="background:#fe9339">PUNCH</div>
-                            <h3>Work Items / Punch List</h3>
+                            <h3>Punch Items</h3>
                         </div>
                         <table class="tbl">
-                            <thead><tr><th>Item</th><th>Status</th><th>Duration</th></tr></thead>
+                            <thead><tr><th>Item</th><th>Owner</th><th>Status</th><th>Due</th></tr></thead>
                             <tbody>
                                 <template for:each={lineItems} for:item="item">
                                     <tr key={item.Id}>
                                         <td>{item.Subject}</td>
+                                        <td>{item.ownerName}</td>
                                         <td><span class={item.statusChipClass}>{item.Status}</span></td>
-                                        <td>{item.Duration} {item.DurationType}</td>
+                                        <td>{item.dueDateFormatted}</td>
                                     </tr>
                                 </template>
                                 <template if:true={noLineItems}>
-                                    <tr><td colspan="3" style="text-align:center;color:#54698d;padding:12px">No work items added yet</td></tr>
+                                    <tr><td colspan="4" style="text-align:center;color:#54698d;padding:12px">No punch items yet</td></tr>
                                 </template>
                             </tbody>
                         </table>
@@ -108,6 +109,18 @@
                             <div class="qa-item">Summarize work order status</div>
                             <div class="qa-item">Draft customer update</div>
                             <div class="qa-item">Show open punch items</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#0070d2">SLA</div>
+                            <h3>Activity Health</h3>
+                        </div>
+                        <div style="padding:10px 14px">
+                            <div class="rail-row"><span>Last touch</span><span>—</span></div>
+                            <div class="rail-row"><span>Voicemail</span><span class="chip cgr">None</span></div>
+                            <div class="rail-row"><span>Next follow-up</span><span class="chip cb2">—</span></div>
+                            <div class="rail-row"><span>Open tasks</span><span>{openPunchCount}</span></div>
                         </div>
                     </div>
                 </div>

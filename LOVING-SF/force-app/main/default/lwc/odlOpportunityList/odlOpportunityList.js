@@ -19,7 +19,8 @@ export default class OdlOpportunityList extends LightningElement {
                 ...o,
                 lobChipClass: o.ODL_Path__c === 'UMB' ? 'chip co' : o.ODL_Path__c === 'Custom Build' ? 'chip cp' : o.ODL_Path__c === 'Lawn Care' ? 'chip ct' : 'chip cgr',
                 amountFormatted: o.Amount ? '$' + Number(o.Amount).toLocaleString() : '—',
-                lastActivityFormatted: o.LastActivityDate ? new Date(o.LastActivityDate).toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '—'
+                lastActivityFormatted: o.LastActivityDate ? new Date(o.LastActivityDate).toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '—',
+                lastActivityLabel: o.Voicemail_Left__c ? 'Voicemail left' : (o.LastActivityDate ? 'Activity' : '—')
             }));
         }
     }
@@ -45,6 +46,7 @@ export default class OdlOpportunityList extends LightningElement {
     filterCb() { this.activeFilter = 'Custom Build'; }
     filterLc() { this.activeFilter = 'Lawn Care'; }
     filterVoicemail() { this.activeFilter = 'Voicemail'; }
+    filterFollowUp() { this.activeFilter = 'FollowUp'; }
     handleSearch(e) { this.searchTerm = e.target.value; }
     get noOpps() { return this.filteredOpps.length === 0; }
 }

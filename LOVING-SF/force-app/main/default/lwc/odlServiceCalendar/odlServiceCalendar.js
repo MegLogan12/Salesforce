@@ -11,7 +11,7 @@ export default class OdlServiceCalendar extends LightningElement {
     consultCount = 0;
     siteVisitCount = 0;
     installCount = 0;
-    totalCount = 0;
+    followUpCount = 0;
 
     connectedCallback() {
         loadStyle(this, homeownerStyles).catch(() => {});
@@ -20,12 +20,18 @@ export default class OdlServiceCalendar extends LightningElement {
     @wire(getServiceCalendar)
     wiredData({ error, data }) {
         if (data) {
-            this.appointments = data.map((a, i) => ({
+            this.appointments = data.map((a) => ({
                 ...a,
-                startFormatted: a.SchedStartTime ? new Date(a.SchedStartTime).toLocaleString('en-US', {month:'short', day:'numeric', hour:'numeric', minute:'2-digit'}) : '—',
-                endFormatted: a.SchedEndTime ? new Date(a.SchedEndTime).toLocaleString('en-US', {hour:'numeric', minute:'2-digit'}) : '—'
+                dateFormatted: a.SchedStartTime ? new Date(a.SchedStartTime).toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '—',
+                windowFormatted: a.SchedStartTime ? new Date(a.SchedStartTime).toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit'}) : '—',
+                appointmentType: a.Subject ? (a.Subject.toLowerCase().includes('consult') ? 'Consult' : a.Subject.toLowerCase().includes('site') ? 'Site Visit' : a.Subject.toLowerCase().includes('install') ? 'Install' : 'Follow-up') : '—',
+                relatedRecord: a.ParentRecordId ? a.ParentRecordId : '—'
             }));
-            this.totalCount = data.length;
+            const subj = (a) => (a.Subject || '').toLowerCase();
+            this.consultCount = data.filter(a => subj(a).includes('consult')).length;
+            this.siteVisitCount = data.filter(a => subj(a).includes('site')).length;
+            this.installCount = data.filter(a => subj(a).includes('install')).length;
+            this.followUpCount = data.filter(a => subj(a).includes('follow')).length;
         }
     }
 

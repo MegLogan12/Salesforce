@@ -15,7 +15,8 @@ public with sharing class ODL_WorkController {
         ];
 
         List<WorkOrderLineItem> lineItems = [
-            SELECT Id, Subject, Status, Duration, DurationType
+            SELECT Id, Subject, Status, Duration, DurationType,
+                   OwnerId, Owner.Name, EndDate
             FROM WorkOrderLineItem
             WHERE WorkOrderId = :workOrderId
             LIMIT 20

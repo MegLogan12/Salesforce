@@ -47,14 +47,51 @@
                         </div>
                     </div>
 
-                    <!-- Activity -->
+                    <!-- Site Visit and Scope -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#0070d2">SV</div>
+                            <h3>Site Visit and Scope</h3>
+                        </div>
+                        <table class="tbl">
+                            <thead><tr><th>Item</th><th>Status</th><th>Owner</th><th>Date</th></tr></thead>
+                            <tbody>
+                                <tr>
+                                    <td>Site visit appointment</td>
+                                    <td><span class="chip cb2">Scheduled</span></td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>Measurements</td>
+                                    <td><span class="chip cgr">Pending visit</span></td>
+                                    <td>Designer</td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>Photos</td>
+                                    <td><span class="chip cgr">Pending visit</span></td>
+                                    <td>Designer</td>
+                                    <td>—</td>
+                                </tr>
+                                <tr>
+                                    <td>Scope draft</td>
+                                    <td><span class="chip cgr">Not started</span></td>
+                                    <td>Studio Lead</td>
+                                    <td>—</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Activity and Next Follow-Up -->
                     <div class="card">
                         <div class="ch">
                             <div class="ci" style="background:#534ab7">ACT</div>
                             <h3>Activity and Next Follow-Up</h3>
                         </div>
                         <table class="tbl">
-                            <thead><tr><th>Last Activity</th><th>Date</th><th>Voicemail</th><th>Owner</th><th>Status</th></tr></thead>
+                            <thead><tr><th>Last Activity</th><th>Date</th><th>Voicemail</th><th>Next Task</th><th>Due</th><th>Owner</th></tr></thead>
                             <tbody>
                                 <template for:each={tasks} for:item="task">
                                     <tr key={task.Id}>
@@ -68,12 +105,13 @@
                                                 <span class="chip cgr">No</span>
                                             </template>
                                         </td>
-                                        <td>{task.Owner.Name}</td>
-                                        <td><span class="chip ca">{task.Status}</span></td>
+                                        <td>{task.Subject}</td>
+                                        <td>{task.activityDateFormatted}</td>
+                                        <td>{opp.Owner.Name}</td>
                                     </tr>
                                 </template>
                                 <template if:true={noTasks}>
-                                    <tr><td colspan="5" style="text-align:center;color:#54698d;padding:12px">No activity yet</td></tr>
+                                    <tr><td colspan="6" style="text-align:center;color:#54698d;padding:12px">No activity yet</td></tr>
                                 </template>
                             </tbody>
                         </table>
@@ -90,6 +128,7 @@
                                 <div><div class="field-label">Estimate Status</div><div class="field-value">{opp.Estimate_Status__c}</div></div>
                                 <div><div class="field-label">Projected Cost</div><div class="field-value">{projectedCostFormatted}</div></div>
                                 <div><div class="field-label">Projected Price</div><div class="field-value">{amountFormatted}</div></div>
+                                <div><div class="field-label">Estimator</div><div class="field-value">—</div></div>
                             </div>
                         </div>
                         <template if:true={hasProperty}>
@@ -142,6 +181,7 @@
                         <div style="padding:10px 14px">
                             <div class="rail-row"><span>Last touch</span><span>{lastTouchFormatted}</span></div>
                             <div class="rail-row"><span>Voicemail</span><span class={vmChipClass}>{voicemailLabel}</span></div>
+                            <div class="rail-row"><span>Next follow-up</span><span class="chip cb2">{nextFollowUpFormatted}</span></div>
                             <div class="rail-row"><span>Open tasks</span><span>{tasks.length}</span></div>
                         </div>
                     </div>

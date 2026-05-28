@@ -6,7 +6,6 @@
                 <div class="ch">
                     <div class="ci" style="background:#fe9339">PATH</div>
                     <h3>Case Status</h3>
-                    <span class="chip cb2">Warranty</span>
                 </div>
                 <div class="path">
                     <template for:each={pathSteps} for:item="step">
@@ -17,20 +16,44 @@
 
             <div class="layout">
                 <div class="layout-main">
-                    <!-- Case Summary -->
+                    <!-- Case Snapshot -->
                     <div class="card info">
                         <div class="ch">
                             <div class="ci" style="background:#0070d2">CASE</div>
-                            <h3>Case Summary</h3>
+                            <h3>Case Snapshot</h3>
                         </div>
                         <div class="fields-grid">
                             <div><div class="field-label">Case Number</div><div class="field-value">{caseRecord.CaseNumber}</div></div>
                             <div><div class="field-label">Account</div><div class="field-value nl">{caseRecord.Account.Name}</div></div>
                             <div><div class="field-label">Case Type</div><div class="field-value"><span class="chip cb2">{caseRecord.Type}</span></div></div>
                             <div><div class="field-label">Priority</div><div class="field-value"><span class={priorityChipClass}>{caseRecord.Priority}</span></div></div>
-                            <div><div class="field-label">Status</div><div class="field-value">{caseRecord.Status}</div></div>
-                            <div><div class="field-label">Created</div><div class="field-value">{createdDateFormatted}</div></div>
+                            <div><div class="field-label">Related Work Order</div><div class="field-value">—</div></div>
+                            <div><div class="field-label">Related Property</div><div class="field-value">—</div></div>
                         </div>
+                    </div>
+
+                    <!-- Coverage Review -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#04844b">COV</div>
+                            <h3>Coverage Review</h3>
+                        </div>
+                        <table class="tbl">
+                            <thead><tr><th>Claim Area</th><th>Coverage</th><th>Action</th><th>Status</th></tr></thead>
+                            <tbody>
+                                <template for:each={coverageItems} for:item="item">
+                                    <tr key={item.id}>
+                                        <td>{item.claimArea}</td>
+                                        <td>{item.coverage}</td>
+                                        <td>{item.action}</td>
+                                        <td><span class={item.chipClass}>{item.status}</span></td>
+                                    </tr>
+                                </template>
+                                <template if:true={noCoverageItems}>
+                                    <tr><td colspan="4" style="text-align:center;color:#54698d;padding:12px">No coverage items</td></tr>
+                                </template>
+                            </tbody>
+                        </table>
                     </div>
 
                     <!-- Subject/Description -->
@@ -56,10 +79,22 @@
                             <h3>Assistant Panel</h3>
                         </div>
                         <div class="qa-list">
-                            <div class="qa-item">Email customer update</div>
-                            <div class="qa-item">Schedule inspection</div>
-                            <div class="qa-item">Review warranty coverage</div>
-                            <div class="qa-item">Create follow-up task</div>
+                            <div class="qa-item">Summarize latest customer activity</div>
+                            <div class="qa-item">Draft follow-up email</div>
+                            <div class="qa-item">Create next task</div>
+                            <div class="qa-item">Show overdue items</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#0070d2">SLA</div>
+                            <h3>Activity Health</h3>
+                        </div>
+                        <div style="padding:10px 14px">
+                            <div class="rail-row"><span>Last touch</span><span>—</span></div>
+                            <div class="rail-row"><span>Voicemail</span><span class="chip cgr">None</span></div>
+                            <div class="rail-row"><span>Next follow-up</span><span class="chip cb2">—</span></div>
+                            <div class="rail-row"><span>Open tasks</span><span>—</span></div>
                         </div>
                     </div>
                 </div>

@@ -1,7 +1,11 @@
 <template>
     <div class="sf-body">
-        <div class="layout">
-            <div class="layout-main">
+        <div class="portal">
+            <div class="portal-hero">
+                <div style="font-size:22px;font-weight:600">Welcome, {contactName}</div>
+                <div style="font-size:12px;margin-top:4px;opacity:.9">Your Outdoor Living project status, property details, appointments, payments, and messages.</div>
+            </div>
+            <div class="portal-body">
                 <div class="g4">
                     <div class="kpi kb">
                         <div class="kn">Quote</div>
@@ -15,66 +19,115 @@
                         <div class="kn">1</div>
                         <div class="kl">Open action</div>
                     </div>
+                    <div class="kpi korange">
+                        <div class="kn">May 14</div>
+                        <div class="kl">Next call</div>
+                    </div>
                 </div>
 
-                <div class="portal">
-                    <div class="portal-hero">
-                        <div style="font-size:11px;opacity:.7;margin-bottom:4px">HOMEOWNER PORTAL PREVIEW</div>
-                        <div style="font-size:20px;font-weight:600;margin-bottom:4px">Your Outdoor Living Project</div>
-                        <div style="font-size:12px;opacity:.8">Review your design, approve your quote, and track your project</div>
+                <div class="card" id="portal-design">
+                    <div class="ch">
+                        <div class="ci" style="background:#fe9339">DES</div>
+                        <h3>Your Design Options</h3>
                     </div>
-                    <div class="portal-body">
-                        <div class="card">
-                            <div class="ch">
-                                <div class="ci" style="background:#0070d2">DESIGN</div>
-                                <h3>Your Design Options</h3>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Option</th>
+                                <th>Status</th>
+                                <th class="num">Estimated Price</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Retreat</td>
+                                <td>Available</td>
+                                <td class="num">$18,500</td>
+                                <td>Simple finished outdoor space</td>
+                            </tr>
+                            <tr>
+                                <td>Entertainer</td>
+                                <td><span class="chip co">Selected</span></td>
+                                <td class="num">$34,000</td>
+                                <td>Patio, grill island, lighting, planting</td>
+                            </tr>
+                            <tr>
+                                <td>Signature</td>
+                                <td>Available</td>
+                                <td class="num">$58,000</td>
+                                <td>Premium full-yard upgrade</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card ok" id="portal-property">
+                    <div class="ch">
+                        <div class="ci" style="background:#04844b">PR</div>
+                        <h3>Your Property Information</h3>
+                    </div>
+                    <div class="fields-grid">
+                        <div>
+                            <div class="field-label">Project Address</div>
+                            <div class="field-value">{propertyAddress}</div>
+                        </div>
+                        <div>
+                            <div class="field-label">Access Notes</div>
+                            <div class="field-value">{propertyAccessNotes}</div>
+                        </div>
+                        <div>
+                            <div class="field-label">Utility Review</div>
+                            <div class="field-value">{propertyUtilityReview}</div>
+                        </div>
+                        <div>
+                            <div class="field-label">Customer Prep</div>
+                            <div class="field-value">{propertyCustomerPrep}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="g2">
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#0070d2">APPT</div>
+                            <h3>Appointments</h3>
+                        </div>
+                        <div class="qa-list">
+                            <div class="qa-item">Consult appointment pending confirmation</div>
+                            <div class="qa-item">No upcoming appointments scheduled</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#04844b">$</div>
+                            <h3>Payments</h3>
+                        </div>
+                        <div class="fields-grid">
+                            <div>
+                                <div class="field-label">Deposit</div>
+                                <div class="field-value">Not due until contract acceptance</div>
                             </div>
-                            <table class="tbl">
-                                <thead>
-                                    <tr>
-                                        <th>Option</th>
-                                        <th>Status</th>
-                                        <th class="num">Estimated Price</th>
-                                        <th>Notes</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>Retreat Package</td>
-                                        <td><span class="chip cgr">Available</span></td>
-                                        <td class="num">$18,500</td>
-                                        <td>Patio, planting refresh, sod repair</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Entertainer Package</td>
-                                        <td><span class="chip co">Selected</span></td>
-                                        <td class="num">$34,000</td>
-                                        <td>Paver patio, grill island, lighting, privacy planting</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Signature Package</td>
-                                        <td><span class="chip cgr">Available</span></td>
-                                        <td class="num">$58,000</td>
-                                        <td>Full backyard transformation</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            <div>
+                                <div class="field-label">Final Payment</div>
+                                <div class="field-value">Due at substantial completion</div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="layout-rail">
-                <div class="card">
-                    <div class="ch">
-                        <div class="ci" style="background:#534ab7">AI</div>
-                        <h3>Assistant Panel</h3>
-                    </div>
-                    <div class="qa-list">
-                        <div class="qa-item">Preview as customer</div>
-                        <div class="qa-item">Send portal invite</div>
-                        <div class="qa-item">Update portal content</div>
-                        <div class="qa-item">View customer activity</div>
-                    </div>
+        </div>
+        <div class="layout-rail" style="display:none">
+            <div class="card">
+                <div class="ch">
+                    <div class="ci" style="background:#534ab7">AI</div>
+                    <h3>Assistant Panel</h3>
+                </div>
+                <div class="qa-list">
+                    <div class="qa-item">Preview as customer</div>
+                    <div class="qa-item">Send portal invite</div>
+                    <div class="qa-item">Update portal content</div>
+                    <div class="qa-item">View customer activity</div>
                 </div>
             </div>
         </div>

@@ -22,6 +22,7 @@ export default class OdlQuote extends LightningElement {
         }
     }
 
+    get quoteNumber() { return this.opp.Name ? this.opp.Name.replace(/[^0-9-]/g, '') : '—'; }
     get amountFormatted() { return this.opp.Amount ? '$' + Number(this.opp.Amount).toLocaleString() : '—'; }
     get depositFormatted() { return this.opp.Deposit_Due__c ? '$' + Number(this.opp.Deposit_Due__c).toLocaleString() : '—'; }
     get finalPaymentFormatted() {
