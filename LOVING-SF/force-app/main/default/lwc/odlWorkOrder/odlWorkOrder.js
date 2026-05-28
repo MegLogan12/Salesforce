@@ -22,7 +22,7 @@ export default class OdlWorkOrder extends LightningElement {
             this.lineItems = (data.lineItems || []).map(li => ({
                 ...li,
                 statusChipClass: li.Status === 'Completed' ? 'chip cg' : li.Status === 'In Progress' ? 'chip ca' : 'chip cgr',
-                ownerName: li.Owner ? li.Owner.Name : '—',
+                ownerName: '—',
                 dueDateFormatted: li.EndDate ? new Date(li.EndDate + 'T12:00:00').toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '—'
             }));
             this.isLoaded = true;
