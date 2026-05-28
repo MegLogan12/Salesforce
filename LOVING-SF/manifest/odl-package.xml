@@ -67,11 +67,17 @@
     </types>
     <types>
         <members>ODL_AccountController</members>
+        <members>ODL_AccountControllerTest</members>
         <members>ODL_DashboardController</members>
+        <members>ODL_DashboardControllerTest</members>
         <members>ODL_LeadController</members>
+        <members>ODL_LeadControllerTest</members>
         <members>ODL_OpportunityController</members>
+        <members>ODL_OpportunityControllerTest</members>
         <members>ODL_TaskController</members>
+        <members>ODL_TaskControllerTest</members>
         <members>ODL_WorkController</members>
+        <members>ODL_WorkControllerTest</members>
         <name>ApexClass</name>
     </types>
     <types>
