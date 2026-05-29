@@ -945,21 +945,25 @@ function bboxFt(nodes){
 // ── PDF handling ───────────────────────────────────────────────
 async function handleFile(file){
   if(!file||file.type!=='application/pdf') return;
-  window._pdfFile  = file;
+  window._pdfFile = file;
   window._pdfParsed = null;
+  window._lotPageMap = {};
+  window._selectedLotNum = null;
+  pdfDoc = null;
   pdfRotate = 0;
   const fn=document.getElementById('fFileName');
-  fn.textContent='⟳ Reading '+file.name+'…';
+  fn.textContent='⟳ Analyzing '+file.name+'…';
   fn.style.display='block';
   document.getElementById('lotSelWrap').style.display='none';
 
   const found = await extractFromPDF(file);
   window._pdfParsed = found;
+  window._lotPageMap = found.lotPageMap||{};
 
   // Multiple lots → show selector
   if(found.allLots && found.allLots.length>1){
     populateLotSelector(found.allLots);
-    fn.textContent=`✓ ${file.name} — ${found.allLots.length} lots detected, select one below`;
+    fn.textContent=`✓ ${file.name} — ${found.allLots.length} lots found — select one below`;
     return;
   }
 
@@ -1015,6 +1019,7 @@ function populateLotSelector(lots){
 function onLotSelect(val){
   if(!val) return;
   const n=parseInt(val);
+  window._selectedLotNum=n;
   if(PRESETS[n]){
     activePreset=n;
     document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('active'));
@@ -1044,29 +1049,42 @@ async function extractFromPDF(file){
   try{
     const url=URL.createObjectURL(file);
     const doc=await pdfjsLib.getDocument(url).promise;
+    pdfDoc=doc; // keep loaded for rendering — no need to reload
+    const numPages=Math.min(doc.numPages,20);
     let allText='';
-    const numPages=Math.min(doc.numPages,8);
+    const lotPageMap={};
     for(let i=1;i<=numPages;i++){
       const page=await doc.getPage(i);
       const tc=await page.getTextContent();
-      allText+=' '+tc.items.map(it=>it.str.trim()).filter(Boolean).join(' ');
+      const pageText=tc.items.map(it=>it.str.trim()).filter(Boolean).join(' ');
+      allText+=' '+pageText;
+      // Map each lot number to the first page it appears on
+      findAllLotNumbers(pageText).forEach(n=>{ if(!lotPageMap[n]) lotPageMap[n]=i; });
     }
     URL.revokeObjectURL(url);
-    const allLots=findAllLotNumbers(allText);
+    // If no per-page lot matches, fall back to full-text scan (all → page 1)
+    if(!Object.keys(lotPageMap).length){
+      findAllLotNumbers(allText).forEach(n=>{ lotPageMap[n]=1; });
+    }
+    const allLots=Object.keys(lotPageMap).map(Number).sort((a,b)=>a-b);
     const parsed=parsePlotText(allText);
-    return{...parsed,allLots};
-  }catch(e){return{allLots:[]};}
+    return{...parsed,allLots,lotPageMap};
+  }catch(e){return{allLots:[],lotPageMap:{}};}
 }
 
 function findAllLotNumbers(text){
   const up=text.toUpperCase();
   const found=new Set();
-  const re=/\b(?:LOT|UNIT|#|NO\.?)\s*0*(\d{1,4})\b/g;
+  // Primary: explicit keywords before a number
+  const re1=/\b(?:LOT|UNIT|PARCEL|TRACT|BLOCK|NO\.?)\s*[:\-]?\s*0*(\d{1,4})\b/g;
   let m;
-  while((m=re.exec(up))!==null){
-    const n=parseInt(m[1]);
-    if(n>=1&&n<=9999) found.add(n);
-  }
+  while((m=re1.exec(up))!==null){const n=parseInt(m[1]);if(n>=1&&n<=9999)found.add(n);}
+  // Secondary: "L-202" or "L202" shorthand
+  const re2=/\bL[_\-]?0*(\d{2,4})\b/g;
+  while((m=re2.exec(up))!==null){const n=parseInt(m[1]);if(n>=1&&n<=9999)found.add(n);}
+  // Tertiary: "#202" or "# 202"
+  const re3=/(?:^|[\s(])#\s*0*(\d{2,4})\b/g;
+  while((m=re3.exec(up))!==null){const n=parseInt(m[1]);if(n>=1&&n<=9999)found.add(n);}
   return [...found].sort((a,b)=>a-b);
 }
 
@@ -1127,11 +1145,19 @@ async function renderBlueprint(){
   bl.classList.remove('show');
 }
 
+function _currentPDFPage(){
+  const n=window._selectedLotNum;
+  if(n&&window._lotPageMap&&window._lotPageMap[n]) return window._lotPageMap[n];
+  return 1;
+}
+
 async function renderPDF(file){
-  const url=URL.createObjectURL(file);
   try{
-    pdfDoc=await pdfjsLib.getDocument(url).promise;
-    await renderPDFPage(1);
+    if(!pdfDoc){
+      const url=URL.createObjectURL(file);
+      pdfDoc=await pdfjsLib.getDocument(url).promise;
+    }
+    await renderPDFPage(_currentPDFPage(), window._selectedLotNum);
   }catch(e){
     document.getElementById('pdfCanvas').style.display='none';
     document.getElementById('svgBlueprint').style.display='block';
@@ -1139,25 +1165,64 @@ async function renderPDF(file){
   }
 }
 
-async function renderPDFPage(pageNum){
+async function renderPDFPage(pageNum, highlightLot){
   if(!pdfDoc) return;
   const page=await pdfDoc.getPage(pageNum);
   const canvas=document.getElementById('pdfCanvas');
   const vp=page.getViewport({scale:pdfScale,rotation:pdfRotate});
   canvas.width=vp.width; canvas.height=vp.height;
   await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
+  if(highlightLot) await highlightLotOnCanvas(page,vp,highlightLot);
+}
+
+async function highlightLotOnCanvas(page,vp,lotNum){
+  try{
+    const tc=await page.getTextContent();
+    const re=new RegExp(`(?:LOT|UNIT|#|NO\\.?)\\s*0*${lotNum}\\b`,'i');
+    let found=null;
+    for(const item of tc.items){
+      if(re.test(item.str)||(item.str.trim()===String(lotNum)&&item.str.trim().length>=2)){
+        found=item; break;
+      }
+    }
+    if(!found) return;
+    const tx=found.transform; // [sx,shy,shx,sy,x,y] in PDF user space
+    const [cx,cy]=vp.convertToViewportPoint(tx[4],tx[5]);
+    const r=Math.max(70,Math.min(200,vp.width*0.13));
+    const canvas=document.getElementById('pdfCanvas');
+    const ctx=canvas.getContext('2d');
+    ctx.save();
+    ctx.fillStyle='rgba(82,198,138,0.12)';
+    ctx.strokeStyle='#52c68a';
+    ctx.lineWidth=3;
+    ctx.setLineDash([10,5]);
+    ctx.beginPath();
+    ctx.rect(cx-r, cy-r*1.8, r*2, r*3.6);
+    ctx.fill(); ctx.stroke();
+    // Label pin
+    ctx.setLineDash([]);
+    ctx.fillStyle='#52c68a';
+    ctx.font=`bold ${Math.round(r*0.28)}px Inter,sans-serif`;
+    ctx.textAlign='center';
+    ctx.fillText(`LOT ${lotNum}`, cx, cy-r*1.8-6);
+    ctx.restore();
+    // Scroll viewport to center on the lot
+    const container=document.getElementById('blueprintCanvas');
+    container.scrollLeft=Math.max(0, cx - container.clientWidth/2);
+    container.scrollTop =Math.max(0, cy - container.clientHeight/2);
+  }catch(e){}
 }
 
 function pdfZoom(factor,mode){
   if(mode==='fit') pdfScale=1.0;
   else pdfScale=Math.max(0.4,Math.min(5,pdfScale*factor));
-  if(pdfDoc) renderPDFPage(1);
+  if(pdfDoc) renderPDFPage(_currentPDFPage(), window._selectedLotNum);
   else renderSVGBlueprint(activeLot||getFormData());
 }
 
 function pdfRotateCW(){
   pdfRotate=(pdfRotate+90)%360;
-  if(pdfDoc) renderPDFPage(1);
+  if(pdfDoc) renderPDFPage(_currentPDFPage(), window._selectedLotNum);
 }
 
 function renderSVGBlueprint(d){
