@@ -558,14 +558,19 @@ function pdfZoom(factor, mode) {
 function renderSVGBlueprint(d) {
   const c    = calcSod(d);
   const S    = 5.5;
-  const ML   = 85, MT = 65, roadH = 32, resH = 70;
+  const ML   = 98, MT = 70, roadH = 32, resH = 96;
   const lw   = d.lotW * S, lh = d.lotD * S;
-  const svgW = lw + ML + 85;
+  const svgW = lw + ML + 100;
   const svgH = lh + MT + roadH + resH + 20;
 
   const bh = d.bldgD * S, ph = d.patD * S, dh = d.drvD * S;
   const pw = d.patW  * S, dw = d.drvW  * S;
   const ox = ML, oy = MT;
+
+  const sodDepth = d.lotD - d.bldgD - d.patD - d.drvD;
+  const sodTop   = oy + bh + ph;
+  const drvTop   = oy + lh - dh;
+  const sodH     = drvTop - sodTop;
 
   let o = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" font-family="sans-serif">`;
   o += `<rect width="100%" height="100%" fill="#f4f1ec"/>`;
@@ -574,51 +579,105 @@ function renderSVGBlueprint(d) {
     <marker id="a2" markerWidth="5" markerHeight="5" refX="5" refY="2.5" orient="auto"><polygon points="5,0 0,2.5 5,5" fill="#1565c0"/></marker>
   </defs>`;
 
-  // Title
-  o += t(svgW/2,18,11,'bold','#1b5e20','middle',`Unit ${d.unit} — ${d.addr}`);
-  o += t(svgW/2,31,8,'','#555','middle',`${d.model||'Custom'} Model · Townes at Stonecrest PH 1 · Survey: Joseph Kane PLS L-5106 · 02/23/2022`);
-  o += t(svgW/2,44,7.5,'','#888','middle',`Scale approx. 1″=20′ · Henderson County, NC · PIN 9660-90-8308`);
+  // Title block
+  o += t(svgW/2,16,11,'bold','#1b5e20','middle',`Unit ${d.unit} — ${d.addr}`);
+  o += t(svgW/2,28,8.5,'','#555','middle',`${d.model||'Custom'} Model · Townes at Stonecrest Ph.1 · Henderson County, NC`);
+  o += t(svgW/2,40,7.5,'','#888','middle',`Survey: Joseph Kane PLS L-5106 · 02/23/2022 · Scale approx. 1″=20′ · PIN 9660-90-8308`);
 
-  // Lot (green = sod)
-  o += box(ox,oy,lw,lh,'#c8e6c9','#2e7d32',2);
-  // Building
-  o += box(ox,oy,d.bldgW*S,bh,'#78909c','#37474f',1.5);
-  o += t(ox+lw/2,oy+bh/2-10,12,'bold','white','middle',d.model||'Building');
-  o += t(ox+lw/2,oy+bh/2+5,9.5,'','#cfd8dc','middle','Building Footprint');
-  o += t(ox+lw/2,oy+bh/2+19,8.5,'','#b0bec5','middle',`${d.bldgW}′ × ${d.bldgD}′ = ${n(d.bldgW*d.bldgD)} sf`);
-  // Patio
-  o += box(ox,oy+bh,pw,ph,'#d7ccc8','#795548',1,'5,3');
-  o += t(ox+pw/2,oy+bh+ph/2+4,9,'','#4e342e','middle',`Patio  ${d.patW}′ × ${d.patD}′ = ${n(d.patW*d.patD)} sf`);
-  // Sod zone label
-  const sodTop=oy+bh+ph, drvTop=oy+lh-dh, sodH=drvTop-sodTop;
-  if(sodH>12){
-    o += t(ox+lw/2,sodTop+sodH/2-6,10,'bold','#2e7d32','middle','← Sod →');
-    o += t(ox+lw/2,sodTop+sodH/2+9,8.5,'','#388e3c','middle',`${d.lotW}′ × ${(d.lotD-d.bldgD-d.patD-d.drvD).toFixed(1)}′`);
+  // ── Lot outline (green = sod area background) ──
+  o += box(ox, oy, lw, lh, '#c8e6c9', '#2e7d32', 2);
+
+  // ── BUILDING ──
+  o += box(ox, oy, d.bldgW*S, bh, '#78909c', '#37474f', 1.5);
+  const bmid = oy + bh/2;
+  o += t(ox+lw/2, bmid-18, 11,'bold','white','middle', d.model||'Building');
+  o += t(ox+lw/2, bmid-4,  9,'','#cfd8dc','middle', 'Building Footprint');
+  o += t(ox+lw/2, bmid+10, 8.5,'','#b0bec5','middle', `${d.bldgW}′ wide × ${d.bldgD}′ deep`);
+  o += t(ox+lw/2, bmid+23, 10.5,'bold','#e8f5e9','middle', `${n(d.bldgW*d.bldgD)} sf`);
+  // width arrow inside top of building
+  o += hd(ox+5, ox+d.bldgW*S-5, oy+14, `${d.bldgW}′`);
+  // depth arrow on right inside building
+  o += vd(ox+lw-14, oy+5, oy+bh-5, `${d.bldgD}′`);
+
+  // ── PATIO ──
+  o += box(ox, oy+bh, pw, ph, '#d7ccc8', '#795548', 1, '5,3');
+  const pmid = oy+bh+ph/2;
+  if(ph >= 36) {
+    o += t(ox+pw/2, pmid-8, 9,'bold','#4e342e','middle','Patio / Stoop');
+    o += t(ox+pw/2, pmid+5, 8,'','#6d4c41','middle', `${d.patW}′ × ${d.patD}′ = ${n(d.patW*d.patD)} sf`);
+  } else {
+    o += t(ox+pw/2, pmid+4, 8,'','#4e342e','middle', `Patio: ${d.patW}′ × ${d.patD}′ = ${n(d.patW*d.patD)} sf`);
   }
-  // Driveway
-  o += box(ox,drvTop,dw,dh,'#b0bec5','#546e7a',1);
-  o += t(ox+lw/2,drvTop+dh/2+4,9,'','#263238','middle',`Driveway  ${d.drvW}′ × ${d.drvD}′ = ${n(d.drvW*d.drvD)} sf`);
-  // Road
-  o += box(0,oy+lh,svgW,roadH,'#546e7a','#546e7a',0);
+  // patio width arrow (inside, top edge)
+  if(ph >= 28) o += hd(ox+5, ox+pw-5, oy+bh+11, `${d.patW}′`);
+
+  // ── SOD ZONE ──
+  if(sodH > 14) {
+    const smid = sodTop + sodH/2;
+    // light diagonal hatch to indicate grass
+    for(let yi=sodTop+8; yi<drvTop-4; yi+=14){
+      o += `<line x1="${ox+2}" y1="${yi}" x2="${ox+lw-2}" y2="${yi}" stroke="#a5d6a7" stroke-width="0.5" stroke-dasharray="5,5"/>`;
+    }
+    o += t(ox+lw/2, smid-22, 10,'bold','#1b5e20','middle', '← SOD ZONE →');
+    o += t(ox+lw/2, smid-8,  8.5,'','#2e7d32','middle', `${d.lotW}′ wide × ${sodDepth.toFixed(1)}′ deep`);
+    o += t(ox+lw/2, smid+7,  12,'bold','#1b5e20','middle', `${n(d.lotW*sodDepth)} sf`);
+    if(sodH > 55){
+      o += t(ox+lw/2, smid+22, 8,'','#388e3c','middle', `(${(d.lotW*sodDepth/9).toFixed(1)} sq yd)`);
+    }
+  }
+
+  // ── DRIVEWAY ──
+  o += box(ox, drvTop, dw, dh, '#b0bec5', '#546e7a', 1);
+  const drmid = drvTop + dh/2;
+  o += t(ox+lw/2, drmid-10, 9,'bold','#263238','middle', 'Driveway');
+  o += t(ox+lw/2, drmid+3,  8.5,'','#37474f','middle', `${d.drvW}′ wide × ${d.drvD}′ deep`);
+  o += t(ox+lw/2, drmid+16, 10,'bold','#37474f','middle', `${n(d.drvW*d.drvD)} sf`);
+  // driveway width arrow inside
+  if(dh >= 28) o += hd(ox+5, ox+dw-5, drvTop+12, `${d.drvW}′`);
+  // driveway depth arrow right side inside
+  o += vd(ox+lw-14, drvTop+4, oy+lh-4, `${d.drvD}′`);
+
+  // ── ROAD ──
+  o += box(0, oy+lh, svgW, roadH, '#546e7a', '#546e7a', 0);
   o += `<line x1="0" y1="${oy+lh+roadH/2}" x2="${svgW}" y2="${oy+lh+roadH/2}" stroke="#78909c" stroke-width="1" stroke-dasharray="12,8"/>`;
-  o += t(svgW/2,oy+lh+13,10,'bold','white','middle','CREEKVIEW RD.   (45′ R/W)');
-  o += t(svgW/2,oy+lh+25,8,'','#cfd8dc','middle','→ Hendersonville  ·  ← N.C. 225');
+  o += t(svgW/2, oy+lh+13, 10,'bold','white','middle','CREEKVIEW RD.  (45′ R/W)');
+  o += t(svgW/2, oy+lh+25, 8,'','#cfd8dc','middle','→ Hendersonville  ·  ← N.C. 225');
 
-  // Dimension lines
-  o += hd(ox,ox+lw,oy-20,`${d.lotW}′ wide`);
-  o += vd(ox+lw+20,oy,oy+lh,`${d.lotD}′ deep`);
-  o += vd(ox-22,oy,oy+bh,`${d.bldgD}′ bldg`);
-  o += vd(ox-22,oy+bh,oy+bh+ph,`${d.patD}′`);
-  o += vd(ox-22,drvTop,oy+lh,`${d.drvD}′ drv`);
-  o += hd(ox,ox+pw,oy+bh+ph+10,`${d.patW}′ patio`);
+  // ── OUTER DIMENSION LINES ──
+  // Top: lot width
+  o += hd(ox, ox+lw, oy-26, `${d.lotW}′ wide`);
+  // Right: total lot depth
+  o += vd(ox+lw+24, oy, oy+lh, `${d.lotD}′ total`);
+  // Left col: stacked depths
+  o += vd(ox-30, oy,        oy+bh,     `${d.bldgD}′ bldg`);
+  o += vd(ox-30, oy+bh,     oy+bh+ph,  `${d.patD}′ pat`);
+  if(sodH>0) o += vd(ox-30, sodTop,    drvTop,    `${sodDepth.toFixed(1)}′ sod`);
+  o += vd(ox-30, drvTop,    oy+lh,     `${d.drvD}′ drv`);
+  // Patio width callout (slightly inset since patio is narrower than lot)
+  o += hd(ox, ox+pw, oy+bh+ph+10, `${d.patW}′`);
 
-  // Result banner
-  const rb=oy+lh+roadH+6;
-  o += box(ox,rb,lw,resH,'#1b5e20','#1b5e20',0,null,5);
-  o += t(ox+10,rb+16,10,'bold','#a5d6a7','start',`SOD CALCULATION — Unit ${d.unit}  ·  ${d.addr}`);
-  o += t(ox+10,rb+30,8,'','#c8e6c9','start',`Lot ${n(d.lotW*d.lotD)} sf − Bldg ${n(d.bldgW*d.bldgD)} sf − Drv ${n(d.drvW*d.drvD)} sf − Patio ${n(d.patW*d.patD)} sf − Other ${n(d.misc)} sf`);
-  o += t(ox+10,rb+50,15,'bold','white','start',`= ${n(c.sf)} sq ft SOD  (${c.sy.toFixed(1)} sq yd)`);
-  o += t(ox+10,rb+65,9,'','#a5d6a7','start',`${c.pal} pallet${c.pal!==1?'s':''} @ ${PALLET_SF} sf/pallet  ·  Total impervious: ${n(c.imp)} sf`);
+  // ── RESULT BANNER (full width) ──
+  const rb = oy+lh+roadH+8;
+  const bx = 4, bwid = svgW-8;
+  o += box(bx, rb, bwid, resH, '#0d2118', '#1b5e20', 1.5, null, 5);
+
+  const lx = bx+10;
+  const rx = bx + Math.floor(bwid/2) + 8;
+
+  // Left column: itemized deductions
+  o += t(lx, rb+13, 9,'bold','#a5d6a7','start', `MEASUREMENT SUMMARY — Unit ${d.unit}`);
+  o += t(lx, rb+25, 7.5,'','#c8e6c9','start',  `Lot:        ${d.lotW}′ × ${d.lotD}′ = ${n(c.lot)} sf`);
+  o += t(lx, rb+36, 7.5,'','#ef9a9a','start',  `− Bldg:    ${d.bldgW}′ × ${d.bldgD}′ = ${n(c.bldg)} sf`);
+  o += t(lx, rb+47, 7.5,'','#ef9a9a','start',  `− Drv:      ${d.drvW}′ × ${d.drvD}′ = ${n(c.drv)} sf`);
+  o += t(lx, rb+58, 7.5,'','#ef9a9a','start',  `− Patio:  ${d.patW}′ × ${d.patD}′ = ${n(c.pat)} sf`);
+  if(d.misc) o += t(lx, rb+69, 7,'','#ef9a9a','start', `− Other hard surface = ${n(d.misc)} sf`);
+
+  // Right column: totals
+  o += t(rx, rb+13, 9,'bold','white','start',      `= ${n(c.sf)} sq ft SOD`);
+  o += t(rx, rb+26, 8.5,'','#a5d6a7','start',     `${c.sy.toFixed(1)} sq yd`);
+  o += t(rx, rb+40, 10,'bold','#a5d6a7','start',  `${c.pal} pallet${c.pal!==1?'s':''} @ ${PALLET_SF} sf`);
+  o += t(rx, rb+54, 7.5,'','#80cbc4','start',     `Impervious: ${n(c.imp)} sf`);
+  o += t(rx, rb+67, 7,'','#78909c','start',        `${d.source||''}`);
 
   o += `</svg>`;
   document.getElementById('svgBlueprint').outerHTML = o.replace('<svg', '<svg id="svgBlueprint"');
