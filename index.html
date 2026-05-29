@@ -296,6 +296,7 @@
           <button class="pdf-ctrl-btn" onclick="pdfZoom(1.2)" title="Zoom in">+</button>
           <button class="pdf-ctrl-btn" onclick="pdfZoom(0.8)" title="Zoom out">−</button>
           <button class="pdf-ctrl-btn" onclick="pdfZoom(1,'fit')" title="Fit">⊡</button>
+          <button class="pdf-ctrl-btn" onclick="pdfRotateCW()" title="Rotate 90°" style="font-size:1rem">↻</button>
         </div>
         <div class="loading" id="bpLoading"><div class="spin"></div><div class="loading-text">Rendering plan…</div></div>
       </div>
@@ -395,6 +396,7 @@ const PALLET_SF = 500;  // sq ft per pallet
 let activeLot  = null;
 let pdfDoc     = null;
 let pdfScale   = 1.5;
+let pdfRotate  = 0;  // degrees: 0, 90, 180, 270
 let gisMap     = null;
 let inputMode  = 'upload'; // 'upload' | 'addr'
 
@@ -420,8 +422,8 @@ function handleFileSelect(file) {
   if (!file || file.type !== 'application/pdf') return alert('Please upload a PDF file.');
   document.getElementById('fileName').textContent = '✓ ' + file.name;
   document.getElementById('fileName').style.display = 'block';
+  pdfRotate = 0;
   showLotSection();
-  // Store for later rendering
   window._pdfFile = file;
 }
 
@@ -538,10 +540,10 @@ async function renderPDF(file) {
 
 async function renderPDFPage(pageNum) {
   if (!pdfDoc) return;
-  const page    = await pdfDoc.getPage(pageNum);
-  const canvas  = document.getElementById('pdfCanvas');
-  const ctx     = canvas.getContext('2d');
-  const vp      = page.getViewport({ scale: pdfScale });
+  const page   = await pdfDoc.getPage(pageNum);
+  const canvas = document.getElementById('pdfCanvas');
+  const ctx    = canvas.getContext('2d');
+  const vp     = page.getViewport({ scale: pdfScale, rotation: pdfRotate });
   canvas.width  = vp.width;
   canvas.height = vp.height;
   await page.render({ canvasContext: ctx, viewport: vp }).promise;
@@ -552,6 +554,11 @@ function pdfZoom(factor, mode) {
   else { pdfScale = Math.max(0.5, Math.min(4, pdfScale * factor)); }
   if (pdfDoc) renderPDFPage(1);
   else renderSVGBlueprint(activeLot);
+}
+
+function pdfRotateCW() {
+  pdfRotate = (pdfRotate + 90) % 360;
+  if (pdfDoc) renderPDFPage(1);
 }
 
 // ── SVG blueprint (generated when no PDF uploaded) ────────────
