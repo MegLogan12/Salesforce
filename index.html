@@ -278,11 +278,22 @@
           <div class="ud-sub">Plot plan · Survey · Floor plan · Site plan</div>
         </div>
         <div id="fFileName" class="upload-status" style="display:none"></div>
-        <div class="lot-sel-wrap" id="lotSelWrap">
-          <label class="lot-sel-lbl">Multiple lots found — select lot number:</label>
+
+        <!-- Auto-detected lot dropdown (multiple lots found in text layer) -->
+        <div class="lot-sel-wrap" id="lotSelWrap" style="display:none">
+          <label class="lot-sel-lbl">Lots detected — select your lot:</label>
           <select class="lot-sel" id="lotSelector" onchange="onLotSelect(this.value)">
-            <option value="">— Select lot —</option>
+            <option value="">— Select lot number —</option>
           </select>
+        </div>
+
+        <!-- Manual lot number entry (always shown after upload, scanned or text PDF) -->
+        <div id="lotManualWrap" style="display:none;margin-top:10px">
+          <label class="lot-sel-lbl">Lot / Unit Number</label>
+          <input type="text" id="fLotManual" class="ec-input"
+            placeholder="e.g. 206, 5, A"
+            onkeydown="if(event.key==='Enter')loadTakeoff()"
+            oninput="onManualLotInput(this.value)">
         </div>
       </div>
 
@@ -523,6 +534,11 @@ function getFormData(){
 
 // ── Entry flow ─────────────────────────────────────────────────
 function loadTakeoff(){
+  // If manual lot number entered but not yet applied, apply it now
+  const manualEl = document.getElementById('fLotManual');
+  if(manualEl && manualEl.value.trim() && !window._selectedLotNum){
+    onManualLotInput(manualEl.value.trim());
+  }
   const addr = document.getElementById('fAddress').value.trim();
   if(!addr && !window._pdfFile && !activePreset){
     document.getElementById('fAddress').focus();
@@ -951,23 +967,44 @@ async function handleFile(file){
   window._selectedLotNum = null;
   pdfDoc = null;
   pdfRotate = 0;
-  const fn=document.getElementById('fFileName');
-  fn.textContent='⟳ Analyzing '+file.name+'…';
-  fn.style.display='block';
-  document.getElementById('lotSelWrap').style.display='none';
+
+  const fn  = document.getElementById('fFileName');
+  const lsw = document.getElementById('lotSelWrap');
+  const lmw = document.getElementById('lotManualWrap');
+  fn.textContent = '⟳ Analyzing ' + file.name + '…';
+  fn.style.display = 'block';
+  lsw.style.display = 'none';
+  lmw.style.display = 'none';
 
   const found = await extractFromPDF(file);
-  window._pdfParsed = found;
+  window._pdfParsed  = found;
   window._lotPageMap = found.lotPageMap||{};
 
-  // Multiple lots → show selector
-  if(found.allLots && found.allLots.length>1){
-    populateLotSelector(found.allLots);
-    fn.textContent=`✓ ${file.name} — ${found.allLots.length} lots found — select one below`;
+  if(found.isScanned){
+    fn.textContent=`✓ ${file.name} — scanned image PDF · enter lot number below`;
+    lmw.style.display='block';
     return;
   }
 
-  _applyPDFData(found, file.name);
+  if(found.allLots && found.allLots.length>1){
+    populateLotSelector(found.allLots);
+    lsw.style.display = 'block';
+    fn.textContent=`✓ ${file.name} — ${found.allLots.length} lots found · select one below`;
+    return;
+  }
+
+  if(found.allLots && found.allLots.length===1){
+    window._selectedLotNum = found.allLots[0];
+    _applyPDFData(found, file.name);
+    // Still show manual override in case user wants a different lot
+    document.getElementById('fLotManual').value = found.allLots[0];
+    lmw.style.display = 'block';
+    return;
+  }
+
+  // No lots detected at all
+  fn.textContent=`✓ ${file.name} — loaded · enter lot number below`;
+  lmw.style.display='block';
 }
 
 function _applyPDFData(found, fname){
@@ -1016,6 +1053,34 @@ function populateLotSelector(lots){
   document.getElementById('lotSelWrap').style.display='block';
 }
 
+function onManualLotInput(val){
+  const raw = val.trim();
+  if(!raw) return;
+  const n = parseInt(raw);
+  if(!n) return;
+  window._selectedLotNum = n;
+  if(PRESETS[n]){
+    activePreset = n;
+    document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('active'));
+    const qb=document.getElementById('qb'+n);
+    if(qb) qb.classList.add('active');
+    const p=PRESETS[n];
+    sv('fAddress',p.addr);
+    sv('fJob',`Unit ${n} — ${p.model} · ${p.pos}`);
+    sv('lotW',p.lotW);  sv('lotD',p.lotD);
+    sv('bldgW',p.bldgW);sv('bldgD',p.bldgD);
+    sv('drvW',p.drvW);  sv('drvD',p.drvD);
+    sv('patW',p.patW);  sv('patD',p.patD);
+    sv('fMisc',p.misc);
+    onMeasChange();
+  } else if(window._pdfParsed){
+    const f=window._pdfParsed;
+    if(f.addr&&!document.getElementById('fAddress').value.trim()) sv('fAddress',f.addr);
+    if(!document.getElementById('fJob').value.trim()) sv('fJob',`Lot ${raw}`);
+    onMeasChange();
+  }
+}
+
 function onLotSelect(val){
   if(!val) return;
   const n=parseInt(val);
@@ -1062,14 +1127,16 @@ async function extractFromPDF(file){
       findAllLotNumbers(pageText).forEach(n=>{ if(!lotPageMap[n]) lotPageMap[n]=i; });
     }
     URL.revokeObjectURL(url);
+    // Scanned (image-only) PDF: very little extractable text
+    const isScanned = allText.trim().length < 80;
     // If no per-page lot matches, fall back to full-text scan (all → page 1)
     if(!Object.keys(lotPageMap).length){
       findAllLotNumbers(allText).forEach(n=>{ lotPageMap[n]=1; });
     }
     const allLots=Object.keys(lotPageMap).map(Number).sort((a,b)=>a-b);
     const parsed=parsePlotText(allText);
-    return{...parsed,allLots,lotPageMap};
-  }catch(e){return{allLots:[],lotPageMap:{}};}
+    return{...parsed,allLots,lotPageMap,isScanned};
+  }catch(e){return{allLots:[],lotPageMap:{},isScanned:true};}
 }
 
 function findAllLotNumbers(text){
@@ -1157,7 +1224,14 @@ async function renderPDF(file){
       const url=URL.createObjectURL(file);
       pdfDoc=await pdfjsLib.getDocument(url).promise;
     }
-    await renderPDFPage(_currentPDFPage(), window._selectedLotNum);
+    // Auto-scale to fit the panel width on first load
+    const pageNum=_currentPDFPage();
+    const page=await pdfDoc.getPage(pageNum);
+    const container=document.getElementById('blueprintCanvas');
+    const containerW=container.clientWidth||800;
+    const naturalVP=page.getViewport({scale:1,rotation:pdfRotate});
+    pdfScale=Math.max(0.5, Math.min(3, (containerW-24)/naturalVP.width));
+    await renderPDFPage(pageNum, window._selectedLotNum);
   }catch(e){
     document.getElementById('pdfCanvas').style.display='none';
     document.getElementById('svgBlueprint').style.display='block';
