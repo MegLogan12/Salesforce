@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sod Estimator — Townes at Stonecrest PH 1</title>
+
+  <!-- Leaflet 1.9.4 (free, no API key) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Esri Leaflet — satellite imagery + FeatureServer queries -->
+  <script src="https://unpkg.com/esri-leaflet@3.0.12/dist/esri-leaflet.js"></script>
+
+  <style>
+    /* ── Reset & tokens ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #0f1923;
+      --surf:    #1a2535;
+      --border:  #2a3a4a;
+      --green:   #52b788;
+      --gdk:     #2d6a4f;
+      --glt:     #a5d6a7;
+      --red:     #ef9a9a;
+      --text:    #e0e6ef;
+      --muted:   #8899aa;
+      --road:    #546e7a;
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--surf);
+      border-bottom: 2px solid var(--gdk);
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+      min-height: 52px;
+    }
+    .logo { font-size: 1.3rem; }
+    header h1 { font-size: 0.97rem; font-weight: 700; color: var(--green); line-height: 1.2; }
+    header .sub { font-size: 0.68rem; color: var(--muted); margin-top: 2px; }
+    .badges { margin-left: auto; display: flex; gap: 6px; flex-shrink: 0; }
+    .badge {
+      background: var(--gdk); color: #fff;
+      font-size: 0.67rem; font-weight: 700;
+      padding: 3px 8px; border-radius: 10px;
+      white-space: nowrap;
+    }
+
+    /* ── Main layout ── */
+    .main { display: flex; flex: 1; overflow: hidden; }
+
+    /* ── Left: map / SVG tabs ── */
+    .view-wrap {
+      flex: 1; display: flex; flex-direction: column; overflow: hidden;
+      min-width: 0;
+    }
+    .tabs {
+      display: flex; background: var(--surf);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .tab {
+      padding: 9px 16px; cursor: pointer;
+      font-size: 0.8rem; border-bottom: 2px solid transparent;
+      color: var(--muted); user-select: none; transition: all .15s;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.on { color: var(--green); border-bottom-color: var(--green); }
+
+    #mapDiv    { flex: 1; }
+    #plotDiv   { flex: 1; display: none; overflow: auto; background: #ebe8e2; }
+    #lotDiv    { flex: 1; display: none; overflow: auto; background: #f4f2ee; padding: 16px; }
+
+    /* Leaflet override */
+    .leaflet-container { background: #1a2535; }
+
+    /* Map status pill */
+    #mapStatus {
+      position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+      background: rgba(26,37,53,.92); color: var(--green);
+      font-size: 0.75rem; padding: 5px 14px; border-radius: 20px;
+      border: 1px solid var(--gdk); pointer-events: none;
+      z-index: 999; display: none;
+    }
+
+    /* ── Right: calculator ── */
+    .sidebar {
+      width: 370px; flex-shrink: 0;
+      background: var(--surf);
+      border-left: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Unit picker */
+    .picker { padding: 12px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .picker-lbl {
+      font-size: 0.65rem; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--muted);
+      display: block; margin-bottom: 8px;
+    }
+    .unit-btns { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+    .ubtn {
+      padding: 7px 2px; border: 1px solid var(--border);
+      background: var(--bg); color: var(--text);
+      cursor: pointer; border-radius: 4px;
+      font-size: 0.78rem; text-align: center;
+      transition: all .15s;
+    }
+    .ubtn:hover { border-color: var(--green); color: var(--green); }
+    .ubtn.on { background: var(--gdk); border-color: var(--green); color: #fff; font-weight: 700; }
+
+    /* Scrollable calc area */
+    .calc { flex: 1; overflow-y: auto; padding: 14px; }
+    .calc::-webkit-scrollbar { width: 5px; }
+    .calc::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    .unit-hd { margin-bottom: 14px; }
+    .unit-hd h2 { font-size: 0.97rem; color: var(--green); }
+    .unit-hd p { font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
+
+    /* Section */
+    .sec { margin-bottom: 13px; }
+    .sec-hd {
+      font-size: 0.64rem; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--muted);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 5px; margin-bottom: 8px;
+    }
+
+    /* Input rows */
+    .row { display: flex; align-items: center; gap: 6px; margin-bottom: 7px; }
+    .row-lbl { flex: 1; font-size: 0.78rem; color: #b0bec5; }
+    .inputs { display: flex; align-items: center; gap: 4px; }
+    .inputs input {
+      width: 56px; background: var(--bg);
+      border: 1px solid var(--border); color: var(--text);
+      padding: 4px 6px; border-radius: 3px;
+      font-size: 0.78rem; text-align: right;
+      transition: border-color .15s;
+    }
+    .inputs input:focus { outline: none; border-color: var(--green); }
+    .sep { color: var(--muted); font-size: 0.76rem; }
+    .sf-out {
+      width: 68px; text-align: right;
+      font-size: 0.74rem; color: var(--muted);
+      font-family: monospace;
+    }
+
+    /* Result box */
+    .res-box {
+      background: #091a10; border: 1px solid var(--gdk);
+      border-radius: 6px; padding: 12px 13px; margin-bottom: 13px;
+    }
+    .r { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; }
+    .r .v { font-family: monospace; color: var(--glt); }
+    .r.sub { font-size: 0.73rem; margin-bottom: 3px; }
+    .r.sub .l, .r.sub .v { color: var(--muted); }
+    .r.ded .l { color: var(--red); }
+    .r.ded .v { color: var(--red); }
+    .r.tot {
+      border-top: 1px solid var(--gdk); padding-top: 8px;
+      margin-top: 4px; font-size: 0.95rem; font-weight: 700;
+    }
+    .r.tot .l { color: #fff; }
+    .r.tot .v { color: var(--glt); font-size: 1rem; }
+
+    /* Summary table */
+    .sum-tbl { width: 100%; border-collapse: collapse; font-size: 0.73rem; }
+    .sum-tbl th {
+      background: var(--bg); padding: 5px 6px;
+      text-align: right; color: var(--muted);
+      font-weight: 500; border-bottom: 1px solid var(--border);
+    }
+    .sum-tbl th:first-child { text-align: left; }
+    .sum-tbl td {
+      padding: 5px 6px; text-align: right;
+      border-bottom: 1px solid var(--border);
+      font-family: monospace; font-size: 0.72rem;
+    }
+    .sum-tbl td:first-child { text-align: left; color: var(--green); font-family: inherit; }
+    .sum-tbl tr.hi td { background: #0d2218; }
+    .sum-tbl tr.tot-r td {
+      border-top: 2px solid var(--gdk); font-weight: 700;
+      color: var(--glt); border-bottom: none;
+    }
+    .sum-tbl tr.tot-r td:first-child { color: var(--glt); }
+
+    /* Action bar */
+    .actions {
+      padding: 10px 14px; border-top: 1px solid var(--border);
+      display: flex; gap: 7px; flex-shrink: 0;
+    }
+    .btn {
+      flex: 1; padding: 8px; border: none;
+      border-radius: 4px; cursor: pointer;
+      font-size: 0.78rem; font-weight: 600; transition: all .15s;
+    }
+    .btn-g { background: var(--gdk); color: #fff; }
+    .btn-g:hover { background: var(--green); }
+    .btn-s { background: var(--bg); color: #b0bec5; border: 1px solid var(--border); }
+    .btn-s:hover { background: var(--border); color: #fff; }
+
+    /* ── Print ── */
+    @media print {
+      body { background: #fff; color: #000; height: auto; overflow: visible; }
+      header { background: #fff; border-bottom: 2px solid #2d6a4f; }
+      header h1 { color: #2d6a4f; }
+      .main { flex-direction: column; height: auto; overflow: visible; }
+      .view-wrap { display: none !important; }
+      .sidebar { width: 100%; border: none; background: #fff; overflow: visible; }
+      .picker, .actions { display: none; }
+      .calc { overflow: visible; }
+      .res-box { background: #f0faf5; border: 1px solid #2d6a4f; }
+      .r .l, .r .v, .r.tot .l { color: #000 !important; }
+      .r.tot .v { color: #1b5e20 !important; }
+      .r.ded .l, .r.ded .v { color: #b71c1c !important; }
+      .r.sub .l, .r.sub .v { color: #555 !important; }
+      .sum-tbl td, .sum-tbl th { color: #000 !important; background: #fff !important; }
+      .sec-hd { color: #555 !important; border-color: #ccc !important; }
+      .inputs input { background: #fff; color: #000; border: 1px solid #ccc; }
+      .unit-hd h2 { color: #2d6a4f; }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      .view-wrap { display: none; }
+      .sidebar { width: 100%; border: none; }
+      .main { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════ HEADER ══════════════ -->
+<header>
+  <span class="logo">🌿</span>
+  <div>
+    <h1>Sod Estimator — Townes at Stonecrest, Phase 1</h1>
+    <div class="sub">Lots 202–207 · Creekview Rd · Hendersonville, Henderson County NC · PIN 9660-90-8308 · Survey 02/23/2022 · D.R. Horton</div>
+  </div>
+  <div class="badges">
+    <span class="badge">1″ = 20′</span>
+    <span class="badge">6 Units</span>
+  </div>
+</header>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<div class="main">
+
+  <!-- Left: map / drawings -->
+  <div class="view-wrap">
+    <div class="tabs">
+      <div class="tab on"  id="t-map"  onclick="showTab('map',  this)">🛰 Aerial Map</div>
+      <div class="tab"     id="t-plan" onclick="showTab('plan', this)">📐 Plot Plan</div>
+      <div class="tab"     id="t-lot"  onclick="showTab('lot',  this)">🏠 Lot Detail</div>
+    </div>
+
+    <div style="position:relative; flex:1; display:flex; flex-direction:column; overflow:hidden;">
+      <div id="mapDiv"></div>
+      <div id="plotDiv"></div>
+      <div id="lotDiv"></div>
+      <div id="mapStatus"></div>
+    </div>
+  </div>
+
+  <!-- Right: calculator -->
+  <div class="sidebar">
+    <div class="picker">
+      <span class="picker-lbl">Select Unit</span>
+      <div class="unit-btns" id="ubtnWrap"></div>
+    </div>
+    <div class="calc" id="calcArea"></div>
+    <div class="actions">
+      <button class="btn btn-s" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="btn btn-s" onclick="showTab('lot', document.getElementById('t-lot'))">View Drawing</button>
+      <button class="btn btn-g" onclick="window.print()">🖨 Print</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════ SCRIPT ══════════════ -->
+<script>
+// ╔══════════════════════════════════════════════════════════════╗
+// ║  SURVEY DATA  —  Townes at Stonecrest, PH 1                ║
+// ║  Joseph Kane PLS L-5106  ·  02/23/2022  ·  Scale 1″=20′   ║
+// ║  Source dimensions read from recorded survey plat.         ║
+// ║  All fields are live-editable in the UI.                   ║
+// ╚══════════════════════════════════════════════════════════════╝
+
+//  Lot layout (road → rear):
+//    [1′ curb offset] → Driveway → Building → Patio → Rear sod
+//
+//  Carson (end units):   22′ wide, building 22×62′
+//  Lansing / Denver:     22′ wide, building 22×50′
+//  Patio (all):          21.67′ × 8′
+//  Driveway (all):       22′ × 20′  (to garage)
+//  Lot depth assumed 110′ — adjust to match recorded deed depth.
+
+const LOTS = {
+  202: { unit:202, addr:"42 Creekview Rd", model:"Carson",  pos:"End – West",
+         lotW:22,    lotD:110,
+         bldgW:22,   bldgD:62,
+         drvW:22,    drvD:20,
+         patW:21.67, patD:8,
+         misc:35 },
+
+  203: { unit:203, addr:"46 Creekview Rd", model:"Lansing", pos:"Interior",
+         lotW:22,    lotD:110,
+         bldgW:22,   bldgD:50,
+         drvW:22,    drvD:20,
+         patW:21.67, patD:8,
+         misc:28 },
+
+  204: { unit:204, addr:"50 Creekview Rd", model:"Denver",  pos:"Interior",
+         lotW:22,    lotD:110,
+         bldgW:22,   bldgD:50,
+         drvW:22,    drvD:20,
+         patW:21.67, patD:8,
+         misc:28 },
+
+  205: { unit:205, addr:"54 Creekview Rd", model:"Denver",  pos:"Interior",
+         lotW:22,    lotD:110,
+         bldgW:22,   bldgD:50,
+         drvW:22,    drvD:20,
+         patW:21.67, patD:8,
+         misc:28 },
+
+  206: { unit:206, addr:"58 Creekview Rd", model:"Lansing", pos:"Interior",
+         lotW:22,    lotD:110,
+         bldgW:22,   bldgD:50,
+         drvW:22,    drvD:20,
+         patW:21.67, patD:8,
+         misc:28 },
+
+  207: { unit:207, addr:"62 Creekview Rd", model:"Carson",  pos:"End – East",
+         lotW:22,    lotD:110,
+         bldgW:22,   bldgD:62,
+         drvW:22,    drvD:20,
+         patW:21.67, patD:8,
+         misc:35 },
+};
+
+let active = 202;
+
+// ── Calc engine ──────────────────────────────────────────────
+function calc(d) {
+  const lot  = d.lotW  * d.lotD;
+  const bldg = d.bldgW * d.bldgD;
+  const drv  = d.drvW  * d.drvD;
+  const pat  = d.patW  * d.patD;
+  const misc = +d.misc;
+  const imp  = bldg + drv + pat + misc;
+  const sf   = Math.max(0, lot - imp);
+  const sy   = sf / 9;
+  const pal  = Math.ceil(sf / 450);
+  return { lot, bldg, drv, pat, misc, imp, sf, sy, pal };
+}
+
+function n(v) { return Math.round(v).toLocaleString(); }
+
+// ── Unit picker ──────────────────────────────────────────────
+function buildPicker() {
+  const wrap = document.getElementById('ubtnWrap');
+  Object.values(LOTS).forEach(d => {
+    const b = document.createElement('div');
+    b.className = 'ubtn' + (d.unit === active ? ' on' : '');
+    b.textContent = d.unit;
+    b.onclick = () => select(d.unit, b);
+    wrap.appendChild(b);
+  });
+}
+
+function select(num, btn) {
+  active = num;
+  document.querySelectorAll('.ubtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderCalc(num);
+  drawLot(num);
+  highlightMap(num);
+}
+
+// ── Calculator panel ─────────────────────────────────────────
+function renderCalc(num) {
+  const d = LOTS[num];
+  const c = calc(d);
+
+  document.getElementById('calcArea').innerHTML = `
+    <div class="unit-hd">
+      <h2>Unit ${d.unit} — ${d.addr}</h2>
+      <p>${d.model} Model · ${d.pos}</p>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hd">Lot Dimensions</div>
+      ${r1('Lot Width', 'lotW', d.lotW, 'ft')}
+      ${r1('Lot Depth', 'lotD', d.lotD, 'ft')}
+    </div>
+
+    <div class="sec">
+      <div class="sec-hd">Building Footprint</div>
+      ${r2('W × D', 'bldgW', d.bldgW, 'bldgD', d.bldgD)}
+    </div>
+
+    <div class="sec">
+      <div class="sec-hd">Driveway</div>
+      ${r2('W × D', 'drvW', d.drvW, 'drvD', d.drvD)}
+    </div>
+
+    <div class="sec">
+      <div class="sec-hd">Patio / Stoop</div>
+      ${r2('W × D', 'patW', d.patW, 'patD', d.patD)}
+    </div>
+
+    <div class="sec">
+      <div class="sec-hd">Other Hard Surface (AC pad, walk, curb cut)</div>
+      ${r1('Area', 'misc', d.misc, 'sq ft')}
+    </div>
+
+    <div class="res-box" id="resBox">${renderRes(c)}</div>
+
+    <div class="sec">
+      <div class="sec-hd">All Units — Summary</div>
+      <div id="sumWrap">${renderSum(num)}</div>
+    </div>
+  `;
+
+  document.getElementById('calcArea').querySelectorAll('input[data-k]').forEach(inp => {
+    inp.addEventListener('input', () => {
+      LOTS[active][inp.dataset.k] = parseFloat(inp.value) || 0;
+      document.getElementById('resBox').innerHTML = renderRes(calc(LOTS[active]));
+      document.getElementById('sumWrap').innerHTML = renderSum(active);
+      // refresh paired sf display
+      const pair = inp.dataset.pair;
+      if (pair) {
+        const sfId = 'sf_' + (inp.dataset.k.endsWith('W') ? inp.dataset.k.replace('W','') : pair.replace('W',''));
+        const el = document.getElementById(sfId);
+        if (el) {
+          const d = LOTS[active];
+          const map = { bldg:['bldgW','bldgD'], drv:['drvW','drvD'], pat:['patW','patD'] };
+          for (const [k,[a,b]] of Object.entries(map)) {
+            if (inp.dataset.k === a || inp.dataset.k === b) {
+              document.getElementById('sf_' + k).textContent = n(d[a]*d[b]) + ' sf';
+            }
+          }
+        }
+      }
+    });
+  });
+}
+
+function r1(label, key, val, unit) {
+  return `<div class="row">
+    <span class="row-lbl">${label}</span>
+    <div class="inputs">
+      <input type="number" step="0.01" value="${val}" data-k="${key}">
+      <span class="sep">${unit}</span>
+    </div>
+  </div>`;
+}
+
+function r2(label, k1, v1, k2, v2) {
+  const id = k1.replace('W','');
+  return `<div class="row">
+    <span class="row-lbl">${label}</span>
+    <div class="inputs">
+      <input type="number" step="0.01" value="${v1}" data-k="${k1}" data-pair="${k2}">
+      <span class="sep">×</span>
+      <input type="number" step="0.01" value="${v2}" data-k="${k2}" data-pair="${k1}">
+      <span class="sep">=</span>
+      <span class="sf-out" id="sf_${id}">${n(v1*v2)} sf</span>
+    </div>
+  </div>`;
+}
+
+function renderRes(c) {
+  return `
+    <div class="r"><span class="l">Total Lot Area</span><span class="v">${n(c.lot)} sq ft</span></div>
+    <div class="r ded"><span class="l">− Building Footprint</span><span class="v">−${n(c.bldg)} sf</span></div>
+    <div class="r ded"><span class="l">− Driveway</span><span class="v">−${n(c.drv)} sf</span></div>
+    <div class="r ded"><span class="l">− Patio / Stoop</span><span class="v">−${n(c.pat)} sf</span></div>
+    <div class="r ded"><span class="l">− Other Hard Surface</span><span class="v">−${n(c.misc)} sf</span></div>
+    <div class="r tot"><span class="l">= SOD AREA</span><span class="v">${n(c.sf)} sq ft</span></div>
+    <div class="r sub"><span class="l">Square yards</span><span class="v">${c.sy.toFixed(1)} sq yd</span></div>
+    <div class="r sub"><span class="l">Pallets @ 450 sf/ea</span><span class="v">${c.pal} pallet${c.pal!==1?'s':''}</span></div>
+  `;
+}
+
+function renderSum(active) {
+  let rows = '', tsf = 0, tpal = 0;
+  Object.values(LOTS).forEach(d => {
+    const c = calc(d);
+    tsf += c.sf; tpal += c.pal;
+    rows += `<tr class="${d.unit===active?'hi':''}">
+      <td>${d.unit}</td><td>${n(c.lot)}</td>
+      <td>${n(c.bldg)}</td><td>${n(c.sf)}</td><td>${c.pal}</td>
+    </tr>`;
+  });
+  return `<table class="sum-tbl"><thead><tr>
+    <th>Unit</th><th>Lot sf</th><th>Bldg sf</th><th>Sod sf</th><th>Pallets</th>
+  </tr></thead><tbody>${rows}
+    <tr class="tot-r"><td>TOTAL</td><td>—</td><td>—</td><td>${n(tsf)}</td><td>${tpal}</td></tr>
+  </tbody></table>`;
+}
+
+// ── CSV export ───────────────────────────────────────────────
+function exportCSV() {
+  const rows = [['Unit','Address','Model','Lot sf','Bldg sf','Drv sf','Patio sf','Other sf','Sod sf','Sod sy','Pallets']];
+  Object.values(LOTS).forEach(d => {
+    const c = calc(d);
+    rows.push([d.unit, d.addr, d.model,
+      n(c.lot), n(c.bldg), n(c.drv), n(c.pat), n(c.misc),
+      n(c.sf), c.sy.toFixed(1), c.pal]);
+  });
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const a = Object.assign(document.createElement('a'), {
+    href: 'data:text/csv,' + encodeURIComponent(csv),
+    download: 'sod-estimator-stonecrest.csv'
+  });
+  a.click();
+}
+
+// ══════════════════════════════════════════════════════════════
+// TAB SWITCHING
+// ══════════════════════════════════════════════════════════════
+function showTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('mapDiv').style.display  = name==='map'  ? 'block' : 'none';
+  document.getElementById('plotDiv').style.display = name==='plan' ? 'flex'  : 'none';
+  document.getElementById('lotDiv').style.display  = name==='lot'  ? 'flex'  : 'none';
+  if (name==='plan') drawPlan();
+  if (name==='lot')  drawLot(active);
+  if (name==='map' && !mapReady) initMap();
+}
+
+// ══════════════════════════════════════════════════════════════
+// LEAFLET MAP
+// ══════════════════════════════════════════════════════════════
+let map, lotLayers = {}, parcelLayer, mapReady = false;
+
+// Approximate lot centroids along Creekview Rd
+// Will be replaced/refined when Henderson County parcel query returns real geometry.
+// Estimated from: address ~42-62 Creekview Rd, Hendersonville NC 28792
+// Using Esri geocoding result + 22′ increments converted to degrees (~0.000303° per ft at 35.32°N)
+const FT_PER_DEG_LNG = 293000; // approximate ft per degree longitude at 35.3°N
+const LOT_W_DEG = 22 / FT_PER_DEG_LNG;
+
+// Base SW corner estimate (will be overridden by parcel query)
+let BASE = { lat: 35.3155, lng: -82.4596 };
+const LOT_D_DEG = 110 / 364000; // ~110 ft depth in degrees latitude
+
+function lotBounds(idx) {
+  const lngStart = BASE.lng + idx * LOT_W_DEG;
+  return [
+    [BASE.lat,            lngStart],
+    [BASE.lat,            lngStart + LOT_W_DEG],
+    [BASE.lat + LOT_D_DEG, lngStart + LOT_W_DEG],
+    [BASE.lat + LOT_D_DEG, lngStart],
+  ];
+}
+
+function setStatus(msg, ms=0) {
+  const el = document.getElementById('mapStatus');
+  el.textContent = msg; el.style.display = 'block';
+  if (ms) setTimeout(() => el.style.display = 'none', ms);
+}
+
+function initMap() {
+  mapReady = true;
+  map = L.map('mapDiv', { zoomControl: true });
+
+  // Esri World Imagery satellite (free, no key)
+  L.esri.basemapLayer('Imagery').addTo(map);
+  L.esri.basemapLayer('ImageryLabels').addTo(map);
+
+  // Henderson County parcel FeatureLayer — query by PIN
+  setStatus('Loading Henderson County parcel data…');
+
+  const PIN = '9660-90-8308';
+  const parcelUrl = 'https://gisweb.hendersoncountync.gov/arcgis/rest/services/Parcels/FeatureServer/0';
+
+  // Live query to get actual parcel geometry
+  L.esri.query({ url: parcelUrl })
+    .where(`PIN_NUM = '${PIN}'`)
+    .fields(['PIN_NUM','OWNER','SITE_ADD','CALC_ACRES'])
+    .run((err, fc) => {
+      if (!err && fc && fc.features.length > 0) {
+        const feat = fc.features[0];
+        parcelLayer = L.geoJSON(feat, {
+          style: { color: '#74c69d', weight: 2.5, fillColor: '#52b788', fillOpacity: 0.12 }
+        }).addTo(map);
+
+        const bounds = parcelLayer.getBounds();
+        map.fitBounds(bounds.pad(0.3));
+
+        // Recalibrate BASE from actual parcel southwest corner
+        const sw = bounds.getSouthWest();
+        BASE.lat = sw.lat;
+        BASE.lng = sw.lng;
+        redrawLotPolygons();
+        setStatus('Parcel loaded — Henderson County GIS', 3000);
+      } else {
+        // Fall back: show all parcels in area + fly to Creekview Rd
+        map.setView([35.3155, -82.4596], 19);
+        setStatus('Parcel query unavailable — showing approximate position', 4000);
+        // Try to load the full Henderson County parcel layer filtered to the area
+        try {
+          L.esri.featureLayer({
+            url: parcelUrl,
+            style: () => ({ color:'#74c69d', weight:1.5, fillColor:'#52b788', fillOpacity:0.1 }),
+            where: "SUBDIV_NAME LIKE '%STONECREST%'",
+          }).addTo(map);
+        } catch(e) {}
+        redrawLotPolygons();
+      }
+    });
+
+  // Add scale control
+  L.control.scale({ imperial: true, metric: true }).addTo(map);
+
+  // Layer switcher
+  const basemaps = {
+    'Satellite': L.esri.basemapLayer('Imagery'),
+    'Hybrid':    L.layerGroup([L.esri.basemapLayer('Imagery'), L.esri.basemapLayer('ImageryLabels')]),
+    'Streets':   L.esri.basemapLayer('Streets'),
+  };
+  L.control.layers(basemaps, {}, { position: 'topright', collapsed: false }).addTo(map);
+
+  redrawLotPolygons();
+}
+
+function redrawLotPolygons() {
+  Object.values(lotLayers).forEach(l => map.removeLayer(l));
+  lotLayers = {};
+
+  Object.values(LOTS).forEach((d, i) => {
+    const isActive = d.unit === active;
+    const c = calc(d);
+    const pts = lotBounds(i);
+
+    const poly = L.polygon(pts, {
+      color:       isActive ? '#52b788' : '#74c69d',
+      weight:      isActive ? 3 : 1.5,
+      fillColor:   isActive ? '#52b788' : '#a5d6a7',
+      fillOpacity: isActive ? 0.35 : 0.18,
+    }).addTo(map);
+
+    poly.bindPopup(`
+      <b>Unit ${d.unit} — ${d.addr}</b><br>
+      Model: ${d.model} &nbsp;·&nbsp; ${d.pos}<br>
+      Lot: ${d.lotW}′ × ${d.lotD}′ = ${n(d.lotW*d.lotD)} sf<br>
+      <span style="color:#2d6a4f;font-weight:700">Sod: ${n(c.sf)} sq ft &nbsp;·&nbsp; ${c.pal} pallet${c.pal!==1?'s':''}</span>
+    `);
+
+    poly.on('click', () => {
+      const btn = [...document.querySelectorAll('.ubtn')].find(b => +b.textContent === d.unit);
+      select(d.unit, btn);
+    });
+
+    // Unit label
+    const center = poly.getBounds().getCenter();
+    const lbl = L.divIcon({
+      className: '',
+      html: `<div style="
+        background:${isActive?'#1b5e20':'rgba(0,0,0,.55)'};
+        color:${isActive?'#a5d6a7':'#c8e6c9'};
+        font:${isActive?'bold 11px':'10px'} sans-serif;
+        padding:2px 5px; border-radius:3px; white-space:nowrap;
+        text-align:center; pointer-events:none; border:1px solid #2d6a4f;
+      ">${d.unit}<br><span style="font-size:9px">${n(c.sf)} sf</span></div>`,
+      iconAnchor: [22, 16],
+    });
+    const marker = L.marker(center, { icon: lbl }).addTo(map);
+    lotLayers[d.unit] = L.layerGroup([poly, marker]);
+  });
+}
+
+function highlightMap(num) {
+  if (!mapReady) return;
+  redrawLotPolygons();
+}
+
+// ══════════════════════════════════════════════════════════════
+// FULL PLOT PLAN — SVG (all 6 lots to scale)
+// ══════════════════════════════════════════════════════════════
+function drawPlan() {
+  const S   = 5.2;   // px per foot
+  const ML  = 90, MT = 75, MR = 50, roadH = 36;
+  const lotW_ft = 22, lotD_ft = 110;
+  const UNITS = Object.values(LOTS);
+  const totalW = UNITS.length * lotW_ft * S;
+  const svgW = totalW + ML + MR;
+  const svgH = lotD_ft * S + MT + roadH + 60;
+
+  const C = {
+    lot:'#c8e6c9', bldg:'#78909c', drv:'#b0bec5',
+    pat:'#d7ccc8', road:'#546e7a', border:'#2e7d32'
+  };
+
+  let o = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" font-family="sans-serif">`;
+  o += `<rect width="100%" height="100%" fill="#ebe8e2"/>`;
+
+  // Title block
+  o += txt(svgW/2, 20, 13, 'bold', '#1b5e20', 'center', 'Townes at Stonecrest — Phase 1  ·  Sod Installation Plan');
+  o += txt(svgW/2, 36, 9.5, '', '#555', 'center', 'Lots 202–207  ·  Creekview Rd  ·  Hendersonville, Henderson County NC  ·  PIN 9660-90-8308');
+  o += txt(svgW/2, 50, 8.5, '', '#777', 'center', 'Joseph Kane PLS L-5106  ·  Survey 02/23/2022  ·  Scale 1″=20′  ·  NAD 83 NC State Plane');
+
+  // Scale bar
+  const scaleLen = 20 * S;
+  o += `<line x1="${ML}" y1="${MT-14}" x2="${ML+scaleLen}" y2="${MT-14}" stroke="#555" stroke-width="2"/>`;
+  o += `<line x1="${ML}" y1="${MT-10}" x2="${ML}" y2="${MT-18}" stroke="#555" stroke-width="1.5"/>`;
+  o += `<line x1="${ML+scaleLen}" y1="${MT-10}" x2="${ML+scaleLen}" y2="${MT-18}" stroke="#555" stroke-width="1.5"/>`;
+  o += txt(ML, MT-3, 8, '', '#555', 'middle', '0');
+  o += txt(ML+scaleLen, MT-3, 8, '', '#555', 'middle', "20'");
+
+  // North arrow
+  o += txt(svgW-40, 30, 18, '', '#555', 'middle', 'N');
+  o += `<line x1="${svgW-40}" y1="34" x2="${svgW-40}" y2="14" stroke="#555" stroke-width="1.5" marker-end="url(#nArr)"/>`;
+  o += `<defs>
+    <marker id="nArr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
+      <polygon points="0,6 3,0 6,6" fill="#555"/>
+    </marker>
+    <marker id="dArr" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto-start-reverse">
+      <polygon points="0,0 5,2.5 0,5" fill="#1565c0"/>
+    </marker>
+  </defs>`;
+
+  // Road
+  const roadY = MT + lotD_ft * S;
+  o += `<rect x="0" y="${roadY}" width="${svgW}" height="${roadH}" fill="${C.road}"/>`;
+  o += `<line x1="0" y1="${roadY+roadH/2}" x2="${svgW}" y2="${roadY+roadH/2}" stroke="#78909c" stroke-width="1" stroke-dasharray="14,10"/>`;
+  o += txt(svgW/2, roadY+14, 11, 'bold', 'white', 'middle', 'CREEKVIEW RD. (45′ R/W)');
+  o += txt(svgW/2, roadY+26, 8, '', '#cfd8dc', 'middle', '→ Hendersonville  ·  ← N.C. 225');
+
+  let x = ML;
+  let totalSF = 0, totalPal = 0;
+
+  UNITS.forEach((d, i) => {
+    const lw = d.lotW * S, lh = d.lotD * S;
+    const isAct = d.unit === active;
+    const c = calc(d);
+    totalSF += c.sf; totalPal += c.pal;
+
+    // Lot (sod fill)
+    o += `<rect x="${x}" y="${MT}" width="${lw}" height="${lh}" fill="${C.lot}" stroke="${isAct?'#2d6a4f':'#888'}" stroke-width="${isAct?2.5:1}"/>`;
+
+    // Building
+    const bh = d.bldgD * S;
+    o += `<rect x="${x}" y="${MT}" width="${d.bldgW*S}" height="${bh}" fill="${C.bldg}" stroke="#37474f" stroke-width="1"/>`;
+    o += txt(x + lw/2, MT+bh/2-7, isAct?10:9, isAct?'bold':'', 'white', 'middle', d.model);
+    o += txt(x + lw/2, MT+bh/2+7, 8, '', '#cfd8dc', 'middle', `${d.bldgW}′×${d.bldgD}′`);
+
+    // Patio
+    const pY = MT + bh, ph = d.patD * S;
+    o += `<rect x="${x}" y="${pY}" width="${d.patW*S}" height="${ph}" fill="${C.pat}" stroke="#795548" stroke-width="0.8" stroke-dasharray="4,3"/>`;
+    o += txt(x + lw/2, pY+ph/2+3, 7.5, '', '#4e342e', 'middle', `Patio ${d.patW}′`);
+
+    // Driveway
+    const dY = MT + lh - d.drvD*S, dh = d.drvD*S;
+    o += `<rect x="${x}" y="${dY}" width="${d.drvW*S}" height="${dh}" fill="${C.drv}" stroke="#546e7a" stroke-width="0.8"/>`;
+    o += txt(x + lw/2, dY+dh/2+3, 7.5, '', '#263238', 'middle', `Drvwy ${d.drvW}′`);
+
+    // Sod area callout (in rear yard)
+    const sodY = pY + ph;
+    const sodH = dY - sodY;
+    if (sodH > 14) {
+      o += txt(x+lw/2, sodY+sodH/2-4, 8.5, 'bold', '#2e7d32', 'middle', `${n(c.sf)} sf sod`);
+      o += txt(x+lw/2, sodY+sodH/2+8, 7.5, '', '#388e3c', 'middle', `${c.pal} pal`);
+    }
+
+    // Unit number above lot
+    o += txt(x+lw/2, MT-4, isAct?11:9, isAct?'bold':'', isAct?'#1b5e20':'#555', 'middle', `${d.unit}`);
+
+    // Width dim below road
+    const dimY = roadY + roadH + 10;
+    o += hDim(x, x+lw, dimY, `${d.lotW}′`, '#1565c0');
+
+    // Address
+    o += txt(x+lw/2, dimY+22, 7.5, '', '#aaa', 'middle', d.addr);
+
+    x += lw;
+  });
+
+  // Grand total banner
+  const banY = roadY + roadH + 48;
+  o += `<rect x="${ML}" y="${banY}" width="${totalW}" height="18" fill="#1b5e20" rx="3"/>`;
+  o += txt(ML+totalW/2, banY+12, 10, 'bold', 'white', 'middle',
+    `TOTAL SOD: ${n(totalSF)} sq ft  (${(totalSF/9).toFixed(0)} sq yd)  ≈ ${totalPal} pallets @ 450 sf/ea`);
+
+  // Legend
+  const legX = ML, legY = banY + 24;
+  const leg = [[C.lot,'Sod Area'],[C.bldg,'Building'],[C.drv,'Driveway'],[C.pat,'Patio']];
+  leg.forEach(([col, lbl], i) => {
+    o += `<rect x="${legX+i*90}" y="${legY}" width="10" height="10" fill="${col}" stroke="#555" stroke-width="0.5"/>`;
+    o += txt(legX+i*90+13, legY+8, 8, '', '#555', 'start', lbl);
+  });
+
+  o += `</svg>`;
+  document.getElementById('plotDiv').innerHTML = o;
+}
+
+// ══════════════════════════════════════════════════════════════
+// LOT DETAIL — SVG (single unit, all dimensions)
+// ══════════════════════════════════════════════════════════════
+function drawLot(num) {
+  const d   = LOTS[num];
+  const c   = calc(d);
+  const S   = 6;
+  const ML  = 80, MT = 60, MR = 80, roadH = 34, resH = 78;
+
+  const lw = d.lotW * S, lh = d.lotD * S;
+  const svgW = lw + ML + MR;
+  const svgH = lh + MT + roadH + resH + 16;
+
+  const ox = ML, oy = MT;
+  const bh = d.bldgD * S;
+  const ph = d.patD  * S;
+  const dh = d.drvD  * S;
+  const pw = d.patW  * S;
+  const dw = d.drvW  * S;
+
+  const C = { lot:'#c8e6c9', bldg:'#78909c', drv:'#b0bec5', pat:'#d7ccc8', road:'#546e7a' };
+
+  let o = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" font-family="sans-serif">`;
+  o += `<rect width="100%" height="100%" fill="#f4f2ee"/>`;
+
+  o += `<defs>
+    <marker id="da" markerWidth="5" markerHeight="5" refX="0" refY="2.5" orient="auto">
+      <polygon points="0,0 5,2.5 0,5" fill="#1565c0"/>
+    </marker>
+    <marker id="dab" markerWidth="5" markerHeight="5" refX="5" refY="2.5" orient="auto">
+      <polygon points="5,0 0,2.5 5,5" fill="#1565c0"/>
+    </marker>
+  </defs>`;
+
+  // Title
+  o += txt(svgW/2, 22, 13, 'bold', '#1b5e20', 'middle', `Unit ${d.unit} — ${d.addr}`);
+  o += txt(svgW/2, 38, 9.5, '', '#555', 'middle', `${d.model} Model · ${d.pos} · Townes at Stonecrest PH 1 · Hendersonville NC`);
+
+  // Lot (sod fill)
+  o += `<rect x="${ox}" y="${oy}" width="${lw}" height="${lh}" fill="${C.lot}" stroke="#2e7d32" stroke-width="2"/>`;
+
+  // Building
+  o += `<rect x="${ox}" y="${oy}" width="${d.bldgW*S}" height="${bh}" fill="${C.bldg}" stroke="#37474f" stroke-width="1.5"/>`;
+  o += txt(ox+lw/2, oy+bh/2-9, 13, 'bold', 'white', 'middle', d.model);
+  o += txt(ox+lw/2, oy+bh/2+6, 10, '', '#cfd8dc', 'middle', 'Building');
+  o += txt(ox+lw/2, oy+bh/2+20, 9, '', '#b0bec5', 'middle', `${d.bldgW}′ × ${d.bldgD}′ = ${n(d.bldgW*d.bldgD)} sf`);
+
+  // Patio
+  const patY = oy + bh;
+  o += `<rect x="${ox}" y="${patY}" width="${pw}" height="${ph}" fill="${C.pat}" stroke="#795548" stroke-width="1" stroke-dasharray="5,3"/>`;
+  o += txt(ox+pw/2, patY+ph/2+4, 9, '', '#4e342e', 'middle', `Patio  ${d.patW}′ × ${d.patD}′`);
+
+  // Rear sod zone
+  const sodY = patY + ph;
+  const drvTop = oy + lh - dh;
+  const sodZoneH = drvTop - sodY;
+  if (sodZoneH > 4) {
+    o += txt(ox+lw/2, sodY+sodZoneH/2+3, 10, 'bold', '#2e7d32', 'middle', `← Sod Rear Yard →`);
+    o += txt(ox+lw/2, sodY+sodZoneH/2+18, 9, '', '#388e3c', 'middle', `${d.lotW}′ × ${(d.lotD - d.bldgD - d.patD - d.drvD).toFixed(1)}′`);
+  }
+
+  // Driveway
+  o += `<rect x="${ox}" y="${drvTop}" width="${dw}" height="${dh}" fill="${C.drv}" stroke="#546e7a" stroke-width="1"/>`;
+  o += txt(ox+lw/2, drvTop+dh/2+4, 9, '', '#263238', 'middle', `Driveway  ${d.drvW}′ × ${d.drvD}′`);
+
+  // Road
+  const rdY = oy + lh;
+  o += `<rect x="0" y="${rdY}" width="${svgW}" height="${roadH}" fill="${C.road}"/>`;
+  o += `<line x1="0" y1="${rdY+roadH/2}" x2="${svgW}" y2="${rdY+roadH/2}" stroke="#78909c" stroke-width="1" stroke-dasharray="14,8"/>`;
+  o += txt(svgW/2, rdY+14, 11, 'bold', 'white', 'middle', 'CREEKVIEW RD.');
+  o += txt(svgW/2, rdY+26, 8, '', '#cfd8dc', 'middle', '45′ Public Right-of-Way');
+
+  // Dimension lines
+  o += hDim(ox, ox+lw, oy-22, `${d.lotW}′ lot width`, '#1565c0');
+  o += vDim(ox+lw+22, oy, oy+lh, `${d.lotD}′ lot depth`, '#1565c0');
+  o += vDim(ox-22, oy, oy+bh, `${d.bldgD}′ bldg`, '#455a64');
+  o += vDim(ox-22, oy+bh, oy+bh+ph, `${d.patD}′ patio`, '#795548');
+  o += vDim(ox-22, drvTop, oy+lh, `${d.drvD}′ drv`, '#546e7a');
+  o += hDim(ox, ox+pw, patY+ph+10, `${d.patW}′ patio`, '#795548');
+
+  // Result box
+  const rbY = rdY + roadH + 8;
+  o += `<rect x="${ox}" y="${rbY}" width="${lw}" height="${resH}" fill="#1b5e20" rx="5"/>`;
+  o += txt(ox+10, rbY+17, 10.5, 'bold', '#a5d6a7', 'start', `SOD CALCULATION — Unit ${num}  ·  ${d.addr}`);
+  o += txt(ox+10, rbY+33, 8.5, '', '#c8e6c9', 'start',
+    `Lot ${n(c.lot)} sf  −  Bldg ${n(c.bldg)} sf  −  Drv ${n(c.drv)} sf  −  Patio ${n(c.pat)} sf  −  Other ${n(c.misc)} sf`);
+  o += txt(ox+10, rbY+54, 15, 'bold', 'white', 'start', `= ${n(c.sf)} sq ft SOD  (${c.sy.toFixed(1)} sq yd)`);
+  o += txt(ox+10, rbY+70, 9.5, '', '#a5d6a7', 'start', `≈ ${c.pal} pallet${c.pal!==1?'s':''} @ 450 sf/pallet  ·  Impervious total: ${n(c.imp)} sf`);
+
+  o += `</svg>`;
+  document.getElementById('lotDiv').innerHTML = o;
+}
+
+// ── SVG helpers ──────────────────────────────────────────────
+function txt(x, y, size, weight, fill, anchor, content) {
+  anchor = anchor === 'middle' ? 'middle' : anchor === 'center' ? 'middle' : anchor === 'start' ? 'start' : 'middle';
+  return `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight||'normal'}" fill="${fill}" text-anchor="${anchor}">${esc(content)}</text>`;
+}
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function hDim(x1, x2, y, label, col='#1565c0') {
+  return `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}" stroke-width="1"
+    marker-start="url(#dab)" marker-end="url(#da)"/>
+  <text x="${(x1+x2)/2}" y="${y-5}" text-anchor="middle" font-size="9" fill="${col}">${esc(label)}</text>
+  <line x1="${x1}" y1="${y-5}" x2="${x1}" y2="${y+5}" stroke="${col}" stroke-width="0.8"/>
+  <line x1="${x2}" y1="${y-5}" x2="${x2}" y2="${y+5}" stroke="${col}" stroke-width="0.8"/>`;
+}
+function vDim(x, y1, y2, label, col='#1565c0') {
+  return `<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${col}" stroke-width="1"
+    marker-start="url(#dab)" marker-end="url(#da)"/>
+  <text x="${x+5}" y="${(y1+y2)/2+4}" font-size="9" fill="${col}">${esc(label)}</text>
+  <line x1="${x-5}" y1="${y1}" x2="${x+5}" y2="${y1}" stroke="${col}" stroke-width="0.8"/>
+  <line x1="${x-5}" y1="${y2}" x2="${x+5}" y2="${y2}" stroke="${col}" stroke-width="0.8"/>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════════════════════════
+buildPicker();
+renderCalc(active);
+drawLot(active);
+initMap();   // start loading immediately (map is default tab)
+</script>
+
+</body>
+</html>
