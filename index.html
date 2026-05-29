@@ -3,944 +3,848 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sod Estimator — Prestige Property &amp; Turf</title>
-
-  <!-- Leaflet (GIS panel) -->
+  <title>Sod Takeoff — Prestige Property &amp; Turf</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/esri-leaflet@3.0.12/dist/esri-leaflet.js"></script>
-
-  <!-- PDF.js (plot plan rendering) -->
   <script src="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
-
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg:    #0f1923;  --surf:  #1a2535;  --border: #2a3a4a;
-      --green: #52b788;  --gdk:   #2d6a4f;  --glt:    #a5d6a7;
-      --red:   #ef9a9a;  --text:  #e0e6ef;  --muted:  #8899aa;
-      --panel: #141f2b;
+      --bg0:#080c14; --bg1:#0f1520; --bg2:#141c2b; --bg3:#1b2538; --bg4:#222d42;
+      --bdr:#2a3650; --bdr2:#364760;
+      --grn:#3a9060; --glt:#52c68a; --gdim:#8ecaab; --gdark:#1e4d32;
+      --red:#e07070; --blu:#4a9eda; --txt:#dce6f5; --mu1:#7a8fa8; --mu2:#4e607a;
+      --font:'Inter','Segoe UI',system-ui,sans-serif;
     }
-    body { font-family:'Segoe UI',system-ui,sans-serif; background:var(--bg); color:var(--text); height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:var(--font);background:var(--bg0);color:var(--txt);height:100vh;display:flex;flex-direction:column;overflow:hidden}
 
-    /* ═══ SHARED HEADER ═══ */
-    .hdr { background:var(--surf); border-bottom:2px solid var(--gdk); padding:9px 18px; display:flex; align-items:center; gap:12px; flex-shrink:0; }
-    .hdr-logo { font-size:1.25rem; }
-    .hdr h1  { font-size:0.95rem; font-weight:700; color:var(--green); }
-    .hdr sub { font-size:0.65rem; color:var(--muted); display:block; margin-top:1px; }
-    .hdr-right { margin-left:auto; display:flex; gap:8px; align-items:center; }
-    .pill { background:var(--gdk); color:#fff; font-size:0.65rem; font-weight:700; padding:3px 8px; border-radius:10px; }
+    .app-hdr{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:0 20px;height:52px;display:flex;align-items:center;gap:14px;flex-shrink:0}
+    .logo-mark{width:32px;height:32px;background:var(--gdark);border:1px solid var(--grn);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+    .app-title{font-size:0.95rem;font-weight:700;letter-spacing:-0.01em}
+    .app-sub{font-size:0.68rem;color:var(--mu1);margin-top:1px}
+    .hdr-div{width:1px;height:26px;background:var(--bdr)}
+    .hdr-chip{font-size:0.63rem;font-weight:700;background:var(--gdark);color:var(--glt);border:1px solid var(--grn);padding:2px 9px;border-radius:10px;letter-spacing:.05em}
+    .hdr-right{margin-left:auto;display:flex;gap:8px;align-items:center}
 
-    /* ═══ INPUT SCREEN ═══ */
-    #inputScreen { flex:1; display:flex; align-items:center; justify-content:center; padding:24px; overflow:auto; }
-    .card { background:var(--surf); border:1px solid var(--border); border-radius:10px; width:100%; max-width:620px; overflow:hidden; }
+    #inputScreen{flex:1;overflow-y:auto;background:var(--bg0)}
+    .input-layout{width:100%;max-width:760px;margin:0 auto;padding:28px 20px 48px}
+    .sec{margin-bottom:28px}
+    .sec-hd{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--mu1);padding-bottom:10px;border-bottom:1px solid var(--bdr);margin-bottom:16px;display:flex;align-items:baseline;gap:8px}
+    .sec-hd-note{font-size:0.58rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--mu2)}
+    .field-row{display:flex;gap:12px;margin-bottom:12px}
+    .field{flex:1}
+    .field label{display:block;font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--mu1);margin-bottom:5px}
+    .field input,.field select{width:100%;background:var(--bg3);border:1px solid var(--bdr);color:var(--txt);padding:10px 13px;border-radius:7px;font-size:0.87rem;font-family:var(--font);transition:border-color .15s,box-shadow .15s}
+    .field input:focus,.field select:focus{outline:none;border-color:var(--grn);box-shadow:0 0 0 3px rgba(58,144,96,.15)}
+    .field input::placeholder{color:var(--mu2)}
+    .field select option{background:var(--bg3)}
 
-    .input-tabs { display:flex; border-bottom:1px solid var(--border); }
-    .itab { flex:1; padding:12px; text-align:center; cursor:pointer; font-size:0.82rem; color:var(--muted); border-bottom:2px solid transparent; transition:all .15s; }
-    .itab:hover { color:var(--text); }
-    .itab.on { color:var(--green); border-bottom-color:var(--green); background:rgba(82,183,136,.06); }
+    .upload-area{border:1.5px dashed var(--bdr2);border-radius:7px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;position:relative;transition:all .2s;height:100%}
+    .upload-area:hover,.upload-area.over{border-color:var(--grn);background:rgba(58,144,96,.06)}
+    .upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+    .upload-icon{font-size:1.4rem;flex-shrink:0}
+    .upload-text{font-size:0.78rem;color:var(--mu1);line-height:1.4}
+    .upload-text strong{color:var(--glt)}
+    #fFileName{color:var(--glt);font-size:0.74rem;margin-top:3px;display:none}
 
-    .input-body { padding:24px; }
+    .meas-table{width:100%;border-collapse:collapse}
+    .meas-table thead th{font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--mu2);padding:0 8px 8px;text-align:left}
+    .meas-table thead th.r{text-align:right}
+    .meas-table thead th.c{text-align:center}
+    .mtr{border-top:1px solid var(--bdr)}
+    .mtr:last-child{border-bottom:1px solid var(--bdr)}
+    .zone-lbl{padding:10px 8px;font-size:0.78rem;font-weight:600;width:120px;white-space:nowrap}
+    .zone-sub{font-size:0.62rem;font-weight:400;color:var(--mu1);display:block;margin-top:2px}
+    .mnum{padding:8px 4px}
+    .mnum input{width:74px;background:var(--bg3);border:1px solid var(--bdr);color:var(--txt);padding:7px 9px;border-radius:6px;font-size:0.84rem;font-family:var(--font);text-align:right;transition:border-color .15s}
+    .mnum input:focus{outline:none;border-color:var(--grn)}
+    .mnum input::placeholder{color:var(--mu2)}
+    .mop{padding:8px 3px;font-size:0.73rem;color:var(--mu2);text-align:center;width:20px}
+    .msf{padding:8px 8px;font-size:0.74rem;font-family:'Courier New',monospace;text-align:right;width:88px;white-space:nowrap;color:var(--mu1)}
+    .msf.lot{color:var(--glt);font-weight:700}
+    .msf.ded{color:var(--red)}
 
-    /* Drop zone */
-    .drop-zone {
-      border:2px dashed var(--border); border-radius:8px; padding:32px;
-      text-align:center; cursor:pointer; transition:all .2s; position:relative;
-    }
-    .drop-zone:hover, .drop-zone.over { border-color:var(--green); background:rgba(82,183,136,.06); }
-    .drop-zone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; }
-    .drop-icon { font-size:2.5rem; margin-bottom:8px; }
-    .drop-label { font-size:0.88rem; color:var(--muted); }
-    .drop-label strong { color:var(--green); }
-    .file-name { margin-top:10px; font-size:0.78rem; color:var(--glt); display:none; }
+    .live-preview{background:var(--gdark);border:1px solid var(--grn);border-radius:10px;padding:18px 22px;display:flex;align-items:center;gap:24px}
+    .prv-main{flex:1}
+    .prv-lbl{font-size:0.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gdim);margin-bottom:5px}
+    .prv-val{font-size:2.1rem;font-weight:700;color:var(--glt);letter-spacing:-.03em;line-height:1}
+    .prv-unit{font-size:1rem;font-weight:400;color:var(--gdim);margin-left:4px}
+    .prv-sy{font-size:0.7rem;color:var(--gdim);margin-top:5px}
+    .prv-side{text-align:right}
+    .prv-pal{font-size:1.6rem;font-weight:700;color:#fff;line-height:1}
+    .prv-pal-lbl{font-size:0.6rem;color:var(--gdim);text-transform:uppercase;letter-spacing:.08em}
+    .prv-pal-sub{font-size:0.6rem;color:var(--gdim);margin-top:3px}
 
-    /* Address input */
-    #addressPane { display:none; }
-    .field-group { margin-bottom:14px; }
-    .field-group label { display:block; font-size:0.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:6px; }
-    .field-group input, .field-group select {
-      width:100%; background:var(--bg); border:1px solid var(--border); color:var(--text);
-      padding:9px 12px; border-radius:5px; font-size:0.85rem; transition:border-color .15s;
-    }
-    .field-group input:focus, .field-group select:focus { outline:none; border-color:var(--green); }
-    .field-group select option { background:var(--bg); }
+    .quick-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+    .qbtn{background:var(--bg3);border:1px solid var(--bdr);color:var(--mu1);padding:10px 6px;border-radius:7px;cursor:pointer;font-size:0.68rem;font-weight:600;font-family:var(--font);text-align:center;transition:all .15s;line-height:1.35}
+    .qbtn:hover{border-color:var(--grn);color:var(--glt);background:rgba(58,144,96,.1)}
+    .qbtn.active{background:var(--gdark);border-color:var(--grn);color:var(--glt)}
+    .qbtn .qnum{font-size:0.88rem;display:block;color:var(--txt);font-weight:700;margin-bottom:2px}
+    .qbtn.active .qnum{color:#fff}
 
-    .source-note { font-size:0.72rem; color:var(--muted); background:var(--bg); border:1px solid var(--border); border-radius:5px; padding:8px 12px; margin-bottom:14px; line-height:1.5; }
-    .source-note strong { color:var(--glt); }
+    .gen-btn{width:100%;padding:14px;background:var(--grn);border:none;border-radius:9px;color:#fff;font-size:0.92rem;font-weight:700;font-family:var(--font);cursor:pointer;letter-spacing:.02em;transition:background .15s,transform .1s;margin-top:4px}
+    .gen-btn:hover{background:var(--glt)}
+    .gen-btn:active{transform:scale(.99)}
 
-    #lotSection { display:none; margin-top:16px; padding-top:16px; border-top:1px solid var(--border); }
+    #reportScreen{flex:1;display:none;flex-direction:column;overflow:hidden}
+    .rpt-bar{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:8px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+    .back-btn{background:var(--bg3);border:1px solid var(--bdr);color:var(--mu1);padding:5px 13px;border-radius:6px;cursor:pointer;font-size:0.72rem;font-weight:600;font-family:var(--font);transition:all .15s;white-space:nowrap}
+    .back-btn:hover{border-color:var(--grn);color:var(--glt)}
+    .rpt-job{font-size:0.88rem;font-weight:700}
+    .rpt-addr{font-size:0.7rem;color:var(--mu1);margin-top:1px}
+    .rpt-sod{background:var(--gdark);border:1px solid var(--grn);color:var(--glt);font-size:0.68rem;font-weight:700;padding:4px 12px;border-radius:12px;white-space:nowrap}
+    .rpt-actions{margin-left:auto;display:flex;gap:6px}
+    .abtn{padding:5px 12px;border-radius:6px;font-size:0.72rem;font-weight:600;font-family:var(--font);cursor:pointer;border:1px solid var(--bdr);transition:all .15s}
+    .abtn-g{background:var(--grn);border-color:var(--grn);color:#fff}
+    .abtn-g:hover{background:var(--glt);border-color:var(--glt)}
+    .abtn-s{background:var(--bg3);color:var(--mu1)}
+    .abtn-s:hover{border-color:var(--grn);color:var(--glt)}
 
-    .go-btn {
-      width:100%; padding:12px; border:none; border-radius:6px; cursor:pointer;
-      background:var(--gdk); color:#fff; font-size:0.9rem; font-weight:700;
-      transition:background .15s; margin-top:8px;
-    }
-    .go-btn:hover { background:var(--green); }
-    .go-btn:disabled { opacity:.4; cursor:not-allowed; }
+    .panels{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:1px;background:var(--bdr);overflow:hidden}
+    .panel{background:var(--bg1);display:flex;flex-direction:column;overflow:hidden;position:relative}
+    .panel-hdr{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:7px 14px;display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .ph-icon{font-size:0.85rem}
+    .panel-hdr h3{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mu1)}
+    .panel-tag{margin-left:auto;font-size:0.56rem;font-weight:600;background:var(--bg3);border:1px solid var(--bdr);color:var(--mu2);padding:2px 8px;border-radius:8px;letter-spacing:.05em;text-transform:uppercase}
+    .panel-body{flex:1;overflow:hidden;position:relative}
 
-    /* ═══ REPORT SCREEN ═══ */
-    #reportScreen { flex:1; display:none; flex-direction:column; overflow:hidden; }
+    #blueprintCanvas{width:100%;height:100%;overflow:auto;background:#f5f2ed}
+    #pdfCanvas{display:block;margin:0 auto}
+    #svgBlueprint{display:block;margin:0 auto}
+    .bp-controls{position:absolute;bottom:8px;right:8px;display:flex;gap:4px;z-index:10}
+    .bp-btn{background:rgba(15,21,32,.92);border:1px solid var(--bdr2);color:var(--txt);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:.82rem;display:flex;align-items:center;justify-content:center;transition:all .15s}
+    .bp-btn:hover{border-color:var(--grn);color:var(--glt)}
 
-    .report-sub {
-      background:var(--surf); border-bottom:1px solid var(--border);
-      padding:7px 16px; display:flex; align-items:center; gap:10px; flex-shrink:0;
-    }
-    .back-btn { background:var(--bg); border:1px solid var(--border); color:var(--muted); padding:4px 12px; border-radius:4px; cursor:pointer; font-size:0.75rem; transition:all .15s; }
-    .back-btn:hover { border-color:var(--green); color:var(--green); }
-    .project-info { font-size:0.75rem; color:var(--muted); }
-    .project-info strong { color:var(--text); }
-    .data-source { margin-left:auto; font-size:0.68rem; color:var(--muted); background:var(--bg); border:1px solid var(--border); padding:3px 10px; border-radius:10px; }
-    .data-source span { color:var(--glt); }
+    #streetFrame{width:100%;height:100%;border:none}
+    .sv-fallback{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;padding:20px;text-align:center}
+    .sv-link{background:var(--grn);color:#fff;text-decoration:none;padding:9px 20px;border-radius:6px;font-size:.8rem;font-weight:600}
 
-    /* 2×2 panel grid */
-    .panels { flex:1; display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:1px; background:var(--border); overflow:hidden; }
-    .panel { background:var(--panel); display:flex; flex-direction:column; overflow:hidden; position:relative; }
-    .panel-hdr { background:var(--surf); border-bottom:1px solid var(--border); padding:6px 12px; display:flex; align-items:center; gap:8px; flex-shrink:0; }
-    .panel-hdr h3 { font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); }
-    .panel-hdr .tag { font-size:0.62rem; background:var(--bg); border:1px solid var(--border); color:var(--muted); padding:1px 7px; border-radius:8px; margin-left:auto; }
-    .panel-body { flex:1; overflow:hidden; position:relative; }
+    .calc-body{flex:1;overflow-y:auto;padding:14px}
+    .calc-body::-webkit-scrollbar{width:3px}
+    .calc-body::-webkit-scrollbar-thumb{background:var(--bdr)}
+    .cr-sec{margin-bottom:10px}
+    .cr-hd{font-size:.57rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--mu2);border-bottom:1px solid var(--bdr);padding-bottom:4px;margin-bottom:7px}
+    .cr-row{display:flex;align-items:center;gap:5px;margin-bottom:5px}
+    .cr-lbl{flex:1;font-size:.73rem;color:var(--mu1)}
+    .cr-inp{width:52px;background:var(--bg3);border:1px solid var(--bdr);color:var(--txt);padding:4px 6px;border-radius:4px;font-size:.73rem;text-align:right;font-family:var(--font)}
+    .cr-inp:focus{outline:none;border-color:var(--grn)}
+    .cr-x{color:var(--mu2);font-size:.68rem}
+    .cr-sf{width:58px;text-align:right;font-size:.67rem;color:var(--mu1);font-family:monospace}
+    .res-box{background:var(--bg0);border:1px solid var(--bdr2);border-radius:7px;padding:11px 13px}
+    .r-row{display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:5px}
+    .r-row .rv{font-family:monospace;color:var(--gdim)}
+    .r-row.ded .rl,.r-row.ded .rv{color:var(--red)}
+    .r-row.tot{border-top:1px solid var(--bdr2);padding-top:7px;margin-top:5px;font-size:.88rem;font-weight:700}
+    .r-row.tot .rv{color:var(--glt)}
+    .r-row.sub{font-size:.67rem}
+    .r-row.sub .rl,.r-row.sub .rv{color:var(--mu1)}
+    .calc-footer{padding:8px 12px;border-top:1px solid var(--bdr);display:flex;gap:6px;flex-shrink:0}
+    .cf-btn{flex:1;padding:7px;border:none;border-radius:5px;font-size:.71rem;font-weight:600;font-family:var(--font);cursor:pointer;transition:all .15s}
+    .cf-g{background:var(--grn);color:#fff}
+    .cf-g:hover{background:var(--glt)}
+    .cf-s{background:var(--bg3);color:var(--mu1);border:1px solid var(--bdr)}
+    .cf-s:hover{border-color:var(--grn);color:var(--glt)}
 
-    /* ── Panel 1: Blueprint ── */
-    #blueprintCanvas { width:100%; height:100%; overflow:auto; background:#f4f1ec; }
-    #pdfCanvas { display:block; margin:0 auto; max-width:100%; }
-    #svgBlueprint { display:block; margin:0 auto; }
-    .pdf-controls { position:absolute; bottom:8px; right:8px; display:flex; gap:4px; z-index:10; }
-    .pdf-ctrl-btn { background:rgba(26,37,53,.9); border:1px solid var(--border); color:var(--text); width:28px; height:28px; border-radius:4px; cursor:pointer; font-size:0.8rem; display:flex; align-items:center; justify-content:center; }
+    .pload{position:absolute;inset:0;background:rgba(8,12,20,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:20}
+    .spin{width:22px;height:22px;border:2px solid var(--bdr);border-top-color:var(--grn);border-radius:50%;animation:sp .7s linear infinite}
+    @keyframes sp{to{transform:rotate(360deg)}}
+    .spin-lbl{font-size:.7rem;color:var(--grn)}
 
-    /* ── Panel 2: Street View ── */
-    #streetFrame { width:100%; height:100%; border:none; }
-    .sv-fallback { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:12px; padding:20px; text-align:center; }
-    .sv-fallback p { font-size:0.8rem; color:var(--muted); line-height:1.5; }
-    .sv-btn { background:var(--gdk); color:#fff; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; font-size:0.82rem; font-weight:600; text-decoration:none; display:inline-block; transition:background .15s; }
-    .sv-btn:hover { background:var(--green); }
-
-    /* ── Panel 3: GIS ── */
-    #gisMap { width:100%; height:100%; }
-
-    /* ── Panel 4: Calculator ── */
-    .calc-scroll { flex:1; overflow-y:auto; padding:12px; }
-    .calc-scroll::-webkit-scrollbar { width:4px; }
-    .calc-scroll::-webkit-scrollbar-thumb { background:var(--border); border-radius:2px; }
-
-    .meas-section { margin-bottom:12px; }
-    .meas-hd { font-size:0.62rem; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); border-bottom:1px solid var(--border); padding-bottom:4px; margin-bottom:8px; }
-    .meas-row { display:flex; align-items:center; gap:5px; margin-bottom:6px; }
-    .meas-lbl { flex:1; font-size:0.76rem; color:#b0bec5; }
-    .meas-inp { display:flex; align-items:center; gap:3px; }
-    .meas-inp input { width:52px; background:var(--bg); border:1px solid var(--border); color:var(--text); padding:3px 5px; border-radius:3px; font-size:0.76rem; text-align:right; }
-    .meas-inp input:focus { outline:none; border-color:var(--green); }
-    .meas-inp .x { color:var(--muted); font-size:0.72rem; }
-    .meas-sf { width:60px; text-align:right; font-size:0.7rem; color:var(--muted); font-family:monospace; }
-
-    .res { background:#091a10; border:1px solid var(--gdk); border-radius:5px; padding:10px 12px; }
-    .res-row { display:flex; justify-content:space-between; font-size:0.78rem; margin-bottom:4px; }
-    .res-row .v { font-family:monospace; color:var(--glt); }
-    .res-row.ded .l, .res-row.ded .v { color:var(--red); }
-    .res-row.tot { border-top:1px solid var(--gdk); padding-top:7px; margin-top:4px; font-size:0.9rem; font-weight:700; }
-    .res-row.tot .l { color:#fff; }
-    .res-row.tot .v { color:var(--glt); font-size:0.95rem; }
-    .res-row.sm { font-size:0.7rem; }
-    .res-row.sm .l, .res-row.sm .v { color:var(--muted); }
-
-    .calc-actions { padding:8px 12px; border-top:1px solid var(--border); display:flex; gap:6px; flex-shrink:0; }
-    .cab { flex:1; padding:7px; border:none; border-radius:4px; cursor:pointer; font-size:0.75rem; font-weight:600; transition:all .15s; }
-    .cab-g { background:var(--gdk); color:#fff; }
-    .cab-g:hover { background:var(--green); }
-    .cab-s { background:var(--bg); color:#b0bec5; border:1px solid var(--border); }
-    .cab-s:hover { background:var(--border); color:#fff; }
-
-    /* Loading spinner overlay */
-    .loading { position:absolute; inset:0; background:rgba(15,25,35,.8); display:flex; align-items:center; justify-content:center; z-index:20; flex-direction:column; gap:10px; }
-    .spin { width:24px; height:24px; border:2px solid var(--border); border-top-color:var(--green); border-radius:50%; animation:sp .7s linear infinite; }
-    @keyframes sp { to { transform:rotate(360deg); } }
-    .loading-text { font-size:0.78rem; color:var(--green); }
-
-    /* Print */
-    @media print {
-      body { background:#fff; color:#000; height:auto; overflow:visible; }
-      .hdr { background:#fff; border-bottom:2px solid #2d6a4f; }
-      .hdr h1 { color:#2d6a4f; }
-      #inputScreen { display:none !important; }
-      #reportScreen { display:flex !important; height:auto; overflow:visible; }
-      .panels { grid-template-columns:1fr; grid-template-rows:auto; }
-      #pnl-street, #pnl-gis { display:none; }
-      .panel-body { overflow:visible; height:auto; }
-      #blueprintCanvas { background:#fff; }
-      .res { background:#f0faf5; border:1px solid #2d6a4f; }
-      .res-row .v { color:#1b5e20; }
-      .res-row.ded .l, .res-row.ded .v { color:#b71c1c; }
-      .report-sub, .calc-actions { display:none; }
-      .calc-scroll { overflow:visible; }
+    @media print{
+      body{background:#fff;color:#000;height:auto;overflow:visible}
+      .app-hdr{background:#fff;border-bottom:2px solid #2d6a4f}
+      .app-title{color:#2d6a4f}
+      #inputScreen{display:none!important}
+      #reportScreen{display:flex!important;height:auto;overflow:visible}
+      .panels{grid-template-columns:1fr;grid-template-rows:auto}
+      #pnl-street,#pnl-gis{display:none}
+      .panel-body{overflow:visible;height:auto}
+      #blueprintCanvas{background:#fff}
+      .res-box{background:#f0faf5;border:1px solid #2d6a4f}
+      .rpt-bar,.calc-footer{display:none}
+      .calc-body{overflow:visible}
     }
   </style>
 </head>
 <body>
 
-<!-- ══════════════════ HEADER (both screens) ══════════════════ -->
-<div class="hdr">
-  <span class="hdr-logo">🌿</span>
+<div class="app-hdr">
+  <div class="logo-mark">🌿</div>
   <div>
-    <h1>Sod Estimator</h1>
-    <sub>Prestige Property &amp; Turf Services</sub>
+    <div class="app-title">Sod Takeoff</div>
+    <div class="app-sub">Prestige Property &amp; Turf Services</div>
   </div>
+  <div class="hdr-div"></div>
+  <span class="hdr-chip">500 sf / pallet</span>
   <div class="hdr-right">
-    <span class="pill">500 sf / pallet</span>
-    <span class="pill" id="lotBadge" style="display:none"></span>
+    <span class="hdr-chip" id="unitChip" style="display:none"></span>
   </div>
 </div>
 
-<!-- ══════════════════ SCREEN 1: INPUT ══════════════════ -->
 <div id="inputScreen">
-  <div class="card">
+  <div class="input-layout">
 
-    <div class="input-tabs">
-      <div class="itab on" id="itab-upload" onclick="switchInputTab('upload')">📄 Upload Plot Plan</div>
-      <div class="itab"    id="itab-addr"   onclick="switchInputTab('addr')">📍 Enter Address</div>
-    </div>
-
-    <div class="input-body">
-
-      <!-- ── Upload pane ── -->
-      <div id="uploadPane">
-        <div class="source-note">
-          Upload a PDF plot plan or survey. The plan will be rendered in the Blueprint panel so you can read off measurements. <strong>Pre-loaded data</strong> will fill in automatically for known Townes at Stonecrest lots.
-        </div>
-
-        <div class="drop-zone" id="dropZone">
-          <input type="file" accept=".pdf,application/pdf" id="pdfInput" onchange="handleFileSelect(this.files[0])">
-          <div class="drop-icon">📋</div>
-          <div class="drop-label"><strong>Drop PDF here</strong> or click to browse</div>
-          <div class="file-name" id="fileName"></div>
-        </div>
-      </div>
-
-      <!-- ── Address pane ── -->
-      <div id="addressPane">
-        <div class="source-note">
-          Enter a street address. Measurements will be pulled from <strong>Henderson County GIS</strong> parcel data and the known survey. Adjust any values before generating.
-        </div>
-        <div class="field-group">
+    <div class="sec">
+      <div class="sec-hd">Property</div>
+      <div class="field-row">
+        <div class="field">
           <label>Street Address</label>
-          <input type="text" id="addrInput" placeholder="e.g. 42 Creekview Rd, Hendersonville, NC 28792" oninput="onAddrInput()">
+          <input type="text" id="fAddress" placeholder="123 Main St, City, NC 28000" oninput="onMeasChange()">
         </div>
       </div>
-
-      <!-- ── Lot selector (shown after input) ── -->
-      <div id="lotSection">
-        <div class="field-group">
-          <label>Lot / Unit Number</label>
-          <select id="lotSelect" onchange="onLotChange()">
-            <option value="">— Select lot —</option>
-            <option value="202">Unit 202 — 42 Creekview Rd (Carson)</option>
-            <option value="203">Unit 203 — 46 Creekview Rd (Lansing)</option>
-            <option value="204">Unit 204 — 50 Creekview Rd (Denver)</option>
-            <option value="205">Unit 205 — 54 Creekview Rd (Denver)</option>
-            <option value="206">Unit 206 — 58 Creekview Rd (Lansing)</option>
-            <option value="207">Unit 207 — 62 Creekview Rd (Carson)</option>
-            <option value="custom">Other / Custom lot</option>
-          </select>
+      <div class="field-row">
+        <div class="field" style="flex:2">
+          <label>Job / Label</label>
+          <input type="text" id="fJob" placeholder="e.g. Lot 5 – Smith Residence">
         </div>
-
-        <div id="customFields" style="display:none">
-          <div class="field-group">
-            <label>Address (for map lookup)</label>
-            <input type="text" id="customAddr" placeholder="123 Main St, City, NC 28000">
-          </div>
-          <div class="field-group">
-            <label>Lot Width (ft)</label>
-            <input type="number" id="customW" placeholder="22" step="0.1">
-          </div>
-          <div class="field-group">
-            <label>Lot Depth (ft)</label>
-            <input type="number" id="customD" placeholder="100" step="0.1">
+        <div class="field" style="flex:1.2">
+          <label>Plot Plan PDF <span style="font-size:.6rem;font-weight:400;color:var(--mu2);text-transform:none;letter-spacing:0">(optional)</span></label>
+          <div class="upload-area" id="uploadArea">
+            <input type="file" accept=".pdf,application/pdf" id="pdfInput" onchange="handleFile(this.files[0])">
+            <div class="upload-icon">📋</div>
+            <div class="upload-text">
+              <strong>Upload PDF</strong> or drag here
+              <div id="fFileName"></div>
+            </div>
           </div>
         </div>
-
-        <button class="go-btn" id="goBtn" onclick="generateReport()" disabled>Generate Report →</button>
       </div>
-
     </div>
+
+    <div class="sec">
+      <div class="sec-hd">Measurements <span class="sec-hd-note">All dimensions in feet</span></div>
+      <table class="meas-table">
+        <thead>
+          <tr>
+            <th>Zone</th>
+            <th class="r" style="padding-right:4px">Width</th>
+            <th class="c" style="width:20px"></th>
+            <th class="r" style="padding-right:4px">Depth</th>
+            <th class="c" style="width:20px"></th>
+            <th class="r">Area</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="mtr">
+            <td class="zone-lbl">Lot <span class="zone-sub">Total parcel</span></td>
+            <td class="mnum"><input type="number" step="0.1" id="lotW" placeholder="0" oninput="onMeasChange()"></td>
+            <td class="mop">×</td>
+            <td class="mnum"><input type="number" step="0.1" id="lotD" placeholder="0" oninput="onMeasChange()"></td>
+            <td class="mop">=</td>
+            <td class="msf lot" id="sfLot">—</td>
+          </tr>
+          <tr class="mtr">
+            <td class="zone-lbl">Building <span class="zone-sub">House footprint</span></td>
+            <td class="mnum"><input type="number" step="0.1" id="bldgW" placeholder="0" oninput="onMeasChange()"></td>
+            <td class="mop">×</td>
+            <td class="mnum"><input type="number" step="0.1" id="bldgD" placeholder="0" oninput="onMeasChange()"></td>
+            <td class="mop">=</td>
+            <td class="msf ded" id="sfBldg">—</td>
+          </tr>
+          <tr class="mtr">
+            <td class="zone-lbl">Driveway <span class="zone-sub">Concrete / asphalt</span></td>
+            <td class="mnum"><input type="number" step="0.1" id="drvW" placeholder="0" oninput="onMeasChange()"></td>
+            <td class="mop">×</td>
+            <td class="mnum"><input type="number" step="0.1" id="drvD" placeholder="0" oninput="onMeasChange()"></td>
+            <td class="mop">=</td>
+            <td class="msf ded" id="sfDrv">—</td>
+          </tr>
+          <tr class="mtr">
+            <td class="zone-lbl">Patio / Stoop <span class="zone-sub">Hard surface</span></td>
+            <td class="mnum"><input type="number" step="0.1" id="patW" placeholder="0" oninput="onMeasChange()"></td>
+            <td class="mop">×</td>
+            <td class="mnum"><input type="number" step="0.1" id="patD" placeholder="0" oninput="onMeasChange()"></td>
+            <td class="mop">=</td>
+            <td class="msf ded" id="sfPat">—</td>
+          </tr>
+          <tr class="mtr">
+            <td class="zone-lbl">Other <span class="zone-sub">AC pad, walks, etc.</span></td>
+            <td class="mnum" colspan="3" style="padding-right:0">
+              <input type="number" step="1" id="fMisc" placeholder="0 sq ft" oninput="onMeasChange()" style="width:100%">
+            </td>
+            <td class="mop"></td>
+            <td class="msf ded" id="sfMisc">—</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="sec">
+      <div class="live-preview">
+        <div class="prv-main">
+          <div class="prv-lbl">Estimated Sod Area</div>
+          <div class="prv-val" id="prvSF">0<span class="prv-unit">sq ft</span></div>
+          <div class="prv-sy" id="prvSY">0.0 sq yd</div>
+        </div>
+        <div class="prv-side">
+          <div class="prv-pal-lbl">Pallets Needed</div>
+          <div class="prv-pal" id="prvPal">0</div>
+          <div class="prv-pal-sub">@ 500 sf each</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div class="sec-hd">Quick Load — Townes at Stonecrest <span class="sec-hd-note">Kane PLS Survey · 02/23/2022</span></div>
+      <div class="quick-grid">
+        <button class="qbtn" id="qb202" onclick="loadPreset(202)"><span class="qnum">202</span>42 Creekview<br>Carson · End W</button>
+        <button class="qbtn" id="qb203" onclick="loadPreset(203)"><span class="qnum">203</span>46 Creekview<br>Lansing · Int</button>
+        <button class="qbtn" id="qb204" onclick="loadPreset(204)"><span class="qnum">204</span>50 Creekview<br>Denver · Int</button>
+        <button class="qbtn" id="qb205" onclick="loadPreset(205)"><span class="qnum">205</span>54 Creekview<br>Denver · Int</button>
+        <button class="qbtn" id="qb206" onclick="loadPreset(206)"><span class="qnum">206</span>58 Creekview<br>Lansing · Int</button>
+        <button class="qbtn" id="qb207" onclick="loadPreset(207)"><span class="qnum">207</span>62 Creekview<br>Carson · End E</button>
+      </div>
+    </div>
+
+    <button class="gen-btn" onclick="generateReport()">Generate Takeoff Report →</button>
+
   </div>
 </div>
 
-<!-- ══════════════════ SCREEN 2: REPORT ══════════════════ -->
 <div id="reportScreen">
 
-  <div class="report-sub">
-    <button class="back-btn" onclick="goBack()">← New</button>
-    <div class="project-info">
-      <strong id="rptTitle">—</strong>
-      <span id="rptSub" style="margin-left:8px">—</span>
+  <div class="rpt-bar">
+    <button class="back-btn" onclick="goBack()">← New Takeoff</button>
+    <div>
+      <div class="rpt-job" id="rptJob">—</div>
+      <div class="rpt-addr" id="rptAddr"></div>
     </div>
-    <div class="data-source">Source: <span id="dataSource">—</span></div>
-    <div class="hdr-right" style="margin-left:12px">
-      <button class="cab cab-s" onclick="exportCSV()" style="flex:none;padding:4px 12px">⬇ CSV</button>
-      <button class="cab cab-g" onclick="window.print()" style="flex:none;padding:4px 12px">🖨 Print</button>
+    <div class="rpt-sod" id="rptSod">—</div>
+    <div class="rpt-actions">
+      <button class="abtn abtn-s" onclick="exportCSV()">⬇ CSV</button>
+      <button class="abtn abtn-g" onclick="window.print()">🖸 Print</button>
     </div>
   </div>
 
   <div class="panels">
 
-    <!-- Panel 1: Blueprint / Plot Plan -->
     <div class="panel" id="pnl-blueprint">
       <div class="panel-hdr">
-        <h3>📐 Blueprint / Plot Plan</h3>
-        <span class="tag" id="bpSourceTag">Uploaded PDF</span>
+        <span class="ph-icon">📐</span>
+        <h3>Blueprint / Plot Plan</h3>
+        <span class="panel-tag" id="bpTag">Generated</span>
       </div>
       <div class="panel-body">
         <div id="blueprintCanvas">
-          <canvas id="pdfCanvas"></canvas>
+          <canvas id="pdfCanvas" style="display:none"></canvas>
           <svg id="svgBlueprint"></svg>
         </div>
-        <div class="pdf-controls">
-          <button class="pdf-ctrl-btn" onclick="pdfZoom(1.2)" title="Zoom in">+</button>
-          <button class="pdf-ctrl-btn" onclick="pdfZoom(0.8)" title="Zoom out">−</button>
-          <button class="pdf-ctrl-btn" onclick="pdfZoom(1,'fit')" title="Fit">⊡</button>
-          <button class="pdf-ctrl-btn" onclick="pdfRotateCW()" title="Rotate 90°" style="font-size:1rem">↻</button>
+        <div class="bp-controls">
+          <button class="bp-btn" onclick="pdfZoom(1.25)" title="Zoom in">+</button>
+          <button class="bp-btn" onclick="pdfZoom(0.8)"  title="Zoom out">−</button>
+          <button class="bp-btn" onclick="pdfZoom(1,'fit')" title="Fit">⊞</button>
+          <button class="bp-btn" onclick="pdfRotateCW()" title="Rotate 90°" style="font-size:1rem">↻</button>
         </div>
-        <div class="loading" id="bpLoading"><div class="spin"></div><div class="loading-text">Rendering plan…</div></div>
+        <div class="pload" id="bpLoad"><div class="spin"></div><div class="spin-lbl">Rendering…</div></div>
       </div>
     </div>
 
-    <!-- Panel 2: Street View -->
     <div class="panel" id="pnl-street">
       <div class="panel-hdr">
-        <h3>📸 Street View</h3>
-        <span class="tag">Google Maps</span>
+        <span class="ph-icon">📸</span>
+        <h3>Street View</h3>
+        <span class="panel-tag">Google Maps</span>
       </div>
       <div class="panel-body">
         <iframe id="streetFrame" src="about:blank" allowfullscreen></iframe>
         <div class="sv-fallback" id="svFallback" style="display:none">
-          <div style="font-size:2rem">🏘</div>
-          <p>Street View loads after geocoding the address.<br>Click below to open directly in Google Maps.</p>
-          <a id="svLink" href="#" target="_blank" class="sv-btn">Open in Google Maps →</a>
+          <div style="font-size:2rem">📍</div>
+          <p style="font-size:.8rem;color:var(--mu1);line-height:1.5">No embed available for this address.</p>
+          <a id="svLink" href="#" target="_blank" class="sv-link">Open in Google Maps →</a>
         </div>
-        <div class="loading" id="svLoading"><div class="spin"></div><div class="loading-text">Loading street view…</div></div>
+        <div class="pload" id="svLoad"><div class="spin"></div><div class="spin-lbl">Loading…</div></div>
       </div>
     </div>
 
-    <!-- Panel 3: GIS / Aerial -->
     <div class="panel" id="pnl-gis">
       <div class="panel-hdr">
-        <h3>🛰 GIS / Aerial</h3>
-        <span class="tag">Esri + Henderson County</span>
+        <span class="ph-icon">🛰</span>
+        <h3>GIS / Aerial</h3>
+        <span class="panel-tag">Esri World Imagery</span>
       </div>
       <div class="panel-body">
         <div id="gisMap"></div>
-        <div class="loading" id="gisLoading"><div class="spin"></div><div class="loading-text">Loading GIS data…</div></div>
+        <div class="pload" id="gisLoad"><div class="spin"></div><div class="spin-lbl">Loading map…</div></div>
       </div>
     </div>
 
-    <!-- Panel 4: Calculations -->
     <div class="panel" id="pnl-calc">
       <div class="panel-hdr">
-        <h3>🌿 Sod Calculation</h3>
-        <span class="tag">Live editable</span>
+        <span class="ph-icon">🌿</span>
+        <h3>Sod Calculation</h3>
+        <span class="panel-tag">Live editable</span>
       </div>
-      <div class="calc-scroll" id="calcScroll"></div>
-      <div class="calc-actions">
-        <button class="cab cab-s" onclick="recalcAll()">↺ Recalc</button>
-        <button class="cab cab-g" onclick="scrollToResult()">View Total</button>
+      <div class="calc-body" id="calcBody"></div>
+      <div class="calc-footer">
+        <button class="cf-btn cf-s" onclick="recalcAll()">↺ Recalc Blueprint</button>
+        <button class="cf-btn cf-g" onclick="scrollToResult()">View Total ↓</button>
       </div>
     </div>
 
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════ -->
 <script>
-// ── Setup PDF.js worker ───────────────────────────────────────
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
 
-// ══════════════════════════════════════════════════════════════
-// SURVEY DATA  (source: Joseph Kane PLS L-5106, 02/23/2022)
-// All measurements in feet. Editable in Panel 4.
-// Lot depth 110′ is estimated — recorded deed depth may differ.
-// ══════════════════════════════════════════════════════════════
-const SURVEY = {
-  202: { unit:202, addr:'42 Creekview Rd, Hendersonville, NC 28792',
-         model:'Carson', pos:'End – West',
-         lotW:22, lotD:110, bldgW:22, bldgD:62, drvW:22, drvD:20,
-         patW:21.67, patD:8, misc:35,
-         lat:35.35117, lng:-82.45660, source:'Survey (Kane PLS, 02/23/2022)' },
-  203: { unit:203, addr:'46 Creekview Rd, Hendersonville, NC 28792',
-         model:'Lansing', pos:'Interior',
-         lotW:22, lotD:110, bldgW:22, bldgD:50, drvW:22, drvD:20,
-         patW:21.67, patD:8, misc:28,
-         lat:35.35117, lng:-82.45635, source:'Survey (Kane PLS, 02/23/2022)' },
-  204: { unit:204, addr:'50 Creekview Rd, Hendersonville, NC 28792',
-         model:'Denver', pos:'Interior',
-         lotW:22, lotD:110, bldgW:22, bldgD:50, drvW:22, drvD:20,
-         patW:21.67, patD:8, misc:28,
-         lat:35.35117, lng:-82.45620, source:'Survey (Kane PLS, 02/23/2022)' },
-  205: { unit:205, addr:'54 Creekview Rd, Hendersonville, NC 28792',
-         model:'Denver', pos:'Interior',
-         lotW:22, lotD:110, bldgW:22, bldgD:50, drvW:22, drvD:20,
-         patW:21.67, patD:8, misc:28,
-         lat:35.35117, lng:-82.45610, source:'Survey (Kane PLS, 02/23/2022)' },
-  206: { unit:206, addr:'58 Creekview Rd, Hendersonville, NC 28792',
-         model:'Lansing', pos:'Interior',
-         lotW:22, lotD:110, bldgW:22, bldgD:50, drvW:22, drvD:20,
-         patW:21.67, patD:8, misc:28,
-         lat:35.35117, lng:-82.45595, source:'Survey (Kane PLS, 02/23/2022)' },
-  207: { unit:207, addr:'62 Creekview Rd, Hendersonville, NC 28792',
-         model:'Carson', pos:'End – East',
-         lotW:22, lotD:110, bldgW:22, bldgD:62, drvW:22, drvD:20,
-         patW:21.67, patD:8, misc:35,
-         lat:35.35117, lng:-82.45578, source:'Survey (Kane PLS, 02/23/2022)' },
+const PRESETS = {
+  202:{unit:202,addr:'42 Creekview Rd, Hendersonville, NC 28792',model:'Carson',pos:'End – West',
+       lotW:22,lotD:110,bldgW:22,bldgD:62,drvW:22,drvD:20,patW:21.67,patD:8,misc:35,
+       lat:35.35117,lng:-82.45660,source:'Survey (Kane PLS, 02/23/2022)'},
+  203:{unit:203,addr:'46 Creekview Rd, Hendersonville, NC 28792',model:'Lansing',pos:'Interior',
+       lotW:22,lotD:110,bldgW:22,bldgD:50,drvW:22,drvD:20,patW:21.67,patD:8,misc:28,
+       lat:35.35117,lng:-82.45635,source:'Survey (Kane PLS, 02/23/2022)'},
+  204:{unit:204,addr:'50 Creekview Rd, Hendersonville, NC 28792',model:'Denver',pos:'Interior',
+       lotW:22,lotD:110,bldgW:22,bldgD:50,drvW:22,drvD:20,patW:21.67,patD:8,misc:28,
+       lat:35.35117,lng:-82.45620,source:'Survey (Kane PLS, 02/23/2022)'},
+  205:{unit:205,addr:'54 Creekview Rd, Hendersonville, NC 28792',model:'Denver',pos:'Interior',
+       lotW:22,lotD:110,bldgW:22,bldgD:50,drvW:22,drvD:20,patW:21.67,patD:8,misc:28,
+       lat:35.35117,lng:-82.45610,source:'Survey (Kane PLS, 02/23/2022)'},
+  206:{unit:206,addr:'58 Creekview Rd, Hendersonville, NC 28792',model:'Lansing',pos:'Interior',
+       lotW:22,lotD:110,bldgW:22,bldgD:50,drvW:22,drvD:20,patW:21.67,patD:8,misc:28,
+       lat:35.35117,lng:-82.45595,source:'Survey (Kane PLS, 02/23/2022)'},
+  207:{unit:207,addr:'62 Creekview Rd, Hendersonville, NC 28792',model:'Carson',pos:'End – East',
+       lotW:22,lotD:110,bldgW:22,bldgD:62,drvW:22,drvD:20,patW:21.67,patD:8,misc:35,
+       lat:35.35117,lng:-82.45578,source:'Survey (Kane PLS, 02/23/2022)'},
 };
 
-const PALLET_SF = 500;  // sq ft per pallet
+const PALLET_SF = 500;
+let activeLot   = null;
+let pdfDoc      = null;
+let pdfScale    = 1.5;
+let pdfRotate   = 0;
+let gisMap      = null;
+let activePreset = null;
 
-let activeLot  = null;
-let pdfDoc     = null;
-let pdfScale   = 1.5;
-let pdfRotate  = 0;  // degrees: 0, 90, 180, 270
-let gisMap     = null;
-let inputMode  = 'upload'; // 'upload' | 'addr'
+function fv(id){ return parseFloat(document.getElementById(id).value)||0; }
+function sv(id,v){ document.getElementById(id).value = v!=null?v:''; }
+function fmt(v){ return Math.round(v).toLocaleString(); }
 
-// ══════════════════════════════════════════════════════════════
-// INPUT SCREEN
-// ══════════════════════════════════════════════════════════════
-function switchInputTab(mode) {
-  inputMode = mode;
-  document.getElementById('itab-upload').classList.toggle('on', mode==='upload');
-  document.getElementById('itab-addr').classList.toggle('on',   mode==='addr');
-  document.getElementById('uploadPane').style.display = mode==='upload' ? 'block' : 'none';
-  document.getElementById('addressPane').style.display= mode==='addr'   ? 'block' : 'none';
-  showLotSection();
+function getFormData(){
+  return {
+    unit:  activePreset||'Custom',
+    addr:  document.getElementById('fAddress').value.trim()||'Unknown Address',
+    job:   document.getElementById('fJob').value.trim(),
+    lotW:  fv('lotW'),  lotD: fv('lotD'),
+    bldgW: fv('bldgW'), bldgD:fv('bldgD'),
+    drvW:  fv('drvW'),  drvD: fv('drvD'),
+    patW:  fv('patW'),  patD: fv('patD'),
+    misc:  fv('fMisc'),
+    lat:   activePreset?PRESETS[activePreset].lat:null,
+    lng:   activePreset?PRESETS[activePreset].lng:null,
+    source:activePreset?PRESETS[activePreset].source:'Manual entry',
+    model: activePreset?PRESETS[activePreset].model:'',
+  };
 }
 
-// Drag-and-drop
-const dz = document.getElementById('dropZone');
-['dragenter','dragover'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('over'); }));
-['dragleave','drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('over'); }));
-dz.addEventListener('drop', ev => handleFileSelect(ev.dataTransfer.files[0]));
+function loadPreset(num){
+  const p = PRESETS[num];
+  activePreset = num;
+  document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('qb'+num).classList.add('active');
+  sv('fAddress',p.addr);
+  sv('fJob',`Unit ${p.unit} — ${p.model} · ${p.pos}`);
+  sv('lotW',p.lotW);  sv('lotD',p.lotD);
+  sv('bldgW',p.bldgW);sv('bldgD',p.bldgD);
+  sv('drvW',p.drvW);  sv('drvD',p.drvD);
+  sv('patW',p.patW);  sv('patD',p.patD);
+  sv('fMisc',p.misc);
+  onMeasChange();
+}
 
-function handleFileSelect(file) {
-  if (!file || file.type !== 'application/pdf') return alert('Please upload a PDF file.');
-  document.getElementById('fileName').textContent = '✓ ' + file.name;
-  document.getElementById('fileName').style.display = 'block';
-  pdfRotate = 0;
-  showLotSection();
+function onMeasChange(){
+  const lw=fv('lotW'),ld=fv('lotD');
+  const bw=fv('bldgW'),bd=fv('bldgD');
+  const dw=fv('drvW'), dd=fv('drvD');
+  const pw=fv('patW'), pd=fv('patD');
+  const mi=fv('fMisc');
+  document.getElementById('sfLot').textContent  = lw&&ld ? fmt(lw*ld)+' sf':'—';
+  document.getElementById('sfBldg').textContent = bw&&bd ? fmt(bw*bd)+' sf':'—';
+  document.getElementById('sfDrv').textContent  = dw&&dd ? fmt(dw*dd)+' sf':'—';
+  document.getElementById('sfPat').textContent  = pw&&pd ? fmt(pw*pd)+' sf':'—';
+  document.getElementById('sfMisc').textContent = mi     ? fmt(mi)+' sf':'—';
+  const sf = Math.max(0, lw*ld - bw*bd - dw*dd - pw*pd - mi);
+  const pal = sf>0 ? Math.ceil(sf/PALLET_SF) : 0;
+  document.getElementById('prvSF').innerHTML = `${fmt(sf)}<span class="prv-unit">sq ft</span>`;
+  document.getElementById('prvSY').textContent = `${(sf/9).toFixed(1)} sq yd`;
+  document.getElementById('prvPal').textContent = pal;
+}
+
+const ua = document.getElementById('uploadArea');
+['dragenter','dragover'].forEach(e=>ua.addEventListener(e,ev=>{ev.preventDefault();ua.classList.add('over');}));
+['dragleave','drop'].forEach(e=>ua.addEventListener(e,ev=>{ev.preventDefault();ua.classList.remove('over');}));
+ua.addEventListener('drop',ev=>handleFile(ev.dataTransfer.files[0]));
+
+function handleFile(file){
+  if(!file||file.type!=='application/pdf') return;
   window._pdfFile = file;
+  pdfRotate = 0;
+  const fn=document.getElementById('fFileName');
+  fn.textContent='✓ '+file.name;
+  fn.style.display='block';
 }
 
-function onAddrInput() { showLotSection(); }
-
-function showLotSection() {
-  const hasUpload = !!window._pdfFile;
-  const hasAddr   = document.getElementById('addrInput').value.trim().length > 5;
-  const show      = (inputMode === 'upload' && hasUpload) || (inputMode === 'addr' && hasAddr);
-  document.getElementById('lotSection').style.display = show ? 'block' : 'none';
-  if (!show) document.getElementById('goBtn').disabled = true;
-}
-
-function onLotChange() {
-  const v = document.getElementById('lotSelect').value;
-  document.getElementById('customFields').style.display = v === 'custom' ? 'block' : 'none';
-  document.getElementById('goBtn').disabled = !v;
-}
-
-// ══════════════════════════════════════════════════════════════
-// GENERATE REPORT
-// ══════════════════════════════════════════════════════════════
-async function generateReport() {
-  const lotVal = document.getElementById('lotSelect').value;
-  if (!lotVal) return;
-
-  if (lotVal === 'custom') {
-    activeLot = buildCustomLot();
-  } else {
-    activeLot = { ...SURVEY[parseInt(lotVal)] };
-    // Override address if user typed one in address tab
-    if (inputMode === 'addr') {
-      const typed = document.getElementById('addrInput').value.trim();
-      if (typed) activeLot.addr = typed;
-    }
-  }
-
-  // Switch to report screen
+function generateReport(){
+  activeLot = getFormData();
   document.getElementById('inputScreen').style.display  = 'none';
   document.getElementById('reportScreen').style.display = 'flex';
-
-  // Update header info
-  document.getElementById('rptTitle').textContent = activeLot.addr;
-  document.getElementById('rptSub').textContent =
-    activeLot.model ? `${activeLot.model} Model · ${activeLot.pos}` : 'Custom lot';
-  document.getElementById('dataSource').textContent = activeLot.source || 'Manual entry';
-  document.getElementById('lotBadge').textContent = lotVal !== 'custom' ? `Unit ${lotVal}` : 'Custom';
-  document.getElementById('lotBadge').style.display = 'inline';
-
-  // Render all 4 panels
+  const job = activeLot.job||activeLot.addr;
+  document.getElementById('rptJob').textContent  = job;
+  document.getElementById('rptAddr').textContent = activeLot.addr!==job?activeLot.addr:'';
+  const c = calcSod(activeLot);
+  document.getElementById('rptSod').textContent = `${fmt(c.sf)} sf · ${c.pal} pallet${c.pal!==1?'s':''}`;
+  document.getElementById('unitChip').textContent = activePreset?`Unit ${activePreset}`:'';
+  document.getElementById('unitChip').style.display = activePreset?'inline':'none';
   renderBlueprint();
   renderStreetView();
   renderGIS();
   renderCalc();
 }
 
-function buildCustomLot() {
-  return {
-    unit: 'Custom',
-    addr: document.getElementById('customAddr').value || 'Custom address',
-    model: '', pos: 'Custom',
-    lotW: parseFloat(document.getElementById('customW').value) || 0,
-    lotD: parseFloat(document.getElementById('customD').value) || 0,
-    bldgW: 0, bldgD: 0, drvW: 0, drvD: 0, patW: 0, patD: 0, misc: 0,
-    lat: 35.3155, lng: -82.4596,
-    source: 'Manual entry'
-  };
+function goBack(){
+  document.getElementById('reportScreen').style.display='none';
+  document.getElementById('inputScreen').style.display='flex';
+  if(gisMap){gisMap.remove();gisMap=null;}
 }
 
-function goBack() {
-  document.getElementById('reportScreen').style.display = 'none';
-  document.getElementById('inputScreen').style.display  = 'flex';
-  document.getElementById('lotBadge').style.display = 'none';
-  if (gisMap) { gisMap.remove(); gisMap = null; }
-}
-
-// ══════════════════════════════════════════════════════════════
-// PANEL 1 — BLUEPRINT / PLOT PLAN
-// ══════════════════════════════════════════════════════════════
-async function renderBlueprint() {
-  const loading = document.getElementById('bpLoading');
-  loading.style.display = 'flex';
-
-  if (window._pdfFile) {
-    // Render uploaded PDF
-    document.getElementById('svgBlueprint').style.display = 'none';
-    document.getElementById('pdfCanvas').style.display    = 'block';
-    document.getElementById('bpSourceTag').textContent    = 'Uploaded PDF';
+async function renderBlueprint(){
+  document.getElementById('bpLoad').style.display='flex';
+  if(window._pdfFile){
+    document.getElementById('svgBlueprint').style.display='none';
+    document.getElementById('pdfCanvas').style.display='block';
+    document.getElementById('bpTag').textContent='Uploaded PDF';
     await renderPDF(window._pdfFile);
   } else {
-    // Generate scaled SVG blueprint from survey data
-    document.getElementById('pdfCanvas').style.display    = 'none';
-    document.getElementById('svgBlueprint').style.display = 'block';
-    document.getElementById('bpSourceTag').textContent    = 'Generated from Survey';
+    document.getElementById('pdfCanvas').style.display='none';
+    document.getElementById('svgBlueprint').style.display='block';
+    document.getElementById('bpTag').textContent='Generated Blueprint';
     renderSVGBlueprint(activeLot);
   }
-
-  loading.style.display = 'none';
+  document.getElementById('bpLoad').style.display='none';
 }
 
-async function renderPDF(file) {
-  const url = URL.createObjectURL(file);
-  try {
-    pdfDoc = await pdfjsLib.getDocument(url).promise;
+async function renderPDF(file){
+  const url=URL.createObjectURL(file);
+  try{
+    pdfDoc=await pdfjsLib.getDocument(url).promise;
     await renderPDFPage(1);
-  } catch(e) {
-    console.warn('PDF render error:', e);
-    // Fall back to SVG
-    document.getElementById('pdfCanvas').style.display    = 'none';
-    document.getElementById('svgBlueprint').style.display = 'block';
+  }catch(e){
+    document.getElementById('pdfCanvas').style.display='none';
+    document.getElementById('svgBlueprint').style.display='block';
     renderSVGBlueprint(activeLot);
   }
 }
 
-async function renderPDFPage(pageNum) {
-  if (!pdfDoc) return;
-  const page   = await pdfDoc.getPage(pageNum);
-  const canvas = document.getElementById('pdfCanvas');
-  const ctx    = canvas.getContext('2d');
-  const vp     = page.getViewport({ scale: pdfScale, rotation: pdfRotate });
-  canvas.width  = vp.width;
-  canvas.height = vp.height;
-  await page.render({ canvasContext: ctx, viewport: vp }).promise;
+async function renderPDFPage(pageNum){
+  if(!pdfDoc) return;
+  const page=await pdfDoc.getPage(pageNum);
+  const canvas=document.getElementById('pdfCanvas');
+  const vp=page.getViewport({scale:pdfScale,rotation:pdfRotate});
+  canvas.width=vp.width; canvas.height=vp.height;
+  await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
 }
 
-function pdfZoom(factor, mode) {
-  if (mode === 'fit') { pdfScale = 1.0; }
-  else { pdfScale = Math.max(0.5, Math.min(4, pdfScale * factor)); }
-  if (pdfDoc) renderPDFPage(1);
+function pdfZoom(factor,mode){
+  if(mode==='fit') pdfScale=1.0;
+  else pdfScale=Math.max(0.4,Math.min(5,pdfScale*factor));
+  if(pdfDoc) renderPDFPage(1);
   else renderSVGBlueprint(activeLot);
 }
 
-function pdfRotateCW() {
-  pdfRotate = (pdfRotate + 90) % 360;
-  if (pdfDoc) renderPDFPage(1);
+function pdfRotateCW(){
+  pdfRotate=(pdfRotate+90)%360;
+  if(pdfDoc) renderPDFPage(1);
 }
 
-// ── SVG blueprint (generated when no PDF uploaded) ────────────
-function renderSVGBlueprint(d) {
-  const c    = calcSod(d);
-  const S    = 5.5;
-  const ML   = 98, MT = 70, roadH = 32, resH = 96;
-  const lw   = d.lotW * S, lh = d.lotD * S;
-  const svgW = lw + ML + 100;
-  const svgH = lh + MT + roadH + resH + 20;
+function renderSVGBlueprint(d){
+  const c   = calcSod(d);
+  const S   = 5.5;
+  const ML  = 90, MT=68, roadH=30, resH=104;
+  const lotW = d.lotW||40, lotD=d.lotD||100;
+  const lw=lotW*S, lh=lotD*S;
+  const svgW=lw+ML+88, svgH=lh+MT+roadH+resH+20;
+  const bh=(d.bldgD||0)*S, ph=(d.patD||0)*S, dh=(d.drvD||0)*S;
+  const bw=(d.bldgW||0)*S, pw=(d.patW||0)*S, dw=(d.drvW||0)*S;
+  const ox=ML, oy=MT;
+  const sodD   = Math.max(0, lotD-(d.bldgD||0)-(d.patD||0)-(d.drvD||0));
+  const sodTop = oy+bh+ph;
+  const drvTop = oy+lh-dh;
+  const sodH   = Math.max(0,drvTop-sodTop);
+  const title = d.job||(d.unit&&d.unit!=='Custom'?`Unit ${d.unit}`:'Custom Lot');
 
-  const bh = d.bldgD * S, ph = d.patD * S, dh = d.drvD * S;
-  const pw = d.patW  * S, dw = d.drvW  * S;
-  const ox = ML, oy = MT;
-
-  const sodDepth = d.lotD - d.bldgD - d.patD - d.drvD;
-  const sodTop   = oy + bh + ph;
-  const drvTop   = oy + lh - dh;
-  const sodH     = drvTop - sodTop;
-
-  let o = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" font-family="sans-serif">`;
-  o += `<rect width="100%" height="100%" fill="#f4f1ec"/>`;
-  o += `<defs>
-    <marker id="a1" markerWidth="5" markerHeight="5" refX="0" refY="2.5" orient="auto"><polygon points="0,0 5,2.5 0,5" fill="#1565c0"/></marker>
-    <marker id="a2" markerWidth="5" markerHeight="5" refX="5" refY="2.5" orient="auto"><polygon points="5,0 0,2.5 5,5" fill="#1565c0"/></marker>
+  let o=`<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" font-family="'Segoe UI',Arial,sans-serif">`;
+  o+=`<rect width="100%" height="100%" fill="#f5f2ed"/>`;
+  o+=`<defs>
+    <marker id="ah" markerWidth="5" markerHeight="5" refX="0" refY="2.5" orient="auto"><polygon points="0,0 5,2.5 0,5" fill="#1565c0"/></marker>
+    <marker id="at" markerWidth="5" markerHeight="5" refX="5" refY="2.5" orient="auto"><polygon points="5,0 0,2.5 5,5" fill="#1565c0"/></marker>
+    <pattern id="hatch" patternUnits="userSpaceOnUse" width="14" height="14">
+      <path d="M0,14 L14,0" stroke="#6db88c" stroke-width="0.7" opacity="0.55"/>
+    </pattern>
   </defs>`;
 
-  // Title block
-  o += t(svgW/2,16,11,'bold','#1b5e20','middle',`Unit ${d.unit} — ${d.addr}`);
-  o += t(svgW/2,28,8.5,'','#555','middle',`${d.model||'Custom'} Model · Townes at Stonecrest Ph.1 · Henderson County, NC`);
-  o += t(svgW/2,40,7.5,'','#888','middle',`Survey: Joseph Kane PLS L-5106 · 02/23/2022 · Scale approx. 1″=20′ · PIN 9660-90-8308`);
+  o+=tx(svgW/2,16,11,'bold','#1b5e20','middle',title);
+  if(d.addr&&d.addr!=='Unknown Address') o+=tx(svgW/2,29,8.5,'','#555','middle',d.addr);
+  if(d.source&&d.source!=='Manual entry') o+=tx(svgW/2,41,7,'','#888','middle',`Source: ${d.source}`);
 
-  // ── Lot outline (green = sod area background) ──
-  o += box(ox, oy, lw, lh, '#c8e6c9', '#2e7d32', 2);
+  o+=bx(ox,oy,lw,lh,'#e8f5e9','#2e7d32',1.5);
 
-  // ── BUILDING ──
-  o += box(ox, oy, d.bldgW*S, bh, '#78909c', '#37474f', 1.5);
-  const bmid = oy + bh/2;
-  o += t(ox+lw/2, bmid-18, 11,'bold','white','middle', d.model||'Building');
-  o += t(ox+lw/2, bmid-4,  9,'','#cfd8dc','middle', 'Building Footprint');
-  o += t(ox+lw/2, bmid+10, 8.5,'','#b0bec5','middle', `${d.bldgW}′ wide × ${d.bldgD}′ deep`);
-  o += t(ox+lw/2, bmid+23, 10.5,'bold','#e8f5e9','middle', `${n(d.bldgW*d.bldgD)} sf`);
-  // width arrow inside top of building
-  o += hd(ox+5, ox+d.bldgW*S-5, oy+14, `${d.bldgW}′`);
-  // depth arrow on right inside building
-  o += vd(ox+lw-14, oy+5, oy+bh-5, `${d.bldgD}′`);
-
-  // ── PATIO ──
-  o += box(ox, oy+bh, pw, ph, '#d7ccc8', '#795548', 1, '5,3');
-  const pmid = oy+bh+ph/2;
-  if(ph >= 36) {
-    o += t(ox+pw/2, pmid-8, 9,'bold','#4e342e','middle','Patio / Stoop');
-    o += t(ox+pw/2, pmid+5, 8,'','#6d4c41','middle', `${d.patW}′ × ${d.patD}′ = ${n(d.patW*d.patD)} sf`);
-  } else {
-    o += t(ox+pw/2, pmid+4, 8,'','#4e342e','middle', `Patio: ${d.patW}′ × ${d.patD}′ = ${n(d.patW*d.patD)} sf`);
-  }
-  // patio width arrow (inside, top edge)
-  if(ph >= 28) o += hd(ox+5, ox+pw-5, oy+bh+11, `${d.patW}′`);
-
-  // ── SOD ZONE ──
-  if(sodH > 14) {
-    const smid = sodTop + sodH/2;
-    // light diagonal hatch to indicate grass
-    for(let yi=sodTop+8; yi<drvTop-4; yi+=14){
-      o += `<line x1="${ox+2}" y1="${yi}" x2="${ox+lw-2}" y2="${yi}" stroke="#a5d6a7" stroke-width="0.5" stroke-dasharray="5,5"/>`;
-    }
-    o += t(ox+lw/2, smid-22, 10,'bold','#1b5e20','middle', '← SOD ZONE →');
-    o += t(ox+lw/2, smid-8,  8.5,'','#2e7d32','middle', `${d.lotW}′ wide × ${sodDepth.toFixed(1)}′ deep`);
-    o += t(ox+lw/2, smid+7,  12,'bold','#1b5e20','middle', `${n(d.lotW*sodDepth)} sf`);
-    if(sodH > 55){
-      o += t(ox+lw/2, smid+22, 8,'','#388e3c','middle', `(${(d.lotW*sodDepth/9).toFixed(1)} sq yd)`);
-    }
+  if(bh>0){
+    const ebw=bw||lw;
+    o+=bx(ox,oy,ebw,bh,'#78909c','#37474f',1.5);
+    const bm=oy+bh/2;
+    o+=tx(ox+ebw/2,bm-9,10,'bold','white','middle','Building');
+    o+=tx(ox+ebw/2,bm+5,8.5,'','#cfd8dc','middle',`${d.bldgW}′ × ${d.bldgD}′`);
+    o+=tx(ox+ebw/2,bm+19,10.5,'bold','#e8f5e9','middle',`${fmt(d.bldgW*d.bldgD)} sf`);
+    if(bh>30) o+=hd(ox+5,ox+ebw-5,oy+14,`${d.bldgW}′`);
+    if(bh>40) o+=vd(ox+ebw-13,oy+5,oy+bh-5,`${d.bldgD}′`);
   }
 
-  // ── DRIVEWAY ──
-  o += box(ox, drvTop, dw, dh, '#b0bec5', '#546e7a', 1);
-  const drmid = drvTop + dh/2;
-  o += t(ox+lw/2, drmid-10, 9,'bold','#263238','middle', 'Driveway');
-  o += t(ox+lw/2, drmid+3,  8.5,'','#37474f','middle', `${d.drvW}′ wide × ${d.drvD}′ deep`);
-  o += t(ox+lw/2, drmid+16, 10,'bold','#37474f','middle', `${n(d.drvW*d.drvD)} sf`);
-  // driveway width arrow inside
-  if(dh >= 28) o += hd(ox+5, ox+dw-5, drvTop+12, `${d.drvW}′`);
-  // driveway depth arrow right side inside
-  o += vd(ox+lw-14, drvTop+4, oy+lh-4, `${d.drvD}′`);
+  if(ph>0){
+    const epw=pw||lw;
+    o+=bx(ox,oy+bh,epw,ph,'#d7ccc8','#795548',1,'5,3');
+    const pm=oy+bh+ph/2;
+    if(ph>=30){
+      o+=tx(ox+epw/2,pm-6,9,'bold','#4e342e','middle','Patio');
+      o+=tx(ox+epw/2,pm+7,8,'','#6d4c41','middle',`${d.patW}′ × ${d.patD}′ = ${fmt(d.patW*d.patD)} sf`);
+    } else {
+      o+=tx(ox+epw/2,pm+4,7.5,'','#4e342e','middle',`Patio: ${d.patW}′ × ${d.patD}′`);
+    }
+    if(ph>=26) o+=hd(ox+4,ox+epw-4,oy+bh+11,`${d.patW}′`);
+  }
 
-  // ── ROAD ──
-  o += box(0, oy+lh, svgW, roadH, '#546e7a', '#546e7a', 0);
-  o += `<line x1="0" y1="${oy+lh+roadH/2}" x2="${svgW}" y2="${oy+lh+roadH/2}" stroke="#78909c" stroke-width="1" stroke-dasharray="12,8"/>`;
-  o += t(svgW/2, oy+lh+13, 10,'bold','white','middle','CREEKVIEW RD.  (45′ R/W)');
-  o += t(svgW/2, oy+lh+25, 8,'','#cfd8dc','middle','→ Hendersonville  ·  ← N.C. 225');
+  if(sodH>10){
+    o+=`<rect x="${ox}" y="${sodTop}" width="${lw}" height="${sodH}" fill="url(#hatch)"/>`;
+    o+=`<rect x="${ox}" y="${sodTop}" width="${lw}" height="${sodH}" fill="none" stroke="#4caf50" stroke-width="0.5" stroke-dasharray="5,4"/>`;
+    const sm=sodTop+sodH/2;
+    o+=tx(ox+lw/2,sm-16,10,'bold','#1b5e20','middle','← SOD ZONE →');
+    o+=tx(ox+lw/2,sm-2,8.5,'','#2e7d32','middle',`${lotW}′ wide × ${sodD.toFixed(1)}′ deep`);
+    o+=tx(ox+lw/2,sm+14,12,'bold','#1b5e20','middle',`${fmt(lotW*sodD)} sf`);
+    if(sodH>50) o+=tx(ox+lw/2,sm+29,8,'','#388e3c','middle',`(${(lotW*sodD/9).toFixed(1)} sq yd)`);
+  }
 
-  // ── OUTER DIMENSION LINES ──
-  // Top: lot width
-  o += hd(ox, ox+lw, oy-26, `${d.lotW}′ wide`);
-  // Right: total lot depth
-  o += vd(ox+lw+24, oy, oy+lh, `${d.lotD}′ total`);
-  // Left col: stacked depths
-  o += vd(ox-30, oy,        oy+bh,     `${d.bldgD}′ bldg`);
-  o += vd(ox-30, oy+bh,     oy+bh+ph,  `${d.patD}′ pat`);
-  if(sodH>0) o += vd(ox-30, sodTop,    drvTop,    `${sodDepth.toFixed(1)}′ sod`);
-  o += vd(ox-30, drvTop,    oy+lh,     `${d.drvD}′ drv`);
-  // Patio width callout (slightly inset since patio is narrower than lot)
-  o += hd(ox, ox+pw, oy+bh+ph+10, `${d.patW}′`);
+  if(dh>0){
+    const edw=dw||lw;
+    o+=bx(ox,drvTop,edw,dh,'#b0bec5','#546e7a',1);
+    const dm=drvTop+dh/2;
+    o+=tx(ox+edw/2,dm-9,9,'bold','#263238','middle','Driveway');
+    o+=tx(ox+edw/2,dm+5,8.5,'','#37474f','middle',`${d.drvW}′ × ${d.drvD}′ = ${fmt(d.drvW*d.drvD)} sf`);
+    if(dh>=26) o+=hd(ox+4,ox+edw-4,drvTop+12,`${d.drvW}′`);
+    if(dh>=26) o+=vd(ox+edw-13,drvTop+4,oy+lh-4,`${d.drvD}′`);
+  }
 
-  // ── RESULT BANNER (full width) ──
-  const rb = oy+lh+roadH+8;
-  const bx = 4, bwid = svgW-8;
-  o += box(bx, rb, bwid, resH, '#0d2118', '#1b5e20', 1.5, null, 5);
+  o+=bx(0,oy+lh,svgW,roadH,'#546e7a','none',0);
+  o+=`<line x1="0" y1="${oy+lh+roadH/2}" x2="${svgW}" y2="${oy+lh+roadH/2}" stroke="#78909c" stroke-width="1" stroke-dasharray="10,7"/>`;
+  o+=tx(svgW/2,oy+lh+12,9,'bold','white','middle','STREET / RIGHT OF WAY');
 
-  const lx = bx+10;
-  const rx = bx + Math.floor(bwid/2) + 8;
+  o+=hd(ox,ox+lw,oy-28,`${lotW}′ wide`);
+  o+=vd(ox+lw+22,oy,oy+lh,`${lotD}′ total`);
+  if(bh>0) o+=vd(ox-28,oy,oy+bh,`${d.bldgD}′ bldg`);
+  if(ph>0) o+=vd(ox-28,oy+bh,oy+bh+ph,`${d.patD}′ pat`);
+  if(sodH>0) o+=vd(ox-28,sodTop,drvTop,`${sodD.toFixed(1)}′ sod`);
+  if(dh>0) o+=vd(ox-28,drvTop,oy+lh,`${d.drvD}′ drv`);
 
-  // Left column: itemized deductions
-  o += t(lx, rb+13, 9,'bold','#a5d6a7','start', `MEASUREMENT SUMMARY — Unit ${d.unit}`);
-  o += t(lx, rb+25, 7.5,'','#c8e6c9','start',  `Lot:        ${d.lotW}′ × ${d.lotD}′ = ${n(c.lot)} sf`);
-  o += t(lx, rb+36, 7.5,'','#ef9a9a','start',  `− Bldg:    ${d.bldgW}′ × ${d.bldgD}′ = ${n(c.bldg)} sf`);
-  o += t(lx, rb+47, 7.5,'','#ef9a9a','start',  `− Drv:      ${d.drvW}′ × ${d.drvD}′ = ${n(c.drv)} sf`);
-  o += t(lx, rb+58, 7.5,'','#ef9a9a','start',  `− Patio:  ${d.patW}′ × ${d.patD}′ = ${n(c.pat)} sf`);
-  if(d.misc) o += t(lx, rb+69, 7,'','#ef9a9a','start', `− Other hard surface = ${n(d.misc)} sf`);
-
-  // Right column: totals
-  o += t(rx, rb+13, 9,'bold','white','start',      `= ${n(c.sf)} sq ft SOD`);
-  o += t(rx, rb+26, 8.5,'','#a5d6a7','start',     `${c.sy.toFixed(1)} sq yd`);
-  o += t(rx, rb+40, 10,'bold','#a5d6a7','start',  `${c.pal} pallet${c.pal!==1?'s':''} @ ${PALLET_SF} sf`);
-  o += t(rx, rb+54, 7.5,'','#80cbc4','start',     `Impervious: ${n(c.imp)} sf`);
-  o += t(rx, rb+67, 7,'','#78909c','start',        `${d.source||''}`);
-
-  o += `</svg>`;
-  document.getElementById('svgBlueprint').outerHTML = o.replace('<svg', '<svg id="svgBlueprint"');
+  const rb=oy+lh+roadH+8;
+  const bwid=svgW-8;
+  o+=bx(4,rb,bwid,resH,'#0d2118','#1b5e20',1.5,null,6);
+  const lx=16, rx=16+Math.floor(bwid/2);
+  o+=tx(lx,rb+14,8.5,'bold','#a5d6a7','start','TAKEOFF SUMMARY');
+  o+=tx(lx,rb+28,7.5,'','#c8e6c9','start',`Lot:             ${lotW}′ × ${lotD}′ = ${fmt(c.lot)} sf`);
+  if(d.bldgD) o+=tx(lx,rb+41,7.5,'','#ef9a9a','start',`− Building:   ${d.bldgW}′ × ${d.bldgD}′ = ${fmt(c.bldg)} sf`);
+  if(d.drvD)  o+=tx(lx,rb+54,7.5,'','#ef9a9a','start',`− Driveway:  ${d.drvW}′ × ${d.drvD}′ = ${fmt(c.drv)} sf`);
+  if(d.patD)  o+=tx(lx,rb+67,7.5,'','#ef9a9a','start',`− Patio:        ${d.patW}′ × ${d.patD}′ = ${fmt(c.pat)} sf`);
+  if(d.misc)  o+=tx(lx,rb+80,7.5,'','#ef9a9a','start',`− Other hard surface: ${fmt(d.misc)} sf`);
+  o+=tx(rx,rb+14,8.5,'bold','white','start',`= ${fmt(c.sf)} sq ft SOD`);
+  o+=tx(rx,rb+28,8,'','#a5d6a7','start',`${c.sy.toFixed(1)} sq yd`);
+  o+=tx(rx,rb+44,11,'bold','#a5d6a7','start',`${c.pal} pallet${c.pal!==1?'s':''} @ ${PALLET_SF} sf`);
+  o+=tx(rx,rb+60,7.5,'','#80cbc4','start',`Impervious area: ${fmt(c.imp)} sf`);
+  if(d.source) o+=tx(rx,rb+74,6.5,'','#567a67','start',d.source);
+  o+=`</svg>`;
+  document.getElementById('svgBlueprint').outerHTML=o.replace('<svg','<svg id="svgBlueprint"');
 }
 
-// SVG helpers
-function t(x,y,sz,w,fill,anchor,text){
-  const ta=anchor==='middle'?'middle':anchor==='start'?'start':'middle';
-  return `<text x="${x}" y="${y}" font-size="${sz}" font-weight="${w||'normal'}" fill="${fill}" text-anchor="${ta}">${String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</text>`;
+function tx(x,y,sz,w,fill,anchor,text){
+  return `<text x="${x}" y="${y}" font-size="${sz}" font-weight="${w||'normal'}" fill="${fill}" text-anchor="${anchor}">${String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</text>`;
 }
-function box(x,y,w,h,fill,stroke,sw,dash='',rx=0){
-  return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"${dash?` stroke-dasharray="${dash}"`:''}${rx?` rx="${rx}"`:''}/>` ;
+function bx(x,y,w,h,fill,stroke,sw,dash,rx){
+  return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"${dash?` stroke-dasharray="${dash}"`:''} ${rx?` rx="${rx}"`:''}\/>`;
 }
 function hd(x1,x2,y,lbl,col='#1565c0'){
-  return `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}" stroke-width="1" marker-start="url(#a2)" marker-end="url(#a1)"/>
-  <text x="${(x1+x2)/2}" y="${y-4}" text-anchor="middle" font-size="9" fill="${col}">${lbl}</text>
+  return `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}" stroke-width="1" marker-start="url(#at)" marker-end="url(#ah)"/>
+  <text x="${(x1+x2)/2}" y="${y-4}" text-anchor="middle" font-size="8.5" fill="${col}">${lbl}</text>
   <line x1="${x1}" y1="${y-4}" x2="${x1}" y2="${y+4}" stroke="${col}" stroke-width="0.8"/>
   <line x1="${x2}" y1="${y-4}" x2="${x2}" y2="${y+4}" stroke="${col}" stroke-width="0.8"/>`;
 }
 function vd(x,y1,y2,lbl,col='#1565c0'){
-  return `<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${col}" stroke-width="1" marker-start="url(#a2)" marker-end="url(#a1)"/>
-  <text x="${x+4}" y="${(y1+y2)/2+4}" font-size="9" fill="${col}">${lbl}</text>
+  return `<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${col}" stroke-width="1" marker-start="url(#at)" marker-end="url(#ah)"/>
+  <text x="${x+4}" y="${(y1+y2)/2+4}" font-size="8.5" fill="${col}">${lbl}</text>
   <line x1="${x-4}" y1="${y1}" x2="${x+4}" y2="${y1}" stroke="${col}" stroke-width="0.8"/>
   <line x1="${x-4}" y1="${y2}" x2="${x+4}" y2="${y2}" stroke="${col}" stroke-width="0.8"/>`;
 }
 
-// ══════════════════════════════════════════════════════════════
-// PANEL 2 — STREET VIEW
-// ══════════════════════════════════════════════════════════════
-function renderStreetView() {
-  document.getElementById('svLoading').style.display = 'flex';
-  const d = activeLot;
-
-  // Pass the address string directly — Google Maps geocodes it server-side.
-  // These new-construction addresses are not yet in Nominatim/OSM, but Google
-  // has them. Avoids the wrong-location bug caused by Nominatim returning null.
-  const enc = encodeURIComponent(d.addr);
-  const gmUrl = 'https://maps.google.com/maps?q=' + enc + '&z=19&t=h&output=embed';
-  const svDirectUrl = 'https://www.google.com/maps/search/?api=1&query=' + enc;
-
-  const frame = document.getElementById('streetFrame');
-  frame.src = gmUrl;
-  frame.onload = () => { document.getElementById('svLoading').style.display = 'none'; };
-  frame.onerror = () => showSVFallback(svDirectUrl);
-  document.getElementById('svLink').href = svDirectUrl;
-
-  setTimeout(() => { document.getElementById('svLoading').style.display = 'none'; }, 5000);
+function renderStreetView(){
+  document.getElementById('svLoad').style.display='flex';
+  const addr=activeLot.addr;
+  if(!addr||addr==='Unknown Address'){
+    document.getElementById('svLoad').style.display='none';
+    document.getElementById('svFallback').style.display='flex';
+    return;
+  }
+  const enc=encodeURIComponent(addr);
+  const frame=document.getElementById('streetFrame');
+  frame.src='https://maps.google.com/maps?q='+enc+'&z=19&t=h&output=embed';
+  frame.onload=()=>{ document.getElementById('svLoad').style.display='none'; };
+  document.getElementById('svLink').href='https://www.google.com/maps/search/?api=1&query='+enc;
+  setTimeout(()=>{ document.getElementById('svLoad').style.display='none'; },5000);
 }
 
-function showSVFallback(url) {
-  document.getElementById('streetFrame').style.display = 'none';
-  document.getElementById('svFallback').style.display  = 'flex';
-  document.getElementById('svLink').href = url;
-  document.getElementById('svLoading').style.display = 'none';
-}
-
-// ══════════════════════════════════════════════════════════════
-// PANEL 3 — GIS / AERIAL
-// ══════════════════════════════════════════════════════════════
-function renderGIS() {
-  document.getElementById('gisLoading').style.display = 'flex';
-  const d = activeLot;
-
-  if (gisMap) gisMap.remove();
-
-  gisMap = L.map('gisMap', { zoomControl: true });
-
-  // Esri World Imagery (free, no key required)
+function renderGIS(){
+  document.getElementById('gisLoad').style.display='flex';
+  const d=activeLot;
+  if(gisMap){gisMap.remove();}
+  gisMap=L.map('gisMap',{zoomControl:true});
   L.esri.basemapLayer('Imagery').addTo(gisMap);
   L.esri.basemapLayer('ImageryLabels').addTo(gisMap);
-
-  // Initial view (will refine after parcel lookup)
-  gisMap.setView([d.lat, d.lng], 19);
-
-  // Layer toggle
-  const bms = {
-    '🛰 Satellite': L.esri.basemapLayer('Imagery'),
-    '🗺 Hybrid':    L.layerGroup([L.esri.basemapLayer('Imagery'), L.esri.basemapLayer('ImageryLabels')]),
-    '📍 Streets':   L.esri.basemapLayer('Streets'),
-  };
-  L.control.layers(bms, {}, { position:'topright', collapsed:true }).addTo(gisMap);
-  L.control.scale({ imperial:true, metric:true }).addTo(gisMap);
-
-  // Query Henderson County parcel FeatureServer
-  const parcelUrl = 'https://gisweb.hendersoncountync.gov/arcgis/rest/services/Parcels/FeatureServer/0';
-  L.esri.query({ url: parcelUrl })
-    .where("PIN_NUM = '9660-90-8308'")
-    .fields(['PIN_NUM','OWNER','SITE_ADD','CALC_ACRES'])
-    .run((err, fc) => {
-      document.getElementById('gisLoading').style.display = 'none';
-      if (!err && fc && fc.features.length > 0) {
-        const pl = L.geoJSON(fc.features[0], {
-          style: { color:'#52b788', weight:2.5, fillColor:'#52b788', fillOpacity:0.15 }
-        }).addTo(gisMap);
-        pl.bindPopup(`<b>PIN: 9660-90-8308</b><br>Townes at Stonecrest PH 1<br>Lots 202–207`);
-        gisMap.fitBounds(pl.getBounds().pad(0.3));
-      }
-    });
-
-  // Lot marker for active unit
-  const c = calcSod(d);
-  L.marker([d.lat, d.lng], {
-    icon: L.divIcon({
-      className: '',
-      html: `<div style="background:#1b5e20;color:#a5d6a7;font:bold 11px sans-serif;padding:4px 8px;border-radius:4px;border:1.5px solid #52b788;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.4)">Unit ${d.unit}<br><span style="font-size:9px;font-weight:normal">${n(c.sf)} sf sod · ${c.pal} pal</span></div>`,
-      iconAnchor: [40, 20]
+  const lat=d.lat||35.35117, lng=d.lng||-82.45620;
+  gisMap.setView([lat,lng],19);
+  L.control.layers({
+    '🛰 Satellite':L.esri.basemapLayer('Imagery'),
+    '🗺 Hybrid':L.layerGroup([L.esri.basemapLayer('Imagery'),L.esri.basemapLayer('ImageryLabels')]),
+    '📍 Streets':L.esri.basemapLayer('Streets'),
+  },{},{position:'topright',collapsed:true}).addTo(gisMap);
+  L.control.scale({imperial:true,metric:true}).addTo(gisMap);
+  document.getElementById('gisLoad').style.display='none';
+  const c=calcSod(d);
+  const unitLbl=d.unit!=='Custom'?`Unit ${d.unit}`:(d.job||'Property');
+  L.marker([lat,lng],{
+    icon:L.divIcon({
+      className:'',
+      html:`<div style="background:#1b5e20;color:#a5d6a7;font:bold 11px 'Segoe UI',sans-serif;padding:4px 8px;border-radius:4px;border:1.5px solid #52b788;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.5)">${unitLbl}<br><span style="font-size:9px;font-weight:normal">${fmt(c.sf)} sf · ${c.pal} pal</span></div>`,
+      iconAnchor:[40,20]
     })
-  }).addTo(gisMap).bindPopup(`<b>Unit ${d.unit} — ${d.addr}</b><br>Sod: ${n(c.sf)} sq ft · ${c.pal} pallet${c.pal!==1?'s':''}`);
+  }).addTo(gisMap).bindPopup(`<b>${unitLbl}</b><br>${d.addr}<br>Sod: ${fmt(c.sf)} sf · ${c.pal} pallet${c.pal!==1?'s':''}`);
+  if(d.unit!=='Custom'){
+    L.esri.query({url:'https://gisweb.hendersoncountync.gov/arcgis/rest/services/Parcels/FeatureServer/0'})
+      .where("PIN_NUM = '9660-90-8308'")
+      .fields(['PIN_NUM','OWNER','SITE_ADD','CALC_ACRES'])
+      .run((err,fc)=>{
+        if(!err&&fc&&fc.features.length>0){
+          L.geoJSON(fc.features[0],{style:{color:'#52b788',weight:2.5,fillColor:'#52b788',fillOpacity:.12}}).addTo(gisMap);
+        }
+      });
+  }
 }
 
-// ══════════════════════════════════════════════════════════════
-// PANEL 4 — CALCULATOR
-// ══════════════════════════════════════════════════════════════
-function renderCalc() {
-  const d = activeLot, c = calcSod(d);
-  document.getElementById('calcScroll').innerHTML = `
-    <div class="meas-section">
-      <div class="meas-hd">Lot Dimensions <span style="font-style:italic;text-transform:none">— from ${d.source||'manual'}</span></div>
-      ${f1('Lot Width','lotW',d.lotW,'ft')}
-      ${f1('Lot Depth','lotD',d.lotD,'ft')}
+function renderCalc(){
+  const d=activeLot, c=calcSod(d);
+  document.getElementById('calcBody').innerHTML=`
+    <div class="cr-sec">
+      <div class="cr-hd">Lot</div>
+      ${cr1('Width','lotW',d.lotW,'ft')}
+      ${cr1('Depth','lotD',d.lotD,'ft')}
     </div>
-    <div class="meas-section">
-      <div class="meas-hd">Building Footprint</div>
-      ${f2('W × D','bldgW',d.bldgW,'bldgD',d.bldgD)}
+    <div class="cr-sec">
+      <div class="cr-hd">Building</div>
+      ${cr2('W × D','bldgW',d.bldgW,'bldgD',d.bldgD)}
     </div>
-    <div class="meas-section">
-      <div class="meas-hd">Driveway</div>
-      ${f2('W × D','drvW',d.drvW,'drvD',d.drvD)}
+    <div class="cr-sec">
+      <div class="cr-hd">Driveway</div>
+      ${cr2('W × D','drvW',d.drvW,'drvD',d.drvD)}
     </div>
-    <div class="meas-section">
-      <div class="meas-hd">Patio / Stoop</div>
-      ${f2('W × D','patW',d.patW,'patD',d.patD)}
+    <div class="cr-sec">
+      <div class="cr-hd">Patio / Stoop</div>
+      ${cr2('W × D','patW',d.patW,'patD',d.patD)}
     </div>
-    <div class="meas-section">
-      <div class="meas-hd">Other Hard Surface (AC pad, walk, curb cut)</div>
-      ${f1('Area','misc',d.misc,'sq ft')}
+    <div class="cr-sec">
+      <div class="cr-hd">Other Hard Surface</div>
+      ${cr1('Area','misc',d.misc,'sf')}
     </div>
-    <div class="res" id="resBox">${renderRes(c)}</div>
+    <div class="res-box" id="resBox">${renderRes(c)}</div>
   `;
-
-  document.getElementById('calcScroll').querySelectorAll('input[data-k]').forEach(inp => {
-    inp.addEventListener('input', () => {
-      activeLot[inp.dataset.k] = parseFloat(inp.value) || 0;
-      const fresh = calcSod(activeLot);
-      document.getElementById('resBox').innerHTML = renderRes(fresh);
-      // refresh sf pair label
-      const pair = inp.dataset.pair;
-      if (pair) {
-        const keys = {bldg:['bldgW','bldgD'],drv:['drvW','drvD'],pat:['patW','patD']};
-        for (const [k,[a,b]] of Object.entries(keys)) {
-          if (inp.dataset.k===a||inp.dataset.k===b) {
-            const el=document.getElementById('sf_'+k);
-            if(el) el.textContent = n(activeLot[a]*activeLot[b])+' sf';
-          }
-        }
+  document.getElementById('calcBody').querySelectorAll('input[data-k]').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      activeLot[inp.dataset.k]=parseFloat(inp.value)||0;
+      document.getElementById('resBox').innerHTML=renderRes(calcSod(activeLot));
+      const map={bldgW:'bldg',bldgD:'bldg',drvW:'drv',drvD:'drv',patW:'pat',patD:'pat'};
+      const keys={bldg:['bldgW','bldgD'],drv:['drvW','drvD'],pat:['patW','patD']};
+      const grp=map[inp.dataset.k];
+      if(grp){
+        const [a,b]=keys[grp];
+        const el=document.getElementById('rsf_'+grp);
+        if(el) el.textContent=fmt(activeLot[a]*activeLot[b])+' sf';
       }
     });
   });
 }
 
-function f1(lbl,key,val,unit) {
-  return `<div class="meas-row"><span class="meas-lbl">${lbl}</span><div class="meas-inp"><input type="number" step="0.01" value="${val}" data-k="${key}"><span class="x">${unit}</span></div></div>`;
+function cr1(lbl,key,val,unit){
+  return `<div class="cr-row"><span class="cr-lbl">${lbl}</span><input class="cr-inp" type="number" step="0.01" value="${val||''}" data-k="${key}"><span class="cr-x">${unit}</span></div>`;
 }
-function f2(lbl,k1,v1,k2,v2) {
+function cr2(lbl,k1,v1,k2,v2){
   const id=k1.replace('W','');
-  return `<div class="meas-row"><span class="meas-lbl">${lbl}</span><div class="meas-inp"><input type="number" step="0.01" value="${v1}" data-k="${k1}" data-pair="${k2}"><span class="x">×</span><input type="number" step="0.01" value="${v2}" data-k="${k2}" data-pair="${k1}"><span class="x">=</span><span class="meas-sf" id="sf_${id}">${n(v1*v2)} sf</span></div></div>`;
+  return `<div class="cr-row"><span class="cr-lbl">${lbl}</span><input class="cr-inp" type="number" step="0.01" value="${v1||''}" data-k="${k1}"><span class="cr-x">×</span><input class="cr-inp" type="number" step="0.01" value="${v2||''}" data-k="${k2}"><span class="cr-x">=</span><span class="cr-sf" id="rsf_${id}">${fmt((v1||0)*(v2||0))} sf</span></div>`;
 }
 
-function renderRes(c) {
+function renderRes(c){
   return `
-    <div class="res-row"><span class="l">Total Lot Area</span><span class="v">${n(c.lot)} sq ft</span></div>
-    <div class="res-row ded"><span class="l">− Building Footprint</span><span class="v">−${n(c.bldg)} sf</span></div>
-    <div class="res-row ded"><span class="l">− Driveway</span><span class="v">−${n(c.drv)} sf</span></div>
-    <div class="res-row ded"><span class="l">− Patio / Stoop</span><span class="v">−${n(c.pat)} sf</span></div>
-    <div class="res-row ded"><span class="l">− Other Hard Surface</span><span class="v">−${n(c.misc)} sf</span></div>
-    <div class="res-row tot"><span class="l">= SOD AREA</span><span class="v">${n(c.sf)} sq ft</span></div>
-    <div class="res-row sm"><span class="l">Square yards</span><span class="v">${c.sy.toFixed(1)} sq yd</span></div>
-    <div class="res-row sm"><span class="l">Pallets @ ${PALLET_SF} sf/pallet</span><span class="v">${c.pal} pallet${c.pal!==1?'s':''}</span></div>
-    <div class="res-row sm"><span class="l">Total impervious</span><span class="v">${n(c.imp)} sf</span></div>
+    <div class="r-row"><span class="rl">Total Lot</span><span class="rv">${fmt(c.lot)} sf</span></div>
+    <div class="r-row ded"><span class="rl">− Building</span><span class="rv">−${fmt(c.bldg)} sf</span></div>
+    <div class="r-row ded"><span class="rl">− Driveway</span><span class="rv">−${fmt(c.drv)} sf</span></div>
+    <div class="r-row ded"><span class="rl">− Patio</span><span class="rv">−${fmt(c.pat)} sf</span></div>
+    <div class="r-row ded"><span class="rl">− Other</span><span class="rv">−${fmt(c.misc)} sf</span></div>
+    <div class="r-row tot"><span class="rl">= SOD AREA</span><span class="rv">${fmt(c.sf)} sf</span></div>
+    <div class="r-row sub"><span class="rl">Square yards</span><span class="rv">${c.sy.toFixed(1)} sy</span></div>
+    <div class="r-row sub"><span class="rl">Pallets @ ${PALLET_SF} sf</span><span class="rv">${c.pal} pallet${c.pal!==1?'s':''}</span></div>
+    <div class="r-row sub"><span class="rl">Total impervious</span><span class="rv">${fmt(c.imp)} sf</span></div>
   `;
 }
 
-function recalcAll() {
-  const fresh = calcSod(activeLot);
-  document.getElementById('resBox').innerHTML = renderRes(fresh);
-  renderSVGBlueprint(activeLot);
+function recalcAll(){
+  renderCalc();
+  if(!window._pdfFile) renderSVGBlueprint(activeLot);
+}
+function scrollToResult(){
+  document.getElementById('resBox')?.scrollIntoView({behavior:'smooth'});
 }
 
-function scrollToResult() {
-  document.getElementById('resBox')?.scrollIntoView({ behavior:'smooth' });
+function calcSod(d){
+  const lot =(d.lotW||0)*(d.lotD||0);
+  const bldg=(d.bldgW||0)*(d.bldgD||0);
+  const drv =(d.drvW||0)*(d.drvD||0);
+  const pat =(d.patW||0)*(d.patD||0);
+  const misc=+(d.misc||0);
+  const imp =bldg+drv+pat+misc;
+  const sf  =Math.max(0,lot-imp);
+  return{lot,bldg,drv,pat,misc,imp,sf,sy:sf/9,pal:Math.ceil(sf/PALLET_SF)};
 }
 
-// ══════════════════════════════════════════════════════════════
-// CALCULATION ENGINE
-// ══════════════════════════════════════════════════════════════
-function calcSod(d) {
-  const lot  = (d.lotW||0)  * (d.lotD||0);
-  const bldg = (d.bldgW||0) * (d.bldgD||0);
-  const drv  = (d.drvW||0)  * (d.drvD||0);
-  const pat  = (d.patW||0)  * (d.patD||0);
-  const misc = +(d.misc||0);
-  const imp  = bldg + drv + pat + misc;
-  const sf   = Math.max(0, lot - imp);
-  return { lot, bldg, drv, pat, misc, imp, sf, sy:sf/9, pal:Math.ceil(sf/PALLET_SF) };
-}
-
-function n(v) { return Math.round(v).toLocaleString(); }
-
-// ══════════════════════════════════════════════════════════════
-// GEOCODING (Nominatim — free, no key)
-// ══════════════════════════════════════════════════════════════
-async function geocode(addr) {
-  try {
-    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(addr)}&format=json&limit=1`;
-    const res = await fetch(url, { headers:{ 'Accept-Language':'en', 'User-Agent':'Prestige-Sod-Estimator/1.0' } });
-    const data = await res.json();
-    if (data && data[0]) return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
-  } catch(e) {}
-  return null;
-}
-
-// ══════════════════════════════════════════════════════════════
-// CSV EXPORT
-// ══════════════════════════════════════════════════════════════
-function exportCSV() {
-  const d = activeLot, c = calcSod(d);
-  const rows = [
+function exportCSV(){
+  const d=activeLot, c=calcSod(d);
+  const rows=[
     ['Field','Value','Unit'],
-    ['Address', d.addr, ''],
-    ['Lot', `Unit ${d.unit}`, ''],
-    ['Model', d.model||'', ''],
-    ['Source', d.source||'', ''],
+    ['Job / Label',d.job||'',''],
+    ['Address',d.addr,''],
+    ['Lot / Unit',d.unit,''],
+    ['Source',d.source||'',''],
     ['','',''],
-    ['Lot Width', d.lotW, 'ft'],
-    ['Lot Depth', d.lotD, 'ft'],
-    ['Lot Area', c.lot, 'sf'],
-    ['Building W', d.bldgW, 'ft'],
-    ['Building D', d.bldgD, 'ft'],
-    ['Building Area', c.bldg, 'sf'],
-    ['Driveway W', d.drvW, 'ft'],
-    ['Driveway D', d.drvD, 'ft'],
-    ['Driveway Area', c.drv, 'sf'],
-    ['Patio W', d.patW, 'ft'],
-    ['Patio D', d.patD, 'ft'],
-    ['Patio Area', c.pat, 'sf'],
-    ['Other Hard Surface', c.misc, 'sf'],
-    ['Total Impervious', c.imp, 'sf'],
+    ['Lot Width',d.lotW,'ft'],['Lot Depth',d.lotD,'ft'],['Lot Area',c.lot,'sf'],
+    ['Building W',d.bldgW,'ft'],['Building D',d.bldgD,'ft'],['Building Area',c.bldg,'sf'],
+    ['Driveway W',d.drvW,'ft'],['Driveway D',d.drvD,'ft'],['Driveway Area',c.drv,'sf'],
+    ['Patio W',d.patW,'ft'],['Patio D',d.patD,'ft'],['Patio Area',c.pat,'sf'],
+    ['Other',d.misc,'sf'],['Total Impervious',c.imp,'sf'],
     ['','',''],
-    ['SOD AREA', c.sf, 'sf'],
-    ['Sod Area', c.sy.toFixed(1), 'sq yd'],
-    [`Pallets (${PALLET_SF} sf/ea)`, c.pal, 'pallets'],
+    ['SOD AREA',c.sf,'sf'],
+    ['Sod Square Yards',c.sy.toFixed(1),'sy'],
+    [`Pallets (${PALLET_SF} sf/ea)`,c.pal,'pallets'],
   ];
-  const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
-  Object.assign(document.createElement('a'), {
-    href: 'data:text/csv,' + encodeURIComponent(csv),
-    download: `sod-unit${d.unit}-${Date.now()}.csv`
+  const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const label=(d.job||d.addr||'takeoff').replace(/[^a-z0-9]+/gi,'-').toLowerCase().slice(0,40);
+  Object.assign(document.createElement('a'),{
+    href:'data:text/csv,'+encodeURIComponent(csv),
+    download:`sod-${label}-${Date.now()}.csv`
   }).click();
 }
 </script>
