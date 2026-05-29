@@ -21,6 +21,7 @@
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{font-family:var(--font);background:var(--bg0);color:var(--txt);height:100vh;display:flex;flex-direction:column;overflow:hidden}
 
+    /* ── Header ── */
     .app-hdr{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:0 20px;height:52px;display:flex;align-items:center;gap:14px;flex-shrink:0}
     .logo-mark{width:32px;height:32px;background:var(--gdark);border:1px solid var(--grn);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
     .app-title{font-size:0.95rem;font-weight:700;letter-spacing:-0.01em}
@@ -29,11 +30,14 @@
     .hdr-chip{font-size:0.63rem;font-weight:700;background:var(--gdark);color:var(--glt);border:1px solid var(--grn);padding:2px 9px;border-radius:10px;letter-spacing:.05em}
     .hdr-right{margin-left:auto;display:flex;gap:8px;align-items:center}
 
+    /* ── Input Screen ── */
     #inputScreen{flex:1;overflow-y:auto;background:var(--bg0)}
     .input-layout{width:100%;max-width:760px;margin:0 auto;padding:28px 20px 48px}
+
     .sec{margin-bottom:28px}
     .sec-hd{font-size:0.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--mu1);padding-bottom:10px;border-bottom:1px solid var(--bdr);margin-bottom:16px;display:flex;align-items:baseline;gap:8px}
     .sec-hd-note{font-size:0.58rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--mu2)}
+
     .field-row{display:flex;gap:12px;margin-bottom:12px}
     .field{flex:1}
     .field label{display:block;font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--mu1);margin-bottom:5px}
@@ -42,6 +46,7 @@
     .field input::placeholder{color:var(--mu2)}
     .field select option{background:var(--bg3)}
 
+    /* ── Upload area ── */
     .upload-area{border:1.5px dashed var(--bdr2);border-radius:7px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;position:relative;transition:all .2s;height:100%}
     .upload-area:hover,.upload-area.over{border-color:var(--grn);background:rgba(58,144,96,.06)}
     .upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
@@ -50,6 +55,7 @@
     .upload-text strong{color:var(--glt)}
     #fFileName{color:var(--glt);font-size:0.74rem;margin-top:3px;display:none}
 
+    /* ── Measurement table ── */
     .meas-table{width:100%;border-collapse:collapse}
     .meas-table thead th{font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--mu2);padding:0 8px 8px;text-align:left}
     .meas-table thead th.r{text-align:right}
@@ -67,6 +73,7 @@
     .msf.lot{color:var(--glt);font-weight:700}
     .msf.ded{color:var(--red)}
 
+    /* ── Live Preview ── */
     .live-preview{background:var(--gdark);border:1px solid var(--grn);border-radius:10px;padding:18px 22px;display:flex;align-items:center;gap:24px}
     .prv-main{flex:1}
     .prv-lbl{font-size:0.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--gdim);margin-bottom:5px}
@@ -78,6 +85,7 @@
     .prv-pal-lbl{font-size:0.6rem;color:var(--gdim);text-transform:uppercase;letter-spacing:.08em}
     .prv-pal-sub{font-size:0.6rem;color:var(--gdim);margin-top:3px}
 
+    /* ── Quick Load ── */
     .quick-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
     .qbtn{background:var(--bg3);border:1px solid var(--bdr);color:var(--mu1);padding:10px 6px;border-radius:7px;cursor:pointer;font-size:0.68rem;font-weight:600;font-family:var(--font);text-align:center;transition:all .15s;line-height:1.35}
     .qbtn:hover{border-color:var(--grn);color:var(--glt);background:rgba(58,144,96,.1)}
@@ -85,10 +93,12 @@
     .qbtn .qnum{font-size:0.88rem;display:block;color:var(--txt);font-weight:700;margin-bottom:2px}
     .qbtn.active .qnum{color:#fff}
 
+    /* ── Generate button ── */
     .gen-btn{width:100%;padding:14px;background:var(--grn);border:none;border-radius:9px;color:#fff;font-size:0.92rem;font-weight:700;font-family:var(--font);cursor:pointer;letter-spacing:.02em;transition:background .15s,transform .1s;margin-top:4px}
     .gen-btn:hover{background:var(--glt)}
     .gen-btn:active{transform:scale(.99)}
 
+    /* ── Report Screen ── */
     #reportScreen{flex:1;display:none;flex-direction:column;overflow:hidden}
     .rpt-bar{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:8px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0}
     .back-btn{background:var(--bg3);border:1px solid var(--bdr);color:var(--mu1);padding:5px 13px;border-radius:6px;cursor:pointer;font-size:0.72rem;font-weight:600;font-family:var(--font);transition:all .15s;white-space:nowrap}
@@ -103,6 +113,7 @@
     .abtn-s{background:var(--bg3);color:var(--mu1)}
     .abtn-s:hover{border-color:var(--grn);color:var(--glt)}
 
+    /* ── 4-panel grid ── */
     .panels{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:1px;background:var(--bdr);overflow:hidden}
     .panel{background:var(--bg1);display:flex;flex-direction:column;overflow:hidden;position:relative}
     .panel-hdr{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:7px 14px;display:flex;align-items:center;gap:8px;flex-shrink:0}
@@ -111,6 +122,7 @@
     .panel-tag{margin-left:auto;font-size:0.56rem;font-weight:600;background:var(--bg3);border:1px solid var(--bdr);color:var(--mu2);padding:2px 8px;border-radius:8px;letter-spacing:.05em;text-transform:uppercase}
     .panel-body{flex:1;overflow:hidden;position:relative}
 
+    /* Panel 1 */
     #blueprintCanvas{width:100%;height:100%;overflow:auto;background:#f5f2ed}
     #pdfCanvas{display:block;margin:0 auto}
     #svgBlueprint{display:block;margin:0 auto}
@@ -118,10 +130,12 @@
     .bp-btn{background:rgba(15,21,32,.92);border:1px solid var(--bdr2);color:var(--txt);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:.82rem;display:flex;align-items:center;justify-content:center;transition:all .15s}
     .bp-btn:hover{border-color:var(--grn);color:var(--glt)}
 
+    /* Panel 2 */
     #streetFrame{width:100%;height:100%;border:none}
     .sv-fallback{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;padding:20px;text-align:center}
     .sv-link{background:var(--grn);color:#fff;text-decoration:none;padding:9px 20px;border-radius:6px;font-size:.8rem;font-weight:600}
 
+    /* Panel 4 */
     .calc-body{flex:1;overflow-y:auto;padding:14px}
     .calc-body::-webkit-scrollbar{width:3px}
     .calc-body::-webkit-scrollbar-thumb{background:var(--bdr)}
@@ -148,11 +162,13 @@
     .cf-s{background:var(--bg3);color:var(--mu1);border:1px solid var(--bdr)}
     .cf-s:hover{border-color:var(--grn);color:var(--glt)}
 
+    /* Loading */
     .pload{position:absolute;inset:0;background:rgba(8,12,20,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:20}
     .spin{width:22px;height:22px;border:2px solid var(--bdr);border-top-color:var(--grn);border-radius:50%;animation:sp .7s linear infinite}
     @keyframes sp{to{transform:rotate(360deg)}}
     .spin-lbl{font-size:.7rem;color:var(--grn)}
 
+    /* Print */
     @media print{
       body{background:#fff;color:#000;height:auto;overflow:visible}
       .app-hdr{background:#fff;border-bottom:2px solid #2d6a4f}
@@ -171,6 +187,7 @@
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="app-hdr">
   <div class="logo-mark">🌿</div>
   <div>
@@ -184,9 +201,11 @@
   </div>
 </div>
 
+<!-- ══════════ INPUT SCREEN ══════════ -->
 <div id="inputScreen">
   <div class="input-layout">
 
+    <!-- Property -->
     <div class="sec">
       <div class="sec-hd">Property</div>
       <div class="field-row">
@@ -214,6 +233,7 @@
       </div>
     </div>
 
+    <!-- Measurements -->
     <div class="sec">
       <div class="sec-hd">Measurements <span class="sec-hd-note">All dimensions in feet</span></div>
       <table class="meas-table">
@@ -272,6 +292,7 @@
       </table>
     </div>
 
+    <!-- Live Preview -->
     <div class="sec">
       <div class="live-preview">
         <div class="prv-main">
@@ -287,6 +308,7 @@
       </div>
     </div>
 
+    <!-- Quick Load -->
     <div class="sec">
       <div class="sec-hd">Quick Load — Townes at Stonecrest <span class="sec-hd-note">Kane PLS Survey · 02/23/2022</span></div>
       <div class="quick-grid">
@@ -304,6 +326,7 @@
   </div>
 </div>
 
+<!-- ══════════ REPORT SCREEN ══════════ -->
 <div id="reportScreen">
 
   <div class="rpt-bar">
@@ -315,12 +338,13 @@
     <div class="rpt-sod" id="rptSod">—</div>
     <div class="rpt-actions">
       <button class="abtn abtn-s" onclick="exportCSV()">⬇ CSV</button>
-      <button class="abtn abtn-g" onclick="window.print()">🖸 Print</button>
+      <button class="abtn abtn-g" onclick="window.print()">🖨 Print</button>
     </div>
   </div>
 
   <div class="panels">
 
+    <!-- P1: Blueprint -->
     <div class="panel" id="pnl-blueprint">
       <div class="panel-hdr">
         <span class="ph-icon">📐</span>
@@ -335,13 +359,14 @@
         <div class="bp-controls">
           <button class="bp-btn" onclick="pdfZoom(1.25)" title="Zoom in">+</button>
           <button class="bp-btn" onclick="pdfZoom(0.8)"  title="Zoom out">−</button>
-          <button class="bp-btn" onclick="pdfZoom(1,'fit')" title="Fit">⊞</button>
+          <button class="bp-btn" onclick="pdfZoom(1,'fit')" title="Fit">⊡</button>
           <button class="bp-btn" onclick="pdfRotateCW()" title="Rotate 90°" style="font-size:1rem">↻</button>
         </div>
         <div class="pload" id="bpLoad"><div class="spin"></div><div class="spin-lbl">Rendering…</div></div>
       </div>
     </div>
 
+    <!-- P2: Street View -->
     <div class="panel" id="pnl-street">
       <div class="panel-hdr">
         <span class="ph-icon">📸</span>
@@ -359,6 +384,7 @@
       </div>
     </div>
 
+    <!-- P3: GIS -->
     <div class="panel" id="pnl-gis">
       <div class="panel-hdr">
         <span class="ph-icon">🛰</span>
@@ -371,6 +397,7 @@
       </div>
     </div>
 
+    <!-- P4: Calculator -->
     <div class="panel" id="pnl-calc">
       <div class="panel-hdr">
         <span class="ph-icon">🌿</span>
@@ -391,6 +418,7 @@
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
 
+// ── Presets ────────────────────────────────────────────────────
 const PRESETS = {
   202:{unit:202,addr:'42 Creekview Rd, Hendersonville, NC 28792',model:'Carson',pos:'End – West',
        lotW:22,lotD:110,bldgW:22,bldgD:62,drvW:22,drvD:20,patW:21.67,patD:8,misc:35,
@@ -420,6 +448,7 @@ let pdfRotate   = 0;
 let gisMap      = null;
 let activePreset = null;
 
+// ── Helpers ────────────────────────────────────────────────────
 function fv(id){ return parseFloat(document.getElementById(id).value)||0; }
 function sv(id,v){ document.getElementById(id).value = v!=null?v:''; }
 function fmt(v){ return Math.round(v).toLocaleString(); }
@@ -462,11 +491,13 @@ function onMeasChange(){
   const dw=fv('drvW'), dd=fv('drvD');
   const pw=fv('patW'), pd=fv('patD');
   const mi=fv('fMisc');
+
   document.getElementById('sfLot').textContent  = lw&&ld ? fmt(lw*ld)+' sf':'—';
   document.getElementById('sfBldg').textContent = bw&&bd ? fmt(bw*bd)+' sf':'—';
   document.getElementById('sfDrv').textContent  = dw&&dd ? fmt(dw*dd)+' sf':'—';
   document.getElementById('sfPat').textContent  = pw&&pd ? fmt(pw*pd)+' sf':'—';
   document.getElementById('sfMisc').textContent = mi     ? fmt(mi)+' sf':'—';
+
   const sf = Math.max(0, lw*ld - bw*bd - dw*dd - pw*pd - mi);
   const pal = sf>0 ? Math.ceil(sf/PALLET_SF) : 0;
   document.getElementById('prvSF').innerHTML = `${fmt(sf)}<span class="prv-unit">sq ft</span>`;
@@ -474,24 +505,139 @@ function onMeasChange(){
   document.getElementById('prvPal').textContent = pal;
 }
 
+// ── Drag and drop ──────────────────────────────────────────────
 const ua = document.getElementById('uploadArea');
 ['dragenter','dragover'].forEach(e=>ua.addEventListener(e,ev=>{ev.preventDefault();ua.classList.add('over');}));
 ['dragleave','drop'].forEach(e=>ua.addEventListener(e,ev=>{ev.preventDefault();ua.classList.remove('over');}));
 ua.addEventListener('drop',ev=>handleFile(ev.dataTransfer.files[0]));
 
-function handleFile(file){
+async function handleFile(file){
   if(!file||file.type!=='application/pdf') return;
   window._pdfFile = file;
   pdfRotate = 0;
   const fn=document.getElementById('fFileName');
-  fn.textContent='✓ '+file.name;
+  fn.textContent='⟳ Reading '+file.name+'…';
   fn.style.display='block';
+
+  const found = await extractFromPDF(file);
+
+  if(found.preset){
+    loadPreset(found.preset);
+    fn.textContent=`✓ ${file.name} — Unit ${found.preset} auto-loaded`;
+  } else {
+    let filled=[];
+    if(found.addr && !document.getElementById('fAddress').value.trim()){
+      sv('fAddress',found.addr); filled.push('address');
+    }
+    if(found.job  && !document.getElementById('fJob').value.trim()){
+      sv('fJob',found.job);
+    }
+    if(found.lotW){ sv('lotW',found.lotW);  filled.push('lot W'); }
+    if(found.lotD){ sv('lotD',found.lotD);  filled.push('lot D'); }
+    if(found.bldgW){ sv('bldgW',found.bldgW); filled.push('bldg W'); }
+    if(found.bldgD){ sv('bldgD',found.bldgD); filled.push('bldg D'); }
+    if(found.drvW){ sv('drvW',found.drvW);  filled.push('drv W'); }
+    if(found.drvD){ sv('drvD',found.drvD);  filled.push('drv D'); }
+    if(found.patW){ sv('patW',found.patW);  filled.push('patio W'); }
+    if(found.patD){ sv('patD',found.patD);  filled.push('patio D'); }
+    onMeasChange();
+    fn.textContent = filled.length
+      ? `✓ ${file.name} — found: ${filled.join(', ')}`
+      : `✓ ${file.name} — enter measurements manually`;
+  }
 }
 
+async function extractFromPDF(file){
+  try{
+    const url=URL.createObjectURL(file);
+    const doc=await pdfjsLib.getDocument(url).promise;
+    const page=await doc.getPage(1);
+    const tc=await page.getTextContent();
+    URL.revokeObjectURL(url);
+    const tokens=tc.items.map(i=>i.str.trim()).filter(Boolean);
+    const text=tokens.join(' ');
+    return parsePlotText(text);
+  }catch(e){ return {}; }
+}
+
+function parsePlotText(text){
+  const up=text.toUpperCase();
+
+  // 1. Match known Stonecrest unit numbers
+  const unitRe=/\b(?:LOT|UNIT|#)\s*0*(20[2-7])\b/;
+  const um=up.match(unitRe);
+  if(um){ const n=parseInt(um[1]); if(PRESETS[n]) return{preset:n}; }
+
+  // 2. Match address against preset addresses
+  for(const[n,p] of Object.entries(PRESETS)){
+    const street=p.addr.split(',')[0].toUpperCase(); // "42 CREEKVIEW RD"
+    const num=street.match(/^\d+/)?.[0];
+    const name=street.replace(/^\d+\s*/,'').replace(/\s+(?:RD|ST|AVE|DR|LN|ROAD|STREET)\b.*/,'').trim();
+    if(num&&name&&up.includes(num)&&up.includes(name)) return{preset:parseInt(n)};
+  }
+
+  const data={};
+
+  // 3. Street address pattern
+  const am=text.match(/\b\d{1,5}\s+[A-Za-z][A-Za-z ]{3,30}(?:Rd|Road|St|Street|Ave|Avenue|Dr|Drive|Ln|Lane|Ct|Court|Blvd|Way|Pl|Place)\.?(?:\s*,\s*[A-Za-z ]+(?:,\s*[A-Z]{2}\s+\d{5})?)?/i);
+  if(am) data.addr=am[0].replace(/\s+/g,' ').trim();
+
+  // 4. Lot / job label
+  const jm=text.match(/\b(?:lot|unit|parcel)\s+#?\s*(\w{1,6})\b/i);
+  if(jm) data.job=`Lot ${jm[1]}`;
+
+  // 5. Labeled dimensions
+  const labeled=[
+    {key:'lotW', re:/lot\s+width[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'lotD', re:/lot\s+(?:depth|length)[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'bldgW',re:/(?:house|building|bldg)(?:\s+width)?[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'bldgD',re:/(?:house|building|bldg)(?:\s+depth)?[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'drvW', re:/driveway(?:\s+width)?[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'drvD', re:/driveway(?:\s+depth)?[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'patW', re:/patio(?:\s+width)?[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'patD', re:/patio(?:\s+depth)?[:\s=]+(\d+(?:\.\d+)?)/i},
+  ];
+  for(const{key,re}of labeled){
+    const m=text.match(re);
+    if(m) data[key]=parseFloat(m[1]);
+  }
+
+  // 6. Bare dimension sequences — look for numbers near section keywords
+  // e.g. "LOT: 22 x 110" or "22.00' x 110.00'"
+  const boxRe=/\b(\d+(?:\.\d+)?)\s*[x×']\s*(\d+(?:\.\d+)?)/gi;
+  const nearby=(keyword,str)=>{
+    const idx=str.search(new RegExp(keyword,'i'));
+    if(idx<0) return null;
+    const snip=str.slice(Math.max(0,idx-10),idx+80);
+    const m=snip.match(/(\d+(?:\.\d+)?)\s*[x×']\s*(\d+(?:\.\d+)?)/i);
+    return m?[parseFloat(m[1]),parseFloat(m[2])]:null;
+  };
+  if(!data.lotW){
+    const d=nearby('lot',text);
+    if(d&&d[0]>5&&d[0]<300&&d[1]>20&&d[1]<600){data.lotW=d[0];data.lotD=d[1];}
+  }
+  if(!data.bldgW){
+    const d=nearby('building',text)||nearby('house',text)||nearby('structure',text);
+    if(d&&d[0]>5&&d[0]<200&&d[1]>10&&d[1]<200){data.bldgW=d[0];data.bldgD=d[1];}
+  }
+  if(!data.drvW){
+    const d=nearby('driveway',text)||nearby('drive',text);
+    if(d&&d[0]>4&&d[0]<60&&d[1]>4&&d[1]<60){data.drvW=d[0];data.drvD=d[1];}
+  }
+  if(!data.patW){
+    const d=nearby('patio',text)||nearby('stoop',text)||nearby('concrete',text);
+    if(d&&d[0]>2&&d[0]<80&&d[1]>2&&d[1]<80){data.patW=d[0];data.patD=d[1];}
+  }
+
+  return data;
+}
+
+// ── Generate ───────────────────────────────────────────────────
 function generateReport(){
   activeLot = getFormData();
   document.getElementById('inputScreen').style.display  = 'none';
   document.getElementById('reportScreen').style.display = 'flex';
+
   const job = activeLot.job||activeLot.addr;
   document.getElementById('rptJob').textContent  = job;
   document.getElementById('rptAddr').textContent = activeLot.addr!==job?activeLot.addr:'';
@@ -499,6 +645,7 @@ function generateReport(){
   document.getElementById('rptSod').textContent = `${fmt(c.sf)} sf · ${c.pal} pallet${c.pal!==1?'s':''}`;
   document.getElementById('unitChip').textContent = activePreset?`Unit ${activePreset}`:'';
   document.getElementById('unitChip').style.display = activePreset?'inline':'none';
+
   renderBlueprint();
   renderStreetView();
   renderGIS();
@@ -511,6 +658,7 @@ function goBack(){
   if(gisMap){gisMap.remove();gisMap=null;}
 }
 
+// ── Panel 1: Blueprint ─────────────────────────────────────────
 async function renderBlueprint(){
   document.getElementById('bpLoad').style.display='flex';
   if(window._pdfFile){
@@ -560,20 +708,25 @@ function pdfRotateCW(){
   if(pdfDoc) renderPDFPage(1);
 }
 
+// ── SVG Blueprint ──────────────────────────────────────────────
 function renderSVGBlueprint(d){
   const c   = calcSod(d);
   const S   = 5.5;
   const ML  = 90, MT=68, roadH=30, resH=104;
+
   const lotW = d.lotW||40, lotD=d.lotD||100;
   const lw=lotW*S, lh=lotD*S;
   const svgW=lw+ML+88, svgH=lh+MT+roadH+resH+20;
+
   const bh=(d.bldgD||0)*S, ph=(d.patD||0)*S, dh=(d.drvD||0)*S;
   const bw=(d.bldgW||0)*S, pw=(d.patW||0)*S, dw=(d.drvW||0)*S;
   const ox=ML, oy=MT;
+
   const sodD   = Math.max(0, lotD-(d.bldgD||0)-(d.patD||0)-(d.drvD||0));
   const sodTop = oy+bh+ph;
   const drvTop = oy+lh-dh;
   const sodH   = Math.max(0,drvTop-sodTop);
+
   const title = d.job||(d.unit&&d.unit!=='Custom'?`Unit ${d.unit}`:'Custom Lot');
 
   let o=`<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" font-family="'Segoe UI',Arial,sans-serif">`;
@@ -586,12 +739,15 @@ function renderSVGBlueprint(d){
     </pattern>
   </defs>`;
 
+  // Title
   o+=tx(svgW/2,16,11,'bold','#1b5e20','middle',title);
   if(d.addr&&d.addr!=='Unknown Address') o+=tx(svgW/2,29,8.5,'','#555','middle',d.addr);
   if(d.source&&d.source!=='Manual entry') o+=tx(svgW/2,41,7,'','#888','middle',`Source: ${d.source}`);
 
+  // Lot outline
   o+=bx(ox,oy,lw,lh,'#e8f5e9','#2e7d32',1.5);
 
+  // Building
   if(bh>0){
     const ebw=bw||lw;
     o+=bx(ox,oy,ebw,bh,'#78909c','#37474f',1.5);
@@ -603,6 +759,7 @@ function renderSVGBlueprint(d){
     if(bh>40) o+=vd(ox+ebw-13,oy+5,oy+bh-5,`${d.bldgD}′`);
   }
 
+  // Patio
   if(ph>0){
     const epw=pw||lw;
     o+=bx(ox,oy+bh,epw,ph,'#d7ccc8','#795548',1,'5,3');
@@ -616,6 +773,7 @@ function renderSVGBlueprint(d){
     if(ph>=26) o+=hd(ox+4,ox+epw-4,oy+bh+11,`${d.patW}′`);
   }
 
+  // Sod zone
   if(sodH>10){
     o+=`<rect x="${ox}" y="${sodTop}" width="${lw}" height="${sodH}" fill="url(#hatch)"/>`;
     o+=`<rect x="${ox}" y="${sodTop}" width="${lw}" height="${sodH}" fill="none" stroke="#4caf50" stroke-width="0.5" stroke-dasharray="5,4"/>`;
@@ -626,6 +784,7 @@ function renderSVGBlueprint(d){
     if(sodH>50) o+=tx(ox+lw/2,sm+29,8,'','#388e3c','middle',`(${(lotW*sodD/9).toFixed(1)} sq yd)`);
   }
 
+  // Driveway
   if(dh>0){
     const edw=dw||lw;
     o+=bx(ox,drvTop,edw,dh,'#b0bec5','#546e7a',1);
@@ -636,10 +795,12 @@ function renderSVGBlueprint(d){
     if(dh>=26) o+=vd(ox+edw-13,drvTop+4,oy+lh-4,`${d.drvD}′`);
   }
 
+  // Road
   o+=bx(0,oy+lh,svgW,roadH,'#546e7a','none',0);
   o+=`<line x1="0" y1="${oy+lh+roadH/2}" x2="${svgW}" y2="${oy+lh+roadH/2}" stroke="#78909c" stroke-width="1" stroke-dasharray="10,7"/>`;
   o+=tx(svgW/2,oy+lh+12,9,'bold','white','middle','STREET / RIGHT OF WAY');
 
+  // Dimension lines
   o+=hd(ox,ox+lw,oy-28,`${lotW}′ wide`);
   o+=vd(ox+lw+22,oy,oy+lh,`${lotD}′ total`);
   if(bh>0) o+=vd(ox-28,oy,oy+bh,`${d.bldgD}′ bldg`);
@@ -647,21 +808,25 @@ function renderSVGBlueprint(d){
   if(sodH>0) o+=vd(ox-28,sodTop,drvTop,`${sodD.toFixed(1)}′ sod`);
   if(dh>0) o+=vd(ox-28,drvTop,oy+lh,`${d.drvD}′ drv`);
 
+  // Result banner
   const rb=oy+lh+roadH+8;
   const bwid=svgW-8;
   o+=bx(4,rb,bwid,resH,'#0d2118','#1b5e20',1.5,null,6);
   const lx=16, rx=16+Math.floor(bwid/2);
+
   o+=tx(lx,rb+14,8.5,'bold','#a5d6a7','start','TAKEOFF SUMMARY');
   o+=tx(lx,rb+28,7.5,'','#c8e6c9','start',`Lot:             ${lotW}′ × ${lotD}′ = ${fmt(c.lot)} sf`);
   if(d.bldgD) o+=tx(lx,rb+41,7.5,'','#ef9a9a','start',`− Building:   ${d.bldgW}′ × ${d.bldgD}′ = ${fmt(c.bldg)} sf`);
   if(d.drvD)  o+=tx(lx,rb+54,7.5,'','#ef9a9a','start',`− Driveway:  ${d.drvW}′ × ${d.drvD}′ = ${fmt(c.drv)} sf`);
   if(d.patD)  o+=tx(lx,rb+67,7.5,'','#ef9a9a','start',`− Patio:        ${d.patW}′ × ${d.patD}′ = ${fmt(c.pat)} sf`);
   if(d.misc)  o+=tx(lx,rb+80,7.5,'','#ef9a9a','start',`− Other hard surface: ${fmt(d.misc)} sf`);
+
   o+=tx(rx,rb+14,8.5,'bold','white','start',`= ${fmt(c.sf)} sq ft SOD`);
   o+=tx(rx,rb+28,8,'','#a5d6a7','start',`${c.sy.toFixed(1)} sq yd`);
   o+=tx(rx,rb+44,11,'bold','#a5d6a7','start',`${c.pal} pallet${c.pal!==1?'s':''} @ ${PALLET_SF} sf`);
   o+=tx(rx,rb+60,7.5,'','#80cbc4','start',`Impervious area: ${fmt(c.imp)} sf`);
   if(d.source) o+=tx(rx,rb+74,6.5,'','#567a67','start',d.source);
+
   o+=`</svg>`;
   document.getElementById('svgBlueprint').outerHTML=o.replace('<svg','<svg id="svgBlueprint"');
 }
@@ -670,7 +835,7 @@ function tx(x,y,sz,w,fill,anchor,text){
   return `<text x="${x}" y="${y}" font-size="${sz}" font-weight="${w||'normal'}" fill="${fill}" text-anchor="${anchor}">${String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</text>`;
 }
 function bx(x,y,w,h,fill,stroke,sw,dash,rx){
-  return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"${dash?` stroke-dasharray="${dash}"`:''} ${rx?` rx="${rx}"`:''}\/>`;
+  return `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${stroke}" stroke-width="${sw}"${dash?` stroke-dasharray="${dash}"`:''}${rx?` rx="${rx}"`:''}/>` ;
 }
 function hd(x1,x2,y,lbl,col='#1565c0'){
   return `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}" stroke-width="1" marker-start="url(#at)" marker-end="url(#ah)"/>
@@ -685,6 +850,7 @@ function vd(x,y1,y2,lbl,col='#1565c0'){
   <line x1="${x-4}" y1="${y2}" x2="${x+4}" y2="${y2}" stroke="${col}" stroke-width="0.8"/>`;
 }
 
+// ── Panel 2: Street View ───────────────────────────────────────
 function renderStreetView(){
   document.getElementById('svLoad').style.display='flex';
   const addr=activeLot.addr;
@@ -701,6 +867,7 @@ function renderStreetView(){
   setTimeout(()=>{ document.getElementById('svLoad').style.display='none'; },5000);
 }
 
+// ── Panel 3: GIS ───────────────────────────────────────────────
 function renderGIS(){
   document.getElementById('gisLoad').style.display='flex';
   const d=activeLot;
@@ -717,6 +884,7 @@ function renderGIS(){
   },{},{position:'topright',collapsed:true}).addTo(gisMap);
   L.control.scale({imperial:true,metric:true}).addTo(gisMap);
   document.getElementById('gisLoad').style.display='none';
+
   const c=calcSod(d);
   const unitLbl=d.unit!=='Custom'?`Unit ${d.unit}`:(d.job||'Property');
   L.marker([lat,lng],{
@@ -726,6 +894,7 @@ function renderGIS(){
       iconAnchor:[40,20]
     })
   }).addTo(gisMap).bindPopup(`<b>${unitLbl}</b><br>${d.addr}<br>Sod: ${fmt(c.sf)} sf · ${c.pal} pallet${c.pal!==1?'s':''}`);
+
   if(d.unit!=='Custom'){
     L.esri.query({url:'https://gisweb.hendersoncountync.gov/arcgis/rest/services/Parcels/FeatureServer/0'})
       .where("PIN_NUM = '9660-90-8308'")
@@ -738,6 +907,7 @@ function renderGIS(){
   }
 }
 
+// ── Panel 4: Calculator ────────────────────────────────────────
 function renderCalc(){
   const d=activeLot, c=calcSod(d);
   document.getElementById('calcBody').innerHTML=`
@@ -781,11 +951,11 @@ function renderCalc(){
 }
 
 function cr1(lbl,key,val,unit){
-  return `<div class="cr-row"><span class="cr-lbl">${lbl}</span><input class="cr-inp" type="number" step="0.01" value="${val||''}" data-k="${key}"><span class="cr-x">${unit}</span></div>`;
+  return `<div class="cr-row"><span class="cr-lbl">${lbl}</span><input class="cr-inp" type="number" step="0.01" value="${val||\'\'}" data-k="${key}"><span class="cr-x">${unit}</span></div>`;
 }
 function cr2(lbl,k1,v1,k2,v2){
   const id=k1.replace('W','');
-  return `<div class="cr-row"><span class="cr-lbl">${lbl}</span><input class="cr-inp" type="number" step="0.01" value="${v1||''}" data-k="${k1}"><span class="cr-x">×</span><input class="cr-inp" type="number" step="0.01" value="${v2||''}" data-k="${k2}"><span class="cr-x">=</span><span class="cr-sf" id="rsf_${id}">${fmt((v1||0)*(v2||0))} sf</span></div>`;
+  return `<div class="cr-row"><span class="cr-lbl">${lbl}</span><input class="cr-inp" type="number" step="0.01" value="${v1||\'\'}" data-k="${k1}"><span class="cr-x">×</span><input class="cr-inp" type="number" step="0.01" value="${v2||\'\'}" data-k="${k2}"><span class="cr-x">=</span><span class="cr-sf" id="rsf_${id}">${fmt((v1||0)*(v2||0))} sf</span></div>`;
 }
 
 function renderRes(c){
@@ -810,6 +980,7 @@ function scrollToResult(){
   document.getElementById('resBox')?.scrollIntoView({behavior:'smooth'});
 }
 
+// ── Calculation engine ─────────────────────────────────────────
 function calcSod(d){
   const lot =(d.lotW||0)*(d.lotD||0);
   const bldg=(d.bldgW||0)*(d.bldgD||0);
@@ -821,6 +992,7 @@ function calcSod(d){
   return{lot,bldg,drv,pat,misc,imp,sf,sy:sf/9,pal:Math.ceil(sf/PALLET_SF)};
 }
 
+// ── CSV Export ─────────────────────────────────────────────────
 function exportCSV(){
   const d=activeLot, c=calcSod(d);
   const rows=[
