@@ -362,32 +362,32 @@ const SURVEY = {
          model:'Carson', pos:'End – West',
          lotW:22, lotD:110, bldgW:22, bldgD:62, drvW:22, drvD:20,
          patW:21.67, patD:8, misc:35,
-         lat:35.3155, lng:-82.4596, source:'Survey (Kane PLS, 02/23/2022)' },
+         lat:35.35117, lng:-82.45660, source:'Survey (Kane PLS, 02/23/2022)' },
   203: { unit:203, addr:'46 Creekview Rd, Hendersonville, NC 28792',
          model:'Lansing', pos:'Interior',
          lotW:22, lotD:110, bldgW:22, bldgD:50, drvW:22, drvD:20,
          patW:21.67, patD:8, misc:28,
-         lat:35.3155, lng:-82.4593, source:'Survey (Kane PLS, 02/23/2022)' },
+         lat:35.35117, lng:-82.45635, source:'Survey (Kane PLS, 02/23/2022)' },
   204: { unit:204, addr:'50 Creekview Rd, Hendersonville, NC 28792',
          model:'Denver', pos:'Interior',
          lotW:22, lotD:110, bldgW:22, bldgD:50, drvW:22, drvD:20,
          patW:21.67, patD:8, misc:28,
-         lat:35.3155, lng:-82.4590, source:'Survey (Kane PLS, 02/23/2022)' },
+         lat:35.35117, lng:-82.45620, source:'Survey (Kane PLS, 02/23/2022)' },
   205: { unit:205, addr:'54 Creekview Rd, Hendersonville, NC 28792',
          model:'Denver', pos:'Interior',
          lotW:22, lotD:110, bldgW:22, bldgD:50, drvW:22, drvD:20,
          patW:21.67, patD:8, misc:28,
-         lat:35.3155, lng:-82.4587, source:'Survey (Kane PLS, 02/23/2022)' },
+         lat:35.35117, lng:-82.45610, source:'Survey (Kane PLS, 02/23/2022)' },
   206: { unit:206, addr:'58 Creekview Rd, Hendersonville, NC 28792',
          model:'Lansing', pos:'Interior',
          lotW:22, lotD:110, bldgW:22, bldgD:50, drvW:22, drvD:20,
          patW:21.67, patD:8, misc:28,
-         lat:35.3155, lng:-82.4584, source:'Survey (Kane PLS, 02/23/2022)' },
+         lat:35.35117, lng:-82.45595, source:'Survey (Kane PLS, 02/23/2022)' },
   207: { unit:207, addr:'62 Creekview Rd, Hendersonville, NC 28792',
          model:'Carson', pos:'End – East',
          lotW:22, lotD:110, bldgW:22, bldgD:62, drvW:22, drvD:20,
          patW:21.67, patD:8, misc:35,
-         lat:35.3155, lng:-82.4581, source:'Survey (Kane PLS, 02/23/2022)' },
+         lat:35.35117, lng:-82.45578, source:'Survey (Kane PLS, 02/23/2022)' },
 };
 
 const PALLET_SF = 500;  // sq ft per pallet
@@ -648,34 +648,24 @@ function vd(x,y1,y2,lbl,col='#1565c0'){
 // ══════════════════════════════════════════════════════════════
 // PANEL 2 — STREET VIEW
 // ══════════════════════════════════════════════════════════════
-async function renderStreetView() {
+function renderStreetView() {
   document.getElementById('svLoading').style.display = 'flex';
   const d = activeLot;
 
-  // Geocode the address to get precise lat/lng
-  let lat = d.lat, lng = d.lng;
-  try {
-    const geo = await geocode(d.addr);
-    if (geo) { lat = geo.lat; lng = geo.lng; }
-  } catch(e) {}
-
-  activeLot.lat = lat;
-  activeLot.lng = lng;
-
-  // Google Maps embed — shows satellite + street view option
-  // The user can drag the yellow pegman to enter Street View
-  const gmUrl = `https://maps.google.com/maps?q=${lat},${lng}&z=19&t=h&output=embed`;
-  const svDirectUrl = `https://www.google.com/maps/@${lat},${lng},3a,75y,0h,90t/data=!3m1!1e1`;
+  // Pass the address string directly — Google Maps geocodes it server-side.
+  // These new-construction addresses are not yet in Nominatim/OSM, but Google
+  // has them. Avoids the wrong-location bug caused by Nominatim returning null.
+  const enc = encodeURIComponent(d.addr);
+  const gmUrl = 'https://maps.google.com/maps?q=' + enc + '&z=19&t=h&output=embed';
+  const svDirectUrl = 'https://www.google.com/maps/search/?api=1&query=' + enc;
 
   const frame = document.getElementById('streetFrame');
   frame.src = gmUrl;
   frame.onload = () => { document.getElementById('svLoading').style.display = 'none'; };
   frame.onerror = () => showSVFallback(svDirectUrl);
-
-  // Always show the direct link button even if iframe loads
   document.getElementById('svLink').href = svDirectUrl;
 
-  setTimeout(() => { document.getElementById('svLoading').style.display = 'none'; }, 4000);
+  setTimeout(() => { document.getElementById('svLoading').style.display = 'none'; }, 5000);
 }
 
 function showSVFallback(url) {
