@@ -162,6 +162,18 @@
     .cf-s{background:var(--bg3);color:var(--mu1);border:1px solid var(--bdr)}
     .cf-s:hover{border-color:var(--grn);color:var(--glt)}
 
+    /* GIS status bar */
+    .gis-bar{display:none;align-items:flex-start;gap:9px;font-size:.7rem;padding:9px 12px;border-radius:7px;margin-top:10px;line-height:1.45;border:1px solid}
+    .gis-bar.searching{background:rgba(74,158,218,.08);border-color:rgba(74,158,218,.35);color:var(--blu)}
+    .gis-bar.ok{background:rgba(58,144,96,.08);border-color:rgba(58,144,96,.4);color:var(--glt)}
+    .gis-bar.warn{background:rgba(224,112,112,.07);border-color:rgba(224,112,112,.35);color:#e09090}
+    .gis-bar.partial{background:rgba(224,192,80,.07);border-color:rgba(224,192,80,.35);color:#d4b84a}
+    .gis-icon{flex-shrink:0;font-size:.75rem}
+    .gis-msg{flex:1}
+    .gis-msg strong{display:block;font-weight:700;margin-bottom:2px}
+    .gis-sources{font-size:.63rem;color:var(--mu1);margin-top:4px}
+    .gis-spin{width:11px;height:11px;border:1.5px solid currentColor;border-top-color:transparent;border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0;margin-top:1px}
+
     /* Loading */
     .pload{position:absolute;inset:0;background:rgba(8,12,20,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:20}
     .spin{width:22px;height:22px;border:2px solid var(--bdr);border-top-color:var(--grn);border-radius:50%;animation:sp .7s linear infinite}
@@ -211,7 +223,7 @@
       <div class="field-row">
         <div class="field">
           <label>Street Address</label>
-          <input type="text" id="fAddress" placeholder="123 Main St, City, NC 28000" oninput="onMeasChange()">
+          <input type="text" id="fAddress" placeholder="123 Main St, City, NC 28000" oninput="onAddressInput()">
         </div>
       </div>
       <div class="field-row">
@@ -290,6 +302,15 @@
           </tr>
         </tbody>
       </table>
+      <div class="gis-bar" id="gisBar">
+        <span class="gis-spin" id="gisSpin" style="display:none"></span>
+        <span class="gis-icon" id="gisIcon"></span>
+        <div class="gis-msg">
+          <strong id="gisMsgHead"></strong>
+          <span id="gisMsgBody"></span>
+          <div class="gis-sources" id="gisSources"></div>
+        </div>
+      </div>
     </div>
 
     <!-- Live Preview -->
@@ -483,6 +504,8 @@ function loadPreset(num){
   sv('patW',p.patW);  sv('patD',p.patD);
   sv('fMisc',p.misc);
   onMeasChange();
+  // Verify preset survey data against GIS/OSM
+  runGISLookup(p.addr);
 }
 
 function onMeasChange(){
@@ -503,6 +526,251 @@ function onMeasChange(){
   document.getElementById('prvSF').innerHTML = `${fmt(sf)}<span class="prv-unit">sq ft</span>`;
   document.getElementById('prvSY').textContent = `${(sf/9).toFixed(1)} sq yd`;
   document.getElementById('prvPal').textContent = pal;
+}
+
+// ── GIS / OSM auto-verify ──────────────────────────────────────
+let _gisTimer=null;
+
+function onAddressInput(){
+  onMeasChange();
+  const addr=document.getElementById('fAddress').value.trim();
+  if(addr.length<8){ hideGIS(); return; }
+  clearTimeout(_gisTimer);
+  _gisTimer=setTimeout(()=>runGISLookup(addr),1800);
+}
+
+function hideGIS(){ document.getElementById('gisBar').style.display='none'; }
+
+function setGIS(state,head,body,sources){
+  const bar=document.getElementById('gisBar');
+  bar.style.display='flex';
+  bar.className='gis-bar '+state;
+  document.getElementById('gisSpin').style.display=state==='searching'?'block':'none';
+  document.getElementById('gisIcon').textContent=
+    state==='searching'?'':state==='ok'?'✓':state==='partial'?'⚡':'⚠';
+  document.getElementById('gisMsgHead').textContent=head;
+  document.getElementById('gisMsgBody').textContent=body||'';
+  document.getElementById('gisSources').textContent=sources||'';
+}
+
+async function runGISLookup(addr){
+  setGIS('searching','Searching GIS, OSM & municipal records…','','');
+
+  // Resolve coordinates
+  let lat=null, lng=null;
+  if(activePreset){ lat=PRESETS[activePreset].lat; lng=PRESETS[activePreset].lng; }
+  if(!lat){
+    const geo=await geocodeNominatim(addr);
+    if(geo){ lat=geo.lat; lng=geo.lng; }
+  }
+
+  if(!lat){
+    setGIS('warn','Geocoding failed','Address not found — property may be new construction not yet in OSM. Enter measurements manually or use Quick Load if it\'s a Stonecrest unit.','Nominatim / OSM');
+    return;
+  }
+
+  // Run OSM + county GIS in parallel
+  const [osm, county] = await Promise.all([
+    queryOSMFeatures(lat,lng),
+    queryCountyGIS(lat,lng,addr)
+  ]);
+
+  const applied=[], verified=[], diffs=[];
+  const lotW=fv('lotW');
+
+  // Helper: fill empty field or flag difference
+  const tryFill=(key,val,src)=>{
+    if(!val||val<=0) return;
+    const cur=fv(key);
+    const diff=cur>0?Math.abs(cur-val)/Math.max(cur,val):0;
+    if(!cur){
+      sv(key,Math.round(val*10)/10);
+      applied.push(`${key.replace(/([WD])/,' $1').toLowerCase()} from ${src}`);
+    } else if(diff<0.08){
+      verified.push(`${key.replace(/([WD])/,' $1').toLowerCase()} ✓`);
+    } else {
+      diffs.push(`${key.replace(/([WD])/,' $1').toLowerCase()}: entered=${Math.round(cur)}, ${src}=${Math.round(val)}`);
+    }
+  };
+
+  // Lot area from county GIS
+  if(county.lotAcres){
+    const lotSF=county.lotAcres*43560;
+    if(lotW>0){
+      const lotD=Math.round(lotSF/lotW*10)/10;
+      tryFill('lotD',lotD,'County GIS');
+    } else if(osm.lotBBoxW){
+      tryFill('lotW',osm.lotBBoxW,'OSM parcel');
+    }
+  }
+
+  // Building from OSM
+  if(osm.buildingArea){
+    const bw=fv('bldgW')||(lotW>0?lotW:osm.buildingBBoxW)||0;
+    if(bw>0){
+      tryFill('bldgW',bw>0?bw:osm.buildingBBoxW,'OSM building');
+      tryFill('bldgD',Math.round(osm.buildingArea/bw*10)/10,'OSM building');
+    }
+  }
+
+  // Driveway from OSM
+  if(osm.drivewayArea){
+    const dw=fv('drvW')||(lotW>0?lotW:osm.drivewayBBoxW)||0;
+    if(dw>0){
+      tryFill('drvW',dw>0?dw:osm.drivewayBBoxW,'OSM driveway');
+      tryFill('drvD',Math.round(osm.drivewayArea/dw*10)/10,'OSM driveway');
+    }
+  }
+
+  // Patio from OSM
+  if(osm.patioArea){
+    const pw=fv('patW')||(lotW>0?Math.min(lotW,osm.patioBBoxW||lotW):10)||0;
+    if(pw>0){
+      tryFill('patW',pw,'OSM patio/stoop');
+      tryFill('patD',Math.round(osm.patioArea/pw*10)/10,'OSM patio/stoop');
+    }
+  }
+
+  // Other impervious (parking, walkways)
+  if(osm.otherArea){
+    tryFill('fMisc',Math.round(osm.otherArea),'OSM impervious');
+  }
+
+  onMeasChange();
+
+  // Build status message
+  const srcList=[
+    osm.buildingArea?`OSM building ${fmt(osm.buildingArea)} sf`:null,
+    osm.drivewayArea?`OSM driveway ${fmt(osm.drivewayArea)} sf`:null,
+    county.lotAcres?`${county.siteAddr||'County GIS'} ${fmt(county.lotAcres*43560)} sf lot`:null,
+    osm.patioArea?`OSM patio/stoop ${fmt(osm.patioArea)} sf`:null,
+  ].filter(Boolean);
+
+  if(!srcList.length&&!applied.length){
+    setGIS('warn','No structural data found','OSM/GIS data unavailable — property may be new construction not yet mapped. Measurements from PDF or manual entry.',`Checked: OSM Overpass · Nominatim · ${addr.match(/\bNC\b/i)?'Henderson County GIS':'County GIS'}`);
+    return;
+  }
+
+  const head=applied.length?`Auto-filled ${applied.length} field${applied.length!==1?'s':''}`:
+             diffs.length?`${diffs.length} measurement${diffs.length!==1?'s':''} differ from GIS`:
+             `All entered measurements verified ✓`;
+  const body=[...applied,...diffs].slice(0,3).join(' · ');
+  const state=diffs.length?'partial':applied.length?'ok':'ok';
+  setGIS(state,head,body,srcList.join(' · ')||'');
+}
+
+async function geocodeNominatim(addr){
+  try{
+    const url='https://nominatim.openstreetmap.org/search?q='+encodeURIComponent(addr)+'&format=json&limit=1&countrycodes=us';
+    const r=await fetch(url,{headers:{'User-Agent':'Prestige-Sod-Estimator/1.0','Accept-Language':'en'}});
+    const d=await r.json();
+    if(d&&d[0]) return{lat:parseFloat(d[0].lat),lng:parseFloat(d[0].lon)};
+  }catch(e){}
+  return null;
+}
+
+async function queryOSMFeatures(lat,lng){
+  const rad=50;
+  const q=`[out:json][timeout:20];
+(
+  way["building"](around:${rad},${lat},${lng});
+  relation["building"]["type"="multipolygon"](around:${rad},${lat},${lng});
+  way["service"="driveway"](around:${rad},${lat},${lng});
+  way["landuse"="parking"](around:${rad},${lat},${lng});
+  way["amenity"="parking"](around:${rad},${lat},${lng});
+  way["leisure"="garden"](around:${rad},${lat},${lng});
+  way["leisure"="patio"](around:${rad},${lat},${lng});
+  way["surface"="concrete"]["area"="yes"](around:${rad},${lat},${lng});
+  way["highway"="footway"](around:${rad},${lat},${lng});
+  way["highway"="path"](around:${rad},${lat},${lng});
+);
+out geom;`;
+
+  try{
+    const ctrl=new AbortController();
+    const t=setTimeout(()=>ctrl.abort(),18000);
+    const resp=await fetch('https://overpass-api.de/api/interpreter',{
+      method:'POST',
+      body:'data='+encodeURIComponent(q),
+      signal:ctrl.signal
+    });
+    clearTimeout(t);
+    const data=await resp.json();
+    const res={};
+
+    for(const el of (data.elements||[])){
+      const geo=el.geometry||(el.members&&el.members.find(m=>m.role==='outer')?.geometry);
+      if(!geo||geo.length<3) continue;
+      const area=polyAreaFt2(geo);
+      const bb=bboxFt(geo);
+      const tags=el.tags||{};
+
+      if(tags.building){
+        if(!res.buildingArea||area>res.buildingArea){
+          res.buildingArea=area;
+          res.buildingBBoxW=Math.min(bb.w,bb.d);
+          res.buildingBBoxD=Math.max(bb.w,bb.d);
+        }
+      } else if(tags.service==='driveway'||(tags.highway==='service'&&tags.service)){
+        res.drivewayArea=(res.drivewayArea||0)+area;
+        res.drivewayBBoxW=bb.w;
+      } else if(tags.amenity==='parking'||tags.landuse==='parking'){
+        res.otherArea=(res.otherArea||0)+area;
+      } else if(tags.leisure==='patio'||tags.leisure==='garden'||tags.surface==='concrete'){
+        res.patioArea=(res.patioArea||0)+area;
+        res.patioBBoxW=bb.w;
+      } else if(tags.highway==='footway'||tags.highway==='path'){
+        res.otherArea=(res.otherArea||0)+area;
+      }
+    }
+    return res;
+  }catch(e){ return {}; }
+}
+
+async function queryCountyGIS(lat,lng,addr){
+  // Henderson County NC parcel lookup
+  if(!lat||!lng) return {};
+  try{
+    return await new Promise(resolve=>{
+      const url='https://gisweb.hendersoncountync.gov/arcgis/rest/services/Parcels/FeatureServer/0';
+      const pt=L.latLng(lat,lng);
+      L.esri.query({url})
+        .nearby(pt,40)
+        .fields(['CALC_ACRES','SITE_ADD','OWNER','PIN_NUM'])
+        .run((err,fc)=>{
+          if(err||!fc||!fc.features||!fc.features.length){resolve({});return;}
+          const f=fc.features[0].properties;
+          resolve({
+            lotAcres: parseFloat(f.CALC_ACRES)||null,
+            siteAddr: f.SITE_ADD||'',
+            pin: f.PIN_NUM||''
+          });
+        });
+      setTimeout(()=>resolve({}),8000);
+    });
+  }catch(e){ return {}; }
+}
+
+function polyAreaFt2(nodes){
+  let area=0;
+  const n=nodes.length;
+  for(let i=0;i<n;i++){
+    const j=(i+1)%n;
+    const x1=nodes[i].lon*111320*Math.cos(nodes[i].lat*Math.PI/180);
+    const y1=nodes[i].lat*110574;
+    const x2=nodes[j].lon*111320*Math.cos(nodes[j].lat*Math.PI/180);
+    const y2=nodes[j].lat*110574;
+    area+=(x1*y2-x2*y1);
+  }
+  return Math.abs(area)/2*10.7639; // m² → ft²
+}
+
+function bboxFt(nodes){
+  const lats=nodes.map(n=>n.lat), lngs=nodes.map(n=>n.lon);
+  const midLat=(Math.max(...lats)+Math.min(...lats))/2;
+  const w=(Math.max(...lngs)-Math.min(...lngs))*111320*Math.cos(midLat*Math.PI/180)*3.28084;
+  const d=(Math.max(...lats)-Math.min(...lats))*110574*3.28084;
+  return{w:Math.round(w*10)/10, d:Math.round(d*10)/10};
 }
 
 // ── Drag and drop ──────────────────────────────────────────────
@@ -544,6 +812,9 @@ async function handleFile(file){
     fn.textContent = filled.length
       ? `✓ ${file.name} — found: ${filled.join(', ')}`
       : `✓ ${file.name} — enter measurements manually`;
+    // After PDF extraction, also query GIS/OSM for remaining fields
+    const addr=document.getElementById('fAddress').value.trim();
+    if(addr) runGISLookup(addr);
   }
 }
 
