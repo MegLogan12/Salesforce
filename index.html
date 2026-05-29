@@ -511,13 +511,125 @@ const ua = document.getElementById('uploadArea');
 ['dragleave','drop'].forEach(e=>ua.addEventListener(e,ev=>{ev.preventDefault();ua.classList.remove('over');}));
 ua.addEventListener('drop',ev=>handleFile(ev.dataTransfer.files[0]));
 
-function handleFile(file){
+async function handleFile(file){
   if(!file||file.type!=='application/pdf') return;
   window._pdfFile = file;
   pdfRotate = 0;
   const fn=document.getElementById('fFileName');
-  fn.textContent='✓ '+file.name;
+  fn.textContent='⟳ Reading '+file.name+'…';
   fn.style.display='block';
+
+  const found = await extractFromPDF(file);
+
+  if(found.preset){
+    loadPreset(found.preset);
+    fn.textContent=`✓ ${file.name} — Unit ${found.preset} auto-loaded`;
+  } else {
+    let filled=[];
+    if(found.addr && !document.getElementById('fAddress').value.trim()){
+      sv('fAddress',found.addr); filled.push('address');
+    }
+    if(found.job  && !document.getElementById('fJob').value.trim()){
+      sv('fJob',found.job);
+    }
+    if(found.lotW){ sv('lotW',found.lotW);  filled.push('lot W'); }
+    if(found.lotD){ sv('lotD',found.lotD);  filled.push('lot D'); }
+    if(found.bldgW){ sv('bldgW',found.bldgW); filled.push('bldg W'); }
+    if(found.bldgD){ sv('bldgD',found.bldgD); filled.push('bldg D'); }
+    if(found.drvW){ sv('drvW',found.drvW);  filled.push('drv W'); }
+    if(found.drvD){ sv('drvD',found.drvD);  filled.push('drv D'); }
+    if(found.patW){ sv('patW',found.patW);  filled.push('patio W'); }
+    if(found.patD){ sv('patD',found.patD);  filled.push('patio D'); }
+    onMeasChange();
+    fn.textContent = filled.length
+      ? `✓ ${file.name} — found: ${filled.join(', ')}`
+      : `✓ ${file.name} — enter measurements manually`;
+  }
+}
+
+async function extractFromPDF(file){
+  try{
+    const url=URL.createObjectURL(file);
+    const doc=await pdfjsLib.getDocument(url).promise;
+    const page=await doc.getPage(1);
+    const tc=await page.getTextContent();
+    URL.revokeObjectURL(url);
+    const tokens=tc.items.map(i=>i.str.trim()).filter(Boolean);
+    const text=tokens.join(' ');
+    return parsePlotText(text);
+  }catch(e){ return {}; }
+}
+
+function parsePlotText(text){
+  const up=text.toUpperCase();
+
+  // 1. Match known Stonecrest unit numbers
+  const unitRe=/\b(?:LOT|UNIT|#)\s*0*(20[2-7])\b/;
+  const um=up.match(unitRe);
+  if(um){ const n=parseInt(um[1]); if(PRESETS[n]) return{preset:n}; }
+
+  // 2. Match address against preset addresses
+  for(const[n,p] of Object.entries(PRESETS)){
+    const street=p.addr.split(',')[0].toUpperCase(); // "42 CREEKVIEW RD"
+    const num=street.match(/^\d+/)?.[0];
+    const name=street.replace(/^\d+\s*/,'').replace(/\s+(?:RD|ST|AVE|DR|LN|ROAD|STREET)\b.*/,'').trim();
+    if(num&&name&&up.includes(num)&&up.includes(name)) return{preset:parseInt(n)};
+  }
+
+  const data={};
+
+  // 3. Street address pattern
+  const am=text.match(/\b\d{1,5}\s+[A-Za-z][A-Za-z ]{3,30}(?:Rd|Road|St|Street|Ave|Avenue|Dr|Drive|Ln|Lane|Ct|Court|Blvd|Way|Pl|Place)\.?(?:\s*,\s*[A-Za-z ]+(?:,\s*[A-Z]{2}\s+\d{5})?)?/i);
+  if(am) data.addr=am[0].replace(/\s+/g,' ').trim();
+
+  // 4. Lot / job label
+  const jm=text.match(/\b(?:lot|unit|parcel)\s+#?\s*(\w{1,6})\b/i);
+  if(jm) data.job=`Lot ${jm[1]}`;
+
+  // 5. Labeled dimensions
+  const labeled=[
+    {key:'lotW', re:/lot\s+width[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'lotD', re:/lot\s+(?:depth|length)[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'bldgW',re:/(?:house|building|bldg)(?:\s+width)?[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'bldgD',re:/(?:house|building|bldg)(?:\s+depth)?[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'drvW', re:/driveway(?:\s+width)?[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'drvD', re:/driveway(?:\s+depth)?[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'patW', re:/patio(?:\s+width)?[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'patD', re:/patio(?:\s+depth)?[:\s=]+(\d+(?:\.\d+)?)/i},
+  ];
+  for(const{key,re}of labeled){
+    const m=text.match(re);
+    if(m) data[key]=parseFloat(m[1]);
+  }
+
+  // 6. Bare dimension sequences — look for numbers near section keywords
+  // e.g. "LOT: 22 x 110" or "22.00' x 110.00'"
+  const boxRe=/\b(\d+(?:\.\d+)?)\s*[x×']\s*(\d+(?:\.\d+)?)/gi;
+  const nearby=(keyword,str)=>{
+    const idx=str.search(new RegExp(keyword,'i'));
+    if(idx<0) return null;
+    const snip=str.slice(Math.max(0,idx-10),idx+80);
+    const m=snip.match(/(\d+(?:\.\d+)?)\s*[x×']\s*(\d+(?:\.\d+)?)/i);
+    return m?[parseFloat(m[1]),parseFloat(m[2])]:null;
+  };
+  if(!data.lotW){
+    const d=nearby('lot',text);
+    if(d&&d[0]>5&&d[0]<300&&d[1]>20&&d[1]<600){data.lotW=d[0];data.lotD=d[1];}
+  }
+  if(!data.bldgW){
+    const d=nearby('building',text)||nearby('house',text)||nearby('structure',text);
+    if(d&&d[0]>5&&d[0]<200&&d[1]>10&&d[1]<200){data.bldgW=d[0];data.bldgD=d[1];}
+  }
+  if(!data.drvW){
+    const d=nearby('driveway',text)||nearby('drive',text);
+    if(d&&d[0]>4&&d[0]<60&&d[1]>4&&d[1]<60){data.drvW=d[0];data.drvD=d[1];}
+  }
+  if(!data.patW){
+    const d=nearby('patio',text)||nearby('stoop',text)||nearby('concrete',text);
+    if(d&&d[0]>2&&d[0]<80&&d[1]>2&&d[1]<80){data.patW=d[0];data.patD=d[1];}
+  }
+
+  return data;
 }
 
 // ── Generate ───────────────────────────────────────────────────
