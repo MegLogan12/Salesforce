@@ -21,7 +21,6 @@
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{font-family:var(--font);background:var(--bg0);color:var(--txt);height:100vh;display:flex;flex-direction:column;overflow:hidden}
 
-    /* ── Header ── */
     .app-hdr{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:0 20px;height:52px;display:flex;align-items:center;gap:14px;flex-shrink:0}
     .logo-mark{width:32px;height:32px;background:var(--gdark);border:1px solid var(--grn);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
     .app-title{font-size:.95rem;font-weight:700;letter-spacing:-.01em}
@@ -30,7 +29,7 @@
     .hdr-chip{font-size:.63rem;font-weight:700;background:var(--gdark);color:var(--glt);border:1px solid var(--grn);padding:2px 9px;border-radius:10px;letter-spacing:.05em}
     .hdr-right{margin-left:auto;display:flex;gap:8px;align-items:center}
 
-    /* ══ ENTRY SCREEN ══ */
+    /* ENTRY */
     #entryScreen{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:28px 20px 48px;background:var(--bg0)}
     .entry-wrap{width:100%;max-width:900px}
     .entry-headline{text-align:center;margin-bottom:24px}
@@ -51,13 +50,9 @@
     .entry-or{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 18px;color:var(--mu2);font-size:.62rem;font-weight:700;letter-spacing:.1em}
     .entry-or::before,.entry-or::after{content:'';flex:1;width:1px;background:var(--bdr);margin:8px 0}
 
-    /* Quick Load grid — 3 col in entry card */
-    .ql-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-    .qbtn{background:var(--bg3);border:1px solid var(--bdr);color:var(--mu1);padding:9px 5px;border-radius:7px;cursor:pointer;font-size:.64rem;font-weight:600;font-family:var(--font);text-align:center;transition:all .15s;line-height:1.35;width:100%}
-    .qbtn:hover{border-color:var(--grn);color:var(--glt);background:rgba(58,144,96,.1)}
-    .qbtn.active{background:var(--gdark);border-color:var(--grn);color:var(--glt)}
-    .qbtn .qnum{font-size:.82rem;display:block;color:var(--txt);font-weight:700;margin-bottom:2px}
-    .qbtn.active .qnum{color:#fff}
+    /* Service area error */
+    .sa-error{display:none;background:rgba(224,112,112,.1);border:1px solid rgba(224,112,112,.4);color:var(--red);border-radius:8px;padding:12px 16px;font-size:.78rem;line-height:1.5;margin-bottom:14px}
+    .sa-error.show{display:block}
 
     /* Upload */
     .upload-drop{border:1.5px dashed var(--bdr2);border-radius:8px;padding:22px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:all .2s;min-height:120px;gap:7px;text-align:center}
@@ -78,10 +73,9 @@
     .load-btn:hover{background:var(--glt)}
     .load-btn:active{transform:scale(.99)}
 
-    /* ══ WORK SCREEN ══ */
+    /* WORK SCREEN */
     #workScreen{flex:1;display:none;flex-direction:row;overflow:hidden}
 
-    /* Left drawing */
     .work-left{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;border-right:1px solid var(--bdr)}
     .draw-tabs{background:var(--bg2);border-bottom:1px solid var(--bdr);display:flex;flex-shrink:0;padding:0 4px}
     .dtab{background:none;border:none;border-bottom:2.5px solid transparent;color:var(--mu1);padding:10px 16px;font-size:.71rem;font-weight:600;font-family:var(--font);cursor:pointer;transition:all .15s;white-space:nowrap;margin-bottom:-1px}
@@ -91,8 +85,9 @@
     .draw-pane.active{display:flex;flex:1;flex-direction:column;overflow:hidden}
     #tabBlueprint{background:#f5f2ed}
     #blueprintCanvas{flex:1;overflow:auto;background:#f5f2ed}
-    #pdfCanvas{display:block;margin:0 auto}
-    #svgBlueprint{display:block;margin:0 auto}
+    #pdfCanvas{flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;background:#f5f2ed}
+    #pdfRender{display:block;margin:0 auto}
+    #svgBlueprint{display:block;margin:0 auto;transform-origin:top center}
     .bp-controls{position:absolute;bottom:10px;right:10px;display:flex;gap:4px;z-index:10}
     .bp-btn{background:rgba(15,21,32,.92);border:1px solid var(--bdr2);color:var(--txt);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:.82rem;display:flex;align-items:center;justify-content:center;transition:all .15s}
     .bp-btn:hover{border-color:var(--grn);color:var(--glt)}
@@ -103,7 +98,6 @@
     #tabGIS{background:var(--bg1)}
     #gisMapEl{flex:1;min-height:0}
 
-    /* Right calculator */
     .work-right{width:420px;flex-shrink:0;display:flex;flex-direction:column;overflow:hidden;background:var(--bg1)}
     .wr-hdr{background:var(--bg2);border-bottom:1px solid var(--bdr);padding:9px 13px;display:flex;align-items:center;gap:9px;flex-shrink:0}
     .back-btn{background:var(--bg3);border:1px solid var(--bdr);color:var(--mu1);padding:5px 11px;border-radius:5px;cursor:pointer;font-size:.7rem;font-weight:600;font-family:var(--font);transition:all .15s;white-space:nowrap}
@@ -123,7 +117,6 @@
     .wr-sec-hd{font-size:.59rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--mu2);padding-bottom:7px;border-bottom:1px solid var(--bdr);margin-bottom:11px;display:flex;align-items:baseline;gap:6px}
     .wr-sec-hd span{font-size:.55rem;font-weight:400;text-transform:none;letter-spacing:0;color:var(--mu2)}
 
-    /* Compact measurement table */
     .meas-table{width:100%;border-collapse:collapse}
     .meas-table thead th{font-size:.55rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--mu2);padding:0 3px 6px;text-align:left}
     .meas-table thead th.r{text-align:right}
@@ -140,19 +133,23 @@
     .msf.lot{color:var(--glt);font-weight:700}
     .msf.ded{color:var(--red)}
 
-    /* GIS bar */
-    .gis-bar{display:none;align-items:flex-start;gap:8px;font-size:.67rem;padding:8px 11px;border-radius:6px;margin:9px 13px 0;line-height:1.45;border:1px solid}
-    .gis-bar.searching{background:rgba(74,158,218,.08);border-color:rgba(74,158,218,.35);color:var(--blu)}
-    .gis-bar.ok{background:rgba(58,144,96,.08);border-color:rgba(58,144,96,.4);color:var(--glt)}
-    .gis-bar.warn{background:rgba(224,112,112,.07);border-color:rgba(224,112,112,.35);color:#e09090}
-    .gis-bar.partial{background:rgba(224,192,80,.07);border-color:rgba(224,192,80,.35);color:#d4b84a}
-    .gis-icon{flex-shrink:0;font-size:.7rem}
-    .gis-msg{flex:1}
-    .gis-msg strong{display:block;font-weight:700;margin-bottom:2px}
-    .gis-sources{font-size:.6rem;color:var(--mu1);margin-top:4px}
-    .gis-spin{width:10px;height:10px;border:1.5px solid currentColor;border-top-color:transparent;border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0;margin-top:2px}
+    /* Source log panel */
+    .src-log{display:none;margin:9px 13px 0;border:1px solid var(--bdr);border-radius:7px;overflow:hidden}
+    .src-log.show{display:block}
+    .src-log-hd{font-size:.57rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--mu2);padding:6px 10px;background:var(--bg2);border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:6px}
+    .src-log-hd .src-spin{width:9px;height:9px;border:1.5px solid var(--blu);border-top-color:transparent;border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0}
+    .src-row{display:flex;align-items:flex-start;gap:8px;padding:5px 10px;border-top:1px solid var(--bdr);font-size:.66rem;line-height:1.4}
+    .src-row:first-child{border-top:none}
+    .src-badge{flex-shrink:0;font-size:.55rem;font-weight:700;padding:1px 5px;border-radius:3px;margin-top:1px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+    .src-badge.ok{background:rgba(58,144,96,.2);color:var(--glt);border:1px solid rgba(82,198,138,.3)}
+    .src-badge.warn{background:rgba(224,192,80,.1);color:#d4b84a;border:1px solid rgba(212,184,74,.3)}
+    .src-badge.fail{background:rgba(224,112,112,.1);color:var(--red);border:1px solid rgba(224,112,112,.3)}
+    .src-badge.skip{background:rgba(78,96,122,.15);color:var(--mu1);border:1px solid var(--bdr)}
+    .src-badge.cred{background:rgba(74,158,218,.1);color:var(--blu);border:1px solid rgba(74,158,218,.3)}
+    .src-name{font-weight:600;color:var(--txt)}
+    .src-detail{color:var(--mu1);margin-top:1px}
 
-    /* Live preview strip */
+    /* Live preview */
     .live-strip{display:flex;align-items:center;justify-content:space-between;background:var(--gdark);border:1px solid var(--grn);border-radius:7px;padding:10px 14px;margin:10px 13px}
     .ls-sf{font-size:1.25rem;font-weight:700;color:var(--glt);letter-spacing:-.02em;line-height:1}
     .ls-sf-unit{font-size:.85rem;font-weight:400;margin-left:2px}
@@ -176,7 +173,6 @@
     .rp-btn-g{background:var(--grn);border-color:var(--grn);color:#fff}
     .rp-btn-g:hover{background:var(--glt);border-color:var(--glt)}
 
-    /* Calc rows inside results */
     .cr-sec{margin-bottom:8px}
     .cr-hd{font-size:.54rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--mu2);border-bottom:1px solid var(--bdr);padding-bottom:3px;margin-bottom:5px}
     .cr-row{display:flex;align-items:center;gap:4px;margin-bottom:4px}
@@ -187,20 +183,17 @@
     .cr-sf{width:54px;text-align:right;font-size:.64rem;color:var(--mu1);font-family:monospace}
     .res-box{background:var(--bg0);border:1px solid var(--bdr2);border-radius:6px;padding:10px 12px;margin-top:8px}
 
-    /* Calculate footer */
     .wr-footer{background:var(--bg2);border-top:1px solid var(--bdr);padding:11px 13px;flex-shrink:0}
     .calc-main-btn{width:100%;padding:13px;background:var(--grn);border:none;border-radius:8px;color:#fff;font-size:.93rem;font-weight:700;font-family:var(--font);cursor:pointer;letter-spacing:.02em;transition:background .15s,transform .1s}
     .calc-main-btn:hover{background:var(--glt)}
     .calc-main-btn:active{transform:scale(.99)}
 
-    /* Loading */
     .pload{position:absolute;inset:0;background:rgba(8,12,20,.85);display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;z-index:20}
     .pload.show{display:flex}
     .spin{width:22px;height:22px;border:2px solid var(--bdr);border-top-color:var(--grn);border-radius:50%;animation:sp .7s linear infinite}
     @keyframes sp{to{transform:rotate(360deg)}}
     .spin-lbl{font-size:.7rem;color:var(--grn)}
 
-    /* Print */
     @media print{
       body{background:#fff;color:#000;height:auto;overflow:visible}
       .app-hdr{background:#fff;border-bottom:2px solid #2d6a4f}
@@ -216,7 +209,6 @@
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="app-hdr">
   <div class="logo-mark">🌿</div>
   <div>
@@ -226,18 +218,20 @@
   <div class="hdr-div"></div>
   <span class="hdr-chip">500 sf / pallet</span>
   <div class="hdr-right">
-    <span class="hdr-chip" id="unitChip" style="display:none"></span>
+    <span class="hdr-chip" style="background:rgba(74,158,218,.15);color:var(--blu);border-color:rgba(74,158,218,.4)">NC · SC Service Area</span>
   </div>
 </div>
 
-<!-- ══════════ ENTRY SCREEN ══════════ -->
+<!-- ENTRY SCREEN -->
 <div id="entryScreen">
   <div class="entry-wrap">
 
     <div class="entry-headline">
       <h2>New Sod Takeoff</h2>
-      <p>Enter a property address or upload a plot plan, survey, or floor plan to begin</p>
+      <p>Enter any NC or SC property address, or upload a plot plan, survey, or site plan to begin</p>
     </div>
+
+    <div id="saError" class="sa-error"></div>
 
     <div class="entry-cards">
 
@@ -245,7 +239,7 @@
       <div class="entry-card">
         <div class="ec-hd">📍 Enter Address</div>
         <div class="ec-field">
-          <label class="ec-lbl">Street Address</label>
+          <label class="ec-lbl">Property Address</label>
           <input type="text" id="fAddress" class="ec-input" placeholder="123 Main St, City, NC 28000"
             onkeydown="if(event.key==='Enter')loadTakeoff()">
         </div>
@@ -254,18 +248,13 @@
           <input type="text" id="fJob" class="ec-input" placeholder="e.g. Lot 5 – Smith Residence"
             onkeydown="if(event.key==='Enter')loadTakeoff()">
         </div>
-        <div class="ec-sep">Quick Load — Townes at Stonecrest</div>
-        <div class="ql-grid">
-          <button class="qbtn" id="qb202" onclick="quickLoad(202)"><span class="qnum">202</span>42 Creekview<br>Carson · W</button>
-          <button class="qbtn" id="qb203" onclick="quickLoad(203)"><span class="qnum">203</span>46 Creekview<br>Lansing</button>
-          <button class="qbtn" id="qb204" onclick="quickLoad(204)"><span class="qnum">204</span>50 Creekview<br>Denver</button>
-          <button class="qbtn" id="qb205" onclick="quickLoad(205)"><span class="qnum">205</span>54 Creekview<br>Denver</button>
-          <button class="qbtn" id="qb206" onclick="quickLoad(206)"><span class="qnum">206</span>58 Creekview<br>Lansing</button>
-          <button class="qbtn" id="qb207" onclick="quickLoad(207)"><span class="qnum">207</span>62 Creekview<br>Carson · E</button>
+        <div class="ec-sep">NC &amp; SC properties supported</div>
+        <div style="font-size:.68rem;color:var(--mu1);line-height:1.55;padding:6px 2px">
+          Works with any North Carolina or South Carolina property address.
+          The tool will automatically find county GIS, parcel boundaries, aerial imagery, and building data.
         </div>
       </div>
 
-      <!-- OR divider -->
       <div class="entry-or">OR</div>
 
       <!-- Upload card -->
@@ -278,37 +267,55 @@
           <div class="ud-sub">Plot plan · Survey · Floor plan · Site plan</div>
         </div>
         <div id="fFileName" class="upload-status" style="display:none"></div>
+
         <div class="lot-sel-wrap" id="lotSelWrap">
-          <label class="lot-sel-lbl">Multiple lots found — select lot number:</label>
+          <label class="lot-sel-lbl">Lots detected — select your lot:</label>
           <select class="lot-sel" id="lotSelector" onchange="onLotSelect(this.value)">
-            <option value="">— Select lot —</option>
+            <option value="">— Select lot number —</option>
           </select>
         </div>
-      </div>
 
-    </div><!-- entry-cards -->
+        <div id="lotManualWrap" style="display:none;margin-top:10px">
+          <label class="lot-sel-lbl">Lot / Unit Number</label>
+          <input type="text" id="fLotManual" class="ec-input"
+            placeholder="e.g. 5, 12, A"
+            onkeydown="if(event.key==='Enter')loadTakeoff()"
+            oninput="onManualLotInput(this.value)">
+        </div>
+      </div>
+    </div>
 
     <button class="load-btn" onclick="loadTakeoff()">Load Takeoff →</button>
 
   </div>
 </div>
 
-<!-- ══════════ WORK SCREEN ══════════ -->
+<!-- WORK SCREEN -->
 <div id="workScreen">
 
-  <!-- Left: Drawings -->
   <div class="work-left">
     <div class="draw-tabs">
       <button class="dtab active" id="tab-blueprint" onclick="switchTab('blueprint')">📐 Blueprint</button>
       <button class="dtab" id="tab-street" onclick="switchTab('street')">📸 Street View</button>
       <button class="dtab" id="tab-gis" onclick="switchTab('gis')">🛰 Aerial GIS</button>
+      <button class="dtab" id="tab-pdf" onclick="switchTab('pdf')" style="display:none">📄 Source Plan</button>
     </div>
 
-    <!-- Blueprint pane -->
     <div class="draw-pane active" id="tabBlueprint">
       <div id="blueprintCanvas">
-        <canvas id="pdfCanvas" style="display:none"></canvas>
         <svg id="svgBlueprint"></svg>
+      </div>
+      <div class="bp-controls">
+        <button class="bp-btn" onclick="bpZoom(1.2)" title="Zoom in">+</button>
+        <button class="bp-btn" onclick="bpZoom(0.83)" title="Zoom out">−</button>
+        <button class="bp-btn" onclick="bpZoom(0,'fit')" title="Fit to screen">⊡</button>
+      </div>
+      <div class="pload" id="bpLoad"><div class="spin"></div><div class="spin-lbl">Rendering…</div></div>
+    </div>
+
+    <div class="draw-pane" id="tabPDF">
+      <div id="pdfCanvas">
+        <canvas id="pdfRender"></canvas>
       </div>
       <div class="bp-controls">
         <button class="bp-btn" onclick="pdfZoom(1.25)" title="Zoom in">+</button>
@@ -316,10 +323,9 @@
         <button class="bp-btn" onclick="pdfZoom(1,'fit')" title="Fit">⊡</button>
         <button class="bp-btn" onclick="pdfRotateCW()" title="Rotate 90°" style="font-size:1rem">↻</button>
       </div>
-      <div class="pload" id="bpLoad"><div class="spin"></div><div class="spin-lbl">Rendering…</div></div>
+      <div class="pload" id="pdfLoad"><div class="spin"></div><div class="spin-lbl">Loading PDF…</div></div>
     </div>
 
-    <!-- Street View pane -->
     <div class="draw-pane" id="tabStreet">
       <iframe id="streetFrame" src="about:blank" allowfullscreen></iframe>
       <div class="sv-fallback" id="svFallback" style="display:none">
@@ -330,17 +336,14 @@
       <div class="pload" id="svLoad"><div class="spin"></div><div class="spin-lbl">Loading…</div></div>
     </div>
 
-    <!-- GIS pane -->
     <div class="draw-pane" id="tabGIS">
       <div id="gisMapEl"></div>
       <div class="pload" id="gisLoad"><div class="spin"></div><div class="spin-lbl">Loading map…</div></div>
     </div>
   </div>
 
-  <!-- Right: Calculator -->
+  <!-- Right panel -->
   <div class="work-right">
-
-    <!-- Header -->
     <div class="wr-hdr">
       <button class="back-btn" onclick="goBack()">← Back</button>
       <div class="wr-job">
@@ -353,21 +356,15 @@
       </div>
     </div>
 
-    <!-- Scrollable body -->
     <div class="wr-scroll" id="wrScroll">
 
-      <!-- Measurements -->
       <div class="wr-sec">
         <div class="wr-sec-hd">Measurements <span>All dimensions in feet</span></div>
         <table class="meas-table">
           <thead>
             <tr>
-              <th>Zone</th>
-              <th class="r">Width</th>
-              <th class="c"></th>
-              <th class="r">Depth</th>
-              <th class="c"></th>
-              <th class="r">Area</th>
+              <th>Zone</th><th class="r">Width</th><th class="c"></th>
+              <th class="r">Depth</th><th class="c"></th><th class="r">Area</th>
             </tr>
           </thead>
           <tbody>
@@ -415,15 +412,13 @@
         </table>
       </div>
 
-      <!-- GIS bar -->
-      <div class="gis-bar" id="gisBar">
-        <span class="gis-spin" id="gisSpin" style="display:none"></span>
-        <span class="gis-icon" id="gisIcon"></span>
-        <div class="gis-msg">
-          <strong id="gisMsgHead"></strong>
-          <span id="gisMsgBody"></span>
-          <div class="gis-sources" id="gisSources"></div>
+      <!-- Source log panel -->
+      <div class="src-log" id="srcLog">
+        <div class="src-log-hd">
+          <span class="src-spin" id="srcSpin" style="display:none"></span>
+          <span id="srcLogTitle">Data Sources</span>
         </div>
+        <div id="srcLogRows"></div>
       </div>
 
       <!-- Live preview -->
@@ -440,7 +435,6 @@
         </div>
       </div>
 
-      <!-- Results (shown after Calculate) -->
       <div class="results-panel" id="resultsPanel">
         <div class="rp-hd">Takeoff Summary</div>
         <div id="resultsBody"></div>
@@ -452,50 +446,82 @@
         </div>
       </div>
 
-    </div><!-- wr-scroll -->
+    </div>
 
-    <!-- Fixed Calculate button -->
     <div class="wr-footer">
       <button class="calc-main-btn" onclick="calculate()">Calculate Sod Takeoff →</button>
     </div>
 
-  </div><!-- work-right -->
-
-</div><!-- workScreen -->
+  </div>
+</div>
 
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   'https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
 
-// ── Constants & state ──────────────────────────────────────────
-const PRESETS = {
-  202:{unit:202,addr:'42 Creekview Rd, Hendersonville, NC 28792',model:'Carson',pos:'End – West',
-       lotW:22,lotD:110,bldgW:22,bldgD:62,drvW:22,drvD:20,patW:21.67,patD:8,misc:35,
-       lat:35.35117,lng:-82.45660,source:'Survey (Kane PLS, 02/23/2022)'},
-  203:{unit:203,addr:'46 Creekview Rd, Hendersonville, NC 28792',model:'Lansing',pos:'Interior',
-       lotW:22,lotD:110,bldgW:22,bldgD:50,drvW:22,drvD:20,patW:21.67,patD:8,misc:28,
-       lat:35.35117,lng:-82.45635,source:'Survey (Kane PLS, 02/23/2022)'},
-  204:{unit:204,addr:'50 Creekview Rd, Hendersonville, NC 28792',model:'Denver',pos:'Interior',
-       lotW:22,lotD:110,bldgW:22,bldgD:50,drvW:22,drvD:20,patW:21.67,patD:8,misc:28,
-       lat:35.35117,lng:-82.45620,source:'Survey (Kane PLS, 02/23/2022)'},
-  205:{unit:205,addr:'54 Creekview Rd, Hendersonville, NC 28792',model:'Denver',pos:'Interior',
-       lotW:22,lotD:110,bldgW:22,bldgD:50,drvW:22,drvD:20,patW:21.67,patD:8,misc:28,
-       lat:35.35117,lng:-82.45610,source:'Survey (Kane PLS, 02/23/2022)'},
-  206:{unit:206,addr:'58 Creekview Rd, Hendersonville, NC 28792',model:'Lansing',pos:'Interior',
-       lotW:22,lotD:110,bldgW:22,bldgD:50,drvW:22,drvD:20,patW:21.67,patD:8,misc:28,
-       lat:35.35117,lng:-82.45595,source:'Survey (Kane PLS, 02/23/2022)'},
-  207:{unit:207,addr:'62 Creekview Rd, Hendersonville, NC 28792',model:'Carson',pos:'End – East',
-       lotW:22,lotD:110,bldgW:22,bldgD:62,drvW:22,drvD:20,patW:21.67,patD:8,misc:35,
-       lat:35.35117,lng:-82.45578,source:'Survey (Kane PLS, 02/23/2022)'},
+// ── Constants ──────────────────────────────────────────────────
+const PALLET_SF = 500;
+const SERVICE_STATES = ['NC','SC','NORTH CAROLINA','SOUTH CAROLINA'];
+
+// Known county ArcGIS FeatureServer endpoints
+// key = "countyname,stateabbr" (lowercase)
+const COUNTY_GIS = {
+  'henderson,nc': {
+    url: 'https://gisweb.hendersoncountync.gov/arcgis/rest/services/Parcels/FeatureServer/0',
+    acresField: 'CALC_ACRES', heatedField: 'HEATED_AREA', addrField: 'SITE_ADD'
+  },
+  'wake,nc': {
+    url: 'https://maps.wakegov.com/arcgis/rest/services/Property/Parcels/FeatureServer/0',
+    acresField: 'CALC_AREA_AC', heatedField: null, addrField: 'SITUS_ADD1'
+  },
+  'mecklenburg,nc': {
+    url: 'https://mcmap.org/arcgis/rest/services/parcels/FeatureServer/0',
+    acresField: 'ACRES', heatedField: null, addrField: 'SITUS_ADDR'
+  },
+  'durham,nc': {
+    url: 'https://webgis.durhamcountync.gov/arcgis/rest/services/Data/ParcelsPropertyData/FeatureServer/0',
+    acresField: 'SHAPE_Area', heatedField: null, addrField: 'PARCEL_ADDR'
+  },
+  'buncombe,nc': {
+    url: 'https://gis.buncombecounty.org/arcgis/rest/services/Parcels/FeatureServer/0',
+    acresField: 'CALC_ACRES', heatedField: null, addrField: 'ADDR'
+  },
+  'guilford,nc': {
+    url: 'https://gis.co.guilford.nc.us/arcgis/rest/services/GIS/Parcels/FeatureServer/0',
+    acresField: 'ACREAGE', heatedField: null, addrField: 'SITE_ADDRESS'
+  },
+  'forsyth,nc': {
+    url: 'https://gis.co.forsyth.nc.us/arcgis/rest/services/ParcelViewer/FeatureServer/0',
+    acresField: 'DEEDED_ACRE', heatedField: null, addrField: 'SITUS_ADDR'
+  },
+  'charleston,sc': {
+    url: 'https://gis.charlestoncounty.org/arcgis/rest/services/OpenData/ParcelData/FeatureServer/0',
+    acresField: 'ACREAGE', heatedField: null, addrField: 'ADDRESS'
+  },
+  'horry,sc': {
+    url: 'https://gis.horrycounty.org/arcgis/rest/services/PublicViewer/Parcels/FeatureServer/0',
+    acresField: 'GISACRES', heatedField: null, addrField: 'SITEADDR'
+  },
+  'greenville,sc': {
+    url: 'https://gisweb.greenvillesc.gov/arcgis/rest/services/Parcel/FeatureServer/0',
+    acresField: 'ACRES', heatedField: null, addrField: 'STADDR'
+  },
+  'richland,sc': {
+    url: 'https://gis.rcgov.us/arcgis/rest/services/GIS/Parcels/FeatureServer/0',
+    acresField: 'ACREAGE', heatedField: null, addrField: 'SITUS_ADDR'
+  },
 };
 
-const PALLET_SF = 500;
-let activeLot    = null;
-let activePreset = null;
-let pdfDoc       = null;
-let pdfScale     = 1.5;
-let pdfRotate    = 0;
-let gisMap       = null;
+// NC OneMap statewide fallback
+const NC_ONEMAP_URL = 'https://gis.nconemap.com/arcgis/rest/services/NC_Parcels/FeatureServer/0';
+
+// ── State ──────────────────────────────────────────────────────
+let activeLot      = null;
+let pdfDoc         = null;
+let pdfScale       = 1.5;
+let pdfRotate      = 0;
+let svgBPScale     = 1;
+let gisMap         = null;
 let streetRendered = false;
 let gisRendered    = false;
 
@@ -506,7 +532,7 @@ function fmt(v){ return Math.round(v).toLocaleString(); }
 
 function getFormData(){
   return {
-    unit:  activePreset||'Custom',
+    unit:  'Custom',
     addr:  document.getElementById('fAddress').value.trim()||'Unknown Address',
     job:   document.getElementById('fJob').value.trim(),
     lotW:  fv('lotW'), lotD: fv('lotD'),
@@ -514,68 +540,178 @@ function getFormData(){
     drvW:  fv('drvW'), drvD: fv('drvD'),
     patW:  fv('patW'), patD: fv('patD'),
     misc:  fv('fMisc'),
-    lat:   activePreset?PRESETS[activePreset].lat:(window._geocodedLat||null),
-    lng:   activePreset?PRESETS[activePreset].lng:(window._geocodedLng||null),
-    source:activePreset?PRESETS[activePreset].source:'Manual entry',
-    model: activePreset?PRESETS[activePreset].model:'',
+    lat:   window._geocodedLat||null,
+    lng:   window._geocodedLng||null,
+    source: window._dataSource||'Manual entry',
   };
 }
 
+// ── Source log ─────────────────────────────────────────────────
+let _srcLogs = [];
+
+function clearSourceLogs(){
+  _srcLogs = [];
+  const el = document.getElementById('srcLog');
+  el.classList.remove('show');
+  document.getElementById('srcLogRows').innerHTML = '';
+}
+
+function addSourceLog(name, status, detail){
+  // status: 'ok' | 'warn' | 'fail' | 'skip' | 'cred'
+  _srcLogs.push({name, status, detail});
+  _renderSourceLogs();
+  document.getElementById('srcLog').classList.add('show');
+}
+
+function _renderSourceLogs(){
+  const labels = {ok:'success', warn:'partial', fail:'failed', skip:'unavailable', cred:'needs credentials'};
+  document.getElementById('srcLogRows').innerHTML = _srcLogs.map(r=>`
+    <div class="src-row">
+      <span class="src-badge ${r.status}">${labels[r.status]||r.status}</span>
+      <div><div class="src-name">${r.name}</div><div class="src-detail">${r.detail||''}</div></div>
+    </div>`).join('');
+}
+
+function setSrcSearching(msg){
+  document.getElementById('srcLog').classList.add('show');
+  document.getElementById('srcSpin').style.display = 'block';
+  document.getElementById('srcLogTitle').textContent = msg||'Searching data sources…';
+}
+
+function setSrcDone(){
+  document.getElementById('srcSpin').style.display = 'none';
+  document.getElementById('srcLogTitle').textContent = 'Data Sources';
+}
+
+// ── NC/SC service area check ───────────────────────────────────
+function isInServiceArea(stateAbbr){
+  if(!stateAbbr) return false;
+  const s = stateAbbr.toUpperCase().trim();
+  return s === 'NC' || s === 'SC';
+}
+
+// ── Geocoding ──────────────────────────────────────────────────
+async function geocodeNominatim(addr){
+  try{
+    const url = 'https://nominatim.openstreetmap.org/search?q=' +
+      encodeURIComponent(addr) +
+      '&format=json&limit=1&countrycodes=us&addressdetails=1';
+    const r = await fetch(url, {
+      headers:{'User-Agent':'Prestige-Sod-Estimator/1.0','Accept-Language':'en'},
+      signal: AbortSignal.timeout(8000)
+    });
+    const d = await r.json();
+    if(d && d[0]){
+      const a = d[0].address||{};
+      const stateAbbr = _inferStateAbbr(a.state);
+      return {
+        lat: parseFloat(d[0].lat),
+        lng: parseFloat(d[0].lon),
+        state: a.state||'',
+        stateAbbr: stateAbbr,
+        county: (a.county||'').replace(/\s+county$/i,'').trim(),
+        city: a.city||a.town||a.village||a.hamlet||''
+      };
+    }
+  }catch(e){}
+  return null;
+}
+
+async function geocodeCensus(addr){
+  try{
+    const url = 'https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address=' +
+      encodeURIComponent(addr) + '&benchmark=Public_AR_Current&format=json';
+    const r = await fetch(url, {signal: AbortSignal.timeout(10000)});
+    const d = await r.json();
+    const matches = d?.result?.addressMatches;
+    if(matches && matches.length > 0){
+      const c = matches[0].coordinates;
+      const comp = matches[0].addressComponents||{};
+      const stateName = comp.state||'';
+      const stateAbbr = _inferStateAbbr(stateName)||stateName;
+      return {
+        lat: parseFloat(c.y),
+        lng: parseFloat(c.x),
+        state: stateName,
+        stateAbbr: stateAbbr,
+        county: (comp.county||'').replace(/\s+county$/i,'').trim(),
+        city: comp.city||''
+      };
+    }
+  }catch(e){}
+  return null;
+}
+
+function _inferStateAbbr(stateName){
+  if(!stateName) return '';
+  const s = stateName.trim().toUpperCase();
+  if(s === 'NC' || s === 'NORTH CAROLINA') return 'NC';
+  if(s === 'SC' || s === 'SOUTH CAROLINA') return 'SC';
+  // Try to map 2-char abbr of any US state
+  if(s.length === 2) return s;
+  return '';
+}
+
 // ── Entry flow ─────────────────────────────────────────────────
-function loadTakeoff(){
+async function loadTakeoff(){
+  const errEl = document.getElementById('saError');
+  errEl.classList.remove('show');
+
+  const manualEl = document.getElementById('fLotManual');
+  if(manualEl && manualEl.value.trim() && !window._selectedLotNum){
+    onManualLotInput(manualEl.value.trim());
+  }
+
   const addr = document.getElementById('fAddress').value.trim();
-  if(!addr && !window._pdfFile && !activePreset){
+  const hasPDF = !!window._pdfFile;
+
+  if(!addr && !hasPDF){
     document.getElementById('fAddress').focus();
     return;
   }
+
+  // If address provided, validate NC/SC before proceeding
+  if(addr){
+    // Quick client-side check first — if it contains NC or SC we can proceed optimistically
+    // Full geocode validation happens in runGISLookup
+    const upperAddr = addr.toUpperCase();
+    const looksNCOrSC = /\b(NC|SC|NORTH CAROLINA|SOUTH CAROLINA)\b/.test(upperAddr);
+    const looksOtherState = /,\s*[A-Z]{2}\s+\d{5}/.test(addr) && !looksNCOrSC;
+
+    if(looksOtherState){
+      errEl.textContent = 'This tool is currently configured for North Carolina and South Carolina properties only. Address is outside the supported service area.';
+      errEl.classList.add('show');
+      if(!hasPDF) return;
+    }
+  }
+
   activeLot = getFormData();
   _showWorkScreen();
-  const lookupAddr = addr||(activePreset?PRESETS[activePreset].addr:'');
-  if(lookupAddr) runGISLookup(lookupAddr);
-}
 
-function quickLoad(num){
-  const p = PRESETS[num];
-  activePreset = num;
-  document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('active'));
-  const qb = document.getElementById('qb'+num);
-  if(qb) qb.classList.add('active');
-  sv('fAddress',p.addr);
-  sv('fJob',`Unit ${p.unit} — ${p.model} · ${p.pos}`);
-  sv('lotW',p.lotW);  sv('lotD',p.lotD);
-  sv('bldgW',p.bldgW);sv('bldgD',p.bldgD);
-  sv('drvW',p.drvW);  sv('drvD',p.drvD);
-  sv('patW',p.patW);  sv('patD',p.patD);
-  sv('fMisc',p.misc);
-  activeLot = getFormData();
-  _showWorkScreen();
-  onMeasChange();
-  runGISLookup(p.addr);
+  if(addr){
+    runGISLookup(addr);
+  }
 }
-
-// keep alias used by PDF extraction
-function loadPreset(num){ quickLoad(num); }
 
 function _showWorkScreen(){
   document.getElementById('entryScreen').style.display = 'none';
   document.getElementById('workScreen').style.display  = 'flex';
-
-  // Reset tab state
   streetRendered = false;
   gisRendered    = false;
+  svgBPScale     = 1;
   _activateTab('blueprint');
 
-  // Hide results
+  const pdfTab = document.getElementById('tab-pdf');
+  if(pdfTab) pdfTab.style.display = window._pdfFile ? 'inline' : 'none';
+
   document.getElementById('resultsPanel').style.display = 'none';
 
-  // Header info
   const d = activeLot||{};
   const job = d.job||(d.unit&&d.unit!=='Custom'?`Unit ${d.unit}`:'New Takeoff');
-  document.getElementById('wrJobTitle').textContent = job;
+  document.getElementById('wrJobTitle').textContent = job||'New Takeoff';
   document.getElementById('wrJobAddr').textContent  = (d.addr&&d.addr!=='Unknown Address')?d.addr:'';
-  document.getElementById('unitChip').textContent   = activePreset?`Unit ${activePreset}`:'';
-  document.getElementById('unitChip').style.display = activePreset?'inline':'none';
 
+  clearSourceLogs();
   onMeasChange();
   renderBlueprint();
 }
@@ -585,6 +721,10 @@ function goBack(){
   document.getElementById('entryScreen').style.display = 'flex';
   if(gisMap){ gisMap.remove(); gisMap=null; }
   gisRendered = streetRendered = false;
+  window._geocodedLat = null;
+  window._geocodedLng = null;
+  window._geocodedCounty = null;
+  window._geocodedState = null;
 }
 
 // ── Tab switching ──────────────────────────────────────────────
@@ -593,12 +733,13 @@ function switchTab(name){
   if(name==='street'&&!streetRendered){ streetRendered=true; renderStreetView(); }
   if(name==='gis'&&!gisRendered){ gisRendered=true; renderGIS(); }
   else if(name==='gis'&&gisMap){ setTimeout(()=>gisMap.invalidateSize(),80); }
+  if(name==='pdf'&&window._pdfFile){ renderSourcePDF(); }
 }
 
 function _activateTab(name){
   document.querySelectorAll('.draw-pane').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('active'));
-  const nameMap={blueprint:'tabBlueprint',street:'tabStreet',gis:'tabGIS'};
+  const nameMap={blueprint:'tabBlueprint',street:'tabStreet',gis:'tabGIS',pdf:'tabPDF'};
   const el=document.getElementById(nameMap[name]);
   if(el) el.classList.add('active');
   const tb=document.getElementById('tab-'+name);
@@ -622,14 +763,10 @@ function onMeasChange(){
   const sf  = Math.max(0, lw*ld - bw*bd - dw*dd - pw*pd - mi);
   const pal = sf>0 ? Math.ceil(sf/PALLET_SF) : 0;
 
-  const lsSF  = document.getElementById('lsSF');
-  const lsSY  = document.getElementById('lsSY');
-  const lsPal = document.getElementById('lsPal');
-  if(lsSF)  lsSF.innerHTML  = `${fmt(sf)}<span class="ls-sf-unit">sf</span>`;
-  if(lsSY)  lsSY.textContent = `${(sf/9).toFixed(1)} sq yd`;
-  if(lsPal) lsPal.textContent = pal;
+  document.getElementById('lsSF').innerHTML  = `${fmt(sf)}<span class="ls-sf-unit">sf</span>`;
+  document.getElementById('lsSY').textContent = `${(sf/9).toFixed(1)} sq yd`;
+  document.getElementById('lsPal').textContent = pal;
 
-  // Refresh results box if open
   const rp = document.getElementById('resultsPanel');
   if(rp&&rp.style.display!=='none'){
     const rb = document.getElementById('resBox');
@@ -641,12 +778,10 @@ function onMeasChange(){
 function calculate(){
   activeLot = getFormData();
   const c = calcSod(activeLot);
-
   document.getElementById('resultsBody').innerHTML = _buildCalcHTML(activeLot);
   document.getElementById('resBox').innerHTML      = renderRes(c);
   document.getElementById('resultsPanel').style.display = 'block';
 
-  // Wire up editable inputs inside results
   document.querySelectorAll('#resultsBody input[data-k]').forEach(inp=>{
     inp.addEventListener('input',()=>{
       activeLot[inp.dataset.k] = parseFloat(inp.value)||0;
@@ -663,15 +798,12 @@ function calculate(){
         const sfEl=document.getElementById('rsf_'+grp);
         if(sfEl) sfEl.textContent=fmt(activeLot[a]*activeLot[b])+' sf';
       }
-      if(!window._pdfFile) renderSVGBlueprint(activeLot);
+      renderSVGBlueprint(activeLot);
     });
   });
 
-  // Scroll results into view
   document.getElementById('resultsPanel').scrollIntoView({behavior:'smooth',block:'nearest'});
-
-  // Refresh blueprint
-  if(!window._pdfFile) renderSVGBlueprint(activeLot);
+  renderSVGBlueprint(activeLot);
 }
 
 function hideResults(){
@@ -681,27 +813,13 @@ function hideResults(){
 
 function _buildCalcHTML(d){
   return `
-    <div class="cr-sec">
-      <div class="cr-hd">Lot</div>
-      ${cr1('Width','lotW',d.lotW,'ft')}
-      ${cr1('Depth','lotD',d.lotD,'ft')}
+    <div class="cr-sec"><div class="cr-hd">Lot</div>
+      ${cr1('Width','lotW',d.lotW,'ft')}${cr1('Depth','lotD',d.lotD,'ft')}
     </div>
-    <div class="cr-sec">
-      <div class="cr-hd">Building</div>
-      ${cr2('W × D','bldgW',d.bldgW,'bldgD',d.bldgD)}
-    </div>
-    <div class="cr-sec">
-      <div class="cr-hd">Driveway</div>
-      ${cr2('W × D','drvW',d.drvW,'drvD',d.drvD)}
-    </div>
-    <div class="cr-sec">
-      <div class="cr-hd">Patio / Stoop</div>
-      ${cr2('W × D','patW',d.patW,'patD',d.patD)}
-    </div>
-    <div class="cr-sec">
-      <div class="cr-hd">Other Hard Surface</div>
-      ${cr1('Area','misc',d.misc,'sf')}
-    </div>`;
+    <div class="cr-sec"><div class="cr-hd">Building</div>${cr2('W × D','bldgW',d.bldgW,'bldgD',d.bldgD)}</div>
+    <div class="cr-sec"><div class="cr-hd">Driveway</div>${cr2('W × D','drvW',d.drvW,'drvD',d.drvD)}</div>
+    <div class="cr-sec"><div class="cr-hd">Patio / Stoop</div>${cr2('W × D','patW',d.patW,'patD',d.patD)}</div>
+    <div class="cr-sec"><div class="cr-hd">Other Hard Surface</div>${cr1('Area','misc',d.misc,'sf')}</div>`;
 }
 
 function cr1(lbl,key,val,unit){
@@ -725,531 +843,649 @@ function renderRes(c){
     <div class="rp-row sub"><span class="rl">Total impervious</span><span class="rv">${fmt(c.imp)} sf</span></div>`;
 }
 
-// ── GIS / OSM auto-verify ──────────────────────────────────────
-let _gisTimer = null;
-
-function hideGIS(){ document.getElementById('gisBar').style.display='none'; }
-
-function setGIS(state,head,body,sources){
-  const bar=document.getElementById('gisBar');
-  bar.style.display='flex';
-  bar.className='gis-bar '+state;
-  document.getElementById('gisSpin').style.display=state==='searching'?'block':'none';
-  document.getElementById('gisIcon').textContent=
-    state==='searching'?'':state==='ok'?'✓':state==='partial'?'⚡':'⚠';
-  document.getElementById('gisMsgHead').textContent=head;
-  document.getElementById('gisMsgBody').textContent=body||'';
-  document.getElementById('gisSources').textContent=sources||'';
-}
-
+// ── GIS lookup — full source search ───────────────────────────
 async function runGISLookup(addr){
-  setGIS('searching','Searching GIS, OSM & municipal records…','','');
+  clearSourceLogs();
+  setSrcSearching('Locating property…');
 
-  let lat=null, lng=null;
-  if(activePreset){ lat=PRESETS[activePreset].lat; lng=PRESETS[activePreset].lng; }
-  if(!lat){
-    const geo=await geocodeNominatim(addr);
-    if(geo){ lat=geo.lat; lng=geo.lng; }
+  // Step 1: Geocode
+  let geo = null;
+  geo = await geocodeNominatim(addr);
+  if(geo){
+    addSourceLog('Nominatim geocoder', 'ok', `${geo.lat.toFixed(5)}, ${geo.lng.toFixed(5)} · ${geo.city||''} ${geo.county||''} ${geo.stateAbbr||''}`);
+  } else {
+    addSourceLog('Nominatim geocoder', 'fail', 'Address not found');
+    geo = await geocodeCensus(addr);
+    if(geo){
+      addSourceLog('US Census geocoder', 'ok', `${geo.lat.toFixed(5)}, ${geo.lng.toFixed(5)} · ${geo.county||''} ${geo.stateAbbr||''}`);
+    } else {
+      addSourceLog('US Census geocoder', 'fail', 'Address not found');
+    }
   }
 
-  if(!lat){
-    setGIS('warn','Geocoding failed','Address not found in OSM — may be new construction. Enter measurements manually or upload a plot plan.','Nominatim / OSM');
+  if(!geo){
+    setSrcDone();
+    addSourceLog('Result', 'fail', 'Could not geocode address. Check the address or enter measurements manually.');
     return;
   }
 
-  const [osm,county]=await Promise.all([queryOSMFeatures(lat,lng),queryCountyGIS(lat,lng,addr)]);
+  const {lat, lng, stateAbbr, county} = geo;
+  window._geocodedLat = lat;
+  window._geocodedLng = lng;
+  window._geocodedState = stateAbbr;
+  window._geocodedCounty = county;
+  window._dataSource = `${county||''} ${stateAbbr||''} GIS`.trim();
 
-  const applied=[], verified=[], diffs=[];
-  const lotW=fv('lotW');
+  // Update activeLot coords
+  if(activeLot){ activeLot.lat = lat; activeLot.lng = lng; }
 
-  const tryFill=(key,val,src)=>{
-    if(!val||val<=0) return;
-    const cur=fv(key);
-    const diff=cur>0?Math.abs(cur-val)/Math.max(cur,val):0;
-    if(!cur){
-      sv(key,Math.round(val*10)/10);
-      applied.push(`${key.replace(/([WD])/,' $1').toLowerCase()} from ${src}`);
-    } else if(diff<0.08){
-      verified.push(`${key.replace(/([WD])/,' $1').toLowerCase()} ✓`);
+  // Step 2: Validate NC/SC service area
+  if(!isInServiceArea(stateAbbr)){
+    setSrcDone();
+    addSourceLog('Service area check', 'fail',
+      'This tool is currently configured for North Carolina and South Carolina properties only. Address is outside the supported service area.');
+    return;
+  }
+  addSourceLog('Service area check', 'ok', `${stateAbbr} — within NC/SC service area`);
+
+  setSrcSearching('Querying data sources…');
+
+  // Step 3: Run all data sources in parallel
+  const countyKey = `${county.toLowerCase()},${stateAbbr.toLowerCase()}`;
+  const countyConfig = COUNTY_GIS[countyKey];
+
+  const [osm, nsi, countyResult, ncOneMapResult] = await Promise.all([
+    queryOSMFeatures(lat, lng),
+    queryFEMANSI(lat, lng),
+    countyConfig ? queryCountyGIS(lat, lng, countyConfig) : Promise.resolve(null),
+    (!countyConfig && stateAbbr === 'NC') ? queryNCOneMap(lat, lng) : Promise.resolve(null),
+  ]);
+
+  // Log OSM
+  if(osm.buildingArea || osm.drivewayArea || osm.patioArea){
+    const parts = [];
+    if(osm.buildingArea) parts.push(`building ${fmt(osm.buildingArea)} sf`);
+    if(osm.drivewayArea) parts.push(`driveway ${fmt(osm.drivewayArea)} sf`);
+    if(osm.patioArea) parts.push(`patio ${fmt(osm.patioArea)} sf`);
+    addSourceLog('OpenStreetMap (OSM)', 'ok', parts.join(' · '));
+  } else {
+    addSourceLog('OpenStreetMap (OSM)', 'warn', 'No building or structure data found — may be new construction');
+  }
+
+  // Log FEMA NSI
+  if(nsi.sqft){
+    addSourceLog('FEMA NSI (National Structure Inventory)', 'ok', `Building footprint: ${fmt(nsi.sqft)} sf${nsi.stories?` · ${nsi.stories} stor${nsi.stories>1?'ies':'y'}`:''}`);
+  } else {
+    addSourceLog('FEMA NSI (National Structure Inventory)', 'warn', 'No structure record at this location');
+  }
+
+  // Log county GIS
+  if(countyConfig){
+    if(countyResult && countyResult.lotAcres){
+      addSourceLog(`${county} County GIS`, 'ok', `Parcel: ${(countyResult.lotAcres*43560).toFixed(0)} sf (${countyResult.lotAcres.toFixed(4)} ac)${countyResult.siteAddr?' · '+countyResult.siteAddr:''}`);
+    } else if(countyResult === null){
+      addSourceLog(`${county} County GIS`, 'fail', 'Endpoint not responding or parcel not found');
     } else {
-      diffs.push(`${key.replace(/([WD])/,' $1').toLowerCase()}: entered=${Math.round(cur)}, ${src}=${Math.round(val)}`);
+      addSourceLog(`${county} County GIS`, 'warn', 'Parcel found but no acreage data returned');
+    }
+  } else if(stateAbbr === 'NC'){
+    // NC OneMap fallback
+    if(ncOneMapResult && ncOneMapResult.lotAcres){
+      addSourceLog('NC OneMap (statewide parcel)', 'ok', `Parcel: ${(ncOneMapResult.lotAcres*43560).toFixed(0)} sf (${ncOneMapResult.lotAcres.toFixed(4)} ac)`);
+    } else {
+      addSourceLog('NC OneMap (statewide parcel)', ncOneMapResult===null?'fail':'warn',
+        ncOneMapResult===null ? 'Service unavailable or parcel not found' : 'Parcel not found in NC OneMap');
+    }
+  } else {
+    // SC county not in table
+    addSourceLog(`${county} County GIS (SC)`, 'skip', `No verified ArcGIS endpoint configured for ${county} County, SC`);
+  }
+
+  // Log EagleView (requires credentials — never attempt)
+  addSourceLog('EagleView aerial measurements', 'cred', 'Requires EagleView account credentials — not configured');
+
+  // Log Google Street View
+  addSourceLog('Google Street View', 'ok', 'Available in Street View tab');
+
+  // Log aerial imagery
+  addSourceLog('Esri satellite imagery', 'ok', 'Available in Aerial GIS tab');
+
+  // Step 4: Apply data to fields
+  const countyData = countyResult || ncOneMapResult;
+  const applied = [], verified = [], diffs = [];
+  const lotW = fv('lotW');
+
+  const tryFill = (key, val, src) => {
+    if(!val || val <= 0) return;
+    const cur = fv(key);
+    const diff = cur > 0 ? Math.abs(cur - val) / Math.max(cur, val) : 0;
+    if(!cur){
+      sv(key, Math.round(val * 10) / 10);
+      applied.push(`${key} from ${src}`);
+    } else if(diff < 0.08){
+      verified.push(`${key} ✓`);
+    } else {
+      diffs.push(`${key}: entered=${Math.round(cur)}, ${src}=${Math.round(val)}`);
     }
   };
 
-  if(county.lotAcres){
-    const lotSF=county.lotAcres*43560;
-    if(lotW>0){
-      tryFill('lotD',Math.round(lotSF/lotW*10)/10,'County GIS');
-    } else if(osm.lotBBoxW){
-      tryFill('lotW',osm.lotBBoxW,'OSM parcel');
+  if(countyData && countyData.lotAcres){
+    const lotSF = countyData.lotAcres * 43560;
+    if(lotW > 0){
+      tryFill('lotD', Math.round(lotSF / lotW * 10) / 10, 'County GIS');
+    }
+  }
+  if(nsi.sqft && !osm.buildingArea){
+    const bw = fv('bldgW') || lotW || 0;
+    if(bw > 0){
+      tryFill('bldgD', Math.round(nsi.sqft / bw * 10) / 10, 'FEMA NSI');
     }
   }
   if(osm.buildingArea){
-    const bw=fv('bldgW')||(lotW>0?lotW:osm.buildingBBoxW)||0;
-    if(bw>0){
-      tryFill('bldgW',bw>0?bw:osm.buildingBBoxW,'OSM building');
-      tryFill('bldgD',Math.round(osm.buildingArea/bw*10)/10,'OSM building');
+    const bw = fv('bldgW') || (lotW > 0 ? lotW : osm.buildingBBoxW) || 0;
+    if(bw > 0){
+      tryFill('bldgD', Math.round(osm.buildingArea / bw * 10) / 10, 'OSM building');
     }
   }
   if(osm.drivewayArea){
-    const dw=fv('drvW')||(lotW>0?lotW:osm.drivewayBBoxW)||0;
-    if(dw>0){
-      tryFill('drvW',dw>0?dw:osm.drivewayBBoxW,'OSM driveway');
-      tryFill('drvD',Math.round(osm.drivewayArea/dw*10)/10,'OSM driveway');
+    const dw = fv('drvW') || (lotW > 0 ? lotW : osm.drivewayBBoxW) || 0;
+    if(dw > 0){
+      tryFill('drvD', Math.round(osm.drivewayArea / dw * 10) / 10, 'OSM driveway');
     }
   }
   if(osm.patioArea){
-    const pw=fv('patW')||(lotW>0?Math.min(lotW,osm.patioBBoxW||lotW):10)||0;
-    if(pw>0){
-      tryFill('patW',pw,'OSM patio');
-      tryFill('patD',Math.round(osm.patioArea/pw*10)/10,'OSM patio');
-    }
+    const pw = fv('patW') || 10;
+    tryFill('patD', Math.round(osm.patioArea / pw * 10) / 10, 'OSM patio');
   }
-  if(osm.otherArea) tryFill('fMisc',Math.round(osm.otherArea),'OSM impervious');
+  if(osm.otherArea) tryFill('fMisc', Math.round(osm.otherArea), 'OSM');
 
   onMeasChange();
+  setSrcDone();
 
-  const srcList=[
-    osm.buildingArea?`OSM building ${fmt(osm.buildingArea)} sf`:null,
-    osm.drivewayArea?`OSM driveway ${fmt(osm.drivewayArea)} sf`:null,
-    county.lotAcres?`County GIS ${fmt(county.lotAcres*43560)} sf lot`:null,
-    osm.patioArea?`OSM patio ${fmt(osm.patioArea)} sf`:null,
-  ].filter(Boolean);
-
-  if(!srcList.length&&!applied.length){
-    setGIS('warn','No structural data found','OSM/GIS data unavailable — property may be new construction not yet mapped.',`Checked: OSM Overpass · Nominatim · County GIS`);
-    return;
+  if(applied.length){
+    addSourceLog('Auto-fill result', 'ok', `${applied.length} field${applied.length>1?'s':''} populated: ${applied.join(', ')}`);
+  } else if(!osm.buildingArea && !nsi.sqft && !(countyData&&countyData.lotAcres)){
+    addSourceLog('Auto-fill result', 'warn', 'No measurements could be extracted. Property may be new construction. Enter dimensions manually from your plot plan.');
   }
-
-  const head=applied.length?`Auto-filled ${applied.length} field${applied.length!==1?'s':''}`:
-             diffs.length?`${diffs.length} measurement${diffs.length!==1?'s':''} differ from GIS`:
-             `All entered measurements verified ✓`;
-  const bodyTxt=[...applied,...diffs].slice(0,3).join(' · ');
-  const state=diffs.length?'partial':applied.length?'ok':'ok';
-  setGIS(state,head,bodyTxt,srcList.join(' · ')||'');
 }
 
-async function geocodeNominatim(addr){
+async function queryFEMANSI(lat, lng){
   try{
-    const url='https://nominatim.openstreetmap.org/search?q='+encodeURIComponent(addr)+'&format=json&limit=1&countrycodes=us';
-    const r=await fetch(url,{headers:{'User-Agent':'Prestige-Sod-Estimator/1.0','Accept-Language':'en'}});
-    const d=await r.json();
-    if(d&&d[0]){
-      window._geocodedLat=parseFloat(d[0].lat);
-      window._geocodedLng=parseFloat(d[0].lon);
-      return{lat:window._geocodedLat,lng:window._geocodedLng};
+    const d = 0.0012;
+    const url = `https://nsi.sec.usace.army.mil/nsiapi/structures?bbox=${lng-d},${lat-d},${lng+d},${lat+d}`;
+    const r = await fetch(url, {signal: AbortSignal.timeout(8000)});
+    const data = await r.json();
+    if(!data || !data.features || !data.features.length) return {};
+    let best = null, bestDist = Infinity;
+    for(const f of data.features){
+      const [fLng, fLat] = f.geometry.coordinates;
+      const dist = Math.hypot(fLat - lat, fLng - lng);
+      if(dist < bestDist){ bestDist = dist; best = f.properties; }
     }
-  }catch(e){}
-  return null;
+    if(!best) return {};
+    return {
+      sqft: parseFloat(best.sqft) || parseFloat(best.ftprntsf) || null,
+      stories: parseFloat(best.num_story) || null,
+      foundType: best.found_type || null,
+    };
+  }catch(e){ return {}; }
 }
 
-async function queryOSMFeatures(lat,lng){
-  const rad=50;
-  const q=`[out:json][timeout:20];
+async function queryOSMFeatures(lat, lng){
+  const rad = 50;
+  const q = `[out:json][timeout:20];
 (
   way["building"](around:${rad},${lat},${lng});
   relation["building"]["type"="multipolygon"](around:${rad},${lat},${lng});
   way["service"="driveway"](around:${rad},${lat},${lng});
-  way["landuse"="parking"](around:${rad},${lat},${lng});
   way["amenity"="parking"](around:${rad},${lat},${lng});
-  way["leisure"="garden"](around:${rad},${lat},${lng});
   way["leisure"="patio"](around:${rad},${lat},${lng});
   way["surface"="concrete"]["area"="yes"](around:${rad},${lat},${lng});
   way["highway"="footway"](around:${rad},${lat},${lng});
-  way["highway"="path"](around:${rad},${lat},${lng});
 );
 out geom;`;
   try{
-    const ctrl=new AbortController();
-    const t=setTimeout(()=>ctrl.abort(),18000);
-    const resp=await fetch('https://overpass-api.de/api/interpreter',{method:'POST',body:'data='+encodeURIComponent(q),signal:ctrl.signal});
+    const ctrl = new AbortController();
+    const t = setTimeout(()=>ctrl.abort(), 18000);
+    const resp = await fetch('https://overpass-api.de/api/interpreter', {
+      method: 'POST', body: 'data=' + encodeURIComponent(q), signal: ctrl.signal
+    });
     clearTimeout(t);
-    const data=await resp.json();
-    const res={};
+    const data = await resp.json();
+    const res = {};
     for(const el of (data.elements||[])){
-      const geo=el.geometry||(el.members&&el.members.find(m=>m.role==='outer')?.geometry);
-      if(!geo||geo.length<3) continue;
-      const area=polyAreaFt2(geo);
-      const bb=bboxFt(geo);
-      const tags=el.tags||{};
+      const geo = el.geometry || (el.members&&el.members.find(m=>m.role==='outer')?.geometry);
+      if(!geo || geo.length < 3) continue;
+      const area = polyAreaFt2(geo);
+      const bb = bboxFt(geo);
+      const tags = el.tags||{};
       if(tags.building){
-        if(!res.buildingArea||area>res.buildingArea){res.buildingArea=area;res.buildingBBoxW=Math.min(bb.w,bb.d);res.buildingBBoxD=Math.max(bb.w,bb.d);}
-      } else if(tags.service==='driveway'||(tags.highway==='service'&&tags.service)){
-        res.drivewayArea=(res.drivewayArea||0)+area;res.drivewayBBoxW=bb.w;
-      } else if(tags.amenity==='parking'||tags.landuse==='parking'){
-        res.otherArea=(res.otherArea||0)+area;
-      } else if(tags.leisure==='patio'||tags.leisure==='garden'||tags.surface==='concrete'){
-        res.patioArea=(res.patioArea||0)+area;res.patioBBoxW=bb.w;
-      } else if(tags.highway==='footway'||tags.highway==='path'){
-        res.otherArea=(res.otherArea||0)+area;
+        if(!res.buildingArea || area > res.buildingArea){
+          res.buildingArea = area; res.buildingBBoxW = Math.min(bb.w, bb.d);
+        }
+      } else if(tags.service === 'driveway'){
+        res.drivewayArea = (res.drivewayArea||0) + area; res.drivewayBBoxW = bb.w;
+      } else if(tags.amenity === 'parking'){
+        res.otherArea = (res.otherArea||0) + area;
+      } else if(tags.leisure === 'patio' || tags.surface === 'concrete'){
+        res.patioArea = (res.patioArea||0) + area; res.patioBBoxW = bb.w;
+      } else if(tags.highway === 'footway'){
+        res.otherArea = (res.otherArea||0) + area;
       }
     }
     return res;
-  }catch(e){return{};}
+  }catch(e){ return {}; }
 }
 
-async function queryCountyGIS(lat,lng,addr){
-  if(!lat||!lng) return {};
+async function queryCountyGIS(lat, lng, cfg){
   try{
     return await new Promise(resolve=>{
-      const url='https://gisweb.hendersoncountync.gov/arcgis/rest/services/Parcels/FeatureServer/0';
-      const pt=L.latLng(lat,lng);
-      L.esri.query({url})
-        .nearby(pt,40)
-        .fields(['CALC_ACRES','HEATED_AREA','SITE_ADD','OWNER','PIN_NUM'])
-        .run((err,fc)=>{
-          if(err||!fc||!fc.features||!fc.features.length){resolve({});return;}
-          const f=fc.features[0].properties;
+      const pt = L.latLng(lat, lng);
+      const fields = [cfg.acresField, cfg.heatedField, cfg.addrField, 'OWNER', 'PIN_NUM'].filter(Boolean);
+      L.esri.query({url: cfg.url})
+        .nearby(pt, 40)
+        .fields(fields)
+        .run((err, fc)=>{
+          if(err || !fc || !fc.features || !fc.features.length){ resolve(null); return; }
+          const f = fc.features[0].properties;
           resolve({
-            lotAcres:parseFloat(f.CALC_ACRES)||null,
-            heatedArea:parseFloat(f.HEATED_AREA)||null,
-            siteAddr:f.SITE_ADD||'',
-            pin:f.PIN_NUM||''
+            lotAcres: parseFloat(f[cfg.acresField]) || null,
+            heatedArea: cfg.heatedField ? parseFloat(f[cfg.heatedField]) || null : null,
+            siteAddr: cfg.addrField ? f[cfg.addrField] || '' : '',
           });
         });
-      setTimeout(()=>resolve({}),8000);
+      setTimeout(()=>resolve(null), 8000);
     });
-  }catch(e){return{};}
+  }catch(e){ return null; }
+}
+
+async function queryNCOneMap(lat, lng){
+  try{
+    return await new Promise(resolve=>{
+      const pt = L.latLng(lat, lng);
+      L.esri.query({url: NC_ONEMAP_URL})
+        .nearby(pt, 40)
+        .fields(['CALCACRES','PARNO','SITEADD'])
+        .run((err, fc)=>{
+          if(err || !fc || !fc.features || !fc.features.length){ resolve(null); return; }
+          const f = fc.features[0].properties;
+          resolve({
+            lotAcres: parseFloat(f.CALCACRES) || null,
+            siteAddr: f.SITEADD || '',
+          });
+        });
+      setTimeout(()=>resolve(null), 8000);
+    });
+  }catch(e){ return null; }
 }
 
 function polyAreaFt2(nodes){
-  let area=0;
-  const n=nodes.length;
-  for(let i=0;i<n;i++){
-    const j=(i+1)%n;
-    const x1=nodes[i].lon*111320*Math.cos(nodes[i].lat*Math.PI/180);
-    const y1=nodes[i].lat*110574;
-    const x2=nodes[j].lon*111320*Math.cos(nodes[j].lat*Math.PI/180);
-    const y2=nodes[j].lat*110574;
-    area+=(x1*y2-x2*y1);
+  let area = 0;
+  const n = nodes.length;
+  for(let i = 0; i < n; i++){
+    const j = (i + 1) % n;
+    const x1 = nodes[i].lon * 111320 * Math.cos(nodes[i].lat * Math.PI / 180);
+    const y1 = nodes[i].lat * 110574;
+    const x2 = nodes[j].lon * 111320 * Math.cos(nodes[j].lat * Math.PI / 180);
+    const y2 = nodes[j].lat * 110574;
+    area += (x1 * y2 - x2 * y1);
   }
-  return Math.abs(area)/2*10.7639;
+  return Math.abs(area) / 2 * 10.7639;
 }
 
 function bboxFt(nodes){
-  const lats=nodes.map(n=>n.lat),lngs=nodes.map(n=>n.lon);
-  const midLat=(Math.max(...lats)+Math.min(...lats))/2;
-  const w=(Math.max(...lngs)-Math.min(...lngs))*111320*Math.cos(midLat*Math.PI/180)*3.28084;
-  const d=(Math.max(...lats)-Math.min(...lats))*110574*3.28084;
-  return{w:Math.round(w*10)/10,d:Math.round(d*10)/10};
+  const lats = nodes.map(n=>n.lat), lngs = nodes.map(n=>n.lon);
+  const midLat = (Math.max(...lats) + Math.min(...lats)) / 2;
+  const w = (Math.max(...lngs) - Math.min(...lngs)) * 111320 * Math.cos(midLat * Math.PI / 180) * 3.28084;
+  const d = (Math.max(...lats) - Math.min(...lats)) * 110574 * 3.28084;
+  return {w: Math.round(w * 10) / 10, d: Math.round(d * 10) / 10};
 }
 
 // ── Drag and drop ──────────────────────────────────────────────
 (function(){
-  const ua=document.getElementById('uploadArea');
+  const ua = document.getElementById('uploadArea');
   ['dragenter','dragover'].forEach(e=>ua.addEventListener(e,ev=>{ev.preventDefault();ua.classList.add('over');}));
   ['dragleave','drop'].forEach(e=>ua.addEventListener(e,ev=>{ev.preventDefault();ua.classList.remove('over');}));
-  ua.addEventListener('drop',ev=>handleFile(ev.dataTransfer.files[0]));
+  ua.addEventListener('drop', ev=>handleFile(ev.dataTransfer.files[0]));
 })();
 
 // ── PDF handling ───────────────────────────────────────────────
 async function handleFile(file){
-  if(!file||file.type!=='application/pdf') return;
-  window._pdfFile  = file;
+  if(!file || file.type !== 'application/pdf') return;
+  window._pdfFile = file;
   window._pdfParsed = null;
+  window._lotPageMap = {};
+  window._selectedLotNum = null;
+  pdfDoc = null;
   pdfRotate = 0;
-  const fn=document.getElementById('fFileName');
-  fn.textContent='⟳ Reading '+file.name+'…';
-  fn.style.display='block';
-  document.getElementById('lotSelWrap').style.display='none';
+
+  const fn  = document.getElementById('fFileName');
+  const lsw = document.getElementById('lotSelWrap');
+  const lmw = document.getElementById('lotManualWrap');
+  fn.textContent = '⟳ Analyzing ' + file.name + '…';
+  fn.style.display = 'block';
+  lsw.style.display = 'none';
+  lmw.style.display = 'none';
 
   const found = await extractFromPDF(file);
-  window._pdfParsed = found;
+  window._pdfParsed  = found;
+  window._lotPageMap = found.lotPageMap || {};
 
-  // Multiple lots → show selector
-  if(found.allLots && found.allLots.length>1){
+  const detectedCount = (found.allLots||[]).length;
+
+  if(detectedCount > 0){
     populateLotSelector(found.allLots);
-    fn.textContent=`✓ ${file.name} — ${found.allLots.length} lots detected, select one below`;
-    return;
   }
 
-  _applyPDFData(found, file.name);
+  if(found.isScanned || !detectedCount){
+    fn.textContent = `✓ ${file.name} — scanned/image PDF · enter lot number below`;
+    lmw.style.display = 'block';
+  } else if(detectedCount === 1){
+    fn.textContent = `✓ ${file.name} — Lot ${found.allLots[0]} detected`;
+    document.getElementById('lotSelector').value = found.allLots[0];
+    window._selectedLotNum = found.allLots[0];
+    _applyPDFData(found, file.name);
+  } else {
+    fn.textContent = `✓ ${file.name} — ${detectedCount} lots detected · select below`;
+    lmw.style.display = 'block';
+  }
 }
 
 function _applyPDFData(found, fname){
-  if(found.preset){
-    const p=PRESETS[found.preset];
-    activePreset=found.preset;
-    document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('active'));
-    const qb=document.getElementById('qb'+found.preset);
-    if(qb) qb.classList.add('active');
-    sv('fAddress',p.addr);
-    sv('fJob',`Unit ${found.preset} — ${p.model} · ${p.pos}`);
-    sv('lotW',p.lotW);  sv('lotD',p.lotD);
-    sv('bldgW',p.bldgW);sv('bldgD',p.bldgD);
-    sv('drvW',p.drvW);  sv('drvD',p.drvD);
-    sv('patW',p.patW);  sv('patD',p.patD);
-    sv('fMisc',p.misc);
-    document.getElementById('fFileName').textContent=`✓ ${fname} — Unit ${found.preset} auto-loaded`;
-  } else {
-    let filled=[];
-    if(found.addr&&!document.getElementById('fAddress').value.trim()){sv('fAddress',found.addr);filled.push('address');}
-    if(found.job&&!document.getElementById('fJob').value.trim()) sv('fJob',found.job);
-    if(found.lotW){sv('lotW',found.lotW);filled.push('lot W');}
-    if(found.lotD){sv('lotD',found.lotD);filled.push('lot D');}
-    if(found.bldgW){sv('bldgW',found.bldgW);filled.push('bldg W');}
-    if(found.bldgD){sv('bldgD',found.bldgD);filled.push('bldg D');}
-    if(found.drvW){sv('drvW',found.drvW);filled.push('drv W');}
-    if(found.drvD){sv('drvD',found.drvD);filled.push('drv D');}
-    if(found.patW){sv('patW',found.patW);filled.push('patio W');}
-    if(found.patD){sv('patD',found.patD);filled.push('patio D');}
-    document.getElementById('fFileName').textContent=filled.length
-      ?`✓ ${fname} — extracted: ${filled.join(', ')}`
-      :`✓ ${fname} — no measurements extracted`;
-  }
+  let filled = [];
+  const addrEl = document.getElementById('fAddress');
+  const jobEl  = document.getElementById('fJob');
+  if(found.addr && !addrEl.value.trim()){ sv('fAddress', found.addr); filled.push('address'); }
+  if(found.job  && !jobEl.value.trim())  sv('fJob', found.job);
+  if(found.lotW){ sv('lotW', found.lotW); filled.push('lot W'); }
+  if(found.lotD){ sv('lotD', found.lotD); filled.push('lot D'); }
+  if(found.bldgW){ sv('bldgW', found.bldgW); filled.push('bldg W'); }
+  if(found.bldgD){ sv('bldgD', found.bldgD); filled.push('bldg D'); }
+  if(found.drvW){ sv('drvW', found.drvW); filled.push('drv W'); }
+  if(found.drvD){ sv('drvD', found.drvD); filled.push('drv D'); }
+  if(found.patW){ sv('patW', found.patW); filled.push('patio W'); }
+  if(found.patD){ sv('patD', found.patD); filled.push('patio D'); }
+  document.getElementById('fFileName').textContent = filled.length
+    ? `✓ ${fname} — extracted: ${filled.join(', ')}`
+    : `✓ ${fname} — no measurements extracted`;
   onMeasChange();
 }
 
 function populateLotSelector(lots){
-  const sel=document.getElementById('lotSelector');
-  sel.innerHTML='<option value="">— Select lot number —</option>';
+  const sel = document.getElementById('lotSelector');
+  sel.innerHTML = '<option value="">— Select lot number —</option>';
   lots.forEach(n=>{
-    const opt=document.createElement('option');
-    opt.value=n;
-    opt.textContent=PRESETS[n]?`Lot ${n} — ${PRESETS[n].addr.split(',')[0]} (${PRESETS[n].model})`:`Lot ${n}`;
+    const opt = document.createElement('option');
+    opt.value = n;
+    opt.textContent = `Lot ${n}`;
     sel.appendChild(opt);
   });
-  document.getElementById('lotSelWrap').style.display='block';
+  document.getElementById('lotSelWrap').style.display = 'block';
 }
 
 function onLotSelect(val){
   if(!val) return;
-  const n=parseInt(val);
-  if(PRESETS[n]){
-    activePreset=n;
-    document.querySelectorAll('.qbtn').forEach(b=>b.classList.remove('active'));
-    const qb=document.getElementById('qb'+n);
-    if(qb) qb.classList.add('active');
-    const p=PRESETS[n];
-    sv('fAddress',p.addr);
-    sv('fJob',`Unit ${n} — ${p.model} · ${p.pos}`);
-    sv('lotW',p.lotW);  sv('lotD',p.lotD);
-    sv('bldgW',p.bldgW);sv('bldgD',p.bldgD);
-    sv('drvW',p.drvW);  sv('drvD',p.drvD);
-    sv('patW',p.patW);  sv('patD',p.patD);
-    sv('fMisc',p.misc);
-  } else if(window._pdfParsed){
-    const f=window._pdfParsed;
-    if(f.addr) sv('fAddress',f.addr);
-    sv('fJob',`Lot ${n}`);
-    if(f.lotW) sv('lotW',f.lotW); if(f.lotD) sv('lotD',f.lotD);
-    if(f.bldgW) sv('bldgW',f.bldgW); if(f.bldgD) sv('bldgD',f.bldgD);
-    if(f.drvW) sv('drvW',f.drvW); if(f.drvD) sv('drvD',f.drvD);
-    if(f.patW) sv('patW',f.patW); if(f.patD) sv('patD',f.patD);
+  const n = parseInt(val);
+  window._selectedLotNum = n;
+  if(!document.getElementById('fJob').value.trim()){
+    sv('fJob', `Lot ${n}`);
+  }
+  const f = window._pdfParsed;
+  if(f){
+    _applyPDFData(f, window._pdfFile ? window._pdfFile.name : '');
   }
   onMeasChange();
 }
 
+function onManualLotInput(val){
+  const raw = val.trim();
+  if(!raw) return;
+  window._selectedLotNum = raw;
+  if(!document.getElementById('fJob').value.trim()){
+    sv('fJob', `Lot ${raw}`);
+  }
+  const f = window._pdfParsed;
+  if(f){
+    if(f.addr && !document.getElementById('fAddress').value.trim()) sv('fAddress', f.addr);
+    onMeasChange();
+  }
+}
+
 async function extractFromPDF(file){
   try{
-    const url=URL.createObjectURL(file);
-    const doc=await pdfjsLib.getDocument(url).promise;
-    let allText='';
-    const numPages=Math.min(doc.numPages,8);
-    for(let i=1;i<=numPages;i++){
-      const page=await doc.getPage(i);
-      const tc=await page.getTextContent();
-      allText+=' '+tc.items.map(it=>it.str.trim()).filter(Boolean).join(' ');
+    const url = URL.createObjectURL(file);
+    const doc = await pdfjsLib.getDocument(url).promise;
+    pdfDoc = doc;
+    const numPages = Math.min(doc.numPages, 20);
+    let allText = '';
+    const lotPageMap = {};
+    for(let i = 1; i <= numPages; i++){
+      const page = await doc.getPage(i);
+      const tc = await page.getTextContent();
+      const pageText = tc.items.map(it=>it.str.trim()).filter(Boolean).join(' ');
+      allText += ' ' + pageText;
+      findAllLotNumbers(pageText).forEach(n=>{ if(!lotPageMap[n]) lotPageMap[n] = i; });
     }
     URL.revokeObjectURL(url);
-    const allLots=findAllLotNumbers(allText);
-    const parsed=parsePlotText(allText);
-    return{...parsed,allLots};
-  }catch(e){return{allLots:[]};}
+    const isScanned = allText.trim().length < 80;
+    if(!Object.keys(lotPageMap).length){
+      findAllLotNumbers(allText).forEach(n=>{ lotPageMap[n] = 1; });
+    }
+    const allLots = Object.keys(lotPageMap).map(Number).sort((a,b)=>a-b);
+    const parsed  = parsePlotText(allText);
+    return {...parsed, allLots, lotPageMap, isScanned};
+  }catch(e){ return {allLots:[], lotPageMap:{}, isScanned:true}; }
 }
 
 function findAllLotNumbers(text){
-  const up=text.toUpperCase();
-  const found=new Set();
-  const re=/\b(?:LOT|UNIT|#|NO\.?)\s*0*(\d{1,4})\b/g;
+  const up = text.toUpperCase();
+  const found = new Set();
+  const re1 = /\b(?:LOT|UNIT|PARCEL|TRACT|BLOCK|NO\.?)\s*[:\-]?\s*0*(\d{1,4})\b/g;
   let m;
-  while((m=re.exec(up))!==null){
-    const n=parseInt(m[1]);
-    if(n>=1&&n<=9999) found.add(n);
-  }
+  while((m = re1.exec(up)) !== null){ const n = parseInt(m[1]); if(n>=1 && n<=9999) found.add(n); }
+  const re2 = /\bL[_\-]?0*(\d{2,4})\b/g;
+  while((m = re2.exec(up)) !== null){ const n = parseInt(m[1]); if(n>=1 && n<=9999) found.add(n); }
+  const re3 = /(?:^|[\s(])#\s*0*(\d{2,4})\b/g;
+  while((m = re3.exec(up)) !== null){ const n = parseInt(m[1]); if(n>=1 && n<=9999) found.add(n); }
   return [...found].sort((a,b)=>a-b);
 }
 
 function parsePlotText(text){
-  const up=text.toUpperCase();
-  const unitRe=/\b(?:LOT|UNIT|#)\s*0*(20[2-7])\b/;
-  const um=up.match(unitRe);
-  if(um){const n=parseInt(um[1]);if(PRESETS[n])return{preset:n,allLots:[n]};}
-  for(const[n,p]of Object.entries(PRESETS)){
-    const street=p.addr.split(',')[0].toUpperCase();
-    const num=street.match(/^\d+/)?.[0];
-    const name=street.replace(/^\d+\s*/,'').replace(/\s+(?:RD|ST|AVE|DR|LN|ROAD|STREET)\b.*/,'').trim();
-    if(num&&name&&up.includes(num)&&up.includes(name))return{preset:parseInt(n),allLots:[parseInt(n)]};
-  }
-  const data={};
-  const am=text.match(/\b\d{1,5}\s+[A-Za-z][A-Za-z ]{3,30}(?:Rd|Road|St|Street|Ave|Avenue|Dr|Drive|Ln|Lane|Ct|Court|Blvd|Way|Pl|Place)\.?(?:\s*,\s*[A-Za-z ]+(?:,\s*[A-Z]{2}\s+\d{5})?)?/i);
-  if(am) data.addr=am[0].replace(/\s+/g,' ').trim();
-  const jm=text.match(/\b(?:lot|unit|parcel)\s+#?\s*(\w{1,6})\b/i);
-  if(jm) data.job=`Lot ${jm[1]}`;
-  const labeled=[
-    {key:'lotW',re:/lot\s+width[:\s=]+(\d+(?:\.\d+)?)/i},
-    {key:'lotD',re:/lot\s+(?:depth|length)[:\s=]+(\d+(?:\.\d+)?)/i},
+  const data = {};
+  const am = text.match(/\b\d{1,5}\s+[A-Za-z][A-Za-z ]{3,30}(?:Rd|Road|St|Street|Ave|Avenue|Dr|Drive|Ln|Lane|Ct|Court|Blvd|Way|Pl|Place)\.?(?:\s*,\s*[A-Za-z ]+(?:,\s*[A-Z]{2}\s+\d{5})?)?/i);
+  if(am) data.addr = am[0].replace(/\s+/g,' ').trim();
+  const jm = text.match(/\b(?:lot|unit|parcel)\s+#?\s*(\w{1,6})\b/i);
+  if(jm) data.job = `Lot ${jm[1]}`;
+  const labeled = [
+    {key:'lotW', re:/lot\s+width[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'lotD', re:/lot\s+(?:depth|length)[:\s=]+(\d+(?:\.\d+)?)/i},
     {key:'bldgW',re:/(?:house|building|bldg)(?:\s+width)?[:\s=]+(\d+(?:\.\d+)?)/i},
     {key:'bldgD',re:/(?:house|building|bldg)(?:\s+depth)?[:\s=]+(\d+(?:\.\d+)?)/i},
-    {key:'drvW',re:/driveway(?:\s+width)?[:\s=]+(\d+(?:\.\d+)?)/i},
-    {key:'drvD',re:/driveway(?:\s+depth)?[:\s=]+(\d+(?:\.\d+)?)/i},
-    {key:'patW',re:/patio(?:\s+width)?[:\s=]+(\d+(?:\.\d+)?)/i},
-    {key:'patD',re:/patio(?:\s+depth)?[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'drvW', re:/driveway(?:\s+width)?[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'drvD', re:/driveway(?:\s+depth)?[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'patW', re:/patio(?:\s+width)?[:\s=]+(\d+(?:\.\d+)?)/i},
+    {key:'patD', re:/patio(?:\s+depth)?[:\s=]+(\d+(?:\.\d+)?)/i},
   ];
-  for(const{key,re}of labeled){const m=text.match(re);if(m)data[key]=parseFloat(m[1]);}
-  const nearby=(keyword,str)=>{
-    const idx=str.search(new RegExp(keyword,'i'));
-    if(idx<0) return null;
-    const snip=str.slice(Math.max(0,idx-10),idx+80);
-    const mm=snip.match(/(\d+(?:\.\d+)?)\s*[x×']\s*(\d+(?:\.\d+)?)/i);
-    return mm?[parseFloat(mm[1]),parseFloat(mm[2])]:null;
+  for(const {key,re} of labeled){ const m = text.match(re); if(m) data[key] = parseFloat(m[1]); }
+  const nearby = (keyword, str) => {
+    const idx = str.search(new RegExp(keyword,'i'));
+    if(idx < 0) return null;
+    const snip = str.slice(Math.max(0, idx-10), idx+80);
+    const mm = snip.match(/(\d+(?:\.\d+)?)\s*[x×']\s*(\d+(?:\.\d+)?)/i);
+    return mm ? [parseFloat(mm[1]), parseFloat(mm[2])] : null;
   };
-  if(!data.lotW){const d=nearby('lot',text);if(d&&d[0]>5&&d[0]<300&&d[1]>20&&d[1]<600){data.lotW=d[0];data.lotD=d[1];}}
-  if(!data.bldgW){const d=nearby('building',text)||nearby('house',text)||nearby('structure',text);if(d&&d[0]>5&&d[0]<200&&d[1]>10&&d[1]<200){data.bldgW=d[0];data.bldgD=d[1];}}
-  if(!data.drvW){const d=nearby('driveway',text)||nearby('drive',text);if(d&&d[0]>4&&d[0]<60&&d[1]>4&&d[1]<60){data.drvW=d[0];data.drvD=d[1];}}
-  if(!data.patW){const d=nearby('patio',text)||nearby('stoop',text)||nearby('concrete',text);if(d&&d[0]>2&&d[0]<80&&d[1]>2&&d[1]<80){data.patW=d[0];data.patD=d[1];}}
+  if(!data.lotW){ const d=nearby('lot',text); if(d&&d[0]>5&&d[0]<300&&d[1]>20&&d[1]<600){data.lotW=d[0];data.lotD=d[1];} }
+  if(!data.bldgW){ const d=nearby('building',text)||nearby('house',text)||nearby('structure',text); if(d&&d[0]>5&&d[0]<200&&d[1]>10&&d[1]<200){data.bldgW=d[0];data.bldgD=d[1];} }
+  if(!data.drvW){ const d=nearby('driveway',text)||nearby('drive',text); if(d&&d[0]>4&&d[0]<60&&d[1]>4&&d[1]<60){data.drvW=d[0];data.drvD=d[1];} }
+  if(!data.patW){ const d=nearby('patio',text)||nearby('stoop',text)||nearby('concrete',text); if(d&&d[0]>2&&d[0]<80&&d[1]>2&&d[1]<80){data.patW=d[0];data.patD=d[1];} }
   return data;
 }
 
 // ── Blueprint ──────────────────────────────────────────────────
 async function renderBlueprint(){
-  const bl=document.getElementById('bpLoad');
+  const bl = document.getElementById('bpLoad');
   bl.classList.add('show');
-  if(window._pdfFile){
-    document.getElementById('svgBlueprint').style.display='none';
-    document.getElementById('pdfCanvas').style.display='block';
-    await renderPDF(window._pdfFile);
-  } else {
-    document.getElementById('pdfCanvas').style.display='none';
-    document.getElementById('svgBlueprint').style.display='block';
-    renderSVGBlueprint(activeLot||getFormData());
-  }
+  renderSVGBlueprint(activeLot || getFormData());
   bl.classList.remove('show');
 }
 
-async function renderPDF(file){
-  const url=URL.createObjectURL(file);
+function bpZoom(factor, mode){
+  if(mode === 'fit') svgBPScale = 1;
+  else svgBPScale = Math.max(0.3, Math.min(4, svgBPScale * factor));
+  const svg = document.getElementById('svgBlueprint');
+  svg.style.transformOrigin = 'top center';
+  svg.style.transform = `scale(${svgBPScale})`;
+}
+
+function _currentPDFPage(){
+  const n = window._selectedLotNum;
+  if(n && window._lotPageMap && window._lotPageMap[n]) return window._lotPageMap[n];
+  return 1;
+}
+
+async function renderSourcePDF(){
+  if(!window._pdfFile) return;
+  const pl = document.getElementById('pdfLoad');
+  if(pl) pl.classList.add('show');
   try{
-    pdfDoc=await pdfjsLib.getDocument(url).promise;
-    await renderPDFPage(1);
-  }catch(e){
-    document.getElementById('pdfCanvas').style.display='none';
-    document.getElementById('svgBlueprint').style.display='block';
-    renderSVGBlueprint(activeLot||getFormData());
-  }
+    if(!pdfDoc){
+      const url = URL.createObjectURL(window._pdfFile);
+      pdfDoc = await pdfjsLib.getDocument(url).promise;
+    }
+    const pageNum = _currentPDFPage();
+    const page = await pdfDoc.getPage(pageNum);
+    const wrap = document.getElementById('pdfCanvas');
+    const containerW = wrap.clientWidth || 800;
+    const naturalVP = page.getViewport({scale:1, rotation:pdfRotate});
+    pdfScale = Math.max(0.5, Math.min(3, (containerW - 24) / naturalVP.width));
+    await renderPDFPage(pageNum);
+  }catch(e){}
+  if(pl) pl.classList.remove('show');
 }
 
 async function renderPDFPage(pageNum){
   if(!pdfDoc) return;
-  const page=await pdfDoc.getPage(pageNum);
-  const canvas=document.getElementById('pdfCanvas');
-  const vp=page.getViewport({scale:pdfScale,rotation:pdfRotate});
-  canvas.width=vp.width; canvas.height=vp.height;
-  await page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
+  const page = await pdfDoc.getPage(pageNum);
+  const canvas = document.getElementById('pdfRender');
+  const vp = page.getViewport({scale:pdfScale, rotation:pdfRotate});
+  canvas.width = vp.width; canvas.height = vp.height;
+  await page.render({canvasContext:canvas.getContext('2d'), viewport:vp}).promise;
 }
 
-function pdfZoom(factor,mode){
-  if(mode==='fit') pdfScale=1.0;
-  else pdfScale=Math.max(0.4,Math.min(5,pdfScale*factor));
-  if(pdfDoc) renderPDFPage(1);
-  else renderSVGBlueprint(activeLot||getFormData());
+function pdfZoom(factor, mode){
+  if(mode === 'fit') pdfScale = 1.0;
+  else pdfScale = Math.max(0.4, Math.min(5, pdfScale * factor));
+  if(pdfDoc) renderPDFPage(_currentPDFPage());
 }
 
 function pdfRotateCW(){
-  pdfRotate=(pdfRotate+90)%360;
-  if(pdfDoc) renderPDFPage(1);
+  pdfRotate = (pdfRotate + 90) % 360;
+  if(pdfDoc) renderPDFPage(_currentPDFPage());
 }
 
 function renderSVGBlueprint(d){
-  const c=calcSod(d);
-  const S=5.5;
-  const ML=90,MT=68,roadH=30,resH=104;
-  const lotW=d.lotW||40,lotD=d.lotD||100;
-  const lw=lotW*S,lh=lotD*S;
-  const svgW=lw+ML+88,svgH=lh+MT+roadH+resH+20;
-  const bh=(d.bldgD||0)*S,ph=(d.patD||0)*S,dh=(d.drvD||0)*S;
-  const bw=(d.bldgW||0)*S,pw=(d.patW||0)*S,dw=(d.drvW||0)*S;
-  const ox=ML,oy=MT;
-  const sodD=Math.max(0,lotD-(d.bldgD||0)-(d.patD||0)-(d.drvD||0));
-  const sodTop=oy+bh+ph;
-  const drvTop=oy+lh-dh;
-  const sodH=Math.max(0,drvTop-sodTop);
-  const title=d.job||(d.unit&&d.unit!=='Custom'?`Unit ${d.unit}`:'Custom Lot');
-  let o=`<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" font-family="'Segoe UI',Arial,sans-serif">`;
-  o+=`<rect width="100%" height="100%" fill="#f5f2ed"/>`;
-  o+=`<defs>
+  const c = calcSod(d);
+  const S = 5.5;
+  const ML = 90, MT = 68, roadH = 30, resH = 104;
+  const lotW = d.lotW||40, lotD = d.lotD||100;
+  const lw = lotW*S, lh = lotD*S;
+  const svgW = lw+ML+88, svgH = lh+MT+roadH+resH+20;
+  const bh = (d.bldgD||0)*S, ph = (d.patD||0)*S, dh = (d.drvD||0)*S;
+  const bw = (d.bldgW||0)*S, pw = (d.patW||0)*S, dw = (d.drvW||0)*S;
+  const ox = ML, oy = MT;
+
+  // Layout top→bottom: SOD (backyard) → Patio → Building → Driveway → Street
+  const sodD   = Math.max(0, lotD-(d.bldgD||0)-(d.patD||0)-(d.drvD||0));
+  const sodH   = sodD*S;
+  const sodTop  = oy;
+  const patTop  = oy + sodH;
+  const bldgTop = patTop + ph;
+  const drvTop  = bldgTop + bh;
+
+  const title = d.job || 'Lot Takeoff';
+  let o = `<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" font-family="'Segoe UI',Arial,sans-serif">`;
+  o += `<rect width="100%" height="100%" fill="#f5f2ed"/>`;
+  o += `<defs>
     <marker id="ah" markerWidth="5" markerHeight="5" refX="0" refY="2.5" orient="auto"><polygon points="0,0 5,2.5 0,5" fill="#1565c0"/></marker>
     <marker id="at" markerWidth="5" markerHeight="5" refX="5" refY="2.5" orient="auto"><polygon points="5,0 0,2.5 5,5" fill="#1565c0"/></marker>
     <pattern id="hatch" patternUnits="userSpaceOnUse" width="14" height="14">
       <path d="M0,14 L14,0" stroke="#6db88c" stroke-width="0.7" opacity="0.55"/>
     </pattern>
   </defs>`;
-  o+=tx(svgW/2,16,11,'bold','#1b5e20','middle',title);
-  if(d.addr&&d.addr!=='Unknown Address') o+=tx(svgW/2,29,8.5,'','#555','middle',d.addr);
-  if(d.source&&d.source!=='Manual entry') o+=tx(svgW/2,41,7,'','#888','middle',`Source: ${d.source}`);
-  o+=bx(ox,oy,lw,lh,'#e8f5e9','#2e7d32',1.5);
-  if(bh>0){
-    const ebw=bw||lw;
-    o+=bx(ox,oy,ebw,bh,'#78909c','#37474f',1.5);
-    const bm=oy+bh/2;
-    o+=tx(ox+ebw/2,bm-9,10,'bold','white','middle','Building');
-    o+=tx(ox+ebw/2,bm+5,8.5,'','#cfd8dc','middle',`${d.bldgW}′ × ${d.bldgD}′`);
-    o+=tx(ox+ebw/2,bm+19,10.5,'bold','#e8f5e9','middle',`${fmt(d.bldgW*d.bldgD)} sf`);
-    if(bh>30) o+=hd(ox+5,ox+ebw-5,oy+14,`${d.bldgW}′`);
-    if(bh>40) o+=vd(ox+ebw-13,oy+5,oy+bh-5,`${d.bldgD}′`);
+  o += tx(svgW/2, 16, 11, 'bold', '#1b5e20', 'middle', title);
+  if(d.addr && d.addr !== 'Unknown Address') o += tx(svgW/2, 29, 8.5, '', '#555', 'middle', d.addr);
+  if(d.source && d.source !== 'Manual entry') o += tx(svgW/2, 41, 7, '', '#888', 'middle', `Source: ${d.source}`);
+
+  o += bx(ox, oy, lw, lh, '#e8f5e9', '#2e7d32', 1.5);
+
+  if(sodH > 10){
+    o += `<rect x="${ox}" y="${sodTop}" width="${lw}" height="${sodH}" fill="url(#hatch)"/>`;
+    o += `<rect x="${ox}" y="${sodTop}" width="${lw}" height="${sodH}" fill="none" stroke="#4caf50" stroke-width="0.5" stroke-dasharray="5,4"/>`;
+    const sm = sodTop + sodH/2;
+    o += tx(ox+lw/2, sm-16, 10, 'bold', '#1b5e20', 'middle', '← SOD ZONE →');
+    o += tx(ox+lw/2, sm-2,  8.5, '', '#2e7d32', 'middle', `${lotW}′ wide × ${sodD.toFixed(1)}′ deep`);
+    o += tx(ox+lw/2, sm+14, 12, 'bold', '#1b5e20', 'middle', `${fmt(lotW*sodD)} sf`);
+    if(sodH > 50) o += tx(ox+lw/2, sm+29, 8, '', '#388e3c', 'middle', `(${(lotW*sodD/9).toFixed(1)} sq yd)`);
   }
-  if(ph>0){
-    const epw=pw||lw;
-    o+=bx(ox,oy+bh,epw,ph,'#d7ccc8','#795548',1,'5,3');
-    const pm=oy+bh+ph/2;
-    if(ph>=30){o+=tx(ox+epw/2,pm-6,9,'bold','#4e342e','middle','Patio');o+=tx(ox+epw/2,pm+7,8,'','#6d4c41','middle',`${d.patW}′ × ${d.patD}′ = ${fmt(d.patW*d.patD)} sf`);}
-    else{o+=tx(ox+epw/2,pm+4,7.5,'','#4e342e','middle',`Patio: ${d.patW}′ × ${d.patD}′`);}
-    if(ph>=26) o+=hd(ox+4,ox+epw-4,oy+bh+11,`${d.patW}′`);
+
+  if(ph > 0){
+    const epw = pw||lw;
+    o += bx(ox, patTop, epw, ph, '#d7ccc8', '#795548', 1, '5,3');
+    const pm = patTop + ph/2;
+    if(ph >= 30){ o += tx(ox+epw/2, pm-6, 9, 'bold', '#4e342e', 'middle', 'Patio'); o += tx(ox+epw/2, pm+7, 8, '', '#6d4c41', 'middle', `${d.patW}′ × ${d.patD}′ = ${fmt(d.patW*d.patD)} sf`); }
+    else{ o += tx(ox+epw/2, pm+4, 7.5, '', '#4e342e', 'middle', `Patio: ${d.patW}′ × ${d.patD}′`); }
+    if(ph >= 26) o += hd(ox+4, ox+epw-4, patTop+11, `${d.patW}′`);
   }
-  if(sodH>10){
-    o+=`<rect x="${ox}" y="${sodTop}" width="${lw}" height="${sodH}" fill="url(#hatch)"/>`;
-    o+=`<rect x="${ox}" y="${sodTop}" width="${lw}" height="${sodH}" fill="none" stroke="#4caf50" stroke-width="0.5" stroke-dasharray="5,4"/>`;
-    const sm=sodTop+sodH/2;
-    o+=tx(ox+lw/2,sm-16,10,'bold','#1b5e20','middle','← SOD ZONE →');
-    o+=tx(ox+lw/2,sm-2,8.5,'','#2e7d32','middle',`${lotW}′ wide × ${sodD.toFixed(1)}′ deep`);
-    o+=tx(ox+lw/2,sm+14,12,'bold','#1b5e20','middle',`${fmt(lotW*sodD)} sf`);
-    if(sodH>50) o+=tx(ox+lw/2,sm+29,8,'','#388e3c','middle',`(${(lotW*sodD/9).toFixed(1)} sq yd)`);
+
+  if(bh > 0){
+    const ebw = bw||lw;
+    o += bx(ox, bldgTop, ebw, bh, '#78909c', '#37474f', 1.5);
+    const bm = bldgTop + bh/2;
+    o += tx(ox+ebw/2, bm-9,  10, 'bold', 'white', 'middle', 'Building');
+    o += tx(ox+ebw/2, bm+5,  8.5,'', '#cfd8dc', 'middle', `${d.bldgW}′ × ${d.bldgD}′`);
+    o += tx(ox+ebw/2, bm+19, 10.5,'bold','#e8f5e9','middle', `${fmt(d.bldgW*d.bldgD)} sf`);
+    if(bh > 30) o += hd(ox+5, ox+ebw-5, bldgTop+14, `${d.bldgW}′`);
+    if(bh > 40) o += vd(ox+ebw-13, bldgTop+5, bldgTop+bh-5, `${d.bldgD}′`);
   }
-  if(dh>0){
-    const edw=dw||lw;
-    o+=bx(ox,drvTop,edw,dh,'#b0bec5','#546e7a',1);
-    const dm=drvTop+dh/2;
-    o+=tx(ox+edw/2,dm-9,9,'bold','#263238','middle','Driveway');
-    o+=tx(ox+edw/2,dm+5,8.5,'','#37474f','middle',`${d.drvW}′ × ${d.drvD}′ = ${fmt(d.drvW*d.drvD)} sf`);
-    if(dh>=26) o+=hd(ox+4,ox+edw-4,drvTop+12,`${d.drvW}′`);
-    if(dh>=26) o+=vd(ox+edw-13,drvTop+4,oy+lh-4,`${d.drvD}′`);
+
+  if(dh > 0){
+    const edw = dw||lw;
+    o += bx(ox, drvTop, edw, dh, '#b0bec5', '#546e7a', 1);
+    const dm = drvTop + dh/2;
+    o += tx(ox+edw/2, dm-9, 9, 'bold', '#263238', 'middle', 'Driveway');
+    o += tx(ox+edw/2, dm+5, 8.5, '', '#37474f', 'middle', `${d.drvW}′ × ${d.drvD}′ = ${fmt(d.drvW*d.drvD)} sf`);
+    if(dh >= 26) o += hd(ox+4, ox+edw-4, drvTop+12, `${d.drvW}′`);
+    if(dh >= 26) o += vd(ox+edw-13, drvTop+4, oy+lh-4, `${d.drvD}′`);
   }
-  o+=bx(0,oy+lh,svgW,roadH,'#546e7a','none',0);
-  o+=`<line x1="0" y1="${oy+lh+roadH/2}" x2="${svgW}" y2="${oy+lh+roadH/2}" stroke="#78909c" stroke-width="1" stroke-dasharray="10,7"/>`;
-  o+=tx(svgW/2,oy+lh+12,9,'bold','white','middle','STREET / RIGHT OF WAY');
-  o+=hd(ox,ox+lw,oy-28,`${lotW}′ wide`);
-  o+=vd(ox+lw+22,oy,oy+lh,`${lotD}′ total`);
-  if(bh>0) o+=vd(ox-28,oy,oy+bh,`${d.bldgD}′ bldg`);
-  if(ph>0) o+=vd(ox-28,oy+bh,oy+bh+ph,`${d.patD}′ pat`);
-  if(sodH>0) o+=vd(ox-28,sodTop,drvTop,`${sodD.toFixed(1)}′ sod`);
-  if(dh>0) o+=vd(ox-28,drvTop,oy+lh,`${d.drvD}′ drv`);
-  const rb=oy+lh+roadH+8;
-  const bwid=svgW-8;
-  o+=bx(4,rb,bwid,resH,'#0d2118','#1b5e20',1.5,null,6);
-  const lx=16,rx=16+Math.floor(bwid/2);
-  o+=tx(lx,rb+14,8.5,'bold','#a5d6a7','start','TAKEOFF SUMMARY');
-  o+=tx(lx,rb+28,7.5,'','#c8e6c9','start',`Lot:             ${lotW}′ × ${lotD}′ = ${fmt(c.lot)} sf`);
-  if(d.bldgD) o+=tx(lx,rb+41,7.5,'','#ef9a9a','start',`− Building:   ${d.bldgW}′ × ${d.bldgD}′ = ${fmt(c.bldg)} sf`);
-  if(d.drvD)  o+=tx(lx,rb+54,7.5,'','#ef9a9a','start',`− Driveway:  ${d.drvW}′ × ${d.drvD}′ = ${fmt(c.drv)} sf`);
-  if(d.patD)  o+=tx(lx,rb+67,7.5,'','#ef9a9a','start',`− Patio:        ${d.patW}′ × ${d.patD}′ = ${fmt(c.pat)} sf`);
-  if(d.misc)  o+=tx(lx,rb+80,7.5,'','#ef9a9a','start',`− Other hard surface: ${fmt(d.misc)} sf`);
-  o+=tx(rx,rb+14,8.5,'bold','white','start',`= ${fmt(c.sf)} sq ft SOD`);
-  o+=tx(rx,rb+28,8,'','#a5d6a7','start',`${c.sy.toFixed(1)} sq yd`);
-  o+=tx(rx,rb+44,11,'bold','#a5d6a7','start',`${c.pal} pallet${c.pal!==1?'s':''} @ ${PALLET_SF} sf`);
-  o+=tx(rx,rb+60,7.5,'','#80cbc4','start',`Impervious area: ${fmt(c.imp)} sf`);
-  if(d.source) o+=tx(rx,rb+74,6.5,'','#567a67','start',d.source);
-  o+=`</svg>`;
-  document.getElementById('svgBlueprint').outerHTML=o.replace('<svg','<svg id="svgBlueprint"');
+
+  o += bx(0, oy+lh, svgW, roadH, '#546e7a', 'none', 0);
+  o += `<line x1="0" y1="${oy+lh+roadH/2}" x2="${svgW}" y2="${oy+lh+roadH/2}" stroke="#78909c" stroke-width="1" stroke-dasharray="10,7"/>`;
+  o += tx(svgW/2, oy+lh+12, 9, 'bold', 'white', 'middle', 'STREET / RIGHT OF WAY');
+  o += tx(ox+lw/2, oy-4, 7, '', '#888', 'middle', '▲ BACK OF LOT');
+
+  o += hd(ox, ox+lw, oy-28, `${lotW}′ wide`);
+  o += vd(ox+lw+22, oy, oy+lh, `${lotD}′ total`);
+  if(sodH > 0) o += vd(ox-28, sodTop, patTop||bldgTop, `${sodD.toFixed(1)}′ sod`);
+  if(ph > 0)   o += vd(ox-28, patTop, bldgTop, `${d.patD}′ pat`);
+  if(bh > 0)   o += vd(ox-28, bldgTop, drvTop, `${d.bldgD}′ bldg`);
+  if(dh > 0)   o += vd(ox-28, drvTop, oy+lh, `${d.drvD}′ drv`);
+
+  const rb = oy+lh+roadH+8;
+  const bwid = svgW-8;
+  o += bx(4, rb, bwid, resH, '#0d2118', '#1b5e20', 1.5, null, 6);
+  const lx = 16, rx = 16+Math.floor(bwid/2);
+  o += tx(lx, rb+14, 8.5, 'bold', '#a5d6a7', 'start', 'TAKEOFF SUMMARY');
+  o += tx(lx, rb+28, 7.5, '', '#c8e6c9', 'start', `Lot:             ${lotW}′ × ${lotD}′ = ${fmt(c.lot)} sf`);
+  if(d.bldgD) o += tx(lx, rb+41, 7.5, '', '#ef9a9a', 'start', `− Building:   ${d.bldgW}′ × ${d.bldgD}′ = ${fmt(c.bldg)} sf`);
+  if(d.drvD)  o += tx(lx, rb+54, 7.5, '', '#ef9a9a', 'start', `− Driveway:  ${d.drvW}′ × ${d.drvD}′ = ${fmt(c.drv)} sf`);
+  if(d.patD)  o += tx(lx, rb+67, 7.5, '', '#ef9a9a', 'start', `− Patio:        ${d.patW}′ × ${d.patD}′ = ${fmt(c.pat)} sf`);
+  if(d.misc)  o += tx(lx, rb+80, 7.5, '', '#ef9a9a', 'start', `− Other hard surface: ${fmt(d.misc)} sf`);
+  o += tx(rx, rb+14, 8.5, 'bold', 'white', 'start', `= ${fmt(c.sf)} sq ft SOD`);
+  o += tx(rx, rb+28, 8, '', '#a5d6a7', 'start', `${c.sy.toFixed(1)} sq yd`);
+  o += tx(rx, rb+44, 11, 'bold', '#a5d6a7', 'start', `${c.pal} pallet${c.pal!==1?'s':''} @ ${PALLET_SF} sf`);
+  o += tx(rx, rb+60, 7.5, '', '#80cbc4', 'start', `Impervious area: ${fmt(c.imp)} sf`);
+  o += `</svg>`;
+  document.getElementById('svgBlueprint').outerHTML = o.replace('<svg', '<svg id="svgBlueprint"');
 }
 
 function tx(x,y,sz,w,fill,anchor,text){
@@ -1273,85 +1509,98 @@ function vd(x,y1,y2,lbl,col='#1565c0'){
 
 // ── Street View ────────────────────────────────────────────────
 function renderStreetView(){
-  const bl=document.getElementById('svLoad');
+  const bl = document.getElementById('svLoad');
   bl.classList.add('show');
-  const addr=(activeLot||{}).addr;
-  if(!addr||addr==='Unknown Address'){
+  const addr = (activeLot||{}).addr;
+  if(!addr || addr === 'Unknown Address'){
     bl.classList.remove('show');
-    document.getElementById('svFallback').style.display='flex';
+    document.getElementById('svFallback').style.display = 'flex';
     return;
   }
-  const enc=encodeURIComponent(addr);
-  const frame=document.getElementById('streetFrame');
-  frame.src='https://maps.google.com/maps?q='+enc+'&z=19&t=h&output=embed';
-  frame.onload=()=>bl.classList.remove('show');
-  document.getElementById('svLink').href='https://www.google.com/maps/search/?api=1&query='+enc;
-  setTimeout(()=>bl.classList.remove('show'),5000);
+  const enc = encodeURIComponent(addr);
+  const frame = document.getElementById('streetFrame');
+  frame.src = 'https://maps.google.com/maps?q=' + enc + '&z=19&t=h&output=embed';
+  frame.onload = ()=>bl.classList.remove('show');
+  document.getElementById('svLink').href = 'https://www.google.com/maps/search/?api=1&query=' + enc;
+  setTimeout(()=>bl.classList.remove('show'), 5000);
 }
 
 // ── GIS map ────────────────────────────────────────────────────
 function renderGIS(){
-  const bl=document.getElementById('gisLoad');
+  const bl = document.getElementById('gisLoad');
   bl.classList.add('show');
-  const d=activeLot||{};
-  if(gisMap){ gisMap.remove(); gisMap=null; }
-  gisMap=L.map('gisMapEl',{zoomControl:true});
+  const d = activeLot||{};
+  if(gisMap){ gisMap.remove(); gisMap = null; }
+  gisMap = L.map('gisMapEl', {zoomControl:true});
   L.esri.basemapLayer('Imagery').addTo(gisMap);
   L.esri.basemapLayer('ImageryLabels').addTo(gisMap);
-  const lat=d.lat||35.35117, lng=d.lng||-82.45620;
-  gisMap.setView([lat,lng],19);
+
+  // Default to center of NC/SC if no coords
+  const lat = d.lat || 35.5;
+  const lng = d.lng || -79.5;
+  const zoom = (d.lat && d.lng) ? 19 : 7;
+  gisMap.setView([lat, lng], zoom);
+
   L.control.layers({
-    '🛰 Satellite':L.esri.basemapLayer('Imagery'),
-    '🗺 Hybrid':L.layerGroup([L.esri.basemapLayer('Imagery'),L.esri.basemapLayer('ImageryLabels')]),
-    '📍 Streets':L.esri.basemapLayer('Streets'),
+    '🛰 Satellite': L.esri.basemapLayer('Imagery'),
+    '🗺 Hybrid': L.layerGroup([L.esri.basemapLayer('Imagery'), L.esri.basemapLayer('ImageryLabels')]),
+    '📍 Streets': L.esri.basemapLayer('Streets'),
   },{},{position:'topright',collapsed:true}).addTo(gisMap);
-  L.control.scale({imperial:true,metric:true}).addTo(gisMap);
+  L.control.scale({imperial:true, metric:true}).addTo(gisMap);
   bl.classList.remove('show');
 
-  const c=calcSod(d);
-  const unitLbl=d.unit!=='Custom'?`Unit ${d.unit}`:(d.job||'Property');
-  L.marker([lat,lng],{
-    icon:L.divIcon({
-      className:'',
-      html:`<div style="background:#1b5e20;color:#a5d6a7;font:bold 11px 'Segoe UI',sans-serif;padding:4px 8px;border-radius:4px;border:1.5px solid #52b788;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.5)">${unitLbl}<br><span style="font-size:9px;font-weight:normal">${fmt(c.sf)} sf · ${c.pal} pal</span></div>`,
-      iconAnchor:[40,20]
-    })
-  }).addTo(gisMap).bindPopup(`<b>${unitLbl}</b><br>${d.addr||''}<br>Sod: ${fmt(c.sf)} sf · ${c.pal} pallet${c.pal!==1?'s':''}`);
+  if(d.lat && d.lng){
+    const c = calcSod(d);
+    const unitLbl = d.job || d.addr || 'Property';
+    L.marker([d.lat, d.lng], {
+      icon: L.divIcon({
+        className: '',
+        html: `<div style="background:#1b5e20;color:#a5d6a7;font:bold 11px 'Segoe UI',sans-serif;padding:4px 8px;border-radius:4px;border:1.5px solid #52b788;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.5)">${unitLbl}<br><span style="font-size:9px;font-weight:normal">${fmt(c.sf)} sf · ${c.pal} pal</span></div>`,
+        iconAnchor: [40, 20]
+      })
+    }).addTo(gisMap).bindPopup(`<b>${unitLbl}</b><br>${d.addr||''}<br>Sod: ${fmt(c.sf)} sf · ${c.pal} pallet${c.pal!==1?'s':''}`);
 
-  if(d.lat&&d.lng){
-    const pt=L.latLng(d.lat,d.lng);
-    L.esri.query({url:'https://gisweb.hendersoncountync.gov/arcgis/rest/services/Parcels/FeatureServer/0'})
-      .nearby(pt,40)
-      .fields(['PIN_NUM','OWNER','SITE_ADD','CALC_ACRES'])
-      .run((err,fc)=>{
-        if(!err&&fc&&fc.features&&fc.features.length>0){
-          L.geoJSON(fc.features[0],{style:{color:'#52b788',weight:2.5,fillColor:'#52b788',fillOpacity:.12}}).addTo(gisMap);
-        }
-      });
+    // Try county GIS parcel overlay
+    const state  = (window._geocodedState||'').toUpperCase();
+    const county = (window._geocodedCounty||'').toLowerCase();
+    const key    = `${county},${state.toLowerCase()}`;
+    const cfg    = COUNTY_GIS[key];
+    const gisUrl = cfg ? cfg.url : (state === 'NC' ? NC_ONEMAP_URL : null);
+    if(gisUrl){
+      const pt = L.latLng(d.lat, d.lng);
+      L.esri.query({url: gisUrl})
+        .nearby(pt, 40)
+        .run((err, fc)=>{
+          if(!err && fc && fc.features && fc.features.length > 0){
+            L.geoJSON(fc.features[0], {
+              style:{color:'#52b788',weight:2.5,fillColor:'#52b788',fillOpacity:.12}
+            }).addTo(gisMap);
+          }
+        });
+    }
   }
 }
 
 // ── Calculation engine ─────────────────────────────────────────
 function calcSod(d){
-  const lot =(d.lotW||0)*(d.lotD||0);
-  const bldg=(d.bldgW||0)*(d.bldgD||0);
-  const drv =(d.drvW||0)*(d.drvD||0);
-  const pat =(d.patW||0)*(d.patD||0);
-  const misc=+(d.misc||0);
-  const imp =bldg+drv+pat+misc;
-  const sf  =Math.max(0,lot-imp);
-  return{lot,bldg,drv,pat,misc,imp,sf,sy:sf/9,pal:Math.ceil(sf/PALLET_SF)};
+  const lot  = (d.lotW||0)*(d.lotD||0);
+  const bldg = (d.bldgW||0)*(d.bldgD||0);
+  const drv  = (d.drvW||0)*(d.drvD||0);
+  const pat  = (d.patW||0)*(d.patD||0);
+  const misc = +(d.misc||0);
+  const imp  = bldg+drv+pat+misc;
+  const sf   = Math.max(0, lot-imp);
+  return {lot, bldg, drv, pat, misc, imp, sf, sy:sf/9, pal:Math.ceil(sf/PALLET_SF)};
 }
 
 // ── CSV Export ─────────────────────────────────────────────────
 function exportCSV(){
-  const d=activeLot||getFormData(),c=calcSod(d);
-  const rows=[
+  const d = activeLot||getFormData(), c = calcSod(d);
+  const rows = [
     ['Field','Value','Unit'],
-    ['Job / Label',d.job||'',''],
-    ['Address',d.addr,''],
-    ['Lot / Unit',d.unit,''],
-    ['Source',d.source||'',''],
+    ['Job / Label', d.job||'', ''],
+    ['Address', d.addr, ''],
+    ['Source', d.source||'', ''],
     ['','',''],
     ['Lot Width',d.lotW,'ft'],['Lot Depth',d.lotD,'ft'],['Lot Area',c.lot,'sf'],
     ['Building W',d.bldgW,'ft'],['Building D',d.bldgD,'ft'],['Building Area',c.bldg,'sf'],
@@ -1363,11 +1612,11 @@ function exportCSV(){
     ['Sod Square Yards',c.sy.toFixed(1),'sy'],
     [`Pallets (${PALLET_SF} sf/ea)`,c.pal,'pallets'],
   ];
-  const csv=rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
-  const label=(d.job||d.addr||'takeoff').replace(/[^a-z0-9]+/gi,'-').toLowerCase().slice(0,40);
+  const csv = rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const label = (d.job||d.addr||'takeoff').replace(/[^a-z0-9]+/gi,'-').toLowerCase().slice(0,40);
   Object.assign(document.createElement('a'),{
-    href:'data:text/csv,'+encodeURIComponent(csv),
-    download:`sod-${label}-${Date.now()}.csv`
+    href: 'data:text/csv,' + encodeURIComponent(csv),
+    download: `sod-${label}-${Date.now()}.csv`
   }).click();
 }
 </script>
