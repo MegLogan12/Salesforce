@@ -780,7 +780,7 @@ function setGIS(state,head,body,sources){
 }
 
 async function runGISLookup(addr){
-  setGIS('searching','Searching GIS, OSM & municipal records…','','');
+  setGIS('searching','Searching GIS, county records, FEMA NSI & OSM…','','');
 
   let lat=null, lng=null;
   if(activePreset){ lat=PRESETS[activePreset].lat; lng=PRESETS[activePreset].lng; }
@@ -788,13 +788,22 @@ async function runGISLookup(addr){
     const geo=await geocodeNominatim(addr);
     if(geo){ lat=geo.lat; lng=geo.lng; }
   }
+  // Census geocoder fallback
+  if(!lat){
+    const geo=await geocodeCensus(addr);
+    if(geo){ lat=geo.lat; lng=geo.lng; }
+  }
 
   if(!lat){
-    setGIS('warn','Geocoding failed','Address not found in OSM — may be new construction. Enter measurements manually or upload a plot plan.','Nominatim / OSM');
+    setGIS('warn','Geocoding failed','Address not found — may be new construction. Enter measurements manually or upload a plot plan.','Nominatim · Census Geocoder');
     return;
   }
 
-  const [osm,county]=await Promise.all([queryOSMFeatures(lat,lng),queryCountyGIS(lat,lng,addr)]);
+  const [osm,county,nsi]=await Promise.all([
+    queryOSMFeatures(lat,lng),
+    queryCountyGIS(lat,lng,addr),
+    queryFEMANSI(lat,lng),
+  ]);
 
   const applied=[], verified=[], diffs=[];
   const lotW=fv('lotW');
@@ -819,6 +828,14 @@ async function runGISLookup(addr){
       tryFill('lotD',Math.round(lotSF/lotW*10)/10,'County GIS');
     } else if(osm.lotBBoxW){
       tryFill('lotW',osm.lotBBoxW,'OSM parcel');
+    }
+  }
+  // FEMA NSI building footprint
+  if(nsi.sqft&&!osm.buildingArea){
+    const bw=fv('bldgW')||lotW||0;
+    if(bw>0){
+      tryFill('bldgW',bw,'FEMA NSI');
+      tryFill('bldgD',Math.round(nsi.sqft/bw*10)/10,'FEMA NSI');
     }
   }
   if(osm.buildingArea){
@@ -847,6 +864,7 @@ async function runGISLookup(addr){
   onMeasChange();
 
   const srcList=[
+    nsi.sqft?`FEMA NSI ${fmt(nsi.sqft)} sf footprint`:null,
     osm.buildingArea?`OSM building ${fmt(osm.buildingArea)} sf`:null,
     osm.drivewayArea?`OSM driveway ${fmt(osm.drivewayArea)} sf`:null,
     county.lotAcres?`County GIS ${fmt(county.lotAcres*43560)} sf lot`:null,
@@ -854,7 +872,9 @@ async function runGISLookup(addr){
   ].filter(Boolean);
 
   if(!srcList.length&&!applied.length){
-    setGIS('warn','No structural data found','OSM/GIS data unavailable — property may be new construction not yet mapped.',`Checked: OSM Overpass · Nominatim · County GIS`);
+    setGIS('warn','No structural data found',
+      'Property not yet in OSM, FEMA NSI, or County GIS — likely new construction. Enter measurements from your plot plan.',
+      `Checked: FEMA NSI · OSM Overpass · Nominatim · Census · Henderson County GIS`);
     return;
   }
 
@@ -878,6 +898,46 @@ async function geocodeNominatim(addr){
     }
   }catch(e){}
   return null;
+}
+
+async function geocodeCensus(addr){
+  try{
+    const url='https://geocoding.geo.census.gov/geocoder/locations/onelineaddress?address='+
+      encodeURIComponent(addr)+'&benchmark=Public_AR_Current&format=json';
+    const r=await fetch(url);
+    const d=await r.json();
+    const matches=d?.result?.addressMatches;
+    if(matches&&matches.length>0){
+      const c=matches[0].coordinates;
+      window._geocodedLat=parseFloat(c.y);
+      window._geocodedLng=parseFloat(c.x);
+      return{lat:window._geocodedLat,lng:window._geocodedLng};
+    }
+  }catch(e){}
+  return null;
+}
+
+async function queryFEMANSI(lat,lng){
+  try{
+    const d=0.0012; // ~130m radius bbox
+    const url=`https://nsi.sec.usace.army.mil/nsiapi/structures?bbox=${lng-d},${lat-d},${lng+d},${lat+d}`;
+    const r=await fetch(url,{signal:AbortSignal.timeout(8000)});
+    const data=await r.json();
+    if(!data||!data.features||!data.features.length) return{};
+    // Find closest feature
+    let best=null,bestDist=Infinity;
+    for(const f of data.features){
+      const [fLng,fLat]=f.geometry.coordinates;
+      const dist=Math.hypot(fLat-lat,fLng-lng);
+      if(dist<bestDist){bestDist=dist;best=f.properties;}
+    }
+    if(!best) return{};
+    return{
+      sqft:parseFloat(best.sqft)||parseFloat(best.ftprntsf)||null,
+      stories:parseFloat(best.num_story)||null,
+      foundType:best.found_type||null,
+    };
+  }catch(e){return{};}
 }
 
 async function queryOSMFeatures(lat,lng){
@@ -1286,10 +1346,16 @@ function renderSVGBlueprint(d){
   const bh=(d.bldgD||0)*S,ph=(d.patD||0)*S,dh=(d.drvD||0)*S;
   const bw=(d.bldgW||0)*S,pw=(d.patW||0)*S,dw=(d.drvW||0)*S;
   const ox=ML,oy=MT;
+
+  // Correct layout — top=backyard, bottom=street:
+  //  SOD (backyard) → Patio → Building → Driveway → Street
   const sodD=Math.max(0,lotD-(d.bldgD||0)-(d.patD||0)-(d.drvD||0));
-  const sodTop=oy+bh+ph;
-  const drvTop=oy+lh-dh;
-  const sodH=Math.max(0,drvTop-sodTop);
+  const sodH=sodD*S;
+  const sodTop =oy;             // backyard sod at top
+  const patTop =oy+sodH;        // patio below sod
+  const bldgTop=patTop+ph;      // building below patio
+  const drvTop =bldgTop+bh;     // driveway below building (touches street)
+
   const title=d.job||(d.unit&&d.unit!=='Custom'?`Unit ${d.unit}`:'Custom Lot');
   let o=`<svg xmlns="http://www.w3.org/2000/svg" width="${svgW}" height="${svgH}" font-family="'Segoe UI',Arial,sans-serif">`;
   o+=`<rect width="100%" height="100%" fill="#f5f2ed"/>`;
@@ -1303,25 +1369,11 @@ function renderSVGBlueprint(d){
   o+=tx(svgW/2,16,11,'bold','#1b5e20','middle',title);
   if(d.addr&&d.addr!=='Unknown Address') o+=tx(svgW/2,29,8.5,'','#555','middle',d.addr);
   if(d.source&&d.source!=='Manual entry') o+=tx(svgW/2,41,7,'','#888','middle',`Source: ${d.source}`);
+
+  // Lot outline
   o+=bx(ox,oy,lw,lh,'#e8f5e9','#2e7d32',1.5);
-  if(bh>0){
-    const ebw=bw||lw;
-    o+=bx(ox,oy,ebw,bh,'#78909c','#37474f',1.5);
-    const bm=oy+bh/2;
-    o+=tx(ox+ebw/2,bm-9,10,'bold','white','middle','Building');
-    o+=tx(ox+ebw/2,bm+5,8.5,'','#cfd8dc','middle',`${d.bldgW}′ × ${d.bldgD}′`);
-    o+=tx(ox+ebw/2,bm+19,10.5,'bold','#e8f5e9','middle',`${fmt(d.bldgW*d.bldgD)} sf`);
-    if(bh>30) o+=hd(ox+5,ox+ebw-5,oy+14,`${d.bldgW}′`);
-    if(bh>40) o+=vd(ox+ebw-13,oy+5,oy+bh-5,`${d.bldgD}′`);
-  }
-  if(ph>0){
-    const epw=pw||lw;
-    o+=bx(ox,oy+bh,epw,ph,'#d7ccc8','#795548',1,'5,3');
-    const pm=oy+bh+ph/2;
-    if(ph>=30){o+=tx(ox+epw/2,pm-6,9,'bold','#4e342e','middle','Patio');o+=tx(ox+epw/2,pm+7,8,'','#6d4c41','middle',`${d.patW}′ × ${d.patD}′ = ${fmt(d.patW*d.patD)} sf`);}
-    else{o+=tx(ox+epw/2,pm+4,7.5,'','#4e342e','middle',`Patio: ${d.patW}′ × ${d.patD}′`);}
-    if(ph>=26) o+=hd(ox+4,ox+epw-4,oy+bh+11,`${d.patW}′`);
-  }
+
+  // ── SOD ZONE (backyard, top of lot) ──
   if(sodH>10){
     o+=`<rect x="${ox}" y="${sodTop}" width="${lw}" height="${sodH}" fill="url(#hatch)"/>`;
     o+=`<rect x="${ox}" y="${sodTop}" width="${lw}" height="${sodH}" fill="none" stroke="#4caf50" stroke-width="0.5" stroke-dasharray="5,4"/>`;
@@ -1331,6 +1383,30 @@ function renderSVGBlueprint(d){
     o+=tx(ox+lw/2,sm+14,12,'bold','#1b5e20','middle',`${fmt(lotW*sodD)} sf`);
     if(sodH>50) o+=tx(ox+lw/2,sm+29,8,'','#388e3c','middle',`(${(lotW*sodD/9).toFixed(1)} sq yd)`);
   }
+
+  // ── PATIO (behind building) ──
+  if(ph>0){
+    const epw=pw||lw;
+    o+=bx(ox,patTop,epw,ph,'#d7ccc8','#795548',1,'5,3');
+    const pm=patTop+ph/2;
+    if(ph>=30){o+=tx(ox+epw/2,pm-6,9,'bold','#4e342e','middle','Patio');o+=tx(ox+epw/2,pm+7,8,'','#6d4c41','middle',`${d.patW}′ × ${d.patD}′ = ${fmt(d.patW*d.patD)} sf`);}
+    else{o+=tx(ox+epw/2,pm+4,7.5,'','#4e342e','middle',`Patio: ${d.patW}′ × ${d.patD}′`);}
+    if(ph>=26) o+=hd(ox+4,ox+epw-4,patTop+11,`${d.patW}′`);
+  }
+
+  // ── BUILDING ──
+  if(bh>0){
+    const ebw=bw||lw;
+    o+=bx(ox,bldgTop,ebw,bh,'#78909c','#37474f',1.5);
+    const bm=bldgTop+bh/2;
+    o+=tx(ox+ebw/2,bm-9,10,'bold','white','middle','Building');
+    o+=tx(ox+ebw/2,bm+5,8.5,'','#cfd8dc','middle',`${d.bldgW}′ × ${d.bldgD}′`);
+    o+=tx(ox+ebw/2,bm+19,10.5,'bold','#e8f5e9','middle',`${fmt(d.bldgW*d.bldgD)} sf`);
+    if(bh>30) o+=hd(ox+5,ox+ebw-5,bldgTop+14,`${d.bldgW}′`);
+    if(bh>40) o+=vd(ox+ebw-13,bldgTop+5,bldgTop+bh-5,`${d.bldgD}′`);
+  }
+
+  // ── DRIVEWAY (front, at street) ──
   if(dh>0){
     const edw=dw||lw;
     o+=bx(ox,drvTop,edw,dh,'#b0bec5','#546e7a',1);
@@ -1340,15 +1416,23 @@ function renderSVGBlueprint(d){
     if(dh>=26) o+=hd(ox+4,ox+edw-4,drvTop+12,`${d.drvW}′`);
     if(dh>=26) o+=vd(ox+edw-13,drvTop+4,oy+lh-4,`${d.drvD}′`);
   }
+
+  // Street / ROW
   o+=bx(0,oy+lh,svgW,roadH,'#546e7a','none',0);
   o+=`<line x1="0" y1="${oy+lh+roadH/2}" x2="${svgW}" y2="${oy+lh+roadH/2}" stroke="#78909c" stroke-width="1" stroke-dasharray="10,7"/>`;
   o+=tx(svgW/2,oy+lh+12,9,'bold','white','middle','STREET / RIGHT OF WAY');
+
+  // "BACK" label at top
+  o+=tx(ox+lw/2,oy-4,7,'','#888','middle','▲ BACK OF LOT');
+
+  // Dimension lines (left side)
   o+=hd(ox,ox+lw,oy-28,`${lotW}′ wide`);
   o+=vd(ox+lw+22,oy,oy+lh,`${lotD}′ total`);
-  if(bh>0) o+=vd(ox-28,oy,oy+bh,`${d.bldgD}′ bldg`);
-  if(ph>0) o+=vd(ox-28,oy+bh,oy+bh+ph,`${d.patD}′ pat`);
-  if(sodH>0) o+=vd(ox-28,sodTop,drvTop,`${sodD.toFixed(1)}′ sod`);
-  if(dh>0) o+=vd(ox-28,drvTop,oy+lh,`${d.drvD}′ drv`);
+  if(sodH>0) o+=vd(ox-28,sodTop,patTop||bldgTop,`${sodD.toFixed(1)}′ sod`);
+  if(ph>0)   o+=vd(ox-28,patTop,bldgTop,`${d.patD}′ pat`);
+  if(bh>0)   o+=vd(ox-28,bldgTop,drvTop,`${d.bldgD}′ bldg`);
+  if(dh>0)   o+=vd(ox-28,drvTop,oy+lh,`${d.drvD}′ drv`);
+
   const rb=oy+lh+roadH+8;
   const bwid=svgW-8;
   o+=bx(4,rb,bwid,resH,'#0d2118','#1b5e20',1.5,null,6);
