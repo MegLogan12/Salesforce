@@ -1,0 +1,879 @@
+<template>
+
+<!-- Record banner -->
+<section class="record-banner">
+    <div class="record-title-row">
+        <div class="object-icon">📅</div>
+        <div>
+            <div class="eyebrow">FSL Dispatch Overlay · ServiceAppointment, AssignedResource, ServiceResource, ServiceTerritory</div>
+            <div class="record-title">Scheduling Console</div>
+            <div class="record-sub">LOVING operating console over standard Salesforce Field Service. No fake data — every surface reflects live org records or shows a clear unavailable state.</div>
+        </div>
+        <div class="banner-actions">
+            <button class="btn" onclick={handleOpenFslDispatcher}>Open FSL Dispatcher</button>
+            <button class="btn" onclick={handleRefreshAll}>↻ Refresh Data</button>
+            <button class="btn primary" onclick={handleReleaseSchedule}>Release Schedule</button>
+        </div>
+    </div>
+</section>
+
+<!-- Tab navigation — 15 tabs per approved spec -->
+<nav class="app-nav" aria-label="Scheduling console tabs">
+    <template for:each={tabs} for:item="t">
+        <button key={t.id} class={t.cls} data-id={t.id} onclick={handleTab}>
+            {t.label}
+            <template if:true={t.badge}><span class={t.badgeCls}>{t.badge}</span></template>
+        </button>
+    </template>
+</nav>
+
+<!-- Loading -->
+<template if:true={isLoading}>
+    <div class="loading-wrap">
+        <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+    </div>
+</template>
+
+<main class="body">
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 1 — DASHBOARD
+═══════════════════════════════════════════════════════ -->
+<template if:true={isDashboard}>
+
+    <!-- KPI strip -->
+    <div class="kpis">
+        <div class="kpi blue">
+            <div class="n">{dashKpi.scheduledThisMonth}</div>
+            <div class="l">Scheduled this month</div>
+            <div class="s">ServiceAppointment</div>
+        </div>
+        <div class="kpi green">
+            <div class="n">{dashKpi.activeToday}</div>
+            <div class="l">Active today</div>
+            <div class="s">In Progress / Dispatched</div>
+        </div>
+        <div class="kpi amber">
+            <div class="n">{dashKpi.readyToSchedule}</div>
+            <div class="l">Ready to schedule</div>
+            <div class="s">Clear-to-schedule queue</div>
+        </div>
+        <div class="kpi red">
+            <div class="n">{dashKpi.issueCount}</div>
+            <div class="l">Needs review</div>
+            <div class="s">Weather, PTO, GPS</div>
+        </div>
+        <div class="kpi aqua">
+            <div class="n">{dashKpi.crewsActive}</div>
+            <div class="l">Crews active</div>
+            <div class="s">AssignedResource</div>
+        </div>
+        <div class="kpi purple">
+            <div class="n">{dashKpi.capacityPct}%</div>
+            <div class="l">Capacity used</div>
+            <div class="s">ServiceTerritory</div>
+        </div>
+    </div>
+
+    <!-- Alert notice -->
+    <template if:true={dashAlert.message}>
+        <div class={dashAlert.cls}><strong>{dashAlert.headline}</strong> {dashAlert.message}</div>
+    </template>
+
+    <div class="layout-rail">
+        <div>
+            <!-- Health card + weather -->
+            <div class="grid2">
+                <div class="panel">
+                    <div class="panel-head"><div class="panel-icon">📈</div><h3>Today's scheduling health</h3><span class="chip green">Live</span></div>
+                    <div class="panel-body">
+                        <div class="grid4">
+                            <div><div class="label-sm">Released</div><div class="value-sm strong">{dashHealth.releaseStatus}</div></div>
+                            <div><div class="label-sm">Next release</div><div class="value-sm strong">{dashHealth.nextRelease}</div></div>
+                            <div><div class="label-sm">Open stops</div><div class="value-sm strong">{dashHealth.openStops}</div></div>
+                            <div><div class="label-sm">Weather hold</div><div class="value-sm strong">{dashHealth.weatherHold}</div></div>
+                        </div>
+                        <div class="gap-md"></div>
+                        <div class="progress"><span class="progress-fill" style={dashHealth.progressStyle}></span></div>
+                    </div>
+                </div>
+                <template if:true={hasWeatherAlert}>
+                    <div class="weather-card">
+                        <div class="weather-main">
+                            <div class="weather-ico">{topWeatherAlert.icon}</div>
+                            <div>
+                                <div class="label-sm">Weather risk · {topWeatherAlert.division}</div>
+                                <div class="temp">{topWeatherAlert.summary}</div>
+                                <div class="weather-meta">{topWeatherAlert.details} · Weather_Alert__c</div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+                <template if:false={hasWeatherAlert}>
+                    <div class="weather-card">
+                        <div class="weather-main">
+                            <div class="weather-ico">🌤</div>
+                            <div>
+                                <div class="label-sm">Weather</div>
+                                <div class="weather-meta">No active Weather_Alert__c records — or source not configured.</div>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Appointment queue table -->
+            <div class="panel">
+                <div class="panel-head">
+                    <div class="panel-icon">🚚</div>
+                    <h3>FSL appointment queue</h3>
+                    <button class="btn" onclick={handleShowBoard}>Open board</button>
+                </div>
+                <div class="panel-body" style="padding: 0">
+                    <template if:true={hasDashQueue}>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Appointment</th><th>Work Order</th><th>Community / Lot</th>
+                                    <th>Window</th><th>Assigned</th><th>Status</th><th>Risk</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={dashQueue} for:item="a">
+                                    <tr key={a.saId}>
+                                        <td><span class="link" data-id={a.saId} onclick={handleNavigateSA}>{a.saNumber}</span></td>
+                                        <td><span class="link" data-id={a.workOrderId} onclick={handleNavigateWO}>{a.workOrderName}</span></td>
+                                        <td>{a.community} · Lot {a.lot}<br/><span style="color: var(--muted)">{a.builder}</span></td>
+                                        <td>{a.window}</td>
+                                        <td>{a.foremanName}<br/><span style="color: var(--muted)">{a.crewName}</span></td>
+                                        <td><span class={a.statusCss}>{a.status}</span></td>
+                                        <td><span class={a.riskCss}>{a.risk}</span></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                    <template if:false={hasDashQueue}>
+                        <div style="padding: 20px; text-align: center; color: var(--muted); font-size: 11px">No ServiceAppointment records for today.</div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar: quick actions + integration status -->
+        <aside>
+            <div class="panel">
+                <div class="panel-head"><div class="panel-icon">⚡</div><h3>Quick actions</h3></div>
+                <div class="panel-body" style="display: flex; flex-direction: column; gap: 8px">
+                    <button class="btn primary wide" onclick={handleRunOptimizer}>Run FSL Optimizer</button>
+                    <button class="btn wide" onclick={handleCreateIssue}>Create schedule issue</button>
+                    <button class="btn wide" onclick={handleRecalcRoute}>Recalculate route</button>
+                    <button class="btn wide" onclick={handleNotifyForemen}>Notify foremen</button>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-head"><div class="panel-icon">🔌</div><h3>Integration status</h3></div>
+                <div class="panel-body">
+                    <div class="pill-row">
+                        <span class={integStatus.fslCss}>{integStatus.fslLabel}</span>
+                        <span class={integStatus.weatherCss}>{integStatus.weatherLabel}</span>
+                        <span class={integStatus.trafficCss}>{integStatus.trafficLabel}</span>
+                        <span class={integStatus.wexCss}>{integStatus.wexLabel}</span>
+                        <span class={integStatus.ripplingCss}>{integStatus.ripplingLabel}</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</template>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 2 — AUTO-SCHEDULE
+═══════════════════════════════════════════════════════ -->
+<template if:true={isAutoSchedule}>
+    <div class="notice">
+        <strong>Auto-Schedule overlays standard FSL.</strong> Proposes changes to ServiceAppointment and AssignedResource. Does not replace FSL Dispatch.
+    </div>
+    <div class="kpi3">
+        <div class="kpi green"><div class="n">{autoSchedule.eligibleJobs}</div><div class="l">Eligible jobs</div><div class="s">Ready-to-schedule</div></div>
+        <div class="kpi purple"><div class="n">{autoSchedule.crewsAvailable}</div><div class="l">Crews available</div><div class="s">ResourceAbsence checked</div></div>
+        <div class="kpi amber"><div class="n">{autoSchedule.humanReviewCount}</div><div class="l">Human review</div><div class="s">Weather + PTO</div></div>
+    </div>
+    <div class="panel">
+        <div class="panel-head">
+            <div class="panel-icon">⚡</div>
+            <h3>System-proposed schedule</h3>
+            <button class="btn" onclick={handleRunOptimizer}>Run again</button>
+            <button class="btn primary" onclick={handleApproveAllProposed}>Approve proposed</button>
+        </div>
+        <div class="panel-body">
+            <template if:true={hasAutoProposals}>
+                <div class="grid2">
+                    <template for:each={autoSchedule.proposals} for:item="p">
+                        <div key={p.dateStr} class="job-card">
+                            <div class="job-head">
+                                <div class="job-ico">{p.icon}</div>
+                                <div>
+                                    <div class="job-title">{p.label}</div>
+                                    <div class="job-sub">{p.reviewNote}</div>
+                                </div>
+                            </div>
+                            <div class="pill-row">
+                                <span class={p.chipCss}>{p.chipLabel}</span>
+                                <span class="chip blue">{p.stops} stops</span>
+                            </div>
+                            <div class="job-actions">
+                                <button class="btn primary" data-date={p.dateStr} onclick={handleApproveProposal}>Approve</button>
+                                <button class="btn" onclick={handleShowBoard}>Review board</button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+            <template if:false={hasAutoProposals}>
+                <div style="padding: 16px; text-align: center; color: var(--muted)">Run the FSL Optimizer to generate schedule proposals.</div>
+            </template>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="panel-head"><div class="panel-icon">🕐</div><h3>Rippling PTO / FSL ResourceAbsence check</h3></div>
+        <div class="panel-body" style="padding: 0">
+            <template if:true={hasResourceAvailability}>
+                <table class="table">
+                    <thead><tr><th>Resource</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <template for:each={autoSchedule.resourceAvailability} for:item="r">
+                            <tr key={r.resourceId}>
+                                <td class="link">{r.resourceName}</td>
+                                <td><span class={r.monCss}>{r.monLabel}</span></td>
+                                <td><span class={r.tueCss}>{r.tueLabel}</span></td>
+                                <td><span class={r.wedCss}>{r.wedLabel}</span></td>
+                                <td><span class={r.thuCss}>{r.thuLabel}</span></td>
+                                <td><span class={r.friCss}>{r.friLabel}</span></td>
+                                <td><span class={r.weekCss}>{r.weekStatus}</span></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={hasResourceAvailability}>
+                <div style="padding: 16px; text-align: center; color: var(--muted)">No ResourceAbsence data found for this week.</div>
+            </template>
+        </div>
+    </div>
+</template>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 3 — SCHEDULE ISSUES
+═══════════════════════════════════════════════════════ -->
+<template if:true={isIssues}>
+    <div class="kpi3">
+        <div class="kpi red"><div class="n">{issueKpi.weather}</div><div class="l">Weather issues</div><div class="s">Weather_Alert__c</div></div>
+        <div class="kpi amber"><div class="n">{issueKpi.pto}</div><div class="l">PTO conflicts</div><div class="s">ResourceAbsence</div></div>
+        <div class="kpi amber"><div class="n">{issueKpi.gps}</div><div class="l">GPS stale</div><div class="s">WEX_GPS_Position__c</div></div>
+    </div>
+    <div class="gap-md"></div>
+    <template if:true={hasIssues}>
+        <template for:each={scheduleIssues} for:item="si">
+            <div key={si.id} class="panel">
+                <div class="panel-head">
+                    <div class="panel-icon">{si.icon}</div>
+                    <h3>{si.name}</h3>
+                    <span class={si.severityCss}>{si.issueType}</span>
+                </div>
+                <div class="panel-body">
+                    <p style="font-size: 12px; margin-bottom: 10px">{si.summary}</p>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap">
+                        <button class="btn primary" data-id={si.id} onclick={handleResolveIssue}>Resolve</button>
+                        <button class="btn" data-id={si.id} onclick={handleReassignFromIssue}>Reassign</button>
+                        <span class="chip gray">{si.status}</span>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </template>
+    <template if:false={hasIssues}>
+        <div class="notice green"><strong>All clear.</strong> No open Schedule_Issue__c records for the current period.</div>
+    </template>
+</template>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 4 — PENDING
+═══════════════════════════════════════════════════════ -->
+<template if:true={isPending}>
+    <div class="toolbar">
+        <button class="filter-chip on" onclick={handlePendingAll}>All</button>
+        <button class="filter-chip" onclick={handlePendingInventory}>Inventory</button>
+        <button class="filter-chip" onclick={handlePendingSite}>Site</button>
+        <button class="filter-chip" onclick={handlePendingClear}>Clear to Schedule</button>
+        <span class="spacer"></span>
+        <button class="btn primary" onclick={handleOpenBacklog}>Open backlog</button>
+    </div>
+    <div class="grid2">
+        <div class="panel">
+            <div class="panel-head"><div class="panel-icon">📦</div><h3>Waiting for inventory</h3><span class="chip amber">{pendingData.inventoryCount}</span></div>
+            <div class="panel-body">
+                <template if:true={hasInventoryPending}>
+                    <template for:each={pendingData.inventoryBlocked} for:item="item">
+                        <div key={item.workOrderId} class="job-card">
+                            <div class="job-title">{item.communityName} · {item.name}</div>
+                            <div class="job-sub">{item.blockDetail}</div>
+                            <span class={item.chipCss}>{item.chipLabel}</span>
+                        </div>
+                    </template>
+                </template>
+                <template if:false={hasInventoryPending}>
+                    <div style="color: var(--muted); font-size: 11px">No inventory blocks.</div>
+                </template>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-head"><div class="panel-icon">🏗</div><h3>Waiting for site</h3><span class="chip red">{pendingData.siteCount}</span></div>
+            <div class="panel-body">
+                <template if:true={hasSitePending}>
+                    <template for:each={pendingData.siteReadinessBlocked} for:item="item">
+                        <div key={item.workOrderId} class="job-card">
+                            <div class="job-title">{item.communityName} · {item.name}</div>
+                            <div class="job-sub">{item.blockDetail}</div>
+                            <span class={item.chipCss}>{item.chipLabel}</span>
+                        </div>
+                    </template>
+                </template>
+                <template if:false={hasSitePending}>
+                    <div style="color: var(--muted); font-size: 11px">No site readiness blocks.</div>
+                </template>
+            </div>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="panel-head"><div class="panel-icon">✓</div><h3>Clear to schedule backlog</h3><span class="chip blue">{pendingData.clearCount}</span></div>
+        <div class="panel-body" style="padding: 0">
+            <template if:true={hasClearPending}>
+                <table class="table">
+                    <thead><tr><th>Work Order</th><th>Community</th><th>Work Type</th><th>Ready Since</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <template for:each={pendingData.sameDayUrgent} for:item="item">
+                            <tr key={item.workOrderId}>
+                                <td class="link">{item.name}</td>
+                                <td>{item.communityName}</td>
+                                <td>{item.chipLabel}</td>
+                                <td>{item.blockDetail}</td>
+                                <td><button class="btn" data-id={item.workOrderId} onclick={handleScheduleWO}>Schedule</button></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={hasClearPending}>
+                <div style="padding: 20px; text-align: center; color: var(--muted)">No urgent pending work orders.</div>
+            </template>
+        </div>
+    </div>
+</template>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 5 — SCHEDULE BOARD
+═══════════════════════════════════════════════════════ -->
+<template if:true={isBoard}>
+    <div class="notice green">
+        <strong>Schedule Board:</strong> cards are ServiceAppointment records with AssignedResource context. Assignments update through FSL-safe paths only.
+    </div>
+    <div class="toolbar">
+        <select class="input-sm select-sm" onchange={handleBoardDateChange}>
+            <template for:each={boardDateOptions} for:item="d">
+                <option key={d.value} value={d.value}>{d.label}</option>
+            </template>
+        </select>
+        <button class="btn" onclick={handleRefreshBoard}>↻ Refresh</button>
+        <button class="btn primary" onclick={handleReleaseSchedule}>Release Day</button>
+        <span class="chip {boardSummary.chipCss}">{boardSummary.totalCrews} crews · {boardSummary.totalStops} stops</span>
+    </div>
+    <template if:true={hasBoardCrews}>
+        <div class="fsl-board">
+            <template for:each={boardCrews} for:item="crew">
+                <div key={crew.crewId} class="crew-col">
+                    <div class="crew-head">
+                        <div class="crew-name">{crew.crewName}</div>
+                        <div class="crew-meta">{crew.foremanName} · {crew.stopCount} stops · <span class={crew.summaryChipCss}>{crew.summaryChip}</span></div>
+                    </div>
+                    <div class="crew-body">
+                        <template for:each={crew.stops} for:item="stop">
+                            <div key={stop.stopId} class="appt-card">
+                                <div class="appt-time">Stop {stop.stopNumber}</div>
+                                <div class="appt-title">{stop.workType} · {stop.workOrderName}</div>
+                                <div class="appt-sub">{stop.communityName} · {stop.address}</div>
+                                <div class="appt-actions">
+                                    <template if:true={stop.hasWarning}>
+                                        <span class="chip amber">{stop.warningNote}</span>
+                                    </template>
+                                    <button class="btn" data-id={stop.workOrderId} onclick={handleNavigateWO}>Open WO</button>
+                                </div>
+                            </div>
+                        </template>
+                        <template if:false={crew.hasStops}>
+                            <div class="appt-card">
+                                <div class="appt-title">Open capacity</div>
+                                <div class="appt-sub">No assigned ServiceAppointment.</div>
+                                <span class="chip green">Available</span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </template>
+    <template if:false={hasBoardCrews}>
+        <div style="padding: 40px; text-align: center; color: var(--muted)">No ServiceAppointment records found for the selected date.</div>
+    </template>
+</template>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 6 — CALENDAR
+═══════════════════════════════════════════════════════ -->
+<template if:true={isCalendar}>
+    <div class="toolbar">
+        <button class="btn" onclick={handlePrevWeek}>‹ Previous</button>
+        <button class="btn primary" onclick={handleThisWeek}>This Week</button>
+        <button class="btn" onclick={handleNextWeek}>Next ›</button>
+        <span class="spacer"></span>
+        <button class="btn" onclick={handleNewAppointment}>+ Manual Appointment</button>
+    </div>
+    <div class="cal-grid">
+        <template for:each={calDays} for:item="day">
+            <div key={day.dateStr} class="day-card">
+                <div class="day-title">
+                    <span>{day.label}</span>
+                    <span class={day.chipCss}>{day.chipLabel}</span>
+                </div>
+                <template for:each={day.items} for:item="item">
+                    <div key={item.id} class={item.css}>{item.label}</div>
+                </template>
+                <template if:false={day.hasItems}>
+                    <div class="day-item gray" style="border-left-color: var(--line)">No scheduled SAs</div>
+                </template>
+            </div>
+        </template>
+    </div>
+</template>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 7 — ROUTE + GPS
+═══════════════════════════════════════════════════════ -->
+<template if:true={isRoute}>
+    <div class="layout-rail">
+        <div>
+            <div class="panel">
+                <div class="panel-head">
+                    <div class="panel-icon">🗺</div>
+                    <h3>Route + GPS overlay</h3>
+                    <span class={gpsHealth.chipCss}>{gpsHealth.label}</span>
+                </div>
+                <!-- GPS position table — WEX/GPSInsights source -->
+                <div class="panel-body" style="padding: 0">
+                    <template if:true={hasGpsData}>
+                        <table class="table">
+                            <thead><tr><th>Crew / Vehicle</th><th>Speed</th><th>Ignition</th><th>Last Seen</th><th>Status</th><th>Coordinates</th></tr></thead>
+                            <tbody>
+                                <template for:each={gpsRows} for:item="g">
+                                    <tr key={g.markerId}>
+                                        <td><strong>{g.crewName}</strong></td>
+                                        <td>{g.speedMph}</td>
+                                        <td>{g.ignitionStatus}</td>
+                                        <td>{g.lastSeen}</td>
+                                        <td><span class={g.statusCss}>{g.status}</span></td>
+                                        <td style="font-family: monospace; font-size: 10px">{g.lat}, {g.lng}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                    <template if:false={hasGpsData}>
+                        <div style="padding: 24px; text-align: center; color: var(--muted)">
+                            No WEX_GPS_Position__c records within the last 8 hours. Verify WEX/GPSInsights integration and vehicle ignition signals.
+                        </div>
+                    </template>
+                </div>
+                <div class="map-legend">
+                    <span class="legend-item"><span class="dot" style="background: #0176d3"></span>Route</span>
+                    <span class="legend-item"><span class="dot" style="background: #5a45d1"></span>WEX/GPSInsights vehicle</span>
+                    <span class="legend-item"><span class="dot" style="background: #dd7a01"></span>Traffic delay</span>
+                    <span class="legend-item"><span class="dot" style="background: #2e844a"></span>Completed stop</span>
+                </div>
+            </div>
+        </div>
+        <aside>
+            <div class="panel">
+                <div class="panel-head"><div class="panel-icon">🚚</div><h3>Route sources</h3></div>
+                <div class="panel-body">
+                    <div style="padding: 8px 0; border-bottom: 1px solid var(--line-soft); font-size: 11px">Route source: ServiceAppointment sequence + Route_Optimization_Result__c</div>
+                    <div style="padding: 8px 0; border-bottom: 1px solid var(--line-soft); font-size: 11px">Vehicle source: WEX_GPS_Position__c</div>
+                    <div style="padding: 8px 0; border-bottom: 1px solid var(--line-soft); font-size: 11px">Traffic source: Traffic_Impact__c</div>
+                    <div style="padding: 8px 0; font-size: 11px">Weather source: Weather_Alert__c</div>
+                    <div class="gap-md"></div>
+                    <button class="btn primary wide" onclick={handleRecalcRoute}>Re-optimize route</button>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-head"><div class="panel-icon">📍</div><h3>GPS health</h3></div>
+                <div class="panel-body">
+                    <div class="pill-row">
+                        <span class="chip green">{gpsHealth.active} active</span>
+                        <span class={gpsHealth.staleCss}>{gpsHealth.stale} stale</span>
+                        <span class="chip blue">WEX source</span>
+                    </div>
+                    <div class="gap-md"></div>
+                    <button class="btn wide" onclick={handleRefreshGps}>↻ Refresh GPS</button>
+                </div>
+            </div>
+        </aside>
+    </div>
+</template>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 8 — DAY-OF MONITOR
+═══════════════════════════════════════════════════════ -->
+<template if:true={isDayOf}>
+    <div class="panel">
+        <div class="panel-head"><div class="panel-icon">🔄</div><h3>Day-of refresh cadence</h3></div>
+        <div class="panel-body">
+            <div class="kpi5">
+                <template for:each={dayOfCadence} for:item="c">
+                    <div key={c.time} class={c.css}>
+                        <div class="n">{c.time}</div>
+                        <div class="l">{c.label}</div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="panel-head">
+            <div class="panel-icon">🟢</div>
+            <h3>Health check monitor</h3>
+            <span class={dayOfSummary.redCss}>{dayOfSummary.redLabel}</span>
+        </div>
+        <div class="panel-body">
+            <template if:true={hasDayOfChecks}>
+                <div class="grid4">
+                    <template for:each={dayOfChecks} for:item="h">
+                        <div key={h.crewName} class="job-card">
+                            <div class="job-title">{h.crewName}</div>
+                            <span class={h.statusCss}>{h.status} · {h.checkTime}</span>
+                            <div class="job-sub">{h.note}</div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+            <template if:false={hasDayOfChecks}>
+                <div style="padding: 20px; text-align: center; color: var(--muted)">No health check data. Foreman submissions sync from ServiceAppointment status updates.</div>
+            </template>
+        </div>
+    </div>
+</template>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 9 — MEASURING CUP
+═══════════════════════════════════════════════════════ -->
+<template if:true={isMeasuringCup}>
+    <div class="kpi4">
+        <div class="kpi purple"><div class="n">{mcKpi.goalHours}</div><div class="l">Goal hours</div></div>
+        <div class="kpi green"><div class="n">{mcKpi.actualHours}</div><div class="l">Actual so far</div></div>
+        <div class="kpi amber"><div class="n">{mcKpi.dayVariance}</div><div class="l">Day variance</div></div>
+        <div class="kpi green"><div class="n">{mcKpi.crewsGreen} / {mcKpi.crewsTotal}</div><div class="l">Crews green</div></div>
+    </div>
+    <div class="panel">
+        <div class="panel-head"><div class="panel-icon">📊</div><h3>Measuring Cup live crew rollup</h3></div>
+        <div class="panel-body" style="padding: 0">
+            <template if:true={hasMcRows}>
+                <table class="table">
+                    <thead><tr><th>Crew</th><th>Work Type</th><th class="num">Goal</th><th class="num">Actual</th><th class="num">Variance</th><th>Source</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <template for:each={mcRows} for:item="r">
+                            <tr key={r.crewName}>
+                                <td>{r.crewName}</td>
+                                <td>{r.workType}</td>
+                                <td class="num">{r.goalHours}</td>
+                                <td class="num">{r.actualHours}</td>
+                                <td class="num"><span class={r.varianceCss}>{r.variance}</span></td>
+                                <td style="font-size: 10px; color: var(--muted)">{r.source}</td>
+                                <td><span class={r.statusCss}>{r.status}</span></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={hasMcRows}>
+                <div style="padding: 20px; text-align: center; color: var(--muted)">No crew utilization data. Source: WorkOrderLineItem, TimeSheetEntry, Rippling_Time_Entry__c.</div>
+            </template>
+        </div>
+    </div>
+</template>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 10 — TRAFFIC
+═══════════════════════════════════════════════════════ -->
+<template if:true={isTraffic}>
+    <div class="notice amber">
+        <strong>Traffic overlay:</strong> ETA risk from Traffic_Impact__c and Route_Optimization_Result__c. If source is unavailable, a warning state is shown — no fake ETA.
+    </div>
+    <div class="panel">
+        <div class="panel-head"><div class="panel-icon">🚦</div><h3>Active traffic impacts</h3></div>
+        <div class="panel-body" style="padding: 0">
+            <template if:true={hasTraffic}>
+                <table class="table">
+                    <thead><tr><th>Route</th><th>Segment</th><th>Impact</th><th>ETA Delta</th><th>System Response</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <template for:each={trafficImpacts} for:item="t">
+                            <tr key={t.id}>
+                                <td>{t.crewName}</td>
+                                <td>{t.segment}</td>
+                                <td><span class={t.impactCss}>{t.impactLevel}</span></td>
+                                <td>{t.etaDelta}</td>
+                                <td style="font-size: 10px; color: var(--muted)">{t.systemResponse}</td>
+                                <td><button class="btn" data-id={t.id} onclick={handleReroute}>Re-route</button></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={hasTraffic}>
+                <div style="padding: 24px; text-align: center; color: var(--muted)">No Traffic_Impact__c records — or traffic integration not configured. Connect approved traffic provider to this object.</div>
+            </template>
+        </div>
+    </div>
+</template>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 11 — WEATHER
+═══════════════════════════════════════════════════════ -->
+<template if:true={isWeather}>
+    <template if:true={hasWeatherAlerts}>
+        <div class="grid3">
+            <template for:each={weatherAlerts} for:item="wa">
+                <div key={wa.id} class="weather-card">
+                    <div class="weather-main">
+                        <div class="weather-ico">{wa.icon}</div>
+                        <div>
+                            <div class="label-sm">{wa.division}</div>
+                            <div class="temp">{wa.summary}</div>
+                            <div class="weather-meta">{wa.details} · {wa.startDisplay} – {wa.endDisplay}</div>
+                        </div>
+                    </div>
+                    <div class="gap-sm"></div>
+                    <div class="pill-row">
+                        <span class={wa.severityCss}>{wa.severity}</span>
+                        <span class="chip blue">{wa.affectedStops} stops affected</span>
+                    </div>
+                </div>
+            </template>
+        </div>
+        <div class="gap-md"></div>
+    </template>
+    <template if:false={hasWeatherAlerts}>
+        <div class="notice green"><strong>No active weather alerts.</strong> Weather_Alert__c source shows clear conditions.</div>
+        <div class="gap-md"></div>
+    </template>
+    <div class="panel">
+        <div class="panel-head"><div class="panel-icon">⚖</div><h3>Weather decision tiers</h3></div>
+        <div class="panel-body" style="padding: 0">
+            <table class="table">
+                <thead><tr><th>Severity</th><th>Source</th><th>System Response</th><th>Human Review</th></tr></thead>
+                <tbody>
+                    <tr><td><span class="chip green">Clear</span></td><td>Weather_Alert__c / NWS</td><td>Proceed</td><td>No</td></tr>
+                    <tr><td><span class="chip blue">Watch</span></td><td>Weather_Alert__c / NWS</td><td>Flag on board</td><td>FM / Scheduling</td></tr>
+                    <tr><td><span class="chip amber">Warning</span></td><td>Weather_Alert__c / NWS</td><td>Move affected stops to review</td><td>Scheduling Manager</td></tr>
+                    <tr><td><span class="chip red">Severe</span></td><td>Weather_Alert__c / NWS</td><td>Auto-hold territory</td><td>COO override only</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</template>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 12 — OVERTIME
+═══════════════════════════════════════════════════════ -->
+<template if:true={isOvertime}>
+    <div class="notice amber">
+        <strong>Overtime uses Rippling and FSL data.</strong> Labor hours from ResourceAbsence, Rippling_Time_Entry__c, or approved time source. Not calculated from display-only cards.
+    </div>
+    <div class="panel">
+        <div class="panel-head"><div class="panel-icon">⏱</div><h3>Weekly hours and release block</h3></div>
+        <div class="panel-body" style="padding: 0">
+            <template if:true={hasOtRows}>
+                <table class="table">
+                    <thead><tr><th>Resource</th><th>Crew</th><th class="num">Scheduled hrs</th><th class="num">Actual hrs</th><th class="num">Projected hrs</th><th>Status</th><th>Action</th></tr></thead>
+                    <tbody>
+                        <template for:each={otRows} for:item="r">
+                            <tr key={r.employeeId}>
+                                <td class="link">{r.resourceName}</td>
+                                <td>{r.crewName}</td>
+                                <td class="num">{r.scheduledHours}</td>
+                                <td class="num">{r.actualHours}</td>
+                                <td class="num">{r.projectedHours}</td>
+                                <td><span class={r.chipCss}>{r.otLabel}</span></td>
+                                <td>
+                                    <template if:true={r.otRisk}>
+                                        <button class="btn warning" data-id={r.employeeId} onclick={handleResolveOt}>Resolve</button>
+                                    </template>
+                                    <template if:false={r.otRisk}>
+                                        <button class="btn disabled">No action</button>
+                                    </template>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={hasOtRows}>
+                <div style="padding: 20px; text-align: center; color: var(--muted)">No overtime risks detected. Source: Rippling_Time_Entry__c and ResourceAbsence.</div>
+            </template>
+        </div>
+    </div>
+</template>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 13 — CREW OPTIMIZATION
+═══════════════════════════════════════════════════════ -->
+<template if:true={isCrewOpt}>
+    <div class="grid2">
+        <div class="panel">
+            <div class="panel-head"><div class="panel-icon">👥</div><h3>Crew efficiency MTD</h3></div>
+            <div class="panel-body" style="padding: 0">
+                <template if:true={hasCrewEfficiency}>
+                    <table class="table">
+                        <thead><tr><th>Crew</th><th class="num">Stops</th><th class="num">Goal hrs</th><th class="num">Actual hrs</th><th class="num">QI</th><th class="num">FJ%</th></tr></thead>
+                        <tbody>
+                            <template for:each={crewEfficiency} for:item="e">
+                                <tr key={e.crewName}>
+                                    <td>{e.crewName}</td>
+                                    <td class="num">{e.stops}</td>
+                                    <td class="num">{e.goalHours}</td>
+                                    <td class="num">{e.actualHours}</td>
+                                    <td class="num">{e.qiScore}</td>
+                                    <td class="num">{e.fjPct}%</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+                <template if:false={hasCrewEfficiency}>
+                    <div style="padding: 20px; text-align: center; color: var(--muted)">No crew efficiency data. Source: WorkOrderLineItem, Rippling, QI_Score__c.</div>
+                </template>
+            </div>
+        </div>
+        <div class="panel">
+            <div class="panel-head"><div class="panel-icon">💡</div><h3>Optimizer recommendations</h3></div>
+            <div class="panel-body">
+                <template if:true={hasOptimizerRecs}>
+                    <template for:each={optimizerRecs} for:item="rec">
+                        <div key={rec.id} class="job-card">
+                            <div class="job-title">{rec.crewName}</div>
+                            <div class="job-sub">{rec.recommendation} · <span class={rec.chipCss}>{rec.minutesSaved} min saved</span></div>
+                            <div class="job-actions">
+                                <button class="btn primary" data-id={rec.id} onclick={handleApplyOptimizerRec}>Apply</button>
+                                <button class="btn" onclick={handleDismissRec}>Dismiss</button>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+                <template if:false={hasOptimizerRecs}>
+                    <div style="color: var(--muted); font-size: 11px">No Route_Optimization_Result__c proposals. Run optimizer to generate recommendations.</div>
+                </template>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 14 — DRAFT REVIEW
+═══════════════════════════════════════════════════════ -->
+<template if:true={isDraftReview}>
+    <div class="notice amber">
+        <strong>{draftReview.draftTime} draft review:</strong> Schedule can be approved in sections. Auto-release is blocked for weather, stale GPS, PTO conflict, or overtime conflicts.
+    </div>
+    <div class="panel">
+        <div class="panel-head">
+            <div class="panel-icon">✓</div>
+            <h3>Draft release readiness</h3>
+            <button class="btn primary" onclick={handleReleaseSchedule}>Approve cleared release</button>
+        </div>
+        <div class="panel-body" style="padding: 0">
+            <template if:true={hasDraftCrews}>
+                <table class="table">
+                    <thead><tr><th>Crew</th><th>Stops</th><th>Route miles</th><th>Weather</th><th>PTO</th><th>OT</th><th>Release Status</th></tr></thead>
+                    <tbody>
+                        <template for:each={draftCrews} for:item="c">
+                            <tr key={c.crewName}>
+                                <td>{c.crewName} <span style="color: var(--muted); font-size: 10px">· {c.foremanName}</span></td>
+                                <td>{c.stops}</td>
+                                <td>{c.routeMiles} mi</td>
+                                <td><span class={c.weatherCss}>{c.weatherStatus}</span></td>
+                                <td><span class={c.ptoCss}>{c.ptoStatus}</span></td>
+                                <td><span class={c.otCss}>{c.otStatus}</span></td>
+                                <td><span class={c.chipCss}>{c.releaseStatus}</span></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={hasDraftCrews}>
+                <div style="padding: 20px; text-align: center; color: var(--muted)">No scheduled crews for draft review. Source: Schedule_Day__c, WorkOrder.</div>
+            </template>
+        </div>
+    </div>
+</template>
+
+<!-- ═══════════════════════════════════════════════════════
+     TAB 15 — DECISION RULES
+═══════════════════════════════════════════════════════ -->
+<template if:true={isDecisionRules}>
+    <div class="panel">
+        <div class="panel-head"><div class="panel-icon">⚖</div><h3>Scheduling decision rules</h3></div>
+        <div class="panel-body" style="padding: 0">
+            <table class="table">
+                <thead><tr><th>Condition</th><th>Source</th><th>System Response</th><th>Human?</th></tr></thead>
+                <tbody>
+                    <template for:each={decisionRules} for:item="r">
+                        <tr key={r.condition}>
+                            <td>{r.condition}</td>
+                            <td style="font-size: 10px; color: var(--muted)">{r.systemAction}</td>
+                            <td>{r.systemAction}</td>
+                            <td><span class={r.humanCss}>{r.requiresHuman}</span></td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</template>
+
+</main>
+
+<!-- Action modal -->
+<template if:true={showModal}>
+    <div class="modal-backdrop" onclick={handleCloseModal}>
+        <div class="modal-card" onclick={stopPropagation}>
+            <div class="modal-head">
+                <h3>{modalTitle}</h3>
+                <button class="btn" onclick={handleCloseModal} style="background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.3); color: #fff">Close</button>
+            </div>
+            <div class="modal-body">
+                <div class="notice">
+                    <strong>Real Salesforce action.</strong> This operation updates standard FSL records or approved LOVING objects. Changes are audited. No fake state changes.
+                </div>
+                <div class="field-grid">
+                    <div><div class="label-sm">Primary source</div><div class="value-sm strong">ServiceAppointment / AssignedResource</div></div>
+                    <div><div class="label-sm">Validation</div><div class="value-sm strong">Weather, Traffic, PTO, GPS, Crew capacity</div></div>
+                    <div><div class="label-sm">Audit log</div><div class="value-sm strong">Schedule_Issue__c or Salesforce Chatter</div></div>
+                    <div><div class="label-sm">Rollback</div><div class="value-sm strong">Restore prior SA assignment and status</div></div>
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 14px">
+                    <button class="btn primary" onclick={handleConfirmModal}>Confirm</button>
+                    <button class="btn" onclick={handleCloseModal}>Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+</template>
