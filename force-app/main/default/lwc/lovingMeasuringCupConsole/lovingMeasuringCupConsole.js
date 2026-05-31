@@ -54,6 +54,12 @@ export default class LovingMeasuringCupConsole extends LightningElement {
             statusCss:   r.status === 'Green' ? 'chip green' : r.status === 'Red' ? 'chip red' : 'chip amber'
         }));
     }
+    get divisionOptions() {
+        return [
+            { label: 'Charlotte', value: 'Charlotte' },
+            { label: 'All',       value: ''           }
+        ];
+    }
     get hasMcRows()  { return this.mcRows.length > 0; }
     get hasData()    { return !!this._data; }
     get hasError()   { return !!this._error; }
