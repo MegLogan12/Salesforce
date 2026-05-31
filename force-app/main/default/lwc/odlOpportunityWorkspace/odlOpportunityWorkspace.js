@@ -142,4 +142,11 @@ export default class OdlOpportunityWorkspace extends NavigationMixin(LightningEl
     async handleRefresh() {
         await refreshApex(this.wiredResult);
     }
+
+    handleNewOpportunity() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Opportunity', actionName: 'new' }
+        });
+    }
 }

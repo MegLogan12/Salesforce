@@ -99,13 +99,29 @@ h1 {
 }
 
 .panel-header {
+    align-items: center;
     background: var(--ol-soft);
     border-bottom: 1px solid var(--ol-line);
     color: var(--ol-navy);
+    display: flex;
     font-size: 13px;
     font-weight: 600;
+    gap: 8px;
     padding: 10px 14px;
 }
+
+.panel-action-btn {
+    background: #fff;
+    border: 1px solid var(--ol-line);
+    border-radius: 4px;
+    color: #0176d3;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    margin-left: auto;
+    padding: 3px 10px;
+}
+.panel-action-btn:hover { background: #f0f5ff; }
 
 .grid,
 .two-up {

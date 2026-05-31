@@ -14,6 +14,8 @@
                     <template lwc:if={accountUrl}>
                         <a class="cta" href={accountUrl}>Open Account</a>
                     </template>
+                    <button class="cta cta-secondary" onclick={handleEditOpportunity}>Edit</button>
+                    <button class="cta cta-secondary" onclick={handleLogCall}>Log a Call</button>
                     <button class="cta cta-secondary" onclick={handleNewTask}>New Task</button>
                 </div>
             </section>
@@ -140,7 +142,12 @@
                 </section>
 
                 <section class="panel">
-                    <div class="panel-header">Quote, Contract, Payment</div>
+                    <div class="panel-header">
+                        Quote, Contract, Payment
+                        <template lwc:if={noQuotes}>
+                            <button class="panel-action-btn" onclick={handleCreateQuote}>+ Create Quote</button>
+                        </template>
+                    </div>
                     <template lwc:if={hasQuotes}>
                         <table class="table">
                             <thead>
