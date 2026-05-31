@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Calculated_Start_Date__c</fullName>
+    <description>Auto-calculated: PO Release Date + Release Schedule Days from Community (if set) or Division Account. Shows the expected start date when no explicit Target Start Date is on the PO. Used as fallback for Days Until Start and pipeline bucket calculation.</description>
+    <formula>IF(NOT(ISBLANK(Community__r.Release_Schedule_Days__c)), PO_Received_Date__c + Community__r.Release_Schedule_Days__c, IF(NOT(ISBLANK(Builder_Market_Account__r.Release_Schedule_Days__c)), PO_Received_Date__c + Builder_Market_Account__r.Release_Schedule_Days__c, PO_Received_Date__c))</formula>
+    <label>Calculated Start Date</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

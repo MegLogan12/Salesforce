@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pine_Straw_Coverage_Per_Bale__c</fullName>
+    <defaultValue>50</defaultValue>
+    <description>Average square feet of coverage per pine straw bale for this community. Converts pine straw source square footage into estimated bales only. This field must never be used for sod roll calculations — sod roll coverage is tracked separately in Avg_Sod_Roll_Coverage__c. These are separate materials with separate coverage rates and formulas.</description>
+    <externalId>false</externalId>
+    <label>Pine Straw Coverage Per Bale (SF)</label>
+    <precision>6</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

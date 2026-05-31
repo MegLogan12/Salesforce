@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Warranty_Timeline_Hours__c</fullName>
+    <description>Hours after job completion that LOVING must respond to warranty callbacks for this builder. Common values: 24 (next business day), 72 (3 business days). Drives QI and callback SLA tracking.</description>
+    <externalId>false</externalId>
+    <label>Warranty Response (Hours)</label>
+    <precision>5</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

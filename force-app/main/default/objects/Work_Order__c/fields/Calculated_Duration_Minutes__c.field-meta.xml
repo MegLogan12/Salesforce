@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Calculated_Duration_Minutes__c</fullName>
+    <description>Final calculated duration in minutes after any adjustment. Used to populate Service Appointment Duration. When Duration_Override__c is set, uses the override value instead.</description>
+    <externalId>false</externalId>
+    <label>Calculated Duration Minutes</label>
+    <precision>10</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

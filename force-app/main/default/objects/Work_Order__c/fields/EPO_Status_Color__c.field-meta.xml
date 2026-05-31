@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>EPO_Status_Color__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF( ISBLANK(EPO_Sent_Date__c), &quot;&quot;,
+        IF( EPO_Days_Open__c &lt;= 2, &quot;Green&quot;,
+        IF( EPO_Days_Open__c = 3, &quot;Yellow&quot;,
+        IF( EPO_Days_Open__c = 4, &quot;Orange&quot;,
+        &quot;Red&quot; ))))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>EPO Status Color</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

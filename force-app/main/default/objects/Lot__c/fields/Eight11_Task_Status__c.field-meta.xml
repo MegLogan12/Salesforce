@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Eight11_Task_Status__c</fullName>
+    <description>Current 811 utility locate status for this Lot. Derived from the related Takeoff Task (Eight11_Status__c on Takeoff_Task__c where Task_Type = 811 Call). Updated by flow when Takeoff Task 811 status changes. Display-only on Lot — source of truth is Takeoff_Task__c.</description>
+    <label>811 Status</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Not Filed</fullName>
+                <default>false</default>
+                <label>Not Filed</label>
+            </value>
+            <value>
+                <fullName>Filed</fullName>
+                <default>false</default>
+                <label>Filed</label>
+            </value>
+            <value>
+                <fullName>Pending Locate</fullName>
+                <default>false</default>
+                <label>Pending Locate</label>
+            </value>
+            <value>
+                <fullName>Marked</fullName>
+                <default>false</default>
+                <label>Marked</label>
+            </value>
+            <value>
+                <fullName>Cleared</fullName>
+                <default>false</default>
+                <label>Cleared</label>
+            </value>
+            <value>
+                <fullName>On Hold</fullName>
+                <default>false</default>
+                <label>On Hold</label>
+            </value>
+            <value>
+                <fullName>Not Needed</fullName>
+                <default>false</default>
+                <label>Not Needed</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

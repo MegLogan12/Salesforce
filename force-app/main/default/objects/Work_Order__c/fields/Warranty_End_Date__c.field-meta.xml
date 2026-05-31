@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Warranty_End_Date__c</fullName>
+    <formula>CASE(TEXT(Warranty_Coverage_Type__c),
+        &quot;Sod 60 Day Standard&quot;, Warranty_Start_Date__c + 60,
+        &quot;Plant 1 Year Standard&quot;, Warranty_Start_Date__c + 365,
+        &quot;Hardscape 2 Year Standard&quot;, Warranty_Start_Date__c + 730,
+        null)</formula>
+    <label>Warranty End Date</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

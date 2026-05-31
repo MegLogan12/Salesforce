@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Active_Community_Package__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>The current default package for this community. When a new Work Order or Quote is created for a lot in this community, this package is pre-populated. Can be overridden per lot.</description>
+    <label>Active Community Package</label>
+    <referenceTo>Community_Package__c</referenceTo>
+    <relationshipLabel>Active Package Communities</relationshipLabel>
+    <relationshipName>Active_Package_Communities</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

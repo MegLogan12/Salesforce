@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>EPO_SLA_Tier__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(EPO_Days_Outstanding__c &gt;= 5, &quot;Red&quot;,
+        IF(EPO_Days_Outstanding__c &gt;= 4, &quot;Orange&quot;,
+        IF(EPO_Days_Outstanding__c &gt;= 3, &quot;Yellow&quot;, &quot;Green&quot;)))</formula>
+    <label>EPO SLA Tier</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

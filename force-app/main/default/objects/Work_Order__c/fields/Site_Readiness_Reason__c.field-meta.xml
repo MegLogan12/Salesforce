@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Site_Readiness_Reason__c</fullName>
+    <label>Site Readiness Reason</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Grading Incomplete</fullName>
+                <default>false</default>
+                <label>Grading Incomplete</label>
+            </value>
+            <value>
+                <fullName>Utilities Not Marked</fullName>
+                <default>false</default>
+                <label>Utilities Not Marked</label>
+            </value>
+            <value>
+                <fullName>Active Construction Conflict</fullName>
+                <default>false</default>
+                <label>Active Construction Conflict</label>
+            </value>
+            <value>
+                <fullName>Access Blocked</fullName>
+                <default>false</default>
+                <label>Access Blocked</label>
+            </value>
+            <value>
+                <fullName>Weather / Standing Water</fullName>
+                <default>false</default>
+                <label>Weather / Standing Water</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

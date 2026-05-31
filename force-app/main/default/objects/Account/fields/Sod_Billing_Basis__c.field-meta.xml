@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sod_Billing_Basis__c</fullName>
+    <externalId>false</externalId>
+    <inlineHelpText>Takeoff / Pull sheet / FM-verified</inlineHelpText>
+    <label>Sod Billing Basis</label>
+    <length>100</length>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pipeline_Stage__c</fullName>
+    <label>Pipeline Stage</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>90+ Days</fullName>
+                <default>false</default>
+                <label>90+ Days</label>
+            </value>
+            <value>
+                <fullName>60+ Days</fullName>
+                <default>false</default>
+                <label>60+ Days</label>
+            </value>
+            <value>
+                <fullName>31 Days</fullName>
+                <default>false</default>
+                <label>31 Days</label>
+            </value>
+            <value>
+                <fullName>Pending Takeoff</fullName>
+                <default>false</default>
+                <label>Pending Takeoff</label>
+            </value>
+            <value>
+                <fullName>Takeoff Scheduled</fullName>
+                <default>false</default>
+                <label>Takeoff Scheduled</label>
+            </value>
+            <value>
+                <fullName>Clear for Schedule</fullName>
+                <default>false</default>
+                <label>Clear for Schedule</label>
+            </value>
+            <value>
+                <fullName>Scheduled</fullName>
+                <default>false</default>
+                <label>Scheduled</label>
+            </value>
+            <value>
+                <fullName>Site Readiness Check</fullName>
+                <default>false</default>
+                <label>Site Readiness Check</label>
+            </value>
+            <value>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+                <label>In Progress</label>
+            </value>
+            <value>
+                <fullName>Completion Status</fullName>
+                <default>false</default>
+                <label>Completion Status</label>
+            </value>
+            <value>
+                <fullName>Pending Approval</fullName>
+                <default>false</default>
+                <label>Pending Approval</label>
+            </value>
+            <value>
+                <fullName>Approved</fullName>
+                <default>false</default>
+                <label>Approved</label>
+            </value>
+            <value>
+                <fullName>QI Scheduled</fullName>
+                <default>false</default>
+                <label>QI Scheduled</label>
+            </value>
+            <value>
+                <fullName>Invoiced</fullName>
+                <default>false</default>
+                <label>Invoiced</label>
+            </value>
+            <value>
+                <fullName>QI Complete</fullName>
+                <default>false</default>
+                <label>QI Complete</label>
+            </value>
+            <value>
+                <fullName>Paid</fullName>
+                <default>false</default>
+                <label>Paid</label>
+            </value>
+            <value>
+                <fullName>Closed</fullName>
+                <default>false</default>
+                <label>Closed</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Route_Distance_Miles__c</fullName>
+    <description>Stage 7 (Scheduling). Drive distance from previous stop on the proposed route. Set by AutoScheduleService for routing optimization and crew load planning.</description>
+    <externalId>false</externalId>
+    <label>Route Distance (Miles)</label>
+    <precision>5</precision>
+    <required>false</required>
+    <scale>1</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

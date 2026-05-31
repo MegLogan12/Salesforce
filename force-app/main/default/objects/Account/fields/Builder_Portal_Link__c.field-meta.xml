@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Builder_Portal_Link__c</fullName>
+    <inlineHelpText>URL to the builder&apos;s vendor portal (SupplyPro, HomebuilderONE, BuildPro, etc.).</inlineHelpText>
+    <label>Builder Portal Link</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Url</type>
+</CustomField>

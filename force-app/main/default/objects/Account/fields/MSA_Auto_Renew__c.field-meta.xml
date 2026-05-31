@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MSA_Auto_Renew__c</fullName>
+    <defaultValue>true</defaultValue>
+    <description>Default true; 90-day notice to terminate</description>
+    <label>MSA Auto Renew</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Checkbox</type>
+</CustomField>

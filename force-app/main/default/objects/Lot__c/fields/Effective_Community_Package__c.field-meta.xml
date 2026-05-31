@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Effective_Community_Package__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>The active Community Package for this lot. Selected based on Corner_Lot__c flag from Community standard or corner package.</description>
+    <label>Effective Community Package</label>
+    <referenceTo>Community_Package__c</referenceTo>
+    <relationshipLabel>Lots</relationshipLabel>
+    <relationshipName>Lots_By_Package</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>
