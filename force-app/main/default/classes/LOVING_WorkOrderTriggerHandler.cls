@@ -1,8 +1,14 @@
 /**
  * LOVING_WorkOrderTriggerHandler
  *
- * Orchestrates all WorkOrder trigger logic for Production Install workflow.
- * Follows single-trigger, handler-class pattern. All methods are bulkified.
+ * Orchestrates WorkOrder trigger logic. Follows single-trigger, handler-class
+ * pattern. All methods are bulkified.
+ *
+ * AFTER_UPDATE is intentionally a no-op. Status-change automation for
+ * Production Install WorkOrders is owned exclusively by the
+ * LOVING_PI_Orchestrator Record-Triggered Flow and its six sub-flows.
+ * Keeping that logic here would create duplicate Tasks, QI_Inspection__c,
+ * and Finish_Job__c records on every status transition.
  */
 public inherited sharing class LOVING_WorkOrderTriggerHandler {
 
@@ -94,215 +100,12 @@ public inherited sharing class LOVING_WorkOrderTriggerHandler {
     }
 
     // ─── AFTER UPDATE ─────────────────────────────────────────────────────────
+    // No-op: all status-change automation is owned by LOVING_PI_Orchestrator
+    // and its sub-flows (Record-Triggered After-Save on WorkOrder). Running
+    // equivalent Apex here would duplicate every Task, QI_Inspection__c, and
+    // Finish_Job__c record on every Production Install status transition.
     @TestVisible
     private static void handleAfterUpdate(List<WorkOrder> newRecords, Map<Id, WorkOrder> oldMap) {
-        List<WorkOrder> toScheduled         = new List<WorkOrder>();
-        List<WorkOrder> toCompleted         = new List<WorkOrder>();
-        List<WorkOrder> toApproved          = new List<WorkOrder>();
-        List<WorkOrder> toNFI               = new List<WorkOrder>();
-        List<WorkOrder> toRedFlag           = new List<WorkOrder>();
-        List<WorkOrder> toFJCreated         = new List<WorkOrder>();
-        List<WorkOrder> autoCloseCandidates = new List<WorkOrder>();
-
-        for (WorkOrder wo : newRecords) {
-            WorkOrder old = (oldMap != null) ? oldMap.get(wo.Id) : null;
-            if (old == null) continue;
-
-            String ns = wo.Status;
-            String os = old.Status;
-
-            if (ns == 'Scheduled'                  && os != 'Scheduled')                 toScheduled.add(wo);
-            if (ns == 'Completed (Field Complete)'  && os != 'Completed (Field Complete)') toCompleted.add(wo);
-            if (ns == 'Approved'                   && os != 'Approved')                   toApproved.add(wo);
-            if (ns == 'Need Further Info'           && os != 'Need Further Info')          toNFI.add(wo);
-
-            if (wo.Health_Check_Status__c == 'Red - Will Not Complete Today'
-                && old.Health_Check_Status__c != 'Red - Will Not Complete Today') {
-                toRedFlag.add(wo);
-                if (wo.Finish_Job_Required__c && !old.Finish_Job_Required__c) {
-                    toFJCreated.add(wo);
-                }
-            }
-
-            if (wo.Payment_Received__c && !old.Payment_Received__c
-                && wo.QI_Submitted__c
-                && wo.QI_Status__c != 'FM QI Review (Red Hold)') {
-                autoCloseCandidates.add(wo);
-            }
-            if (wo.QI_Submitted__c && !old.QI_Submitted__c
-                && wo.Payment_Received__c
-                && wo.QI_Status__c != 'FM QI Review (Red Hold)') {
-                autoCloseCandidates.add(wo);
-            }
-        }
-
-        if (!toScheduled.isEmpty())         handleStatusToScheduled(toScheduled);
-        if (!toCompleted.isEmpty())         handleStatusToCompleted(toCompleted);
-        if (!toApproved.isEmpty())          handleStatusToApproved(toApproved);
-        if (!toNFI.isEmpty())               handleStatusToNFI(toNFI);
-        if (!toRedFlag.isEmpty())           handleRedFlagEscalation(toRedFlag);
-        if (!toFJCreated.isEmpty())         createFinishJobRecords(toFJCreated);
-        if (!autoCloseCandidates.isEmpty()) autoCloseWorkOrders(autoCloseCandidates);
-    }
-
-    // ─── HANDLERS ─────────────────────────────────────────────────────────────
-
-    private static void handleStatusToScheduled(List<WorkOrder> wos) {
-        Set<Id> woIds = new Set<Id>();
-        for (WorkOrder wo : wos) woIds.add(wo.Id);
-
-        Map<Id, WorkOrder> woMap = new Map<Id, WorkOrder>([
-            SELECT Id, FM__c, Lot_Address__c, Lot_Number__c, Community__c,
-                   Scheduled_Date__c, Aqua_Community__c, AccountId, Lot__c,
-                   Builder_Regional__c
-            FROM WorkOrder WHERE Id IN :woIds
-        ]);
-
-        List<Task>     tasks       = new List<Task>();
-        List<WorkOrder> aquaWOs    = new List<WorkOrder>();
-        List<WorkOrder> pullWOs    = new List<WorkOrder>();
-        List<WorkOrder> loadingWOs = new List<WorkOrder>();
-
-        for (WorkOrder wo : wos) {
-            WorkOrder full = woMap.get(wo.Id);
-            if (full == null) continue;
-
-            if (full.Scheduled_Date__c != null) {
-                tasks.addAll(buildSRCTask(full));
-            }
-            if (full.Aqua_Community__c) aquaWOs.add(full);
-            pullWOs.add(full);
-            loadingWOs.add(full);
-        }
-
-        if (!tasks.isEmpty()) insert tasks;
-        if (!pullWOs.isEmpty())    createSubTickets(pullWOs, 'Pull Ticket');
-        if (!loadingWOs.isEmpty()) createSubTickets(loadingWOs, 'Loading Ticket');
-        if (!aquaWOs.isEmpty()) LOVING_AquaTicketService.createAquaInstallTickets(aquaWOs);
-    }
-
-    private static void handleStatusToCompleted(List<WorkOrder> wos) {
-        Set<Id> woIds = new Set<Id>();
-        for (WorkOrder wo : wos) woIds.add(wo.Id);
-
-        Map<Id, List<WorkOrderLineItem>> lineItemMap = new Map<Id, List<WorkOrderLineItem>>();
-        for (WorkOrderLineItem woli : [
-            SELECT Id, WorkOrderId, Description, Quantity, UnitPrice
-            FROM WorkOrderLineItem WHERE WorkOrderId IN :woIds
-        ]) {
-            if (!lineItemMap.containsKey(woli.WorkOrderId)) {
-                lineItemMap.put(woli.WorkOrderId, new List<WorkOrderLineItem>());
-            }
-            lineItemMap.get(woli.WorkOrderId).add(woli);
-        }
-
-        Map<Id, WorkOrder> woFullMap = new Map<Id, WorkOrder>([
-            SELECT Id, FM__c, Lot_Address__c, Crew_Complete_Timestamp__c, AccountId
-            FROM WorkOrder WHERE Id IN :woIds
-        ]);
-
-        List<WorkOrder> fullWOs = new List<WorkOrder>();
-        for (WorkOrder wo : wos) {
-            WorkOrder full = woFullMap.get(wo.Id);
-            if (full != null) fullWOs.add(full);
-        }
-
-        List<QI_Inspection__c> qiRecords = buildQIRecords(fullWOs);
-        if (!qiRecords.isEmpty()) {
-            insert qiRecords;
-
-            Map<Id, Id> woToQI = new Map<Id, Id>();
-            for (QI_Inspection__c qi : qiRecords) {
-                woToQI.put(qi.Work_Order__c, qi.Id);
-            }
-
-            List<QI_Line_Item__c> qiLineItems = new List<QI_Line_Item__c>();
-            for (WorkOrder wo : fullWOs) {
-                List<WorkOrderLineItem> lines = lineItemMap.get(wo.Id);
-                if (lines == null) continue;
-                for (WorkOrderLineItem woli : lines) {
-                    QI_Line_Item__c qili  = new QI_Line_Item__c();
-                    qili.QI_Inspection__c = woToQI.get(wo.Id);
-                    qili.Work_Order_Line_Item_Ref__c = woli.Description != null
-                        ? woli.Description : 'Line Item ' + woli.Id;
-                    qili.FM_Score__c = null;
-                    qiLineItems.add(qili);
-                }
-            }
-            if (!qiLineItems.isEmpty()) insert qiLineItems;
-
-            List<Task> qiTasks = buildQITasks(fullWOs);
-            if (!qiTasks.isEmpty()) insert qiTasks;
-
-            List<WorkOrder> toUpdate = new List<WorkOrder>();
-            for (WorkOrder wo : fullWOs) {
-                toUpdate.add(new WorkOrder(Id=wo.Id, QI_Status__c='Scheduled'));
-            }
-            update toUpdate;
-        }
-    }
-
-    private static void handleStatusToApproved(List<WorkOrder> wos) {
-        List<Task> tasks = buildApprovedTasks(wos);
-        if (!tasks.isEmpty()) insert tasks;
-    }
-
-    private static void handleStatusToNFI(List<WorkOrder> wos) {
-        Set<Id> woIds = new Set<Id>();
-        for (WorkOrder wo : wos) woIds.add(wo.Id);
-
-        Map<Id, WorkOrder> woFullMap = new Map<Id, WorkOrder>([
-            SELECT Id, FM__c, Lot_Address__c, Need_Further_Info_Notes__c, NFI_Count__c
-            FROM WorkOrder WHERE Id IN :woIds
-        ]);
-
-        List<WorkOrder> fullWOs = new List<WorkOrder>();
-        for (WorkOrder wo : wos) {
-            WorkOrder full = woFullMap.get(wo.Id);
-            if (full != null) fullWOs.add(full);
-        }
-
-        List<Task> tasks = buildNFITasks(fullWOs);
-        if (!tasks.isEmpty()) insert tasks;
-    }
-
-    private static void handleRedFlagEscalation(List<WorkOrder> wos) {
-        Set<Id> woIds = new Set<Id>();
-        for (WorkOrder wo : wos) woIds.add(wo.Id);
-
-        Map<Id, WorkOrder> woMap = new Map<Id, WorkOrder>([
-            SELECT Id, FM__c, Lot_Address__c, Red_Flag_Notes__c, Community__c
-            FROM WorkOrder WHERE Id IN :woIds
-        ]);
-
-        List<WorkOrder> fullWOs = new List<WorkOrder>();
-        for (WorkOrder wo : wos) {
-            WorkOrder full = woMap.get(wo.Id);
-            if (full != null) fullWOs.add(full);
-        }
-
-        List<Task> tasks = buildRedFlagTasks(fullWOs);
-        if (!tasks.isEmpty()) insert tasks;
-    }
-
-    private static void createFinishJobRecords(List<WorkOrder> wos) {
-        List<Finish_Job__c> fjs = buildFinishJobs(wos);
-        if (!fjs.isEmpty()) insert fjs;
-    }
-
-    private static void autoCloseWorkOrders(List<WorkOrder> candidates) {
-        Set<Id> seen = new Set<Id>();
-        List<WorkOrder> toClose = new List<WorkOrder>();
-        for (WorkOrder wo : candidates) {
-            if (!seen.contains(wo.Id)) {
-                seen.add(wo.Id);
-                toClose.add(new WorkOrder(Id=wo.Id, Status='Closed'));
-            }
-        }
-        if (!toClose.isEmpty()) {
-            LOVING_TriggerGuard.clearAlreadyRun('WorkOrder');
-            update toClose;
-        }
     }
 
     // ─── @TestVisible BUILDERS ────────────────────────────────────────────────
@@ -468,25 +271,5 @@ public inherited sharing class LOVING_WorkOrderTriggerHandler {
             result.add(fj);
         }
         return result;
-    }
-
-    @TestVisible
-    private static void createSubTickets(List<WorkOrder> wos, String ticketType) {
-        List<WorkOrder> tickets = new List<WorkOrder>();
-        for (WorkOrder wo : wos) {
-            WorkOrder ticket = new WorkOrder();
-            ticket.AccountId          = wo.AccountId;
-            ticket.Work_Order_Type__c = ticketType;
-            ticket.Status             = 'New';
-            ticket.ParentWorkOrderId  = wo.Id;
-            ticket.Subject            = ticketType + ' — ' + wo.Lot_Address__c
-                + ' — ' + (wo.Scheduled_Date__c != null
-                    ? wo.Scheduled_Date__c.format() : 'TBD');
-            tickets.add(ticket);
-        }
-        if (!tickets.isEmpty()) {
-            LOVING_TriggerGuard.clearAlreadyRun('WorkOrder');
-            insert tickets;
-        }
     }
 }
