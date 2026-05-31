@@ -58,6 +58,26 @@
                                     {truck.street}, {truck.city}
                                 </div>
                                 <div class="tc-time">GPS {truck.status} · {truck.schedTime}</div>
+                                <div class="tc-actions">
+                                    <template if:true={truck.workOrderId}>
+                                        <lightning-button
+                                            label="View WO"
+                                            icon-name="utility:open"
+                                            icon-position="right"
+                                            variant="neutral"
+                                            size="x-small"
+                                            data-id={truck.workOrderId}
+                                            onclick={handleViewWorkOrder}
+                                            class="tc-btn">
+                                        </lightning-button>
+                                    </template>
+                                    <template if:true={truck.foremanPhone}>
+                                        <a href={truck.phoneHref} class="tc-call-btn" title="Call driver">
+                                            <lightning-icon icon-name="utility:call" size="xx-small"></lightning-icon>
+                                            <span>Call</span>
+                                        </a>
+                                    </template>
+                                </div>
                             </div>
                         </template>
                     </div>

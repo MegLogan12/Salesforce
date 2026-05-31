@@ -8,7 +8,16 @@
                 <span class="ph-sub">{todayLabel}</span>
             </div>
             <div class="ph-right">
-                <span class="ph-total">{totalLots} active lots</span>
+                <lightning-input
+                    type="search"
+                    placeholder="Search lots..."
+                    value={searchTerm}
+                    onchange={handleSearch}
+                    class="ph-search"
+                    variant="label-hidden"
+                    label="Search lots">
+                </lightning-input>
+                <span class="ph-total">{filteredTotal} lots</span>
                 <lightning-button-icon
                     icon-name="utility:refresh"
                     variant="bare-inverse"
@@ -48,6 +57,14 @@
                                         <div class="lot-meta">
                                             <span class="lot-fm">{lot.fmName}</span>
                                             <span class="lot-days">{lot.targetDateDisplay}</span>
+                                        </div>
+                                        <div class="lot-flags">
+                                            <template if:true={lot.takeoffDone}>
+                                                <span class="lot-flag flag-done" title="Takeoff complete">T✓</span>
+                                            </template>
+                                            <template if:true={lot.woCreated}>
+                                                <span class="lot-flag flag-wo" title="Work order exists">WO✓</span>
+                                            </template>
                                         </div>
                                     </div>
                                 </template>

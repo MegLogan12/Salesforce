@@ -1,4 +1,5 @@
 import { LightningElement, api, wire, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import { refreshApex } from '@salesforce/apex';
 import getTodayDispatch from '@salesforce/apex/DispatchMapController.getTodayDispatch';
 
@@ -11,7 +12,7 @@ const STATUS_CLASSES = {
 
 const REFRESH_INTERVAL_MS = 60000; // 60 seconds
 
-export default class LovingDispatchMap extends LightningElement {
+export default class LovingDispatchMap extends NavigationMixin(LightningElement) {
     @api territory;
 
     @track trucks     = [];
@@ -57,6 +58,7 @@ export default class LovingDispatchMap extends LightningElement {
                 driverName:  t.driverName  || 'Unassigned',
                 statusClass: STATUS_CLASSES[t.status] || 'tc-status status-other',
                 schedTime:   t.lastSeen    || '—',
+                phoneHref:   t.foremanPhone ? 'tel:' + t.foremanPhone.replace(/\D/g, '') : null,
             }));
 
             this.mapMarkers = this.trucks
@@ -78,5 +80,13 @@ export default class LovingDispatchMap extends LightningElement {
     handleRefresh() {
         this.isLoading = true;
         refreshApex(this.wiredResult).finally(() => { this.isLoading = false; });
+    }
+
+    handleViewWorkOrder(event) {
+        const woId = event.currentTarget.dataset.id;
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: { recordId: woId, actionName: 'view' }
+        });
     }
 }

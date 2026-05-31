@@ -8,8 +8,9 @@ export default class WorkOrderPipelineKanban extends NavigationMixin(LightningEl
     @track _columns = [];
     @track _error = null;
     @track isLoading = true;
+    @track searchTerm = '';
 
-    @wire(getPipelineSummary, {})
+    @wire(getPipelineSummary, { division: null })
     wiredPipeline(result) {
         this._wiredResult = result;
         this.isLoading = false;
@@ -21,7 +22,17 @@ export default class WorkOrderPipelineKanban extends NavigationMixin(LightningEl
         }
     }
 
-    get columns()   { return this._columns; }
+    get columns() {
+        const term = (this.searchTerm || '').toLowerCase().trim();
+        if (!term) return this._columns;
+        return this._columns.map(col => {
+            const filtered = (col.lots || []).filter(
+                l => (l.name || '').toLowerCase().includes(term)
+                  || (l.fmName || '').toLowerCase().includes(term)
+            );
+            return { ...col, lots: filtered, count: filtered.length };
+        }).filter(col => col.count > 0);
+    }
     get hasColumns(){ return this._columns.length > 0; }
     get hasError()  { return !!this._error; }
     get errorMsg()  { return this._error; }
@@ -30,6 +41,13 @@ export default class WorkOrderPipelineKanban extends NavigationMixin(LightningEl
     }
     get totalLots() {
         return this._columns.reduce((sum, c) => sum + (c.count || 0), 0);
+    }
+    get filteredTotal() {
+        return this.columns.reduce((sum, c) => sum + (c.count || 0), 0);
+    }
+
+    handleSearch(event) {
+        this.searchTerm = event.target.value;
     }
 
     handleRefresh() {

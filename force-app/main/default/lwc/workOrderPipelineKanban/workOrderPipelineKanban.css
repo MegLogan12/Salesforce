@@ -24,6 +24,7 @@
 .ph-right { display: flex; align-items: center; gap: 12px; }
 .ph-total { background: #0070d2; color: #fff; padding: 4px 14px; border-radius: 14px; font-size: 12px; font-weight: 700; }
 .ph-refresh { --lwc-colorTextIconDefault: #7a9ec4; }
+.ph-search { --slds-c-input-color-background: rgba(255,255,255,0.12); --slds-c-input-color-border: rgba(255,255,255,0.25); --slds-c-input-text-color: #fff; max-width: 160px; }
 
 .kanban-scroll {
     display: flex;
@@ -69,9 +70,13 @@
 }
 .lot-card:hover { box-shadow: 0 2px 8px rgba(0,112,210,0.12); border-color: #0070d2; }
 .lot-name { font-size: 12px; font-weight: 700; color: #16325c; margin-bottom: 4px; }
-.lot-meta { display: flex; justify-content: space-between; font-size: 10px; color: #6b7a8d; }
-.lot-fm   { font-weight: 600; color: #0070d2; }
-.lot-days { }
+.lot-meta  { display: flex; justify-content: space-between; font-size: 10px; color: #6b7a8d; }
+.lot-fm    { font-weight: 600; color: #0070d2; }
+.lot-days  { }
+.lot-flags { display: flex; gap: 4px; margin-top: 5px; }
+.lot-flag  { font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 8px; }
+.flag-done { background: #e3f5e1; color: #2e7d32; }
+.flag-wo   { background: #e8f4ff; color: #0070d2; }
 
 .col-empty { font-size: 11px; color: #bbc4ce; padding: 8px 4px; text-align: center; }
 
