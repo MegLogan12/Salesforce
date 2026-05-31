@@ -417,6 +417,31 @@ private class LovSchedConsoleOverlaySvcTest {
     }
 
     @IsTest
+    static void testBuildAppointmentRow_withWorkOrder() {
+        // Covers the wo != null branch — all relational sub-fields are null on in-memory WO → '—'
+        ServiceAppointment sa = new ServiceAppointment();
+        sa.Status    = 'In Progress';
+        sa.SchedStartTime = Datetime.newInstanceGmt(Date.today(), Time.newInstance(7,0,0,0));
+        sa.SchedEndTime   = Datetime.newInstanceGmt(Date.today(), Time.newInstance(15,0,0,0));
+
+        WorkOrder wo = new WorkOrder();
+        wo.WorkOrderNumber = 'WO-COVERAGE-001';
+        // Community__r, Lot__r, Account, Crew__r, Field_Manager__r all null on in-memory WO
+
+        LovingSchedulingConsoleOverlayController.FslAppointmentRowDto row =
+            LovingSchedulingConsoleOverlayService.buildAppointmentRow(sa, wo, null);
+
+        System.assertEquals('chip blue',          row.statusCss);
+        System.assertEquals('WO-COVERAGE-001',    row.workOrderName);
+        System.assertEquals('—',                  row.community);
+        System.assertEquals('—',                  row.lot);
+        System.assertEquals('—',                  row.builder);
+        System.assertEquals('—',                  row.crewName);
+        System.assertEquals('—',                  row.foremanName);
+        System.assert(row.window.contains(':'));
+    }
+
+    @IsTest
     static void testBuildResourceRow_noAbsences() {
         ServiceResource r = new ServiceResource();
         r.Name = 'Test Technician';
