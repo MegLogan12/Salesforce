@@ -428,8 +428,9 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
         const optsStr = opts ? ` data-opts="${opts.join('|')}"` : '';
         return `class="opp-value editable" data-rt="${rt}" data-rid="${rid}" data-field="${field}" data-type="${type || 'text'}"${optsStr}`;
     }
-    actItem(dotCls, icon, title, sub, dateStr, overdue=false) {
-        return `<div class="act-item"><div class="act-dot-col"><div class="act-dot ${dotCls}"></div><div class="act-connector"></div></div><div class="act-body"><div class="act-title">${icon} ${title}</div><div class="act-sub${overdue?' act-overdue':''}">${sub}</div></div><div class="act-date${overdue?' act-overdue':''}">${dateStr}</div></div>`;
+    actItem(dotCls, icon, title, sub, dateStr, overdue=false, actionBtn='') {
+        const btnHtml = actionBtn ? `<div style="margin-top:5px">${actionBtn}</div>` : '';
+        return `<div class="act-item"><div class="act-dot-col"><div class="act-dot ${dotCls}"></div><div class="act-connector"></div></div><div class="act-body"><div class="act-title">${icon} ${title}</div><div class="act-sub${overdue?' act-overdue':''}">${sub}</div>${btnHtml}</div><div class="act-date${overdue?' act-overdue':''}">${dateStr}</div></div>`;
     }
     refreshRow(view, hint) {
         return `<div class="refresh-row"><button class="refresh-btn" data-action="doRefresh" data-view="${view}">↻ Refresh</button><span style="font-size:11px;color:#54698d">${this.navTimestamp}</span><span style="margin-left:auto;font-size:10px;color:#b0b7c3">${hint}</span></div>`;
@@ -449,7 +450,7 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
                 const comms = DB.communities.filter(c => c.divisionId === d.id);
                 rows += `<div style="display:flex;align-items:center;padding:7px 14px;border-bottom:1px solid #f4f6f9;background:#fafaf9">
                   <div style="width:8px;height:8px;border-radius:50%;background:#0070d2;margin-left:14px;margin-right:10px;flex-shrink:0"></div>
-                  <div style="flex:1"><span class="nl">${d.name}</span><div style="font-size:10px;color:#54698d">${d.contact} · ${d.phone} · $${d.stdSodRate}/sf</div></div>
+                  <div style="flex:1"><span class="nl">${d.name}</span><div style="font-size:10px;color:#54698d">${d.contact} · <a href="tel:${(d.phone||'').replace(/\D/g,'')}" style="color:#0070d2">${d.phone}</a> · $${d.stdSodRate}/sf</div></div>
                   <span style="font-size:10px;color:#54698d">${comms.length} communities</span></div>`;
                 comms.forEach(c => {
                     rows += `<div style="display:flex;align-items:center;padding:6px 14px;border-bottom:1px solid #f4f6f9;background:#fff;cursor:pointer" data-action="navigate" data-view="community-detail" data-id="${c.id}">
@@ -556,8 +557,8 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
         overdueLots.forEach( l => { upcoming += this.actItem('overdue','🚧',`811 not filed — ${l.lotId}`,`Required before Clear for Schedule · ${l.fm}`,'Overdue',true); });
         activeLots.forEach(  l => { upcoming += this.actItem('task','🏗',`Install active — ${l.lotId}`,`${l.crew||l.fm} · ${l.address}`,'Today'); });
         schedLots.forEach(   l => { upcoming += this.actItem('event','📅',`Scheduled — ${l.lotId}`,`${l.crew||'Crew TBD'} · ${l.address}`,this.fmtDate(l.reqInstall).replace(', 2026','')); });
-        clearLots.forEach(   l => { upcoming += this.actItem('call','✅',`Clear for Schedule — ${l.lotId}`,`Assign crew · ${l.fm}`,this.fmtDate(l.reqInstall).replace(', 2026','')); });
-        takeoffLots.forEach( l => { upcoming += this.actItem('task','📏',`Takeoff upcoming — ${l.lotId}`,`${l.takeoff} · ${l.fm}`,this.fmtDate(l.reqInstall).replace(', 2026','')); });
+        clearLots.forEach(   l => { upcoming += this.actItem('call','✅',`Clear for Schedule — ${l.lotId}`,`Assign crew · ${l.fm}`,this.fmtDate(l.reqInstall).replace(', 2026',''), false, `<button class="sf-btn" style="font-size:10px;padding:3px 9px" data-action="navigate" data-view="lot-detail" data-id="${l.id}">Assign Crew →</button>`); });
+        takeoffLots.forEach( l => { upcoming += this.actItem('task','📏',`Takeoff upcoming — ${l.lotId}`,`${l.takeoff} · ${l.fm}`,this.fmtDate(l.reqInstall).replace(', 2026',''), false, `<button class="sf-btn" style="font-size:10px;padding:3px 9px" data-action="navigate" data-view="lot-detail" data-id="${l.id}">Schedule →</button>`); });
         thirtyLots.forEach(  l => { upcoming += this.actItem('task','⏰',`30-day window — ${l.lotId}`,`811 ${l.eighty11} · Takeoff needed · ${l.fm}`,this.fmtDate(l.reqInstall).replace(', 2026','')); });
         if (!upcoming) upcoming = `<div style="padding:12px 0;font-size:11px;color:#54698d">No upcoming items.</div>`;
 
@@ -814,6 +815,9 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
           <div class="rec-actions">
             <button class="sf-btn">Edit</button>
             <button class="sf-btn" data-action="navigate" data-view="community-detail" data-id="${c?.id}">View Community</button>
+            ${!l.crew && !['active','closed'].includes(l.bucket) ? `<button class="sf-btn" data-action="showToast" data-msg="Opens FSL crew assignment panel">Assign Crew</button>` : ''}
+            ${l.bucket === 'takeoff' ? `<button class="sf-btn" data-action="showToast" data-msg="Takeoff scheduled — FM will be notified">Schedule Takeoff</button>` : ''}
+            ${l.bucket === 'clear' ? `<button class="sf-btn" data-action="showToast" data-msg="Lot marked Clear for Schedule">Clear for Schedule</button>` : ''}
             <button class="sf-btn primary">+ New Work Order</button>
           </div>
         </div></div>
@@ -874,10 +878,10 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
           </div>
           <div class="card last">
             <div class="ch"><div class="ci" style="background:#16325c">🔗</div><h3>Related</h3></div>
-            <div class="related-mini"><div style="font-size:12px">📋 Work Orders</div><div class="rm-count ${l.woCount?'has':''}">${l.woCount||0}</div></div>
+            <div class="related-mini" data-action="subTab" data-prefix="ld" data-tab="workorders" style="cursor:pointer"><div style="font-size:12px">📋 Work Orders</div><div class="rm-count ${l.woCount?'has':''}">${l.woCount||0}</div></div>
+            <div class="related-mini" data-action="subTab" data-prefix="ld" data-tab="aqua" style="cursor:pointer"><div style="font-size:12px">💧 Aqua Ticket</div><div class="rm-count ${l.aqua!=='N/A'?'has':''}">${l.aqua==='N/A'?'0':'1'}</div></div>
+            <div class="related-mini" data-action="subTab" data-prefix="ld" data-tab="pipeline" style="cursor:pointer"><div style="font-size:12px">🚧 811 Task</div><div class="rm-count has">1</div></div>
             <div class="related-mini"><div style="font-size:12px">📷 Photos</div><div class="rm-count ${l.photoCount?'has':''}">${l.photoCount||0}</div></div>
-            <div class="related-mini"><div style="font-size:12px">💧 Aqua Ticket</div><div class="rm-count ${l.aqua!=='N/A'?'has':''}">${l.aqua==='N/A'?'0':'1'}</div></div>
-            <div class="related-mini"><div style="font-size:12px">🚧 811 Task</div><div class="rm-count has">1</div></div>
           </div>
         </div></div></div></div>
         <div id="ld-pipeline" class="sub-tc"><div class="sf-body">
@@ -886,6 +890,8 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
           <div class="card last"><div class="ch"><div class="ci" style="background:#04844b">🚧</div><h3>811 Utility Marking</h3>${this.eighty11Chip(l.eighty11)}</div>
             <div class="status-bar">${e11Bar}</div>
             <div style="padding:8px 14px;font-size:11px;color:#54698d">811 must be Cleared before advancing to Clear for Schedule</div>
+            ${l.eighty11 === 'Not Filed' ? `<div style="padding:4px 14px 14px"><button class="sf-btn primary" style="font-size:11px" data-action="showToast" data-msg="811 filing initiated — NC811 confirms within 3 business days">File 811 Now</button></div>` : ''}
+            ${l.eighty11 === 'Cleared' && ['30','takeoff'].includes(l.bucket) ? `<div style="padding:4px 14px 14px"><button class="sf-btn primary" style="font-size:11px" data-action="showToast" data-msg="Lot advanced to Clear for Schedule queue">Advance to Clear for Schedule</button></div>` : ''}
           </div>
         </div></div>
         <div id="ld-workorders" class="sub-tc"><div class="sf-body"><div class="card last">
