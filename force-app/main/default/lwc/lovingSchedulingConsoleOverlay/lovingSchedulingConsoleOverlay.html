@@ -302,10 +302,10 @@
 ═══════════════════════════════════════════════════════ -->
 <template if:true={isPending}>
     <div class="toolbar">
-        <button class="filter-chip on" onclick={handlePendingAll}>All</button>
-        <button class="filter-chip" onclick={handlePendingInventory}>Inventory</button>
-        <button class="filter-chip" onclick={handlePendingSite}>Site</button>
-        <button class="filter-chip" onclick={handlePendingClear}>Clear to Schedule</button>
+        <button class={filterAllCss}       onclick={handlePendingAll}>All</button>
+        <button class={filterInventoryCss} onclick={handlePendingInventory}>Inventory</button>
+        <button class={filterSiteCss}      onclick={handlePendingSite}>Site</button>
+        <button class={filterClearCss}     onclick={handlePendingClear}>Clear to Schedule</button>
         <span class="spacer"></span>
         <button class="btn primary" onclick={handleOpenBacklog}>Open backlog</button>
     </div>
@@ -407,6 +407,7 @@
                                         <span class="chip amber">{stop.warningNote}</span>
                                     </template>
                                     <button class="btn" data-id={stop.workOrderId} onclick={handleNavigateWO}>Open WO</button>
+                                    <button class="btn" data-id={stop.stopId} onclick={handleReassignStop}>Reassign</button>
                                 </div>
                             </div>
                         </template>
@@ -560,6 +561,11 @@
                             <div class="job-title">{h.crewName}</div>
                             <span class={h.statusCss}>{h.status} · {h.checkTime}</span>
                             <div class="job-sub">{h.note}</div>
+                            <template if:true={h.isRed}>
+                                <div class="job-actions">
+                                    <button class="btn warning" data-crew={h.crewName} onclick={handleEscalateDayOf}>Escalate</button>
+                                </div>
+                            </template>
                         </div>
                     </template>
                 </div>
@@ -586,7 +592,7 @@
         <div class="panel-body" style="padding: 0">
             <template if:true={hasMcRows}>
                 <table class="table">
-                    <thead><tr><th>Crew</th><th>Work Type</th><th class="num">Goal</th><th class="num">Actual</th><th class="num">Variance</th><th>Source</th><th>Status</th></tr></thead>
+                    <thead><tr><th>Crew</th><th>Work Type</th><th class="num">Goal</th><th class="num">Actual</th><th class="num">Variance</th><th>Source</th><th>Status</th><th></th></tr></thead>
                     <tbody>
                         <template for:each={mcRows} for:item="r">
                             <tr key={r.crewName}>
@@ -597,6 +603,11 @@
                                 <td class="num"><span class={r.varianceCss}>{r.variance}</span></td>
                                 <td style="font-size: 10px; color: var(--muted)">{r.source}</td>
                                 <td><span class={r.statusCss}>{r.status}</span></td>
+                                <td>
+                                    <template if:true={r.workOrderId}>
+                                        <button class="btn" data-id={r.workOrderId} onclick={handleViewMcWo}>View WO</button>
+                                    </template>
+                                </td>
                             </tr>
                         </template>
                     </tbody>
@@ -663,6 +674,9 @@
                     <div class="pill-row">
                         <span class={wa.severityCss}>{wa.severity}</span>
                         <span class="chip blue">{wa.affectedStops} stops affected</span>
+                    </div>
+                    <div class="job-actions" style="margin-top: 8px">
+                        <button class="btn warning" data-id={wa.id} onclick={handleWeatherHold}>Place Hold</button>
                     </div>
                 </div>
             </template>

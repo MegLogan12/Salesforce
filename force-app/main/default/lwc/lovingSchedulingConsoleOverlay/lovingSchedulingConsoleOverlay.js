@@ -412,7 +412,8 @@ export default class LovingSchedulingConsoleOverlay extends NavigationMixin(Ligh
     get dayOfChecks() {
         return (this._dayOfData ? (this._dayOfData.healthChecks || []) : []).map(h => ({
             ...h,
-            statusCss: h.status === 'Green' ? 'chip green' : h.status === 'Red' ? 'chip red' : 'chip amber'
+            statusCss: h.status === 'Green' ? 'chip green' : h.status === 'Red' ? 'chip red' : 'chip amber',
+            isRed: h.status === 'Red'
         }));
     }
     get hasDayOfChecks() { return this.dayOfChecks.length > 0; }
@@ -624,10 +625,37 @@ export default class LovingSchedulingConsoleOverlay extends NavigationMixin(Ligh
     handlePendingClear()    { this._pendingFilter = 'clear'; }
     handleOpenBacklog()     { this[NavigationMixin.Navigate]({ type: 'standard__objectPage', attributes: { objectApiName: 'WorkOrder', actionName: 'list' } }); }
 
+    get filterAllCss()       { return 'filter-chip' + (this._pendingFilter === 'all'       ? ' on' : ''); }
+    get filterInventoryCss() { return 'filter-chip' + (this._pendingFilter === 'inventory' ? ' on' : ''); }
+    get filterSiteCss()      { return 'filter-chip' + (this._pendingFilter === 'site'      ? ' on' : ''); }
+    get filterClearCss()     { return 'filter-chip' + (this._pendingFilter === 'clear'     ? ' on' : ''); }
+
     handleReroute()         { this._openModal('Re-route Crew', () => Promise.resolve(this._toast('Re-route', 'Route re-optimization submitted', 'success'))); }
     handleResolveOt()       { this._openModal('Resolve Overtime', () => Promise.resolve(this._toast('OT', 'Overtime resolution requires FM approval. Create a Schedule_Issue__c note.', 'warning'))); }
     handleApplyOptimizerRec(){ this._openModal('Apply Route Recommendation', () => Promise.resolve(this._toast('Applied', 'Route recommendation applied to ServiceAppointment sequence', 'success'))); }
     handleDismissRec()      { this._toast('Dismissed', 'Recommendation dismissed', 'info'); }
+
+    handleReassignStop(event) {
+        const stopId = event.currentTarget.dataset.id;
+        this[NavigationMixin.Navigate]({ type: 'standard__recordPage', attributes: { recordId: stopId, actionName: 'view' } });
+    }
+
+    handleEscalateDayOf() {
+        this[NavigationMixin.Navigate]({ type: 'standard__objectPage', attributes: { objectApiName: 'Schedule_Issue__c', actionName: 'new' } });
+    }
+
+    handleViewMcWo(event) {
+        const id = event.currentTarget.dataset.id;
+        if (!id) return;
+        this[NavigationMixin.Navigate]({ type: 'standard__recordPage', attributes: { recordId: id, actionName: 'view' } });
+    }
+
+    handleWeatherHold() {
+        this._openModal('Place Weather Hold', () => {
+            this._toast('Weather Hold', 'Territory placed on weather hold. Verify in Weather_Alert__c.', 'warning');
+            return refreshApex(this._weatherWire);
+        });
+    }
 
     handleNavigateSA(event) {
         const id = event.currentTarget.dataset.id;
