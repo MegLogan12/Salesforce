@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status__c</fullName>
+    <description>Schema repair v2 2026-04-30</description>
+    <label>Status</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Draft</fullName>
+                <default>true</default>
+                <label>Draft</label>
+            </value>
+            <value>
+                <fullName>Pending Takeoff</fullName>
+                <default>false</default>
+                <label>Pending Takeoff</label>
+            </value>
+            <value>
+                <fullName>Takeoff Scheduled</fullName>
+                <default>false</default>
+                <label>Takeoff Scheduled</label>
+            </value>
+            <value>
+                <fullName>Takeoff In Progress</fullName>
+                <default>false</default>
+                <label>Takeoff In Progress</label>
+            </value>
+            <value>
+                <fullName>Takeoff Complete</fullName>
+                <default>false</default>
+                <label>Takeoff Complete</label>
+            </value>
+            <value>
+                <fullName>Pending Quote</fullName>
+                <default>false</default>
+                <label>Pending Quote</label>
+            </value>
+            <value>
+                <fullName>Quote Sent</fullName>
+                <default>false</default>
+                <label>Quote Sent</label>
+            </value>
+            <value>
+                <fullName>Clear for Schedule</fullName>
+                <default>false</default>
+                <label>Clear for Schedule</label>
+            </value>
+            <value>
+                <fullName>Site Readiness Check</fullName>
+                <default>false</default>
+                <label>Site Readiness Check</label>
+            </value>
+            <value>
+                <fullName>Scheduled</fullName>
+                <default>false</default>
+                <label>Scheduled</label>
+            </value>
+            <value>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+                <label>In Progress</label>
+            </value>
+            <value>
+                <fullName>FM QI Review</fullName>
+                <default>false</default>
+                <label>FM QI Review</label>
+            </value>
+            <value>
+                <fullName>Pending Closeout</fullName>
+                <default>false</default>
+                <label>Pending Closeout</label>
+            </value>
+            <value>
+                <fullName>Closed</fullName>
+                <default>false</default>
+                <label>Closed</label>
+            </value>
+            <value>
+                <fullName>Cancelled</fullName>
+                <default>false</default>
+                <label>Cancelled</label>
+            </value>
+            <value>
+                <fullName>Need Further Info (NFI)</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Need Further Info (NFI)</label>
+            </value>
+            <value>
+                <fullName>Pending Pull</fullName>
+                <default>false</default>
+                <label>Pending Pull</label>
+            </value>
+            <value>
+                <fullName>Approved</fullName>
+                <default>false</default>
+                <label>Approved</label>
+            </value>
+            <value>
+                <fullName>NFI</fullName>
+                <default>false</default>
+                <label>NFI</label>
+            </value>
+            <value>
+                <fullName>New</fullName>
+                <default>false</default>
+                <label>New</label>
+            </value>
+            <value>
+                <fullName>Open</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Open</label>
+            </value>
+            <value>
+                <fullName>Paid</fullName>
+                <default>false</default>
+                <label>Paid</label>
+            </value>
+            <value>
+                <fullName>Pending Approval</fullName>
+                <default>false</default>
+                <label>Pending Approval</label>
+            </value>
+            <value>
+                <fullName>QI Passed</fullName>
+                <default>false</default>
+                <label>QI Passed</label>
+            </value>
+            <value>
+                <fullName>Ready to Schedule</fullName>
+                <default>false</default>
+                <label>Ready to Schedule</label>
+            </value>
+            <value>
+                <fullName>Pending Scheduling</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Pending Scheduling</label>
+            </value>
+            <value>
+                <fullName>Ready for Scheduling</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Ready for Scheduling</label>
+            </value>
+            <value>
+                <fullName>Pending Material</fullName>
+                <default>false</default>
+                <label>Pending Material</label>
+            </value>
+            <value>
+                <fullName>Site Readiness Pending</fullName>
+                <default>false</default>
+                <label>Site Readiness Pending</label>
+            </value>
+            <value>
+                <fullName>Site Readiness Passed</fullName>
+                <default>false</default>
+                <label>Site Readiness Passed</label>
+            </value>
+            <value>
+                <fullName>Site Not Ready</fullName>
+                <default>false</default>
+                <label>Site Not Ready</label>
+            </value>
+            <value>
+                <fullName>Dispatched</fullName>
+                <default>false</default>
+                <label>Dispatched</label>
+            </value>
+            <value>
+                <fullName>Field Complete</fullName>
+                <default>false</default>
+                <label>Field Complete</label>
+            </value>
+            <value>
+                <fullName>Pending FM Review</fullName>
+                <default>false</default>
+                <label>Pending FM Review</label>
+            </value>
+            <value>
+                <fullName>Pending QI</fullName>
+                <default>false</default>
+                <label>Pending QI</label>
+            </value>
+            <value>
+                <fullName>QI Failed</fullName>
+                <default>false</default>
+                <label>QI Failed</label>
+            </value>
+            <value>
+                <fullName>Closeout Approved</fullName>
+                <default>false</default>
+                <label>Closeout Approved</label>
+            </value>
+            <value>
+                <fullName>Ready for Invoice</fullName>
+                <default>false</default>
+                <label>Ready for Invoice</label>
+            </value>
+            <value>
+                <fullName>Invoiced</fullName>
+                <default>false</default>
+                <label>Invoiced</label>
+            </value>
+            <value>
+                <fullName>On Hold</fullName>
+                <default>false</default>
+                <label>On Hold</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
