@@ -503,8 +503,7 @@ public without sharing class LovingSchedulingConsoleOverlayService {
     // ─── Mutations ───────────────────────────────────────────────────────────
 
     public static void requestOptimizerRun(Date schedDate, String division) {
-        // FSL Optimizer is invoked through the FSL API / Apex action.
-        // Create an audit log entry; actual optimization is async.
+        if (forceError) throw new AuraHandledException('forced for test');
         try {
             insert new Schedule_Issue__c(
                 Issue_Type__c = 'Other',
