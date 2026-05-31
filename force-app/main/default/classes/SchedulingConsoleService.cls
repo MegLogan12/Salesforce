@@ -1293,40 +1293,38 @@ public without sharing class SchedulingConsoleService {
     public static List<SchedulingConsoleController.PipelineSummaryDto> buildPipelineSummary(String division) {
         if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
 
-        List<Lot__c> lots = [
+        List<Work_Order__c> wos = [
             SELECT Id, Name, Requested_Install_Date__c,
-                   Pipeline_Bucket__c, Current_Work_Order__c,
-                   Community__r.Assigned_FM__r.Name
-            FROM Lot__c
-            WHERE Lot_Status__c = 'Active'
+                   Pipeline_Bucket__c, Takeoff_Task_Complete__c,
+                   Field_Manager__r.Name
+            FROM Work_Order__c
+            WHERE Status__c NOT IN ('Closed', 'Cancelled', 'Field Complete',
+                                    'Pending Closeout', 'Closeout Approved',
+                                    'Paid', 'Invoiced', 'Ready for Invoice')
             AND (Pipeline_Bucket__c = null
                  OR Pipeline_Bucket__c NOT IN ('Complete', 'Cancelled', 'Closed'))
             ORDER BY Requested_Install_Date__c ASC NULLS LAST
             LIMIT 500
         ];
 
-        Set<String> takeoffDoneBuckets = new Set<String>{
-            'Takeoff In Progress', 'Takeoff Complete', 'Scheduled', 'In Progress'
-        };
         Map<String, List<SchedulingConsoleController.PipelineLotDto>> bucketMap =
             new Map<String, List<SchedulingConsoleController.PipelineLotDto>>();
         Date today = Date.today();
 
-        for (Lot__c lot : lots) {
-            String bucket = String.isNotBlank(lot.Pipeline_Bucket__c) ? lot.Pipeline_Bucket__c : 'Ready to Schedule';
+        for (Work_Order__c wo : wos) {
+            String bucket = String.isNotBlank(wo.Pipeline_Bucket__c) ? wo.Pipeline_Bucket__c : 'Ready to Schedule';
             if (!bucketMap.containsKey(bucket)) {
                 bucketMap.put(bucket, new List<SchedulingConsoleController.PipelineLotDto>());
             }
             SchedulingConsoleController.PipelineLotDto d = new SchedulingConsoleController.PipelineLotDto();
-            d.lotId       = lot.Id;
-            d.name        = lot.Name;
-            d.fmName      = lot.Community__r != null && lot.Community__r.Assigned_FM__r != null
-                                ? lot.Community__r.Assigned_FM__r.Name : '—';
-            d.takeoffDone = takeoffDoneBuckets.contains(lot.Pipeline_Bucket__c);
-            d.woCreated   = lot.Current_Work_Order__c != null;
-            if (lot.Requested_Install_Date__c != null) {
-                d.daysUntil         = today.daysBetween(lot.Requested_Install_Date__c);
-                d.targetDateDisplay = lot.Requested_Install_Date__c.format();
+            d.lotId       = wo.Id;
+            d.name        = wo.Name;
+            d.fmName      = wo.Field_Manager__r != null ? wo.Field_Manager__r.Name : '—';
+            d.takeoffDone = wo.Takeoff_Task_Complete__c == true;
+            d.woCreated   = true;
+            if (wo.Requested_Install_Date__c != null) {
+                d.daysUntil         = today.daysBetween(wo.Requested_Install_Date__c);
+                d.targetDateDisplay = wo.Requested_Install_Date__c.format();
             } else {
                 d.daysUntil         = null;
                 d.targetDateDisplay = 'No date';

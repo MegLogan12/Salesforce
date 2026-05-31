@@ -4,10 +4,12 @@ private class LOVING_SchedulerClassesTest {
     // ── Bypass Setup ──────────────────────────────────────────────────────────
     @TestSetup
     static void setupBypass() {
-        Extentia_SIM__MapPlotterTriggerSettings__c bypassSetting =
-            Extentia_SIM__MapPlotterTriggerSettings__c.getOrgDefaults();
-        bypassSetting.Extentia_SIM__Bypass_Trigger__c = true;
-        upsert bypassSetting;
+        try {
+            Extentia_SIM__MapPlotterTriggerSettings__c bypassSetting =
+                Extentia_SIM__MapPlotterTriggerSettings__c.getOrgDefaults();
+            bypassSetting.Extentia_SIM__Bypass_Trigger__c = true;
+            upsert bypassSetting;
+        } catch (Exception e) {}
     }
 
     // ── Shared Helpers ────────────────────────────────────────────────────────
@@ -104,47 +106,72 @@ private class LOVING_SchedulerClassesTest {
 
     @IsTest
     static void testBucketEngineService_MultipleBuckets() {
-        Community__c comm = new Community__c(Name = 'Test Community Bucket SCH');
-        insert comm;
+        Profile p = [SELECT Id FROM Profile WHERE Name = 'Standard User' LIMIT 1];
+        User fmUser = new User(
+            Username          = 'bucketfm.' + System.currentTimeMillis() + '@testloving.invalid',
+            Email             = 'bucketfm@testloving.invalid',
+            LastName          = 'BucketFM',
+            Alias             = 'bktfm',
+            ProfileId         = p.Id,
+            TimeZoneSidKey    = 'America/New_York',
+            LocaleSidKey      = 'en_US',
+            EmailEncodingKey  = 'UTF-8',
+            LanguageLocaleKey = 'en_US'
+        );
+        insert fmUser;
 
-        // Lot A: 100 days out → BUCKET_90
-        Lot__c lotA = new Lot__c(
-            Name                     = 'Bucket Lot A SCH',
-            Lot_Status__c            = 'Active',
+        // WO A: 100 days out → BUCKET_90
+        Work_Order__c woA = new Work_Order__c(
+            Status__c                = 'Pending Takeoff',
             Requested_Install_Date__c = Date.today().addDays(100),
-            Community__c             = comm.Id
+            Field_Manager__c         = fmUser.Id
         );
 
-        // Lot B: 20 days out, no takeoff → BUCKET_30
-        Lot__c lotB = new Lot__c(
-            Name                     = 'Bucket Lot B SCH',
-            Lot_Status__c            = 'Active',
+        // WO B: 20 days out, no takeoff → BUCKET_30, task created
+        Work_Order__c woB = new Work_Order__c(
+            Status__c                = 'Pending Takeoff',
             Requested_Install_Date__c = Date.today().addDays(20),
-            Community__c             = comm.Id
+            Field_Manager__c         = fmUser.Id
         );
 
-        // Lot C: -5 days (past due), no takeoff, no WO → forced BUCKET_RTS
-        Lot__c lotC = new Lot__c(
-            Name                     = 'Bucket Lot C SCH',
-            Lot_Status__c            = 'Active',
+        // WO C: -5 days (past due), no takeoff → forced BUCKET_RTS
+        Work_Order__c woC = new Work_Order__c(
+            Status__c                = 'Pending Takeoff',
             Requested_Install_Date__c = Date.today().addDays(-5),
-            Community__c             = comm.Id
+            Field_Manager__c         = fmUser.Id
         );
 
-        insert new List<Lot__c>{ lotA, lotB, lotC };
+        // WO D: 45 days out → BUCKET_60
+        Work_Order__c woD = new Work_Order__c(
+            Status__c                = 'Pending Takeoff',
+            Requested_Install_Date__c = Date.today().addDays(45)
+        );
+
+        // WO E: On Hold → skipped by engine
+        Work_Order__c woE = new Work_Order__c(
+            Status__c                = 'Pending Takeoff',
+            Pipeline_Bucket__c       = 'On Hold',
+            Requested_Install_Date__c = Date.today().addDays(10)
+        );
+
+        insert new List<Work_Order__c>{ woA, woB, woC, woD, woE };
 
         Test.startTest();
         LOVING_BucketEngineService.runBucketEngine();
         Test.stopTest();
 
-        Map<Id, Lot__c> updated = new Map<Id, Lot__c>([
-            SELECT Id, Pipeline_Bucket__c FROM Lot__c
-            WHERE Id IN (:lotA.Id, :lotB.Id, :lotC.Id)
+        Map<Id, Work_Order__c> updated = new Map<Id, Work_Order__c>([
+            SELECT Id, Pipeline_Bucket__c, Takeoff_Tasks_Created__c
+            FROM Work_Order__c
+            WHERE Id IN (:woA.Id, :woB.Id, :woC.Id, :woD.Id, :woE.Id)
         ]);
-        System.assertEquals(3, updated.size(), 'All three lots returned');
-        System.assertEquals('90+ Days',          updated.get(lotA.Id).Pipeline_Bucket__c, 'Lot A → 90+ Days');
-        System.assertEquals('30 Days',           updated.get(lotB.Id).Pipeline_Bucket__c, 'Lot B → 30 Days');
-        System.assertEquals('Ready to Schedule', updated.get(lotC.Id).Pipeline_Bucket__c, 'Lot C → Ready to Schedule');
+        System.assertEquals(5, updated.size(), 'All five WOs returned');
+        System.assertEquals('90+ Days',          updated.get(woA.Id).Pipeline_Bucket__c, 'WO A → 90+ Days');
+        System.assertEquals('30 Days',           updated.get(woB.Id).Pipeline_Bucket__c, 'WO B → 30 Days');
+        System.assertEquals('Ready to Schedule', updated.get(woC.Id).Pipeline_Bucket__c, 'WO C → Ready to Schedule');
+        System.assertEquals('60+ Days',          updated.get(woD.Id).Pipeline_Bucket__c, 'WO D → 60+ Days');
+        System.assertEquals('On Hold',           updated.get(woE.Id).Pipeline_Bucket__c, 'WO E → On Hold unchanged');
+        System.assert(updated.get(woB.Id).Takeoff_Tasks_Created__c, 'WO B takeoff task flagged');
     }
 
     // ── LOVING_HealthCheckScheduler ───────────────────────────────────────────

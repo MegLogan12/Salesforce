@@ -179,18 +179,14 @@ private class SchedulingConsoleControllerTest {
             insert emp;
         } catch (Exception e) {}
 
-        // Lot__c record for pipeline summary coverage
+        // Work_Order__c record for pipeline summary coverage
         try {
-            Community__c comm = new Community__c(Name = 'SC Test Community Pipeline');
-            insert comm;
-            Lot__c pipelineLot = new Lot__c(
-                Name                     = 'SC Pipeline Lot 1',
-                Lot_Status__c            = 'Active',
+            Work_Order__c pipelineWO = new Work_Order__c(
+                Status__c                = 'Pending Takeoff',
                 Pipeline_Bucket__c       = '30 Days',
-                Requested_Install_Date__c = Date.today().addDays(25),
-                Community__c             = comm.Id
+                Requested_Install_Date__c = Date.today().addDays(25)
             );
-            insert pipelineLot;
+            insert pipelineWO;
         } catch (Exception e) {}
     }
 
