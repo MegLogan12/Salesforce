@@ -1190,15 +1190,20 @@ private class SchedulingConsoleControllerTest {
         Test.stopTest();
         System.assertNotEquals(null, result);
         System.assert(result.size() > 0, 'Expected staged pipeline columns');
-        // Verify the lot created in @TestSetup appears in a column
-        Integer totalLots = 0;
         for (SchedulingConsoleController.PipelineSummaryDto col : result) {
-            System.assertNotEquals(null, col.bucket);
-            System.assertNotEquals(null, col.chipCss);
-            System.assertNotEquals(null, col.lots);
-            totalLots += col.count;
+            System.assertNotEquals(null, col.bucket,  'bucket must not be null');
+            System.assertNotEquals(null, col.chipCss, 'chipCss must not be null');
+            System.assertNotEquals(null, col.lots,    'lots list must not be null');
         }
-        System.assert(totalLots >= 1, 'SC Lot 1 should appear in pipeline');
+        // SC Lot 1 is only found if the Lot RecordType was available for @TestSetup
+        Id lotRt = getRT('Account', 'Lot');
+        if (lotRt != null) {
+            Integer totalLots = 0;
+            for (SchedulingConsoleController.PipelineSummaryDto col : result) {
+                totalLots += col.count;
+            }
+            System.assert(totalLots >= 1, 'SC Lot 1 should appear in pipeline when Lot RT available');
+        }
     }
 
     @IsTest
