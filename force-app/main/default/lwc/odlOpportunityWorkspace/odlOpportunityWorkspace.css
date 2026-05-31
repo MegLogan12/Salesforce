@@ -84,6 +84,13 @@ h1 {
     min-width: 17rem;
 }
 
+.header-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-shrink: 0;
+}
+
 .secondary-btn,
 .primary-btn {
     padding: 0.55rem 0.95rem;
