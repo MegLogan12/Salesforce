@@ -4,6 +4,12 @@ import getWorkbenchData from '@salesforce/apex/LovingCommunityWorkbenchControlle
 // ─── DATA LAYER ────────────────────────────────────────────────────────────
 // Populated from Salesforce via LovingCommunityWorkbenchController.getWorkbenchData
 let DB = {
+    builders: [ /* replaced by live Apex data */ ],
+    divisions: [],
+    communities: [],
+    lots: [],
+};
+const _DB_SEED_DUMMY = {
     builders: [
         { id: 'drh',  name: 'DR Horton',     type: 'National Builder', hq: 'Arlington, TX' },
         { id: 'len',  name: 'Lennar',         type: 'National Builder', hq: 'Miami, FL' },
@@ -51,8 +57,7 @@ let DB = {
         { id: 'stonemill-06',communityId: 'stonemill',num: '06', lotId: 'L-STONEMILL-06',address: '206 Stonemill Dr',       reqInstall: '2026-04-12', bucket: 'clear',     lotStatus: 'Under Construction',eighty11: 'Cleared',   takeoff: 'Locked',           aqua: 'N/A',  po: 'DAV-2026-1006', poAmt: 3840, specType: 'Flexible',  fm: 'Tyler Kelly',     phase: 'Phase 1', gps: '35.4914,-80.6211', sodSf: 2600, goalHrs: 5.8, crew: '', woCount: 0, photoCount: 2 },
         { id: 'stonemill-11',communityId: 'stonemill',num: '11', lotId: 'L-STONEMILL-11',address: '216 Stonemill Dr',       reqInstall: '2026-05-03', bucket: '30',        lotStatus: 'Under Construction',eighty11: 'Filed',     takeoff: 'Not Started',      aqua: 'N/A',  po: 'DAV-2026-1011', poAmt: 3840, specType: 'Flexible',  fm: 'Tyler Kelly',     phase: 'Phase 1', gps: '35.4917,-80.6214', sodSf: 2550, goalHrs: 5.8, crew: '', woCount: 0, photoCount: 0 },
     ],
-};
-// Seed cleared when live data loads — see connectedCallback
+}; // _DB_SEED_DUMMY — never used at runtime, kept only for field shape reference
 
 const COMM_STAGES = ['Site Assessment','Contract Executed','HOA Setup','Active Selling','Fully Sold','Closed Out'];
 const INLINE_CSS  = `<style>
@@ -508,7 +513,7 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
           </select>
           <select class="list-select" id="comm-fm-filter">
             <option value="all"${this.filters.comms.fm==='all'?' selected':''}>All FMs</option>
-            ${['Tyler Kelly','Scott Spaulding','Jamie Hinson','Jersain Laris'].map(f=>`<option value="${f}"${this.filters.comms.fm===f?' selected':''}>${f}</option>`).join('')}
+            ${[...new Set(DB.communities.map(c=>c.fm).filter(Boolean))].sort().map(f=>`<option value="${f}"${this.filters.comms.fm===f?' selected':''}>${f}</option>`).join('')}
           </select>
           <input class="list-search" id="comm-search" placeholder="Search communities…" value="${this.filters.comms.search||''}">
         </div>
@@ -572,7 +577,7 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
         });
 
         // Field sections
-        const FM_OPTS = ['Tyler Kelly','Scott Spaulding','Jamie Hinson','Jersain Laris'];
+        const FM_OPTS = [...new Set(DB.communities.map(c=>c.fm).filter(Boolean))].sort();
         const SP_OPTS = ['Average','Exact','Flexible'];
         const buildFieldRow = (label, display, rt, rid, field, type, opts) => {
             const editAttrs = field ? `class="opp-value editable" data-rt="${rt}" data-rid="${rid}" data-field="${field}" data-type="${type||'text'}"${opts?` data-opts="${opts.join('|')}"`:''} ` : 'class="opp-value"';
@@ -740,7 +745,7 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
           </select>
           <select class="list-select" id="lot-fm-filter">
             <option value="all"${this.filters.lots.fm==='all'?' selected':''}>All FMs</option>
-            ${['Tyler Kelly','Scott Spaulding','Jamie Hinson','Jersain Laris'].map(f=>`<option value="${f}"${this.filters.lots.fm===f?' selected':''}>${f}</option>`).join('')}
+            ${[...new Set(DB.lots.map(l=>l.fm).filter(Boolean))].sort().map(f=>`<option value="${f}"${this.filters.lots.fm===f?' selected':''}>${f}</option>`).join('')}
           </select>
           <input class="list-search" id="lot-search" placeholder="Search lots, PO, address…" value="${this.filters.lots.search||''}">
         </div>
@@ -768,7 +773,7 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
             return `<div class="field-row"><div class="field-label">${label}</div><div ${editAttrs}>${display}</div></div>`;
         };
 
-        const FM_OPTS = ['Tyler Kelly','Scott Spaulding','Jamie Hinson','Jersain Laris'];
+        const FM_OPTS = [...new Set(DB.communities.map(c=>c.fm).filter(Boolean))].sort();
         const STATUS_OPTS = ['Open','Under Construction','In Production','Installed','Closed (HO Owned)'];
         const PHASE_OPTS  = ['Phase 1','Phase 2','Phase 3','Phase 4'];
 
