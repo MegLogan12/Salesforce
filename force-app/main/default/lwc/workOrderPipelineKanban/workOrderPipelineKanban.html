@@ -1,0 +1,73 @@
+<template>
+    <div class="pipeline-board">
+
+        <div class="pipeline-header">
+            <div class="ph-left">
+                <lightning-icon icon-name="utility:kanban" size="small" class="ph-icon"></lightning-icon>
+                <span class="ph-title">LOT PIPELINE</span>
+                <span class="ph-sub">{todayLabel}</span>
+            </div>
+            <div class="ph-right">
+                <span class="ph-total">{totalLots} active lots</span>
+                <lightning-button-icon
+                    icon-name="utility:refresh"
+                    variant="bare-inverse"
+                    title="Refresh pipeline"
+                    onclick={handleRefresh}
+                    class="ph-refresh">
+                </lightning-button-icon>
+            </div>
+        </div>
+
+        <template if:true={hasError}>
+            <div class="error-banner">
+                <lightning-icon icon-name="utility:warning" size="x-small" class="err-icon"></lightning-icon>
+                <span>{errorMsg}</span>
+            </div>
+        </template>
+
+        <template if:true={isLoading}>
+            <div class="loading-wrap">
+                <lightning-spinner alternative-text="Loading pipeline..." size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:false={isLoading}>
+            <template if:true={hasColumns}>
+                <div class="kanban-scroll">
+                    <template for:each={columns} for:item="col">
+                        <div key={col.bucket} class="kanban-col">
+                            <div class="col-header">
+                                <span class={col.chipCss}>{col.count}</span>
+                                <span class="col-title">{col.bucket}</span>
+                            </div>
+                            <div class="col-body">
+                                <template for:each={col.lots} for:item="lot">
+                                    <div key={lot.lotId} class="lot-card" data-id={lot.lotId} onclick={handleNavigateLot}>
+                                        <div class="lot-name">{lot.name}</div>
+                                        <div class="lot-meta">
+                                            <span class="lot-fm">{lot.fmName}</span>
+                                            <span class="lot-days">{lot.targetDateDisplay}</span>
+                                        </div>
+                                    </div>
+                                </template>
+                                <template if:false={col.lots.length}>
+                                    <div class="col-empty">No lots</div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+            <template if:false={hasColumns}>
+                <template if:false={hasError}>
+                    <div class="empty-state">
+                        <lightning-icon icon-name="utility:check" size="medium"></lightning-icon>
+                        <p>No active lots in pipeline.</p>
+                    </div>
+                </template>
+            </template>
+        </template>
+
+    </div>
+</template>

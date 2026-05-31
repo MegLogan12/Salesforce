@@ -40,7 +40,7 @@ public with sharing class RipplingSyncService {
         'Mowing',
         'Farm',
         'Land Development',
-        'Logisitics'
+        'Logistics'
     };
 
     // Normalize Rippling department names to the Salesforce picklist values we use.

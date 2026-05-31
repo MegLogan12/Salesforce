@@ -7,7 +7,7 @@
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__AppPage">
-            <property name="territory" type="String" label="Territory Label" description="Display name shown in the dispatch header (e.g. Charlotte North)"/>
+            <property name="defaultDivision" type="String" default="Charlotte" label="Default Division"/>
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>

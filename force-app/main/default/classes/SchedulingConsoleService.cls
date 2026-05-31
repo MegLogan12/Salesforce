@@ -1288,4 +1288,92 @@ public without sharing class SchedulingConsoleService {
         d.suggestedFix = fix;
         return d;
     }
+
+    // ─── Pipeline Summary ─────────────────────────────────────────────────────
+    public static List<SchedulingConsoleController.PipelineSummaryDto> buildPipelineSummary(String division) {
+        if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
+
+        List<Account> lots = [
+            SELECT Id, Name, FM__r.Name, Target_Start_Date__c,
+                   Pipeline_Bucket__c, Takeoff_Complete__c, WO_Created__c
+            FROM Account
+            WHERE RecordType.DeveloperName = 'Lot'
+            AND Lot_Status__c = 'Active'
+            AND (Pipeline_Bucket__c = null
+                 OR Pipeline_Bucket__c NOT IN ('Complete', 'Cancelled', 'Closed'))
+            ORDER BY Target_Start_Date__c ASC NULLS LAST
+            LIMIT 500
+        ];
+
+        Map<String, List<SchedulingConsoleController.PipelineLotDto>> bucketMap =
+            new Map<String, List<SchedulingConsoleController.PipelineLotDto>>();
+        Date today = Date.today();
+
+        for (Account lot : lots) {
+            String bucket = String.isNotBlank(lot.Pipeline_Bucket__c) ? lot.Pipeline_Bucket__c : 'Ready to Schedule';
+            if (!bucketMap.containsKey(bucket)) {
+                bucketMap.put(bucket, new List<SchedulingConsoleController.PipelineLotDto>());
+            }
+            SchedulingConsoleController.PipelineLotDto d = new SchedulingConsoleController.PipelineLotDto();
+            d.lotId       = lot.Id;
+            d.name        = lot.Name;
+            d.fmName      = lot.FM__r != null ? lot.FM__r.Name : '—';
+            d.takeoffDone = lot.Takeoff_Complete__c == true;
+            d.woCreated   = lot.WO_Created__c == true;
+            if (lot.Target_Start_Date__c != null) {
+                d.daysUntil         = today.daysBetween(lot.Target_Start_Date__c);
+                d.targetDateDisplay = lot.Target_Start_Date__c.format();
+            } else {
+                d.daysUntil         = null;
+                d.targetDateDisplay = 'No date';
+            }
+            bucketMap.get(bucket).add(d);
+        }
+
+        List<String> stages = new List<String>{
+            '90+ Days', '60+ Days', '30 Days', 'Ready to Schedule',
+            'Takeoff In Progress', 'Takeoff Complete',
+            'Scheduled', 'In Progress', 'On Hold'
+        };
+        Map<String, String> chipMap = new Map<String, String>{
+            '90+ Days'            => 'chip gray',
+            '60+ Days'            => 'chip blue',
+            '30 Days'             => 'chip amber',
+            'Ready to Schedule'   => 'chip green',
+            'Takeoff In Progress' => 'chip purple',
+            'Takeoff Complete'    => 'chip purple',
+            'Scheduled'           => 'chip blue',
+            'In Progress'         => 'chip green',
+            'On Hold'             => 'chip amber'
+        };
+
+        List<SchedulingConsoleController.PipelineSummaryDto> result =
+            new List<SchedulingConsoleController.PipelineSummaryDto>();
+        Set<String> stageSet = new Set<String>(stages);
+
+        for (String stage : stages) {
+            List<SchedulingConsoleController.PipelineLotDto> stageLots =
+                bucketMap.containsKey(stage) ? bucketMap.get(stage)
+                : new List<SchedulingConsoleController.PipelineLotDto>();
+            SchedulingConsoleController.PipelineSummaryDto s = new SchedulingConsoleController.PipelineSummaryDto();
+            s.bucket  = stage;
+            s.count   = stageLots.size();
+            s.chipCss = chipMap.get(stage);
+            s.lots    = stageLots;
+            result.add(s);
+        }
+
+        for (String bucket : bucketMap.keySet()) {
+            if (!stageSet.contains(bucket)) {
+                SchedulingConsoleController.PipelineSummaryDto s = new SchedulingConsoleController.PipelineSummaryDto();
+                s.bucket  = bucket;
+                s.count   = bucketMap.get(bucket).size();
+                s.chipCss = 'chip gray';
+                s.lots    = bucketMap.get(bucket);
+                result.add(s);
+            }
+        }
+
+        return result;
+    }
 }

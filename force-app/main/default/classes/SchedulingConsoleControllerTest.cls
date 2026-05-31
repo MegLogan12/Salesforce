@@ -1181,6 +1181,39 @@ private class SchedulingConsoleControllerTest {
         System.assert(true, 'buildScheduleRequests loop body covered');
     }
 
+    // ─── Pipeline summary ────────────────────────────────────────────────────
+    @IsTest
+    static void testGetPipelineSummary_success() {
+        Test.startTest();
+        List<SchedulingConsoleController.PipelineSummaryDto> result =
+            SchedulingConsoleController.getPipelineSummary(null);
+        Test.stopTest();
+        System.assertNotEquals(null, result);
+        System.assert(result.size() > 0, 'Expected staged pipeline columns');
+        // Verify the lot created in @TestSetup appears in a column
+        Integer totalLots = 0;
+        for (SchedulingConsoleController.PipelineSummaryDto col : result) {
+            System.assertNotEquals(null, col.bucket);
+            System.assertNotEquals(null, col.chipCss);
+            System.assertNotEquals(null, col.lots);
+            totalLots += col.count;
+        }
+        System.assert(totalLots >= 1, 'SC Lot 1 should appear in pipeline');
+    }
+
+    @IsTest
+    static void testGetPipelineSummary_forceThrow() {
+        SchedulingConsoleService.throwForCoverageTest = true;
+        Test.startTest();
+        try {
+            SchedulingConsoleController.getPipelineSummary(null);
+            System.assert(false, 'Should throw');
+        } catch (AuraHandledException e) {
+            System.assertNotEquals(null, e.getMessage());
+        }
+        Test.stopTest();
+    }
+
     @IsTest
     static void testSyncFslAppointments_mainPath() {
         // Bypass MapPlotter trigger

@@ -7,7 +7,11 @@
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__UtilityBar">
-            <property name="label" type="String" default="Ops Links" label="Button Label"/>
+            <property name="label"       type="String" default="Ops Links"                    label="Button Label"/>
+            <property name="wexUrl"      type="String" default="https://online.wexfleet.com"  label="WEX Fleet GPS Portal URL"/>
+            <property name="weatherUrl"  type="String" default="https://forecast.weather.gov/" label="Weather Forecast URL"/>
+            <property name="ripplingUrl" type="String" default="https://app.rippling.com"     label="Rippling URL"/>
+            <property name="mapsUrl"     type="String" default="https://www.google.com/maps"  label="Google Maps URL"/>
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>

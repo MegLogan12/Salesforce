@@ -1,0 +1,116 @@
+<template>
+    <div class="mc-console">
+
+        <div class="mc-header">
+            <div class="mc-title-row">
+                <lightning-icon icon-name="utility:measure" size="small" class="mc-icon"></lightning-icon>
+                <span class="mc-title">MEASURING CUP</span>
+                <span class="mc-date">{todayLabel}</span>
+            </div>
+            <div class="mc-controls">
+                <lightning-combobox
+                    name="division"
+                    label=""
+                    value={division}
+                    options={[
+                        {label:'Charlotte',value:'Charlotte'},
+                        {label:'All',value:''}
+                    ]}
+                    onchange={handleDivisionChange}
+                    class="mc-division-picker">
+                </lightning-combobox>
+                <lightning-button-icon
+                    icon-name="utility:refresh"
+                    variant="bare-inverse"
+                    title="Refresh"
+                    onclick={handleRefresh}
+                    class="mc-refresh">
+                </lightning-button-icon>
+            </div>
+        </div>
+
+        <template if:true={hasError}>
+            <div class="error-banner">
+                <lightning-icon icon-name="utility:warning" size="x-small" class="err-icon"></lightning-icon>
+                <span>{errorMsg}</span>
+            </div>
+        </template>
+
+        <template if:true={isLoading}>
+            <div class="loading-wrap">
+                <lightning-spinner alternative-text="Loading measuring cup data..." size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:false={isLoading}>
+            <template if:true={hasData}>
+
+                <div class="kpi-row">
+                    <div class="kpi-tile blue">
+                        <div class="kpi-label">Goal Hours</div>
+                        <div class="kpi-value">{kpi.goalHours}</div>
+                    </div>
+                    <div class="kpi-tile blue">
+                        <div class="kpi-label">Actual Hours</div>
+                        <div class="kpi-value">{kpi.actualHours}</div>
+                    </div>
+                    <div class={kpi.varianceCss}>
+                        <div class="kpi-label">Day Variance</div>
+                        <div class="kpi-value">{kpi.dayVariance}</div>
+                    </div>
+                    <div class="kpi-tile green">
+                        <div class="kpi-label">Crews Green</div>
+                        <div class="kpi-value">{kpi.crewsGreen} / {kpi.crewsTotal}</div>
+                    </div>
+                </div>
+
+                <template if:true={hasMcRows}>
+                    <div class="mc-table-wrap">
+                        <table class="mc-table">
+                            <thead>
+                                <tr>
+                                    <th>Crew</th>
+                                    <th>Type</th>
+                                    <th class="num-col">Goal Hrs</th>
+                                    <th class="num-col">Actual Hrs</th>
+                                    <th class="num-col">Variance</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={mcRows} for:item="row">
+                                    <tr key={row.crewName}>
+                                        <td class="crew-cell">{row.crewName}</td>
+                                        <td>{row.workType}</td>
+                                        <td class="num-col">{row.goalHours}</td>
+                                        <td class="num-col">{row.actualHours}</td>
+                                        <td class={row.varianceCss}>{row.variance}</td>
+                                        <td><span class={row.statusCss}>{row.status}</span></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </template>
+
+                <template if:false={hasMcRows}>
+                    <div class="empty-state">
+                        <lightning-icon icon-name="utility:check" size="medium" class="empty-icon"></lightning-icon>
+                        <p>No measuring cup data for today.</p>
+                    </div>
+                </template>
+
+            </template>
+
+            <template if:false={hasData}>
+                <template if:false={hasError}>
+                    <div class="empty-state">
+                        <lightning-icon icon-name="utility:info" size="medium" class="empty-icon"></lightning-icon>
+                        <p>No data available. Select a division and refresh.</p>
+                    </div>
+                </template>
+            </template>
+        </template>
+
+    </div>
+</template>

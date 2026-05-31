@@ -820,4 +820,31 @@ public with sharing class SchedulingConsoleController {
             ErrorLogService.log('SchedulingConsoleController','refreshSchedulingConsole',null,'Manual refresh triggered by ' + UserInfo.getName());
         } catch (Exception e) { /* non-blocking */ }
     }
+
+    // ─── Pipeline Summary ─────────────────────────────────────────────────────
+    public class PipelineSummaryDto {
+        @AuraEnabled public String                bucket;
+        @AuraEnabled public Integer               count;
+        @AuraEnabled public String                chipCss;
+        @AuraEnabled public List<PipelineLotDto>  lots;
+    }
+    public class PipelineLotDto {
+        @AuraEnabled public Id      lotId;
+        @AuraEnabled public String  name;
+        @AuraEnabled public String  fmName;
+        @AuraEnabled public Integer daysUntil;
+        @AuraEnabled public String  targetDateDisplay;
+        @AuraEnabled public Boolean takeoffDone;
+        @AuraEnabled public Boolean woCreated;
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<PipelineSummaryDto> getPipelineSummary(String division) {
+        try {
+            return SchedulingConsoleService.buildPipelineSummary(division);
+        } catch (Exception e) {
+            ErrorLogService.log('SchedulingConsoleController','getPipelineSummary',null,e.getMessage());
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
 }

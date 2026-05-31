@@ -5,7 +5,7 @@
             <div class="dh-brand">
                 <lightning-icon icon-name="utility:routing_offline" size="small" class="dh-icon"></lightning-icon>
                 <span class="dh-title">LOVING DISPATCH</span>
-                <span class="dh-territory">Charlotte North</span>
+                <template if:true={territory}><span class="dh-territory">{territory}</span></template>
             </div>
             <div class="dh-meta">
                 <span class="dh-stat">{activeCount} units deployed today</span>

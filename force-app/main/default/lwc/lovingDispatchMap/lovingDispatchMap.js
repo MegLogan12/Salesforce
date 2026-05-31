@@ -1,4 +1,4 @@
-import { LightningElement, wire, track } from 'lwc';
+import { LightningElement, api, wire, track } from 'lwc';
 import { refreshApex } from '@salesforce/apex';
 import getTodayDispatch from '@salesforce/apex/DispatchMapController.getTodayDispatch';
 
@@ -12,6 +12,8 @@ const STATUS_CLASSES = {
 const REFRESH_INTERVAL_MS = 60000; // 60 seconds
 
 export default class LovingDispatchMap extends LightningElement {
+    @api territory;
+
     @track trucks     = [];
     @track mapMarkers = [];
     @track error;
@@ -20,13 +22,17 @@ export default class LovingDispatchMap extends LightningElement {
     wiredResult;
     _refreshTimer;
 
-    mapCenter = {
-        location: { Latitude: 35.13, Longitude: -80.82 }
-    };
-
     todayLabel = new Date().toLocaleDateString('en-US', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
     });
+
+    get mapCenter() {
+        const pts = this.trucks.filter(t => t.lat != null && t.lng != null);
+        if (pts.length === 0) return null;
+        const lat = pts.reduce((s, t) => s + t.lat, 0) / pts.length;
+        const lng = pts.reduce((s, t) => s + t.lng, 0) / pts.length;
+        return { location: { Latitude: lat, Longitude: lng } };
+    }
 
     get activeCount() { return this.trucks.length; }
     get hasTrucks()   { return this.trucks.length > 0; }
