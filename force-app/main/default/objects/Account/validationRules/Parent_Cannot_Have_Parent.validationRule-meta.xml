@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Parent_Cannot_Have_Parent</fullName>
+    <active>true</active>
+    <description>A Builder Parent account is the top of the hierarchy and cannot itself have a Parent Account. Division-level accounts (Builder_Market) are children of a Parent.</description>
+    <errorConditionFormula>AND(
+    NOT($Profile.Name = &quot;System Administrator&quot;),
+    (AND(
+  RecordType.DeveloperName = &quot;Builder_Parent&quot;,
+  NOT(ISBLANK(ParentId))
+))
+)</errorConditionFormula>
+    <errorDisplayField>ParentId</errorDisplayField>
+    <errorMessage>A Builder Parent account cannot have a Parent Account. Clear the Parent Account field, or change the Record Type to Builder Division.</errorMessage>
+</ValidationRule>

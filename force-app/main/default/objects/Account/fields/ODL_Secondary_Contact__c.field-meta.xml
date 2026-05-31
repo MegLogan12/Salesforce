@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ODL_Secondary_Contact__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Optional spouse or secondary contact used by Outdoor Living homeowner workflows.</description>
+    <inlineHelpText>Optional spouse or second contact for ODL homeowner scheduling, follow-up, and email workflows.</inlineHelpText>
+    <label>ODL Secondary Contact</label>
+    <referenceTo>Contact</referenceTo>
+    <relationshipLabel>Accounts (ODL Secondary Contact)</relationshipLabel>
+    <relationshipName>Accounts_ODLSecondaryContact</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Lookup</type>
+</CustomField>

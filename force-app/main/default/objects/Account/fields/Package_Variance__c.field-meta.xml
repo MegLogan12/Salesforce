@@ -3,5 +3,6 @@
     <fullName>Package_Variance__c</fullName>
     <defaultValue>false</defaultValue>
     <label>Package Variance</label>
+    <trackFeedHistory>false</trackFeedHistory>
     <type>Checkbox</type>
 </CustomField>

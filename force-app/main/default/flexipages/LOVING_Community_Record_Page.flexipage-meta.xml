@@ -1,26 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
     <flexiPageRegions>
-        <name>header</name>
-        <type>Region</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentName>communityHeaderKpis</componentName>
-                <identifier>comm_details_header</identifier>
-            </componentInstance>
-        </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentName>communityProgress</componentName>
                 <identifier>comm_progress</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentName>communityStage</componentName>
-                <identifier>comm_stage</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -43,21 +27,11 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
-                <componentName>communityKeyContacts</componentName>
-                <identifier>comm_key_contacts</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>Facet-tab-comm-details</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
                 <componentName>communityScope</componentName>
                 <identifier>comm_scope</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-tab-comm-sow</name>
+        <name>Facet-tab-comm-overview</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -89,11 +63,17 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>communityTakeoffSiteVisit</componentName>
-                <identifier>comm_takeoff_site</identifier>
+                <componentName>communityKeyContacts</componentName>
+                <identifier>comm_key_contacts</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-tab-comm-tv</name>
+        <itemInstances>
+            <componentInstance>
+                <componentName>communityContactsTab</componentName>
+                <identifier>comm_contacts_tab</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-tab-comm-con</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -103,17 +83,7 @@
                 <identifier>comm_change_orders</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-tab-comm-co</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentName>communityContactsTab</componentName>
-                <identifier>comm_contacts_tab</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>Facet-tab-comm-con</name>
+        <name>Facet-tab-comm-rules</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -134,29 +104,37 @@
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
-                    <name>body</name>
-                    <value>Facet-tab-comm-details</value>
+                    <name>relatedListComponentOverride</name>
+                    <value>NONE</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
-                    <name>title</name>
-                    <value>Details</value>
+                    <name>rowsToDisplay</name>
+                    <value>10</value>
                 </componentInstanceProperties>
-                <componentName>flexipage:tab</componentName>
-                <identifier>comm_tab_details</identifier>
+                <componentInstanceProperties>
+                    <name>showActionBar</name>
+                    <value>true</value>
+                </componentInstanceProperties>
+                <componentName>force:relatedListContainer</componentName>
+                <identifier>comm_related_lists</identifier>
             </componentInstance>
         </itemInstances>
+        <name>Facet-tab-comm-files</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-tab-comm-sow</value>
+                    <value>Facet-tab-comm-overview</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
-                    <value>Scope of Work</value>
+                    <value>Overview</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
-                <identifier>comm_tab_sow</identifier>
+                <identifier>comm_tab_overview</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -167,7 +145,7 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
-                    <value>Lot Tracker</value>
+                    <value>Lots</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>comm_tab_lots</identifier>
@@ -191,28 +169,14 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-tab-comm-tv</value>
+                    <value>Facet-tab-comm-rules</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
-                    <value>Takeoff and Site Visit</value>
+                    <value>Rules + Changes</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
-                <identifier>comm_tab_tv</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>Facet-tab-comm-co</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>title</name>
-                    <value>Change Orders</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:tab</componentName>
-                <identifier>comm_tab_co</identifier>
+                <identifier>comm_tab_rules</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -243,6 +207,20 @@
                 <identifier>comm_tab_activity</identifier>
             </componentInstance>
         </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-tab-comm-files</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Files</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>comm_tab_files</identifier>
+            </componentInstance>
+        </itemInstances>
         <name>Facet-tabset-comm-main</name>
         <type>Facet</type>
     </flexiPageRegions>
@@ -258,11 +236,29 @@
                     <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
+                    <name>enableActionsInNative</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>hideChatterActions</name>
                     <value>false</value>
                 </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>numVisibleActions</name>
+                    <value>6</value>
+                </componentInstanceProperties>
                 <componentName>force:highlightsPanel</componentName>
-                <identifier>comm_highlights_panel</identifier>
+                <identifier>community_highlights</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>header</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>communityHeaderKpis</componentName>
+                <identifier>comm_header_summary</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>

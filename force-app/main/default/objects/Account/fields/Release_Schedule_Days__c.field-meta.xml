@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Release_Schedule_Days__c</fullName>
+    <description>Days between PO release date and expected landscape start date for this builder/division. Example: DR Horton Charlotte = 90 means if PO releases Jan 1, landscape starts ~Apr 1. Used to auto-calculate Target Start Date on Work Orders when no explicit start date is on the PO.</description>
+    <externalId>false</externalId>
+    <label>Release Schedule (Days)</label>
+    <precision>5</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>
