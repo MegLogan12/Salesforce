@@ -1,55 +1,11 @@
-import { LightningElement, track } from 'lwc';
+import { LightningElement, track, wire } from 'lwc';
+import { getRecord, getFieldValue } from 'lightning/uiRecordApi';
+import userId from '@salesforce/user/Id';
+import FIRST_NAME from '@salesforce/schema/User.FirstName';
+import LAST_NAME from '@salesforce/schema/User.LastName';
+import getWorkbenchData from '@salesforce/apex/AccountCommunityLotWorkbenchController.getWorkbenchData';
 
-// ─── DATA LAYER ────────────────────────────────────────────────────────────
-const DB = {
-    builders: [
-        { id: 'drh',  name: 'DR Horton',     type: 'National Builder', hq: 'Arlington, TX' },
-        { id: 'len',  name: 'Lennar',         type: 'National Builder', hq: 'Miami, FL' },
-        { id: 'dav',  name: 'Davidson Homes', type: 'Regional Builder', hq: 'Huntsville, AL' },
-        { id: 'ryan', name: 'Ryan Homes',     type: 'National Builder', hq: 'Pittsburgh, PA' },
-    ],
-    divisions: [
-        { id: 'drh-clt',  builderId: 'drh',  name: 'DRH Charlotte',       contact: 'Sarah Mitchell', phone: '704-555-0101', stdSodRate: 1.42, pricebook: 'DRH-CLT Pricebook' },
-        { id: 'len-clt',  builderId: 'len',  name: 'Lennar Charlotte',     contact: 'Bob Daniels',    phone: '704-555-0188', stdSodRate: 1.58, pricebook: 'LEN-CLT Pricebook' },
-        { id: 'dav-clt',  builderId: 'dav',  name: 'Davidson Charlotte',   contact: 'Tom Reed',       phone: '704-555-0244', stdSodRate: 1.35, pricebook: 'DAV-CLT Pricebook' },
-        { id: 'ryan-clt', builderId: 'ryan', name: 'Ryan Homes Charlotte', contact: 'Jen Park',       phone: '704-555-0312', stdSodRate: 1.45, pricebook: 'RYAN-CLT Pricebook' },
-    ],
-    communities: [
-        { id: 'pines',     divisionId: 'drh-clt',  name: 'The Pines at Berewick',    fm: 'Tyler Kelly',     stage: 'Active Selling', totalLots: 128, activeLots: 34, closedLots: 12, phases: 3, aqua: true,  pkg: 'DRH-CLT-Standard', stdPkg: 4820, aquaAddon: 485, goalHrs: 6.5, address: 'Berewick Pkwy, Charlotte NC 28278',   startDate: '2024-03-01', closeDate: '2027-06-30', specType: 'Average', sodRate: 1.42, lotSize: 'avg 3,200 sf' },
-        { id: 'mallard',   divisionId: 'len-clt',  name: 'Reserve at Mallard Creek', fm: 'Jamie Hinson',    stage: 'Active Selling', totalLots: 96,  activeLots: 21, closedLots: 8,  phases: 2, aqua: false, pkg: 'LEN-CLT-Exact',    stdPkg: 5140, aquaAddon: 0,   goalHrs: 7.0, address: 'Mallard Creek Rd, Charlotte NC 28262', startDate: '2024-06-15', closeDate: '2026-12-31', specType: 'Exact',   sodRate: 1.58, lotSize: 'avg 3,600 sf' },
-        { id: 'heritage',  divisionId: 'dav-clt',  name: 'Heritage Oaks',            fm: 'Tyler Kelly',     stage: 'Active Selling', totalLots: 72,  activeLots: 18, closedLots: 5,  phases: 2, aqua: false, pkg: 'DAV-CLT-Flex',     stdPkg: 3840, aquaAddon: 0,   goalHrs: 5.8, address: 'Heritage Oaks Pkwy, Concord NC 28025', startDate: '2024-09-01', closeDate: '2027-03-31', specType: 'Flexible',sodRate: 1.35, lotSize: 'avg 2,850 sf' },
-        { id: 'waverly',   divisionId: 'len-clt',  name: 'Waverly Reserve',          fm: 'Jamie Hinson',    stage: 'Active Selling', totalLots: 54,  activeLots: 12, closedLots: 4,  phases: 1, aqua: true,  pkg: 'LEN-CLT-Exact',    stdPkg: 5140, aquaAddon: 485, goalHrs: 7.0, address: 'Waverly Reserve Ln, Matthews NC 28104', startDate: '2025-01-15', closeDate: '2026-08-31', specType: 'Exact',   sodRate: 1.58, lotSize: 'avg 3,400 sf' },
-        { id: 'hampton',   divisionId: 'drh-clt',  name: 'Hampton Creek',            fm: 'Scott Spaulding', stage: 'Active Selling', totalLots: 156, activeLots: 42, closedLots: 22, phases: 4, aqua: true,  pkg: 'DRH-CLT-Standard', stdPkg: 4820, aquaAddon: 485, goalHrs: 6.5, address: 'Hampton Creek Ct, Gastonia NC 28054',  startDate: '2023-11-01', closeDate: '2028-06-30', specType: 'Average', sodRate: 1.42, lotSize: 'avg 3,100 sf' },
-        { id: 'baypte',    divisionId: 'drh-clt',  name: 'Bay Pointe at Paw Creek',  fm: 'Scott Spaulding', stage: 'Active Selling', totalLots: 88,  activeLots: 28, closedLots: 6,  phases: 2, aqua: false, pkg: 'DRH-CLT-Standard', stdPkg: 4820, aquaAddon: 0,   goalHrs: 6.5, address: 'Paw Creek Rdg, Charlotte NC 28214',    startDate: '2024-08-01', closeDate: '2027-09-30', specType: 'Average', sodRate: 1.42, lotSize: 'avg 3,050 sf' },
-        { id: 'thornton',  divisionId: 'ryan-clt', name: 'Thornton Place',           fm: 'Jersain Laris',   stage: 'Active Selling', totalLots: 64,  activeLots: 14, closedLots: 3,  phases: 2, aqua: true,  pkg: 'RYAN-CLT-Avg',     stdPkg: 4420, aquaAddon: 485, goalHrs: 6.2, address: 'Thornton Blvd, Indian Trail NC 28079', startDate: '2025-02-01', closeDate: '2027-01-31', specType: 'Average', sodRate: 1.45, lotSize: 'avg 3,050 sf' },
-        { id: 'stonemill', divisionId: 'dav-clt',  name: 'Stonemill Estates',        fm: 'Tyler Kelly',     stage: 'Fully Sold',     totalLots: 42,  activeLots: 2,  closedLots: 38, phases: 1, aqua: false, pkg: 'DAV-CLT-Flex',     stdPkg: 3840, aquaAddon: 0,   goalHrs: 5.8, address: 'Stonemill Dr, Kannapolis NC 28081',    startDate: '2023-05-01', closeDate: '2025-12-31', specType: 'Flexible',sodRate: 1.35, lotSize: 'avg 2,600 sf' },
-        { id: 'lakecrest', divisionId: 'len-clt',  name: 'Lakecrest at Northlake',   fm: 'Jamie Hinson',    stage: 'Active Selling', totalLots: 112, activeLots: 31, closedLots: 15, phases: 3, aqua: true,  pkg: 'LEN-CLT-Exact',    stdPkg: 5140, aquaAddon: 485, goalHrs: 7.0, address: 'Northlake Mall Dr, Charlotte NC 28216', startDate: '2023-08-01', closeDate: '2027-12-31', specType: 'Exact',   sodRate: 1.58, lotSize: 'avg 3,500 sf' },
-        { id: 'crossings', divisionId: 'drh-clt',  name: 'Crossings at Harrisburg',  fm: 'Scott Spaulding', stage: 'Active Selling', totalLots: 98,  activeLots: 24, closedLots: 9,  phases: 2, aqua: false, pkg: 'DRH-CLT-Standard', stdPkg: 4820, aquaAddon: 0,   goalHrs: 6.5, address: 'Pharr Mill Rd, Harrisburg NC 28075',  startDate: '2024-04-01', closeDate: '2027-06-30', specType: 'Average', sodRate: 1.42, lotSize: 'avg 3,200 sf' },
-        { id: 'sunridge',  divisionId: 'ryan-clt', name: 'Sun Ridge at Monroe',      fm: 'Jersain Laris',   stage: 'Active Selling', totalLots: 78,  activeLots: 19, closedLots: 4,  phases: 2, aqua: true,  pkg: 'RYAN-CLT-Avg',     stdPkg: 4420, aquaAddon: 485, goalHrs: 6.2, address: 'Sun Ridge Dr, Monroe NC 28112',         startDate: '2024-11-01', closeDate: '2027-03-31', specType: 'Average', sodRate: 1.45, lotSize: 'avg 2,900 sf' },
-        { id: 'millbend',  divisionId: 'dav-clt',  name: 'Mill Bend',                fm: 'Tyler Kelly',     stage: 'Closed Out',     totalLots: 36,  activeLots: 0,  closedLots: 36, phases: 1, aqua: false, pkg: 'DAV-CLT-Flex',     stdPkg: 3840, aquaAddon: 0,   goalHrs: 5.8, address: 'Mill Bend Rd, Concord NC 28027',       startDate: '2022-03-01', closeDate: '2024-09-30', specType: 'Flexible',sodRate: 1.35, lotSize: 'avg 2,500 sf' },
-    ],
-    lots: [
-        { id: 'pines-07',    communityId: 'pines',    num: '07', lotId: 'L-PINES-07',    address: '8412 Berewick Pine Dr',  reqInstall: '2026-04-25', bucket: 'scheduled', lotStatus: 'In Production',    eighty11: 'Cleared',   takeoff: 'Locked',           aqua: 'Auto', po: 'DRH-2026-8847', poAmt: 4820, specType: 'Average',   fm: 'Tyler Kelly',     phase: 'Phase 1', gps: '35.1112,-81.0368', sodSf: 3200, goalHrs: 6.5, crew: 'Crew A · J. Reyes', woCount: 3, photoCount: 12 },
-        { id: 'pines-05',    communityId: 'pines',    num: '05', lotId: 'L-PINES-05',    address: '8404 Berewick Pine Dr',  reqInstall: '2026-04-20', bucket: 'scheduled', lotStatus: 'Installed',        eighty11: 'Cleared',   takeoff: 'Locked',           aqua: 'Auto', po: 'DRH-2026-8845', poAmt: 4820, specType: 'Average',   fm: 'Tyler Kelly',     phase: 'Phase 1', gps: '35.1110,-81.0366', sodSf: 3150, goalHrs: 6.5, crew: 'Crew B · M. Torres', woCount: 2, photoCount: 8 },
-        { id: 'pines-09',    communityId: 'pines',    num: '09', lotId: 'L-PINES-09',    address: '8420 Berewick Pine Dr',  reqInstall: '2026-04-28', bucket: 'takeoff',   lotStatus: 'Under Construction',eighty11: 'Filed',     takeoff: 'Scheduled May 1',  aqua: 'Auto', po: 'DRH-2026-8849', poAmt: 4820, specType: 'Average',   fm: 'Tyler Kelly',     phase: 'Phase 1', gps: '35.1115,-81.0370', sodSf: 3200, goalHrs: 6.5, crew: '', woCount: 0, photoCount: 2 },
-        { id: 'pines-12',    communityId: 'pines',    num: '12', lotId: 'L-PINES-12',    address: '8428 Berewick Pine Dr',  reqInstall: '2026-05-10', bucket: 'clear',     lotStatus: 'Under Construction',eighty11: 'Cleared',   takeoff: 'Locked',           aqua: 'Auto', po: 'DRH-2026-8852', poAmt: 4820, specType: 'Average',   fm: 'Tyler Kelly',     phase: 'Phase 1', gps: '35.1118,-81.0372', sodSf: 3300, goalHrs: 6.5, crew: '', woCount: 0, photoCount: 3 },
-        { id: 'pines-18',    communityId: 'pines',    num: '18', lotId: 'L-PINES-18',    address: '8440 Berewick Pine Dr',  reqInstall: '2026-06-02', bucket: '31',        lotStatus: 'Under Construction',eighty11: 'Not Filed', takeoff: 'Not Started',      aqua: 'Auto', po: 'DRH-2026-8858', poAmt: 4820, specType: 'Average',   fm: 'Tyler Kelly',     phase: 'Phase 2', gps: '35.1121,-81.0375', sodSf: 3100, goalHrs: 6.5, crew: '', woCount: 0, photoCount: 0 },
-        { id: 'pines-01',    communityId: 'pines',    num: '01', lotId: 'L-PINES-01',    address: '8400 Berewick Pine Dr',  reqInstall: '2026-01-15', bucket: 'closed',    lotStatus: 'Closed (HO Owned)',eighty11: 'Cleared',   takeoff: 'Locked',           aqua: 'Installed', po: 'DRH-2025-8801', poAmt: 4820, specType: 'Average', fm: 'Tyler Kelly', phase: 'Phase 1', gps: '35.1109,-81.0364', sodSf: 3200, goalHrs: 6.5, crew: '', woCount: 3, photoCount: 10 },
-        { id: 'mallard-79',  communityId: 'mallard',  num: '79', lotId: 'L-MALLARD-79',  address: '14732 Mallard Cove Dr',  reqInstall: '2026-04-27', bucket: 'clear',     lotStatus: 'Under Construction',eighty11: 'Cleared',   takeoff: 'Locked',           aqua: 'N/A',  po: 'LEN-2026-4421', poAmt: 5140, specType: 'Exact',     fm: 'Jamie Hinson',    phase: 'Phase 1', gps: '35.3245,-80.7412', sodSf: 3580, goalHrs: 7.0, crew: '', woCount: 0, photoCount: 3 },
-        { id: 'mallard-45',  communityId: 'mallard',  num: '45', lotId: 'L-MALLARD-45',  address: '14698 Mallard Cove Dr',  reqInstall: '2026-05-15', bucket: 'takeoff',   lotStatus: 'Under Construction',eighty11: 'Filed',     takeoff: 'Scheduled May 8',  aqua: 'N/A',  po: 'LEN-2026-4387', poAmt: 5140, specType: 'Exact',     fm: 'Jamie Hinson',    phase: 'Phase 1', gps: '35.3240,-80.7408', sodSf: 3620, goalHrs: 7.0, crew: '', woCount: 0, photoCount: 1 },
-        { id: 'mallard-62',  communityId: 'mallard',  num: '62', lotId: 'L-MALLARD-62',  address: '14714 Mallard Cove Dr',  reqInstall: '2026-07-10', bucket: '60+',       lotStatus: 'Under Construction',eighty11: '—',         takeoff: 'Not Started',      aqua: 'N/A',  po: 'LEN-2026-4404', poAmt: 5140, specType: 'Exact',     fm: 'Jamie Hinson',    phase: 'Phase 2', gps: '35.3248,-80.7415', sodSf: 3400, goalHrs: 7.0, crew: '', woCount: 0, photoCount: 0 },
-        { id: 'heritage-156',communityId: 'heritage', num: '156',lotId: 'L-HERITAGE-156',address: '2218 Heritage Oaks Pkwy',reqInstall: '2026-05-22', bucket: '30',        lotStatus: 'Under Construction',eighty11: 'Not Filed', takeoff: 'Not Started',      aqua: 'N/A',  po: 'DAV-2026-1156', poAmt: 3840, specType: 'Flexible',  fm: 'Tyler Kelly',     phase: 'Phase 2', gps: '35.4028,-80.5881', sodSf: 2850, goalHrs: 5.8, crew: '', woCount: 0, photoCount: 0 },
-        { id: 'waverly-25',  communityId: 'waverly',  num: '25', lotId: 'L-WAVERLY-25',  address: '814 Waverly Reserve Ln', reqInstall: '2026-05-26', bucket: '31',        lotStatus: 'Under Construction',eighty11: 'Not Filed', takeoff: 'Not Started',      aqua: 'Auto', po: 'LEN-2026-4425', poAmt: 5140, specType: 'Exact',     fm: 'Jamie Hinson',    phase: 'Phase 1', gps: '35.1195,-80.7228', sodSf: 3440, goalHrs: 7.0, crew: '', woCount: 0, photoCount: 0 },
-        { id: 'hampton-88',  communityId: 'hampton',  num: '88', lotId: 'L-HAMPTON-88',  address: '144 Hampton Creek Ct',   reqInstall: '2026-06-15', bucket: '60+',       lotStatus: 'Under Construction',eighty11: '—',         takeoff: 'Not Started',      aqua: 'Auto', po: 'DRH-2026-9012', poAmt: 4820, specType: 'Average',   fm: 'Scott Spaulding', phase: 'Phase 3', gps: '35.2544,-81.1788', sodSf: 3100, goalHrs: 6.5, crew: '', woCount: 0, photoCount: 0 },
-        { id: 'hampton-22',  communityId: 'hampton',  num: '22', lotId: 'L-HAMPTON-22',  address: '78 Hampton Creek Ct',    reqInstall: '2026-04-30', bucket: 'scheduled', lotStatus: 'Under Construction',eighty11: 'Cleared',   takeoff: 'Locked',           aqua: 'Auto', po: 'DRH-2026-8946', poAmt: 4820, specType: 'Average',   fm: 'Scott Spaulding', phase: 'Phase 1', gps: '35.2538,-81.1781', sodSf: 3050, goalHrs: 6.5, crew: 'Crew C · D. Vega', woCount: 1, photoCount: 2 },
-        { id: 'hampton-44',  communityId: 'hampton',  num: '44', lotId: 'L-HAMPTON-44',  address: '110 Hampton Creek Ct',   reqInstall: '2026-08-22', bucket: '90+',       lotStatus: 'Open',             eighty11: '—',         takeoff: '—',                aqua: 'Auto', po: 'DRH-2026-9088', poAmt: 4820, specType: 'Average',   fm: 'Scott Spaulding', phase: 'Phase 2', gps: '35.2541,-81.1785', sodSf: 3200, goalHrs: 6.5, crew: '', woCount: 0, photoCount: 0 },
-        { id: 'baypte-42',   communityId: 'baypte',   num: '42', lotId: 'L-BAYPTE-42',   address: '502 Paw Creek Rdg',      reqInstall: '2026-08-10', bucket: '90+',       lotStatus: 'Open',             eighty11: '—',         takeoff: '—',                aqua: 'N/A',  po: 'DRH-2026-9188', poAmt: 4820, specType: 'Average',   fm: 'Scott Spaulding', phase: 'Phase 2', gps: '35.3348,-80.9612', sodSf: 3050, goalHrs: 6.5, crew: '', woCount: 0, photoCount: 0 },
-        { id: 'baypte-33',   communityId: 'baypte',   num: '33', lotId: 'L-BAYPTE-33',   address: '490 Paw Creek Rdg',      reqInstall: '2026-04-25', bucket: 'active',    lotStatus: 'In Production',    eighty11: 'Cleared',   takeoff: 'Locked',           aqua: 'N/A',  po: 'DRH-2026-9179', poAmt: 4820, specType: 'Average',   fm: 'Scott Spaulding', phase: 'Phase 1', gps: '35.3345,-80.9610', sodSf: 3100, goalHrs: 6.5, crew: 'Crew B · M. Torres', woCount: 2, photoCount: 5 },
-        { id: 'thornton-08', communityId: 'thornton', num: '08', lotId: 'L-THORNTON-08', address: '412 Thornton Blvd',      reqInstall: '2026-07-01', bucket: '60+',       lotStatus: 'Under Construction',eighty11: '—',         takeoff: 'Not Started',      aqua: 'Auto', po: 'RYAN-2026-2208', poAmt: 4420, specType: 'Average',  fm: 'Jersain Laris',   phase: 'Phase 1', gps: '35.0682,-80.6544', sodSf: 3050, goalHrs: 6.2, crew: '', woCount: 0, photoCount: 0 },
-        { id: 'stonemill-06',communityId: 'stonemill',num: '06', lotId: 'L-STONEMILL-06',address: '206 Stonemill Dr',       reqInstall: '2026-04-12', bucket: 'clear',     lotStatus: 'Under Construction',eighty11: 'Cleared',   takeoff: 'Locked',           aqua: 'N/A',  po: 'DAV-2026-1006', poAmt: 3840, specType: 'Flexible',  fm: 'Tyler Kelly',     phase: 'Phase 1', gps: '35.4914,-80.6211', sodSf: 2600, goalHrs: 5.8, crew: '', woCount: 0, photoCount: 2 },
-        { id: 'stonemill-11',communityId: 'stonemill',num: '11', lotId: 'L-STONEMILL-11',address: '216 Stonemill Dr',       reqInstall: '2026-05-03', bucket: '30',        lotStatus: 'Under Construction',eighty11: 'Filed',     takeoff: 'Not Started',      aqua: 'N/A',  po: 'DAV-2026-1011', poAmt: 3840, specType: 'Flexible',  fm: 'Tyler Kelly',     phase: 'Phase 1', gps: '35.4917,-80.6214', sodSf: 2550, goalHrs: 5.8, crew: '', woCount: 0, photoCount: 0 },
-    ],
-};
+let DB = { builders: [], divisions: [], communities: [], lots: [] };
 
 const COMM_STAGES = ['Site Assessment','Contract Executed','HOA Setup','Active Selling','Fully Sold','Closed Out'];
 const INLINE_CSS  = `<style>
@@ -187,6 +143,20 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
     _initialized    = false;
     _autoRefreshTmr = null;
     _toastTmr       = null;
+    _loading        = true;
+    _loadError      = null;
+
+    @wire(getRecord, { recordId: userId, fields: [FIRST_NAME, LAST_NAME] })
+    currentUser;
+
+    get userInitials() {
+        const first = (getFieldValue(this.currentUser?.data, FIRST_NAME) || '')[0] || '';
+        const last  = (getFieldValue(this.currentUser?.data, LAST_NAME)  || '')[0] || '';
+        return (first + last).toUpperCase() || '--';
+    }
+    get builderCount()   { return DB.builders.length; }
+    get communityCount() { return DB.communities.length; }
+    get lotCount()       { return DB.lots.length.toLocaleString(); }
 
     get tabAccCls()  { return 'sf-tab' + (this.currentView === 'accounts'   ? ' on' : ''); }
     get tabComCls()  { return 'sf-tab' + (this.currentView === 'communities' ? ' on' : ''); }
@@ -196,17 +166,60 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
     get content() { return this.template.querySelector('[data-id="main-content"]'); }
 
     connectedCallback() {
+        this._loadData();
         this._autoRefreshTmr = setInterval(() => this.doRefresh(this.currentView), 30000);
     }
     disconnectedCallback() {
         if (this._autoRefreshTmr) clearInterval(this._autoRefreshTmr);
     }
     renderedCallback() {
-        if (!this._initialized) {
+        if (!this._initialized && !this._loading) {
             this._initialized = true;
             this.renderView();
             this.stampTs();
         }
+    }
+
+    _loadData() {
+        this._loading = true;
+        getWorkbenchData()
+            .then(data => {
+                this._enrichAndStore(data);
+                this._loading = false;
+                if (!this._initialized) {
+                    this._initialized = true;
+                    this.renderView();
+                    this.stampTs();
+                } else {
+                    this.renderView();
+                    this.stampTs();
+                }
+            })
+            .catch(err => {
+                this._loadError = err && err.body ? err.body.message : String(err);
+                this._loading = false;
+                const el = this.content;
+                if (el) el.innerHTML = `<div style="padding:20px;color:#c23934">Error loading data: ${this._loadError}</div>`;
+            });
+    }
+
+    _enrichAndStore(data) {
+        DB.builders   = data.builders   || [];
+        DB.divisions  = data.divisions  || [];
+        DB.communities = (data.communities || []).map(c => ({ ...c, totalLots: 0, activeLots: c.activeLots || 0, closedLots: c.closedLots || 0 }));
+        DB.lots = data.lots || [];
+        // Build community map and enrich lots with FM; compute totalLots from child records
+        const commMap = {};
+        DB.communities.forEach(c => { commMap[c.id] = c; });
+        DB.lots.forEach(l => {
+            const c = commMap[l.communityId];
+            if (c) {
+                if (!l.fm) l.fm = c.fm;
+                c.totalLots = (c.totalLots || 0) + 1;
+                if (l.bucket === 'active')  c.activeLots = (c.activeLots || 0) + 1;
+                if (l.bucket === 'closed')  c.closedLots = (c.closedLots || 0) + 1;
+            }
+        });
     }
 
     // ── Navigation ──────────────────────────────
@@ -241,7 +254,11 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
     }
 
     doRefresh(view) {
-        if (view === this.currentView) { this.renderView(); this.stampTs(); this.showToast('Refreshed'); }
+        if (view === this.currentView) {
+            getWorkbenchData()
+                .then(data => { this._enrichAndStore(data); this.renderView(); this.stampTs(); this.showToast('Refreshed'); })
+                .catch(() => { this.renderView(); this.stampTs(); this.showToast('Refreshed'); });
+        }
     }
 
     stampTs() {
@@ -494,7 +511,7 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
           </select>
           <select class="list-select" id="comm-fm-filter">
             <option value="all"${this.filters.comms.fm==='all'?' selected':''}>All FMs</option>
-            ${['Tyler Kelly','Scott Spaulding','Jamie Hinson','Jersain Laris'].map(f=>`<option value="${f}"${this.filters.comms.fm===f?' selected':''}>${f}</option>`).join('')}
+            ${[...new Set(DB.communities.map(c=>c.fm).filter(Boolean))].sort().map(f=>`<option value="${f}"${this.filters.comms.fm===f?' selected':''}>${f}</option>`).join('')}
           </select>
           <input class="list-search" id="comm-search" placeholder="Search communities…" value="${this.filters.comms.search||''}">
         </div>
@@ -558,7 +575,7 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
         });
 
         // Field sections
-        const FM_OPTS = ['Tyler Kelly','Scott Spaulding','Jamie Hinson','Jersain Laris'];
+        const FM_OPTS = [...new Set(DB.communities.map(c=>c.fm).filter(Boolean))].sort();
         const SP_OPTS = ['Average','Exact','Flexible'];
         const buildFieldRow = (label, display, rt, rid, field, type, opts) => {
             const editAttrs = field ? `class="opp-value editable" data-rt="${rt}" data-rid="${rid}" data-field="${field}" data-type="${type||'text'}"${opts?` data-opts="${opts.join('|')}"`:''} ` : 'class="opp-value"';
@@ -713,7 +730,7 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
         <div class="rec-header"><div class="rec-top-row">
           <div class="rec-icon" style="background:#534ab7">🏠</div>
           <div class="rec-title-block"><div class="rec-breadcrumb">Lots</div>
-            <div class="rec-title">All Lots <span class="chip cgr" style="margin-left:6px">${filtered.length} shown · 2,847 total</span></div></div>
+            <div class="rec-title">All Lots <span class="chip cgr" style="margin-left:6px">${filtered.length} shown · ${DB.lots.length} total</span></div></div>
           <div class="rec-actions"><button class="sf-btn">Export</button><button class="sf-btn primary">+ New Lot</button></div>
         </div></div>
         <div class="list-toolbar">
@@ -726,7 +743,7 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
           </select>
           <select class="list-select" id="lot-fm-filter">
             <option value="all"${this.filters.lots.fm==='all'?' selected':''}>All FMs</option>
-            ${['Tyler Kelly','Scott Spaulding','Jamie Hinson','Jersain Laris'].map(f=>`<option value="${f}"${this.filters.lots.fm===f?' selected':''}>${f}</option>`).join('')}
+            ${[...new Set(DB.lots.map(l=>l.fm).filter(Boolean))].sort().map(f=>`<option value="${f}"${this.filters.lots.fm===f?' selected':''}>${f}</option>`).join('')}
           </select>
           <input class="list-search" id="lot-search" placeholder="Search lots, PO, address…" value="${this.filters.lots.search||''}">
         </div>
@@ -737,7 +754,7 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
             <th>Address</th><th>Req. Install</th><th>Pipeline</th><th>Status</th>
             <th>811</th><th>Takeoff</th><th>Aqua</th><th>PO #</th><th class="num">PO $</th><th>Spec</th>
           </tr></thead><tbody>${tbody||'<tr><td colspan="14" style="text-align:center;padding:24px;color:#54698d">No lots match filters</td></tr>'}</tbody></table>
-          <div style="padding:10px 14px;background:#fafaf9;border-top:1px solid #e5e5e5;font-size:11px;color:#54698d">${filtered.length} of ${DB.lots.length} sample lots shown (2,847 in production) · Pipeline_Bucket__c recalculated nightly</div>
+          <div style="padding:10px 14px;background:#fafaf9;border-top:1px solid #e5e5e5;font-size:11px;color:#54698d">${filtered.length} of ${DB.lots.length} lots shown · Pipeline_Bucket__c recalculated nightly</div>
         </div></div>`;
     }
 
@@ -754,7 +771,7 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
             return `<div class="field-row"><div class="field-label">${label}</div><div ${editAttrs}>${display}</div></div>`;
         };
 
-        const FM_OPTS = ['Tyler Kelly','Scott Spaulding','Jamie Hinson','Jersain Laris'];
+        const FM_OPTS = [...new Set(DB.communities.map(c=>c.fm).filter(Boolean))].sort();
         const STATUS_OPTS = ['Open','Under Construction','In Production','Installed','Closed (HO Owned)'];
         const PHASE_OPTS  = ['Phase 1','Phase 2','Phase 3','Phase 4'];
 
