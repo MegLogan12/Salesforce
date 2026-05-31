@@ -76,14 +76,8 @@ public without sharing class LovingSchedulingConsoleOverlayService {
         d.issueCount       = openIssues;
         d.weatherHoldCount = weatherHolds;
 
-        // Alert notice
-        if (openIssues > 0 || weatherHolds > 0) {
-            List<String> parts = new List<String>();
-            if (weatherHolds > 0) parts.add(weatherHolds + ' weather hold' + (weatherHolds > 1 ? 's' : ''));
-            if (openIssues   > 0) parts.add(openIssues   + ' open schedule issue' + (openIssues > 1 ? 's' : ''));
-            d.alertNotice = String.join(parts, ', ') + ' require review before release.';
-            d.alertLevel  = weatherHolds > 0 ? 'red' : 'amber';
-        }
+        d.alertNotice = buildAlertNotice(openIssues, weatherHolds);
+        if (d.alertNotice != null) d.alertLevel = weatherHolds > 0 ? 'red' : 'amber';
 
         // Schedule day release status
         d.releaseStatus = 'Not released';
@@ -143,35 +137,7 @@ public without sharing class LovingSchedulingConsoleOverlayService {
         ]) arMap.put(ar.ServiceAppointmentId, ar);
 
         for (ServiceAppointment sa : sas) {
-            LovingSchedulingConsoleOverlayController.FslAppointmentRowDto row =
-                new LovingSchedulingConsoleOverlayController.FslAppointmentRowDto();
-            row.saId       = sa.Id;
-            row.saNumber   = sa.AppointmentNumber;
-            row.workOrderId = sa.ParentRecordId;
-            row.status     = sa.Status;
-            row.statusCss  = statusChip(sa.Status);
-
-            WorkOrder wo = woMap.get(sa.ParentRecordId);
-            if (wo != null) {
-                row.workOrderName = wo.WorkOrderNumber;
-                row.community     = wo.Community__r != null ? wo.Community__r.Name : '—';
-                row.lot           = wo.Lot__r       != null ? wo.Lot__r.Name       : '—';
-                row.builder       = wo.Account      != null ? wo.Account.Name       : '—';
-                row.crewName      = wo.Crew__r      != null ? wo.Crew__r.Name       : '—';
-                row.foremanName   = wo.Field_Manager__r != null ? wo.Field_Manager__r.Name : '—';
-            } else {
-                row.workOrderName = sa.Subject != null ? sa.Subject : '—';
-                row.community = '—'; row.lot = '—'; row.builder = '—';
-                row.crewName  = '—'; row.foremanName = '—';
-            }
-            AssignedResource ar = arMap.get(sa.Id);
-            if (ar != null && ar.ServiceResource != null) row.crewName = ar.ServiceResource.Name;
-
-            String startFmt = sa.SchedStartTime != null ? sa.SchedStartTime.format('h:mm') : '?';
-            String endFmt   = sa.SchedEndTime   != null ? sa.SchedEndTime.format('h:mm')   : '?';
-            row.window = startFmt + '–' + endFmt;
-            row.risk   = 'Low'; row.riskCss = 'chip green';
-            rows.add(row);
+            rows.add(buildAppointmentRow(sa, woMap.get(sa.ParentRecordId), arMap.get(sa.Id)));
         }
         return rows;
     }
@@ -299,22 +265,7 @@ public without sharing class LovingSchedulingConsoleOverlayService {
         ]) { if (absMap.containsKey(ra.ResourceId)) absMap.get(ra.ResourceId).add(ra); }
 
         for (ServiceResource r : resources) {
-            LovingSchedulingConsoleOverlayController.ResourceAvailabilityDto row =
-                new LovingSchedulingConsoleOverlayController.ResourceAvailabilityDto();
-            row.resourceId   = r.Id;
-            row.resourceName = r.Name;
-            List<ResourceAbsence> abs = absMap.get(r.Id);
-            row.monLabel = dayStatus(monday,        abs);
-            row.tueLabel = dayStatus(monday.addDays(1), abs);
-            row.wedLabel = dayStatus(monday.addDays(2), abs);
-            row.thuLabel = dayStatus(monday.addDays(3), abs);
-            row.friLabel = dayStatus(monday.addDays(4), abs);
-            Boolean anyAbsence = row.monLabel != 'Available' || row.tueLabel != 'Available'
-                              || row.wedLabel != 'Available' || row.thuLabel != 'Available'
-                              || row.friLabel != 'Available';
-            row.weekStatus = anyAbsence ? 'Partial' : 'Full week';
-            row.weekCss    = anyAbsence ? 'chip amber' : 'chip green';
-            rows.add(row);
+            rows.add(buildResourceRow(r, monday, absMap.get(r.Id)));
         }
         return rows;
     }
@@ -446,16 +397,7 @@ public without sharing class LovingSchedulingConsoleOverlayService {
 
         for (Crew__c c : crews) {
             LovingSchedulingConsoleOverlayController.MeasuringCupRowDto r =
-                new LovingSchedulingConsoleOverlayController.MeasuringCupRowDto();
-            r.crewName    = c.Name;
-            r.workType    = typeMap.containsKey(c.Name) ? typeMap.get(c.Name) : 'Multiple';
-            r.goalHours   = goalMap.containsKey(c.Name)   ? goalMap.get(c.Name)   : 0;
-            r.actualHours = actualMap.containsKey(c.Name) ? actualMap.get(c.Name) : r.goalHours;
-            r.variance    = (r.actualHours - r.goalHours).setScale(1);
-            r.varianceCss = r.variance > 0.5 ? 'chip amber' : r.variance < -1 ? 'chip red' : 'chip green';
-            r.source      = actualMap.containsKey(c.Name) ? 'Rippling_Time_Entry__c' : 'WorkOrder (estimated)';
-            r.status      = Math.abs(r.variance) <= 0.5 ? 'Green' : r.variance > 0.5 ? 'Over' : 'Behind';
-            r.statusCss   = r.status == 'Green' ? 'chip green' : r.status == 'Over' ? 'chip amber' : 'chip red';
+                buildMeasuringRow(c.Name, goalMap, actualMap, typeMap);
             if (r.status == 'Green') green++;
             totalGoal   += r.goalHours;
             totalActual += r.actualHours;
@@ -556,6 +498,85 @@ public without sharing class LovingSchedulingConsoleOverlayService {
             ));
         }
         if (!tasks.isEmpty()) insert tasks;
+    }
+
+    // ─── @TestVisible row builders ───────────────────────────────────────────
+
+    @TestVisible
+    private static String buildAlertNotice(Integer openIssues, Integer weatherHolds) {
+        if (openIssues == 0 && weatherHolds == 0) return null;
+        List<String> parts = new List<String>();
+        if (weatherHolds > 0) parts.add(weatherHolds + ' weather hold' + (weatherHolds > 1 ? 's' : ''));
+        if (openIssues   > 0) parts.add(openIssues   + ' open schedule issue' + (openIssues > 1 ? 's' : ''));
+        return String.join(parts, ', ') + ' require review before release.';
+    }
+
+    @TestVisible
+    private static LovingSchedulingConsoleOverlayController.FslAppointmentRowDto buildAppointmentRow(
+            ServiceAppointment sa, WorkOrder wo, AssignedResource ar) {
+        LovingSchedulingConsoleOverlayController.FslAppointmentRowDto row =
+            new LovingSchedulingConsoleOverlayController.FslAppointmentRowDto();
+        row.saId        = sa.Id;
+        row.saNumber    = sa.AppointmentNumber;
+        row.workOrderId = sa.ParentRecordId;
+        row.status      = sa.Status;
+        row.statusCss   = statusChip(sa.Status);
+        if (wo != null) {
+            row.workOrderName = wo.WorkOrderNumber;
+            row.community     = wo.Community__r != null ? wo.Community__r.Name : '—';
+            row.lot           = wo.Lot__r       != null ? wo.Lot__r.Name       : '—';
+            row.builder       = wo.Account      != null ? wo.Account.Name       : '—';
+            row.crewName      = wo.Crew__r      != null ? wo.Crew__r.Name       : '—';
+            row.foremanName   = wo.Field_Manager__r != null ? wo.Field_Manager__r.Name : '—';
+        } else {
+            row.workOrderName = sa.Subject != null ? sa.Subject : '—';
+            row.community = '—'; row.lot = '—'; row.builder = '—';
+            row.crewName  = '—'; row.foremanName = '—';
+        }
+        if (ar != null && ar.ServiceResource != null) row.crewName = ar.ServiceResource.Name;
+        String startFmt = sa.SchedStartTime != null ? sa.SchedStartTime.format('h:mm') : '?';
+        String endFmt   = sa.SchedEndTime   != null ? sa.SchedEndTime.format('h:mm')   : '?';
+        row.window = startFmt + '–' + endFmt;
+        row.risk   = 'Low'; row.riskCss = 'chip green';
+        return row;
+    }
+
+    @TestVisible
+    private static LovingSchedulingConsoleOverlayController.ResourceAvailabilityDto buildResourceRow(
+            ServiceResource r, Date monday, List<ResourceAbsence> absences) {
+        LovingSchedulingConsoleOverlayController.ResourceAvailabilityDto row =
+            new LovingSchedulingConsoleOverlayController.ResourceAvailabilityDto();
+        row.resourceId   = r.Id;
+        row.resourceName = r.Name;
+        row.monLabel = dayStatus(monday,            absences);
+        row.tueLabel = dayStatus(monday.addDays(1), absences);
+        row.wedLabel = dayStatus(monday.addDays(2), absences);
+        row.thuLabel = dayStatus(monday.addDays(3), absences);
+        row.friLabel = dayStatus(monday.addDays(4), absences);
+        Boolean anyAbsence = row.monLabel != 'Available' || row.tueLabel != 'Available'
+                          || row.wedLabel != 'Available' || row.thuLabel != 'Available'
+                          || row.friLabel != 'Available';
+        row.weekStatus = anyAbsence ? 'Partial' : 'Full week';
+        row.weekCss    = anyAbsence ? 'chip amber' : 'chip green';
+        return row;
+    }
+
+    @TestVisible
+    private static LovingSchedulingConsoleOverlayController.MeasuringCupRowDto buildMeasuringRow(
+            String crewName, Map<String,Decimal> goalMap, Map<String,Decimal> actualMap,
+            Map<String,String> typeMap) {
+        LovingSchedulingConsoleOverlayController.MeasuringCupRowDto r =
+            new LovingSchedulingConsoleOverlayController.MeasuringCupRowDto();
+        r.crewName    = crewName;
+        r.workType    = typeMap.containsKey(crewName) ? typeMap.get(crewName) : 'Multiple';
+        r.goalHours   = goalMap.containsKey(crewName)   ? goalMap.get(crewName)   : 0;
+        r.actualHours = actualMap.containsKey(crewName) ? actualMap.get(crewName) : r.goalHours;
+        r.variance    = (r.actualHours - r.goalHours).setScale(1);
+        r.varianceCss = r.variance > 0.5 ? 'chip amber' : r.variance < -1 ? 'chip red' : 'chip green';
+        r.source      = actualMap.containsKey(crewName) ? 'Rippling_Time_Entry__c' : 'WorkOrder (estimated)';
+        r.status      = Math.abs(r.variance) <= 0.5 ? 'Green' : r.variance > 0.5 ? 'Over' : 'Behind';
+        r.statusCss   = r.status == 'Green' ? 'chip green' : r.status == 'Over' ? 'chip amber' : 'chip red';
+        return r;
     }
 
     // ─── Helpers ─────────────────────────────────────────────────────────────

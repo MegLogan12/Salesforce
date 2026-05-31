@@ -358,6 +358,142 @@ private class LovSchedConsoleOverlaySvcTest {
         System.assertNotEquals(null, dto.appointmentQueue);
     }
 
+    // ─── @TestVisible row builder coverage ───────────────────────────────────
+
+    @IsTest
+    static void testBuildAlertNotice_allBranches() {
+        // No issues → null
+        System.assertEquals(null, LovingSchedulingConsoleOverlayService.buildAlertNotice(0, 0));
+
+        // Only open issues
+        String s1 = LovingSchedulingConsoleOverlayService.buildAlertNotice(1, 0);
+        System.assert(s1.contains('open schedule issue'));
+        System.assert(s1.contains('require review'));
+
+        // Plural issues
+        String s2 = LovingSchedulingConsoleOverlayService.buildAlertNotice(3, 0);
+        System.assert(s2.contains('open schedule issues'));
+
+        // Only weather holds
+        String s3 = LovingSchedulingConsoleOverlayService.buildAlertNotice(0, 2);
+        System.assert(s3.contains('weather holds'));
+
+        // Both
+        String s4 = LovingSchedulingConsoleOverlayService.buildAlertNotice(2, 1);
+        System.assert(s4.contains('weather hold'));
+        System.assert(s4.contains('open schedule issues'));
+    }
+
+    @IsTest
+    static void testBuildAppointmentRow_noWorkOrder() {
+        ServiceAppointment sa = new ServiceAppointment();
+        sa.Status         = 'Dispatched';
+        sa.Subject        = 'Test SA Subject';
+        sa.SchedStartTime = Datetime.newInstanceGmt(Date.today(), Time.newInstance(8,0,0,0));
+        sa.SchedEndTime   = Datetime.newInstanceGmt(Date.today(), Time.newInstance(16,0,0,0));
+
+        LovingSchedulingConsoleOverlayController.FslAppointmentRowDto row =
+            LovingSchedulingConsoleOverlayService.buildAppointmentRow(sa, null, null);
+
+        System.assertEquals('chip blue',      row.statusCss);
+        System.assertEquals('Dispatched',     row.status);
+        System.assertEquals('Test SA Subject', row.workOrderName);
+        System.assertEquals('—',              row.community);
+        System.assertEquals('—',              row.lot);
+        System.assertEquals('Low',            row.risk);
+        System.assertEquals('chip green',     row.riskCss);
+        System.assertNotEquals(null, row.window);
+    }
+
+    @IsTest
+    static void testBuildAppointmentRow_nullTimes() {
+        ServiceAppointment sa = new ServiceAppointment();
+        sa.Status = 'Completed';
+        // SchedStartTime and SchedEndTime both null → window uses '?'
+        LovingSchedulingConsoleOverlayController.FslAppointmentRowDto row =
+            LovingSchedulingConsoleOverlayService.buildAppointmentRow(sa, null, null);
+        System.assert(row.window.contains('?'));
+        System.assertEquals('chip green', row.statusCss);
+    }
+
+    @IsTest
+    static void testBuildResourceRow_noAbsences() {
+        ServiceResource r = new ServiceResource();
+        r.Name = 'Test Technician';
+        // Monday Jan 5 2026
+        Date monday = Date.newInstance(2026, 1, 5);
+
+        LovingSchedulingConsoleOverlayController.ResourceAvailabilityDto row =
+            LovingSchedulingConsoleOverlayService.buildResourceRow(r, monday, new List<ResourceAbsence>());
+
+        System.assertEquals('Test Technician', row.resourceName);
+        System.assertEquals('Available', row.monLabel);
+        System.assertEquals('Available', row.friLabel);
+        System.assertEquals('Full week',  row.weekStatus);
+        System.assertEquals('chip green', row.weekCss);
+    }
+
+    @IsTest
+    static void testBuildResourceRow_withAbsence() {
+        ServiceResource r = new ServiceResource();
+        r.Name = 'Test Tech Absent';
+        Date monday = Date.newInstance(2026, 1, 5);
+
+        // Absence covering Monday only
+        ResourceAbsence ra = new ResourceAbsence();
+        ra.Start = Datetime.newInstanceGmt(monday, Time.newInstance(0,0,0,0));
+        ra.End   = Datetime.newInstanceGmt(monday, Time.newInstance(23,59,59,999));
+
+        LovingSchedulingConsoleOverlayController.ResourceAvailabilityDto row =
+            LovingSchedulingConsoleOverlayService.buildResourceRow(r, monday, new List<ResourceAbsence>{ ra });
+
+        System.assertEquals('PTO',       row.monLabel);
+        System.assertEquals('Available', row.tueLabel);
+        System.assertEquals('Partial',   row.weekStatus);
+        System.assertEquals('chip amber', row.weekCss);
+    }
+
+    @IsTest
+    static void testBuildMeasuringRow_allVarianceBranches() {
+        Map<String,String> types = new Map<String,String>();
+
+        // On track — variance within ±0.5
+        LovingSchedulingConsoleOverlayController.MeasuringCupRowDto r1 =
+            LovingSchedulingConsoleOverlayService.buildMeasuringRow('Crew A',
+                new Map<String,Decimal>{'Crew A' => 8.0},
+                new Map<String,Decimal>{'Crew A' => 8.0}, types);
+        System.assertEquals('Green',      r1.status);
+        System.assertEquals('chip green', r1.statusCss);
+        System.assertEquals('chip green', r1.varianceCss);
+        System.assertEquals('Rippling_Time_Entry__c', r1.source);
+
+        // Over — actual > goal by >0.5
+        LovingSchedulingConsoleOverlayController.MeasuringCupRowDto r2 =
+            LovingSchedulingConsoleOverlayService.buildMeasuringRow('Crew B',
+                new Map<String,Decimal>{'Crew B' => 8.0},
+                new Map<String,Decimal>{'Crew B' => 10.0}, types);
+        System.assertEquals('Over',       r2.status);
+        System.assertEquals('chip amber', r2.statusCss);
+        System.assertEquals('chip amber', r2.varianceCss);
+
+        // Behind — actual < goal by >1
+        LovingSchedulingConsoleOverlayController.MeasuringCupRowDto r3 =
+            LovingSchedulingConsoleOverlayService.buildMeasuringRow('Crew C',
+                new Map<String,Decimal>{'Crew C' => 8.0},
+                new Map<String,Decimal>{'Crew C' => 5.0}, types);
+        System.assertEquals('Behind',  r3.status);
+        System.assertEquals('chip red', r3.statusCss);
+        System.assertEquals('chip red', r3.varianceCss);
+
+        // No data — uses estimated source, defaults to 0/0
+        LovingSchedulingConsoleOverlayController.MeasuringCupRowDto r4 =
+            LovingSchedulingConsoleOverlayService.buildMeasuringRow('Crew D',
+                new Map<String,Decimal>(), new Map<String,Decimal>(), types);
+        System.assertEquals('Green',                r4.status);
+        System.assertEquals('WorkOrder (estimated)', r4.source);
+        System.assertEquals('Multiple',             r4.workType);
+    }
+
     @IsTest
     static void testForceError_coversBuildOverlayDashboard() {
         LovingSchedulingConsoleOverlayService.forceError = true;
