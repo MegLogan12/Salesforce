@@ -76,12 +76,15 @@ public inherited sharing class LOVING_AquaTicketService {
 
     // ── Create Aqua Check Ticket ─────────────────────────────────────────────
     public static void createFirstCheckTicket(WorkOrder aquaInstallWO) {
-        Account community = [
+        if (aquaInstallWO.Community__c == null) return;
+        List<Account> communities = [
             SELECT Id, Aqua_Tech__c, Aqua_Service_Days__c
             FROM Account
             WHERE Id = :aquaInstallWO.Community__c
             LIMIT 1
         ];
+        if (communities.isEmpty()) return;
+        Account community = communities[0];
         Date nextServiceDay = getNextServiceDay(community.Aqua_Service_Days__c, Date.today().addDays(1));
         WorkOrder check = buildCheckTicket(aquaInstallWO, community, nextServiceDay);
         insert check;
@@ -118,17 +121,22 @@ public inherited sharing class LOVING_AquaTicketService {
 
     // ── Create Aqua Pickup Ticket ────────────────────────────────────────────
     public static void createPickupTicket(Id lotAccountId) {
-        Account lot = [
+        List<Account> lots = [
             SELECT Id, ParentId, Lot_Number__c, Street_Address__c,
                    (SELECT Id FROM WorkOrders WHERE Work_Order_Type__c = 'Aqua Install'
                     AND Status = 'Completed' ORDER BY CreatedDate DESC LIMIT 1)
             FROM Account WHERE Id = :lotAccountId LIMIT 1
         ];
+        if (lots.isEmpty()) return;
+        Account lot = lots[0];
+        if (lot.ParentId == null) return;
 
-        Account community = [
+        List<Account> communityList = [
             SELECT Id, Aqua_Tech__c, Aqua_Service_Days__c
             FROM Account WHERE Id = :lot.ParentId LIMIT 1
         ];
+        if (communityList.isEmpty()) return;
+        Account community = communityList[0];
 
         Date nextPickupDay = getNextServiceDay(community.Aqua_Service_Days__c, Date.today());
         WorkOrder pickup = buildPickupTicket(lotAccountId, lot, community, nextPickupDay);
