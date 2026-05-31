@@ -25,10 +25,13 @@ private class LOVING_WorkOrderTriggerHandlerTest {
 
     @TestSetup
     static void setupBypass() {
-        Extentia_SIM__MapPlotterTriggerSettings__c bypassSetting =
-            Extentia_SIM__MapPlotterTriggerSettings__c.getOrgDefaults();
-        bypassSetting.Extentia_SIM__Bypass_Trigger__c = true;
-        upsert bypassSetting;
+        try {
+            Extentia_SIM__MapPlotterTriggerSettings__c bypassSetting =
+                Extentia_SIM__MapPlotterTriggerSettings__c.getOrgDefaults();
+            if (bypassSetting.Id == null) bypassSetting.Name = 'Default';
+            bypassSetting.Extentia_SIM__Bypass_Trigger__c = true;
+            upsert bypassSetting;
+        } catch (Exception e) {}
     }
 
     // ── Test Data Factory ─────────────────────────────────────────────────────
