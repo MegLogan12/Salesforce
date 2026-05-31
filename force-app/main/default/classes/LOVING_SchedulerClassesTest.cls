@@ -104,40 +104,47 @@ private class LOVING_SchedulerClassesTest {
 
     @IsTest
     static void testBucketEngineService_MultipleBuckets() {
-        Account builder = makeBuilder();
-        Account com     = makeCommunity(builder.Id, false);
+        Community__c comm = new Community__c(Name = 'Test Community Bucket SCH');
+        insert comm;
 
         // Lot A: 100 days out → BUCKET_90
-        Account lotA = makeLot(com.Id, 100);
-
-        // Lot B: 20 days out, no takeoff → BUCKET_30, task created
-        Account lotB = makeLot(com.Id, 20);
-
-        // Lot C: -5 days (past due), no takeoff, no WO created → forced BUCKET_RTS
-        Account lotC = new Account(
-            Name                 = 'Overdue Lot SCH',
-            ParentId             = com.Id,
-            Lot_Number__c        = '5',
-            Street_Address__c    = '5 Overdue Rd Charlotte NC',
-            Lot_Status__c        = 'Active',
-            Target_Start_Date__c = Date.today().addDays(-5),
-            FM__c                = UserInfo.getUserId(),
-            Takeoff_Complete__c  = false,
-            Takeoff_Task_Created__c = false,
-            WO_Created__c        = false
+        Lot__c lotA = new Lot__c(
+            Name                     = 'Bucket Lot A SCH',
+            Lot_Status__c            = 'Active',
+            Requested_Install_Date__c = Date.today().addDays(100),
+            Community__c             = comm.Id
         );
-        Id rt = getRT('Account', 'Lot');
-        if (rt != null) lotC.RecordTypeId = rt;
-        insert lotC;
+
+        // Lot B: 20 days out, no takeoff → BUCKET_30
+        Lot__c lotB = new Lot__c(
+            Name                     = 'Bucket Lot B SCH',
+            Lot_Status__c            = 'Active',
+            Requested_Install_Date__c = Date.today().addDays(20),
+            Community__c             = comm.Id
+        );
+
+        // Lot C: -5 days (past due), no takeoff, no WO → forced BUCKET_RTS
+        Lot__c lotC = new Lot__c(
+            Name                     = 'Bucket Lot C SCH',
+            Lot_Status__c            = 'Active',
+            Requested_Install_Date__c = Date.today().addDays(-5),
+            Community__c             = comm.Id
+        );
+
+        insert new List<Lot__c>{ lotA, lotB, lotC };
 
         Test.startTest();
         LOVING_BucketEngineService.runBucketEngine();
         Test.stopTest();
 
-        List<Account> updated = [SELECT Id, Pipeline_Bucket__c
-            FROM Account WHERE Id IN (:lotA.Id, :lotB.Id, :lotC.Id)
-            ORDER BY Name];
-        System.assertEquals(3, updated.size(), 'All three lots updated');
+        Map<Id, Lot__c> updated = new Map<Id, Lot__c>([
+            SELECT Id, Pipeline_Bucket__c FROM Lot__c
+            WHERE Id IN (:lotA.Id, :lotB.Id, :lotC.Id)
+        ]);
+        System.assertEquals(3, updated.size(), 'All three lots returned');
+        System.assertEquals('90+ Days',          updated.get(lotA.Id).Pipeline_Bucket__c, 'Lot A → 90+ Days');
+        System.assertEquals('30 Days',           updated.get(lotB.Id).Pipeline_Bucket__c, 'Lot B → 30 Days');
+        System.assertEquals('Ready to Schedule', updated.get(lotC.Id).Pipeline_Bucket__c, 'Lot C → Ready to Schedule');
     }
 
     // ── LOVING_HealthCheckScheduler ───────────────────────────────────────────

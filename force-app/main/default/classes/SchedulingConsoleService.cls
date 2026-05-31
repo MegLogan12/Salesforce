@@ -1293,23 +1293,26 @@ public without sharing class SchedulingConsoleService {
     public static List<SchedulingConsoleController.PipelineSummaryDto> buildPipelineSummary(String division) {
         if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
 
-        List<Account> lots = [
-            SELECT Id, Name, FM__r.Name, Target_Start_Date__c,
-                   Pipeline_Bucket__c, Takeoff_Complete__c, WO_Created__c
-            FROM Account
-            WHERE RecordType.DeveloperName = 'Lot'
-            AND Lot_Status__c = 'Active'
+        List<Lot__c> lots = [
+            SELECT Id, Name, Requested_Install_Date__c,
+                   Pipeline_Bucket__c, Current_Work_Order__c,
+                   Community__r.Assigned_FM__r.Name
+            FROM Lot__c
+            WHERE Lot_Status__c = 'Active'
             AND (Pipeline_Bucket__c = null
                  OR Pipeline_Bucket__c NOT IN ('Complete', 'Cancelled', 'Closed'))
-            ORDER BY Target_Start_Date__c ASC NULLS LAST
+            ORDER BY Requested_Install_Date__c ASC NULLS LAST
             LIMIT 500
         ];
 
+        Set<String> takeoffDoneBuckets = new Set<String>{
+            'Takeoff In Progress', 'Takeoff Complete', 'Scheduled', 'In Progress'
+        };
         Map<String, List<SchedulingConsoleController.PipelineLotDto>> bucketMap =
             new Map<String, List<SchedulingConsoleController.PipelineLotDto>>();
         Date today = Date.today();
 
-        for (Account lot : lots) {
+        for (Lot__c lot : lots) {
             String bucket = String.isNotBlank(lot.Pipeline_Bucket__c) ? lot.Pipeline_Bucket__c : 'Ready to Schedule';
             if (!bucketMap.containsKey(bucket)) {
                 bucketMap.put(bucket, new List<SchedulingConsoleController.PipelineLotDto>());
@@ -1317,12 +1320,13 @@ public without sharing class SchedulingConsoleService {
             SchedulingConsoleController.PipelineLotDto d = new SchedulingConsoleController.PipelineLotDto();
             d.lotId       = lot.Id;
             d.name        = lot.Name;
-            d.fmName      = lot.FM__r != null ? lot.FM__r.Name : '—';
-            d.takeoffDone = lot.Takeoff_Complete__c == true;
-            d.woCreated   = lot.WO_Created__c == true;
-            if (lot.Target_Start_Date__c != null) {
-                d.daysUntil         = today.daysBetween(lot.Target_Start_Date__c);
-                d.targetDateDisplay = lot.Target_Start_Date__c.format();
+            d.fmName      = lot.Community__r != null && lot.Community__r.Assigned_FM__r != null
+                                ? lot.Community__r.Assigned_FM__r.Name : '—';
+            d.takeoffDone = takeoffDoneBuckets.contains(lot.Pipeline_Bucket__c);
+            d.woCreated   = lot.Current_Work_Order__c != null;
+            if (lot.Requested_Install_Date__c != null) {
+                d.daysUntil         = today.daysBetween(lot.Requested_Install_Date__c);
+                d.targetDateDisplay = lot.Requested_Install_Date__c.format();
             } else {
                 d.daysUntil         = null;
                 d.targetDateDisplay = 'No date';

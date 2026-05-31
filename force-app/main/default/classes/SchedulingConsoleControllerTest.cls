@@ -178,6 +178,20 @@ private class SchedulingConsoleControllerTest {
             );
             insert emp;
         } catch (Exception e) {}
+
+        // Lot__c record for pipeline summary coverage
+        try {
+            Community__c comm = new Community__c(Name = 'SC Test Community Pipeline');
+            insert comm;
+            Lot__c pipelineLot = new Lot__c(
+                Name                     = 'SC Pipeline Lot 1',
+                Lot_Status__c            = 'Active',
+                Pipeline_Bucket__c       = '30 Days',
+                Requested_Install_Date__c = Date.today().addDays(25),
+                Community__c             = comm.Id
+            );
+            insert pipelineLot;
+        } catch (Exception e) {}
     }
 
     // ─── Helper to fetch wo1 Id ──────────────────────────────────────────────
@@ -1195,15 +1209,11 @@ private class SchedulingConsoleControllerTest {
             System.assertNotEquals(null, col.chipCss, 'chipCss must not be null');
             System.assertNotEquals(null, col.lots,    'lots list must not be null');
         }
-        // SC Lot 1 is only found if the Lot RecordType was available for @TestSetup
-        Id lotRt = getRT('Account', 'Lot');
-        if (lotRt != null) {
-            Integer totalLots = 0;
-            for (SchedulingConsoleController.PipelineSummaryDto col : result) {
-                totalLots += col.count;
-            }
-            System.assert(totalLots >= 1, 'SC Lot 1 should appear in pipeline when Lot RT available');
+        Integer totalLots = 0;
+        for (SchedulingConsoleController.PipelineSummaryDto col : result) {
+            totalLots += col.count;
         }
+        System.assert(totalLots >= 1, 'SC Pipeline Lot 1 should appear in pipeline summary');
     }
 
     @IsTest

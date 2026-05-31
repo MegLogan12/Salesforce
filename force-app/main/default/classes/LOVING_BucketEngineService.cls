@@ -9,45 +9,60 @@ public with sharing class LOVING_BucketEngineService {
 
     @InvocableMethod(label='Run Bucket Engine' description='Updates lot pipeline buckets based on target dates')
     public static void runBucketEngine() {
-        List<Account> lots = [
-            SELECT Id, Name, FM__c, Target_Start_Date__c,
-                   Pipeline_Bucket__c, Bucket_Changed_Date__c,
-                   Takeoff_Task_Created__c, Takeoff_Complete__c,
-                   WO_Created__c, Lot_Status__c
-            FROM Account
-            WHERE RecordType.DeveloperName = 'Lot'
-            AND Lot_Status__c = 'Active'
-            AND Target_Start_Date__c != null
+        List<Lot__c> lots = [
+            SELECT Id, Name, Requested_Install_Date__c,
+                   Pipeline_Bucket__c, Lot_Status__c,
+                   Current_Work_Order__c,
+                   Current_Work_Order__r.Takeoff_Complete__c,
+                   Community__r.Assigned_FM__c
+            FROM Lot__c
+            WHERE Lot_Status__c = 'Active'
+            AND Requested_Install_Date__c != null
             AND Pipeline_Bucket__c NOT IN ('Scheduled', 'In Progress', 'Complete', 'Closed', 'Cancelled')
         ];
 
         if (lots.isEmpty()) return;
 
-        List<Account> toUpdate = new List<Account>();
-        List<Task>    newTasks = new List<Task>();
+        Set<Id> lotIds = new Set<Id>();
+        for (Lot__c lot : lots) lotIds.add(lot.Id);
+
+        Set<Id> lotsWithTakeoffTask = new Set<Id>();
+        for (Task t : [
+            SELECT WhatId FROM Task
+            WHERE WhatId IN :lotIds AND Type = 'Takeoff' AND IsClosed = false
+        ]) {
+            lotsWithTakeoffTask.add(t.WhatId);
+        }
+
+        List<Lot__c> toUpdate = new List<Lot__c>();
+        List<Task>   newTasks = new List<Task>();
         Date today = Date.today();
 
-        for (Account lot : lots) {
+        for (Lot__c lot : lots) {
             if (lot.Pipeline_Bucket__c == BUCKET_HOLD) continue;
 
-            Integer daysUntil  = today.daysBetween(lot.Target_Start_Date__c);
-            String  newBucket  = calculateBucket(daysUntil, lot.Takeoff_Complete__c);
-            Boolean changed    = newBucket != lot.Pipeline_Bucket__c;
+            Boolean takeoffDone = lot.Current_Work_Order__r != null
+                && lot.Current_Work_Order__r.Takeoff_Complete__c == true;
+            Boolean woCreated = lot.Current_Work_Order__c != null;
 
-            Account updated = new Account(Id = lot.Id);
+            Integer daysUntil = today.daysBetween(lot.Requested_Install_Date__c);
+            String  newBucket = calculateBucket(daysUntil, takeoffDone);
+
+            Lot__c updated = new Lot__c(Id = lot.Id);
             updated.Pipeline_Bucket__c = newBucket;
-            if (changed) updated.Bucket_Changed_Date__c = System.now();
 
-            Boolean needsTask = !lot.Takeoff_Task_Created__c
-                && !lot.Takeoff_Complete__c
+            Boolean needsTask = !lotsWithTakeoffTask.contains(lot.Id)
+                && !takeoffDone
                 && (newBucket == BUCKET_30 || newBucket == BUCKET_RTS);
 
             if (needsTask) {
-                newTasks.add(buildTakeoffTask(lot, newBucket == BUCKET_RTS));
-                updated.Takeoff_Task_Created__c = true;
+                Id fmId = lot.Community__r != null ? lot.Community__r.Assigned_FM__c : null;
+                if (fmId != null) {
+                    newTasks.add(buildTakeoffTask(lot, fmId, newBucket == BUCKET_RTS));
+                }
             }
 
-            if (daysUntil < 0 && !lot.Takeoff_Complete__c && !lot.WO_Created__c) {
+            if (daysUntil < 0 && !takeoffDone && !woCreated) {
                 updated.Pipeline_Bucket__c = BUCKET_RTS;
             }
 
@@ -66,10 +81,10 @@ public with sharing class LOVING_BucketEngineService {
         return BUCKET_RTS;
     }
 
-    private static Task buildTakeoffTask(Account lot, Boolean isHighPriority) {
+    private static Task buildTakeoffTask(Lot__c lot, Id fmId, Boolean isHighPriority) {
         Task t = new Task();
         t.Subject      = 'Site Takeoff Required — ' + lot.Name;
-        t.OwnerId      = lot.FM__c;
+        t.OwnerId      = fmId;
         t.WhatId       = lot.Id;
         t.Priority     = isHighPriority ? 'High' : 'Normal';
         t.ActivityDate = Date.today().addDays(2);
@@ -78,7 +93,7 @@ public with sharing class LOVING_BucketEngineService {
             + 'Geotag validation required — must be within 150m of lot address. '
             + 'DEADLINE: 48 hours. Escalates to manager if missed. '
             + 'Target install date: '
-            + (lot.Target_Start_Date__c != null ? lot.Target_Start_Date__c.format() : 'TBD');
+            + (lot.Requested_Install_Date__c != null ? lot.Requested_Install_Date__c.format() : 'TBD');
         return t;
     }
 }
