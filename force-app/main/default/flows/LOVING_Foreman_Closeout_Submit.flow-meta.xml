@@ -236,7 +236,7 @@
             <targetReference>Get_WO_For_Closeout</targetReference>
         </connector>
     </start>
-    <status>InvalidDraft</status>
+    <status>Active</status>
     <variables>
         <name>recordId</name>
         <dataType>String</dataType>
