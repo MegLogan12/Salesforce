@@ -1,0 +1,114 @@
+:host {
+    display: block;
+}
+
+.table-card {
+    background: #fff;
+    border: 1px solid #d8dde6;
+    border-radius: 6px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, .04);
+    margin: 22px;
+    overflow-x: auto;
+}
+
+table {
+    border-collapse: collapse;
+    min-width: 1300px;
+    width: 100%;
+}
+
+th,
+td {
+    border-bottom: 1px solid #eef1f5;
+    color: #243a5e;
+    font-size: 12px;
+    padding: 10px 12px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+th {
+    color: #66758f;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+tbody tr {
+    cursor: pointer;
+}
+
+tbody tr:hover {
+    background: #f7fbff;
+}
+
+a {
+    color: #256dd9;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.num {
+    text-align: right;
+}
+
+.chip {
+    border-radius: 12px;
+    display: inline-flex;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    padding: 5px 10px;
+}
+
+.cg,
+.pb-clear,
+.pb-sched,
+.pb-active,
+.pb-invoiced {
+    background: #e8f4ea;
+    color: #3f8a4c;
+}
+
+.ca,
+.pb-pending,
+.pb-qi {
+    background: #fff2cf;
+    color: #b66d13;
+}
+
+.cr {
+    background: #ffe8e8;
+    color: #b33635;
+}
+
+.cb2 {
+    background: #e7f1ff;
+    color: #1f5f9f;
+}
+
+.cp,
+.pb-takeoff {
+    background: #efeafe;
+    color: #6542c0;
+}
+
+.cgr,
+.pb-new,
+.pb-closed {
+    background: #f0f2f6;
+    color: #65738a;
+}
+
+.pb-invoice {
+    background: #e1f5ee;
+    color: #0f6e56;
+}
+
+footer {
+    color: #66758f;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 12px 14px;
+}
