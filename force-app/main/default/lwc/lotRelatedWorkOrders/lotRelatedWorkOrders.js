@@ -1,4 +1,5 @@
 import { LightningElement, api, wire } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import getWorkOrders from '@salesforce/apex/LotRecordController.getWorkOrders';
 
 const COLUMNS = [
@@ -10,7 +11,7 @@ const COLUMNS = [
     { label: 'Foreman', fieldName: 'foreman', type: 'text' }
 ];
 
-export default class LotRelatedWorkOrders extends LightningElement {
+export default class LotRelatedWorkOrders extends NavigationMixin(LightningElement) {
     @api recordId;
     rows = [];
     columns = COLUMNS;
@@ -18,5 +19,13 @@ export default class LotRelatedWorkOrders extends LightningElement {
     @wire(getWorkOrders, { lotId: '$recordId' })
     onWOs({ data }) {
         if (data) this.rows = data;
+    }
+
+    handleNewWorkOrder() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'WorkOrder', actionName: 'new' },
+            state: { defaultFieldValues: `Lot__c=${this.recordId}` }
+        });
     }
 }

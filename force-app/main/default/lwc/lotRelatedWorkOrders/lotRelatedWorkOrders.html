@@ -1,5 +1,8 @@
 <template>
     <lightning-card title="Work Orders for this Lot" icon-name="standard:work_order">
+        <div slot="actions">
+            <lightning-button label="New Work Order" icon-name="utility:add" onclick={handleNewWorkOrder}></lightning-button>
+        </div>
         <div class="slds-p-horizontal_small">
             <template if:true={rows.length}>
                 <lightning-datatable

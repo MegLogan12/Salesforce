@@ -1,7 +1,8 @@
 import { LightningElement, api, wire } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import getFinishJobs from '@salesforce/apex/WorkOrderRecordController.getFinishJobs';
 
-export default class WorkOrderFinishJobs extends LightningElement {
+export default class WorkOrderFinishJobs extends NavigationMixin(LightningElement) {
     @api recordId;
     jobs = [];
     error;
@@ -32,5 +33,13 @@ export default class WorkOrderFinishJobs extends LightningElement {
 
     get hasJobs() {
         return this.jobs && this.jobs.length > 0;
+    }
+
+    handleNewFinishJob() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Finish_Job__c', actionName: 'new' },
+            state: { defaultFieldValues: `LOVING_Parent_Work_Order__c=${this.recordId}` }
+        });
     }
 }

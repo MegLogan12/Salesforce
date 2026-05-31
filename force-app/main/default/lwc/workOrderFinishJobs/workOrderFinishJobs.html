@@ -1,5 +1,8 @@
 <template>
     <lightning-card title="Finish Jobs" icon-name="standard:task">
+        <div slot="actions">
+            <lightning-button label="New Finish Job" icon-name="utility:add" onclick={handleNewFinishJob}></lightning-button>
+        </div>
         <div class="slds-p-around_small">
             <template if:true={loading}>
                 <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
