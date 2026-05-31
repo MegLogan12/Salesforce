@@ -1,7 +1,9 @@
 import { LightningElement, track } from 'lwc';
+import getWorkbenchData from '@salesforce/apex/LovingCommunityWorkbenchController.getWorkbenchData';
 
 // ─── DATA LAYER ────────────────────────────────────────────────────────────
-const DB = {
+// Populated from Salesforce via LovingCommunityWorkbenchController.getWorkbenchData
+let DB = {
     builders: [
         { id: 'drh',  name: 'DR Horton',     type: 'National Builder', hq: 'Arlington, TX' },
         { id: 'len',  name: 'Lennar',         type: 'National Builder', hq: 'Miami, FL' },
@@ -50,6 +52,7 @@ const DB = {
         { id: 'stonemill-11',communityId: 'stonemill',num: '11', lotId: 'L-STONEMILL-11',address: '216 Stonemill Dr',       reqInstall: '2026-05-03', bucket: '30',        lotStatus: 'Under Construction',eighty11: 'Filed',     takeoff: 'Not Started',      aqua: 'N/A',  po: 'DAV-2026-1011', poAmt: 3840, specType: 'Flexible',  fm: 'Tyler Kelly',     phase: 'Phase 1', gps: '35.4917,-80.6214', sodSf: 2550, goalHrs: 5.8, crew: '', woCount: 0, photoCount: 0 },
     ],
 };
+// Seed cleared when live data loads — see connectedCallback
 
 const COMM_STAGES = ['Site Assessment','Contract Executed','HOA Setup','Active Selling','Fully Sold','Closed Out'];
 const INLINE_CSS  = `<style>
@@ -197,6 +200,17 @@ export default class LovingAccountCommunityLotWorkbench extends LightningElement
 
     connectedCallback() {
         this._autoRefreshTmr = setInterval(() => this.doRefresh(this.currentView), 30000);
+        getWorkbenchData()
+            .then(result => {
+                DB = result;
+                if (this._initialized) {
+                    this.renderView();
+                    this.stampTs();
+                }
+            })
+            .catch(err => {
+                console.error('[WorkbenchError]', JSON.stringify(err));
+            });
     }
     disconnectedCallback() {
         if (this._autoRefreshTmr) clearInterval(this._autoRefreshTmr);
