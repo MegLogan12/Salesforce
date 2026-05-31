@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>66.0</apiVersion>
-    <description>Scheduled flow — runs daily at 2PM ET. Queries standard WorkOrders that are In Progress today, not yet afternoon-checked, and have a foreman assigned. Creates a Task for each foreman to complete the 2PM health check via the Foreman App. Does not create Health_Check_Log__c records. Does not reference legacy Work_Order__c.</description>
+    <apiVersion>59.0</apiVersion>
+    <description>Scheduled flow that runs daily at 2 PM. Queries Work Orders that are In Progress and creates a Health_Check_Log__c record prompting the FM to submit a 2 PM health check.</description>
     <interviewLabel>LOVING 2PM Health Check Prompt {!$Flow.CurrentDateTime}</interviewLabel>
     <label>LOVING 2PM Health Check Prompt</label>
     <loops>
-        <name>Loop_Active_Work_Orders</name>
+        <name>Loop_Active_WOs</name>
         <label>Loop Active Work Orders</label>
         <locationX>176</locationX>
         <locationY>278</locationY>
         <collectionReference>Get_Active_Work_Orders</collectionReference>
         <iterationOrder>Asc</iterationOrder>
         <nextValueConnector>
-            <targetReference>Create_Health_Check_Task</targetReference>
+            <targetReference>Create_Health_Check_Log</targetReference>
         </nextValueConnector>
     </loops>
     <processMetadataValues>
@@ -23,97 +23,46 @@
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
     <recordCreates>
-        <name>Create_Health_Check_Task</name>
-        <label>Create Health Check Task for Foreman</label>
+        <name>Create_Health_Check_Log</name>
+        <label>Create Health Check Log</label>
         <locationX>176</locationX>
         <locationY>458</locationY>
         <connector>
-            <targetReference>Loop_Active_Work_Orders</targetReference>
+            <targetReference>Loop_Active_WOs</targetReference>
         </connector>
         <inputAssignments>
-            <field>ActivityDate</field>
+            <field>Check_Date__c</field>
             <value>
                 <elementReference>$Flow.CurrentDate</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
-            <field>Description</field>
+            <field>Work_Order__c</field>
             <value>
-                <stringValue>Answer all 6 health check questions via the Foreman App. If any issue is flagged, a Schedule Issue will be created automatically. Tap this task to open the health check screen.</stringValue>
+                <elementReference>Loop_Active_WOs.Id</elementReference>
             </value>
         </inputAssignments>
-        <inputAssignments>
-            <field>OwnerId</field>
-            <value>
-                <elementReference>Loop_Active_Work_Orders.Foreman__c</elementReference>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Priority</field>
-            <value>
-                <stringValue>High</stringValue>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Status</field>
-            <value>
-                <stringValue>Not Started</stringValue>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Subject</field>
-            <value>
-                <stringValue>2PM Health Check — Submit via Foreman App</stringValue>
-            </value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>WhatId</field>
-            <value>
-                <elementReference>Loop_Active_Work_Orders.Id</elementReference>
-            </value>
-        </inputAssignments>
-        <object>Task</object>
+        <object>Health_Check_Log__c</object>
     </recordCreates>
     <recordLookups>
         <name>Get_Active_Work_Orders</name>
-        <label>Get Active Work Orders (Standard WorkOrder)</label>
+        <label>Get Active Work Orders</label>
         <locationX>176</locationX>
         <locationY>98</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Loop_Active_Work_Orders</targetReference>
+            <targetReference>Loop_Active_WOs</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
-            <field>Status</field>
+            <field>Status__c</field>
             <operator>EqualTo</operator>
             <value>
                 <stringValue>In Progress</stringValue>
             </value>
         </filters>
-        <filters>
-            <field>Scheduled_Date__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>$Flow.CurrentDate</elementReference>
-            </value>
-        </filters>
-        <filters>
-            <field>Afternoon_Check_Complete__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <booleanValue>false</booleanValue>
-            </value>
-        </filters>
-        <filters>
-            <field>Foreman__c</field>
-            <operator>IsNull</operator>
-            <value>
-                <booleanValue>false</booleanValue>
-            </value>
-        </filters>
         <getFirstRecordOnly>false</getFirstRecordOnly>
-        <object>WorkOrder</object>
+        <object>Work_Order__c</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <start>
@@ -124,10 +73,10 @@
         </connector>
         <schedule>
             <frequency>Daily</frequency>
-            <startDate>2026-05-06</startDate>
-            <startTime>19:00:00.000Z</startTime>
+            <startDate>2026-05-01</startDate>
+            <startTime>14:00:00.000Z</startTime>
         </schedule>
         <triggerType>Scheduled</triggerType>
     </start>
-    <status>InvalidDraft</status>
+    <status>Draft</status>
 </Flow>
