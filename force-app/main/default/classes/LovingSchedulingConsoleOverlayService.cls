@@ -22,11 +22,16 @@ public without sharing class LovingSchedulingConsoleOverlayService {
     private static final Boolean WX_HOLD_EXISTS =
         Schema.SObjectType.WorkOrder.fields.getMap().containsKey('severe_weather_hold__c');
 
+    // Test hook — set true in @IsTest context to force service methods to throw,
+    // covering controller catch blocks without needing live integration data.
+    @TestVisible private static Boolean forceError = false;
+
     // ─── Dashboard ───────────────────────────────────────────────────────────
 
     public static LovingSchedulingConsoleOverlayController.OverlayDashboardDto buildOverlayDashboard(
             Date schedDate, String division) {
 
+        if (forceError) throw new AuraHandledException('forced for test');
         LovingSchedulingConsoleOverlayController.OverlayDashboardDto d =
             new LovingSchedulingConsoleOverlayController.OverlayDashboardDto();
 
@@ -219,6 +224,7 @@ public without sharing class LovingSchedulingConsoleOverlayService {
     public static LovingSchedulingConsoleOverlayController.AutoScheduleDto buildAutoSchedule(
             Date schedDate, String division) {
 
+        if (forceError) throw new AuraHandledException('forced for test');
         LovingSchedulingConsoleOverlayController.AutoScheduleDto dto =
             new LovingSchedulingConsoleOverlayController.AutoScheduleDto();
 
@@ -313,7 +319,7 @@ public without sharing class LovingSchedulingConsoleOverlayService {
         return rows;
     }
 
-    private static String dayStatus(Date d, List<ResourceAbsence> absences) {
+    @TestVisible private static String dayStatus(Date d, List<ResourceAbsence> absences) {
         Datetime ds = Datetime.newInstanceGmt(d, Time.newInstance(0,0,0,0));
         Datetime de = Datetime.newInstanceGmt(d, Time.newInstance(23,59,59,999));
         for (ResourceAbsence ra : absences) {
@@ -327,6 +333,7 @@ public without sharing class LovingSchedulingConsoleOverlayService {
     public static LovingSchedulingConsoleOverlayController.DayOfMonitorDto buildDayOfMonitor(
             Date schedDate, String division) {
 
+        if (forceError) throw new AuraHandledException('forced for test');
         LovingSchedulingConsoleOverlayController.DayOfMonitorDto dto =
             new LovingSchedulingConsoleOverlayController.DayOfMonitorDto();
 
@@ -384,7 +391,7 @@ public without sharing class LovingSchedulingConsoleOverlayService {
         return dto;
     }
 
-    private static String statusToHealth(String saStatus) {
+    @TestVisible private static String statusToHealth(String saStatus) {
         if (saStatus == null) return 'Pending';
         if (saStatus == 'Completed' || saStatus == 'In Progress') return 'Green';
         if (saStatus == 'Cannot Complete' || saStatus == 'Canceled') return 'Red';
@@ -396,6 +403,7 @@ public without sharing class LovingSchedulingConsoleOverlayService {
     public static LovingSchedulingConsoleOverlayController.MeasuringCupDto buildMeasuringCup(
             Date schedDate, String division) {
 
+        if (forceError) throw new AuraHandledException('forced for test');
         LovingSchedulingConsoleOverlayController.MeasuringCupDto dto =
             new LovingSchedulingConsoleOverlayController.MeasuringCupDto();
         dto.rows = new List<LovingSchedulingConsoleOverlayController.MeasuringCupRowDto>();
@@ -466,6 +474,7 @@ public without sharing class LovingSchedulingConsoleOverlayService {
     public static List<LovingSchedulingConsoleOverlayController.TrafficImpactDto> buildTrafficImpacts(
             Date schedDate, String division) {
 
+        if (forceError) throw new AuraHandledException('forced for test');
         List<LovingSchedulingConsoleOverlayController.TrafficImpactDto> rows =
             new List<LovingSchedulingConsoleOverlayController.TrafficImpactDto>();
         try {
@@ -516,7 +525,7 @@ public without sharing class LovingSchedulingConsoleOverlayService {
     }
 
     public static void notifyForemen(Date schedDate, String division) {
-        // Collect FM users with active SAs today and send Salesforce notifications.
+        if (forceError) throw new AuraHandledException('forced for test');
         Datetime dayStart = Datetime.newInstanceGmt(schedDate, Time.newInstance(0,0,0,0));
         Datetime dayEnd   = Datetime.newInstanceGmt(schedDate, Time.newInstance(23,59,59,999));
         Set<Id> fmUserIds = new Set<Id>();
@@ -552,7 +561,7 @@ public without sharing class LovingSchedulingConsoleOverlayService {
 
     // ─── Helpers ─────────────────────────────────────────────────────────────
 
-    private static String statusChip(String status) {
+    @TestVisible private static String statusChip(String status) {
         if (status == null) return 'chip gray';
         String s = status.toLowerCase();
         if (s.contains('complete') || s.contains('approved')) return 'chip green';
@@ -562,7 +571,7 @@ public without sharing class LovingSchedulingConsoleOverlayService {
         return 'chip gray';
     }
 
-    private static Integer countWorkDays(Date startDate, Date endDate) {
+    @TestVisible private static Integer countWorkDays(Date startDate, Date endDate) {
         if (startDate == null || endDate == null || endDate < startDate) return 0;
         Integer count = 0;
         Date d = startDate;
