@@ -342,7 +342,7 @@ public without sharing class LovingSchedulingConsoleOverlayService {
         for (Object[] cd : cadenceData) {
             LovingSchedulingConsoleOverlayController.CadenceDto c =
                 new LovingSchedulingConsoleOverlayController.CadenceDto();
-            c.time  = (String)cd[0];
+            c.slotTime = (String)cd[0];
             c.label = (String)cd[1];
             c.css   = (String)cd[2];
             dto.cadence.add(c);
@@ -469,28 +469,25 @@ public without sharing class LovingSchedulingConsoleOverlayService {
         List<LovingSchedulingConsoleOverlayController.TrafficImpactDto> rows =
             new List<LovingSchedulingConsoleOverlayController.TrafficImpactDto>();
         try {
-            for (Traffic_Impact__c ti : [
-                SELECT Id, Crew__r.Name, Route_Segment__c, Impact_Level__c,
-                       ETA_Delta_Minutes__c, System_Response__c
-                FROM Traffic_Impact__c
-                WHERE Active__c = true
-                ORDER BY Impact_Level__c DESC
-                LIMIT 20
-            ]) {
+            String q = 'SELECT Id, Crew__r.Name, Route_Segment__c, Impact_Level__c, '
+                     + 'ETA_Delta_Minutes__c, System_Response__c '
+                     + 'FROM Traffic_Impact__c WHERE Active__c = true LIMIT 20';
+            for (SObject ti : Database.query(q)) {
                 LovingSchedulingConsoleOverlayController.TrafficImpactDto r =
                     new LovingSchedulingConsoleOverlayController.TrafficImpactDto();
-                r.id            = ti.Id;
-                r.crewName      = ti.Crew__r != null ? ti.Crew__r.Name : '—';
-                r.segment       = ti.Route_Segment__c;
-                r.impactLevel   = ti.Impact_Level__c;
-                r.impactCss     = ti.Impact_Level__c == 'Closure' || ti.Impact_Level__c == 'High'
-                                  ? 'chip red' : 'chip amber';
-                r.etaDelta      = ti.ETA_Delta_Minutes__c != null
-                                  ? '+' + ti.ETA_Delta_Minutes__c.intValue() + ' min' : '—';
-                r.systemResponse = ti.System_Response__c;
+                r.id            = (Id)ti.get('Id');
+                SObject crew    = ti.getSObject('Crew__r');
+                r.crewName      = crew != null ? (String)crew.get('Name') : '—';
+                r.segment       = (String)ti.get('Route_Segment__c');
+                String lvl      = (String)ti.get('Impact_Level__c');
+                r.impactLevel   = lvl;
+                r.impactCss     = (lvl == 'Closure' || lvl == 'High') ? 'chip red' : 'chip amber';
+                Decimal mins    = (Decimal)ti.get('ETA_Delta_Minutes__c');
+                r.etaDelta      = mins != null ? '+' + mins.intValue() + ' min' : '—';
+                r.systemResponse = (String)ti.get('System_Response__c');
                 rows.add(r);
             }
-        } catch (Exception e) { /* Traffic_Impact__c not deployed — return empty list; UI shows unavailable state */ }
+        } catch (Exception e) { /* Traffic_Impact__c not deployed or fields missing — return empty list */ }
         return rows;
     }
 
@@ -525,13 +522,13 @@ public without sharing class LovingSchedulingConsoleOverlayService {
         Set<Id> fmUserIds = new Set<Id>();
         try {
             for (WorkOrder wo : [
-                SELECT Field_Manager__r.User__c FROM WorkOrder
+                SELECT Field_Manager__c FROM WorkOrder
                 WHERE Schedule_Locked__c = true AND Scheduled_Date__c = :schedDate
-                  AND Field_Manager__r.User__c != null
+                  AND Field_Manager__c != null
                 LIMIT 50
             ]) {
-                if (wo.Field_Manager__r != null && wo.Field_Manager__r.User__c != null)
-                    fmUserIds.add(wo.Field_Manager__r.User__c);
+                if (wo.Field_Manager__c != null)
+                    fmUserIds.add(wo.Field_Manager__c);
             }
         } catch (Exception e) { /* field may differ */ }
 

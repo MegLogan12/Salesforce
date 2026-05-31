@@ -105,7 +105,7 @@ public with sharing class LovingSchedulingConsoleOverlayController {
     }
 
     public class CadenceDto {
-        @AuraEnabled public String time;
+        @AuraEnabled public String slotTime;
         @AuraEnabled public String label;
         @AuraEnabled public String css;
     }

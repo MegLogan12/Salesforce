@@ -1,11 +1,11 @@
 /**
- * LovingSchedulingConsoleOverlayControllerTest
+ * LovSchedConsoleOverlayCtrlTest
  * Covers all @AuraEnabled methods in LovingSchedulingConsoleOverlayController.
  * FSL objects (ServiceAppointment, ServiceResource, AssignedResource, ResourceAbsence)
  * may not support direct insert in test context — mock guards are applied in the service.
  */
 @IsTest
-private class LovingSchedulingConsoleOverlayControllerTest {
+private class LovSchedConsoleOverlayCtrlTest {
 
     @TestSetup
     static void setup() {
@@ -77,7 +77,6 @@ private class LovingSchedulingConsoleOverlayControllerTest {
         List<LovingSchedulingConsoleOverlayController.TrafficImpactDto> rows =
             LovingSchedulingConsoleOverlayController.getTrafficImpacts(Date.today(), 'Charlotte');
         Test.stopTest();
-        // Traffic_Impact__c may not exist — graceful empty list expected
         System.assertNotEquals(null, rows, 'Traffic list should not be null — should be empty list if object missing');
     }
 

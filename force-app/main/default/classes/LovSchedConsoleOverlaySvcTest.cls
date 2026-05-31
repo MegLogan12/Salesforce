@@ -1,10 +1,10 @@
 /**
- * LovingSchedulingConsoleOverlayServiceTest
+ * LovSchedConsoleOverlaySvcTest
  * Covers service-layer methods directly.
  * Validates graceful fallback when optional integration objects are unavailable.
  */
 @IsTest
-private class LovingSchedulingConsoleOverlayServiceTest {
+private class LovSchedConsoleOverlaySvcTest {
 
     @IsTest
     static void testBuildOverlayDashboard_basicCoverage() {
@@ -20,7 +20,6 @@ private class LovingSchedulingConsoleOverlayServiceTest {
         System.assert(dto.issueCount         >= 0, 'Count must be non-negative');
         System.assert(dto.capacityPct        >= 0, 'Pct must be non-negative');
         System.assertNotEquals(null, dto.integrationStatus.fslStatus);
-        // FSL status must always be green (FSL is always present)
         System.assertEquals('green', dto.integrationStatus.fslStatus);
     }
 
@@ -48,15 +47,14 @@ private class LovingSchedulingConsoleOverlayServiceTest {
 
         System.assertNotEquals(null, dto);
         System.assertEquals(5, dto.cadence.size(), 'Always 5 cadence items');
-        System.assertEquals('6A',  dto.cadence[0].time);
-        System.assertEquals('EOD', dto.cadence[4].time);
+        System.assertEquals('6A',  dto.cadence[0].slotTime);
+        System.assertEquals('EOD', dto.cadence[4].slotTime);
         System.assert(dto.redCount   >= 0);
         System.assert(dto.greenCount >= 0);
     }
 
     @IsTest
     static void testBuildMeasuringCup_noCrewData() {
-        // No Crew__c in test org — should return empty rows gracefully
         Test.startTest();
         LovingSchedulingConsoleOverlayController.MeasuringCupDto dto =
             LovingSchedulingConsoleOverlayService.buildMeasuringCup(Date.today(), 'Charlotte');
@@ -70,7 +68,6 @@ private class LovingSchedulingConsoleOverlayServiceTest {
 
     @IsTest
     static void testBuildTrafficImpacts_noObject() {
-        // Traffic_Impact__c likely absent in test org — should return empty list
         Test.startTest();
         List<LovingSchedulingConsoleOverlayController.TrafficImpactDto> rows =
             LovingSchedulingConsoleOverlayService.buildTrafficImpacts(Date.today(), 'Charlotte');
@@ -93,7 +90,6 @@ private class LovingSchedulingConsoleOverlayServiceTest {
 
     @IsTest
     static void testApproveProposedDays_withValidIds() {
-        // Create a minimal WorkOrder
         WorkOrder wo = new WorkOrder(Status = 'New', Subject = 'Test WO for overlay');
         insert wo;
 
@@ -109,7 +105,6 @@ private class LovingSchedulingConsoleOverlayServiceTest {
 
     @IsTest
     static void testNotifyForemen_noFMs() {
-        // No Field Manager records — should complete silently
         Test.startTest();
         LovingSchedulingConsoleOverlayService.notifyForemen(Date.today(), 'Charlotte');
         Test.stopTest();
@@ -118,14 +113,11 @@ private class LovingSchedulingConsoleOverlayServiceTest {
 
     @IsTest
     static void testBuildResourceAvailability_activeServiceResources() {
-        // ServiceResource insert typically requires FSL managed package.
-        // This test validates the method runs without exception when no SRs exist.
         Test.startTest();
         LovingSchedulingConsoleOverlayController.AutoScheduleDto dto =
             LovingSchedulingConsoleOverlayService.buildAutoSchedule(Date.today(), 'Charlotte');
         Test.stopTest();
 
-        // resourceAvailability must be a list (possibly empty) — never null
         System.assertNotEquals(null, dto.resourceAvailability,
             'Resource availability must return a list, not null');
     }
@@ -144,13 +136,11 @@ private class LovingSchedulingConsoleOverlayServiceTest {
 
     @IsTest
     static void testDashboardAlertLevel_noIssues() {
-        // Fresh test org with no Schedule_Issue__c — alertNotice should be null
         Test.startTest();
         LovingSchedulingConsoleOverlayController.OverlayDashboardDto dto =
             LovingSchedulingConsoleOverlayService.buildOverlayDashboard(Date.today(), 'Charlotte');
         Test.stopTest();
 
-        // alertNotice is null when issueCount == 0 and weatherHoldCount == 0
         if (dto.issueCount == 0 && dto.weatherHoldCount == 0) {
             System.assertEquals(null, dto.alertNotice,
                 'No alert notice when there are no issues or weather holds');
