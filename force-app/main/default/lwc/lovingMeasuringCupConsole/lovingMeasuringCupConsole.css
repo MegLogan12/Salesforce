@@ -118,3 +118,8 @@ td[data-negative="true"] { color: #c62828; font-weight: 600; }
 .chip-amber   { background: #fff8e1; color: #e65100; }
 .chip-red     { background: #ffebee; color: #c62828; }
 .chip-gray    { background: #f4f6f9; color: #54698d; }
+/* ── CTA additions ─────────────────────────────── */
+.mc-refresh-btn { margin-left: auto; --lwc-colorTextIconDefault: #54698d; }
+.mc-row-link    { cursor: pointer; }
+.mc-row-link:hover { background: #f0f7ff; }
+.mc-lot-link    { color: #0070d2; font-weight: 600; }

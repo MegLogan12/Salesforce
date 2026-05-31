@@ -42,6 +42,13 @@
                     {t.icon}&nbsp;{t.label}
                 </button>
             </template>
+            <lightning-button-icon
+                icon-name="utility:refresh"
+                variant="bare"
+                title="Refresh"
+                onclick={handleRefresh}
+                class="mc-refresh-btn">
+            </lightning-button-icon>
         </div>
 
         <!-- ── Body ────────────────────────────────────────────────────── -->
@@ -73,10 +80,10 @@
                         </thead>
                         <tbody>
                             <template for:each={crewRows} for:item="r">
-                                <tr key={r.crewName}>
+                                <tr key={r.crewName} class="mc-row-link" data-id={r.workOrderId} onclick={handleCrewRowClick} title="Open Work Order">
                                     <td class="fw-600">{r.crewName}</td>
                                     <td>{r.foreman}</td>
-                                    <td>{r.currentLot}</td>
+                                    <td class="mc-lot-link">{r.currentLot}</td>
                                     <td class="text-right">{r.goalDisplay}</td>
                                     <td class="text-right">{r.actualDisplay}</td>
                                     <td class="text-right" data-negative={r.isNegative}>{r.varianceDisplay}</td>

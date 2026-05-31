@@ -1,4 +1,6 @@
 import { LightningElement, wire, track, api } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
+import { refreshApex } from '@salesforce/apex';
 import getActiveToday    from '@salesforce/apex/MeasuringCupController.getActiveToday';
 import getKpis           from '@salesforce/apex/MeasuringCupController.getKpis';
 import getSchedulingKpis from '@salesforce/apex/SchedulingController.getSchedulingKpis';
@@ -9,7 +11,7 @@ const TABS = [
     { id: 'pipeline',   label: 'Pipeline',      icon: '🗓️' }
 ];
 
-export default class LovingMeasuringCupConsole extends LightningElement {
+export default class LovingMeasuringCupConsole extends NavigationMixin(LightningElement) {
 
     @api pageTitle = 'Measuring Cup';
 
@@ -19,6 +21,10 @@ export default class LovingMeasuringCupConsole extends LightningElement {
     @track kpiData   = null;
     @track crews     = [];
     @track schedData = {};
+
+    _wiredCrews;
+    _wiredKpis;
+    _wiredSched;
 
     // ── Tabs ─────────────────────────────────────
     get tabs() {
@@ -34,7 +40,9 @@ export default class LovingMeasuringCupConsole extends LightningElement {
 
     // ── Wire ─────────────────────────────────────
     @wire(getActiveToday)
-    wiredCrews({ data, error }) {
+    wiredCrews(result) {
+        this._wiredCrews = result;
+        const { data, error } = result;
         if (data) {
             this.crews = data.map(c => ({
                 ...c,
@@ -55,13 +63,17 @@ export default class LovingMeasuringCupConsole extends LightningElement {
     }
 
     @wire(getKpis)
-    wiredKpis({ data, error }) {
+    wiredKpis(result) {
+        this._wiredKpis = result;
+        const { data, error } = result;
         if (data) this.kpiData = data;
         else if (error) this.errorMsg = this._errMsg(error);
     }
 
     @wire(getSchedulingKpis)
-    wiredSchedKpis({ data, error }) {
+    wiredSchedKpis(result) {
+        this._wiredSched = result;
+        const { data, error } = result;
         if (data) this.schedData = data;
         else if (error) this.errorMsg = this._errMsg(error);
     }
@@ -109,6 +121,21 @@ export default class LovingMeasuringCupConsole extends LightningElement {
     // ── Tab nav ───────────────────────────────────
     handleTabClick(evt) {
         this.activeTab = evt.currentTarget.dataset.tabid;
+    }
+
+    handleRefresh() {
+        if (this._wiredCrews) refreshApex(this._wiredCrews);
+        if (this._wiredKpis)  refreshApex(this._wiredKpis);
+        if (this._wiredSched) refreshApex(this._wiredSched);
+    }
+
+    handleCrewRowClick(evt) {
+        const woId = evt.currentTarget.dataset.id;
+        if (!woId) return;
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: { recordId: woId, actionName: 'view' }
+        });
     }
 
     // ── Helpers ───────────────────────────────────

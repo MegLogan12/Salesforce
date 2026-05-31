@@ -15,6 +15,7 @@ public with sharing class MeasuringCupController {
         @AuraEnabled public Decimal actualHours;
         @AuraEnabled public Decimal varianceHours;
         @AuraEnabled public String status;
+        @AuraEnabled public String workOrderId;
     }
 
     public class CupKpis {
@@ -51,6 +52,7 @@ public with sharing class MeasuringCupController {
         c.actualHours = wo.Actual_Hours__c;
         c.varianceHours = wo.Variance_Hours__c;
         c.status = wo.Job_Health__c;
+        c.workOrderId = wo.Id;
         return c;
     }
 
