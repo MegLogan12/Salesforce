@@ -3,19 +3,15 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>odlWorkOrder</componentName>
-                <identifier>c_odlWorkOrder</identifier>
+                <componentName>lovingPoPipelineBoard</componentName>
+                <identifier>takeoff_workspace_board</identifier>
             </componentInstance>
         </itemInstances>
         <name>main</name>
         <type>Region</type>
     </flexiPageRegions>
-    <flexiPageRegions>
-        <name>sidebar</name>
-        <type>Region</type>
-    </flexiPageRegions>
-    <masterLabel>ODL WorkOrder Record Page</masterLabel>
-    <sobjectType>WorkOrder</sobjectType>
+    <masterLabel>LOVING Takeoff Record Page</masterLabel>
+    <sobjectType>Takeoff__c</sobjectType>
     <template>
         <name>flexipage:recordHomeTemplateDesktop</name>
     </template>

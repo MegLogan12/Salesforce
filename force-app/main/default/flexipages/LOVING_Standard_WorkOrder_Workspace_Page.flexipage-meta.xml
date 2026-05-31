@@ -3,18 +3,14 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>odlWorkOrder</componentName>
-                <identifier>c_odlWorkOrder</identifier>
+                <componentName>lovingStandardWorkOrderWorkspace</componentName>
+                <identifier>wo_workspace_shell</identifier>
             </componentInstance>
         </itemInstances>
         <name>main</name>
         <type>Region</type>
     </flexiPageRegions>
-    <flexiPageRegions>
-        <name>sidebar</name>
-        <type>Region</type>
-    </flexiPageRegions>
-    <masterLabel>ODL WorkOrder Record Page</masterLabel>
+    <masterLabel>LOVING Standard WorkOrder Workspace Page</masterLabel>
     <sobjectType>WorkOrder</sobjectType>
     <template>
         <name>flexipage:recordHomeTemplateDesktop</name>

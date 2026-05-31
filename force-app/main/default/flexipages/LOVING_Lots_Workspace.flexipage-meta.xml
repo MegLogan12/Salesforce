@@ -3,14 +3,14 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>lovingForemanMobile</componentName>
-                <identifier>foreman_mobile</identifier>
+                <componentName>lovingLotsWorkspace</componentName>
+                <identifier>loving_lots_workspace</identifier>
             </componentInstance>
         </itemInstances>
         <name>main</name>
         <type>Region</type>
     </flexiPageRegions>
-    <masterLabel>Loving Foreman Home</masterLabel>
+    <masterLabel>LOVING Lots Workspace</masterLabel>
     <template>
         <name>flexipage:defaultAppHomeTemplate</name>
     </template>

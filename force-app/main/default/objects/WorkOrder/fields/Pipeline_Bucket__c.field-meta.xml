@@ -8,16 +8,16 @@
         <restricted>false</restricted>
         <valueSetDefinition>
             <sorted>false</sorted>
-            <value>
-                <fullName>Ready_to_Schedule</fullName>
-                <default>false</default>
-                <label>Ready_to_Schedule</label>
-            </value>
-            <value>
-                <fullName>Clear for Schedule</fullName>
-                <default>false</default>
-                <label>Clear for Schedule</label>
-            </value>
+            <value><fullName>New</fullName><default>false</default><label>New</label></value>
+            <value><fullName>Pending Scheduling</fullName><default>false</default><label>Pending Scheduling</label></value>
+            <value><fullName>Scheduled</fullName><default>false</default><label>Scheduled</label></value>
+            <value><fullName>Takeoff Complete</fullName><default>false</default><label>Takeoff Complete</label></value>
+            <value><fullName>Site Ready</fullName><default>false</default><label>Site Ready</label></value>
+            <value><fullName>In Progress</fullName><default>false</default><label>In Progress</label></value>
+            <value><fullName>QI</fullName><default>false</default><label>QI</label></value>
+            <value><fullName>Closed</fullName><default>false</default><label>Closed</label></value>
+            <value><fullName>Ready to Invoice</fullName><default>false</default><label>Ready to Invoice</label></value>
+            <value><fullName>Invoiced</fullName><default>false</default><label>Invoiced</label></value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>
