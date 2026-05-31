@@ -10,34 +10,36 @@ global without sharing class LOVING_TakeoffEscalationScheduler implements Schedu
     }
 
     private static void escalate() {
-        DateTime cutoff = System.now().addHours(-48);
-        List<Account> lots = [
-            SELECT Id, Name, FM__c, FM__r.ManagerId, Target_Start_Date__c, Bucket_Changed_Date__c
-            FROM Account
-            WHERE RecordType.DeveloperName = 'Lot'
-            AND Pipeline_Bucket__c IN ('30 Days', 'Ready to Schedule')
-            AND Takeoff_Task_Created__c = true
-            AND Takeoff_Complete__c = false
-            AND Bucket_Changed_Date__c < :cutoff
+        List<Work_Order__c> wos = [
+            SELECT Id, Name, Field_Manager__c, Field_Manager__r.ManagerId,
+                   Requested_Install_Date__c
+            FROM Work_Order__c
+            WHERE Pipeline_Bucket__c IN ('30 Days', 'Ready to Schedule')
+            AND Takeoff_Tasks_Created__c = true
+            AND Takeoff_Task_Complete__c = false
+            AND Status__c NOT IN ('Closed', 'Cancelled', 'Invoiced', 'Paid',
+                                  'Ready for Invoice', 'Field Complete')
         ];
-        if (lots.isEmpty()) return;
-        List<Task>    tasks  = new List<Task>();
-        List<Account> toFlag = new List<Account>();
-        for (Account lot : lots) {
-            Id ownerId = lot.FM__r.ManagerId != null ? lot.FM__r.ManagerId : lot.FM__c;
-            Task t = new Task();
-            t.Subject      = 'OVERDUE TAKEOFF — ' + lot.Name;
+        if (wos.isEmpty()) return;
+        List<Task> tasks = new List<Task>();
+        for (Work_Order__c wo : wos) {
+            Id ownerId = (wo.Field_Manager__r != null && wo.Field_Manager__r.ManagerId != null)
+                         ? wo.Field_Manager__r.ManagerId
+                         : wo.Field_Manager__c;
+            if (ownerId == null) continue;
+            Task t       = new Task();
+            t.Subject      = 'OVERDUE TAKEOFF — ' + wo.Name;
             t.OwnerId      = ownerId;
-            t.WhatId       = lot.Id;
+            t.WhatId       = wo.Id;
             t.Priority     = 'High';
             t.ActivityDate = Date.today();
             t.Type         = 'Escalation';
-            t.Description  = 'Site takeoff not completed within 48 hours. Contact FM immediately.';
+            t.Description  = 'Site takeoff not completed. Contact FM immediately. '
+                           + 'Target install date: '
+                           + (wo.Requested_Install_Date__c != null
+                              ? wo.Requested_Install_Date__c.format() : 'TBD');
             tasks.add(t);
-            toFlag.add(new Account(Id = lot.Id, Takeoff_Overdue__c = true));
         }
-        if (!tasks.isEmpty())  insert tasks;
-        if (!toFlag.isEmpty()) update toFlag;
+        if (!tasks.isEmpty()) insert tasks;
     }
 }
-
