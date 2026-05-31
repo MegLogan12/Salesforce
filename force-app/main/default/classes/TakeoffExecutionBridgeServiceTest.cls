@@ -8,22 +8,22 @@ private class TakeoffExecutionBridgeServiceTest {
 
     private static SeedContext loadSeedContext() {
         SeedContext ctx = new SeedContext();
+        ctx.community = [
+            SELECT Id, Name, Builder_Account__c
+            FROM Community__c
+            WHERE Builder_Account__c != null
+            ORDER BY Name
+            LIMIT 1
+        ];
         ctx.builderMarket = [
             SELECT Id, Name
             FROM Account
-            WHERE Builder_Code__c = 'UAT-HB-MKT-01'
-            LIMIT 1
-        ];
-        ctx.community = [
-            SELECT Id, Name
-            FROM Community__c
-            WHERE Name = 'UAT Builder Community 01'
-            LIMIT 1
+            WHERE Id = :ctx.community.Builder_Account__c
         ];
         ctx.lot = [
             SELECT Id, Name, Effective_Community_Package__c, Effective_Community_Package__r.Pricing_Book__c
             FROM Lot__c
-            WHERE Name = 'UAT Builder Community 01 - Lot 001'
+            WHERE Community__c = :ctx.community.Id
             LIMIT 1
         ];
         return ctx;
