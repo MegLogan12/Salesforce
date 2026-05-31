@@ -1,0 +1,40 @@
+<template>
+    <lightning-card title="Work Order Pipeline" icon-name="standard:work_order">
+        <span slot="actions" class="slds-badge">{totalCount} total</span>
+        <div class="kanban-container">
+            <template for:each={columns} for:item="col">
+                <div key={col.stage} class="kanban-column">
+                    <div class="kanban-header">
+                        <span class="kanban-stage-label">{col.label}</span>
+                        <span class="kanban-stage-count">{col.count}</span>
+                    </div>
+                    <div class="kanban-body">
+                        <template for:each={col.cards} for:item="card">
+                            <a key={card.id} href={card.url} class={card.cardClass} data-id={card.id}>
+                                <div class="card-number">{card.woNumber}</div>
+                                <div class="card-meta">
+                                    <span class="card-builder">{card.builder}</span>
+                                    <span class="card-foreman">{card.foreman}</span>
+                                </div>
+                                <div class="card-lot">{card.lotName}</div>
+                                <template if:true={card.releaseDate}>
+                                    <div class="card-date">
+                                        <lightning-formatted-date-time value={card.releaseDate}
+                                            year="numeric" month="short" day="numeric">
+                                        </lightning-formatted-date-time>
+                                    </div>
+                                </template>
+                                <template if:true={card.takeoffStatus}>
+                                    <div class="card-takeoff">Takeoff: {card.takeoffStatus}</div>
+                                </template>
+                            </a>
+                        </template>
+                        <template if:false={col.cards.length}>
+                            <div class="kanban-empty">No work orders</div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,99 @@
+.kanban-container {
+    display: flex;
+    overflow-x: auto;
+    padding: 12px;
+    gap: 12px;
+    background: #F3F3F3;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+.kanban-column {
+    min-width: 280px;
+    width: 280px;
+    background: #FAFAF9;
+    border-radius: 6px;
+    border: 1px solid #D8DDE6;
+    display: flex;
+    flex-direction: column;
+}
+.kanban-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: #16325C;
+    color: #fff;
+    border-radius: 6px 6px 0 0;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+.kanban-stage-count {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 1px 8px;
+    border-radius: 12px;
+}
+.kanban-body {
+    padding: 8px;
+    flex: 1;
+    overflow-y: auto;
+    max-height: 600px;
+}
+.kanban-empty {
+    text-align: center;
+    color: #54698D;
+    font-size: 11px;
+    padding: 20px;
+    font-style: italic;
+}
+.wo-card-green, .wo-card-amber, .wo-card-red {
+    display: block;
+    text-decoration: none;
+    color: #181818;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border-radius: 4px;
+    border-left: 3px solid;
+    background: #fff;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+    transition: transform 0.1s ease;
+}
+.wo-card-green:hover, .wo-card-amber:hover, .wo-card-red:hover {
+    transform: translateX(2px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-decoration: none;
+    color: #181818;
+}
+.wo-card-green { border-left-color: #04844B; }
+.wo-card-amber { border-left-color: #FE9339; }
+.wo-card-red { border-left-color: #C23934; background: #FCE8E8; }
+.card-number {
+    font-size: 12px;
+    font-weight: 600;
+    color: #0070D2;
+    margin-bottom: 2px;
+}
+.card-meta {
+    font-size: 10px;
+    color: #54698D;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+.card-lot {
+    font-size: 11px;
+    font-weight: 500;
+    color: #181818;
+    margin-bottom: 2px;
+}
+.card-date {
+    font-size: 10px;
+    color: #54698D;
+    font-variant-numeric: tabular-nums;
+}
+.card-takeoff {
+    font-size: 9px;
+    color: #54698D;
+    margin-top: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}

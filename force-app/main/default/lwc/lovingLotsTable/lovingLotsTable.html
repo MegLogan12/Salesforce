@@ -1,0 +1,33 @@
+<template>
+    <section class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <template for:each={columns} for:item="column">
+                        <th key={column.key} class={column.headerClass}>{column.label}</th>
+                    </template>
+                </tr>
+            </thead>
+            <tbody>
+                <template for:each={rows} for:item="row">
+                    <tr key={row.lotId} data-id={row.lotId} onclick={openLot}>
+                        <template for:each={row.cells} for:item="cell">
+                            <td key={cell.key} class={cell.cellClass}>
+                                <template if:true={cell.isLink}>
+                                    <a>{cell.value}</a>
+                                </template>
+                                <template if:true={cell.isChip}>
+                                    <span class={cell.chipClass}>{cell.value}</span>
+                                </template>
+                                <template if:true={cell.isText}>
+                                    {cell.value}
+                                </template>
+                            </td>
+                        </template>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+        <footer>{rowCount} of {lotCount} {objectPluralLabel} shown.</footer>
+    </section>
+</template>

@@ -489,7 +489,7 @@ export default class LovingSchedulingConsole extends NavigationMixin(LightningEl
         this.isLoading = true;
         markReadyForScheduling({ woId })
             .then(() => {
-                this._toast('Updated', 'Work Order marked Ready to Schedule', 'success');
+                this._toast('Updated', 'Work Order moved to Takeoff Complete', 'success');
                 return refreshApex(this._unscheduledWire);
             })
             .catch(err => this._toast('Error', err.body ? err.body.message : 'Update failed', 'error'))

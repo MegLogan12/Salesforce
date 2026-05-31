@@ -1,0 +1,41 @@
+<template>
+    <lightning-card title="Finish Jobs" icon-name="standard:task">
+        <div class="slds-p-around_small">
+            <template if:true={loading}>
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </template>
+            <div class="fj-callout">
+                FJ rule: Finish Jobs must link to the original parent Work Order. Close-Out Status is Closed - No Invoice.
+            </div>
+            <template if:false={hasJobs}>
+                <p class="slds-text-color_weak slds-m-top_small">No Finish Jobs created.</p>
+            </template>
+            <template if:true={hasJobs}>
+                <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-m-top_small">
+                    <thead>
+                        <tr>
+                            <th>FJ#</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Scheduled</th>
+                            <th>FM</th>
+                            <th>Photos</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={jobs} for:item="j">
+                            <tr key={j.id}>
+                                <td>{j.name}</td>
+                                <td>{j.reason}</td>
+                                <td><span class={j.statusClass}>{j.status}</span></td>
+                                <td>{j.scheduledDate}</td>
+                                <td>{j.fm}</td>
+                                <td>{j.completionPhotoCount}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+        </div>
+    </lightning-card>
+</template>

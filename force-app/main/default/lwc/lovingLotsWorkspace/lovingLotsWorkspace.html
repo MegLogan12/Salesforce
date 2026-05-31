@@ -1,0 +1,37 @@
+<template>
+    <div class="lots-workspace">
+        <c-loving-lots-workspace-header
+            object-label={objectLabel}
+            object-plural-label={objectPluralLabel}
+            account-count={accountCount}
+            community-count={communityCount}
+            lot-count={lotCount}
+            active-lot-count={activeLotCount}
+            onexport={exportCsv}
+            onnewlot={handleNewLot}>
+        </c-loving-lots-workspace-header>
+
+        <c-loving-lots-toolbar
+            filters={pipelineFilters}
+            builder-options={builderOptions}
+            fm-options={fmOptions}
+            builder-filter={builderFilter}
+            fm-filter={fmFilter}
+            search-term={searchTerm}
+            onpipelinechange={setPipeline}
+            onbuilderchange={handleBuilderFilter}
+            onfmchange={handleFmFilter}
+            onsearch={handleSearch}>
+        </c-loving-lots-toolbar>
+
+        <template if:true={isLoading}>
+            <div class="spinner"><lightning-spinner alternative-text="Loading lots" size="small"></lightning-spinner></div>
+        </template>
+
+        <template if:true={errorMsg}>
+            <div class="banner error">{errorMsg}</div>
+        </template>
+
+        <c-loving-lots-table columns={columns} rows={filteredRows} lot-count={lotCount} object-plural-label={objectPluralLabel} onopenlot={openLot}></c-loving-lots-table>
+    </div>
+</template>

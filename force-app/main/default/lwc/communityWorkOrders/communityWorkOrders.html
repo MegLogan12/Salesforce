@@ -1,0 +1,42 @@
+<template>
+    <template lwc:if={loaded}>
+        <div class="card full">
+            <div class="ch">
+                <h3>Work Orders</h3>
+                <span class="chip-group">
+                    <span class="stat-chip chip-g">{data.completeCount} complete</span>
+                    <span class="stat-chip chip-b">{data.scheduledCount} scheduled</span>
+                    <span class="stat-chip chip-a">QI due: {data.qiDueCount}</span>
+                </span>
+            </div>
+            <template lwc:if={hasRows}>
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Work Order</th><th>Lot</th><th>Type</th><th>Foreman</th><th>Crew</th>
+                            <th>Scheduled</th><th>Status</th><th>Foreman Submit</th><th>FM QI</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={data.rows} for:item="r">
+                            <tr key={r.id}>
+                                <td><a href={r.recordUrl} class="name-link">{r.name}</a></td>
+                                <td>{r.lot}</td>
+                                <td>{r.woType}</td>
+                                <td>{r.foreman}</td>
+                                <td>{r.crew}</td>
+                                <td>{r.scheduled}</td>
+                                <td><span class={r.statusClass}>{r.status}</span></td>
+                                <td><span class={r.foremanSubmitClass}>{r.foremanSubmit}</span></td>
+                                <td><span class={r.qiClass}>{r.qi}</span></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template lwc:else>
+                <div class="empty">0 work orders linked to this community.</div>
+            </template>
+        </div>
+    </template>
+</template>

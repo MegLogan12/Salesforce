@@ -1,0 +1,30 @@
+.fj-callout {
+    background: #fff8e1;
+    border: 1px solid #f0d58c;
+    color: #6a5600;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+.pill {
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+.pill-done {
+    background: #e3f6ea;
+    color: #1c7c41;
+}
+.pill-active {
+    background: #e8f0fb;
+    color: #2b5d8a;
+}
+.pill-warn {
+    background: #fff2d9;
+    color: #7a5200;
+}
+.pill-neutral {
+    background: #eee;
+    color: #555;
+}

@@ -1,0 +1,42 @@
+<template>
+    <lightning-card title="Photo Gallery" icon-name="standard:photo">
+        <div class="slds-p-around_small">
+            <template if:true={loading}>
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </template>
+            <template if:true={emptyState}>
+                <p class="slds-text-color_weak">No photos uploaded for this work order.</p>
+            </template>
+            <template for:each={sections} for:item="sec">
+                <div key={sec.key} class="photo-section">
+                    <header class="section-head">
+                        <span class="section-label">{sec.label}</span>
+                        <span class="section-count">{sec.count}</span>
+                    </header>
+                    <div class="photo-grid">
+                        <template for:each={sec.items} for:item="p">
+                            <article key={p.id} class="photo-card">
+                                <div class="thumb">
+                                    <template if:true={p.s3Url}>
+                                        <img src={p.s3Url} alt={p.photoType} />
+                                    </template>
+                                    <template if:false={p.s3Url}>
+                                        <div class="thumb-placeholder">No preview</div>
+                                    </template>
+                                </div>
+                                <div class="meta">
+                                    <span class={p.badgeClass}>{p.badge}</span>
+                                    <span class="taken-by">{p.takenBy}</span>
+                                    <span class="taken-at">{p.takenAt}</span>
+                                </div>
+                                <template if:true={p.notes}>
+                                    <p class="notes">{p.notes}</p>
+                                </template>
+                            </article>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>
