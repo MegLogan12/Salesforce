@@ -3,6 +3,7 @@
         <div class="card full">
             <div class="ch">
                 <h3>Work Orders</h3>
+                <lightning-button label="New Work Order" icon-name="utility:add" onclick={handleNewWorkOrder}></lightning-button>
                 <span class="chip-group">
                     <span class="stat-chip chip-g">{data.completeCount} complete</span>
                     <span class="stat-chip chip-b">{data.scheduledCount} scheduled</span>

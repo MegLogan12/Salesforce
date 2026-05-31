@@ -1,7 +1,8 @@
 import { LightningElement, wire, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import getPipeline from '@salesforce/apex/WorkOrderPipelineController.getPipeline';
 
-export default class WorkOrderPipelineKanban extends LightningElement {
+export default class WorkOrderPipelineKanban extends NavigationMixin(LightningElement) {
     @track columns = [];
     error;
 
@@ -19,5 +20,12 @@ export default class WorkOrderPipelineKanban extends LightningElement {
 
     get totalCount() {
         return this.columns.reduce((acc, c) => acc + (c.count || 0), 0);
+    }
+
+    handleNewWorkOrder() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'WorkOrder', actionName: 'new' }
+        });
     }
 }

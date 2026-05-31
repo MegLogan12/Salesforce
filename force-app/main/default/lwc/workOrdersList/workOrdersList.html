@@ -2,6 +2,7 @@
     <div class="wo-card">
         <div class="ch">
             <h3>Work Orders: All Communities</h3>
+            <lightning-button label="New Work Order" icon-name="utility:add" onclick={handleNewWorkOrder}></lightning-button>
             <div class="chips">
                 <span class="stat-chip chip-g">{completeCount} complete</span>
                 <span class="stat-chip chip-b">{scheduledCount} scheduled</span>

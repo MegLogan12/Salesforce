@@ -1,6 +1,7 @@
 <template>
     <lightning-card title="Work Order Pipeline" icon-name="standard:work_order">
         <span slot="actions" class="slds-badge">{totalCount} total</span>
+        <lightning-button slot="actions" label="New Work Order" icon-name="utility:add" onclick={handleNewWorkOrder}></lightning-button>
         <div class="kanban-container">
             <template for:each={columns} for:item="col">
                 <div key={col.stage} class="kanban-column">

@@ -1,4 +1,5 @@
 import { LightningElement, api, wire } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import getWorkOrdersForAccount from '@salesforce/apex/ParentAccountRollupController.getWorkOrdersForAccount';
 
 function statusPillCls(status) {
@@ -19,7 +20,7 @@ function qiPillCls(qi) {
     return 'pill pgr';
 }
 
-export default class WorkOrdersList extends LightningElement {
+export default class WorkOrdersList extends NavigationMixin(LightningElement) {
     @api recordId;
     rows;
     error;
@@ -87,6 +88,13 @@ export default class WorkOrdersList extends LightningElement {
 
     handleCommunityChange(event) { this.communityFilter = event.detail.value; }
     handleStatusChange(event) { this.statusFilter = event.detail.value; }
+
+    handleNewWorkOrder() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'WorkOrder', actionName: 'new' }
+        });
+    }
 
     get showingNote() {
         return `Showing ${this.count} of ${this.totalCount} work orders`;

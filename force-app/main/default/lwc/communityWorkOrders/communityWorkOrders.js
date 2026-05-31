@@ -1,7 +1,8 @@
 import { LightningElement, api, wire } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import getWorkOrders from '@salesforce/apex/CommunityRecordController.getWorkOrders';
 
-export default class CommunityWorkOrders extends LightningElement {
+export default class CommunityWorkOrders extends NavigationMixin(LightningElement) {
     @api recordId;
     data;
 
@@ -16,4 +17,12 @@ export default class CommunityWorkOrders extends LightningElement {
 
     get loaded() { return !!this.data; }
     get hasRows() { return this.data && this.data.rows && this.data.rows.length > 0; }
+
+    handleNewWorkOrder() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'WorkOrder', actionName: 'new' },
+            state: { defaultFieldValues: `Community__c=${this.recordId}` }
+        });
+    }
 }
