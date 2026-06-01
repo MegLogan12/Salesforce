@@ -166,7 +166,7 @@
     <navType>Console</navType>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>ODL_UMB_Opportunity_Record_Page</content>
+        <content>ODL_Opportunity_Record_Page</content>
         <formFactor>Large</formFactor>
         <pageOrSobjectType>Opportunity</pageOrSobjectType>
         <recordType>Opportunity.UMB</recordType>
@@ -175,7 +175,7 @@
     </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>ODL_UMB_Opportunity_Record_Page</content>
+        <content>ODL_Opportunity_Record_Page</content>
         <formFactor>Large</formFactor>
         <pageOrSobjectType>Opportunity</pageOrSobjectType>
         <recordType>Opportunity.UMB</recordType>
@@ -184,7 +184,7 @@
     </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>ODL_UMB_Opportunity_Record_Page</content>
+        <content>ODL_Opportunity_Record_Page</content>
         <formFactor>Large</formFactor>
         <pageOrSobjectType>Opportunity</pageOrSobjectType>
         <recordType>Opportunity.UMB</recordType>
@@ -193,7 +193,7 @@
     </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>ODL_UMB_Opportunity_Record_Page</content>
+        <content>ODL_Opportunity_Record_Page</content>
         <formFactor>Large</formFactor>
         <pageOrSobjectType>Opportunity</pageOrSobjectType>
         <recordType>Opportunity.UMB</recordType>
@@ -202,7 +202,7 @@
     </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>ODL_Design_Build_Opportunity_Record_Page</content>
+        <content>ODL_Opportunity_Record_Page</content>
         <formFactor>Large</formFactor>
         <pageOrSobjectType>Opportunity</pageOrSobjectType>
         <recordType>Opportunity.Design_Build</recordType>
@@ -211,7 +211,7 @@
     </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>ODL_Design_Build_Opportunity_Record_Page</content>
+        <content>ODL_Opportunity_Record_Page</content>
         <formFactor>Large</formFactor>
         <pageOrSobjectType>Opportunity</pageOrSobjectType>
         <recordType>Opportunity.Design_Build</recordType>
@@ -220,7 +220,7 @@
     </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>ODL_Design_Build_Opportunity_Record_Page</content>
+        <content>ODL_Opportunity_Record_Page</content>
         <formFactor>Large</formFactor>
         <pageOrSobjectType>Opportunity</pageOrSobjectType>
         <recordType>Opportunity.Design_Build</recordType>
@@ -229,7 +229,7 @@
     </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>ODL_Design_Build_Opportunity_Record_Page</content>
+        <content>ODL_Opportunity_Record_Page</content>
         <formFactor>Large</formFactor>
         <pageOrSobjectType>Opportunity</pageOrSobjectType>
         <recordType>Opportunity.Design_Build</recordType>
@@ -373,7 +373,7 @@
     </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>ODL_UMB_Opportunity_Record_Page</content>
+        <content>ODL_Opportunity_Record_Page</content>
         <formFactor>Large</formFactor>
         <pageOrSobjectType>Opportunity</pageOrSobjectType>
         <recordType>Opportunity.UMB</recordType>
@@ -382,7 +382,7 @@
     </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
-        <content>ODL_Design_Build_Opportunity_Record_Page</content>
+        <content>ODL_Opportunity_Record_Page</content>
         <formFactor>Large</formFactor>
         <pageOrSobjectType>Opportunity</pageOrSobjectType>
         <recordType>Opportunity.Design_Build</recordType>
