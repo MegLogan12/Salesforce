@@ -30,7 +30,7 @@ export default class OdlOpportunityRecordWorkspace extends NavigationMixin(Light
     get lastActionDate() { return this.pageData?.lastActionDate || ''; }
     get readiness() { return this.pageData?.readiness; }
     get nextActionText() { return this.pageData?.nextActionText || ''; }
-    get nextActionButton() { return this.pageData?.nextActionButton || 'View'; }
+    get nextActionButton() { return this.pageData?.nextActionButton ?? null; }
     get woReady() { return this.pageData?.readiness?.woReady || false; }
 
     get stagePath() { return this.pageData?.stagePath || []; }

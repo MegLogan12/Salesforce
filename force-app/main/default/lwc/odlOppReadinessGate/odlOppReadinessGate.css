@@ -163,6 +163,13 @@
 
 .btn-release-active:hover { background: #145522; }
 
+.blocked-reason {
+    margin: 0.3rem 0 0;
+    font-size: 0.72rem;
+    color: #b34700;
+    font-weight: 500;
+}
+
 .gate-loading {
     padding: 1rem;
     font-size: 0.8rem;
