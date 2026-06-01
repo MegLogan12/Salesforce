@@ -43,7 +43,7 @@ private class ODLInboundResponseServiceTest {
         Test.stopTest();
 
         Opportunity result = [SELECT Last_Customer_Response_Date__c FROM Opportunity WHERE Id = :opp.Id];
-        Assert.isNotNull(result.Last_Customer_Response_Date__c, 'Should have stamped a date');
+        System.assertNotEquals(null, result.Last_Customer_Response_Date__c, 'Should have stamped a date');
     }
 
     @IsTest
@@ -67,7 +67,7 @@ private class ODLInboundResponseServiceTest {
         Test.stopTest();
 
         Opportunity result = [SELECT Last_Customer_Response_Date__c FROM Opportunity WHERE Id = :opp.Id];
-        Assert.isNull(result.Last_Customer_Response_Date__c, 'Outbound email should NOT stamp');
+        System.assertEquals(null, result.Last_Customer_Response_Date__c, 'Outbound email should NOT stamp');
     }
 
     @IsTest
@@ -89,7 +89,7 @@ private class ODLInboundResponseServiceTest {
         Test.stopTest();
 
         Opportunity result = [SELECT Last_Customer_Response_Date__c FROM Opportunity WHERE Id = :opp.Id];
-        Assert.isNotNull(result.Last_Customer_Response_Date__c, 'Inbound call task should stamp');
+        System.assertNotEquals(null, result.Last_Customer_Response_Date__c, 'Inbound call task should stamp');
     }
 
     @IsTest
@@ -111,7 +111,7 @@ private class ODLInboundResponseServiceTest {
         Test.stopTest();
 
         Opportunity result = [SELECT Last_Customer_Response_Date__c FROM Opportunity WHERE Id = :opp.Id];
-        Assert.isNull(result.Last_Customer_Response_Date__c, 'Outbound task should NOT stamp');
+        System.assertEquals(null, result.Last_Customer_Response_Date__c, 'Outbound task should NOT stamp');
     }
 
     @IsTest
@@ -137,16 +137,17 @@ private class ODLInboundResponseServiceTest {
         Test.stopTest();
 
         Opportunity result = [SELECT Last_Customer_Response_Date__c FROM Opportunity WHERE Id = :opp.Id];
-        Assert.areEqual(Date.today(), result.Last_Customer_Response_Date__c, 'Should not overwrite newer date');
+        System.assertEquals(Date.today(), result.Last_Customer_Response_Date__c, 'Should not overwrite newer date');
     }
 
     @IsTest
     static void testOnlyODLRecordTypesStamped() {
         // Non-ODL opportunity should not be stamped
-        RecordType lawnRt = [SELECT Id FROM RecordType
+        List<RecordType> rtList = [SELECT Id FROM RecordType
             WHERE SObjectType = 'Opportunity' AND DeveloperName NOT IN ('UMB', 'Design_Build')
             LIMIT 1];
-        if (lawnRt == null) return;
+        if (rtList.isEmpty()) return;
+        RecordType lawnRt = rtList[0];
 
         Account a = new Account(Name = 'Non-ODL Account');
         insert a;
@@ -171,7 +172,7 @@ private class ODLInboundResponseServiceTest {
         Test.stopTest();
 
         Opportunity result = [SELECT Last_Customer_Response_Date__c FROM Opportunity WHERE Id = :opp.Id];
-        Assert.isNull(result.Last_Customer_Response_Date__c, 'Non-ODL opp should NOT be stamped');
+        System.assertEquals(null, result.Last_Customer_Response_Date__c, 'Non-ODL opp should NOT be stamped');
     }
 
     @IsTest
@@ -193,6 +194,6 @@ private class ODLInboundResponseServiceTest {
         Test.stopTest();
 
         Opportunity result = [SELECT Last_Customer_Response_Date__c FROM Opportunity WHERE Id = :opp.Id];
-        Assert.isNotNull(result.Last_Customer_Response_Date__c, 'Attended consult event should stamp');
+        System.assertNotEquals(null, result.Last_Customer_Response_Date__c, 'Attended consult event should stamp');
     }
 }
