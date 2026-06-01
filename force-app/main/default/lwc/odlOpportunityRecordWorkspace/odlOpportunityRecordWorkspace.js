@@ -5,6 +5,7 @@ import getPageData from '@salesforce/apex/ODLOpportunityRecordController.getPage
 export default class OdlOpportunityRecordWorkspace extends NavigationMixin(LightningElement) {
     @api recordId;
 
+    activeTab = 'overview';
     pageData;
     error;
 
@@ -95,6 +96,15 @@ export default class OdlOpportunityRecordWorkspace extends NavigationMixin(Light
         if (!this.error) return '';
         if (Array.isArray(this.error.body)) return this.error.body.map(e => e.message).join(', ');
         return this.error.body?.message || this.error.message || 'Unable to load opportunity data.';
+    }
+
+    get isOverviewTab() { return this.activeTab === 'overview'; }
+    get isCloseTab() { return this.activeTab === 'close'; }
+    get tabClassOverview() { return this.activeTab === 'overview' ? 'tab-btn tab-btn-active' : 'tab-btn'; }
+    get tabClassClose() { return this.activeTab === 'close' ? 'tab-btn tab-btn-active' : 'tab-btn'; }
+
+    handleTabClick(event) {
+        this.activeTab = event.currentTarget.dataset.tab;
     }
 
     handleNewTask() {
