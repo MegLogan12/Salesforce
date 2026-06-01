@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Customer_Invoice_Amount__c</fullName>
+    <description>What the customer actually owes for the grilling island. $0 for Standard (voucher covers full value). Deluxe minus Standard for Deluxe. Calculated: Gross_Grill_Price__c minus Voucher_Face_Value__c, minimum $0.</description>
+    <label>Customer Invoice Amount</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Currency</type>
+</CustomField>

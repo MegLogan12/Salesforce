@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Expired_Voucher_Cannot_Advance</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+NOT(ISBLANK(Expiration_Date__c)),
+Expiration_Date__c &lt; TODAY(),
+NOT(Finance_Exception_Approved__c),
+OR(
+ISPICKVAL(Status__c, &quot;Validated&quot;),
+ISPICKVAL(Status__c, &quot;Reserved&quot;),
+ISPICKVAL(Status__c, &quot;Applied to Quote&quot;)
+)
+)</errorConditionFormula>
+    <errorMessage>Expired vouchers cannot be validated, reserved, or applied to quote unless an exception is approved.</errorMessage>
+</ValidationRule>

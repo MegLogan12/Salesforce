@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Voucher_Type__c</fullName>
+    <label>Voucher Type</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Standard Grilling Island</fullName>
+                <default>true</default>
+                <label>Standard Grilling Island</label>
+            </value>
+            <value>
+                <fullName>Deluxe Grilling Island Upgrade</fullName>
+                <default>false</default>
+                <label>Deluxe Grilling Island Upgrade</label>
+            </value>
+            <value>
+                <fullName>Dollar Credit</fullName>
+                <default>false</default>
+                <label>Dollar Credit</label>
+            </value>
+            <value>
+                <fullName>Percent Discount</fullName>
+                <default>false</default>
+                <label>Percent Discount</label>
+            </value>
+            <value>
+                <fullName>Package Upgrade</fullName>
+                <default>false</default>
+                <label>Package Upgrade</label>
+            </value>
+            <value>
+                <fullName>Closing Gift</fullName>
+                <default>false</default>
+                <label>Closing Gift</label>
+            </value>
+            <value>
+                <fullName>Model Home Offer</fullName>
+                <default>false</default>
+                <label>Model Home Offer</label>
+            </value>
+            <value>
+                <fullName>Community Buyer Offer</fullName>
+                <default>false</default>
+                <label>Community Buyer Offer</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

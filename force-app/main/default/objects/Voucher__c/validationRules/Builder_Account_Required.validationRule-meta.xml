@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Builder_Account_Required</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISBLANK(Builder_Account__c)</errorConditionFormula>
+    <errorMessage>Builder Account is required for Lennar vouchers.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Invoice_Number_And_Date_Required</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+ISPICKVAL(Status__c, &quot;Builder Invoiced&quot;),
+OR(
+ISBLANK(Builder_Invoice_Number__c),
+ISBLANK(Builder_Invoice_Date__c)
+)
+)</errorConditionFormula>
+    <errorMessage>Builder Invoice Number and Builder Invoice Date are required when Voucher Status is Builder Invoiced.</errorMessage>
+</ValidationRule>
