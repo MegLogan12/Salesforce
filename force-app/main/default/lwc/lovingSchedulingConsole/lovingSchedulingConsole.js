@@ -3,6 +3,7 @@ import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { refreshApex } from '@salesforce/apex';
 
+import getDivisions              from '@salesforce/apex/SchedulingConsoleController.getDivisions';
 import getTodaySchedule          from '@salesforce/apex/SchedulingConsoleController.getTodaySchedule';
 import getUnscheduledWork        from '@salesforce/apex/SchedulingConsoleController.getUnscheduledWork';
 import getScheduledWork          from '@salesforce/apex/SchedulingConsoleController.getScheduledWork';
@@ -24,16 +25,8 @@ import markWorkOrderBlocked      from '@salesforce/apex/SchedulingConsoleControl
 import clearWorkOrderBlocker     from '@salesforce/apex/SchedulingConsoleController.clearWorkOrderBlocker';
 import refreshSchedulingConsole  from '@salesforce/apex/SchedulingConsoleController.refreshSchedulingConsole';
 
-const ALL_DIVISIONS = ['All', 'Charlotte', 'Triad', 'Greenville', 'Columbia', 'Asheville'];
-const DIV_LABELS    = ['All Divisions', 'Charlotte Metro', 'Triad', 'Greenville', 'Columbia', 'Asheville'];
-
-const TERRITORY_COORDS = {
-    'Charlotte Metro': { lat: 35.2271, lon: -80.8431 },
-    'Triad':           { lat: 36.0726, lon: -79.7920 },
-    'Greenville':      { lat: 34.8526, lon: -82.3940 },
-    'Columbia':        { lat: 34.0007, lon: -81.0348 },
-    'Asheville':       { lat: 35.5951, lon: -82.5515 }
-};
+const DEFAULT_TERRITORY = 'Charlotte Metro';
+const DEFAULT_COORDS    = { lat: 35.2271, lon: -80.8431 };
 
 export default class LovingSchedulingConsole extends NavigationMixin(LightningElement) {
 
@@ -457,7 +450,11 @@ export default class LovingSchedulingConsole extends NavigationMixin(LightningEl
 
     // ── Weather & Traffic map URLs (territory-aware) ───────────────────────────
     get _coords() {
-        return TERRITORY_COORDS[this.territory] || TERRITORY_COORDS['Charlotte Metro'];
+        const match = this._divisions.find(d => d.label === this.territory);
+        if (match && match.latitude != null && match.longitude != null) {
+            return { lat: match.latitude, lon: match.longitude };
+        }
+        return DEFAULT_COORDS;
     }
     get weatherMapUrl() {
         const c = this._coords;
@@ -471,16 +468,30 @@ export default class LovingSchedulingConsole extends NavigationMixin(LightningEl
     }
 
     // ── Division / filter chips ────────────────────────────────────────────────
+    @track _divisions = [];
+
+    @wire(getDivisions)
+    wiredDivisions({ data }) {
+        if (data) this._divisions = data;
+    }
+
     get divisionChips() {
-        return ALL_DIVISIONS.map((v,i) => ({
-            label: DIV_LABELS[i], value: v,
+        return this._divisions.map((d, i) => ({
+            label: d.label,
+            value: d.value,
             cls: 'div-chip' + (i === this.activeDivIdx ? ' on' : '')
         }));
     }
     handleDivChip(event) {
         const val = event.currentTarget.dataset.div;
-        this.activeDivIdx = ALL_DIVISIONS.indexOf(val);
-        this.territory = val === 'All' ? 'Charlotte Metro' : val;
+        this.activeDivIdx = this._divisions.findIndex(d => d.value === val);
+        if (this.activeDivIdx < 0) this.activeDivIdx = 0;
+        if (val === 'All') {
+            this.territory = DEFAULT_TERRITORY;
+        } else {
+            const match = this._divisions.find(d => d.value === val);
+            this.territory = match ? match.label : val;
+        }
     }
 
     // ── Actions ────────────────────────────────────────────────────────────────

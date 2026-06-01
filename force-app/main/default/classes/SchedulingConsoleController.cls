@@ -847,4 +847,30 @@ public with sharing class SchedulingConsoleController {
             throw new AuraHandledException(e.getMessage());
         }
     }
+
+    public class DivisionDto {
+        @AuraEnabled public String value;
+        @AuraEnabled public String label;
+        @AuraEnabled public Decimal latitude;
+        @AuraEnabled public Decimal longitude;
+    }
+
+    @AuraEnabled(cacheable=true)
+    public static List<DivisionDto> getDivisions() {
+        List<DivisionDto> out = new List<DivisionDto>();
+        for (LOVING_Division__mdt m : [
+            SELECT Division_Value__c, Display_Label__c, Latitude__c, Longitude__c, Sort_Order__c
+            FROM LOVING_Division__mdt
+            WHERE Is_Active__c = true
+            ORDER BY Sort_Order__c ASC, Display_Label__c ASC
+        ]) {
+            DivisionDto d = new DivisionDto();
+            d.value     = m.Division_Value__c;
+            d.label     = m.Display_Label__c;
+            d.latitude  = m.Latitude__c;
+            d.longitude = m.Longitude__c;
+            out.add(d);
+        }
+        return out;
+    }
 }
