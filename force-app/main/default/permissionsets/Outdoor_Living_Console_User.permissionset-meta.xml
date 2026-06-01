@@ -15,6 +15,10 @@
         <apexClass>ODLInboundResponseService</apexClass>
         <enabled>true</enabled>
     </classAccesses>
+    <classAccesses>
+        <apexClass>ODLOpportunityCloseController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
     <fieldPermissions>
         <field>Opportunity.Last_Customer_Response_Date__c</field>
         <editable>true</editable>
@@ -28,6 +32,21 @@
     <fieldPermissions>
         <field>Opportunity.Design_Fee_Paid_Date__c</field>
         <editable>true</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Opportunity.Deposit_Due__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Opportunity.Deposit_Paid__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Opportunity.Deposit_Paid_Date__c</field>
+        <editable>false</editable>
         <readable>true</readable>
     </fieldPermissions>
 </PermissionSet>
