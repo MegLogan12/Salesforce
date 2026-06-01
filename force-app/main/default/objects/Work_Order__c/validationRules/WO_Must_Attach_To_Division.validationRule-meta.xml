@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>WO_Must_Attach_To_Division</fullName>
-    <active>false</active>
+    <active>true</active>
     <description>Prevents a Work Order's builder account from being set to a Builder Parent (roll-up only). Builder_Market_Account__c must point to a Builder_Market Division when set. Deployed inactive; activate after sandbox T4 passes. Spec VR 7.4.</description>
     <errorConditionFormula>AND(
   NOT(ISBLANK(Builder_Market_Account__c)),

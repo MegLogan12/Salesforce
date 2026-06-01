@@ -1,6 +1,8 @@
 public class DivisionKpiRecalcBatch implements Database.Batchable<SObject> {
 
     private static final Date T12M = Date.today().addDays(-365);
+    // On-Time % is a trailing-30-day measure (field description / Spec 3.5).
+    private static final DateTime T30 = DateTime.now().addDays(-30);
 
     // Terminal statuses loaded from WO_Status_Mapping__mdt so finance can
     // change the open/closed line without a code deploy (Prompt 2 requirement).
@@ -136,9 +138,26 @@ public class DivisionKpiRecalcBatch implements Database.Batchable<SObject> {
             lotsByDiv.put((Id) ar.get('div'), l != null ? l.intValue() : 0);
         }
 
-        // On_Time_Completion_Pct__c: requires a target/scheduled completion date field
-        // to compare against Closed_Date__c. No target date field confirmed yet.
-        // Stays null until sandbox testing resolves the on-time definition.
+        // On-Time Completion % (trailing 30 days).
+        // Promise date  = Scheduled_End_DateTime__c (confirmed by Meg).
+        // Actual finish = Field_Complete_Date__c (crew completion DateTime, comparable to the promise).
+        // A WO is measurable only if it has a promise date; WOs without one are excluded from
+        // both numerator and denominator so they neither help nor hurt the score.
+        Map<Id, Integer> completedByDiv = new Map<Id, Integer>();
+        Map<Id, Integer> onTimeByDiv = new Map<Id, Integer>();
+        for (Work_Order__c wo : [
+            SELECT Builder_Market_Account__c, Field_Complete_Date__c, Scheduled_End_DateTime__c
+            FROM Work_Order__c
+            WHERE Builder_Market_Account__c IN :divIds
+              AND Field_Complete_Date__c >= :T30
+              AND Scheduled_End_DateTime__c != null
+        ]) {
+            Id d = wo.Builder_Market_Account__c;
+            completedByDiv.put(d, (completedByDiv.containsKey(d) ? completedByDiv.get(d) : 0) + 1);
+            if (wo.Field_Complete_Date__c <= wo.Scheduled_End_DateTime__c) {
+                onTimeByDiv.put(d, (onTimeByDiv.containsKey(d) ? onTimeByDiv.get(d) : 0) + 1);
+            }
+        }
 
         List<Account> updates = new List<Account>();
         for (Id divId : divIds) {
@@ -157,6 +176,14 @@ public class DivisionKpiRecalcBatch implements Database.Batchable<SObject> {
             a.Open_PO_Count__c            = poByDiv.containsKey(divId)      ? poByDiv.get(divId)      : 0;
             a.Open_Warranty_Count__c      = warrantyByDiv.containsKey(divId)? warrantyByDiv.get(divId): 0;
             a.Open_NFI_Count__c           = nfiByDiv.containsKey(divId)     ? nfiByDiv.get(divId)     : 0;
+
+            Integer completed = completedByDiv.containsKey(divId) ? completedByDiv.get(divId) : 0;
+            Integer onTime    = onTimeByDiv.containsKey(divId)    ? onTimeByDiv.get(divId)    : 0;
+            // Null (not 0) when there is nothing measurable, so the UI can show "—" rather than a false 0%.
+            a.On_Time_Completion_Pct__c = completed > 0
+                ? (((Decimal) onTime) / completed * 100).setScale(2)
+                : null;
+
             updates.add(a);
         }
 

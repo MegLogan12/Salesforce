@@ -24,6 +24,26 @@ private class DivisionKpiRecalcBatchTest {
         );
         insert wo;
 
+        // Two completed WOs in the trailing-30-day window for On-Time %:
+        //   on-time: finished 5 days ago, promised 4 days ago (finish <= promise)
+        //   late:    finished 2 days ago, promised 10 days ago (finish >  promise)
+        // → 1 of 2 on time = 50.00%. Both Closed so they don't affect Open_WO_Count.
+        List<Work_Order__c> completed = new List<Work_Order__c>{
+            new Work_Order__c(
+                Builder_Market_Account__c = div.Id,
+                Status__c = 'Closed',
+                Field_Complete_Date__c = DateTime.now().addDays(-5),
+                Scheduled_End_DateTime__c = DateTime.now().addDays(-4)
+            ),
+            new Work_Order__c(
+                Builder_Market_Account__c = div.Id,
+                Status__c = 'Closed',
+                Field_Complete_Date__c = DateTime.now().addDays(-2),
+                Scheduled_End_DateTime__c = DateTime.now().addDays(-10)
+            )
+        };
+        insert completed;
+
         // Paid T12M invoice exercising both adjustment types:
         //   Adjusted_Revenue = 10000 - 1000 = 9000
         //   Adjusted_Cost    = 7000  - 500  = 6500
@@ -62,7 +82,7 @@ private class DivisionKpiRecalcBatchTest {
 
         Account div = [
             SELECT Division_Revenue_T12M__c, Division_GP_Pct__c,
-                   Open_WO_Count__c, Active_Communities_Count__c
+                   Open_WO_Count__c, Active_Communities_Count__c, On_Time_Completion_Pct__c
             FROM Account
             WHERE RecordType.DeveloperName = 'Builder_Market'
               AND Name = 'Test Division'
@@ -72,6 +92,7 @@ private class DivisionKpiRecalcBatchTest {
         System.assertEquals(27.78, div.Division_GP_Pct__c, 'GP% from adjusted rev/cost: (9000-6500)/9000*100');
         System.assertEquals(1, (Integer) div.Open_WO_Count__c, 'One open WO expected');
         System.assertEquals(1, (Integer) div.Active_Communities_Count__c, 'One active community expected');
+        System.assertEquals(50.00, div.On_Time_Completion_Pct__c, 'One of two completed WOs on time = 50%');
     }
 
     @IsTest
