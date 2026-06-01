@@ -90,12 +90,13 @@ private class ODLInboundResponseTriggerTest {
         Opportunity opp = makeOpp();
 
         Test.startTest();
+        Datetime evStart = Datetime.now().addDays(-1);
         Event ev = new Event(
             WhatId = opp.Id,
             Subject = 'Discovery Consult',
-            ActivityDateTime = Datetime.now().addDays(-1),
+            ActivityDateTime = evStart,
             DurationInMinutes = 60,
-            EndDateTime = Datetime.now()
+            EndDateTime = evStart.addMinutes(60)
         );
         insert ev;
         Test.stopTest();
