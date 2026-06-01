@@ -688,6 +688,9 @@ public with sharing class TakeoffExecutionBridgeService {
     }
 
     private static Id getStandardPricebookId() {
+        if (Test.isRunningTest()) {
+            return Test.getStandardPricebookId();
+        }
         List<Pricebook2> rows = [
             SELECT Id
             FROM Pricebook2
