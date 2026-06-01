@@ -1,0 +1,217 @@
+<template>
+    <div class="odl-home">
+
+        <!-- Error banner -->
+        <template if:true={hasError}>
+            <div class="error-banner">
+                <lightning-icon icon-name="utility:error" size="x-small" variant="error"></lightning-icon>
+                <span class="error-text">{errorMessage}</span>
+            </div>
+        </template>
+
+        <!-- ── Sub-navigation tabs ───────────────────────────────────── -->
+        <div class="tabs-nav">
+            <template for:each={navItems} for:item="item">
+                <a key={item.label} class="tab-chip" href={item.url}>{item.label}</a>
+            </template>
+        </div>
+
+        <!-- ── KPI chips row ─────────────────────────────────────────── -->
+        <div class="kpi-row">
+            <div class="kpi-chip chip-orange">
+                <div class="kpi-number">{totalPipelineDisplay}</div>
+                <div class="kpi-label">Total Pipeline</div>
+            </div>
+            <div class="kpi-chip chip-blue">
+                <div class="kpi-number">{umbPipelineDisplay}</div>
+                <div class="kpi-label">UMB</div>
+            </div>
+            <div class="kpi-chip chip-purple">
+                <div class="kpi-number">{customBuildPipelineDisplay}</div>
+                <div class="kpi-label">Custom Build</div>
+            </div>
+            <div class="kpi-chip chip-teal">
+                <div class="kpi-number">{lawnCarePipelineDisplay}</div>
+                <div class="kpi-label">Lawn Care</div>
+            </div>
+            <div class="kpi-chip chip-amber">
+                <div class="kpi-number">{totalFollowUpsDue}</div>
+                <div class="kpi-label">Follow-Ups Due</div>
+            </div>
+            <div class="kpi-chip chip-red">
+                <div class="kpi-number">{totalAtRisk}</div>
+                <div class="kpi-label">At Risk</div>
+            </div>
+        </div>
+
+        <!-- ── Body: main column + rail ─────────────────────────────── -->
+        <div class="body-layout">
+
+            <!-- Main column -->
+            <div class="body-main">
+
+                <!-- Pipeline by LOB -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon ci-orange">PIPE</div>
+                        <h2 class="card-title">Pipeline by Line of Business</h2>
+                    </div>
+                    <template if:true={hasPipelineRows}>
+                        <table class="odl-table">
+                            <thead>
+                                <tr>
+                                    <th>LOB</th>
+                                    <th class="num">Open Opps</th>
+                                    <th class="num">Pipeline</th>
+                                    <th class="num">Weighted</th>
+                                    <th class="num">Follow-Ups Due</th>
+                                    <th class="num">At Risk</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={formattedPipelineRows} for:item="row">
+                                    <tr key={row.lob}>
+                                        <td><span class="lob-badge">{row.lob}</span></td>
+                                        <td class="num">{row.openOpps}</td>
+                                        <td class="num">{row.pipelineDisplay}</td>
+                                        <td class="num">{row.weightedDisplay}</td>
+                                        <td class="num">{row.followUpsDue}</td>
+                                        <td class="num">{row.atRisk}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                    <template if:false={hasPipelineRows}>
+                        <div class="empty-state">No pipeline data available.</div>
+                    </template>
+                    <div class="card-footer">
+                        <lightning-button
+                            label="View All Opportunities"
+                            variant="neutral"
+                            onclick={handleOpenOpportunities}>
+                        </lightning-button>
+                    </div>
+                </div>
+
+                <!-- Activity Risk -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon ci-purple">ACT</div>
+                        <h2 class="card-title">Activity Risk</h2>
+                    </div>
+                    <template if:true={hasActivityRisk}>
+                        <table class="odl-table">
+                            <thead>
+                                <tr>
+                                    <th>Opportunity</th>
+                                    <th>LOB</th>
+                                    <th>Last Activity</th>
+                                    <th>Follow-Up Due</th>
+                                    <th>Risk</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={activityRiskRows} for:item="row">
+                                    <tr key={row.opportunityId}>
+                                        <td>
+                                            <a class="rec-link"
+                                               data-id={row.opportunityId}
+                                               onclick={handleOpenRecord}>{row.opportunityName}</a>
+                                        </td>
+                                        <td class="muted">{row.lob}</td>
+                                        <td class="muted">{row.lastActivity}</td>
+                                        <td class="muted">{row.followUpDue}</td>
+                                        <td><span class={row.riskChip}>{row.risk}</span></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                    <template if:false={hasActivityRisk}>
+                        <div class="empty-state">
+                            <lightning-icon icon-name="utility:check" size="small" variant="success"></lightning-icon>
+                            <p>No at-risk opportunities right now.</p>
+                        </div>
+                    </template>
+                </div>
+
+            </div><!-- /body-main -->
+
+            <!-- Rail column -->
+            <div class="body-rail">
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon ci-orange">A</div>
+                        <h2 class="card-title">Quick Actions</h2>
+                    </div>
+                    <div class="qa-list">
+                        <div class="qa-item" onclick={handleOpenOpportunities}>Open opportunities</div>
+                        <div class="qa-item" onclick={handleOpenLeads}>Open leads</div>
+                        <div class="qa-item" onclick={handleOpenTasks}>Review overdue tasks</div>
+                        <div class="qa-item" onclick={handleNewOpportunity}>New opportunity</div>
+                        <div class="qa-item" onclick={handleNewLead}>New lead</div>
+                    </div>
+                </div>
+
+                <!-- Gross Profit Snapshot -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon ci-teal">GP</div>
+                        <h2 class="card-title">Gross Profit Snapshot</h2>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Green</span>
+                        <span class="summary-value gp-green">{gpSummary.greenCount}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Yellow</span>
+                        <span class="summary-value gp-yellow">{gpSummary.yellowCount}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Red</span>
+                        <span class="summary-value gp-red">{gpSummary.redCount}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Blocked</span>
+                        <span class="summary-value gp-blocked">{gpSummary.blockedCount}</span>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-row">
+                        <span class="summary-label">Revenue Pending</span>
+                        <span class="summary-value">{grossProfitDisplay}</span>
+                    </div>
+                </div>
+
+                <!-- Operations counts -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon ci-slate">OPS</div>
+                        <h2 class="card-title">Operations</h2>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Open Opportunities</span>
+                        <span class="summary-value">{dashboard.opportunityCount}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Work Orders</span>
+                        <span class="summary-value">{dashboard.workOrderCount}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Vouchers</span>
+                        <span class="summary-value">{dashboard.voucherCount}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Open Quotes</span>
+                        <span class="summary-value">{dashboard.quoteCount}</span>
+                    </div>
+                </div>
+
+            </div><!-- /body-rail -->
+
+        </div><!-- /body-layout -->
+
+    </div>
+</template>
