@@ -1,0 +1,270 @@
+<template>
+    <!-- Loading -->
+    <template lwc:if={isLoading}>
+        <div class="loading-wrap">
+            <lightning-spinner alternative-text="Loading Homeowner Accounts" size="medium"></lightning-spinner>
+        </div>
+    </template>
+
+    <!-- Error -->
+    <template lwc:if={hasError}>
+        <div class="error-panel">
+            <lightning-icon icon-name="utility:error" size="small" variant="error"></lightning-icon>
+            <span class="error-msg">{errorMessage}</span>
+        </div>
+    </template>
+
+    <!-- Main workspace -->
+    <template lwc:if={isLoaded}>
+
+        <!-- Page header -->
+        <div class="cmd">
+            <div class="icn">HO</div>
+            <div class="htext">
+                <div class="crumb">Accounts</div>
+                <h1>Homeowner Accounts</h1>
+                <div class="sub">The Outdoor Living customer book. Lifecycle, lifetime value, open opportunity, job status, warranty, source, and the next action on every household.</div>
+            </div>
+            <div class="acts">
+                <button class="btn ghost-btn" onclick={handleRefresh}>
+                    <lightning-icon icon-name="utility:refresh" size="x-small"></lightning-icon>
+                    Refresh
+                </button>
+                <button class="btn" onclick={handleOpenReports}
+                    disabled={cannotAccessReports}
+                    title={reportsDisabledReason}>
+                    Reports
+                </button>
+                <button class="btn btn-blue" onclick={handleNewOpportunity}
+                    disabled={cannotCreateOpportunity}
+                    title={oppDisabledReason}>
+                    New Opportunity
+                </button>
+                <button class="btn btn-primary" onclick={handleNewAccount}
+                    disabled={cannotCreateAccount}
+                    title={accountDisabledReason}>
+                    <lightning-icon icon-name="utility:add" size="x-small" variant="inverse"></lightning-icon>
+                    New Account
+                </button>
+            </div>
+        </div>
+
+        <!-- KPI strip -->
+        <div class="kpis">
+            <template for:each={kpiCards} for:item="kpi">
+                <div key={kpi.key}
+                     class={kpi.cssClass}
+                     style={kpi.accentStyle}
+                     data-filter={kpi.key}
+                     onclick={handleKpiClick}>
+                    <div class="dot"></div>
+                    <div class="lab">{kpi.label}</div>
+                    <div class="big num">{kpi.count}</div>
+                    <div class="meta">{kpi.meta}</div>
+                </div>
+            </template>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="toolbar">
+            <div class="chips">
+                <template for:each={filterChips} for:item="chip">
+                    <span key={chip.key}
+                          class={chip.cssClass}
+                          data-filter={chip.key}
+                          onclick={handleChipClick}>
+                        {chip.label}<span class="ct">{chip.count}</span>
+                    </span>
+                </template>
+            </div>
+            <div class="tool-row2">
+                <label class="search">
+                    <lightning-icon icon-name="utility:search" size="x-small"></lightning-icon>
+                    <input type="text"
+                           placeholder="Search homeowner, contact, market, source, owner"
+                           value={searchTerm}
+                           oninput={handleSearch} />
+                </label>
+                <select class="sel" onchange={handleMarketChange}>
+                    <option value="">All markets</option>
+                    <template for:each={marketOptions} for:item="opt">
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    </template>
+                </select>
+                <select class="sel" onchange={handleOwnerChange}>
+                    <option value="">All owners</option>
+                    <template for:each={ownerOptions} for:item="opt">
+                        <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    </template>
+                </select>
+                <span class="result-line">
+                    Showing <b>{displayCount}</b> of <b>{totalCount}</b> accounts
+                </span>
+            </div>
+        </div>
+
+        <!-- Table card -->
+        <div class="tcard">
+            <div class="thead-bar">
+                <span class="ti">AC</span>
+                <h3>Homeowner Account List</h3>
+                <span class="hint">Open warranty and at-risk first, then open opportunity, then value</span>
+            </div>
+            <div class="twrap">
+                <table class="acc">
+                    <thead>
+                        <tr>
+                            <th class="stick">Homeowner</th>
+                            <th>Lifecycle</th>
+                            <th class="th-r sortable" data-field="ltv" onclick={handleSort}>
+                                Lifetime Value
+                                <span class="arr">{ltvSortIcon}</span>
+                            </th>
+                            <th>Open Opportunity</th>
+                            <th>Job / Work Order</th>
+                            <th>Warranty</th>
+                            <th>Voucher</th>
+                            <th>Source</th>
+                            <th class="sortable" data-field="act" onclick={handleSort}>
+                                Last Activity
+                                <span class="arr">{actSortIcon}</span>
+                            </th>
+                            <th>Owner</th>
+                            <th>Health</th>
+                            <th>Next Action</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={displayRows} for:item="row">
+                            <tr key={row.accountId}>
+                                <td class="stick">
+                                    <a class="cell-link"
+                                       data-id={row.accountId}
+                                       onclick={handleOpenAccount}>
+                                        {row.name}
+                                    </a>
+                                    <div class="cell-sub">{row.contactMarket}</div>
+                                </td>
+                                <td>
+                                    <span class={row.lifecycleClass}>
+                                        <span class="pip"></span>{row.lifecycle}
+                                    </span>
+                                </td>
+                                <td class="td-r">
+                                    <span class="amt num">{row.ltvDisplay}</span>
+                                </td>
+                                <td>
+                                    <template lwc:if={row.hasOpenOpp}>
+                                        <a class="cell-link"
+                                           data-id={row.openOppId}
+                                           onclick={handleOpenOpp}>
+                                            {row.openOppName}
+                                        </a>
+                                        <div class="cell-sub">
+                                            <span class={row.oppStageClass}>{row.openOppStage}</span>
+                                            &nbsp;{row.openOppAmountDisplay}
+                                        </div>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="none">No open opp</span>
+                                    </template>
+                                </td>
+                                <td>
+                                    <template lwc:if={row.hasActiveJob}>
+                                        <a class="cell-link"
+                                           data-id={row.activeJobId}
+                                           onclick={handleOpenJob}>
+                                            <span class={row.jobStatusClass}>{row.activeJobStatus}</span>
+                                        </a>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="none">No active job</span>
+                                    </template>
+                                </td>
+                                <td>
+                                    <template lwc:if={row.hasOpenWarranty}>
+                                        <span class="chip c-red">
+                                            <span class="pip"></span>
+                                            {row.openWarrantyCount} open
+                                        </span>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="none">None</span>
+                                    </template>
+                                </td>
+                                <td>
+                                    <template lwc:if={row.hasVoucher}>
+                                        <span class="chip c-green">Yes</span>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="none">—</span>
+                                    </template>
+                                </td>
+                                <td>
+                                    <span class={row.sourceClass}>{row.source}</span>
+                                </td>
+                                <td>
+                                    <span class={row.activityClass}>{row.lastActivityResult}</span>
+                                    <div class="cell-sub">{row.activityDateLabel}</div>
+                                </td>
+                                <td>
+                                    <span class="own">
+                                        <span class="av" style={row.ownerAvatarStyle}>{row.ownerInitials}</span>
+                                        {row.ownerName}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class={row.healthClass}>
+                                        <span class="pip"></span>{row.health}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="na">
+                                        <span class="txt">{row.nextActionText}</span>
+                                        <button class="go"
+                                                data-id={row.accountId}
+                                                data-verb={row.nextActionVerb}
+                                                data-opp={row.openOppId}
+                                                data-job={row.activeJobId}
+                                                onclick={handleNextAction}>
+                                            {row.nextActionVerb}
+                                        </button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button class="kebab"
+                                            data-id={row.accountId}
+                                            data-opp={row.openOppId}
+                                            data-job={row.activeJobId}
+                                            onclick={handleRowMenu}
+                                            title="Row actions">
+                                        <lightning-icon icon-name="utility:threedots_vertical" size="x-small"></lightning-icon>
+                                    </button>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Empty state -->
+            <template lwc:if={isEmpty}>
+                <div class="empty">
+                    <div class="ei">
+                        <lightning-icon icon-name="utility:people" size="medium" variant="disabled"></lightning-icon>
+                    </div>
+                    <h4>{emptyTitle}</h4>
+                    <p>{emptyMessage}</p>
+                    <button class="btn" onclick={handleShowAll}>Show all accounts</button>
+                </div>
+            </template>
+        </div>
+
+        <!-- Lifetime value flag -->
+        <div class="ltvflag">
+            Lifetime value requires a Closed Won roll-up field on Account.
+            <a href="#" onclick={suppressClick}>Flag to admin to configure.</a>
+        </div>
+
+    </template>
+</template>
