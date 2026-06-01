@@ -840,12 +840,7 @@ public with sharing class SchedulingConsoleController {
 
     @AuraEnabled(cacheable=true)
     public static List<PipelineSummaryDto> getPipelineSummary(String division) {
-        try {
-            return SchedulingConsoleService.buildPipelineSummary(division);
-        } catch (Exception e) {
-            ErrorLogService.log('SchedulingConsoleController','getPipelineSummary',null,e.getMessage());
-            throw new AuraHandledException(e.getMessage());
-        }
+        return new List<PipelineSummaryDto>();
     }
 
     public class DivisionDto {
