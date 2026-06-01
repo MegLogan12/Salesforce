@@ -1,0 +1,171 @@
+:host { display: block; }
+
+.gate-card {
+    background: #fff;
+    border: 1.5px solid #e8e0d4;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+
+.gate-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 0.9rem;
+    background: #faf7f2;
+    border-bottom: 1px solid #f0ebe3;
+}
+
+.gate-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #9c8e80;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.18rem 0.55rem;
+    border-radius: 99px;
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
+.badge-green { background: #e5f5e8; color: #1a6b2a; }
+.badge-red { background: #fdecea; color: #b71c1c; }
+.badge-amber { background: #fff3e0; color: #b34700; }
+.badge-blue { background: #e3f0fd; color: #1255a0; }
+
+.gates-grid {
+    padding: 0.6rem 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.gate-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.45rem 0.65rem;
+    border-radius: 7px;
+    border: 1px solid transparent;
+}
+
+.gate-pass {
+    background: #f0faf2;
+    border-color: #c3e6cc;
+}
+
+.gate-fail {
+    background: #fef8f8;
+    border-color: #f5d0d0;
+}
+
+.gate-neutral {
+    background: #faf7f2;
+    border-color: #e8e0d4;
+}
+
+.gate-check {
+    font-size: 0.9rem;
+    font-weight: 700;
+    width: 1.1rem;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.gate-pass .gate-check { color: #1a6b2a; }
+.gate-fail .gate-check { color: #b71c1c; }
+.gate-neutral .gate-check { color: #9c8e80; }
+
+.gate-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.gate-name {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #2d2523;
+    margin-bottom: 0.1rem;
+}
+
+.gate-detail {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.gate-sub {
+    font-size: 0.65rem;
+    color: #9c8e80;
+}
+
+.chip {
+    display: inline-block;
+    padding: 0.14rem 0.45rem;
+    border-radius: 99px;
+    font-size: 0.68rem;
+    font-weight: 600;
+}
+
+.chip-green { background: #e5f5e8; color: #1a6b2a; }
+.chip-amber { background: #fff3e0; color: #b34700; }
+.chip-red { background: #fdecea; color: #b71c1c; }
+.chip-gray { background: #f2ede5; color: #7a6f65; }
+
+.blocker-line {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0 0.9rem 0.55rem;
+    padding: 0.4rem 0.6rem;
+    background: #fff5f5;
+    border: 1px solid #f5c6c6;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    color: #b71c1c;
+    font-weight: 500;
+}
+
+.blocker-icon {
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.gate-footer {
+    padding: 0.6rem 0.9rem;
+    border-top: 1px solid #f0ebe3;
+    background: #faf7f2;
+    text-align: right;
+}
+
+.btn-release {
+    padding: 0.38rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: #d4cbc0;
+    color: #9c8e80;
+    border: none;
+    border-radius: 6px;
+    cursor: not-allowed;
+}
+
+.btn-release-active {
+    background: #1a6b2a;
+    color: #fff;
+    cursor: pointer;
+}
+
+.btn-release-active:hover { background: #145522; }
+
+.gate-loading {
+    padding: 1rem;
+    font-size: 0.8rem;
+    color: #9c8e80;
+    text-align: center;
+}

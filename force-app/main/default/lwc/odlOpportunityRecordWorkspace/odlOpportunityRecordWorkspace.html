@@ -1,171 +1,154 @@
 <template>
     <template lwc:if={hasData}>
-        <section class="workspace">
-            <section class="panel hero">
-                <div class="hero-copy">
-                    <div class="eyebrow">Opportunity</div>
-                    <h1>{opportunityRecord.Name}</h1>
+        <section class="workspace-canvas">
+
+            <!-- Hero header -->
+            <section class="panel panel-hero">
+                <div class="hero-body">
+                    <div class="hero-eyebrow">{projectPath}</div>
+                    <h1 class="hero-title">{opportunityRecord.Name}</h1>
                     <div class="hero-meta">
-                        <span class="chip">{projectPath}</span>
-                        <span class="chip">{opportunityRecord.StageName}</span>
+                        <span class={stageChipClass}>{opportunityRecord.StageName}</span>
+                        <template lwc:if={opportunityRecord.Amount}>
+                            <span class="chip chip-stone">{amountDisplay}</span>
+                        </template>
                     </div>
                 </div>
                 <div class="hero-actions">
                     <template lwc:if={accountUrl}>
-                        <a class="cta" href={accountUrl}>Open Account</a>
+                        <a class="btn-hero-sec" href={accountUrl}>Open Account</a>
                     </template>
-                    <button class="cta cta-secondary" onclick={handleNewTask}>New Task</button>
+                    <button class="btn-hero-sec" onclick={handleNewTask}>+ Task</button>
                 </div>
             </section>
 
-            <section class="panel" lwc:if={hasStagePath}>
-                <div class="panel-header">Opportunity Path</div>
-                <div class="path">
-                    <template for:each={stagePathItems} for:item="step">
-                        <span key={step.label} class={step.className}>{step.label}</span>
-                    </template>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header">Opportunity Snapshot</div>
-                <div class="grid">
-                    <div><div class="label">Account</div><div class="value"><a href={accountUrl}>{accountName}</a></div></div>
-                    <div><div class="label">Project Path</div><div class="value">{projectPath}</div></div>
-                    <div><div class="label">Stage</div><div class="value">{opportunityRecord.StageName}</div></div>
-                    <div><div class="label">Amount</div><div class="value">{opportunityRecord.Amount}</div></div>
-                    <div><div class="label">Close Date</div><div class="value">{opportunityRecord.CloseDate}</div></div>
-                    <div><div class="label">Opportunity Number</div><div class="value">{opportunityRecord.Opportunity_Number__c}</div></div>
-                    <div><div class="label">Package</div><div class="value">{opportunityRecord.BMG_Package__c}</div></div>
-                    <div><div class="label">Community</div><div class="value">{opportunityRecord.Community_Name__c}</div></div>
-                    <div><div class="label">Services</div><div class="value">{opportunityRecord.Services_Selected__c}</div></div>
-                    <div><div class="label">Requirements</div><div class="value">{opportunityRecord.Selected_Requirements__c}</div></div>
-                    <div><div class="label">Budget</div><div class="value">{opportunityRecord.Budget__c}</div></div>
-                    <div><div class="label">Timeline</div><div class="value">{opportunityRecord.Timeline__c}</div></div>
-                </div>
-            </section>
-
-            <section class="panel">
-                <div class="panel-header">Package and Voucher</div>
-                <div class="grid compact-grid">
-                    <div><div class="label">Selected Package</div><div class="value">{opportunityRecord.BMG_Package__c}</div></div>
-                    <div><div class="label">Services</div><div class="value">{opportunityRecord.Services_Selected__c}</div></div>
-                    <div><div class="label">Requirements</div><div class="value">{opportunityRecord.Selected_Requirements__c}</div></div>
-                    <div><div class="label">Voucher</div><div class="value">
-                        <template lwc:if={hasVoucher}>
-                            <a href={pageData.voucherRecord.url}>{pageData.voucherRecord.label}</a>
+            <!-- Sales Path -->
+            <template lwc:if={hasStagePath}>
+                <section class="panel panel-path">
+                    <div class="path-track">
+                        <template for:each={stagePathItems} for:item="step">
+                            <div key={step.label} class={step.className}>
+                                <div class="path-dot"></div>
+                                <div class="path-label">{step.label}</div>
+                            </div>
                         </template>
-                        <template lwc:else>None linked</template>
-                    </div></div>
-                </div>
-            </section>
+                    </div>
+                </section>
+            </template>
 
+            <!-- Next Action Banner -->
+            <c-odl-opp-next-action
+                next-action-text={nextActionText}
+                next-action-button={nextActionButton}
+                record-id={recordId}
+                wo-ready={woReady}>
+            </c-odl-opp-next-action>
+
+            <!-- Work Order Readiness Gate -->
+            <c-odl-opp-readiness-gate
+                readiness={readiness}
+                record-id={recordId}>
+            </c-odl-opp-readiness-gate>
+
+            <!-- Two-column row: Snapshot + Property -->
             <div class="two-up">
                 <section class="panel">
-                    <div class="panel-header">Activity and Next Follow-Up</div>
-                    <table class="table">
-                        <thead>
-                            <tr><th>Last Action</th><th>Date</th><th>Voicemail</th><th>Next Task</th><th>Due</th><th>Owner</th></tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>{lastAction}</td>
-                                <td>{lastActionDate}</td>
-                                <td>{voicemailStatus}</td>
-                                <td>{pageData.nextFollowUpSubject}</td>
-                                <td>{pageData.nextFollowUpDate}</td>
-                                <td>{opportunityRecord.Owner.Name}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <template lwc:if={hasInteractions}>
-                        <table class="table">
-                            <thead>
-                                <tr><th>Date</th><th>Type</th><th>Subject</th><th>Status</th><th>Open</th></tr>
-                            </thead>
-                            <tbody>
-                                <template for:each={pageData.interactions} for:item="row">
-                                    <tr key={row.id}>
-                                        <td>{row.dateText}</td>
-                                        <td>{row.interactionType}</td>
-                                        <td>{row.label}</td>
-                                        <td>{row.status}</td>
-                                        <td><a href={row.url}>Open</a></td>
-                                    </tr>
-                                </template>
-                            </tbody>
-                        </table>
-                    </template>
+                    <div class="panel-header">Opportunity Snapshot</div>
+                    <div class="field-grid">
+                        <div class="field-row"><span class="fl">Account</span><span class="fv"><a href={accountUrl}>{accountName}</a></span></div>
+                        <div class="field-row"><span class="fl">Stage</span><span class="fv">{opportunityRecord.StageName}</span></div>
+                        <div class="field-row"><span class="fl">Amount</span><span class="fv">{amountDisplay}</span></div>
+                        <div class="field-row"><span class="fl">Close Date</span><span class="fv">{opportunityRecord.CloseDate}</span></div>
+                        <div class="field-row"><span class="fl">Package</span><span class="fv">{packageDisplay}</span></div>
+                        <div class="field-row"><span class="fl">Community</span><span class="fv">{opportunityRecord.Community_Name__c}</span></div>
+                        <div class="field-row"><span class="fl">Budget</span><span class="fv">{opportunityRecord.Budget__c}</span></div>
+                        <div class="field-row"><span class="fl">Timeline</span><span class="fv">{opportunityRecord.Timeline__c}</span></div>
+                        <template lwc:if={hasVoucher}>
+                            <div class="field-row">
+                                <span class="fl">Voucher</span>
+                                <span class="fv"><a href={pageData.voucherRecord.url}>{pageData.voucherRecord.label}</a>
+                                    &nbsp;<span class="chip chip-gray">{pageData.voucherRecord.status}</span>
+                                </span>
+                            </div>
+                        </template>
+                    </div>
                 </section>
 
                 <section class="panel">
                     <div class="panel-header">Related Property</div>
                     <template lwc:if={hasProperty}>
-                        <div class="grid">
-                            <div><div class="label">Property</div><div class="value"><a href={pageData.propertyRecord.url}>{pageData.propertyRecord.label}</a></div></div>
-                            <div><div class="label">Community</div><div class="value">{pageData.propertyRecord.status}</div></div>
-                            <div><div class="label">Lot</div><div class="value">{pageData.propertyRecord.subtext}</div></div>
-                            <div><div class="label">Homeowner</div><div class="value">{pageData.propertyRecord.secondaryText}</div></div>
+                        <div class="field-grid">
+                            <div class="field-row"><span class="fl">Property</span><span class="fv"><a href={pageData.propertyRecord.url}>{pageData.propertyRecord.label}</a></span></div>
+                            <div class="field-row"><span class="fl">Community</span><span class="fv">{pageData.propertyRecord.status}</span></div>
+                            <div class="field-row"><span class="fl">Lot</span><span class="fv">{pageData.propertyRecord.subtext}</span></div>
+                            <div class="field-row"><span class="fl">Homeowner</span><span class="fv">{pageData.propertyRecord.secondaryText}</span></div>
                         </div>
                     </template>
                     <template lwc:else>
-                        <div class="empty">No Homeowner Property record is linked to this opportunity.</div>
+                        <p class="empty-msg">No Homeowner Property is linked.</p>
                     </template>
                 </section>
             </div>
 
+            <!-- Activity Timeline -->
+            <c-odl-opp-activity-timeline
+                interactions={pageData.interactions}
+                last-action={lastAction}
+                last-action-date={lastActionDate}>
+            </c-odl-opp-activity-timeline>
+
+            <!-- Follow-up row -->
+            <section class="panel">
+                <div class="panel-header">Next Follow-Up</div>
+                <div class="field-grid">
+                    <div class="field-row"><span class="fl">Task</span><span class="fv">{pageData.nextFollowUpSubject}</span></div>
+                    <div class="field-row"><span class="fl">Due</span><span class="fv">{pageData.nextFollowUpDate}</span></div>
+                    <div class="field-row"><span class="fl">Owner</span><span class="fv">{opportunityRecord.Owner.Name}</span></div>
+                </div>
+            </section>
+
+            <!-- Two-column: Design Review + Quote/Contract/Payment -->
             <div class="two-up">
                 <section class="panel">
                     <div class="panel-header">Design Review</div>
                     <template lwc:if={hasDesignReviews}>
-                        <table class="table">
-                            <thead>
-                                <tr><th>Review</th><th>Status</th><th>Updated</th><th>Open</th></tr>
-                            </thead>
+                        <table class="data-table">
+                            <thead><tr><th>Review</th><th>Status</th><th>Updated</th></tr></thead>
                             <tbody>
                                 <template for:each={pageData.designReviews} for:item="row">
                                     <tr key={row.id}>
-                                        <td>{row.label}</td>
+                                        <td><a href={row.url}>{row.label}</a></td>
                                         <td>{row.status}</td>
                                         <td>{row.dateText}</td>
-                                        <td><a href={row.url}>Open</a></td>
                                     </tr>
                                 </template>
                             </tbody>
                         </table>
                     </template>
                     <template lwc:else>
-                        <div class="empty">No Design Review record is linked to this opportunity.</div>
+                        <p class="empty-msg">No Design Review linked.</p>
                     </template>
                 </section>
 
                 <section class="panel">
-                    <div class="panel-header">Quote, Contract, Payment</div>
+                    <div class="panel-header">Quote, Contract &amp; Payment</div>
                     <template lwc:if={hasQuotes}>
-                        <table class="table">
-                            <thead>
-                                <tr><th>Quote</th><th>Status</th><th>Total</th><th>Created</th></tr>
-                            </thead>
+                        <table class="data-table">
+                            <thead><tr><th>Quote</th><th>Status</th><th>Amount</th></tr></thead>
                             <tbody>
                                 <template for:each={pageData.quotes} for:item="row">
                                     <tr key={row.id}>
-                                        <td><a href={row.url}>{row.label}</a></td>
-                                        <td>{row.status}</td>
+                                        <td>{row.label}</td>
+                                        <td><span class={row.chipClass}>{row.status}</span></td>
                                         <td>{row.subtext}</td>
-                                        <td>{row.dateText}</td>
                                     </tr>
                                 </template>
                             </tbody>
                         </table>
                     </template>
-                    <template lwc:else>
-                        <div class="empty">No Quote is linked to this opportunity.</div>
-                    </template>
                     <template lwc:if={hasPaymentMilestones}>
-                        <table class="table">
-                            <thead>
-                                <tr><th>Payment</th><th>Status</th><th>Amount</th><th>Due</th></tr>
-                            </thead>
+                        <table class="data-table">
+                            <thead><tr><th>Payment</th><th>Status</th><th>Amount</th><th>Due</th></tr></thead>
                             <tbody>
                                 <template for:each={pageData.paymentMilestones} for:item="row">
                                     <tr key={row.id}>
@@ -178,45 +161,47 @@
                             </tbody>
                         </table>
                     </template>
+                    <template lwc:if={neitherQuoteNorPayment}>
+                        <p class="empty-msg">No quotes or payment milestones linked.</p>
+                    </template>
                 </section>
             </div>
 
-            <section class="panel">
-                <div class="panel-header">Files and Photos</div>
-                <template lwc:if={hasFiles}>
-                    <table class="table">
-                        <thead>
-                            <tr><th>File</th><th>Type</th><th>Updated</th><th>Open</th></tr>
-                        </thead>
+            <!-- Files -->
+            <template lwc:if={hasFiles}>
+                <section class="panel">
+                    <div class="panel-header">Files and Photos</div>
+                    <table class="data-table">
+                        <thead><tr><th>File</th><th>Type</th><th>Updated</th></tr></thead>
                         <tbody>
                             <template for:each={pageData.files} for:item="row">
                                 <tr key={row.id}>
-                                    <td>{row.label}</td>
+                                    <td><a href={row.url}>{row.label}</a></td>
                                     <td>{row.subtext}</td>
                                     <td>{row.dateText}</td>
-                                    <td><a href={row.url}>Open</a></td>
                                 </tr>
                             </template>
                         </tbody>
                     </table>
-                </template>
-                <template lwc:else>
-                    <div class="empty">No files or photos are linked to this opportunity.</div>
-                </template>
-            </section>
+                </section>
+            </template>
 
-            <section class="panel" lwc:if={hasMissingData}>
-                <div class="panel-header">Open Items</div>
-                <div class="issue-list">
-                    <template for:each={missingData} for:item="item">
-                        <div class="issue" key={item}>{item}</div>
-                    </template>
-                </div>
-            </section>
+            <!-- Open items / blockers -->
+            <template lwc:if={hasMissingData}>
+                <section class="panel panel-issues">
+                    <div class="panel-header">Open Items</div>
+                    <div class="issue-list">
+                        <template for:each={missingData} for:item="item">
+                            <div class="issue-item" key={item}>⚠ {item}</div>
+                        </template>
+                    </div>
+                </section>
+            </template>
+
         </section>
     </template>
 
-    <template lwc:elseif={error}>
-        <div class="panel error">{errorMessage}</div>
+    <template lwc:elseif={hasError}>
+        <div class="panel error-panel">{errorMessage}</div>
     </template>
 </template>

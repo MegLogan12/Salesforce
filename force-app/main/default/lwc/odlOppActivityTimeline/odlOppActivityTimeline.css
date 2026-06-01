@@ -1,0 +1,132 @@
+:host { display: block; }
+
+.timeline-card {
+    background: #fff;
+    border: 1.5px solid #e8e0d4;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.timeline-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 0.9rem;
+    background: #faf7f2;
+    border-bottom: 1px solid #f0ebe3;
+}
+
+.timeline-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #9c8e80;
+}
+
+.last-action-summary {
+    font-size: 0.72rem;
+    color: #9c8e80;
+}
+
+.timeline-list {
+    padding: 0.5rem 0.9rem;
+}
+
+.timeline-item {
+    display: flex;
+    gap: 0.65rem;
+    padding: 0.5rem 0;
+}
+
+.timeline-item:last-child .timeline-line {
+    display: none;
+}
+
+.timeline-dot-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 0.75rem;
+    flex-shrink: 0;
+    padding-top: 0.25rem;
+}
+
+.timeline-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    background: #c8844a;
+    flex-shrink: 0;
+}
+
+.timeline-line {
+    width: 1.5px;
+    flex: 1;
+    background: #e8e0d4;
+    margin-top: 0.2rem;
+    min-height: 1rem;
+}
+
+.timeline-content {
+    flex: 1;
+    min-width: 0;
+    padding-bottom: 0.5rem;
+}
+
+.timeline-row-top {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.2rem;
+    flex-wrap: wrap;
+}
+
+.timeline-date {
+    font-size: 0.68rem;
+    color: #9c8e80;
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.timeline-subject {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #2d2523;
+    margin-bottom: 0.15rem;
+}
+
+.timeline-notes {
+    font-size: 0.72rem;
+    color: #6b5f54;
+    line-height: 1.4;
+    margin-bottom: 0.2rem;
+}
+
+.timeline-link {
+    font-size: 0.7rem;
+    color: #7c6eb0;
+    text-decoration: none;
+}
+
+.timeline-link:hover { text-decoration: underline; }
+
+.chip {
+    display: inline-block;
+    padding: 0.12rem 0.4rem;
+    border-radius: 99px;
+    font-size: 0.65rem;
+    font-weight: 700;
+}
+
+.chip-amber { background: #fff3e0; color: #b34700; }
+.chip-blue { background: #e3f0fd; color: #1255a0; }
+.chip-green { background: #e5f5e8; color: #1a6b2a; }
+.chip-gray { background: #f2ede5; color: #7a6f65; }
+
+.timeline-empty {
+    padding: 1.5rem 0.9rem;
+    font-size: 0.8rem;
+    color: #9c8e80;
+    text-align: center;
+}

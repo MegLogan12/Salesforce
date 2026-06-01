@@ -1,0 +1,100 @@
+<template>
+    <div class="gate-card">
+        <div class="gate-header">
+            <span class="gate-title">Work Order Readiness</span>
+            <template lwc:if={hasReadiness}>
+                <span class={readiness.badgeClass}>{readiness.readinessBadge}</span>
+            </template>
+        </div>
+
+        <template lwc:if={hasReadiness}>
+            <div class="gates-grid">
+                <!-- Gate 1: Voucher (UMB only) -->
+                <template lwc:if={readiness.isUmb}>
+                    <div class={voucherGateClass}>
+                        <div class="gate-check">{voucherCheck}</div>
+                        <div class="gate-info">
+                            <div class="gate-name">Voucher</div>
+                            <div class="gate-detail">
+                                <template lwc:if={readiness.voucherLinked}>
+                                    <span class="chip chip-green">{readiness.voucherCode}</span>
+                                    <span class="gate-sub">{readiness.voucherStatus}</span>
+                                </template>
+                                <template lwc:else>
+                                    <span class="chip chip-gray">None linked</span>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Gate 2: Quote -->
+                <div class={quoteGateClass}>
+                    <div class="gate-check">{quoteCheck}</div>
+                    <div class="gate-info">
+                        <div class="gate-name">Quote</div>
+                        <div class="gate-detail">
+                            <template lwc:if={readiness.quoteStatus}>
+                                <span class={quoteStatusClass}>{readiness.quoteStatus}</span>
+                            </template>
+                            <template lwc:else>
+                                <span class="chip chip-gray">Not Sent</span>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gate 3: Contract -->
+                <div class={contractGateClass}>
+                    <div class="gate-check">{contractCheck}</div>
+                    <div class="gate-info">
+                        <div class="gate-name">Contract</div>
+                        <div class="gate-detail">
+                            <template lwc:if={readiness.contractStatus}>
+                                <span class={contractStatusClass}>{readiness.contractStatus}</span>
+                            </template>
+                            <template lwc:else>
+                                <span class="chip chip-gray">Not Sent</span>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gate 4: Deposit -->
+                <div class={depositGateClass}>
+                    <div class="gate-check">{depositCheck}</div>
+                    <div class="gate-info">
+                        <div class="gate-name">Deposit</div>
+                        <div class="gate-detail">
+                            <template lwc:if={readiness.depositPaid}>
+                                <span class="chip chip-green">Paid</span>
+                            </template>
+                            <template lwc:else>
+                                <span class="chip chip-gray">Pending</span>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Blocker line -->
+            <template lwc:if={readiness.blockerLine}>
+                <div class="blocker-line">
+                    <span class="blocker-icon">⚠</span>
+                    <span>{readiness.blockerLine}</span>
+                </div>
+            </template>
+
+            <!-- Release WO button -->
+            <div class="gate-footer">
+                <button class={releaseButtonClass} disabled={releaseDisabled} onclick={handleReleaseWo}>
+                    Release Work Order
+                </button>
+            </div>
+        </template>
+
+        <template lwc:else>
+            <div class="gate-loading">Loading readiness…</div>
+        </template>
+    </div>
+</template>

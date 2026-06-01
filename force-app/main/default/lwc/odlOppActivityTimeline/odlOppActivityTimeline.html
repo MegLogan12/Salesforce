@@ -1,0 +1,39 @@
+<template>
+    <div class="timeline-card">
+        <div class="timeline-header">
+            <span class="timeline-title">Activity Timeline</span>
+            <template lwc:if={lastAction}>
+                <span class="last-action-summary">{lastAction} · {lastActionDate}</span>
+            </template>
+        </div>
+
+        <template lwc:if={hasInteractions}>
+            <div class="timeline-list">
+                <template for:each={interactions} for:item="item">
+                    <div key={item.id} class="timeline-item">
+                        <div class="timeline-dot-col">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-line"></div>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-row-top">
+                                <span class={item.chipClass}>{item.interactionType}</span>
+                                <span class="timeline-date">{item.dateText}</span>
+                            </div>
+                            <div class="timeline-subject">{item.label}</div>
+                            <template lwc:if={item.notesPreview}>
+                                <div class="timeline-notes">{item.notesPreview}</div>
+                            </template>
+                            <template lwc:if={item.url}>
+                                <a class="timeline-link" href={item.url}>Open</a>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+        <template lwc:else>
+            <div class="timeline-empty">No activity logged yet.</div>
+        </template>
+    </div>
+</template>

@@ -11,6 +11,23 @@ public with sharing class ODLOpportunityRecordController {
         @AuraEnabled public String relatedUrl;
         @AuraEnabled public String notesPreview;
         @AuraEnabled public String interactionType;
+        @AuraEnabled public String chipClass;
+    }
+
+    public class ReadinessGate {
+        @AuraEnabled public Boolean voucherLinked;
+        @AuraEnabled public String voucherStatus;
+        @AuraEnabled public String voucherCode;
+        @AuraEnabled public Boolean quoteAccepted;
+        @AuraEnabled public String quoteStatus;
+        @AuraEnabled public Boolean contractSigned;
+        @AuraEnabled public String contractStatus;
+        @AuraEnabled public Boolean depositPaid;
+        @AuraEnabled public Boolean woReady;
+        @AuraEnabled public String blockerLine;
+        @AuraEnabled public String readinessBadge;
+        @AuraEnabled public String badgeClass;
+        @AuraEnabled public Boolean isUmb;
     }
 
     public class PageData {
@@ -32,6 +49,9 @@ public with sharing class ODLOpportunityRecordController {
         @AuraEnabled public List<RowData> quotes;
         @AuraEnabled public List<RowData> files;
         @AuraEnabled public List<String> missingData;
+        @AuraEnabled public ReadinessGate readiness;
+        @AuraEnabled public String nextActionText;
+        @AuraEnabled public String nextActionButton;
     }
 
     private class DatedRow implements Comparable {
@@ -49,6 +69,11 @@ public with sharing class ODLOpportunityRecordController {
         }
     }
 
+    private static final List<String> STAGE_ORDER = new List<String>{
+        'Discovery', 'Consult Scheduled', 'Design In Progress',
+        'Quote Review', 'Contract Sent', 'Deposit Pending', 'Closed Won', 'Closed Lost'
+    };
+
     @AuraEnabled(cacheable=true)
     public static PageData getPageData(Id opportunityId) {
         if (opportunityId == null) {
@@ -65,24 +90,28 @@ public with sharing class ODLOpportunityRecordController {
         data.stagePath = new List<String>();
 
         data.opportunityRecord = [
-            SELECT Id, Name, Type, StageName, Amount, CloseDate, AccountId, Account.Name, Owner.Name, LeadSource,
+            SELECT Id, Name, Type, StageName, Amount, CloseDate, AccountId, Account.Name,
+                   Owner.Name, LeadSource, RecordType.DeveloperName,
                    BMG_Package__c, Community_Name__c, Budget__c, Timeline__c, Budget_Confirmed__c,
-                   Opportunity_Number__c, Deposit_Paid__c, Deposit_Paid_Date__c, Design_Link__c,
-                   Lot_Layout_Link__c, Model_Pricing_Link__c, Services_Selected__c, Selected_Requirements__c
+                   Opportunity_Number__c, Deposit_Paid__c, Deposit_Paid_Date__c,
+                   Design_Link__c, Lot_Layout_Link__c, Model_Pricing_Link__c,
+                   Services_Selected__c, Selected_Requirements__c, Selected_Package__c,
+                   Quote_Status__c, Contract_Status__c, Voicemail_Left__c, LastActivityDate
             FROM Opportunity
             WHERE Id = :opportunityId
             LIMIT 1
         ];
 
-        Map<String, String> typeLabels = picklistLabelByValue(Opportunity.Type);
-        data.projectPath = deriveProjectPath(data.opportunityRecord, typeLabels);
-        data.accountName = data.opportunityRecord.Account != null ? data.opportunityRecord.Account.Name : null;
-        data.accountUrl = data.opportunityRecord.AccountId != null ? '/' + data.opportunityRecord.AccountId : null;
-        data.stagePath = activeStagePath();
+        Opportunity opp = data.opportunityRecord;
+        data.projectPath = deriveProjectPath(opp);
+        data.accountName = opp.Account != null ? opp.Account.Name : null;
+        data.accountUrl = opp.AccountId != null ? '/lightning/r/Account/' + opp.AccountId + '/view' : null;
+        data.stagePath = stagePathForRecord(opp);
 
         Task nextTask = nextFollowUpTask(opportunityId);
         data.nextFollowUpSubject = nextTask != null ? nextTask.Subject : 'No follow-up task';
-        data.nextFollowUpDate = nextTask != null && nextTask.ActivityDate != null ? String.valueOf(nextTask.ActivityDate) : 'No due date';
+        data.nextFollowUpDate = nextTask != null && nextTask.ActivityDate != null
+            ? String.valueOf(nextTask.ActivityDate) : 'No due date';
 
         data.interactions = recentInteractions(opportunityId);
         if (!data.interactions.isEmpty()) {
@@ -95,12 +124,16 @@ public with sharing class ODLOpportunityRecordController {
             data.lastActionDate = 'No activity';
             data.lastActionWasVoicemail = false;
         }
+
         data.designReviews = designReviews(opportunityId);
         data.paymentMilestones = paymentMilestones(opportunityId);
-        data.quotes = quotes(opportunityId);
+        data.quotes = quoteFromStatus(opp);
         data.files = relatedFiles(opportunityId);
         data.propertyRecord = propertyRecord(opportunityId);
         data.voucherRecord = voucherRecord(opportunityId);
+        data.readiness = buildReadiness(opp, data.voucherRecord);
+        data.nextActionText = deriveNextActionText(opp, data.readiness, nextTask, data.lastActionWasVoicemail);
+        data.nextActionButton = deriveNextActionButton(opp, data.readiness, nextTask);
 
         if (String.isBlank(data.projectPath)) {
             data.missingData.add('This opportunity is not classified as UpgradeMyBackyard or Design Build.');
@@ -111,15 +144,160 @@ public with sharing class ODLOpportunityRecordController {
         if (data.paymentMilestones.isEmpty()) {
             data.missingData.add('No Payment Milestone records are linked to this opportunity.');
         }
-        if (data.quotes.isEmpty()) {
-            data.missingData.add('No Quote is linked to this opportunity.');
-        }
         if (data.propertyRecord == null) {
             data.missingData.add('No Homeowner Property record is linked to this opportunity.');
         }
 
         return data;
     }
+
+    // ─── Path derivation ────────────────────────────────────────────────────────
+
+    private static String deriveProjectPath(Opportunity opp) {
+        if (opp == null) return null;
+        String rtName = opp.RecordType != null ? opp.RecordType.DeveloperName : null;
+        if (rtName == 'UMB') return 'UpgradeMyBackyard';
+        if (rtName == 'Design_Build') return 'Design Build';
+        // Fallback: heuristic from Type and name for older records without record type
+        String normalizedType = String.isBlank(opp.Type) ? '' : opp.Type.toLowerCase();
+        if (normalizedType.contains('lawn')) return null;
+        if (opp.Type == 'UMB' || normalizedType.contains('upgrade')) return 'UpgradeMyBackyard';
+        if (opp.Type == 'Design Build' || normalizedType.contains('design') || normalizedType.contains('custom')) return 'Design Build';
+        return null;
+    }
+
+    private static List<String> stagePathForRecord(Opportunity opp) {
+        String rtName = opp.RecordType != null ? opp.RecordType.DeveloperName : null;
+        if (rtName == 'UMB' || rtName == 'Design_Build') {
+            // Return the 8 spec stages in order (omit Closed Lost from the visual path)
+            return new List<String>{
+                'Discovery', 'Consult Scheduled', 'Design In Progress',
+                'Quote Review', 'Contract Sent', 'Deposit Pending', 'Closed Won'
+            };
+        }
+        // Fallback: return all active global picklist values
+        List<String> steps = new List<String>();
+        for (Schema.PicklistEntry entry : Opportunity.StageName.getDescribe().getPicklistValues()) {
+            if (entry.isActive()) {
+                steps.add(entry.getLabel());
+            }
+        }
+        return steps;
+    }
+
+    // ─── Readiness gate ─────────────────────────────────────────────────────────
+
+    private static ReadinessGate buildReadiness(Opportunity opp, RowData voucher) {
+        ReadinessGate gate = new ReadinessGate();
+        String rtName = opp.RecordType != null ? opp.RecordType.DeveloperName : null;
+        gate.isUmb = rtName == 'UMB';
+
+        gate.voucherLinked = voucher != null;
+        gate.voucherCode = voucher != null ? voucher.label : null;
+        gate.voucherStatus = voucher != null ? voucher.status : null;
+
+        gate.quoteStatus = opp.Quote_Status__c;
+        gate.quoteAccepted = opp.Quote_Status__c == 'Accepted';
+
+        gate.contractStatus = opp.Contract_Status__c;
+        gate.contractSigned = opp.Contract_Status__c == 'Signed';
+
+        gate.depositPaid = opp.Deposit_Paid__c;
+
+        gate.woReady = gate.quoteAccepted && gate.contractSigned && gate.depositPaid;
+
+        // Derive badge + blocker
+        if (gate.woReady) {
+            gate.readinessBadge = 'WO Ready';
+            gate.badgeClass = 'badge badge-green';
+            gate.blockerLine = null;
+        } else if (!gate.quoteAccepted) {
+            gate.readinessBadge = 'Blocked';
+            gate.badgeClass = 'badge badge-red';
+            gate.blockerLine = 'Quote has not been accepted';
+        } else if (!gate.contractSigned) {
+            gate.readinessBadge = 'Blocked';
+            gate.badgeClass = 'badge badge-red';
+            gate.blockerLine = 'Contract has not been signed';
+        } else if (!gate.depositPaid) {
+            gate.readinessBadge = 'Blocked';
+            gate.badgeClass = 'badge badge-amber';
+            gate.blockerLine = 'Deposit has not been collected';
+        } else {
+            gate.readinessBadge = 'In Progress';
+            gate.badgeClass = 'badge badge-blue';
+            gate.blockerLine = null;
+        }
+
+        return gate;
+    }
+
+    // ─── Next action engine (11 rules, mirrors workspace) ────────────────────────
+
+    private static String deriveNextActionText(Opportunity opp, ReadinessGate gate,
+                                               Task nextTask, Boolean lastWasVoicemail) {
+        if (gate != null && gate.woReady) return 'Work order is ready — release now';
+        if (opp.Voicemail_Left__c) return 'Schedule callback — voicemail was left';
+        if (nextTask != null && nextTask.ActivityDate != null && nextTask.ActivityDate < Date.today()) {
+            return 'Overdue: ' + (nextTask.Subject != null ? nextTask.Subject : 'follow-up task');
+        }
+        if (opp.StageName == 'Deposit Pending') return 'Collect deposit to release work order';
+        if (opp.StageName == 'Contract Sent' || opp.Contract_Status__c == 'Sent') {
+            return 'Contract sent — awaiting signature';
+        }
+        if (opp.StageName == 'Quote Review' || opp.Quote_Status__c == 'Sent') {
+            return 'Quote sent — follow up for a decision';
+        }
+        if (opp.StageName == 'Design In Progress') return 'Complete design and send quote';
+        if (opp.StageName == 'Consult Scheduled') return 'Confirm consultation appointment';
+        if (nextTask != null && nextTask.ActivityDate != null && nextTask.ActivityDate == Date.today()) {
+            return 'Due today: ' + (nextTask.Subject != null ? nextTask.Subject : 'follow-up task');
+        }
+        if (opp.LastActivityDate == null) return 'Log first contact';
+        if (nextTask == null) return 'Schedule next follow-up';
+        return 'On track';
+    }
+
+    private static String deriveNextActionButton(Opportunity opp, ReadinessGate gate, Task nextTask) {
+        if (gate != null && gate.woReady) return 'Release WO';
+        if (opp.Voicemail_Left__c) return 'Schedule';
+        if (nextTask != null && nextTask.ActivityDate != null && nextTask.ActivityDate <= Date.today()) return 'Log Activity';
+        if (opp.StageName == 'Deposit Pending') return 'Call';
+        if (opp.StageName == 'Contract Sent' || opp.Contract_Status__c == 'Sent') return 'Call';
+        if (opp.StageName == 'Quote Review' || opp.Quote_Status__c == 'Sent') return 'Call';
+        if (opp.StageName == 'Design In Progress') return 'Send Quote';
+        if (opp.StageName == 'Consult Scheduled') return 'Confirm';
+        if (opp.LastActivityDate == null) return 'Log Call';
+        if (nextTask == null) return 'New Task';
+        return 'View';
+    }
+
+    // ─── Quote from opportunity status field (standard Quote not in use) ─────────
+
+    private static List<RowData> quoteFromStatus(Opportunity opp) {
+        List<RowData> rows = new List<RowData>();
+        if (String.isBlank(opp.Quote_Status__c) || opp.Quote_Status__c == 'Not Sent') {
+            return rows;
+        }
+        RowData row = new RowData();
+        row.id = opp.Id;
+        row.url = '/lightning/r/Opportunity/' + opp.Id + '/view';
+        row.label = opp.Name + ' — Quote';
+        row.status = opp.Quote_Status__c;
+        row.subtext = opp.Amount != null ? '$' + String.valueOf(opp.Amount.setScale(0)) : 'Amount not set';
+        row.chipClass = quoteStatusChipClass(opp.Quote_Status__c);
+        rows.add(row);
+        return rows;
+    }
+
+    private static String quoteStatusChipClass(String status) {
+        if (status == 'Accepted') return 'chip chip-green';
+        if (status == 'Sent') return 'chip chip-amber';
+        if (status == 'Rejected') return 'chip chip-red';
+        return 'chip chip-gray';
+    }
+
+    // ─── Activity: Tasks + Events + EmailMessages ────────────────────────────────
 
     private static List<RowData> recentInteractions(Id opportunityId) {
         List<DatedRow> datedRows = new List<DatedRow>();
@@ -136,21 +314,22 @@ public with sharing class ODLOpportunityRecordController {
                 row.id = emailRow.Id;
                 row.url = '/' + emailRow.Id;
                 row.label = firstNonBlank(new List<String>{ emailRow.Subject, 'Logged Email' });
-            row.status = 'Logged Email';
-            row.subtext = firstNonBlank(new List<String>{ emailRow.ToAddress, 'Email' });
-            row.dateText = emailRow.MessageDate != null ? emailRow.MessageDate.format('M/d/yyyy h:mm a') : null;
-            row.notesPreview = String.isBlank(emailRow.TextBody) ? 'No email preview' : trimPreview(emailRow.TextBody);
-            row.interactionType = 'Email';
-            datedRows.add(wrap(row, emailRow.MessageDate));
-        }
+                row.status = 'Logged Email';
+                row.subtext = firstNonBlank(new List<String>{ emailRow.ToAddress, 'Email' });
+                row.dateText = emailRow.MessageDate != null ? emailRow.MessageDate.format('M/d/yyyy h:mm a') : null;
+                row.notesPreview = String.isBlank(emailRow.TextBody) ? 'No email preview' : trimPreview(emailRow.TextBody);
+                row.interactionType = 'Email';
+                row.chipClass = 'chip chip-blue';
+                datedRows.add(wrap(row, emailRow.MessageDate));
+            }
         }
 
         for (Task taskRow : [
-            SELECT Id, Subject, Status, TaskSubtype, ActivityDate, CreatedDate, Description
+            SELECT Id, Subject, Status, TaskSubtype, ActivityDate, CreatedDate, Description, CallDisposition
             FROM Task
             WHERE WhatId = :opportunityId
             ORDER BY CreatedDate DESC
-            LIMIT 10
+            LIMIT 15
         ]) {
             if (!isCompletedTask(taskRow)) {
                 continue;
@@ -165,7 +344,8 @@ public with sharing class ODLOpportunityRecordController {
             row.status = taskRow.Status;
             row.dateText = taskRow.ActivityDate != null ? String.valueOf(taskRow.ActivityDate) : null;
             row.notesPreview = String.isBlank(taskRow.Description) ? 'No notes yet' : trimPreview(taskRow.Description);
-            row.interactionType = deriveInteractionType(taskRow.Subject, taskRow.TaskSubtype, null);
+            row.interactionType = deriveInteractionType(taskRow.Subject, taskRow.TaskSubtype, null, taskRow.CallDisposition);
+            row.chipClass = interactionChipClass(row.interactionType);
             datedRows.add(wrap(row, occurredAt));
         }
 
@@ -184,18 +364,29 @@ public with sharing class ODLOpportunityRecordController {
             row.status = eventRow.ActivityDateTime != null && eventRow.ActivityDateTime >= System.now() ? 'Scheduled' : 'Completed';
             row.dateText = occurredAt != null ? occurredAt.format('M/d/yyyy h:mm a') : null;
             row.notesPreview = String.isBlank(eventRow.Description) ? 'No notes yet' : trimPreview(eventRow.Description);
-            row.interactionType = deriveInteractionType(eventRow.Subject, null, eventRow.Type);
+            row.interactionType = deriveInteractionType(eventRow.Subject, null, eventRow.Type, null);
+            row.chipClass = interactionChipClass(row.interactionType);
             datedRows.add(wrap(row, occurredAt));
         }
 
         datedRows.sort();
         List<RowData> rows = new List<RowData>();
-        Integer limitSize = Math.min(5, datedRows.size());
+        Integer limitSize = Math.min(8, datedRows.size());
         for (Integer i = 0; i < limitSize; i++) {
             rows.add(datedRows[i].row);
         }
         return rows;
     }
+
+    private static String interactionChipClass(String interactionType) {
+        if (interactionType == 'Voicemail') return 'chip chip-amber';
+        if (interactionType == 'Email') return 'chip chip-blue';
+        if (interactionType == 'Call') return 'chip chip-green';
+        if (interactionType == 'Text') return 'chip chip-blue';
+        return 'chip chip-gray';
+    }
+
+    // ─── Other related data ───────────────────────────────────────────────────────
 
     private static List<RowData> designReviews(Id opportunityId) {
         List<RowData> rows = new List<RowData>();
@@ -239,27 +430,6 @@ public with sharing class ODLOpportunityRecordController {
         return rows;
     }
 
-    private static List<RowData> quotes(Id opportunityId) {
-        List<RowData> rows = new List<RowData>();
-        for (Quote quoteRow : [
-            SELECT Id, Name, Status, GrandTotal, CreatedDate
-            FROM Quote
-            WHERE OpportunityId = :opportunityId
-            ORDER BY CreatedDate DESC
-            LIMIT 5
-        ]) {
-            RowData row = new RowData();
-            row.id = quoteRow.Id;
-            row.url = '/' + quoteRow.Id;
-            row.label = quoteRow.Name;
-            row.status = quoteRow.Status;
-            row.subtext = quoteRow.GrandTotal != null ? '$' + String.valueOf(quoteRow.GrandTotal.setScale(0)) : 'Total not set';
-            row.dateText = quoteRow.CreatedDate.format('M/d/yyyy');
-            rows.add(row);
-        }
-        return rows;
-    }
-
     private static RowData propertyRecord(Id opportunityId) {
         List<Homeowner_Property__c> rows = [
             SELECT Id, Name, Community__r.Name, Lot__r.Name, Homeowner_Account__r.Name
@@ -287,7 +457,7 @@ public with sharing class ODLOpportunityRecordController {
             return null;
         }
         List<SObject> rows = Database.query(
-            'SELECT Id, Name, Voucher_Code__c, Status__c, Voucher_Type__c ' +
+            'SELECT Id, Name, Voucher_Code__c, Status__c, Voucher_Type__c, Builder_Account__c ' +
             'FROM Voucher__c WHERE Reserved_Opportunity__c = :opportunityId ORDER BY CreatedDate DESC LIMIT 1'
         );
         if (rows.isEmpty()) {
@@ -296,11 +466,12 @@ public with sharing class ODLOpportunityRecordController {
         SObject voucherRow = rows[0];
         RowData row = new RowData();
         row.id = (Id) voucherRow.get('Id');
-        row.url = '/' + row.id;
+        row.url = '/lightning/r/Voucher__c/' + row.id + '/view';
         row.label = String.valueOf(voucherRow.get('Voucher_Code__c'));
         row.status = String.valueOf(voucherRow.get('Status__c'));
         row.subtext = String.valueOf(voucherRow.get('Voucher_Type__c'));
         row.notesPreview = String.valueOf(voucherRow.get('Name'));
+        row.secondaryText = voucherRow.get('Builder_Account__c') != null ? 'Builder Voucher' : 'Standard Voucher';
         return row;
     }
 
@@ -330,21 +501,13 @@ public with sharing class ODLOpportunityRecordController {
             FROM Task
             WHERE WhatId = :opportunityId
             AND IsClosed = false
-            ORDER BY ActivityDate ASC, CreatedDate ASC
+            ORDER BY ActivityDate ASC NULLS LAST, CreatedDate ASC
             LIMIT 1
         ];
         return tasks.isEmpty() ? null : tasks[0];
     }
 
-    private static List<String> activeStagePath() {
-        List<String> steps = new List<String>();
-        for (Schema.PicklistEntry entry : Opportunity.StageName.getDescribe().getPicklistValues()) {
-            if (entry.isActive()) {
-                steps.add(entry.getLabel());
-            }
-        }
-        return steps;
-    }
+    // ─── Utilities ────────────────────────────────────────────────────────────────
 
     private static DatedRow wrap(RowData row, Datetime occurredAt) {
         DatedRow wrapped = new DatedRow();
@@ -359,128 +522,53 @@ public with sharing class ODLOpportunityRecordController {
             && taskRow.Status.toLowerCase().contains('complete');
     }
 
-    private static Map<String, String> picklistLabelByValue(Schema.SObjectField fieldRef) {
-        Map<String, String> labels = new Map<String, String>();
-        for (Schema.PicklistEntry entry : fieldRef.getDescribe().getPicklistValues()) {
-            labels.put(entry.getValue(), entry.getLabel());
+    private static String deriveInteractionType(String subject, String taskSubtype, String eventType, String callDisposition) {
+        if (!String.isBlank(callDisposition)) {
+            String disp = callDisposition.toLowerCase();
+            if (disp.contains('voicemail')) return 'Voicemail';
+            if (disp.contains('connected') || disp.contains('reached') || disp.contains('answered')) return 'Call';
         }
-        return labels;
-    }
-
-    private static String deriveProjectPath(Opportunity opp, Map<String, String> typeLabels) {
-        if (opp == null) {
-            return null;
-        }
-        String label = typeLabels != null && typeLabels.containsKey(opp.Type) ? typeLabels.get(opp.Type) : opp.Type;
-        String normalizedType = String.isBlank(opp.Type) ? '' : opp.Type.toLowerCase();
-        String normalizedLabel = String.isBlank(label) ? '' : label.toLowerCase();
-        String normalizedLeadSource = String.isBlank(opp.LeadSource) ? '' : opp.LeadSource.toLowerCase();
-        String normalizedName = String.isBlank(opp.Name) ? '' : opp.Name.toLowerCase();
-
-        if (normalizedType.contains('lawn') || normalizedLabel.contains('lawn')) {
-            return null;
-        }
-        if (label == 'UpgradeMyBackyard' || opp.Type == 'UMB') {
-            return 'UpgradeMyBackyard';
-        }
-        if (label == 'Design Build' || label == 'Design and Build') {
-            return 'Design Build';
-        }
-        // Voucher/Lennar LeadSource check precedes name check — voucher opps are the UMB
-        // homebuilder-partner channel even when named "- Backyard Design".
-        if (
-            normalizedLeadSource.contains('voucher') ||
-            normalizedLeadSource.contains('lennar') ||
-            normalizedName.contains('voucher') ||
-            normalizedName.contains('upgrademybackyard')
-        ) {
-            return 'UpgradeMyBackyard';
-        }
-        if (
-            normalizedType.contains('custom') ||
-            normalizedLabel.contains('custom') ||
-            normalizedName.contains('design build') ||
-            normalizedName.contains('backyard design')
-        ) {
-            return 'Design Build';
-        }
-        // Home Builder type = homebuilder partner channel = UMB delivery path.
-        if (
-            opp.Type == 'New Business' ||
-            opp.Type == 'Home Builder' ||
-            !String.isBlank(opp.BMG_Package__c) ||
-            normalizedLeadSource.contains('upgrade') ||
-            normalizedLeadSource.contains('builder') ||
-            normalizedName.contains('backyard') ||
-            normalizedName.contains('umb')
-        ) {
-            return 'UpgradeMyBackyard';
-        }
-        return null;
-    }
-
-    private static String deriveInteractionType(String subject, String taskSubtype, String eventType) {
         String normalizedSubject = String.isBlank(subject) ? '' : subject.toLowerCase();
         String normalizedSubtype = String.isBlank(taskSubtype) ? '' : taskSubtype.toLowerCase();
         String normalizedEventType = String.isBlank(eventType) ? '' : eventType.toLowerCase();
 
-        if (normalizedSubject.contains('voicemail')) {
-            return 'Voicemail';
-        }
-        if (normalizedSubtype == 'call' || normalizedEventType == 'call' || normalizedSubject.contains('call')) {
-            return 'Call';
-        }
-        if (normalizedSubtype == 'email' || normalizedSubject.contains('email') || normalizedEventType.contains('email')) {
-            return 'Email';
-        }
-        if (!String.isBlank(eventType)) {
-            return eventType;
-        }
+        if (normalizedSubject.contains('voicemail')) return 'Voicemail';
+        if (normalizedSubtype == 'call' || normalizedEventType == 'call' || normalizedSubject.contains('call')) return 'Call';
+        if (normalizedSubtype == 'email' || normalizedSubject.contains('email') || normalizedEventType.contains('email')) return 'Email';
+        if (normalizedSubject.contains('text') || normalizedSubject.contains('sms')) return 'Text';
+        if (!String.isBlank(eventType)) return eventType;
         return 'Task';
     }
 
     private static String deriveActionLabel(String interactionType, String subject, String status) {
         String phase = deriveActionPhase(subject);
-        if (interactionType == 'Voicemail') {
-            return 'Left Voicemail - ' + phase;
-        }
-        if (interactionType == 'Email') {
-            return 'Sent Email - ' + phase;
-        }
-        if (interactionType == 'Call') {
-            return 'Call Complete - ' + phase;
-        }
+        if (interactionType == 'Voicemail') return 'Left Voicemail — ' + phase;
+        if (interactionType == 'Email') return 'Email Sent — ' + phase;
+        if (interactionType == 'Call') return 'Call Complete — ' + phase;
+        if (interactionType == 'Text') return 'Text Sent — ' + phase;
         if (interactionType == 'Task' || String.isBlank(interactionType)) {
             return firstNonBlank(new List<String>{ subject, 'Activity Logged' });
         }
-        return interactionType + ' - ' + phase;
+        return interactionType + ' — ' + phase;
     }
 
     private static String deriveActionPhase(String subject) {
         String normalized = String.isBlank(subject) ? '' : subject.toLowerCase();
-        if (normalized.contains('presentation')) {
-            return 'Presentation';
-        }
-        if (normalized.contains('follow-up') || normalized.contains('follow up') || normalized.contains('callback')) {
-            return 'Follow-Up';
-        }
+        if (normalized.contains('presentation')) return 'Presentation';
+        if (normalized.contains('follow-up') || normalized.contains('follow up') || normalized.contains('callback')) return 'Follow-Up';
         return 'Initial';
     }
 
     private static String firstNonBlank(List<String> values) {
         for (String value : values) {
-            if (!String.isBlank(value)) {
-                return value;
-            }
+            if (!String.isBlank(value)) return value;
         }
         return null;
     }
 
     private static String trimPreview(String value) {
         String normalized = value.replace('\r', ' ').replace('\n', ' ').trim();
-        if (normalized.length() <= 80) {
-            return normalized;
-        }
+        if (normalized.length() <= 80) return normalized;
         return normalized.substring(0, 77) + '...';
     }
 }

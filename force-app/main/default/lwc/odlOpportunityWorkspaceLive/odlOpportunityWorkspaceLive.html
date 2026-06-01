@@ -1,124 +1,170 @@
 <template>
-    <section class="page">
-        <nav class="tab-strip">
-            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Home">Home Page</a>
-            <a class="sf-tab" href="/lightning/cmp/c__odlHomeownerAccountsTab">Account</a>
-            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Leads">Leads</a>
-            <a class="sf-tab on" href="/lightning/n/Outdoor_Living_Opportunities">Opportunities</a>
-            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Campaigns">Campaigns</a>
-            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Tasks">Tasks</a>
-            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Quotes">Quote</a>
-            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Work_Orders">Work Order</a>
-            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Calendar">Calendar</a>
-        </nav>
+    <section class="page-canvas">
 
-        <div class="header">
+        <!-- Page header -->
+        <div class="page-header">
             <div class="header-left">
-                <div class="record-icon">OP</div>
+                <div class="page-icon">OP</div>
                 <div>
-                    <h1>Homeowner Opportunity List</h1>
+                    <h1 class="page-title">Homeowner Opportunity List</h1>
+                    <p class="page-subtitle">Outdoor Living — UMB &amp; Design Build</p>
                 </div>
             </div>
             <div class="header-actions">
-                <button type="button" class="btn primary" onclick={handleNewUmbOpportunity}>New UMB Opportunity</button>
-                <button type="button" class="btn primary" onclick={handleNewCustomOpportunity}>New Custom Design Opportunity</button>
-                <button type="button" class="btn primary" onclick={handleNewLawnOpportunity}>New Lawn Care Opportunity</button>
+                <button class="btn-new" onclick={handleNewUmb}>+ New UMB</button>
+                <button class="btn-new btn-design" onclick={handleNewDesignBuild}>+ New Design Build</button>
             </div>
         </div>
 
-        <div class="toolbar">
-            <button class={allChipClass} data-filter="All Homeowner Opportunities" onclick={handleFilterClick}>All Homeowner Opportunities</button>
-            <button class={umbChipClass} data-filter="UMB" onclick={handleFilterClick}>UMB</button>
-            <button class={designChipClass} data-filter="Custom" onclick={handleFilterClick}>Custom</button>
-            <button class={lawnChipClass} data-filter="Lawn Care" onclick={handleFilterClick}>Lawn Care</button>
-            <button class={voicemailChipClass} data-filter="Voicemail Left" onclick={handleFilterClick}>Voicemail Left</button>
-            <button class={followupChipClass} data-filter="Follow-Up Due" onclick={handleFilterClick}>Follow-Up Due</button>
-            <span class="spacer"></span>
-            <select onchange={handleOwnerChange}>
-                <option value="">All owners</option>
-                <template for:each={ownerOptions} for:item="owner">
-                    <option key={owner} value={owner}>{owner}</option>
-                </template>
-            </select>
-            <select onchange={handleStageChange}>
-                <option value="">All stages</option>
-                <template for:each={stageOptions} for:item="stage">
-                    <option key={stage} value={stage}>{stage}</option>
-                </template>
-            </select>
-            <input type="search" class="search" placeholder="Search opportunities" value={searchText} oninput={handleSearchInput} />
-            <div class="column-picker-wrap">
-                <button type="button" class="column-button" onclick={handleToggleColumnPicker}>Columns ({visibleColumnCount})</button>
-                <template lwc:if={showColumnPicker}>
-                    <div class="column-picker">
-                        <template for:each={columnOptions} for:item="option">
-                            <label key={option.key} class="column-option">
-                                <input type="checkbox" checked={option.checked} data-column={option.key} onchange={handleColumnToggle} />
-                                <span>{option.label}</span>
-                            </label>
-                        </template>
-                    </div>
-                </template>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <div class="icon">OP</div>
-                <h2>Opportunity Operating List</h2>
-            </div>
-            <template lwc:if={hasLoadError}>
-                <div style="padding:0.85rem 0.9rem;font-size:0.8rem;color:#c23934">{loadError}</div>
-            </template>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Opportunity</th>
-                        <template lwc:if={showAccountColumn}><th>Account</th></template>
-                        <template lwc:if={showLobColumn}><th>LOB</th></template>
-                        <template lwc:if={showStageColumn}><th>Stage</th></template>
-                        <template lwc:if={showAmountColumn}><th class="num">Amount</th></template>
-                        <template lwc:if={showPackageColumn}><th>Package / Service</th></template>
-                        <template lwc:if={showLastActivityColumn}><th>Last Activity</th></template>
-                        <template lwc:if={showLastActivityDateColumn}><th>Last Activity Date</th></template>
-                        <template lwc:if={showVoicemailColumn}><th>Voicemail</th></template>
-                        <template lwc:if={showVoicemailDateColumn}><th>Voicemail Date</th></template>
-                        <template lwc:if={showFollowUpTaskColumn}><th>Follow-Up Task</th></template>
-                        <template lwc:if={showFollowUpDueColumn}><th>Follow-Up Due</th></template>
-                        <template lwc:if={showOwnerColumn}><th>Owner</th></template>
-                        <template lwc:if={showOpenItemColumn}><th>Open Item</th></template>
-                    </tr>
-                </thead>
-                <tbody>
-                    <template for:each={filteredRows} for:item="row">
-                        <tr key={row.id}>
-                            <td><a class="record-link" href={row.oppHref} data-record-id={row.id} onclick={handleOpenOpportunity}>{row.label}</a></td>
-                            <template lwc:if={showAccountColumn}><td>
-                                <template lwc:if={row.accountHref}>
-                                    <a class="account-link" href={row.accountHref} data-record-id={row.accountUrl} onclick={handleOpenAccount}>{row.accountName}</a>
-                                </template>
-                                <template lwc:else>{row.accountName}</template>
-                            </td></template>
-                            <template lwc:if={showLobColumn}><td><span class={row.lobChipClass}>{row.lob}</span></td></template>
-                            <template lwc:if={showStageColumn}><td>{row.stageName}</td></template>
-                            <template lwc:if={showAmountColumn}><td class="num">{row.amountDisplay}</td></template>
-                            <template lwc:if={showPackageColumn}><td>{row.packageDisplay}</td></template>
-                            <template lwc:if={showLastActivityColumn}><td>
-                                <template lwc:if={row.lastAction}>
-                                    <a class="activity-link" href={row.oppHref} data-record-id={row.id} data-section={row.lastActivitySection} onclick={handleOpenActivity}>{row.lastAction}</a>
-                                </template>
-                            </td></template>
-                            <template lwc:if={showLastActivityDateColumn}><td>{row.lastActivityDate}</td></template>
-                            <template lwc:if={showVoicemailColumn}><td><span class={row.voicemailChipClass}>{row.voicemailStatus}</span></td></template>
-                            <template lwc:if={showVoicemailDateColumn}><td>{row.voicemailDate}</td></template>
-                            <template lwc:if={showFollowUpTaskColumn}><td>{row.followUpTask}</td></template>
-                            <template lwc:if={showFollowUpDueColumn}><td>{row.followUpDue}</td></template>
-                            <template lwc:if={showOwnerColumn}><td>{row.ownerName}</td></template>
-                            <template lwc:if={showOpenItemColumn}><td><span class={row.openItemChipClass}>{row.openItem}</span></td></template>
-                        </tr>
+        <!-- KPI cards -->
+        <div class="kpi-grid">
+            <template for:each={kpiCards} for:item="kpi">
+                <div key={kpi.key} class={kpi.cardClass} data-key={kpi.key} onclick={handleKpiClick}>
+                    <div class="kpi-label">{kpi.label}</div>
+                    <div class="kpi-count">{kpi.count}</div>
+                    <template lwc:if={kpi.amountDisplay}>
+                        <div class="kpi-amount">{kpi.amountDisplay}</div>
                     </template>
-                </tbody>
-            </table>
+                </div>
+            </template>
         </div>
+
+        <!-- Filter bar -->
+        <div class="toolbar-bar">
+            <div class="chip-row">
+                <template for:each={chipList} for:item="chip">
+                    <button key={chip.key} class={chip.cls} data-key={chip.key} onclick={handleChipClick}>
+                        {chip.label}&nbsp;<span class="chip-count">{chip.count}</span>
+                    </button>
+                </template>
+            </div>
+            <div class="toolbar-right">
+                <select class="owner-select" onchange={handleOwnerChange}>
+                    <option value="">All owners</option>
+                    <template for:each={ownerNames} for:item="name">
+                        <option key={name} value={name}>{name}</option>
+                    </template>
+                </select>
+                <input type="search" class="search-box"
+                    placeholder="Search opps, accounts, vouchers…"
+                    oninput={handleSearchInput}
+                    value={searchText} />
+            </div>
+        </div>
+
+        <!-- Error -->
+        <template lwc:if={hasError}>
+            <div class="error-bar">{errorMessage}</div>
+        </template>
+
+        <!-- Table -->
+        <div class="table-card">
+            <div class="table-header-row">
+                <span class="row-count">{rowCount} opportunities</span>
+            </div>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="col-sticky">Opportunity</th>
+                            <th>Account</th>
+                            <th>Path</th>
+                            <th>Stage</th>
+                            <th class="col-num sortable" onclick={handleSortAmount}>Amount {sortIconAmount}</th>
+                            <th>Package</th>
+                            <th>Voucher / Campaign</th>
+                            <th>Quote</th>
+                            <th>Contract</th>
+                            <th>Deposit</th>
+                            <th>WO Release</th>
+                            <th class="sortable" onclick={handleSortActivity}>Last Activity {sortIconActivity}</th>
+                            <th class="sortable" onclick={handleSortFollowUp}>Follow-Up {sortIconFollowUp}</th>
+                            <th>Owner</th>
+                            <th class="col-next-action">Next Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={visibleRows} for:item="row">
+                            <tr key={row.id}>
+                                <td class="col-sticky">
+                                    <a class="opp-link" href={row.oppHref} data-id={row.id} onclick={handleOpenRecord}>{row.oppName}</a>
+                                </td>
+                                <td>
+                                    <template lwc:if={row.accountHref}>
+                                        <a class="acct-link" href={row.accountHref} data-id={row.accountId} onclick={handleOpenAccount}>{row.accountName}</a>
+                                    </template>
+                                    <template lwc:else>{row.accountName}</template>
+                                </td>
+                                <td><span class={row.lobChipClass}>{row.lob}</span></td>
+                                <td><span class={row.stageChipClass}>{row.stageName}</span></td>
+                                <td class="col-num">{row.amountDisplay}</td>
+                                <td>{row.packageDisplay}</td>
+                                <td>
+                                    <template lwc:if={row.voucherCode}>
+                                        <span class="voucher-code">{row.voucherCode}</span>
+                                        <template lwc:if={row.hasBuilderVoucher}>
+                                            <span class="chip chip-umb">Builder</span>
+                                        </template>
+                                    </template>
+                                    <template lwc:elseif={row.campaignName}>
+                                        <span class="campaign-name">{row.campaignName}</span>
+                                    </template>
+                                </td>
+                                <td>
+                                    <template lwc:if={row.quoteStatus}>
+                                        <span class={row.quoteStatusChipClass}>{row.quoteStatus}</span>
+                                    </template>
+                                </td>
+                                <td>{row.contractStatus}</td>
+                                <td>
+                                    <template lwc:if={row.depositPaid}>
+                                        <span class="chip chip-green">Paid</span>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="chip chip-gray">—</span>
+                                    </template>
+                                </td>
+                                <td>
+                                    <template lwc:if={row.woReady}>
+                                        <span class="chip chip-green">Ready</span>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="chip chip-gray">Not Ready</span>
+                                    </template>
+                                </td>
+                                <td>
+                                    <span class={row.lastActivityChipClass}>{row.lastActivityResult}</span>
+                                    <template lwc:if={row.lastActivityDateDisplay}>
+                                        <span class="date-sub">{row.lastActivityDateDisplay}</span>
+                                    </template>
+                                </td>
+                                <td>
+                                    <template lwc:if={row.followUpDateDisplay}>
+                                        <span class={row.followUpChipClass}>{row.followUpDateDisplay}</span>
+                                        <template lwc:if={row.followUpSubject}>
+                                            <span class="date-sub">{row.followUpSubject}</span>
+                                        </template>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="chip chip-gray">None</span>
+                                    </template>
+                                </td>
+                                <td>{row.ownerName}</td>
+                                <td class="col-next-action">
+                                    <span class="next-action-text">{row.nextActionText}</span>
+                                    <button class={row.actionBtnClass} data-id={row.id} data-action={row.nextActionButton} onclick={handleActionClick}>{row.nextActionButton}</button>
+                                </td>
+                            </tr>
+                        </template>
+                        <template lwc:if={isEmpty}>
+                            <tr>
+                                <td colspan="15" class="empty-cell">No opportunities match the current filters.</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </section>
 </template>

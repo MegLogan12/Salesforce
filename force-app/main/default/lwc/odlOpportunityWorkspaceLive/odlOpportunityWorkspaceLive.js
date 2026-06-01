@@ -3,376 +3,280 @@ import { NavigationMixin } from 'lightning/navigation';
 import { encodeDefaultFieldValues } from 'lightning/pageReferenceUtils';
 import { getObjectInfo } from 'lightning/uiObjectInfoApi';
 import OPPORTUNITY_OBJECT from '@salesforce/schema/Opportunity';
-import getPageData from '@salesforce/apex/ODLOpportunityListController.getPageData';
+import getWorkspaceData from '@salesforce/apex/ODLOpportunityWorkspaceController.getWorkspaceData';
+
+const CHIP_DEFS = [
+    { key: 'all',       label: 'All Open',        test: () => true },
+    { key: 'umb',       label: 'UMB',              test: r => r.lob === 'UpgradeMyBackyard' },
+    { key: 'design',    label: 'Design Build',     test: r => r.lob === 'Design Build' },
+    { key: 'disc',      label: 'Discovery',        test: r => r.stageName === 'Discovery' },
+    { key: 'consult',   label: 'Consult Sched.',   test: r => r.stageName === 'Consult Scheduled' },
+    { key: 'design_ip', label: 'Design In Prog.',  test: r => r.stageName === 'Design In Progress' },
+    { key: 'qr',        label: 'Quote Review',     test: r => r.stageName === 'Quote Review' },
+    { key: 'cs',        label: 'Contract Sent',    test: r => r.stageName === 'Contract Sent' },
+    { key: 'dp',        label: 'Deposit Pending',  test: r => r.stageName === 'Deposit Pending' },
+    { key: 'vm',        label: 'Voicemail',        test: r => r.voicemailLeft === true },
+    { key: 'fudue',     label: 'Follow-Up Due',    test: r => r.followUpChipClass === 'chip chip-red' || r.followUpChipClass === 'chip chip-amber' },
+    { key: 'wo',        label: 'WO Ready',         test: r => r.woReady === true },
+    { key: 'noact',     label: 'No Activity',      test: r => r.lastActivityResult === 'No Activity' },
+    { key: 'hival',     label: 'High Value',       test: r => (r.amount || 0) >= 50000 }
+];
+
+function followUpScore(row) {
+    if (!row.followUpDate) return 999;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const fu = new Date(row.followUpDate);
+    const days = Math.round((fu - today) / 86400000);
+    return days;
+}
+
+function compareDates(a, b, asc) {
+    const av = a ? new Date(a).getTime() : 0;
+    const bv = b ? new Date(b).getTime() : 0;
+    return asc ? av - bv : bv - av;
+}
 
 export default class OdlOpportunityWorkspaceLive extends NavigationMixin(LightningElement) {
-    @track activeFilter = 'All Homeowner Opportunities';
+    @track activeKpi = 'all';
+    @track activeChip = 'all';
     @track selectedOwner = '';
-    @track selectedStage = '';
     @track searchText = '';
-    @track selectedColumns = [
-        'opportunity',
-        'account',
-        'lob',
-        'stage',
-        'amount',
-        'package',
-        'lastActivity',
-        'lastActivityDate',
-        'followUpTask',
-        'followUpDue',
-        'owner',
-        'openItem'
-    ];
-    @track showColumnPicker = false;
+    @track sortField = 'followUp';
+    @track sortAsc = true;
 
-    pageData = { rows: [] };
+    workspaceData;
+    loadError;
     objectInfo;
-    @track loadError = '';
 
     @wire(getObjectInfo, { objectApiName: OPPORTUNITY_OBJECT })
     wiredObjectInfo({ data }) {
-        if (data) {
-            this.objectInfo = data;
-        }
+        if (data) this.objectInfo = data;
     }
 
-    @wire(getPageData)
-    wiredPageData({ data, error }) {
+    @wire(getWorkspaceData)
+    wiredWorkspace({ data, error }) {
         if (data) {
-            this.pageData = data;
-            this.loadError = '';
+            this.workspaceData = data;
+            this.loadError = null;
         } else if (error) {
-            this.pageData = { rows: [] };
             this.loadError = this.reduceError(error);
+            this.workspaceData = null;
         }
     }
 
-    get hasLoadError() {
-        return Boolean(this.loadError);
-    }
+    get hasError() { return Boolean(this.loadError); }
+    get errorMessage() { return this.loadError || ''; }
+    get ownerNames() { return this.workspaceData?.ownerNames || []; }
 
-    reduceError(error) {
-        if (!error) {
-            return '';
-        }
-        if (Array.isArray(error.body)) {
-            return error.body.map((item) => item.message).join(', ');
-        }
-        if (error.body && error.body.message) {
-            return error.body.message;
-        }
-        return error.message || 'Unable to load opportunities.';
-    }
-
-    get ownerOptions() {
-        const owners = new Set();
-        this.normalizedRows.forEach((row) => {
-            if (row.ownerName) {
-                owners.add(row.ownerName);
-            }
-        });
-        return Array.from(owners).sort();
-    }
-
-    get stageOptions() {
-        const stages = new Set();
-        this.normalizedRows.forEach((row) => {
-            if (row.stageName) {
-                stages.add(row.stageName);
-            }
-        });
-        return Array.from(stages).sort();
-    }
-
-    get normalizedRows() {
-        return (this.pageData.rows || []).map((row) => {
-            const normalized = { ...row };
-            normalized.oppHref = row.oppHref || (row.id ? `/lightning/r/Opportunity/${row.id}/view` : '#');
-            normalized.accountHref = row.accountHref || (row.accountUrl ? `/lightning/r/Account/${String(row.accountUrl).replace('/', '')}/view` : '');
-            normalized.voicemailChipClass = row.voicemailChipClass || (row.voicemailStatus === 'Yes' ? 'chip chip-amber' : 'chip chip-gray');
-            normalized.openItemChipClass = row.openItemChipClass || this.deriveOpenItemChipClass(row.openItem);
-            normalized.lastActivitySection = this.deriveActivitySection(row);
-            return normalized;
-        });
-    }
-
-    get filteredRows() {
-        return this.normalizedRows.filter((row) => {
-            if (this.selectedOwner && row.ownerName !== this.selectedOwner) {
-                return false;
-            }
-            if (this.selectedStage && row.stageName !== this.selectedStage) {
-                return false;
-            }
-            if (this.activeFilter === 'UMB' && row.lob !== 'UMB') {
-                return false;
-            }
-            if (this.activeFilter === 'Custom' && row.lob !== 'Custom') {
-                return false;
-            }
-            if (this.activeFilter === 'Lawn Care' && row.lob !== 'Lawn Care') {
-                return false;
-            }
-            if (this.activeFilter === 'Voicemail Left' && row.voicemailStatus !== 'Yes') {
-                return false;
-            }
-            if (this.activeFilter === 'Follow-Up Due' && !row.followUpDue) {
-                return false;
-            }
-            if (this.searchText) {
-                const haystack = [
-                    row.label,
-                    row.accountName,
-                    row.ownerName,
-                    row.packageDisplay,
-                    row.stageName,
-                    row.openItem
-                ].join(' ').toLowerCase();
-                if (!haystack.includes(this.searchText.toLowerCase())) {
-                    return false;
-                }
-            }
-            return true;
-        });
-    }
-
-    get latestUmbHref() {
-        const recordId = (this.pageData.latestUmbUrl || '').replace('/', '');
-        return recordId ? `/lightning/r/Opportunity/${recordId}/view` : '#';
-    }
-
-    get latestCustomHref() {
-        const recordId = (this.pageData.latestCustomUrl || '').replace('/', '');
-        return recordId ? `/lightning/r/Opportunity/${recordId}/view` : '#';
-    }
-
-    get latestLawnHref() {
-        const recordId = (this.pageData.latestLawnUrl || '').replace('/', '');
-        return recordId ? `/lightning/r/Opportunity/${recordId}/view` : '#';
-    }
-
-    get hasLatestUmb() {
-        return !!this.pageData.latestUmbUrl;
-    }
-
-    get hasLatestCustom() {
-        return !!this.pageData.latestCustomUrl;
-    }
-
-    get hasLatestLawn() {
-        return !!this.pageData.latestLawnUrl;
-    }
-
-    get columnOptions() {
-        return [
-            { key: 'account', label: 'Account' },
-            { key: 'lob', label: 'LOB' },
-            { key: 'stage', label: 'Stage' },
-            { key: 'amount', label: 'Amount' },
-            { key: 'package', label: 'Package / Service' },
-            { key: 'lastActivity', label: 'Last Activity' },
-            { key: 'lastActivityDate', label: 'Last Activity Date' },
-            { key: 'voicemail', label: 'Voicemail' },
-            { key: 'voicemailDate', label: 'Voicemail Date' },
-            { key: 'followUpTask', label: 'Follow-Up Task' },
-            { key: 'followUpDue', label: 'Follow-Up Due' },
-            { key: 'owner', label: 'Owner' },
-            { key: 'openItem', label: 'Open Item' }
-        ].map((option) => ({
-            ...option,
-            checked: this.selectedColumns.includes(option.key)
+    get allRows() {
+        return (this.workspaceData?.rows || []).map(r => ({
+            ...r,
+            actionBtnClass: r.woReady ? 'btn-action wo-ready' : 'btn-action'
         }));
     }
 
-    get visibleColumnCount() {
-        return this.selectedColumns.length;
+    get kpiCards() {
+        return (this.workspaceData?.kpis || []).map(k => ({
+            ...k,
+            cardClass: (this.activeKpi === k.key && this.activeChip === 'all')
+                ? 'kpi-card active' : 'kpi-card'
+        }));
     }
 
-    get showAccountColumn() { return this.selectedColumns.includes('account'); }
-    get showLobColumn() { return this.selectedColumns.includes('lob'); }
-    get showStageColumn() { return this.selectedColumns.includes('stage'); }
-    get showAmountColumn() { return this.selectedColumns.includes('amount'); }
-    get showPackageColumn() { return this.selectedColumns.includes('package'); }
-    get showLastActivityColumn() { return this.selectedColumns.includes('lastActivity'); }
-    get showLastActivityDateColumn() { return this.selectedColumns.includes('lastActivityDate'); }
-    get showVoicemailColumn() { return this.selectedColumns.includes('voicemail'); }
-    get showVoicemailDateColumn() { return this.selectedColumns.includes('voicemailDate'); }
-    get showFollowUpTaskColumn() { return this.selectedColumns.includes('followUpTask'); }
-    get showFollowUpDueColumn() { return this.selectedColumns.includes('followUpDue'); }
-    get showOwnerColumn() { return this.selectedColumns.includes('owner'); }
-    get showOpenItemColumn() { return this.selectedColumns.includes('openItem'); }
+    get kpiFilteredRows() {
+        const rows = this.allRows;
+        switch (this.activeKpi) {
+            case 'umb':       return rows.filter(r => r.lob === 'UpgradeMyBackyard');
+            case 'design':    return rows.filter(r => r.lob === 'Design Build');
+            case 'woReady':   return rows.filter(r => r.woReady === true);
+            case 'voicemail': return rows.filter(r => r.voicemailLeft === true);
+            case 'followUp':  return rows.filter(r =>
+                r.followUpChipClass === 'chip chip-red' || r.followUpChipClass === 'chip chip-amber');
+            default:          return rows;
+        }
+    }
 
-    handleFilterClick(event) {
-        this.activeFilter = event.currentTarget.dataset.filter;
+    get chipList() {
+        const base = this.kpiFilteredRows;
+        return CHIP_DEFS.map(def => ({
+            key: def.key,
+            label: def.label,
+            count: base.filter(def.test).length,
+            cls: this.activeChip === def.key ? 'filter-chip active' : 'filter-chip'
+        }));
+    }
+
+    get filteredRows() {
+        let rows = this.kpiFilteredRows;
+
+        const chipDef = CHIP_DEFS.find(d => d.key === this.activeChip);
+        if (chipDef && this.activeChip !== 'all') {
+            rows = rows.filter(chipDef.test);
+        }
+
+        if (this.selectedOwner) {
+            rows = rows.filter(r => r.ownerName === this.selectedOwner);
+        }
+
+        if (this.searchText) {
+            const q = this.searchText.toLowerCase();
+            rows = rows.filter(r => {
+                const hay = [
+                    r.oppName, r.accountName, r.ownerName, r.packageDisplay,
+                    r.stageName, r.voucherCode, r.campaignName, r.nextActionText
+                ].filter(Boolean).join(' ').toLowerCase();
+                return hay.includes(q);
+            });
+        }
+
+        return this.sortRows(rows);
+    }
+
+    get visibleRows() { return this.filteredRows; }
+    get rowCount() { return this.filteredRows.length; }
+    get isEmpty() { return this.filteredRows.length === 0; }
+
+    sortRows(rows) {
+        return [...rows].sort((a, b) => {
+            if (this.sortField === 'amount') {
+                const diff = (b.amount || 0) - (a.amount || 0);
+                return this.sortAsc ? -diff : diff;
+            }
+            if (this.sortField === 'activity') {
+                return compareDates(a.lastActivityDate, b.lastActivityDate, this.sortAsc);
+            }
+            // Default: follow-up urgency (overdue first) then oldest activity
+            const fuDiff = followUpScore(a) - followUpScore(b);
+            if (fuDiff !== 0) return fuDiff;
+            return compareDates(a.lastActivityDate, b.lastActivityDate, true);
+        });
+    }
+
+    get sortIconAmount() {
+        return this.sortField === 'amount' ? (this.sortAsc ? ' ▲' : ' ▼') : '';
+    }
+    get sortIconActivity() {
+        return this.sortField === 'activity' ? (this.sortAsc ? ' ▲' : ' ▼') : '';
+    }
+    get sortIconFollowUp() {
+        return this.sortField === 'followUp' ? (this.sortAsc ? ' ▲' : ' ▼') : '';
+    }
+
+    handleKpiClick(event) {
+        this.activeKpi = event.currentTarget.dataset.key;
+        this.activeChip = 'all';
+    }
+
+    handleChipClick(event) {
+        this.activeChip = event.currentTarget.dataset.key;
     }
 
     handleOwnerChange(event) {
         this.selectedOwner = event.target.value;
     }
 
-    handleStageChange(event) {
-        this.selectedStage = event.target.value;
-    }
-
     handleSearchInput(event) {
         this.searchText = event.target.value;
     }
 
-    handleToggleColumnPicker() {
-        this.showColumnPicker = !this.showColumnPicker;
-    }
-
-    handleColumnToggle(event) {
-        const columnKey = event.target.dataset.column;
-        if (!columnKey) {
-            return;
-        }
-        const next = new Set(this.selectedColumns);
-        if (next.has(columnKey)) {
-            if (next.size === 1) {
-                return;
-            }
-            next.delete(columnKey);
+    handleSortAmount() {
+        if (this.sortField === 'amount') {
+            this.sortAsc = !this.sortAsc;
         } else {
-            next.add(columnKey);
+            this.sortField = 'amount';
+            this.sortAsc = false;
         }
-        this.selectedColumns = this.columnOptions
-            .map((option) => option.key)
-            .filter((key) => next.has(key));
     }
 
-    handleNewUmbOpportunity() {
-        this.navigateToNewOpportunity('UMB', {
-            Type: 'UMB',
-            StageName: 'Intake'
-        });
+    handleSortActivity() {
+        if (this.sortField === 'activity') {
+            this.sortAsc = !this.sortAsc;
+        } else {
+            this.sortField = 'activity';
+            this.sortAsc = false;
+        }
     }
 
-    handleNewCustomOpportunity() {
-        this.navigateToNewOpportunity('Design_Build', {
-            Type: 'Design Build',
-            StageName: 'Discovery'
-        });
+    handleSortFollowUp() {
+        if (this.sortField === 'followUp') {
+            this.sortAsc = !this.sortAsc;
+        } else {
+            this.sortField = 'followUp';
+            this.sortAsc = true;
+        }
     }
 
-    handleNewLawnOpportunity() {
-        this[NavigationMixin.Navigate]({
-            type: 'standard__objectPage',
-            attributes: {
-                objectApiName: 'Opportunity',
-                actionName: 'new'
-            },
-            state: {
-                defaultFieldValues: encodeDefaultFieldValues({
-                    Type: 'Lawn Care',
-                    StageName: 'Intake'
-                })
-            }
-        });
-    }
-
-    handleOpenOpportunity(event) {
+    handleOpenRecord(event) {
         event.preventDefault();
-        const recordId = (event.currentTarget.dataset.recordId || '').replace('/', '');
-        if (!recordId) {
-            return;
-        }
+        const id = event.currentTarget.dataset.id;
+        if (!id) return;
         this[NavigationMixin.Navigate]({
             type: 'standard__recordPage',
-            attributes: {
-                recordId,
-                actionName: 'view'
-            }
-        });
-    }
-
-    handleOpenActivity(event) {
-        event.preventDefault();
-        const recordId = (event.currentTarget.dataset.recordId || '').replace('/', '');
-        if (!recordId) {
-            return;
-        }
-        this[NavigationMixin.Navigate]({
-            type: 'standard__recordPage',
-            attributes: {
-                recordId,
-                actionName: 'view'
-            },
-            state: {
-                c__focusSection: event.currentTarget.dataset.section || 'activity'
-            }
+            attributes: { recordId: id, actionName: 'view' }
         });
     }
 
     handleOpenAccount(event) {
         event.preventDefault();
-        const recordId = (event.currentTarget.dataset.recordId || '').replace('/', '');
-        if (!recordId) {
-            return;
-        }
+        const id = event.currentTarget.dataset.id;
+        if (!id) return;
         this[NavigationMixin.Navigate]({
             type: 'standard__recordPage',
-            attributes: {
-                recordId,
-                actionName: 'view'
-            }
+            attributes: { recordId: id, actionName: 'view' }
         });
     }
 
-    chipClass(label) {
-        return this.activeFilter === label ? 'filter-chip active' : 'filter-chip';
-    }
-
-    get allChipClass() { return this.chipClass('All Homeowner Opportunities'); }
-    get umbChipClass() { return this.chipClass('UMB'); }
-    get designChipClass() { return this.chipClass('Custom'); }
-    get lawnChipClass() { return this.chipClass('Lawn Care'); }
-    get voicemailChipClass() { return this.chipClass('Voicemail Left'); }
-    get followupChipClass() { return this.chipClass('Follow-Up Due'); }
-
-    deriveOpenItemChipClass(openItem) {
-        if (openItem === 'Customer callback' || openItem === 'Follow-up due') {
-            return 'chip chip-amber';
-        }
-        if (openItem === 'Site visit decision' || openItem === 'Quote follow-up') {
-            return 'chip chip-blue';
-        }
-        if (openItem === 'Awaiting approval' || openItem === 'On track') {
-            return 'chip chip-green';
-        }
-        return 'chip chip-gray';
-    }
-
-    deriveActivitySection(row) {
-        const text = [row.lastAction, row.followUpTask, row.openItem].filter(Boolean).join(' ').toLowerCase();
-        if (text.includes('email') || text.includes('voicemail') || text.includes('call') || text.includes('note')) {
-            return 'notes';
-        }
-        return 'activity';
-    }
-
-    navigateToNewOpportunity(recordTypeDeveloperName, defaultFieldValues) {
-        const recordTypeId = this.findRecordTypeId(recordTypeDeveloperName);
-        const state = {
-            defaultFieldValues: encodeDefaultFieldValues(defaultFieldValues)
-        };
-        if (recordTypeId) {
-            state.recordTypeId = recordTypeId;
-        }
+    handleNewUmb() {
+        const rtId = this.findRecordTypeId('UMB');
+        const state = { defaultFieldValues: encodeDefaultFieldValues({ StageName: 'Discovery' }) };
+        if (rtId) state.recordTypeId = rtId;
         this[NavigationMixin.Navigate]({
             type: 'standard__objectPage',
-            attributes: {
-                objectApiName: 'Opportunity',
-                actionName: 'new'
-            },
+            attributes: { objectApiName: 'Opportunity', actionName: 'new' },
             state
         });
     }
 
+    handleNewDesignBuild() {
+        const rtId = this.findRecordTypeId('Design_Build');
+        const state = { defaultFieldValues: encodeDefaultFieldValues({ StageName: 'Discovery' }) };
+        if (rtId) state.recordTypeId = rtId;
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Opportunity', actionName: 'new' },
+            state
+        });
+    }
+
+    handleActionClick(event) {
+        const id = event.currentTarget.dataset.id;
+        const action = event.currentTarget.dataset.action;
+        if (!id || !action) return;
+        const taskActions = ['New Task', 'Log Activity', 'Log Call', 'Schedule', 'Confirm'];
+        if (taskActions.includes(action)) {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__quickAction',
+                attributes: { apiName: 'Global.NewTask' },
+                state: { recordId: id }
+            });
+        } else {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: { recordId: id, actionName: 'view' }
+            });
+        }
+    }
+
     findRecordTypeId(developerName) {
-        const recordTypeInfos = this.objectInfo?.recordTypeInfos || {};
-        return Object.values(recordTypeInfos).find((info) => info.developerName === developerName)?.recordTypeId
-            || null;
+        const infos = this.objectInfo?.recordTypeInfos || {};
+        const found = Object.values(infos).find(i => i.developerName === developerName);
+        return found?.recordTypeId || null;
+    }
+
+    reduceError(error) {
+        if (!error) return '';
+        if (Array.isArray(error.body)) return error.body.map(e => e.message).join(', ');
+        return error.body?.message || error.message || 'Unable to load opportunities.';
     }
 }
