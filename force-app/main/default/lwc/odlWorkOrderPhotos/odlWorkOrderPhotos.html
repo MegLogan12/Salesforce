@@ -1,0 +1,26 @@
+<template>
+    <lightning-card title="Photo Capture and Gates" icon-name="utility:photo">
+        <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+            <template if:true={error}>
+                <div class="slds-text-color_error">{error}</div>
+            </template>
+
+            <template if:true={tiles.length}>
+                <div class="photogrid">
+                    <template for:each={tiles} for:item="t">
+                        <div key={t.name} class="ptile">
+                            <div class="pt-name">{t.name}</div>
+                            <div class="pt-count">{t.count}</div>
+                            <div class="pt-req">{t.requirement}</div>
+                            <div class={t.statusClass}>{t.status}</div>
+                        </div>
+                    </template>
+                </div>
+                <p class="slds-text-body_small slds-text-color_weak slds-m-top_small">
+                    Closeout photos gate job completion. Each photo must be captured on site and
+                    tied to this work order. Counts reflect captured photos, not stock images.
+                </p>
+            </template>
+        </div>
+    </lightning-card>
+</template>

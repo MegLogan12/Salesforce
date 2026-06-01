@@ -1,0 +1,51 @@
+.na-banner {
+    border-left: 3px solid #2d5f8a;
+    background: #f3f7fb;
+}
+
+.steps {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+}
+
+.step {
+    flex: 1;
+    min-width: 90px;
+    padding: 8px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+    border-radius: 4px;
+    background: #eef0f2;
+    color: #5b6470;
+    white-space: nowrap;
+}
+
+.step.done {
+    background: #cfe6da;
+    color: #2e7d5b;
+}
+
+.step.current {
+    background: #2d5f8a;
+    color: #fff;
+}
+
+.gate-badge {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 8px;
+}
+
+.gate-badge.ready {
+    background: #e6f3ec;
+    color: #2e7d5b;
+}
+
+.gate-badge.notready {
+    background: #eef0f2;
+    color: #5b6470;
+}

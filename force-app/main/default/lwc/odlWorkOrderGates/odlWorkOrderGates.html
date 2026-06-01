@@ -1,0 +1,130 @@
+<template>
+    <lightning-card>
+        <div slot="title" class="slds-grid slds-grid_vertical-align-center slds-gutters_x-small">
+            <lightning-icon icon-name="standard:work_order" size="small"></lightning-icon>
+            <span class="slds-m-left_x-small">Field Execution</span>
+        </div>
+        <lightning-button-icon
+            slot="actions"
+            icon-name="utility:refresh"
+            alternative-text="Refresh"
+            title="Refresh"
+            onclick={handleRefresh}>
+        </lightning-button-icon>
+
+        <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+
+            <!-- ERROR -->
+            <template if:true={error}>
+                <div class="slds-text-color_error slds-p-vertical_small">{error}</div>
+            </template>
+
+            <template if:true={hasData}>
+
+                <!-- NEXT ACTION -->
+                <div class="na-banner slds-box slds-box_x-small slds-m-bottom_small">
+                    <span class="slds-text-title_caps slds-text-color_weak">Next</span>
+                    <span class="slds-text-heading_small slds-m-left_x-small">
+                        {view.nextAction.text}
+                    </span>
+                </div>
+
+                <!-- LIFECYCLE STEPPER -->
+                <div class="steps slds-m-bottom_medium">
+                    <template for:each={steps} for:item="s">
+                        <span key={s.label} class={s.cssClass}>{s.label}</span>
+                    </template>
+                </div>
+
+                <!-- READINESS -->
+                <div class="slds-grid slds-grid_vertical-align-center slds-m-bottom_x-small">
+                    <h3 class="slds-text-heading_small">Completion Gates</h3>
+                    <span class={readinessClass}>{readinessLabel}</span>
+                </div>
+
+                <!-- GATES -->
+                <ul class="slds-has-dividers_bottom-space">
+                    <template for:each={gates} for:item="g">
+                        <li key={g.label} class="slds-item slds-grid slds-grid_vertical-align-center">
+                            <lightning-icon
+                                icon-name={g.iconName}
+                                variant={g.iconVariant}
+                                size="x-small"
+                                class="slds-m-right_small">
+                            </lightning-icon>
+                            <div class="slds-col">
+                                <div class="slds-text-body_regular slds-text-title_bold">{g.label}</div>
+                                <div class="slds-text-body_small slds-text-color_weak">{g.detail}</div>
+                                <template if:true={g.flag}>
+                                    <div class="slds-text-body_small slds-text-color_weak slds-text-color_error">
+                                        {g.flag}
+                                    </div>
+                                </template>
+                            </div>
+                            <div class="slds-text-body_small slds-text-align_right">{g.statusText}</div>
+                        </li>
+                    </template>
+                </ul>
+
+                <!-- COMPLETE -->
+                <div class="slds-m-top_medium">
+                    <lightning-button
+                        label="Complete Job"
+                        variant="success"
+                        disabled={completeDisabled}
+                        onclick={handleComplete}>
+                    </lightning-button>
+                    <div class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">
+                        {completeReason}
+                    </div>
+                </div>
+
+                <!-- INSTALL SCOPE -->
+                <div class="slds-m-top_large">
+                    <h3 class="slds-text-heading_small slds-m-bottom_x-small">Install Scope</h3>
+                    <template if:true={hasScope}>
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <th scope="col">Scope item</th>
+                                    <th scope="col">Detail</th>
+                                    <th scope="col">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={view.scope} for:item="line">
+                                    <tr key={line.name}>
+                                        <td>{line.name}</td>
+                                        <td>{line.detail}</td>
+                                        <td>{line.status}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                    <template if:false={hasScope}>
+                        <p class="slds-text-color_weak">No install scope lines on this work order.</p>
+                    </template>
+                </div>
+
+                <!-- CUSTOMER -->
+                <div class="slds-m-top_large">
+                    <h3 class="slds-text-heading_small slds-m-bottom_x-small">Customer</h3>
+                    <p class="slds-text-title_bold">{view.customer.contactName}</p>
+                    <p class="slds-text-body_small">{view.customer.siteAddress}</p>
+                    <p class="slds-text-body_small">{view.customer.phone}</p>
+                    <p class="slds-text-body_small slds-text-color_weak">Builder: {view.customer.builderName}</p>
+                </div>
+
+                <!-- SOURCE OPPORTUNITY (flagged gap) -->
+                <div class="slds-m-top_large">
+                    <h3 class="slds-text-heading_small slds-m-bottom_x-small">Source Opportunity</h3>
+                    <p class="slds-text-color_weak">
+                        No source opportunity is linked. Work_Order__c has no Opportunity lookup in this org.
+                    </p>
+                </div>
+
+            </template>
+        </div>
+    </lightning-card>
+</template>
