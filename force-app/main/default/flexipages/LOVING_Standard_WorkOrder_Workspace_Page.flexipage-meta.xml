@@ -7,6 +7,18 @@
                 <identifier>wo_workspace_shell</identifier>
             </componentInstance>
         </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>c:odlWorkOrderGates</componentName>
+                <identifier>wo_workspace_odl_gates</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>c:odlWorkOrderPhotos</componentName>
+                <identifier>wo_workspace_odl_photos</identifier>
+            </componentInstance>
+        </itemInstances>
         <name>main</name>
         <type>Region</type>
     </flexiPageRegions>

@@ -3,13 +3,14 @@
     <apiVersion>62.0</apiVersion>
     <isExposed>true</isExposed>
     <masterLabel>ODL Work Order Gates</masterLabel>
-    <description>Completion gates, lifecycle stepper, next action, scope, and customer for the Outdoor Living Work_Order__c field execution page.</description>
+    <description>Completion gates, lifecycle stepper, next action, scope, and customer for the Outdoor Living work order field execution page.</description>
     <targets>
         <target>lightning__RecordPage</target>
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__RecordPage">
             <objects>
+                <object>WorkOrder</object>
                 <object>Work_Order__c</object>
             </objects>
         </targetConfig>

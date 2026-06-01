@@ -3,13 +3,14 @@
     <apiVersion>62.0</apiVersion>
     <isExposed>true</isExposed>
     <masterLabel>ODL Work Order Photos</masterLabel>
-    <description>Photo capture counts against minimums for the Outdoor Living Work_Order__c field execution page. Shows counts, never stock images.</description>
+    <description>Photo capture counts against minimums for the Outdoor Living work order field execution page. Shows counts, never stock images.</description>
     <targets>
         <target>lightning__RecordPage</target>
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__RecordPage">
             <objects>
+                <object>WorkOrder</object>
                 <object>Work_Order__c</object>
             </objects>
         </targetConfig>
