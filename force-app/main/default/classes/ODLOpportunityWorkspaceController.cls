@@ -201,8 +201,10 @@ public with sharing class ODLOpportunityWorkspaceController {
     private static String activityChipClass(String result) {
         if (result == 'Left Voicemail') return 'chip chip-amber';
         if (result == 'Email Sent') return 'chip chip-blue';
-        if (result == 'Call Connected') return 'chip chip-green';
-        if (result == 'Text Sent') return 'chip chip-blue';
+        if (result == 'Call Completed') return 'chip chip-green';
+        if (result == 'Consult Scheduled') return 'chip chip-blue';
+        if (result == 'Quote Sent') return 'chip chip-amber';
+        if (result == 'Activity Logged') return 'chip chip-gray';
         return 'chip chip-gray';
     }
 
@@ -227,53 +229,55 @@ public with sharing class ODLOpportunityWorkspaceController {
         if (!String.isBlank(callDisposition)) {
             String disp = callDisposition.toLowerCase();
             if (disp.contains('voicemail')) return 'Left Voicemail';
-            if (disp.contains('connected') || disp.contains('reached') || disp.contains('answered')) return 'Call Connected';
+            if (disp.contains('connected') || disp.contains('reached') || disp.contains('answered')) return 'Call Completed';
         }
         if (!String.isBlank(subject)) {
             String lower = subject.toLowerCase();
             if (lower.contains('voicemail')) return 'Left Voicemail';
+            if (lower.contains('quote')) return 'Quote Sent';
+            if (lower.contains('consult') || lower.contains('schedule')) return 'Consult Scheduled';
             if (lower.contains('email')) return 'Email Sent';
-            if (lower.contains('text') || lower.contains('sms')) return 'Text Sent';
-            if (lower.contains('call') || lower.contains('phone')) return 'Call Connected';
+            if (lower.contains('call') || lower.contains('phone')) return 'Call Completed';
         }
-        return 'Activity';
+        return 'Activity Logged';
     }
 
     private static String deriveNextActionText(OppRow row, Opportunity opp) {
-        if (row.woReady) return 'Work order ready to release';
-        if (opp.Voicemail_Left__c) return 'Schedule callback — voicemail was left';
-        if (row.followUpDate != null && row.followUpDate < Date.today()) {
-            return 'Overdue: ' + (row.followUpSubject != null ? row.followUpSubject : 'follow-up task');
-        }
-        if (opp.StageName == 'Deposit Pending') return 'Collect deposit to release work order';
-        if (opp.StageName == 'Contract Sent' || opp.Contract_Status__c == 'Sent') {
-            return 'Contract awaiting signature';
-        }
-        if (opp.StageName == 'Quote Review' || opp.Quote_Status__c == 'Sent') {
-            return 'Quote awaiting customer decision';
-        }
-        if (opp.StageName == 'Design In Progress') return 'Complete design and send quote';
-        if (opp.StageName == 'Consult Scheduled') return 'Confirm consultation appointment';
-        if (row.followUpDate != null && row.followUpDate == Date.today()) {
-            return 'Due today: ' + (row.followUpSubject != null ? row.followUpSubject : 'follow-up task');
-        }
-        if (opp.LastActivityDate == null || row.lastActivityResult == 'No Activity') return 'Log first contact';
-        if (row.followUpDate == null) return 'Schedule next follow-up';
-        return 'On track';
+        // 1. Closed Won
+        if (opp.StageName == 'Closed Won') return 'Handoff to ops';
+        // 2. Closed Lost
+        if (opp.StageName == 'Closed Lost') return 'Move to nurture';
+        // 3. No Activity
+        if (opp.LastActivityDate == null || row.lastActivityResult == 'No Activity') return 'Make first contact';
+        // 4. Ready
+        if (row.woReady) return 'Release work order';
+        // 5. Blocked on contract
+        if (opp.Quote_Status__c == 'Accepted' && opp.Contract_Status__c != 'Signed') return 'Confirm contract signature';
+        // 6. Blocked otherwise (deposit)
+        if (opp.Quote_Status__c == 'Accepted' && opp.Contract_Status__c == 'Signed' && !opp.Deposit_Paid__c) return 'Collect deposit';
+        // 7. Quote Sent or Presented
+        if (opp.Quote_Status__c == 'Sent' || opp.StageName == 'Quote Review') return 'Follow up on quote';
+        // 8. Quote Draft / Design In Progress
+        if (opp.StageName == 'Design In Progress') return 'Finalize and send quote';
+        // 9. Consult Scheduled
+        if (opp.StageName == 'Consult Scheduled') return 'Prep design for consult';
+        // 10. Discovery
+        if (opp.StageName == 'Discovery') return 'Book consult';
+        // 11. Default
+        return 'Advance the deal';
     }
 
     private static String deriveNextActionButton(OppRow row, Opportunity opp) {
-        if (row.woReady) return 'Release WO';
-        if (opp.Voicemail_Left__c) return 'Schedule';
-        if (row.followUpDate != null && row.followUpDate <= Date.today()) return 'Log Activity';
-        if (opp.StageName == 'Deposit Pending') return 'Call';
-        if (opp.StageName == 'Contract Sent' || opp.Contract_Status__c == 'Sent') return 'Call';
-        if (opp.StageName == 'Quote Review' || opp.Quote_Status__c == 'Sent') return 'Call';
-        if (opp.StageName == 'Design In Progress') return 'Send Quote';
-        if (opp.StageName == 'Consult Scheduled') return 'Confirm';
-        if (opp.LastActivityDate == null) return 'Log Call';
-        if (row.followUpDate == null) return 'New Task';
-        return 'View';
+        if (opp.StageName == 'Closed Won' || opp.StageName == 'Closed Lost') return null;
+        if (opp.LastActivityDate == null || row.lastActivityResult == 'No Activity') return 'Call';
+        if (row.woReady) return 'Release';
+        if (opp.Quote_Status__c == 'Accepted' && opp.Contract_Status__c != 'Signed') return 'Mark Signed';
+        if (opp.Quote_Status__c == 'Accepted' && opp.Contract_Status__c == 'Signed' && !opp.Deposit_Paid__c) return 'Request';
+        if (opp.Quote_Status__c == 'Sent' || opp.StageName == 'Quote Review') return 'Call';
+        if (opp.StageName == 'Design In Progress') return 'Send';
+        if (opp.StageName == 'Consult Scheduled') return 'Open';
+        if (opp.StageName == 'Discovery') return 'Schedule';
+        return 'Open';
     }
 
     private static List<KpiCard> buildKpis(List<OppRow> rows) {

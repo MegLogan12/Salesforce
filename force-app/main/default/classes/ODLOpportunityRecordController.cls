@@ -118,7 +118,7 @@ public with sharing class ODLOpportunityRecordController {
             RowData latestInteraction = data.interactions[0];
             data.lastAction = deriveActionLabel(latestInteraction.interactionType, latestInteraction.label, latestInteraction.status);
             data.lastActionDate = latestInteraction.dateText;
-            data.lastActionWasVoicemail = latestInteraction.interactionType == 'Voicemail';
+            data.lastActionWasVoicemail = latestInteraction.interactionType == 'Left Voicemail';
         } else {
             data.lastAction = 'No action logged';
             data.lastActionDate = 'No activity';
@@ -232,44 +232,45 @@ public with sharing class ODLOpportunityRecordController {
         return gate;
     }
 
-    // ─── Next action engine (11 rules, mirrors workspace) ────────────────────────
+    // ─── Next action engine (11 rules, spec-ordered, matches workspace) ─────────
 
     private static String deriveNextActionText(Opportunity opp, ReadinessGate gate,
                                                Task nextTask, Boolean lastWasVoicemail) {
-        if (gate != null && gate.woReady) return 'Work order is ready — release now';
-        if (opp.Voicemail_Left__c) return 'Schedule callback — voicemail was left';
-        if (nextTask != null && nextTask.ActivityDate != null && nextTask.ActivityDate < Date.today()) {
-            return 'Overdue: ' + (nextTask.Subject != null ? nextTask.Subject : 'follow-up task');
-        }
-        if (opp.StageName == 'Deposit Pending') return 'Collect deposit to release work order';
-        if (opp.StageName == 'Contract Sent' || opp.Contract_Status__c == 'Sent') {
-            return 'Contract sent — awaiting signature';
-        }
-        if (opp.StageName == 'Quote Review' || opp.Quote_Status__c == 'Sent') {
-            return 'Quote sent — follow up for a decision';
-        }
-        if (opp.StageName == 'Design In Progress') return 'Complete design and send quote';
-        if (opp.StageName == 'Consult Scheduled') return 'Confirm consultation appointment';
-        if (nextTask != null && nextTask.ActivityDate != null && nextTask.ActivityDate == Date.today()) {
-            return 'Due today: ' + (nextTask.Subject != null ? nextTask.Subject : 'follow-up task');
-        }
-        if (opp.LastActivityDate == null) return 'Log first contact';
-        if (nextTask == null) return 'Schedule next follow-up';
-        return 'On track';
+        // 1. Closed Won
+        if (opp.StageName == 'Closed Won') return 'Handoff to ops';
+        // 2. Closed Lost
+        if (opp.StageName == 'Closed Lost') return 'Move to nurture';
+        // 3. No Activity
+        if (opp.LastActivityDate == null) return 'Make first contact';
+        // 4. Ready
+        if (gate != null && gate.woReady) return 'Release work order';
+        // 5. Blocked on contract
+        if (gate != null && gate.quoteAccepted && !gate.contractSigned) return 'Confirm contract signature';
+        // 6. Blocked otherwise (deposit)
+        if (gate != null && gate.quoteAccepted && gate.contractSigned && !gate.depositPaid) return 'Collect deposit';
+        // 7. Quote Sent or Presented
+        if (opp.Quote_Status__c == 'Sent' || opp.StageName == 'Quote Review') return 'Follow up on quote';
+        // 8. Quote Draft / Design in progress
+        if (opp.StageName == 'Design In Progress') return 'Finalize and send quote';
+        // 9. Consult Scheduled
+        if (opp.StageName == 'Consult Scheduled') return 'Prep design for consult';
+        // 10. Discovery
+        if (opp.StageName == 'Discovery') return 'Book consult';
+        // 11. Default
+        return 'Advance the deal';
     }
 
     private static String deriveNextActionButton(Opportunity opp, ReadinessGate gate, Task nextTask) {
-        if (gate != null && gate.woReady) return 'Release WO';
-        if (opp.Voicemail_Left__c) return 'Schedule';
-        if (nextTask != null && nextTask.ActivityDate != null && nextTask.ActivityDate <= Date.today()) return 'Log Activity';
-        if (opp.StageName == 'Deposit Pending') return 'Call';
-        if (opp.StageName == 'Contract Sent' || opp.Contract_Status__c == 'Sent') return 'Call';
-        if (opp.StageName == 'Quote Review' || opp.Quote_Status__c == 'Sent') return 'Call';
-        if (opp.StageName == 'Design In Progress') return 'Send Quote';
-        if (opp.StageName == 'Consult Scheduled') return 'Confirm';
-        if (opp.LastActivityDate == null) return 'Log Call';
-        if (nextTask == null) return 'New Task';
-        return 'View';
+        if (opp.StageName == 'Closed Won' || opp.StageName == 'Closed Lost') return null;
+        if (opp.LastActivityDate == null) return 'Call';
+        if (gate != null && gate.woReady) return 'Release';
+        if (gate != null && gate.quoteAccepted && !gate.contractSigned) return 'Mark Signed';
+        if (gate != null && gate.quoteAccepted && gate.contractSigned && !gate.depositPaid) return 'Request';
+        if (opp.Quote_Status__c == 'Sent' || opp.StageName == 'Quote Review') return 'Call';
+        if (opp.StageName == 'Design In Progress') return 'Send';
+        if (opp.StageName == 'Consult Scheduled') return 'Open';
+        if (opp.StageName == 'Discovery') return 'Schedule';
+        return 'Open';
     }
 
     // ─── Quote from opportunity status field (standard Quote not in use) ─────────
@@ -379,10 +380,12 @@ public with sharing class ODLOpportunityRecordController {
     }
 
     private static String interactionChipClass(String interactionType) {
-        if (interactionType == 'Voicemail') return 'chip chip-amber';
-        if (interactionType == 'Email') return 'chip chip-blue';
-        if (interactionType == 'Call') return 'chip chip-green';
-        if (interactionType == 'Text') return 'chip chip-blue';
+        if (interactionType == 'Left Voicemail') return 'chip chip-amber';
+        if (interactionType == 'Email Sent') return 'chip chip-blue';
+        if (interactionType == 'Call Completed') return 'chip chip-green';
+        if (interactionType == 'Consult Scheduled') return 'chip chip-blue';
+        if (interactionType == 'Quote Sent') return 'chip chip-amber';
+        if (interactionType == 'Activity Logged') return 'chip chip-gray';
         return 'chip chip-gray';
     }
 
@@ -525,38 +528,26 @@ public with sharing class ODLOpportunityRecordController {
     private static String deriveInteractionType(String subject, String taskSubtype, String eventType, String callDisposition) {
         if (!String.isBlank(callDisposition)) {
             String disp = callDisposition.toLowerCase();
-            if (disp.contains('voicemail')) return 'Voicemail';
-            if (disp.contains('connected') || disp.contains('reached') || disp.contains('answered')) return 'Call';
+            if (disp.contains('voicemail')) return 'Left Voicemail';
+            if (disp.contains('connected') || disp.contains('reached') || disp.contains('answered')) return 'Call Completed';
         }
         String normalizedSubject = String.isBlank(subject) ? '' : subject.toLowerCase();
         String normalizedSubtype = String.isBlank(taskSubtype) ? '' : taskSubtype.toLowerCase();
         String normalizedEventType = String.isBlank(eventType) ? '' : eventType.toLowerCase();
 
-        if (normalizedSubject.contains('voicemail')) return 'Voicemail';
-        if (normalizedSubtype == 'call' || normalizedEventType == 'call' || normalizedSubject.contains('call')) return 'Call';
-        if (normalizedSubtype == 'email' || normalizedSubject.contains('email') || normalizedEventType.contains('email')) return 'Email';
-        if (normalizedSubject.contains('text') || normalizedSubject.contains('sms')) return 'Text';
-        if (!String.isBlank(eventType)) return eventType;
-        return 'Task';
+        if (normalizedSubject.contains('voicemail')) return 'Left Voicemail';
+        if (normalizedSubject.contains('quote')) return 'Quote Sent';
+        if (normalizedSubject.contains('consult') || normalizedSubject.contains('schedule')) return 'Consult Scheduled';
+        if (normalizedSubtype == 'call' || normalizedEventType == 'call' || normalizedSubject.contains('call')) return 'Call Completed';
+        if (normalizedSubtype == 'email' || normalizedSubject.contains('email') || normalizedEventType.contains('email')) return 'Email Sent';
+        if (normalizedSubject.contains('text') || normalizedSubject.contains('sms')) return 'Activity Logged';
+        if (!String.isBlank(callDisposition) || !String.isBlank(eventType)) return 'Activity Logged';
+        return 'Result Not Categorized';
     }
 
     private static String deriveActionLabel(String interactionType, String subject, String status) {
-        String phase = deriveActionPhase(subject);
-        if (interactionType == 'Voicemail') return 'Left Voicemail — ' + phase;
-        if (interactionType == 'Email') return 'Email Sent — ' + phase;
-        if (interactionType == 'Call') return 'Call Complete — ' + phase;
-        if (interactionType == 'Text') return 'Text Sent — ' + phase;
-        if (interactionType == 'Task' || String.isBlank(interactionType)) {
-            return firstNonBlank(new List<String>{ subject, 'Activity Logged' });
-        }
-        return interactionType + ' — ' + phase;
-    }
-
-    private static String deriveActionPhase(String subject) {
-        String normalized = String.isBlank(subject) ? '' : subject.toLowerCase();
-        if (normalized.contains('presentation')) return 'Presentation';
-        if (normalized.contains('follow-up') || normalized.contains('follow up') || normalized.contains('callback')) return 'Follow-Up';
-        return 'Initial';
+        if (!String.isBlank(interactionType) && interactionType != 'Result Not Categorized') return interactionType;
+        return firstNonBlank(new List<String>{ subject, 'Activity Logged' });
     }
 
     private static String firstNonBlank(List<String> values) {

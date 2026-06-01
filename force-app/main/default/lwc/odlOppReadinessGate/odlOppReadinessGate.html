@@ -87,9 +87,13 @@
 
             <!-- Release WO button -->
             <div class="gate-footer">
-                <button class={releaseButtonClass} disabled={releaseDisabled} onclick={handleReleaseWo}>
+                <button class={releaseButtonClass} disabled={releaseDisabled} onclick={handleReleaseWo}
+                    title={releaseButtonTitle}>
                     Release Work Order
                 </button>
+                <template lwc:if={releaseDisabled}>
+                    <p class="blocked-reason">Blocked until contract and deposit requirements are complete.</p>
+                </template>
             </div>
         </template>
 

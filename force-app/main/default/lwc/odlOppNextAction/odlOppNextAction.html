@@ -5,8 +5,10 @@
             <div class="next-action-label">Next Action</div>
             <div class="next-action-text">{nextActionText}</div>
         </div>
-        <div class="next-action-cta">
-            <button class={buttonClass} onclick={handleAction}>{nextActionButton}</button>
-        </div>
+        <template lwc:if={hasButton}>
+            <div class="next-action-cta">
+                <button class={buttonClass} onclick={handleAction}>{nextActionButton}</button>
+            </div>
+        </template>
     </div>
 </template>

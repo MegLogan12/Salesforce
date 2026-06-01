@@ -7,6 +7,11 @@ export default class OdlOppReadinessGate extends NavigationMixin(LightningElemen
 
     get hasReadiness() { return Boolean(this.readiness); }
     get releaseDisabled() { return !this.readiness?.woReady; }
+    get releaseButtonTitle() {
+        return this.readiness?.woReady
+            ? 'Release Work Order'
+            : 'Blocked until contract and deposit requirements are complete.';
+    }
     get releaseButtonClass() {
         return this.readiness?.woReady ? 'btn-release btn-release-active' : 'btn-release';
     }

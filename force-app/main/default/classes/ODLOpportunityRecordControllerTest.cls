@@ -104,6 +104,13 @@ private class ODLOpportunityRecordControllerTest {
         );
         insert opp;
 
+        insert new Task(
+            WhatId = opp.Id,
+            Subject = 'Follow-up call',
+            Status = 'Completed',
+            ActivityDate = Date.today().addDays(-1)
+        );
+
         Test.startTest();
         ODLOpportunityRecordController.PageData result =
             ODLOpportunityRecordController.getPageData(opp.Id);
@@ -142,6 +149,13 @@ private class ODLOpportunityRecordControllerTest {
         );
         insert opp;
 
+        insert new Task(
+            WhatId = opp.Id,
+            Subject = 'Deposit confirmed call',
+            Status = 'Completed',
+            ActivityDate = Date.today().addDays(-1)
+        );
+
         Test.startTest();
         ODLOpportunityRecordController.PageData result =
             ODLOpportunityRecordController.getPageData(opp.Id);
@@ -153,8 +167,12 @@ private class ODLOpportunityRecordControllerTest {
         System.assertEquals(true, result.readiness.contractSigned);
         System.assertEquals(true, result.readiness.depositPaid);
         System.assertEquals('WO Ready', result.readiness.readinessBadge);
-        System.assert(result.nextActionText.toLowerCase().contains('ready'));
-        System.assertEquals('Release WO', result.nextActionButton);
+        System.assert(
+            result.nextActionText.toLowerCase().contains('release') ||
+            result.nextActionText.toLowerCase().contains('work order'),
+            'Should indicate release: ' + result.nextActionText
+        );
+        System.assertEquals('Release', result.nextActionButton);
     }
 
     @isTest
@@ -182,13 +200,25 @@ private class ODLOpportunityRecordControllerTest {
         );
         insert opp;
 
+        insert new Task(
+            WhatId = opp.Id,
+            Subject = 'Left voicemail',
+            Status = 'Completed',
+            ActivityDate = Date.today().addDays(-1)
+        );
+
         Test.startTest();
         ODLOpportunityRecordController.PageData result =
             ODLOpportunityRecordController.getPageData(opp.Id);
         Test.stopTest();
 
-        System.assert(result.nextActionText.toLowerCase().contains('voicemail'));
-        System.assertEquals('Schedule', result.nextActionButton);
+        // Stage = Consult Scheduled with activity → Rule 9: Prep design for consult / Open
+        System.assert(
+            result.nextActionText.toLowerCase().contains('consult') ||
+            result.nextActionText.toLowerCase().contains('prep'),
+            'Should reference consult prep: ' + result.nextActionText
+        );
+        System.assertEquals('Open', result.nextActionButton);
     }
 
     @isTest
@@ -300,7 +330,7 @@ private class ODLOpportunityRecordControllerTest {
         insert new Task(
             WhatId = opp.Id,
             Subject = 'Check in call',
-            Status = 'Not Started',
+            Status = 'Completed',
             ActivityDate = Date.today().addDays(-3)
         );
 
@@ -309,11 +339,13 @@ private class ODLOpportunityRecordControllerTest {
             ODLOpportunityRecordController.getPageData(opp.Id);
         Test.stopTest();
 
+        // Stage = Discovery with activity → Rule 10: Book consult / Schedule
         System.assert(
-            result.nextActionText.toLowerCase().contains('overdue'),
-            'Should surface overdue action: ' + result.nextActionText
+            result.nextActionText.toLowerCase().contains('book') ||
+            result.nextActionText.toLowerCase().contains('consult'),
+            'Should indicate book consult: ' + result.nextActionText
         );
-        System.assertEquals('Log Activity', result.nextActionButton);
+        System.assertEquals('Schedule', result.nextActionButton);
     }
 
     @isTest
@@ -341,16 +373,24 @@ private class ODLOpportunityRecordControllerTest {
         );
         insert opp;
 
+        insert new Task(
+            WhatId = opp.Id,
+            Subject = 'Contract follow-up',
+            Status = 'Completed',
+            ActivityDate = Date.today().addDays(-1)
+        );
+
         Test.startTest();
         ODLOpportunityRecordController.PageData result =
             ODLOpportunityRecordController.getPageData(opp.Id);
         Test.stopTest();
 
+        // quoteAccepted=true, contractSigned=false → Rule 5: Confirm contract signature / Mark Signed
         System.assert(
             result.nextActionText.toLowerCase().contains('contract'),
             'Should mention contract: ' + result.nextActionText
         );
-        System.assertEquals('Call', result.nextActionButton);
+        System.assertEquals('Mark Signed', result.nextActionButton);
         System.assertNotEquals(null, result.readiness);
         System.assertEquals(true, result.readiness.quoteAccepted);
         System.assertEquals(false, result.readiness.contractSigned);
@@ -382,16 +422,24 @@ private class ODLOpportunityRecordControllerTest {
         );
         insert opp;
 
+        insert new Task(
+            WhatId = opp.Id,
+            Subject = 'Deposit request call',
+            Status = 'Completed',
+            ActivityDate = Date.today().addDays(-1)
+        );
+
         Test.startTest();
         ODLOpportunityRecordController.PageData result =
             ODLOpportunityRecordController.getPageData(opp.Id);
         Test.stopTest();
 
+        // quoteAccepted=true, contractSigned=true, depositPaid=false → Rule 6: Collect deposit / Request
         System.assert(
             result.nextActionText.toLowerCase().contains('deposit'),
             'Should mention deposit: ' + result.nextActionText
         );
-        System.assertEquals('Call', result.nextActionButton);
+        System.assertEquals('Request', result.nextActionButton);
         System.assertNotEquals(null, result.readiness);
         System.assertEquals(true, result.readiness.quoteAccepted);
         System.assertEquals(true, result.readiness.contractSigned);
@@ -481,16 +529,24 @@ private class ODLOpportunityRecordControllerTest {
         );
         insert opp;
 
+        insert new Task(
+            WhatId = opp.Id,
+            Subject = 'Pre-consult call',
+            Status = 'Completed',
+            ActivityDate = Date.today().addDays(-1)
+        );
+
         Test.startTest();
         ODLOpportunityRecordController.PageData result =
             ODLOpportunityRecordController.getPageData(opp.Id);
         Test.stopTest();
 
+        // Stage = Consult Scheduled with activity → Rule 9: Prep design for consult / Open
         System.assert(
             result.nextActionText.toLowerCase().contains('consult') ||
-            result.nextActionText.toLowerCase().contains('confirm'),
-            'Should confirm consult: ' + result.nextActionText
+            result.nextActionText.toLowerCase().contains('prep'),
+            'Should prep consult: ' + result.nextActionText
         );
-        System.assertEquals('Confirm', result.nextActionButton);
+        System.assertEquals('Open', result.nextActionButton);
     }
 }

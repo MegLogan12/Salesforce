@@ -180,6 +180,13 @@ private class ODLOpportunityWorkspaceControllerTest {
         );
         insert vmOpp;
 
+        insert new Task(
+            WhatId = vmOpp.Id,
+            Subject = 'Left voicemail',
+            Status = 'Completed',
+            ActivityDate = Date.today().addDays(-1)
+        );
+
         Test.startTest();
         ODLOpportunityWorkspaceController.WorkspaceData result =
             ODLOpportunityWorkspaceController.getWorkspaceData();
@@ -193,7 +200,12 @@ private class ODLOpportunityWorkspaceControllerTest {
         }
         System.assertNotEquals(null, found, 'Voicemail opp should appear in results');
         System.assert(found.voicemailLeft == true);
-        System.assert(found.nextActionText.contains('voicemail'));
+        // Stage = Discovery with activity → Rule 10: Book consult / Schedule
+        System.assert(
+            found.nextActionText.toLowerCase().contains('book') ||
+            found.nextActionText.toLowerCase().contains('consult'),
+            'Should indicate book consult: ' + found.nextActionText
+        );
         System.assertEquals('Schedule', found.nextActionButton);
     }
 
@@ -221,6 +233,13 @@ private class ODLOpportunityWorkspaceControllerTest {
         );
         insert woOpp;
 
+        insert new Task(
+            WhatId = woOpp.Id,
+            Subject = 'Deposit confirmed call',
+            Status = 'Completed',
+            ActivityDate = Date.today().addDays(-1)
+        );
+
         Test.startTest();
         ODLOpportunityWorkspaceController.WorkspaceData result =
             ODLOpportunityWorkspaceController.getWorkspaceData();
@@ -234,8 +253,13 @@ private class ODLOpportunityWorkspaceControllerTest {
         }
         System.assertNotEquals(null, found, 'WO Ready opp should appear in results');
         System.assertEquals(true, found.woReady);
-        System.assertEquals('Work order ready to release', found.nextActionText);
-        System.assertEquals('Release WO', found.nextActionButton);
+        // woReady with activity → Rule 4: Release work order / Release
+        System.assert(
+            found.nextActionText.toLowerCase().contains('release') ||
+            found.nextActionText.toLowerCase().contains('work order'),
+            'Should indicate release: ' + found.nextActionText
+        );
+        System.assertEquals('Release', found.nextActionButton);
 
         Boolean woReadyKpiPositive = false;
         for (ODLOpportunityWorkspaceController.KpiCard kpi : result.kpis) {
