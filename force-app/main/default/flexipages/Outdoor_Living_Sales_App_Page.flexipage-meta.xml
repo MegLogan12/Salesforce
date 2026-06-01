@@ -3,14 +3,14 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>odlSalesWorkbench</componentName>
-                <identifier>c_odlSalesWorkbench</identifier>
+                <componentName>c:odlConsoleHome</componentName>
+                <identifier>c_odlConsoleHome</identifier>
             </componentInstance>
         </itemInstances>
         <name>main</name>
         <type>Region</type>
     </flexiPageRegions>
-    <masterLabel>Outdoor Living Dashboard App Page</masterLabel>
+    <masterLabel>Outdoor Living Home</masterLabel>
     <template>
         <name>flexipage:defaultAppHomeTemplate</name>
     </template>
