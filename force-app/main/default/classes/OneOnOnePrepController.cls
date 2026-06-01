@@ -50,8 +50,8 @@ public with sharing class OneOnOnePrepController {
 
             // Fetch the parent OneOnOne__c record
             List<OneOnOne__c> records = [
-                SELECT Id, Name, Meeting_Date__c, Status__c, Attendees__c,
-                       Notes__c, Action_Items__c, OwnerId, Owner.Name, CreatedDate
+                SELECT Id, Name, Meeting_Date__c, Status__c,
+                       OwnerId, Owner.Name, CreatedDate
                 FROM OneOnOne__c
                 WHERE Id = :recordId
                 LIMIT 1
@@ -69,10 +69,10 @@ public with sharing class OneOnOnePrepController {
             dto.meetingDateLabel = rec.Meeting_Date__c != null
                 ? rec.Meeting_Date__c.month() + '/' + rec.Meeting_Date__c.day() + '/' + rec.Meeting_Date__c.year()
                 : '';
-            dto.status           = rec.Status__c       != null ? rec.Status__c       : '';
-            dto.attendees        = rec.Attendees__c    != null ? rec.Attendees__c    : '';
-            dto.notes            = rec.Notes__c        != null ? rec.Notes__c        : '';
-            dto.actionItemsSummary = rec.Action_Items__c != null ? rec.Action_Items__c : '';
+            dto.status           = rec.Status__c != null ? rec.Status__c : '';
+            dto.attendees        = '';
+            dto.notes            = '';
+            dto.actionItemsSummary = '';
             dto.ownerName        = rec.Owner           != null ? rec.Owner.Name      : '';
             dto.createdDateLabel = rec.CreatedDate      != null
                 ? rec.CreatedDate.format('M/d/yyyy')

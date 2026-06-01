@@ -87,7 +87,7 @@ public with sharing class VPOpsDashboardController {
             // Recent hire requests (5)
             List<HireRequestRow> hrRows = new List<HireRequestRow>();
             for (Hire_Request__c hr : [
-                SELECT Id, Name, Status__c, Priority__c, CreatedDate
+                SELECT Id, Name, Status__c, CreatedDate
                 FROM Hire_Request__c
                 WHERE Status__c NOT IN ('Filled', 'Cancelled', 'Closed')
                 ORDER BY CreatedDate DESC
@@ -96,8 +96,8 @@ public with sharing class VPOpsDashboardController {
                 HireRequestRow r = new HireRequestRow();
                 r.id               = hr.Id;
                 r.name             = hr.Name;
-                r.status           = hr.Status__c   != null ? hr.Status__c   : '';
-                r.priority         = hr.Priority__c != null ? hr.Priority__c : '';
+                r.status           = hr.Status__c != null ? hr.Status__c : '';
+                r.priority         = '';
                 r.createdDateLabel = hr.CreatedDate != null
                     ? hr.CreatedDate.format('M/d/yyyy')
                     : '';
@@ -109,7 +109,7 @@ public with sharing class VPOpsDashboardController {
             Date today = Date.today();
             List<ActionItemRow> aiRows = new List<ActionItemRow>();
             for (Action_Item__c ai : [
-                SELECT Id, Name, Status__c, Due_Date__c, Owner.Name
+                SELECT Id, Name, Status__c, Due_Date__c
                 FROM Action_Item__c
                 WHERE Status__c NOT IN ('Completed', 'Cancelled', 'Closed')
                 ORDER BY Due_Date__c ASC NULLS LAST
@@ -122,7 +122,7 @@ public with sharing class VPOpsDashboardController {
                 r.dueDateLabel = ai.Due_Date__c != null
                     ? ai.Due_Date__c.month() + '/' + ai.Due_Date__c.day() + '/' + ai.Due_Date__c.year()
                     : '';
-                r.ownerName    = ai.Owner != null ? ai.Owner.Name : '';
+                r.ownerName    = '';
                 r.isOverdue    = (ai.Due_Date__c != null && ai.Due_Date__c < today);
                 r.statusChip   = chipClass(ai.Status__c);
                 aiRows.add(r);

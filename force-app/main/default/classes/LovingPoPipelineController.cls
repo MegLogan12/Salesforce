@@ -40,6 +40,7 @@ public with sharing class LovingPoPipelineController {
         @AuraEnabled public String name;
         @AuraEnabled public String builderPoId;
         @AuraEnabled public String poNumber;
+        @AuraEnabled public String purchaseOrderName;
         @AuraEnabled public String status;
         @AuraEnabled public String stage;
         @AuraEnabled public String takeoffStatus;
@@ -195,9 +196,10 @@ public with sharing class LovingPoPipelineController {
 
         for (Purchase_Order__c po : pos) {
             PoCardDTO dto  = new PoCardDTO();
-            dto.id         = po.Id;
-            dto.name       = po.PO_Number__c != null ? po.PO_Number__c : po.Name;
-            dto.poNumber   = po.PO_Number__c;
+            dto.id               = po.Id;
+            dto.name             = po.PO_Number__c != null ? po.PO_Number__c : po.Name;
+            dto.poNumber         = po.PO_Number__c;
+            dto.purchaseOrderName = po.PO_Number__c != null ? po.PO_Number__c : po.Name;
             dto.status     = po.Status__c;
             dto.stage      = po.Pipeline_Bucket__c;
             dto.takeoffStatus = po.Takeoff_Status__c;
@@ -315,6 +317,7 @@ public with sharing class LovingPoPipelineController {
             Purchase_Order__c po = pos[0];
             pdto.id               = po.Id;
             pdto.poNumber         = po.PO_Number__c;
+            pdto.purchaseOrderName = po.PO_Number__c != null ? po.PO_Number__c : po.Name;
             pdto.status           = po.Status__c;
             pdto.stage            = po.Pipeline_Bucket__c;
             pdto.takeoffStatus    = po.Takeoff_Status__c;
@@ -587,9 +590,10 @@ public with sharing class LovingPoPipelineController {
         DetailDTO detail = new DetailDTO();
 
         PoCardDTO pdto  = new PoCardDTO();
-        pdto.id         = po.Id;
-        pdto.name       = po.PO_Number__c != null ? po.PO_Number__c : po.Name;
-        pdto.poNumber   = po.PO_Number__c;
+        pdto.id               = po.Id;
+        pdto.name             = po.PO_Number__c != null ? po.PO_Number__c : po.Name;
+        pdto.poNumber         = po.PO_Number__c;
+        pdto.purchaseOrderName = po.PO_Number__c != null ? po.PO_Number__c : po.Name;
         pdto.status     = po.Status__c;
         pdto.stage      = po.Pipeline_Bucket__c;
         pdto.takeoffStatus = po.Takeoff_Status__c;
