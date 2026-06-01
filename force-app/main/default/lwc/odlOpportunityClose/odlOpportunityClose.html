@@ -44,14 +44,14 @@
                         </template>
                     </div>
 
-                    <template lwc:if={!isConfirming}>
+                    <template lwc:if={isNotConfirming}>
                         <button
                             class={closeButtonClass}
                             disabled={closeButtonDisabled}
                             onclick={handleConfirmClose}>
                             Mark as Closed Won
                         </button>
-                        <template lwc:if={!woReady}>
+                        <template lwc:if={isNotWoReady}>
                             <p class="close-blocked-note">
                                 All readiness gates must be complete before closing.
                             </p>

@@ -29,6 +29,8 @@ export default class OdlOpportunityClose extends NavigationMixin(LightningElemen
     get paymentSchedule() { return this.pageData?.paymentSchedule ?? null; }
     get isUmb() { return this.pageData?.isUmb ?? false; }
     get woReady() { return this.readiness?.woReady ?? false; }
+    get isNotWoReady() { return !this.woReady; }
+    get isNotConfirming() { return !this.isConfirming; }
 
     get isAlreadyClosed() {
         const s = this.stageName;
