@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>On_Time_Completion_Pct__c</fullName>
+    <description>Trailing-30-day on-time completion %. Maintained by DivisionKpiRecalcBatch. System-maintained; set FLS read-only. Spec Section 3.5.</description>
+    <label>On-Time Completion %</label>
+    <precision>5</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Percent</type>
+</CustomField>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Concentration_Pct_Q__c</fullName>
+    <description>Revenue concentration: this division's T12M revenue as a share of its parent's total. Cross-object formula with divide-by-zero guard; returns blank (renders as dash) until ParentRollupBatch populates Parent_Revenue_T12M__c. Spec Section 5.1.</description>
+    <formula>IF(
+  OR( ISBLANK(Parent.Parent_Revenue_T12M__c), Parent.Parent_Revenue_T12M__c = 0 ),
+  null,
+  Division_Revenue_T12M__c / Parent.Parent_Revenue_T12M__c
+)</formula>
+    <formulaTreatBlanksAs>BlankAsBlank</formulaTreatBlanksAs>
+    <label>Revenue Concentration %</label>
+    <precision>5</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Percent</type>
+</CustomField>
