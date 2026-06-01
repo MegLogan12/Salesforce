@@ -1,0 +1,124 @@
+<template>
+    <section class="page">
+        <nav class="tab-strip">
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Home">Home Page</a>
+            <a class="sf-tab" href="/lightning/cmp/c__odlHomeownerAccountsTab">Account</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Leads">Leads</a>
+            <a class="sf-tab on" href="/lightning/n/Outdoor_Living_Opportunities">Opportunities</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Campaigns">Campaigns</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Tasks">Tasks</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Quotes">Quote</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Work_Orders">Work Order</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Calendar">Calendar</a>
+        </nav>
+
+        <div class="header">
+            <div class="header-left">
+                <div class="record-icon">OP</div>
+                <div>
+                    <h1>Homeowner Opportunity List</h1>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button type="button" class="btn primary" onclick={handleNewUmbOpportunity}>New UMB Opportunity</button>
+                <button type="button" class="btn primary" onclick={handleNewCustomOpportunity}>New Custom Design Opportunity</button>
+                <button type="button" class="btn primary" onclick={handleNewLawnOpportunity}>New Lawn Care Opportunity</button>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <button class={allChipClass} data-filter="All Homeowner Opportunities" onclick={handleFilterClick}>All Homeowner Opportunities</button>
+            <button class={umbChipClass} data-filter="UMB" onclick={handleFilterClick}>UMB</button>
+            <button class={designChipClass} data-filter="Custom" onclick={handleFilterClick}>Custom</button>
+            <button class={lawnChipClass} data-filter="Lawn Care" onclick={handleFilterClick}>Lawn Care</button>
+            <button class={voicemailChipClass} data-filter="Voicemail Left" onclick={handleFilterClick}>Voicemail Left</button>
+            <button class={followupChipClass} data-filter="Follow-Up Due" onclick={handleFilterClick}>Follow-Up Due</button>
+            <span class="spacer"></span>
+            <select onchange={handleOwnerChange}>
+                <option value="">All owners</option>
+                <template for:each={ownerOptions} for:item="owner">
+                    <option key={owner} value={owner}>{owner}</option>
+                </template>
+            </select>
+            <select onchange={handleStageChange}>
+                <option value="">All stages</option>
+                <template for:each={stageOptions} for:item="stage">
+                    <option key={stage} value={stage}>{stage}</option>
+                </template>
+            </select>
+            <input type="search" class="search" placeholder="Search opportunities" value={searchText} oninput={handleSearchInput} />
+            <div class="column-picker-wrap">
+                <button type="button" class="column-button" onclick={handleToggleColumnPicker}>Columns ({visibleColumnCount})</button>
+                <template lwc:if={showColumnPicker}>
+                    <div class="column-picker">
+                        <template for:each={columnOptions} for:item="option">
+                            <label key={option.key} class="column-option">
+                                <input type="checkbox" checked={option.checked} data-column={option.key} onchange={handleColumnToggle} />
+                                <span>{option.label}</span>
+                            </label>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="icon">OP</div>
+                <h2>Opportunity Operating List</h2>
+            </div>
+            <template lwc:if={hasLoadError}>
+                <div style="padding:0.85rem 0.9rem;font-size:0.8rem;color:#c23934">{loadError}</div>
+            </template>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Opportunity</th>
+                        <template lwc:if={showAccountColumn}><th>Account</th></template>
+                        <template lwc:if={showLobColumn}><th>LOB</th></template>
+                        <template lwc:if={showStageColumn}><th>Stage</th></template>
+                        <template lwc:if={showAmountColumn}><th class="num">Amount</th></template>
+                        <template lwc:if={showPackageColumn}><th>Package / Service</th></template>
+                        <template lwc:if={showLastActivityColumn}><th>Last Activity</th></template>
+                        <template lwc:if={showLastActivityDateColumn}><th>Last Activity Date</th></template>
+                        <template lwc:if={showVoicemailColumn}><th>Voicemail</th></template>
+                        <template lwc:if={showVoicemailDateColumn}><th>Voicemail Date</th></template>
+                        <template lwc:if={showFollowUpTaskColumn}><th>Follow-Up Task</th></template>
+                        <template lwc:if={showFollowUpDueColumn}><th>Follow-Up Due</th></template>
+                        <template lwc:if={showOwnerColumn}><th>Owner</th></template>
+                        <template lwc:if={showOpenItemColumn}><th>Open Item</th></template>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={filteredRows} for:item="row">
+                        <tr key={row.id}>
+                            <td><a class="record-link" href={row.oppHref} data-record-id={row.id} onclick={handleOpenOpportunity}>{row.label}</a></td>
+                            <template lwc:if={showAccountColumn}><td>
+                                <template lwc:if={row.accountHref}>
+                                    <a class="account-link" href={row.accountHref} data-record-id={row.accountUrl} onclick={handleOpenAccount}>{row.accountName}</a>
+                                </template>
+                                <template lwc:else>{row.accountName}</template>
+                            </td></template>
+                            <template lwc:if={showLobColumn}><td><span class={row.lobChipClass}>{row.lob}</span></td></template>
+                            <template lwc:if={showStageColumn}><td>{row.stageName}</td></template>
+                            <template lwc:if={showAmountColumn}><td class="num">{row.amountDisplay}</td></template>
+                            <template lwc:if={showPackageColumn}><td>{row.packageDisplay}</td></template>
+                            <template lwc:if={showLastActivityColumn}><td>
+                                <template lwc:if={row.lastAction}>
+                                    <a class="activity-link" href={row.oppHref} data-record-id={row.id} data-section={row.lastActivitySection} onclick={handleOpenActivity}>{row.lastAction}</a>
+                                </template>
+                            </td></template>
+                            <template lwc:if={showLastActivityDateColumn}><td>{row.lastActivityDate}</td></template>
+                            <template lwc:if={showVoicemailColumn}><td><span class={row.voicemailChipClass}>{row.voicemailStatus}</span></td></template>
+                            <template lwc:if={showVoicemailDateColumn}><td>{row.voicemailDate}</td></template>
+                            <template lwc:if={showFollowUpTaskColumn}><td>{row.followUpTask}</td></template>
+                            <template lwc:if={showFollowUpDueColumn}><td>{row.followUpDue}</td></template>
+                            <template lwc:if={showOwnerColumn}><td>{row.ownerName}</td></template>
+                            <template lwc:if={showOpenItemColumn}><td><span class={row.openItemChipClass}>{row.openItem}</span></td></template>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</template>
