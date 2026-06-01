@@ -9,6 +9,9 @@ public with sharing class ODLOpportunityRecordController {
         @AuraEnabled public String secondaryText;
         @AuraEnabled public String relatedLabel;
         @AuraEnabled public String relatedUrl;
+        @AuraEnabled public String relatedOpportunityLabel;
+        @AuraEnabled public String relatedOpportunityUrl;
+        @AuraEnabled public String actionLabel;
         @AuraEnabled public String notesPreview;
         @AuraEnabled public String interactionType;
     }
@@ -26,11 +29,13 @@ public with sharing class ODLOpportunityRecordController {
         @AuraEnabled public String nextFollowUpDate;
         @AuraEnabled public RowData propertyRecord;
         @AuraEnabled public RowData voucherRecord;
+        @AuraEnabled public List<RowData> vouchers;
         @AuraEnabled public List<RowData> interactions;
         @AuraEnabled public List<RowData> designReviews;
         @AuraEnabled public List<RowData> paymentMilestones;
         @AuraEnabled public List<RowData> quotes;
         @AuraEnabled public List<RowData> files;
+        @AuraEnabled public List<RowData> notes;
         @AuraEnabled public List<String> missingData;
     }
 
@@ -61,11 +66,14 @@ public with sharing class ODLOpportunityRecordController {
         data.paymentMilestones = new List<RowData>();
         data.quotes = new List<RowData>();
         data.files = new List<RowData>();
+        data.notes = new List<RowData>();
+        data.vouchers = new List<RowData>();
         data.missingData = new List<String>();
         data.stagePath = new List<String>();
 
         data.opportunityRecord = [
-            SELECT Id, Name, Type, StageName, Amount, CloseDate, AccountId, Account.Name, Owner.Name, LeadSource,
+            SELECT Id, Name, Type, StageName, Amount, CloseDate, AccountId, ContactId,
+                   Account.Name, Account.Phone, Account.PersonMobilePhone, Account.PersonEmail, Account.BillingStreet, Owner.Name, LeadSource,
                    BMG_Package__c, Community_Name__c, Budget__c, Timeline__c, Budget_Confirmed__c,
                    Opportunity_Number__c, Deposit_Paid__c, Deposit_Paid_Date__c, Design_Link__c,
                    Lot_Layout_Link__c, Model_Pricing_Link__c, Services_Selected__c, Selected_Requirements__c
@@ -78,11 +86,11 @@ public with sharing class ODLOpportunityRecordController {
         data.projectPath = deriveProjectPath(data.opportunityRecord, typeLabels);
         data.accountName = data.opportunityRecord.Account != null ? data.opportunityRecord.Account.Name : null;
         data.accountUrl = data.opportunityRecord.AccountId != null ? '/' + data.opportunityRecord.AccountId : null;
-        data.stagePath = activeStagePath();
+        data.stagePath = activeStagePath(data.projectPath);
 
         Task nextTask = nextFollowUpTask(opportunityId);
-        data.nextFollowUpSubject = nextTask != null ? nextTask.Subject : 'No follow-up task';
-        data.nextFollowUpDate = nextTask != null && nextTask.ActivityDate != null ? String.valueOf(nextTask.ActivityDate) : 'No due date';
+        data.nextFollowUpSubject = nextTask != null ? nextTask.Subject : null;
+        data.nextFollowUpDate = nextTask != null && nextTask.ActivityDate != null ? String.valueOf(nextTask.ActivityDate) : null;
 
         data.interactions = recentInteractions(opportunityId);
         if (!data.interactions.isEmpty()) {
@@ -91,34 +99,58 @@ public with sharing class ODLOpportunityRecordController {
             data.lastActionDate = latestInteraction.dateText;
             data.lastActionWasVoicemail = latestInteraction.interactionType == 'Voicemail';
         } else {
-            data.lastAction = 'No action logged';
-            data.lastActionDate = 'No activity';
+            data.lastAction = null;
+            data.lastActionDate = null;
             data.lastActionWasVoicemail = false;
         }
         data.designReviews = designReviews(opportunityId);
         data.paymentMilestones = paymentMilestones(opportunityId);
         data.quotes = quotes(opportunityId);
         data.files = relatedFiles(opportunityId);
+        data.notes = relatedNotes(opportunityId);
         data.propertyRecord = propertyRecord(opportunityId);
         data.voucherRecord = voucherRecord(opportunityId);
-
+        data.vouchers = voucherRows(opportunityId);
         if (String.isBlank(data.projectPath)) {
-            data.missingData.add('This opportunity is not classified as UpgradeMyBackyard or Design Build.');
+            data.missingData.add('This opportunity is not classified as an outdoor living sales path.');
         }
-        if (data.designReviews.isEmpty()) {
-            data.missingData.add('No Design Review record is linked to this opportunity.');
-        }
-        if (data.paymentMilestones.isEmpty()) {
-            data.missingData.add('No Payment Milestone records are linked to this opportunity.');
-        }
-        if (data.quotes.isEmpty()) {
-            data.missingData.add('No Quote is linked to this opportunity.');
-        }
-        if (data.propertyRecord == null) {
-            data.missingData.add('No Homeowner Property record is linked to this opportunity.');
+        return data;
+    }
+
+    @AuraEnabled
+    public static String advanceStage(Id opportunityId) {
+        if (opportunityId == null) {
+            throw new AuraHandledException('Opportunity Id is required.');
         }
 
-        return data;
+        Opportunity oppRow = [
+            SELECT Id, Name, Type, StageName, LeadSource, BMG_Package__c
+            FROM Opportunity
+            WHERE Id = :opportunityId
+            LIMIT 1
+        ];
+
+        Map<String, String> typeLabels = picklistLabelByValue(Opportunity.Type);
+        String projectPath = deriveProjectPath(oppRow, typeLabels);
+        List<String> stagePath = activeStagePath(projectPath);
+        if (stagePath.isEmpty()) {
+            throw new AuraHandledException('No active stage path is available for this opportunity.');
+        }
+
+        Integer currentIndex = stagePath.indexOf(oppRow.StageName);
+        if (currentIndex == -1) {
+            throw new AuraHandledException('Current stage is not on the active ODL path. Use Edit to correct the stage.');
+        }
+        if (currentIndex >= stagePath.size() - 1) {
+            return oppRow.StageName;
+        }
+
+        String nextStage = stagePath[currentIndex + 1];
+        update new Opportunity(
+            Id = oppRow.Id,
+            StageName = nextStage
+        );
+        return nextStage;
     }
 
     private static List<RowData> recentInteractions(Id opportunityId) {
@@ -139,7 +171,7 @@ public with sharing class ODLOpportunityRecordController {
             row.status = 'Logged Email';
             row.subtext = firstNonBlank(new List<String>{ emailRow.ToAddress, 'Email' });
             row.dateText = emailRow.MessageDate != null ? emailRow.MessageDate.format('M/d/yyyy h:mm a') : null;
-            row.notesPreview = String.isBlank(emailRow.TextBody) ? 'No email preview' : trimPreview(emailRow.TextBody);
+            row.notesPreview = trimPreview(emailRow.TextBody);
             row.interactionType = 'Email';
             datedRows.add(wrap(row, emailRow.MessageDate));
         }
@@ -164,7 +196,7 @@ public with sharing class ODLOpportunityRecordController {
             row.label = taskRow.Subject;
             row.status = taskRow.Status;
             row.dateText = taskRow.ActivityDate != null ? String.valueOf(taskRow.ActivityDate) : null;
-            row.notesPreview = String.isBlank(taskRow.Description) ? 'No notes yet' : trimPreview(taskRow.Description);
+            row.notesPreview = trimPreview(taskRow.Description);
             row.interactionType = deriveInteractionType(taskRow.Subject, taskRow.TaskSubtype, null);
             datedRows.add(wrap(row, occurredAt));
         }
@@ -183,7 +215,7 @@ public with sharing class ODLOpportunityRecordController {
             row.label = eventRow.Subject;
             row.status = eventRow.ActivityDateTime != null && eventRow.ActivityDateTime >= System.now() ? 'Scheduled' : 'Completed';
             row.dateText = occurredAt != null ? occurredAt.format('M/d/yyyy h:mm a') : null;
-            row.notesPreview = String.isBlank(eventRow.Description) ? 'No notes yet' : trimPreview(eventRow.Description);
+            row.notesPreview = trimPreview(eventRow.Description);
             row.interactionType = deriveInteractionType(eventRow.Subject, null, eventRow.Type);
             datedRows.add(wrap(row, occurredAt));
         }
@@ -231,9 +263,9 @@ public with sharing class ODLOpportunityRecordController {
             row.url = '/' + milestone.Id;
             row.label = milestone.Type__c;
             row.status = milestone.Status__c;
-            row.subtext = milestone.Amount__c != null ? '$' + String.valueOf(milestone.Amount__c.setScale(0)) : 'Amount not set';
-            row.dateText = milestone.Due_Date__c != null ? String.valueOf(milestone.Due_Date__c) : 'No due date';
-            row.secondaryText = milestone.Paid_Date__c != null ? 'Paid ' + String.valueOf(milestone.Paid_Date__c) : 'Not paid';
+            row.subtext = milestone.Amount__c != null ? '$' + String.valueOf(milestone.Amount__c.setScale(0)) : null;
+            row.dateText = milestone.Due_Date__c != null ? String.valueOf(milestone.Due_Date__c) : null;
+            row.secondaryText = milestone.Paid_Date__c != null ? 'Paid ' + String.valueOf(milestone.Paid_Date__c) : null;
             rows.add(row);
         }
         return rows;
@@ -253,7 +285,7 @@ public with sharing class ODLOpportunityRecordController {
             row.url = '/' + quoteRow.Id;
             row.label = quoteRow.Name;
             row.status = quoteRow.Status;
-            row.subtext = quoteRow.GrandTotal != null ? '$' + String.valueOf(quoteRow.GrandTotal.setScale(0)) : 'Total not set';
+            row.subtext = quoteRow.GrandTotal != null ? '$' + String.valueOf(quoteRow.GrandTotal.setScale(0)) : null;
             row.dateText = quoteRow.CreatedDate.format('M/d/yyyy');
             rows.add(row);
         }
@@ -262,7 +294,7 @@ public with sharing class ODLOpportunityRecordController {
 
     private static RowData propertyRecord(Id opportunityId) {
         List<Homeowner_Property__c> rows = [
-            SELECT Id, Name, Community__r.Name, Lot__r.Name, Homeowner_Account__r.Name
+            SELECT Id, Name, Community__r.Name, Lot__r.Name, Lot__r.Street_Address__c, Homeowner_Account__r.Name, Homeowner_Account__r.BillingStreet
             FROM Homeowner_Property__c
             WHERE Opportunity__c = :opportunityId
             ORDER BY LastModifiedDate DESC
@@ -275,10 +307,17 @@ public with sharing class ODLOpportunityRecordController {
         RowData row = new RowData();
         row.id = propertyRow.Id;
         row.url = '/' + propertyRow.Id;
-        row.label = propertyRow.Name;
+        String homeownerLast = extractLastToken(propertyRow.Homeowner_Account__r != null ? propertyRow.Homeowner_Account__r.Name : null);
+        String lotStreet = propertyRow.Lot__r != null ? (String) propertyRow.Lot__r.get('Street_Address__c') : null;
+        String streetForLabel = firstNonBlank(new List<String>{
+            lotStreet,
+            propertyRow.Homeowner_Account__r != null ? propertyRow.Homeowner_Account__r.BillingStreet : null
+        });
+        row.label = buildPropertyLabel(homeownerLast, streetForLabel, propertyRow.Name);
         row.status = propertyRow.Community__r != null ? propertyRow.Community__r.Name : null;
         row.subtext = propertyRow.Lot__r != null ? propertyRow.Lot__r.Name : null;
         row.secondaryText = propertyRow.Homeowner_Account__r != null ? propertyRow.Homeowner_Account__r.Name : null;
+        row.notesPreview = firstNonBlank(new List<String>{ streetForLabel, propertyRow.Name });
         return row;
     }
 
@@ -286,22 +325,251 @@ public with sharing class ODLOpportunityRecordController {
         if (!Schema.getGlobalDescribe().containsKey('Voucher__c')) {
             return null;
         }
+        Map<String, Schema.SObjectField> voucherFields = Schema.SObjectType.Voucher__c.fields.getMap();
+        Set<Id> quoteIds = new Set<Id>();
+        for (Quote quoteRow : [
+            SELECT Id
+            FROM Quote
+            WHERE OpportunityId = :opportunityId
+            ORDER BY CreatedDate DESC
+            LIMIT 10
+        ]) {
+            quoteIds.add(quoteRow.Id);
+        }
+
+        Set<Id> contactIds = new Set<Id>();
+        for (Homeowner_Property__c propertyRow : [
+            SELECT Id, Homeowner_Account__r.PersonContactId
+            FROM Homeowner_Property__c
+            WHERE Opportunity__c = :opportunityId
+            ORDER BY LastModifiedDate DESC
+            LIMIT 1
+        ]) {
+            if (propertyRow.Homeowner_Account__r != null && propertyRow.Homeowner_Account__r.PersonContactId != null) {
+                contactIds.add(propertyRow.Homeowner_Account__r.PersonContactId);
+            }
+        }
+
+        Opportunity oppRow = [
+            SELECT Id, Name, StageName, LeadSource, Description, ContactId, Account.PersonContactId
+            FROM Opportunity
+            WHERE Id = :opportunityId
+            LIMIT 1
+        ];
+        if (oppRow.ContactId != null) {
+            contactIds.add(oppRow.ContactId);
+        }
+        if (oppRow.Account != null && oppRow.Account.PersonContactId != null) {
+            contactIds.add(oppRow.Account.PersonContactId);
+        }
+
+        List<String> filters = new List<String>();
+        if (voucherFields.containsKey('Reserved_Opportunity__c')) {
+            filters.add('Reserved_Opportunity__c = :opportunityId');
+        }
+        if (!quoteIds.isEmpty() && voucherFields.containsKey('Redeemed_Quote__c')) {
+            filters.add('Redeemed_Quote__c IN :quoteIds');
+        }
+        if (!contactIds.isEmpty() && voucherFields.containsKey('Contact__c')) {
+            filters.add('Contact__c IN :contactIds');
+        }
+        if (filters.isEmpty()) {
+            return null;
+        }
+
         List<SObject> rows = Database.query(
-            'SELECT Id, Name, Voucher_Code__c, Status__c, Voucher_Type__c ' +
-            'FROM Voucher__c WHERE Reserved_Opportunity__c = :opportunityId ORDER BY CreatedDate DESC LIMIT 1'
+            'SELECT Id, Name, Voucher_Code__c, Status__c, Voucher_Type__c, Campaign__c, Campaign__r.Name, ' +
+            'Reserved_Opportunity__c, Reserved_Opportunity__r.Name, Redeemed_Quote__c, Redeemed_Quote__r.Name ' +
+            'FROM Voucher__c WHERE ' + String.join(filters, ' OR ') + ' ORDER BY CreatedDate DESC LIMIT 1'
         );
         if (rows.isEmpty()) {
+            String fallbackVoucherCode = voucherCodeFromOpportunity(oppRow);
+            if (isVoucherSourcedOpportunity(oppRow) && String.isNotBlank(fallbackVoucherCode)) {
+                RowData fallbackRow = new RowData();
+                fallbackRow.id = oppRow.Id;
+                fallbackRow.url = '/' + oppRow.Id;
+                fallbackRow.label = fallbackVoucherCode;
+                fallbackRow.status = oppRow.StageName;
+                fallbackRow.subtext = 'Voucher-sourced opportunity';
+                fallbackRow.secondaryText = oppRow.LeadSource;
+                fallbackRow.notesPreview = null;
+                return fallbackRow;
+            }
             return null;
         }
         SObject voucherRow = rows[0];
         RowData row = new RowData();
         row.id = (Id) voucherRow.get('Id');
         row.url = '/' + row.id;
-        row.label = String.valueOf(voucherRow.get('Voucher_Code__c'));
+        row.label = firstNonBlank(new List<String>{
+            String.valueOf(voucherRow.get('Voucher_Code__c')),
+            String.valueOf(voucherRow.get('Name'))
+        });
         row.status = String.valueOf(voucherRow.get('Status__c'));
         row.subtext = String.valueOf(voucherRow.get('Voucher_Type__c'));
+        SObject campaignRow = voucherRow.getSObject('Campaign__r');
+        SObject redeemedQuoteRow = voucherRow.getSObject('Redeemed_Quote__r');
+        row.secondaryText = campaignRow == null ? null : String.valueOf(campaignRow.get('Name'));
+        row.relatedLabel = redeemedQuoteRow == null ? null : String.valueOf(redeemedQuoteRow.get('Name'));
         row.notesPreview = String.valueOf(voucherRow.get('Name'));
         return row;
+    }
+
+    private static List<RowData> voucherRows(Id opportunityId) {
+        List<RowData> rows = new List<RowData>();
+        if (!Schema.getGlobalDescribe().containsKey('Voucher__c')) {
+            return rows;
+        }
+        Map<String, Schema.SObjectField> voucherFields = Schema.SObjectType.Voucher__c.fields.getMap();
+        Set<Id> quoteIds = new Set<Id>();
+        for (Quote quoteRow : [
+            SELECT Id
+            FROM Quote
+            WHERE OpportunityId = :opportunityId
+            ORDER BY CreatedDate DESC
+            LIMIT 10
+        ]) {
+            quoteIds.add(quoteRow.Id);
+        }
+
+        Set<Id> contactIds = new Set<Id>();
+        for (Homeowner_Property__c propertyRow : [
+            SELECT Id, Homeowner_Account__r.PersonContactId
+            FROM Homeowner_Property__c
+            WHERE Opportunity__c = :opportunityId
+            ORDER BY LastModifiedDate DESC
+            LIMIT 1
+        ]) {
+            if (propertyRow.Homeowner_Account__r != null && propertyRow.Homeowner_Account__r.PersonContactId != null) {
+                contactIds.add(propertyRow.Homeowner_Account__r.PersonContactId);
+            }
+        }
+
+        Opportunity oppRow = [
+            SELECT Id, Name, StageName, LeadSource, Description, ContactId, AccountId, Account.PersonContactId
+            FROM Opportunity
+            WHERE Id = :opportunityId
+            LIMIT 1
+        ];
+        if (oppRow.ContactId != null) {
+            contactIds.add(oppRow.ContactId);
+        }
+        if (oppRow.Account != null && oppRow.Account.PersonContactId != null) {
+            contactIds.add(oppRow.Account.PersonContactId);
+        }
+
+        List<String> filters = new List<String>();
+        if (voucherFields.containsKey('Reserved_Opportunity__c')) {
+            filters.add('Reserved_Opportunity__c = :opportunityId');
+        }
+        if (!quoteIds.isEmpty() && voucherFields.containsKey('Redeemed_Quote__c')) {
+            filters.add('Redeemed_Quote__c IN :quoteIds');
+        }
+        if (!contactIds.isEmpty() && voucherFields.containsKey('Contact__c')) {
+            filters.add('Contact__c IN :contactIds');
+        }
+
+        Set<Id> seenIds = new Set<Id>();
+        if (!filters.isEmpty()) {
+            for (SObject voucherRow : Database.query(
+                'SELECT Id, Name, Voucher_Code__c, Status__c, Voucher_Type__c, Campaign__c, Campaign__r.Name, ' +
+                'Reserved_Opportunity__c, Reserved_Opportunity__r.Name, Redeemed_Quote__c, Redeemed_Quote__r.Name, Expiration_Date__c ' +
+                'FROM Voucher__c WHERE ' + String.join(filters, ' OR ') + ' ORDER BY CreatedDate DESC LIMIT 10'
+            )) {
+                RowData row = new RowData();
+                row.id = (Id) voucherRow.get('Id');
+                row.url = '/' + row.id;
+                row.label = firstNonBlank(new List<String>{
+                    String.valueOf(voucherRow.get('Voucher_Code__c')),
+                    String.valueOf(voucherRow.get('Name'))
+                });
+                row.status = String.valueOf(voucherRow.get('Status__c'));
+                row.subtext = String.valueOf(voucherRow.get('Voucher_Type__c'));
+                SObject campaignRow = voucherRow.getSObject('Campaign__r');
+                SObject reservedOppRow = voucherRow.getSObject('Reserved_Opportunity__r');
+                SObject redeemedQuoteRow = voucherRow.getSObject('Redeemed_Quote__r');
+                row.relatedLabel = campaignRow == null ? null : String.valueOf(campaignRow.get('Name'));
+                row.relatedUrl = voucherRow.get('Campaign__c') == null ? null : '/' + String.valueOf(voucherRow.get('Campaign__c'));
+                row.relatedOpportunityLabel = reservedOppRow == null ? null : String.valueOf(reservedOppRow.get('Name'));
+                row.relatedOpportunityUrl = voucherRow.get('Reserved_Opportunity__c') == null ? null : '/' + String.valueOf(voucherRow.get('Reserved_Opportunity__c'));
+                row.secondaryText = redeemedQuoteRow == null ? null : String.valueOf(redeemedQuoteRow.get('Name'));
+                row.dateText = voucherRow.get('Expiration_Date__c') == null ? null : String.valueOf(voucherRow.get('Expiration_Date__c'));
+                row.actionLabel = 'Open';
+                row.notesPreview = String.valueOf(voucherRow.get('Name'));
+                rows.add(row);
+                seenIds.add(row.id);
+            }
+        }
+
+        String fallbackVoucherCode = voucherCodeFromOpportunity(oppRow);
+        if (rows.isEmpty() && isVoucherSourcedOpportunity(oppRow) && String.isNotBlank(fallbackVoucherCode)) {
+            RowData fallbackRow = new RowData();
+            fallbackRow.id = oppRow.Id;
+            fallbackRow.url = '/' + oppRow.Id;
+            fallbackRow.label = fallbackVoucherCode;
+            fallbackRow.status = oppRow.StageName;
+            fallbackRow.subtext = 'Voucher-sourced opportunity';
+            fallbackRow.secondaryText = oppRow.LeadSource;
+            fallbackRow.relatedOpportunityLabel = oppRow.Name;
+            fallbackRow.relatedOpportunityUrl = '/' + oppRow.Id;
+            fallbackRow.actionLabel = 'Open Opportunity';
+            fallbackRow.notesPreview = null;
+            rows.add(fallbackRow);
+            seenIds.add(fallbackRow.id);
+        }
+
+        if (oppRow.AccountId != null) {
+            for (Opportunity voucherOpp : [
+                SELECT Id, Name, StageName, LeadSource, Description
+                FROM Opportunity
+                WHERE AccountId = :oppRow.AccountId
+                AND Id != :opportunityId
+                AND IsClosed = false
+                AND (Name LIKE '%Voucher%' OR LeadSource LIKE '%Voucher%')
+                ORDER BY LastModifiedDate DESC
+                LIMIT 5
+            ]) {
+                if (seenIds.contains(voucherOpp.Id)) {
+                    continue;
+                }
+                RowData row = new RowData();
+                row.id = voucherOpp.Id;
+                row.url = '/' + voucherOpp.Id;
+                String voucherCode = voucherCodeFromOpportunity(voucherOpp);
+                if (String.isBlank(voucherCode)) {
+                    continue;
+                }
+                row.label = voucherCode;
+                row.status = voucherOpp.StageName;
+                row.subtext = 'Voucher-sourced opportunity';
+                row.relatedOpportunityLabel = voucherOpp.Name;
+                row.relatedOpportunityUrl = '/' + voucherOpp.Id;
+                row.secondaryText = voucherOpp.LeadSource;
+                row.actionLabel = 'Open Opportunity';
+                row.notesPreview = null;
+                rows.add(row);
+                seenIds.add(row.id);
+            }
+        }
+        return rows;
+    }
+
+    private static String voucherCodeFromOpportunity(Opportunity oppRow) {
+        if (oppRow == null) {
+            return null;
+        }
+        String raw = oppRow.Description;
+        if (String.isBlank(raw)) {
+            return null;
+        }
+        String candidate = raw.trim();
+        if (candidate.contains(' ') || candidate.length() < 4 || candidate.length() > 24) {
+            return null;
+        }
+        if (!Pattern.matches('[A-Za-z0-9\\-]+', candidate)) {
+            return null;
+        }
+        return candidate;
     }
 
     private static List<RowData> relatedFiles(Id opportunityId) {
@@ -313,12 +581,66 @@ public with sharing class ODLOpportunityRecordController {
             ORDER BY SystemModstamp DESC
             LIMIT 5
         ]) {
+            if (linkRow.ContentDocument.FileType == 'SNOTE') {
+                continue;
+            }
             RowData row = new RowData();
             row.id = linkRow.ContentDocumentId;
             row.url = '/' + linkRow.ContentDocumentId;
             row.label = linkRow.ContentDocument.Title;
             row.subtext = linkRow.ContentDocument.FileType;
             row.dateText = linkRow.ContentDocument.LastModifiedDate.format('M/d/yyyy');
+            rows.add(row);
+        }
+        return rows;
+    }
+
+    private static List<RowData> relatedNotes(Id opportunityId) {
+        List<RowData> rows = new List<RowData>();
+        List<ContentDocumentLink> links = [
+            SELECT ContentDocumentId, LinkedEntityId, ContentDocument.Title, ContentDocument.FileType, ContentDocument.LastModifiedDate
+            FROM ContentDocumentLink
+            WHERE LinkedEntityId = :opportunityId
+            ORDER BY SystemModstamp DESC
+            LIMIT 10
+        ];
+        Set<Id> docIds = new Set<Id>();
+        for (ContentDocumentLink linkRow : links) {
+            if (linkRow.ContentDocument.FileType == 'SNOTE') {
+                docIds.add(linkRow.ContentDocumentId);
+            }
+        }
+
+        Map<Id, String> notePreviewByDocId = new Map<Id, String>();
+        if (!docIds.isEmpty()) {
+            for (ContentVersion versionRow : [
+                SELECT ContentDocumentId, TextPreview, VersionData, FileExtension
+                FROM ContentVersion
+                WHERE IsLatest = true
+                AND ContentDocumentId IN :docIds
+            ]) {
+                String preview = String.isNotBlank(versionRow.TextPreview)
+                    ? versionRow.TextPreview
+                    : (versionRow.VersionData != null && String.valueOf(versionRow.FileExtension).toLowerCase() == 'snote'
+                        ? trimPreview(versionRow.VersionData.toString())
+                        : null);
+                if (String.isNotBlank(preview)) {
+                    notePreviewByDocId.put(versionRow.ContentDocumentId, trimPreview(preview));
+                }
+            }
+        }
+
+        for (ContentDocumentLink linkRow : links) {
+            if (linkRow.ContentDocument.FileType != 'SNOTE') {
+                continue;
+            }
+            RowData row = new RowData();
+            row.id = linkRow.ContentDocumentId;
+            row.url = '/' + linkRow.ContentDocumentId;
+            row.label = linkRow.ContentDocument.Title;
+            row.subtext = 'Salesforce Note';
+            row.dateText = linkRow.ContentDocument.LastModifiedDate.format('M/d/yyyy');
+            row.notesPreview = notePreviewByDocId.get(linkRow.ContentDocumentId);
             rows.add(row);
         }
         return rows;
@@ -336,7 +658,38 @@ public with sharing class ODLOpportunityRecordController {
         return tasks.isEmpty() ? null : tasks[0];
     }
 
-    private static List<String> activeStagePath() {
+    private static List<String> activeStagePath(String projectPath) {
+        if (projectPath == 'Upgrade My Backyard') {
+            return new List<String>{
+                'Community Activated',
+                'Quote Requested',
+                'Consultation Scheduled',
+                'Design In Progress',
+                'Proposal Presented',
+                'Contract Sent',
+                'Financing Review',
+                'Contract Signed',
+                'Deposit Paid',
+                'Pre-Production',
+                'In Progress',
+                'Pre Close',
+                'Job Completed',
+                'Closed Lost'
+            };
+        }
+        if (projectPath == 'Design Build') {
+            return new List<String>{
+                'Inquiry',
+                'Discovery',
+                'Proposal',
+                'Negotiation',
+                'Contract Signed',
+                'Deposit Paid',
+                'In Progress',
+                'Job Completed',
+                'Closed Lost'
+            };
+        }
         List<String> steps = new List<String>();
         for (Schema.PicklistEntry entry : Opportunity.StageName.getDescribe().getPicklistValues()) {
             if (entry.isActive()) {
@@ -380,21 +733,24 @@ public with sharing class ODLOpportunityRecordController {
         if (normalizedType.contains('lawn') || normalizedLabel.contains('lawn')) {
             return null;
         }
-        if (label == 'UpgradeMyBackyard' || opp.Type == 'UMB') {
-            return 'UpgradeMyBackyard';
+        if (
+            label == 'UpgradeMyBackyard' ||
+            opp.Type == 'UMB' ||
+            opp.Type == 'UpgradeMyBackyard'
+        ) {
+            return 'Upgrade My Backyard';
         }
         if (label == 'Design Build' || label == 'Design and Build') {
             return 'Design Build';
         }
         // Voucher/Lennar LeadSource check precedes name check — voucher opps are the UMB
-        // homebuilder-partner channel even when named "- Backyard Design".
         if (
             normalizedLeadSource.contains('voucher') ||
             normalizedLeadSource.contains('lennar') ||
             normalizedName.contains('voucher') ||
             normalizedName.contains('upgrademybackyard')
         ) {
-            return 'UpgradeMyBackyard';
+            return 'Upgrade My Backyard';
         }
         if (
             normalizedType.contains('custom') ||
@@ -404,17 +760,14 @@ public with sharing class ODLOpportunityRecordController {
         ) {
             return 'Design Build';
         }
-        // Home Builder type = homebuilder partner channel = UMB delivery path.
         if (
             opp.Type == 'New Business' ||
-            opp.Type == 'Home Builder' ||
             !String.isBlank(opp.BMG_Package__c) ||
             normalizedLeadSource.contains('upgrade') ||
-            normalizedLeadSource.contains('builder') ||
             normalizedName.contains('backyard') ||
             normalizedName.contains('umb')
         ) {
-            return 'UpgradeMyBackyard';
+            return 'Upgrade My Backyard';
         }
         return null;
     }
@@ -476,8 +829,41 @@ public with sharing class ODLOpportunityRecordController {
         return null;
     }
 
+    private static Boolean isVoucherSourcedOpportunity(Opportunity oppRow) {
+        if (oppRow == null) {
+            return false;
+        }
+        String normalizedLeadSource = String.isBlank(oppRow.LeadSource) ? '' : oppRow.LeadSource.toLowerCase();
+        String normalizedName = String.isBlank(oppRow.Name) ? '' : oppRow.Name.toLowerCase();
+        return normalizedLeadSource.contains('voucher')
+            || normalizedLeadSource.contains('lennar')
+            || normalizedName.contains('voucher')
+            || normalizedName.contains('lennar');
+    }
+
+    private static String extractLastToken(String value) {
+        if (String.isBlank(value)) {
+            return null;
+        }
+        List<String> parts = value.trim().split('\\s+');
+        return parts.isEmpty() ? value : parts[parts.size() - 1];
+    }
+
+    private static String buildPropertyLabel(String lastName, String street, String fallbackLabel) {
+        if (String.isNotBlank(lastName) && String.isNotBlank(street)) {
+            return lastName + ' - ' + street;
+        }
+        return firstNonBlank(new List<String>{ street, fallbackLabel });
+    }
+
     private static String trimPreview(String value) {
+        if (value == null) {
+            return null;
+        }
         String normalized = value.replace('\r', ' ').replace('\n', ' ').trim();
+        if (String.isBlank(normalized)) {
+            return null;
+        }
         if (normalized.length() <= 80) {
             return normalized;
         }
