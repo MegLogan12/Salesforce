@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All_Home_Owner_Opportunities</fullName>
+    <columns>OPPORTUNITY_NAME</columns>
+    <columns>ACCOUNT_NAME</columns>
+    <columns>STAGE_NAME</columns>
+    <columns>AMOUNT</columns>
+    <columns>CLOSE_DATE</columns>
+    <columns>OPPORTUNITY_OWNER</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>ACCOUNT_TYPE</field>
+        <operation>equals</operation>
+        <value>Home Owner</value>
+    </filters>
+    <filters>
+        <field>OPPORTUNITY_STAGE</field>
+        <operation>notEqual</operation>
+        <value>Closed Won,Closed Lost</value>
+    </filters>
+    <label>All Home Owner Opportunities</label>
+    <sharedTo>
+        <allInternalUsers/>
+    </sharedTo>
+</ListView>

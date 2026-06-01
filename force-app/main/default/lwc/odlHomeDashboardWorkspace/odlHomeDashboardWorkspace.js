@@ -141,9 +141,8 @@ export default class OdlHomeDashboardWorkspace extends NavigationMixin(Lightning
 
     handleOpenOpportunities() {
         this[NavigationMixin.Navigate]({
-            type:       'standard__objectPage',
-            attributes: { objectApiName: 'Opportunity', actionName: 'list' },
-            state:      { filterName: 'Recent' }
+            type:       'standard__navItemPage',
+            attributes: { apiName: 'Outdoor_Living_Opportunities' }
         });
     }
 
