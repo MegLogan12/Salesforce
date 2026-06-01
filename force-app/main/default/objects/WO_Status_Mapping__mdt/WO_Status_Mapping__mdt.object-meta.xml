@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Maps each Work_Order__c Status__c value to an open/terminal bucket and a simplified display stage for lifecycle steppers. Finance and ops can change the mapping here without code changes.</description>
+    <label>WO Status Mapping</label>
+    <pluralLabel>WO Status Mappings</pluralLabel>
+    <visibility>Public</visibility>
+</CustomObject>

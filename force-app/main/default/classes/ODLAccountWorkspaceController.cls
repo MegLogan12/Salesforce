@@ -26,6 +26,7 @@ public with sharing class ODLAccountWorkspaceController {
             List<Account> accounts = [
                 SELECT Id, Name, OwnerId, Owner.Name,
                        Market__c, AccountSource, LastActivityDate,
+                       YTD_Revenue__c,
                        (SELECT Id, Name
                         FROM Contacts
                         ORDER BY CreatedDate
@@ -198,7 +199,9 @@ public with sharing class ODLAccountWorkspaceController {
         row.ownerId            = a.OwnerId;
         row.ownerName          = a.Owner != null ? a.Owner.Name : '';
         row.lifecycle          = lifecycle;
-        row.lifetimeValue      = null;
+        // LTV proxy: YTD_Revenue__c until a proper lifetime roll-up is created (§9 workaround).
+        // Gate: a Closed Won Opp roll-up or completed-job sum needs Meg approval before creation.
+        row.lifetimeValue      = a.YTD_Revenue__c;
         row.openOppId          = openOpp != null ? openOpp.Id        : null;
         row.openOppName        = openOpp != null ? openOpp.Name      : null;
         row.openOppStage       = openOpp != null ? openOpp.StageName : null;

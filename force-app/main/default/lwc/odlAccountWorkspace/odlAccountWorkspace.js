@@ -19,7 +19,7 @@ const FILTER_DEFS = [
 ];
 
 // ── Market values from org picklist ───────────────────────────────────────
-const MARKETS = ['Charlotte', 'Greenville', 'Asheville', 'Spartanburg'];
+const MARKETS = ['Triad', 'Columbia', 'Greenville', 'Charlotte-North', 'Charlotte-South', 'Asheville', 'Charlotte'];
 
 // ── Owner avatar palette ───────────────────────────────────────────────────
 const AVATAR_COLORS = [

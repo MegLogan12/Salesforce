@@ -1,9 +1,26 @@
 public class DivisionKpiRecalcBatch implements Database.Batchable<SObject> {
 
     private static final Date T12M = Date.today().addDays(-365);
-    private static final Set<String> WO_TERMINAL = new Set<String>{
-        'Closed', 'Cancelled', 'Invoiced', 'Paid', 'Closeout Approved'
-    };
+
+    // Terminal statuses loaded from WO_Status_Mapping__mdt so finance can
+    // change the open/closed line without a code deploy (Prompt 2 requirement).
+    private static final Set<String> WO_TERMINAL = loadTerminalStatuses();
+
+    private static Set<String> loadTerminalStatuses() {
+        Set<String> terminal = new Set<String>();
+        for (WO_Status_Mapping__mdt m : [
+            SELECT Status_Label__c FROM WO_Status_Mapping__mdt WHERE Is_Terminal__c = true
+        ]) {
+            terminal.add(m.Status_Label__c);
+        }
+        // Fallback in case CMT records are absent (deployment gap)
+        if (terminal.isEmpty()) {
+            terminal.addAll(new Set<String>{
+                'Closed', 'Cancelled', 'Invoiced', 'Paid', 'Closeout Approved'
+            });
+        }
+        return terminal;
+    }
 
     public static void run() {
         Database.executeBatch(new DivisionKpiRecalcBatch(), 50);
