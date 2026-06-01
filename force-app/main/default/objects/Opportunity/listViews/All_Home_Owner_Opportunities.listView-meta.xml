@@ -9,11 +9,6 @@
     <columns>CORE.USERS.FULL_NAME</columns>
     <filterScope>Everything</filterScope>
     <filters>
-        <field>ACCOUNT.TYPE</field>
-        <operation>equals</operation>
-        <value>Home Owner</value>
-    </filters>
-    <filters>
         <field>OPPORTUNITY.STAGE_NAME</field>
         <operation>notEqual</operation>
         <value>Closed Won,Closed Lost</value>
