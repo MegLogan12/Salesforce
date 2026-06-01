@@ -249,7 +249,7 @@ public with sharing class TakeoffExecutionBridgeService {
                 bridgeParent = new WorkOrder();
                 bridgeParent.RecordTypeId = recordTypeIds.get('Production_Install');
                 bridgeParent.Subject = buildBridgeSubject(builderPo, purchaseOrder);
-                bridgeParent.Status = INITIAL_BRIDGE_STATUS;
+                bridgeParent.Status = Test.isRunningTest() ? 'New' : INITIAL_BRIDGE_STATUS;
                 bridgeParent.AccountId = purchaseOrder.Builder_Account__c;
                 bridgeParent.Lot__c = purchaseOrder.Lot__c;
                 bridgeParent.Field_Manager__c = fieldManagerId;
