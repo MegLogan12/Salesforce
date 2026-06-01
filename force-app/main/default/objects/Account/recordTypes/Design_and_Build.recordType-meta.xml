@@ -552,10 +552,7 @@
             <fullName>Commercial</fullName>
             <default>false</default>
         </values>
-        <values>
-            <fullName>Contractor</fullName>
-            <default>false</default>
-        </values>
+
         <values>
             <fullName>Homeowner</fullName>
             <default>false</default>
