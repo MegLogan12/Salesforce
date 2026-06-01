@@ -4,7 +4,11 @@
     <description>Outdoor Living Design Build sales process.</description>
     <isActive>true</isActive>
     <values>
-        <fullName>Discovery</fullName>
+        <fullName>Discovery Consult</fullName>
+        <default>true</default>
+    </values>
+    <values>
+        <fullName>Design Agreement</fullName>
         <default>false</default>
     </values>
     <values>
@@ -12,19 +16,11 @@
         <default>false</default>
     </values>
     <values>
-        <fullName>Design In Progress</fullName>
+        <fullName>Design Development</fullName>
         <default>false</default>
     </values>
     <values>
-        <fullName>Quote Review</fullName>
-        <default>false</default>
-    </values>
-    <values>
-        <fullName>Contract Sent</fullName>
-        <default>false</default>
-    </values>
-    <values>
-        <fullName>Deposit Pending</fullName>
+        <fullName>Proposal Presented</fullName>
         <default>false</default>
     </values>
     <values>

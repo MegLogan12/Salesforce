@@ -4,7 +4,11 @@
     <description>Outdoor Living UMB packaged opportunity sales process.</description>
     <isActive>true</isActive>
     <values>
-        <fullName>Discovery</fullName>
+        <fullName>Qualifying</fullName>
+        <default>true</default>
+    </values>
+    <values>
+        <fullName>Package Selected</fullName>
         <default>false</default>
     </values>
     <values>
@@ -12,19 +16,15 @@
         <default>false</default>
     </values>
     <values>
-        <fullName>Design In Progress</fullName>
+        <fullName>Quote Sent</fullName>
         <default>false</default>
     </values>
     <values>
-        <fullName>Quote Review</fullName>
+        <fullName>Quote Accepted</fullName>
         <default>false</default>
     </values>
     <values>
-        <fullName>Contract Sent</fullName>
-        <default>false</default>
-    </values>
-    <values>
-        <fullName>Deposit Pending</fullName>
+        <fullName>Proposal Presented</fullName>
         <default>false</default>
     </values>
     <values>

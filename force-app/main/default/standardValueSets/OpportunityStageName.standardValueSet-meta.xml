@@ -149,4 +149,53 @@
         <closed>true</closed>
         <won>true</won>
     </standardValue>
+    <standardValue>
+        <fullName>Qualifying</fullName>
+        <default>false</default>
+        <label>Qualifying</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Package Selected</fullName>
+        <default>false</default>
+        <label>Package Selected</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Quote Sent</fullName>
+        <default>false</default>
+        <label>Quote Sent</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Quote Accepted</fullName>
+        <default>false</default>
+        <label>Quote Accepted</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Discovery Consult</fullName>
+        <default>false</default>
+        <label>Discovery Consult</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Design Agreement</fullName>
+        <default>false</default>
+        <label>Design Agreement</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Design Development</fullName>
+        <default>false</default>
+        <label>Design Development</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
 </StandardValueSet>

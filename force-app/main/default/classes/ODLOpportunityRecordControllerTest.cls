@@ -37,7 +37,7 @@ private class ODLOpportunityRecordControllerTest {
         Opportunity opp = new Opportunity(
             Name = 'Test UMB Record Page Opp',
             AccountId = acc.Id,
-            StageName = 'Discovery',
+            StageName = 'Qualifying',
             CloseDate = Date.today().addDays(30),
             RecordTypeId = rtIds.get('UMB'),
             Amount = 30000,
@@ -93,7 +93,7 @@ private class ODLOpportunityRecordControllerTest {
         Opportunity opp = new Opportunity(
             Name = 'Test DB Record Page Opp',
             AccountId = acc.Id,
-            StageName = 'Quote Review',
+            StageName = 'Design Development',
             CloseDate = Date.today().addDays(45),
             RecordTypeId = rtIds.get('Design_Build'),
             Amount = 80000,
@@ -143,7 +143,7 @@ private class ODLOpportunityRecordControllerTest {
         Opportunity opp = new Opportunity(
             Name = 'WO Ready Record Page Opp',
             AccountId = acc.Id,
-            StageName = 'Deposit Pending',
+            StageName = 'Quote Accepted',
             CloseDate = Date.today().addDays(10),
             RecordTypeId = rtId,
             Amount = 25000,
@@ -321,7 +321,7 @@ private class ODLOpportunityRecordControllerTest {
         Opportunity opp = new Opportunity(
             Name = 'No Activity Opp',
             AccountId = acc.Id,
-            StageName = 'Discovery',
+            StageName = 'Discovery Consult',
             CloseDate = Date.today().addDays(30),
             RecordTypeId = rtId,
             Amount = 12000,
@@ -404,7 +404,7 @@ private class ODLOpportunityRecordControllerTest {
         Opportunity opp = new Opportunity(
             Name = 'Contract Sent Opp',
             AccountId = acc.Id,
-            StageName = 'Contract Sent',
+            StageName = 'Proposal Presented',
             CloseDate = Date.today().addDays(14),
             RecordTypeId = rtId,
             Amount = 55000,
@@ -453,7 +453,7 @@ private class ODLOpportunityRecordControllerTest {
         Opportunity opp = new Opportunity(
             Name = 'Deposit Pending Not Ready Opp',
             AccountId = acc.Id,
-            StageName = 'Deposit Pending',
+            StageName = 'Quote Accepted',
             CloseDate = Date.today().addDays(7),
             RecordTypeId = rtId,
             Amount = 28000,
@@ -503,7 +503,7 @@ private class ODLOpportunityRecordControllerTest {
         Opportunity opp = new Opportunity(
             Name = 'Event Interaction Opp',
             AccountId = acc.Id,
-            StageName = 'Design In Progress',
+            StageName = 'Design Development',
             CloseDate = Date.today().addDays(30),
             RecordTypeId = rtIds.get('Design_Build'),
             Amount = 35000,
