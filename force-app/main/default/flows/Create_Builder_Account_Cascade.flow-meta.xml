@@ -42,11 +42,27 @@
         </value>
     </choices>
     <choices>
-        <name>CH_Div_Charlotte</name>
-        <choiceText>Charlotte</choiceText>
+        <name>CH_Div_Charlotte_North</name>
+        <choiceText>Charlotte-North</choiceText>
         <dataType>String</dataType>
         <value>
-            <stringValue>Charlotte</stringValue>
+            <stringValue>Charlotte-North</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>CH_Div_Charlotte_South</name>
+        <choiceText>Charlotte-South</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Charlotte-South</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>CH_Div_Columbia</name>
+        <choiceText>Columbia</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Columbia</stringValue>
         </value>
     </choices>
     <choices>
@@ -58,11 +74,11 @@
         </value>
     </choices>
     <choices>
-        <name>CH_Div_Spartanburg</name>
-        <choiceText>Spartanburg</choiceText>
+        <name>CH_Div_Triad</name>
+        <choiceText>Triad</choiceText>
         <dataType>String</dataType>
         <value>
-            <stringValue>Spartanburg</stringValue>
+            <stringValue>Triad</stringValue>
         </value>
     </choices>
     <choices>
@@ -774,9 +790,11 @@
         <fields>
             <name>DV_Division</name>
             <choiceReferences>CH_Div_Asheville</choiceReferences>
-            <choiceReferences>CH_Div_Charlotte</choiceReferences>
+            <choiceReferences>CH_Div_Charlotte_North</choiceReferences>
+            <choiceReferences>CH_Div_Charlotte_South</choiceReferences>
+            <choiceReferences>CH_Div_Columbia</choiceReferences>
             <choiceReferences>CH_Div_Greenville</choiceReferences>
-            <choiceReferences>CH_Div_Spartanburg</choiceReferences>
+            <choiceReferences>CH_Div_Triad</choiceReferences>
             <dataType>String</dataType>
             <fieldText>Division</fieldText>
             <fieldType>DropdownBox</fieldType>

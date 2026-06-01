@@ -31,7 +31,7 @@ private class ODLAccountWorkspaceControllerTest {
 
     @IsTest
     static void getWorkspaceData_returnsHomeownersOnly() {
-        Account ho = makeAccount('Homeowner One', 'Charlotte');
+        Account ho = makeAccount('Homeowner One', 'Greenville');
         Account builder = new Account(
             Name = 'Builder Corp',
             RecordTypeId = Schema.SObjectType.Account
@@ -59,7 +59,7 @@ private class ODLAccountWorkspaceControllerTest {
 
     @IsTest
     static void lifecycle_leadWhenNoOppNoJob() {
-        Account ho = makeAccount('Lead House', 'Charlotte');
+        Account ho = makeAccount('Lead House', 'Greenville');
         insert ho;
 
         Test.startTest();
@@ -90,7 +90,7 @@ private class ODLAccountWorkspaceControllerTest {
 
     @IsTest
     static void lifecycle_repeatCustomerWhenMultipleClosedWon() {
-        Account ho = makeAccount('Repeat House', 'Charlotte');
+        Account ho = makeAccount('Repeat House', 'Greenville');
         insert ho;
         Opportunity o1 = makeOpp(ho.Id, 'Closed Won', 'UMB');
         o1.CloseDate = Date.today().addDays(-10);
@@ -130,7 +130,7 @@ private class ODLAccountWorkspaceControllerTest {
 
     @IsTest
     static void health_watchWhenNoActivityIn30Days() {
-        Account ho = makeAccount('Cold House', 'Charlotte');
+        Account ho = makeAccount('Cold House', 'Greenville');
         insert ho;
         // Create a completed task 45 days in the past — controller picks this up
         Task t = new Task(
@@ -153,7 +153,7 @@ private class ODLAccountWorkspaceControllerTest {
 
     @IsTest
     static void recordTypeIdIsReturned() {
-        Account ho = makeAccount('RT Check', 'Charlotte');
+        Account ho = makeAccount('RT Check', 'Greenville');
         insert ho;
 
         Test.startTest();

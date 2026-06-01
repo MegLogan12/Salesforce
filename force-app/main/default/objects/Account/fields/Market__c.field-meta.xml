@@ -12,14 +12,14 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>Asheville</fullName>
+                <fullName>Triad</fullName>
                 <default>false</default>
-                <label>Asheville</label>
+                <label>Triad</label>
             </value>
             <value>
-                <fullName>Charlotte</fullName>
+                <fullName>Columbia</fullName>
                 <default>false</default>
-                <label>Charlotte</label>
+                <label>Columbia</label>
             </value>
             <value>
                 <fullName>Greenville</fullName>
@@ -27,27 +27,31 @@
                 <label>Greenville</label>
             </value>
             <value>
+                <fullName>Charlotte-North</fullName>
+                <default>false</default>
+                <label>Charlotte-North</label>
+            </value>
+            <value>
+                <fullName>Charlotte-South</fullName>
+                <default>false</default>
+                <label>Charlotte-South</label>
+            </value>
+            <value>
+                <fullName>Asheville</fullName>
+                <default>false</default>
+                <label>Asheville</label>
+            </value>
+            <value>
+                <fullName>Charlotte</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Charlotte</label>
+            </value>
+            <value>
                 <fullName>Spartanburg</fullName>
                 <default>false</default>
+                <isActive>false</isActive>
                 <label>Spartanburg</label>
-            </value>
-            <value>
-                <fullName>Columbia</fullName>
-                <default>false</default>
-                <isActive>false</isActive>
-                <label>Columbia</label>
-            </value>
-            <value>
-                <fullName>Other</fullName>
-                <default>false</default>
-                <isActive>false</isActive>
-                <label>Other</label>
-            </value>
-            <value>
-                <fullName>Triad</fullName>
-                <default>false</default>
-                <isActive>false</isActive>
-                <label>Triad</label>
             </value>
         </valueSetDefinition>
     </valueSet>
