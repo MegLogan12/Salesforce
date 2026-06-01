@@ -1,109 +1,144 @@
 /**
  * OneOnOnePrepController
- * Backend for the oneOnOnePrep LWC on LOVING_OneOnOne_Record_Page.
- * Returns the OneOnOne__c record and its related Action_Item__c children.
+ *
+ * Backs the 1:1 Prep View Lightning Component.
+ * Pulls live data from across Salesforce and shows it in a single screen
+ * so the manager does not have to bounce around to assemble context.
+ *
+ * Spec reference: Section 20.4.
  */
 public with sharing class OneOnOnePrepController {
 
-    // ── DTOs ─────────────────────────────────────────────────────────────────
-
-    public class PrepDTO {
-        @AuraEnabled public String         id;
-        @AuraEnabled public String         name;
-        @AuraEnabled public String         meetingDateLabel;
-        @AuraEnabled public String         status;
-        @AuraEnabled public String         attendees;
-        @AuraEnabled public String         notes;
-        @AuraEnabled public String         actionItemsSummary;
-        @AuraEnabled public String         ownerName;
-        @AuraEnabled public String         createdDateLabel;
-        @AuraEnabled public List<ActionItemRow> actionItems;
+    public class PrepView {
+        @AuraEnabled public List<String> suggestedTopics;
+        @AuraEnabled public List<Action_Item__c> openActionItems;
+        @AuraEnabled public List<TrendPoint> performanceTrend;
+        @AuraEnabled public String existingNotes;
+        @AuraEnabled public Id oneOnOneId;
+        @AuraEnabled public String managerName;
+        @AuraEnabled public String directReportName;
     }
 
-    public class ActionItemRow {
-        @AuraEnabled public String  id;
-        @AuraEnabled public String  name;
-        @AuraEnabled public String  status;
-        @AuraEnabled public String  dueDateLabel;
-        @AuraEnabled public Boolean isOverdue;
-        @AuraEnabled public String  statusChip;
+    public class TrendPoint {
+        @AuraEnabled public String metric;
+        @AuraEnabled public Decimal value;
+        @AuraEnabled public Date weekOf;
     }
-
-    // ── Helper ────────────────────────────────────────────────────────────────
-
-    private static String chipClass(String status) {
-        if (status == null) return 'chip-neutral';
-        String s = status.toLowerCase();
-        if (s.contains('open') || s.contains('pending'))    return 'chip-orange';
-        if (s.contains('complet') || s.contains('closed'))  return 'chip-green';
-        if (s.contains('cancel'))                           return 'chip-neutral';
-        return 'chip-blue';
-    }
-
-    // ── Main query ────────────────────────────────────────────────────────────
 
     @AuraEnabled(cacheable=true)
-    public static PrepDTO getPrepData(Id recordId) {
-        try {
-            PrepDTO dto = new PrepDTO();
-            Date today = Date.today();
+    public static PrepView getPrepView(Id oneOnOneId) {
+        PrepView v = new PrepView();
+        v.oneOnOneId = oneOnOneId;
+        v.suggestedTopics = new List<String>();
+        v.openActionItems = new List<Action_Item__c>();
+        v.performanceTrend = new List<TrendPoint>();
 
-            // Fetch the parent OneOnOne__c record
-            List<OneOnOne__c> records = [
-                SELECT Id, Name, Meeting_Date__c, Status__c,
-                       OwnerId, Owner.Name, CreatedDate
-                FROM OneOnOne__c
-                WHERE Id = :recordId
-                LIMIT 1
-            ];
+        if (oneOnOneId == null) return v;
 
-            if (records.isEmpty()) {
-                dto.name = 'Record not found';
-                dto.actionItems = new List<ActionItemRow>();
-                return dto;
-            }
+        OneOnOne__c o = [
+            SELECT Id, Manager__c, Direct_Report__c, Topics_Discussed__c,
+                   Manager__r.Name, Direct_Report__r.Name
+            FROM OneOnOne__c
+            WHERE Id = :oneOnOneId
+            LIMIT 1
+        ];
+        v.managerName = o.Manager__r.Name;
+        v.directReportName = o.Direct_Report__r.Name;
+        v.existingNotes = o.Topics_Discussed__c;
 
-            OneOnOne__c rec = records[0];
-            dto.id               = rec.Id;
-            dto.name             = rec.Name;
-            dto.meetingDateLabel = rec.Meeting_Date__c != null
-                ? rec.Meeting_Date__c.month() + '/' + rec.Meeting_Date__c.day() + '/' + rec.Meeting_Date__c.year()
-                : '';
-            dto.status           = rec.Status__c != null ? rec.Status__c : '';
-            dto.attendees        = '';
-            dto.notes            = '';
-            dto.actionItemsSummary = '';
-            dto.ownerName        = rec.Owner           != null ? rec.Owner.Name      : '';
-            dto.createdDateLabel = rec.CreatedDate      != null
-                ? rec.CreatedDate.format('M/d/yyyy')
-                : '';
+        // Pull open action items from previous 1:1s with same direct report
+        v.openActionItems = [
+            SELECT Id, Description__c, Owner_User__c, Owner_User__r.Name,
+                   Due_Date__c, Status__c, Completed_Date__c
+            FROM Action_Item__c
+            WHERE OneOnOne__r.Direct_Report__c = :o.Direct_Report__c
+            AND Status__c != 'Done'
+            ORDER BY Due_Date__c ASC
+            LIMIT 50
+        ];
 
-            // Related action items
-            List<ActionItemRow> aiRows = new List<ActionItemRow>();
-            for (Action_Item__c ai : [
-                SELECT Id, Name, Status__c, Due_Date__c
-                FROM Action_Item__c
-                WHERE OneOnOne__c = :recordId
-                ORDER BY Due_Date__c ASC NULLS LAST
-                LIMIT 20
-            ]) {
-                ActionItemRow r = new ActionItemRow();
-                r.id           = ai.Id;
-                r.name         = ai.Name;
-                r.status       = ai.Status__c != null ? ai.Status__c : '';
-                r.dueDateLabel = ai.Due_Date__c != null
-                    ? ai.Due_Date__c.month() + '/' + ai.Due_Date__c.day() + '/' + ai.Due_Date__c.year()
-                    : '';
-                r.isOverdue    = (ai.Due_Date__c != null && ai.Due_Date__c < today);
-                r.statusChip   = chipClass(ai.Status__c);
-                aiRows.add(r);
-            }
-            dto.actionItems = aiRows;
+        // Suggested topics: query past week's events for this direct report
+        v.suggestedTopics = generateSuggestedTopics(o.Direct_Report__c);
 
-            return dto;
+        // Performance trend: variance, FJ rate, photo compliance, QI avg over 12 weeks
+        v.performanceTrend = generateTrend(o.Direct_Report__c);
 
-        } catch (Exception e) {
-            throw new AuraHandledException('Unable to load 1:1 prep data: ' + e.getMessage());
+        return v;
+    }
+
+    private static List<String> generateSuggestedTopics(Id directReportId) {
+        List<String> topics = new List<String>();
+        if (directReportId == null) return topics;
+
+        DateTime weekAgo = DateTime.now().addDays(-7);
+
+        // Red 2 PM checks
+        Integer redChecks = [
+            SELECT COUNT()
+            FROM WorkOrder
+            WHERE Field_Manager__c = :directReportId
+            AND Job_Health__c = 'Red'
+            AND Health_Check_Responded_At__c >= :weekAgo
+        ];
+        if (redChecks > 0) {
+            topics.add('Discuss ' + redChecks + ' Red 2PM checks from past week');
         }
+
+        // FJ creations stub - field will be added to standard WorkOrder in next wave
+        Integer fjCount = 0;
+
+        // Pending Hire Requests
+        Integer pendingHires = [
+            SELECT COUNT()
+            FROM Hire_Request__c
+            WHERE Submitted_By_FM__c = :directReportId
+            AND Status__c IN ('Submitted', 'Under VP Review', 'Under COO Review')
+        ];
+        if (pendingHires > 0) {
+            topics.add('Address ' + pendingHires + ' pending Hire Request(s)');
+        }
+
+        // QI scores
+        if (topics.isEmpty()) {
+            topics.add('Review week-over-week variance trends');
+            topics.add('Discuss upcoming community launches');
+            topics.add('Check on team morale and any blockers');
+        }
+        return topics;
+    }
+
+    private static List<TrendPoint> generateTrend(Id directReportId) {
+        List<TrendPoint> trend = new List<TrendPoint>();
+        // Stub: in production, compute weekly aggregates
+        return trend;
+    }
+
+    @AuraEnabled
+    public static Id createActionItem(Id oneOnOneId, Id ownerId, String description, Date dueDate) {
+        Action_Item__c ai = new Action_Item__c(
+            OneOnOne__c = oneOnOneId,
+            Owner_User__c = ownerId,
+            Description__c = description,
+            Due_Date__c = dueDate == null ? Date.today().addDays(7) : dueDate,
+            Status__c = 'Open'
+        );
+        insert ai;
+        return ai.Id;
+    }
+
+    @AuraEnabled
+    public static void saveNotes(Id oneOnOneId, String notes) {
+        OneOnOne__c o = new OneOnOne__c(Id = oneOnOneId, Topics_Discussed__c = notes);
+        update o;
+    }
+
+    @AuraEnabled
+    public static void markActionItemDone(Id actionItemId) {
+        Action_Item__c ai = new Action_Item__c(
+            Id = actionItemId,
+            Status__c = 'Done',
+            Completed_Date__c = Date.today()
+        );
+        update ai;
     }
 }
