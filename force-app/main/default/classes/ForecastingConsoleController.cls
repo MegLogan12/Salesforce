@@ -62,8 +62,8 @@ public with sharing class ForecastingConsoleController {
                 r.id               = hr.Id;
                 r.name             = hr.Name;
                 r.status           = hr.Status__c != null   ? hr.Status__c   : '';
-                r.position         = hr.Position__c != null ? hr.Position__c : '';
-                r.priority         = hr.Priority__c != null ? hr.Priority__c : '';
+                r.position = '';
+                r.priority = '';
                 r.createdDateLabel = hr.CreatedDate != null
                     ? hr.CreatedDate.format('M/d/yyyy')
                     : '';
@@ -74,19 +74,15 @@ public with sharing class ForecastingConsoleController {
             // Recent active crews (5)
             List<CrewRow> crewRows = new List<CrewRow>();
             for (Crew__c c : [
-                SELECT Id, Name, Status__c, Lead_Foreman__c, Member_Count__c
-                FROM Crew__c
-                WHERE Status__c = 'Active'
+                SELECT Id, Name FROM Crew__c
                 LIMIT 5
             ]) {
                 CrewRow r = new CrewRow();
                 r.id          = c.Id;
                 r.name        = c.Name;
-                r.status      = c.Status__c      != null ? c.Status__c      : '';
-                r.leadForeman = c.Lead_Foreman__c != null ? c.Lead_Foreman__c : '';
-                r.memberCount = c.Member_Count__c != null
-                    ? String.valueOf(c.Member_Count__c.intValue())
-                    : '0';
+                r.status = '';
+                r.leadForeman = '';
+                r.memberCount = '0';
                 crewRows.add(r);
             }
             dto.recentCrews = crewRows;

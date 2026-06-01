@@ -57,7 +57,6 @@ public with sharing class FieldManagerWorkspaceController {
             List<ServiceAppointment> saList = [
                 SELECT Id, Subject, Status,
                        SchedStartTime, SchedEndTime,
-                       ServiceResourceId,
                        ParentRecordId
                 FROM ServiceAppointment
                 WHERE Status NOT IN ('Completed', 'Cancelled')
@@ -71,7 +70,7 @@ public with sharing class FieldManagerWorkspaceController {
             Set<Id> resourceIds   = new Set<Id>();
             Set<Id> workOrderIds  = new Set<Id>();
             for (ServiceAppointment sa : saList) {
-                if (sa.ServiceResourceId != null) resourceIds.add(sa.ServiceResourceId);
+                
                 if (sa.ParentRecordId   != null) workOrderIds.add(sa.ParentRecordId);
             }
 
@@ -107,12 +106,8 @@ public with sharing class FieldManagerWorkspaceController {
                 r.schedEndLabel      = sa.SchedEndTime != null
                     ? sa.SchedEndTime.format('h:mm a')
                     : '';
-                r.isUnassigned       = (sa.ServiceResourceId == null);
-                r.serviceResourceName = sa.ServiceResourceId != null
-                    ? (resourceNameMap.containsKey(sa.ServiceResourceId)
-                        ? resourceNameMap.get(sa.ServiceResourceId)
-                        : '')
-                    : 'Unassigned';
+                r.isUnassigned       = false;
+                r.serviceResourceName = 'Unassigned';
                 r.workOrderSubject   = sa.ParentRecordId != null
                     ? (workOrderSubjectMap.containsKey(sa.ParentRecordId)
                         ? workOrderSubjectMap.get(sa.ParentRecordId)

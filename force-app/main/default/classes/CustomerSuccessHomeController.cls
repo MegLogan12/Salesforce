@@ -77,7 +77,7 @@ public with sharing class CustomerSuccessHomeController {
             DateTime avgClosed  = (DateTime) avgRes[0].get('avgClosed');
             DateTime avgCreated = (DateTime) avgRes[0].get('avgCreated');
             Long diffMs         = avgClosed.getTime() - avgCreated.getTime();
-            kpis.avgResolutionDays = (diffMs / 86400000L).setScale(1);
+            kpis.avgResolutionDays = ((Decimal) diffMs / 86400000L).setScale(1);
         } else {
             kpis.avgResolutionDays = 0;
         }

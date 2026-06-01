@@ -74,7 +74,7 @@ public with sharing class CCConsoleHomeController {
         if (avgResult[0].get('avgCreated') != null) {
             DateTime avgCreated = (DateTime) avgResult[0].get('avgCreated');
             Long diffMs         = DateTime.now().getTime() - avgCreated.getTime();
-            kpis.avgDaysSinceCreated = (diffMs / 86400000L).setScale(1);
+            kpis.avgDaysSinceCreated = ((Decimal) diffMs / 86400000L).setScale(1);
         } else {
             kpis.avgDaysSinceCreated = 0;
         }

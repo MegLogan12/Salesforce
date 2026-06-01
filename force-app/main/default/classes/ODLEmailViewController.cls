@@ -38,8 +38,8 @@ public with sharing class ODLEmailViewController {
                     ? t.CreatedDate.format('M/d/yyyy h:mm a')
                     : '';
                 // Truncate description to 200 chars
-                String desc = t.Description != null ? t.Description : '';
-                r.snippet  = desc.length() > 200 ? desc.substring(0, 200) + '…' : desc;
+                String bodyText = t.Description != null ? t.Description : '';
+                r.snippet = bodyText.length() > 200 ? bodyText.substring(0, 200) + '…' : bodyText;
                 r.ownerName = t.Owner != null ? t.Owner.Name : '';
                 r.direction = t.TaskSubtype != null ? t.TaskSubtype : '';
                 rows.add(r);
