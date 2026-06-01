@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SMS_Opt_In_Source__c</fullName>
+    <label>SMS Opt-In Source</label>
+    <type>Text</type>
+    <length>100</length>
+    <description>How the contact opted in to SMS — e.g., "Web form", "Sales rep", "In-person". Populated alongside SMS_Consent__c and SMS_Opt_In_Date__c.</description>
+</CustomField>

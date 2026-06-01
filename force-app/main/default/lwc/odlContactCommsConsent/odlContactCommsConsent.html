@@ -1,0 +1,83 @@
+<template>
+    <div class="comms-card">
+
+        <!-- Header -->
+        <div class="comms-head">
+            <span class="comms-icon">CC</span>
+            <h3 class="comms-title">Communication and Consent</h3>
+            <span class={commsChipClass}>{pageData.commsChip}</span>
+        </div>
+
+        <!-- Channel strips -->
+        <div class="channels">
+
+            <div class="chan">
+                <div class="chan-key">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8.1 9.8a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/>
+                    </svg>
+                    Phone
+                </div>
+                <div class="chan-val">{phoneDisplay}</div>
+                <div class="chan-sub">Mobile</div>
+            </div>
+
+            <div class="chan">
+                <div class="chan-key">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="4" width="20" height="16" rx="2"/>
+                        <path d="m22 6-10 7L2 6"/>
+                    </svg>
+                    Email
+                </div>
+                <div class={emailStatusClass}>{pageData.emailStatus}</div>
+                <template lwc:if={pageData.emailBounced}>
+                    <div class="chan-sub chan-warn">Bounced — delivery failed</div>
+                </template>
+                <template lwc:else>
+                    <div class="chan-sub">{emailSubtext}</div>
+                </template>
+            </div>
+
+            <div class="chan">
+                <div class="chan-key">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    SMS
+                </div>
+                <div class={smsStatusClass}>{smsStatusLabel}</div>
+                <div class="chan-sub">{smsSubtext}</div>
+                <button class={sendTextBtnClass} disabled={sendTextDisabled} onclick={handleSendText}>
+                    {sendTextLabel}
+                </button>
+                <template lwc:if={sendTextDisabled}>
+                    <div class="chan-blocked">SMS consent is off — obtain opt-in before texting</div>
+                </template>
+            </div>
+
+        </div>
+
+        <!-- Marketing Cloud Journeys -->
+        <div class="journeys-header">Marketing Cloud Journeys</div>
+        <div class="journeys-pending">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>
+            </svg>
+            Journey membership pending Marketing Cloud sync. Consent state is confirmed from real fields — SMS texts and email sends respect the opt-in values above.
+        </div>
+
+        <!-- Governance statement -->
+        <div class="gov-bar">
+            <strong>Consent governs sends.</strong>
+            <template lwc:if={pageData.smsConsent}>
+                SMS opt-in is on — the going-dark text cadence and journey texts are permitted.
+            </template>
+            <template lwc:else>
+                SMS consent is off — text cadence and SMS journeys are suppressed for this contact.
+            </template>
+            If a customer opts out, SMS is suppressed automatically. Nothing sends unless real consent allows it.
+        </div>
+
+    </div>
+</template>

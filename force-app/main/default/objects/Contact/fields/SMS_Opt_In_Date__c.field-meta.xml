@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SMS_Opt_In_Date__c</fullName>
+    <label>SMS Opt-In Date</label>
+    <type>Date</type>
+    <description>Date the contact consented to SMS communications. Populated when SMS_Consent__c is set to true. Write-once — do not overwrite an existing opt-in date on re-consent.</description>
+</CustomField>

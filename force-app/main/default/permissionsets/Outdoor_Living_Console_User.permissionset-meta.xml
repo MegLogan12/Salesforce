@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
-    <description>Grants Apex class access and field-level security for the Outdoor Living Console — Opportunity record pages, workspace, and engagement health.</description>
+    <description>Grants Apex class access and field-level security for the Outdoor Living Console — Opportunity and Contact record pages, workspace, and engagement health.</description>
     <hasActivationRequired>false</hasActivationRequired>
     <label>Outdoor Living Console User</label>
+    <classAccesses>
+        <apexClass>ODLContactRecordController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
     <classAccesses>
         <apexClass>ODLOpportunityRecordController</apexClass>
         <enabled>true</enabled>
@@ -19,6 +23,36 @@
         <apexClass>ODLOpportunityCloseController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
+    <fieldPermissions>
+        <field>Contact.SMS_Consent__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Contact.SMS_Opt_In_Date__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Contact.SMS_Opt_In_Source__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Contact.Last_Activity_DateTime__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Contact.Last_Activity_Summary__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <field>Contact.Next_Follow_Up_DateTime__c</field>
+        <editable>false</editable>
+        <readable>true</readable>
+    </fieldPermissions>
     <fieldPermissions>
         <field>Opportunity.Last_Customer_Response_Date__c</field>
         <editable>true</editable>

@@ -1,0 +1,111 @@
+<template>
+
+    <template lwc:if={hasData}>
+
+        <!-- ── Household ─────────────────────────────────────────────── -->
+        <div class="card">
+            <div class="card-head">
+                <span class="card-icon ci-blue">HH</span>
+                <span class="card-title">Household</span>
+                <a href={pageData.accountId} class="card-link">Open</a>
+            </div>
+            <div class="card-body">
+                <div class="mini">
+                    <span class="mini-icon" style="background:#2d5f8a">{accountInitials}</span>
+                    <div>
+                        <div class="mini-name">
+                            <a href={pageData.accountId} class="link-blue">{pageData.accountName}</a>
+                        </div>
+                        <div class="mini-sub">{pageData.location}</div>
+                    </div>
+                </div>
+                <template for:each={pageData.householdMembers} for:item="m">
+                    <div key={m.contactId} class="mini">
+                        <span class="mini-icon" style="background:#5b6470">{m.initials}</span>
+                        <div>
+                            <div class="mini-name">{m.name}</div>
+                            <div class="mini-sub">{m.subtitle}</div>
+                        </div>
+                    </div>
+                </template>
+                <template lwc:if={pageData.householdLtv}>
+                    <div class="ltv-row">
+                        <div class="ltv-k">Household lifetime value</div>
+                        <div class="ltv-v">{pageData.householdLtv}</div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- ── Source ────────────────────────────────────────────────── -->
+        <template lwc:if={pageData.leadSource}>
+            <div class="card">
+                <div class="card-head">
+                    <span class="card-icon ci-green">SR</span>
+                    <span class="card-title">Source</span>
+                </div>
+                <div class="card-body">
+                    <span class="chip chip-green">{pageData.leadSource}</span>
+                </div>
+            </div>
+        </template>
+
+        <!-- ── Referrals ──────────────────────────────────────────────── -->
+        <div class="card">
+            <div class="card-head">
+                <span class="card-icon ci-purple">RF</span>
+                <span class="card-title">Referrals Made</span>
+            </div>
+            <div class="card-body card-note">
+                Referral tracking is not yet recorded at the contact level in Salesforce.
+                Check the source lead for referral attribution.
+            </div>
+        </div>
+
+        <!-- ── Owner ─────────────────────────────────────────────────── -->
+        <template lwc:if={pageData.ownerName}>
+            <div class="card">
+                <div class="card-head">
+                    <span class="card-icon ci-purple">OW</span>
+                    <span class="card-title">Owner</span>
+                </div>
+                <div class="card-body">
+                    <div class="mini">
+                        <span class="mini-icon" style="background:#2e7d5b">{ownerInitials}</span>
+                        <div>
+                            <div class="mini-name">{pageData.ownerName}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </template>
+
+        <!-- ── Recent Activity ────────────────────────────────────────── -->
+        <div class="card">
+            <div class="card-head">
+                <span class="card-icon ci-blue">AC</span>
+                <span class="card-title">Recent Activity</span>
+            </div>
+            <div class="card-body">
+                <template lwc:if={hasActivity}>
+                    <div class="timeline">
+                        <template for:each={pageData.recentActivity} for:item="a">
+                            <div key={a.subject} class="tl-entry">
+                                <div class="tl-subject">{a.subject}</div>
+                                <div class="tl-date">{a.dateText}</div>
+                                <template lwc:if={a.description}>
+                                    <div class="tl-desc">{a.description}</div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+                <template lwc:else>
+                    <div class="empty-msg">No recent activity recorded.</div>
+                </template>
+            </div>
+        </div>
+
+    </template>
+
+</template>
