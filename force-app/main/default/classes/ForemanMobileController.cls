@@ -265,6 +265,7 @@ public with sharing class ForemanMobileController {
         if (workOrderId != null && workOrderId.getSObjectType() == ServiceAppointment.sObjectType) {
             return buildContextFromStandardWo(workOrderId, ctx);
         }
+
         Id resolvedId = workOrderId == null ? getTodaysJobId() : workOrderId;
         ctx.workOrderId = resolvedId;
         if (resolvedId == null) {
