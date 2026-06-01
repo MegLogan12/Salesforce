@@ -59,11 +59,8 @@ public with sharing class MeasuringCupConsoleController {
                   AND Work_Order_Type__c = 'Measure'
             ];
 
-            // KPI: active crews
-            dto.crewCount = [
-                SELECT COUNT() FROM Crew__c
-                WHERE Status__c = 'Active'
-            ];
+            // KPI: crew count (Status__c not available on Crew__c schema)
+            dto.crewCount = [SELECT COUNT() FROM Crew__c];
 
             // Recent open measure work orders
             List<WorkOrderRow> rows = new List<WorkOrderRow>();

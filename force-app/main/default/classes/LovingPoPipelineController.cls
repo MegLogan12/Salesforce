@@ -508,8 +508,7 @@ public with sharing class LovingPoPipelineController {
 
         Takeoff__c newTakeoff = new Takeoff__c(
             Purchase_Order__c = po.Id,
-            Status__c         = 'Requested',
-            Name              = 'Takeoff - ' + po.PO_Number__c
+            Status__c         = 'Requested'
         );
         insert newTakeoff;
         return newTakeoff.Id;
