@@ -13,16 +13,12 @@ import getWateringData   from '@salesforce/apex/AquaConsoleController.getWaterin
 import getCloseoutQueue  from '@salesforce/apex/AquaConsoleController.getCloseoutQueue';
 import getPickupData              from '@salesforce/apex/AquaConsoleController.getPickupData';
 import getPickupReconciliation    from '@salesforce/apex/AquaConsoleController.getPickupReconciliation';
-import applyRunTimePct   from '@salesforce/apex/AquaConsoleController.applyRunTimePct';
 import updateWateringSchedule from '@salesforce/apex/AquaConsoleController.updateWateringSchedule';
 import approveCloseout   from '@salesforce/apex/AquaConsoleController.approveCloseout';
 import returnNfi         from '@salesforce/apex/AquaConsoleController.returnNfi';
 import resolveTicket     from '@salesforce/apex/AquaConsoleController.resolveTicket';
-import createSameDayRepair from '@salesforce/apex/AquaConsoleController.createSameDayRepair';
 import bulkRetrieveEndOfSeason from '@salesforce/apex/AquaConsoleController.bulkRetrieveEndOfSeason';
-import reassignPickup    from '@salesforce/apex/AquaConsoleController.reassignPickup';
 import reoptimizeRoutes  from '@salesforce/apex/AquaConsoleController.reoptimizeRoutes';
-import addShopStop       from '@salesforce/apex/AquaConsoleController.addShopStop';
 
 // Tab definitions — frozen from CLAUDE.md
 const TABS = [

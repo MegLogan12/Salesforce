@@ -1,0 +1,44 @@
+<template>
+    <template if:true={loaded}>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon ci-amber">!</div>
+                <h2 class="card-title">Service Flags</h2>
+            </div>
+            <div class="card-body">
+                <template if:true={hasFlags}>
+                    <ul class="flag-list">
+                        <template for:each={flags} for:item="flag">
+                            <li key={flag.id} class={flag.cls}>
+                                <span class="flag-icon">{flag.icon}</span>
+                                <span class="flag-message">{flag.message}</span>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+                <template if:false={hasFlags}>
+                    <div class="empty-state">
+                        <lightning-icon icon-name="utility:check" size="small"></lightning-icon>
+                        <span>No active service flags</span>
+                    </div>
+                </template>
+                <template if:true={hasOverdueTasks}>
+                    <div class="flag-section-header">Overdue Tasks</div>
+                    <ul class="flag-list">
+                        <template for:each={overdueTasks} for:item="task">
+                            <li key={task.id} class="flag-row flag-warn">
+                                <span class="flag-icon">⚠</span>
+                                <span class="flag-message">{task.subject} — Due: {task.activityDate}</span>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+            </div>
+        </div>
+    </template>
+    <template if:false={loaded}>
+        <div class="loading-state">
+            <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+        </div>
+    </template>
+</template>

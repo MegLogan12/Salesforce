@@ -1,0 +1,38 @@
+<template>
+    <template if:true={loaded}>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon ci-blue">P</div>
+                <h2 class="card-title">Community Progress</h2>
+            </div>
+            <div class="card-body">
+                <div class="stats-strip">
+                    <div class="stat-chip">
+                        <div class="stat-number">{openWoCount}</div>
+                        <div class="stat-label">Open Work Orders</div>
+                    </div>
+                    <div class="stat-chip">
+                        <div class="stat-number">{recentActivityCount}</div>
+                        <div class="stat-label">Recent Tasks</div>
+                    </div>
+                    <div class="stat-chip">
+                        <div class="stat-number">{changeOrderCount}</div>
+                        <div class="stat-label">Change Orders</div>
+                    </div>
+                </div>
+                <template if:true={hasOpenWos}>
+                    <div class="progress-section">
+                        <div class="progress-label">Open Work Orders</div>
+                        <lightning-progress-bar value={woProgressValue} size="medium"></lightning-progress-bar>
+                        <div class="progress-caption">{openWoCount} active of {totalWoCapacity} capacity tracked</div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </template>
+    <template if:false={loaded}>
+        <div class="loading-state">
+            <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+        </div>
+    </template>
+</template>

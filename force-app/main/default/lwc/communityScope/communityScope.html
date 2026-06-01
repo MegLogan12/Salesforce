@@ -1,0 +1,67 @@
+<template>
+    <template if:true={loaded}>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon ci-purple">S</div>
+                <h2 class="card-title">Scope Summary</h2>
+            </div>
+            <div class="card-body">
+                <template if:true={hasWorkTypeRows}>
+                    <div class="section-label">Work Orders by Type</div>
+                    <table class="odl-table">
+                        <thead>
+                            <tr>
+                                <th>Work Type</th>
+                                <th class="num-col">Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={workTypeRows} for:item="row">
+                                <tr key={row.workType}>
+                                    <td>{row.workType}</td>
+                                    <td class="num-col">{row.count}</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+                <template if:false={hasWorkTypeRows}>
+                    <div class="empty-state">No work orders linked to this community.</div>
+                </template>
+                <template if:true={hasChangeOrders}>
+                    <div class="section-label top-gap">Recent Change Orders</div>
+                    <table class="odl-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={changeOrders} for:item="co">
+                                <tr key={co.id}>
+                                    <td>{co.name}</td>
+                                    <td>{co.status}</td>
+                                    <td>
+                                        <template if:true={co.createdDate}>
+                                            <lightning-formatted-date-time
+                                                value={co.createdDate}
+                                                year="numeric" month="short" day="numeric">
+                                            </lightning-formatted-date-time>
+                                        </template>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+            </div>
+        </div>
+    </template>
+    <template if:false={loaded}>
+        <div class="loading-state">
+            <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+        </div>
+    </template>
+</template>

@@ -1,0 +1,22 @@
+<template>
+    <section class="stack">
+        <section class="card">
+            <div class="header">Record Info</div>
+            <div class="form-wrap">
+                <lightning-record-form
+                    record-id={recordId}
+                    object-api-name={objectApiName}
+                    mode="view"
+                    layout-type="Compact">
+                </lightning-record-form>
+            </div>
+        </section>
+
+        <section class="card">
+            <div class="header">Quick Links</div>
+            <div class="body">
+                <a class="open-link" href={recordUrl}>Open Full Record</a>
+            </div>
+        </section>
+    </section>
+</template>

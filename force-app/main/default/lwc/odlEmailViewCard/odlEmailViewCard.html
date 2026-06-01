@@ -1,0 +1,77 @@
+<template>
+    <div class="email-card">
+
+        <!-- Loading -->
+        <template if:true={isLoading}>
+            <div class="odl-loading">
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Error -->
+        <template if:true={hasError}>
+            <div class="odl-error-state">
+                <lightning-icon icon-name="utility:error" size="x-small" variant="error"></lightning-icon>
+                <p>{error}</p>
+                <lightning-button label="Retry" onclick={handleRefresh} size="small"></lightning-button>
+            </div>
+        </template>
+
+        <!-- Main content -->
+        <template if:false={isLoading}>
+            <template if:false={hasError}>
+
+                <!-- Card header -->
+                <div class="card-header">
+                    <div class="card-icon" style="background:var(--odl-blue)">
+                        <lightning-icon icon-name="utility:email" size="x-small" variant="inverse"></lightning-icon>
+                    </div>
+                    <h2 class="card-title">Recent Emails</h2>
+                    <span class="email-count">{emailCount}</span>
+                    <lightning-button-icon
+                        icon-name="utility:refresh"
+                        alternative-text="Refresh"
+                        variant="bare"
+                        size="small"
+                        onclick={handleRefresh}
+                        class="card-refresh"
+                    ></lightning-button-icon>
+                </div>
+
+                <!-- Email list -->
+                <template if:true={hasEmails}>
+                    <ul class="email-list">
+                        <template for:each={emails} for:item="row">
+                            <li key={row.id} class="email-item">
+                                <div class="email-row">
+                                    <a class="email-subject rec-link" data-id={row.id} onclick={handleOpenTask}>
+                                        {row.subject}
+                                    </a>
+                                    <template if:true={row.direction}>
+                                        <span class="status-chip chip-blue">{row.direction}</span>
+                                    </template>
+                                    <span class="email-date muted">{row.createdDateLabel}</span>
+                                </div>
+                                <template if:true={row.snippet}>
+                                    <p class="email-snippet muted">{row.snippet}</p>
+                                </template>
+                                <template if:true={row.ownerName}>
+                                    <span class="email-owner muted">From: {row.ownerName}</span>
+                                </template>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+
+                <template if:false={hasEmails}>
+                    <div class="empty-state">
+                        <lightning-icon icon-name="utility:email" size="small"></lightning-icon>
+                        <p>No email activity on this record.</p>
+                    </div>
+                </template>
+
+            </template>
+        </template>
+
+    </div>
+</template>

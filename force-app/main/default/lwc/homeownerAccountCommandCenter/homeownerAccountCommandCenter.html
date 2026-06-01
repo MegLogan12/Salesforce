@@ -1,0 +1,225 @@
+<template>
+    <template lwc:if={isLoading}>
+        <div class="cmd-loading">
+            <lightning-spinner alternative-text="Loading Command Center" size="medium"></lightning-spinner>
+        </div>
+    </template>
+
+    <template lwc:elseif={hasError}>
+        <div class="cmd-error">
+            <lightning-icon icon-name="utility:error" size="small"></lightning-icon>
+            <span>{error}</span>
+        </div>
+    </template>
+
+    <template lwc:else>
+        <div class="cmd-center">
+
+            <!-- ── Account Summary Banner ──────────────────────────────────── -->
+            <div class="acct-banner">
+                <div class="acct-name">{accountName}</div>
+                <div class="acct-meta">
+                    <template lwc:if={accountPhone}>
+                        <span class="meta-item">
+                            <lightning-icon icon-name="utility:call" size="xx-small"></lightning-icon>
+                            {accountPhone}
+                        </span>
+                    </template>
+                    <template lwc:if={accountEmail}>
+                        <span class="meta-item">
+                            <lightning-icon icon-name="utility:email" size="xx-small"></lightning-icon>
+                            {accountEmail}
+                        </span>
+                    </template>
+                    <template lwc:if={accountLocation}>
+                        <span class="meta-item">
+                            <lightning-icon icon-name="utility:location" size="xx-small"></lightning-icon>
+                            {accountLocation}
+                        </span>
+                    </template>
+                    <template lwc:if={accountOwnerName}>
+                        <span class="meta-item">
+                            <lightning-icon icon-name="utility:user" size="xx-small"></lightning-icon>
+                            {accountOwnerName}
+                        </span>
+                    </template>
+                </div>
+            </div>
+
+            <!-- ── Tab bar ────────────────────────────────────────────────── -->
+            <div class="tab-bar">
+                <button class={tabClassOpps}      onclick={showOpps}       data-tab="opps">
+                    Opportunities
+                    <span class="tab-badge">{oppsCount}</span>
+                </button>
+                <button class={tabClassActivity}  onclick={showActivity}   data-tab="activity">
+                    Activity
+                    <span class="tab-badge">{activitiesCount}</span>
+                </button>
+                <button class={tabClassLeads}     onclick={showLeads}      data-tab="leads">
+                    Leads
+                    <span class="tab-badge">{leadsCount}</span>
+                </button>
+                <button class={tabClassCases}     onclick={showCases}      data-tab="cases">
+                    Cases
+                    <span class="tab-badge">{casesCount}</span>
+                </button>
+            </div>
+
+            <!-- ── Opportunities Tab ──────────────────────────────────────── -->
+            <template lwc:if={isOppsTab}>
+                <div class="tab-panel">
+                    <template lwc:if={hasOpps}>
+                        <table class="cmd-table">
+                            <thead>
+                                <tr>
+                                    <th>Opportunity</th>
+                                    <th>Type</th>
+                                    <th>Stage</th>
+                                    <th class="num-col">Amount</th>
+                                    <th>Close Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={opps} for:item="row">
+                                    <tr key={row.id}>
+                                        <td>
+                                            <a class="rec-link" href={row.url} target="_blank">{row.name}</a>
+                                        </td>
+                                        <td class="muted">{row.type}</td>
+                                        <td>
+                                            <span class="stage-chip">{row.stageName}</span>
+                                        </td>
+                                        <td class="num-col">{row.amountFormatted}</td>
+                                        <td class="muted">{row.closeDate}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                    <template lwc:else>
+                        <div class="empty-state">
+                            <lightning-icon icon-name="utility:opportunity" size="medium"></lightning-icon>
+                            <p>No open opportunities for this homeowner.</p>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <!-- ── Activity Tab ───────────────────────────────────────────── -->
+            <template lwc:if={isActivityTab}>
+                <div class="tab-panel">
+                    <template lwc:if={hasActivities}>
+                        <table class="cmd-table">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Status</th>
+                                    <th>Contact</th>
+                                    <th>Due Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={activities} for:item="row">
+                                    <tr key={row.id}>
+                                        <td>
+                                            <a class="rec-link" href={row.url} target="_blank">{row.subject}</a>
+                                        </td>
+                                        <td>
+                                            <span class="status-chip chip-alert">{row.status}</span>
+                                        </td>
+                                        <td class="muted">{row.whoName}</td>
+                                        <td class="muted">{row.activityDate}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                    <template lwc:else>
+                        <div class="empty-state">
+                            <lightning-icon icon-name="utility:task" size="medium"></lightning-icon>
+                            <p>No open tasks or activities found.</p>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <!-- ── Leads Tab ──────────────────────────────────────────────── -->
+            <template lwc:if={isLeadsTab}>
+                <div class="tab-panel">
+                    <template lwc:if={hasLeads}>
+                        <table class="cmd-table">
+                            <thead>
+                                <tr>
+                                    <th>Lead Name</th>
+                                    <th>Status</th>
+                                    <th>Lead Source</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={leads} for:item="row">
+                                    <tr key={row.id}>
+                                        <td>
+                                            <a class="rec-link" href={row.url} target="_blank">{row.name}</a>
+                                        </td>
+                                        <td>
+                                            <span class="status-chip chip-ok">{row.status}</span>
+                                        </td>
+                                        <td class="muted">{row.leadSource}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                    <template lwc:else>
+                        <div class="empty-state">
+                            <lightning-icon icon-name="utility:lead" size="medium"></lightning-icon>
+                            <p>No open leads associated with this homeowner.</p>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <!-- ── Cases Tab ──────────────────────────────────────────────── -->
+            <template lwc:if={isCasesTab}>
+                <div class="tab-panel">
+                    <template lwc:if={hasCases}>
+                        <table class="cmd-table">
+                            <thead>
+                                <tr>
+                                    <th>Case #</th>
+                                    <th>Subject</th>
+                                    <th>Status</th>
+                                    <th>Priority</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={cases} for:item="row">
+                                    <tr key={row.id}>
+                                        <td>
+                                            <a class="rec-link" href={row.url} target="_blank">{row.caseNumber}</a>
+                                        </td>
+                                        <td>{row.subject}</td>
+                                        <td>
+                                            <span class="status-chip chip-alert">{row.status}</span>
+                                        </td>
+                                        <td>
+                                            <span class={row.priorityClass}>{row.priority}</span>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                    <template lwc:else>
+                        <div class="empty-state">
+                            <lightning-icon icon-name="utility:case" size="medium"></lightning-icon>
+                            <p>No open cases for this homeowner.</p>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+        </div>
+    </template>
+</template>

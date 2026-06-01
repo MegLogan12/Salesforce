@@ -1,0 +1,251 @@
+/* ── Shell ──────────────────────────────────────────────────────────────── */
+.ticket-shell {
+    background: #F3F5F8;
+    font-family: 'Salesforce Sans', Arial, sans-serif;
+    padding: 0 0 24px;
+}
+
+/* ── Ticket Header ──────────────────────────────────────────────────────── */
+.ticket-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 20px 14px;
+    background: #16325C;
+    color: #fff;
+}
+
+.ticket-mark {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: #E86826;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.ticket-title-block {
+    flex: 1;
+}
+
+.ticket-wo-number {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+}
+
+.ticket-subject {
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+    margin-top: 1px;
+}
+
+.ticket-subtitle {
+    font-size: 11px;
+    color: rgba(255,255,255,0.60);
+    margin-top: 2px;
+}
+
+.ticket-pill-strip {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: flex-end;
+}
+
+.ticket-pill {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1px;
+}
+
+.pill-label {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255,255,255,0.55);
+}
+
+.pill-value {
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+}
+
+/* ── Layout ─────────────────────────────────────────────────────────────── */
+.two-up {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 16px 16px 0;
+}
+
+.top-gap {
+    margin-top: 16px;
+    margin-left: 16px;
+    margin-right: 16px;
+}
+
+/* ── Cards ──────────────────────────────────────────────────────────────── */
+.card {
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #E0E5EE;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+    overflow: hidden;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px 10px;
+    border-bottom: 1px solid #E0E5EE;
+}
+
+.ch {
+    font-size: 13px;
+    color: #54698D;
+    flex-shrink: 0;
+}
+
+.card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #181818;
+    margin: 0;
+}
+
+.card-body {
+    padding: 16px;
+}
+
+/* ── Meta grid ──────────────────────────────────────────────────────────── */
+.meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.meta-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #6B7280;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+}
+
+.meta-value {
+    font-size: 13px;
+    color: #181818;
+    font-weight: 500;
+}
+
+/* ── Tables ─────────────────────────────────────────────────────────────── */
+.tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.tbl thead tr {
+    background: #F8F9FB;
+}
+
+.tbl th {
+    padding: 7px 12px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 700;
+    color: #6B7280;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid #E0E5EE;
+}
+
+.tbl td {
+    padding: 9px 12px;
+    color: #181818;
+    border-bottom: 1px solid #E0E5EE;
+    vertical-align: middle;
+}
+
+.tbl tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.tbl tbody tr:hover {
+    background: #F8F9FB;
+}
+
+.num {
+    text-align: right;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.sf-btn {
+    background: #fff;
+    border: 1px solid #D8DDE6;
+    color: #0176D3;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.1s;
+}
+
+.sf-btn:hover {
+    background: #F3F5F8;
+}
+
+/* ── Photo CTA ──────────────────────────────────────────────────────────── */
+.photo-gallery-cta {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid #E0E5EE;
+}
+
+/* ── States ─────────────────────────────────────────────────────────────── */
+.empty-note {
+    font-size: 12px;
+    color: #6B7280;
+    font-style: italic;
+    padding: 4px 0;
+}
+
+.loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 280px;
+}
+
+.error-state {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 24px 20px;
+    color: #BA0517;
+    font-size: 13px;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .two-up {
+        grid-template-columns: 1fr;
+    }
+    .ticket-pill-strip {
+        display: none;
+    }
+}

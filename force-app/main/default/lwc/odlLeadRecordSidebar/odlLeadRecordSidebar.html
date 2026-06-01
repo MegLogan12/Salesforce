@@ -1,0 +1,40 @@
+<template>
+    <section class="stack">
+        <section class="card">
+            <div class="header">Next Action</div>
+            <ul class="list">
+                <template for:each={nextActions} for:item="item">
+                    <li key={item}>{item}</li>
+                </template>
+            </ul>
+        </section>
+
+        <section class="card">
+            <div class="header">Missing Data</div>
+            <template lwc:if={hasMissingData}>
+                <div class="body">
+                    <template for:each={missingData} for:item="item">
+                        <div class="issue" key={item}>{item}</div>
+                    </template>
+                </div>
+            </template>
+            <template lwc:else>
+                <div class="empty">No data gaps detected on this lead.</div>
+            </template>
+        </section>
+
+        <section class="card">
+            <div class="header">Service Interests</div>
+            <template lwc:if={hasServiceInterests}>
+                <ul class="list">
+                    <template for:each={serviceInterests} for:item="interest">
+                        <li key={interest}>{interest}</li>
+                    </template>
+                </ul>
+            </template>
+            <template lwc:else>
+                <div class="empty">No service interests are flagged on this lead.</div>
+            </template>
+        </section>
+    </section>
+</template>

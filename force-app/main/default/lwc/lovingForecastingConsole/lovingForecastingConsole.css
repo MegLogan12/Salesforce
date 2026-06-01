@@ -1,0 +1,275 @@
+/* ── Design tokens ──────────────────────────────────────────────────────────── */
+:host {
+    --odl-orange:      #E86826;
+    --odl-orange-dark: #C05318;
+    --odl-blue:        #0176D3;
+    --odl-blue-dark:   #014486;
+    --odl-slate:       #54698D;
+    --text-dark:       #181818;
+    --text-mid:        #444444;
+    --text-light:      #6B7280;
+    --border:          #E0E5EE;
+    --bg-page:         #F3F5F8;
+    --bg-card:         #FFFFFF;
+    --radius-card:     8px;
+    --shadow-card:     0 1px 4px rgba(0,0,0,0.10);
+}
+
+.console-home {
+    background: var(--bg-page);
+    min-height: 100%;
+    padding: 16px 20px 24px;
+    box-sizing: border-box;
+    font-family: 'Salesforce Sans', Arial, sans-serif;
+}
+
+/* ── Page header ──────────────────────────────────────────────────────────── */
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.page-header-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.page-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0 0 2px;
+}
+
+.page-sub {
+    font-size: 13px;
+    color: var(--text-light);
+    margin: 0;
+}
+
+.page-refresh {
+    margin-left: auto;
+}
+
+/* ── Loading / Error ──────────────────────────────────────────────────────── */
+.odl-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 240px;
+}
+
+.odl-error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 48px;
+    color: var(--text-mid);
+    text-align: center;
+}
+
+/* ── KPI row ──────────────────────────────────────────────────────────────── */
+.kpi-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+    max-width: 480px;
+}
+
+.kpi-chip {
+    border-radius: var(--radius-card);
+    padding: 16px 14px;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.15s;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.kpi-chip:hover { opacity: 0.88; transform: translateY(-1px); }
+
+.kpi-number {
+    font-size: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1;
+}
+
+.kpi-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.88);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.kc-orange { background: linear-gradient(135deg, var(--odl-orange), var(--odl-orange-dark)); }
+.kc-blue   { background: linear-gradient(135deg, var(--odl-blue),   var(--odl-blue-dark));   }
+
+/* ── Body layout ──────────────────────────────────────────────────────────── */
+.body-layout {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 16px;
+    align-items: start;
+}
+
+/* ── Cards ────────────────────────────────────────────────────────────────── */
+.card {
+    background: var(--bg-card);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.card:last-child { margin-bottom: 0; }
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.card-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+    flex: 1;
+}
+
+.card-refresh { margin-left: auto; }
+
+.card-footer {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    background: #FAFBFD;
+}
+
+/* ── Tables ───────────────────────────────────────────────────────────────── */
+.odl-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.odl-table thead tr { background: #F8F9FB; }
+
+.odl-table th {
+    padding: 8px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border);
+}
+
+.odl-table th.num-col,
+.odl-table td.num-col { text-align: right; }
+
+.odl-table td {
+    padding: 10px 16px;
+    color: var(--text-dark);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+.odl-table tbody tr:last-child td { border-bottom: none; }
+.odl-table tbody tr:hover { background: #F8F9FB; }
+
+/* ── Links ────────────────────────────────────────────────────────────────── */
+.rec-link {
+    color: var(--odl-blue);
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.rec-link:hover { text-decoration: underline; }
+
+/* ── Status chips ─────────────────────────────────────────────────────────── */
+.status-chip {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.chip-alert {
+    background: #FEF0CC;
+    color: #7A4500;
+    border: 1px solid #F5C244;
+}
+
+.chip-ok {
+    background: #E4F5E9;
+    color: #1B6B2A;
+    border: 1px solid #8DCA99;
+}
+
+/* ── Muted text ───────────────────────────────────────────────────────────── */
+.muted { color: var(--text-light); }
+
+/* ── Empty state ──────────────────────────────────────────────────────────── */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 32px 16px;
+    color: var(--text-light);
+    font-size: 13px;
+    text-align: center;
+}
+
+/* ── Quick actions ────────────────────────────────────────────────────────── */
+.qa-list { padding: 8px 0; }
+
+.qa-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-mid);
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+}
+
+.qa-item:last-child { border-bottom: none; }
+.qa-item:hover { background: #F3F5F8; color: var(--odl-blue); }
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 1000px) {
+    .body-layout { grid-template-columns: 1fr; }
+    .kpi-row     { max-width: 100%; }
+}

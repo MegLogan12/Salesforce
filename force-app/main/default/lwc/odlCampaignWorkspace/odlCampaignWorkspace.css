@@ -1,0 +1,182 @@
+.workspace-shell {
+    background: #f4f6f9;
+    min-height: 100vh;
+    padding: 1.5rem;
+    color: #16325c;
+}
+
+.workspace-header,
+.toolbar,
+.list-card,
+.state-card {
+    background: #fff;
+    border: 1px solid #d8dde6;
+    border-radius: 8px;
+}
+
+.workspace-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    padding: 1.25rem 1.5rem;
+}
+
+.eyebrow {
+    margin: 0 0 0.25rem;
+    color: #54698d;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    line-height: 1.2;
+}
+
+.subtitle {
+    margin: 0.35rem 0 0;
+    color: #54698d;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.9rem 1rem;
+}
+
+.chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-chip,
+.secondary-btn,
+.primary-btn {
+    border-radius: 999px;
+    border: 1px solid #d8dde6;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.filter-chip {
+    background: #fff;
+    color: #16325c;
+    padding: 0.45rem 0.85rem;
+}
+
+.filter-chip.active {
+    background: #16325c;
+    border-color: #16325c;
+    color: #fff;
+}
+
+.search-input {
+    min-width: 17rem;
+}
+
+.secondary-btn,
+.primary-btn {
+    padding: 0.55rem 0.95rem;
+}
+
+.secondary-btn {
+    background: #fff;
+    color: #16325c;
+}
+
+.primary-btn {
+    background: #f28c28;
+    border-color: #f28c28;
+    color: #fff;
+}
+
+.list-card,
+.state-card {
+    padding: 1rem 1.25rem;
+}
+
+.state-card.error {
+    border-color: #c23934;
+    color: #c23934;
+}
+
+.card-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.card-heading h2 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.card-heading p {
+    margin: 0.3rem 0 0;
+    color: #54698d;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+.workspace-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.workspace-table th,
+.workspace-table td {
+    border-top: 1px solid #e5e8ec;
+    padding: 0.9rem 0.75rem;
+    text-align: left;
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+.workspace-table th {
+    border-top: 0;
+    color: #54698d;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.link-button {
+    background: none;
+    border: 0;
+    color: #0176d3;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0;
+    text-align: left;
+}
+
+.status-chip {
+    border-radius: 999px;
+    display: inline-flex;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.25rem 0.65rem;
+    background: #eef4ff;
+    color: #16325c;
+}

@@ -1,0 +1,232 @@
+<template>
+    <template lwc:if={isLoading}>
+        <div class="cs-home odl-loading">
+            <lightning-spinner alternative-text="Loading Customer Success" size="medium"></lightning-spinner>
+        </div>
+    </template>
+
+    <template lwc:elseif={hasError}>
+        <div class="cs-home">
+            <div class="odl-error-state">
+                <lightning-icon icon-name="utility:error" size="large"></lightning-icon>
+                <p>{error}</p>
+            </div>
+        </div>
+    </template>
+
+    <template lwc:else>
+        <div class="cs-home">
+
+            <!-- ── Page header ───────────────────────────────────────────── -->
+            <div class="page-header">
+                <div class="page-header-inner">
+                    <div class="page-title-block">
+                        <lightning-icon icon-name="standard:service_contract" size="medium" class="page-icon"></lightning-icon>
+                        <div>
+                            <div class="page-title">Customer Success</div>
+                            <div class="page-subtitle">Escalations · Warranty &amp; Service Cases · Follow-ups</div>
+                        </div>
+                    </div>
+                    <button class="refresh-btn" onclick={handleRefresh} title="Refresh">
+                        <lightning-icon icon-name="utility:refresh" size="x-small"></lightning-icon>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── KPI row ───────────────────────────────────────────────── -->
+            <div class="kpi-row">
+                <div class="kpi-chip kc-blue" title="Total open cases">
+                    <span class="kpi-number">{openCases}</span>
+                    <span class="kpi-label">Open Cases</span>
+                </div>
+                <div class="kpi-chip kc-red" title="Currently escalated open cases">
+                    <span class="kpi-number">{escalatedCases}</span>
+                    <span class="kpi-label">Escalated</span>
+                </div>
+                <div class="kpi-chip kc-teal" title="Average resolution time for cases closed in last 90 days">
+                    <span class="kpi-number">{avgResolutionDays}</span>
+                    <span class="kpi-label">Avg Resolution Days</span>
+                </div>
+                <div class="kpi-chip kc-amber" title="Open Warranty and Service cases">
+                    <span class="kpi-number">{warrantyCases}</span>
+                    <span class="kpi-label">Warranty / Service</span>
+                </div>
+            </div>
+
+            <!-- ── Body layout ───────────────────────────────────────────── -->
+            <div class="body-layout">
+
+                <!-- Main column -->
+                <div class="body-main">
+
+                    <!-- Recent Cases (escalated first) -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background:#EEF3FA;">
+                                <lightning-icon icon-name="standard:case" size="x-small"></lightning-icon>
+                            </div>
+                            <h2 class="card-title">Open Cases — Escalated &amp; Priority</h2>
+                        </div>
+                        <template lwc:if={hasRecentCases}>
+                            <table class="odl-table">
+                                <thead>
+                                    <tr>
+                                        <th>Case #</th>
+                                        <th>Subject</th>
+                                        <th>Account</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                        <th>Priority</th>
+                                        <th>Created</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={recentCases} for:item="row">
+                                        <tr key={row.id} class={row.rowClass}>
+                                            <td>
+                                                <a class="rec-link" href={row.url} target="_blank">{row.caseNumber}</a>
+                                            </td>
+                                            <td>
+                                                {row.subject}
+                                                <template lwc:if={row.isEscalated}>
+                                                    <span class="escalated-badge">ESC</span>
+                                                </template>
+                                            </td>
+                                            <td class="muted">{row.accountName}</td>
+                                            <td>
+                                                <template lwc:if={row.type}>
+                                                    <span class="type-chip">{row.type}</span>
+                                                </template>
+                                            </td>
+                                            <td>
+                                                <span class="status-chip chip-alert">{row.status}</span>
+                                            </td>
+                                            <td>
+                                                <span class={row.priorityClass}>{row.priority}</span>
+                                            </td>
+                                            <td class="muted">{row.createdDate}</td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </template>
+                        <template lwc:else>
+                            <div class="empty-state">
+                                <lightning-icon icon-name="utility:check" size="medium"></lightning-icon>
+                                <p>No open cases — excellent!</p>
+                            </div>
+                        </template>
+                        <div class="card-footer">
+                            <button class="footer-link" onclick={handleOpenCases}>View All Open Cases</button>
+                        </div>
+                    </div>
+
+                    <!-- Overdue Follow-ups -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background:#FFF4EC;">
+                                <lightning-icon icon-name="utility:task" size="x-small"></lightning-icon>
+                            </div>
+                            <h2 class="card-title">Overdue Follow-Ups</h2>
+                        </div>
+                        <template lwc:if={hasOverdueFollowUps}>
+                            <table class="odl-table">
+                                <thead>
+                                    <tr>
+                                        <th>Subject</th>
+                                        <th>Related To</th>
+                                        <th>Owner</th>
+                                        <th>Due Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={overdueFollowUps} for:item="row">
+                                        <tr key={row.id}>
+                                            <td>
+                                                <a class="rec-link" href={row.url} target="_blank">{row.subject}</a>
+                                            </td>
+                                            <td class="muted">{row.relatedTo}</td>
+                                            <td class="muted">{row.ownerName}</td>
+                                            <td>
+                                                <span class="status-chip chip-alert">{row.activityDate}</span>
+                                            </td>
+                                            <td class="muted">{row.status}</td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </template>
+                        <template lwc:else>
+                            <div class="empty-state">
+                                <lightning-icon icon-name="utility:check" size="medium"></lightning-icon>
+                                <p>No overdue follow-ups.</p>
+                            </div>
+                        </template>
+                    </div>
+
+                </div>
+
+                <!-- Quick-actions rail -->
+                <div class="body-rail">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Quick Actions</h2>
+                        </div>
+                        <div class="qa-list">
+                            <div class="qa-item" onclick={handleNewCase}>
+                                <lightning-icon icon-name="utility:add" size="x-small"></lightning-icon>
+                                <span>New Case</span>
+                            </div>
+                            <div class="qa-item" onclick={handleNewTask}>
+                                <lightning-icon icon-name="utility:add" size="x-small"></lightning-icon>
+                                <span>New Follow-Up Task</span>
+                            </div>
+                            <div class="qa-item" onclick={handleOpenCases}>
+                                <lightning-icon icon-name="utility:cases" size="x-small"></lightning-icon>
+                                <span>All Open Cases</span>
+                            </div>
+                            <div class="qa-item" onclick={handleEscalatedCases}>
+                                <lightning-icon icon-name="utility:priority" size="x-small"></lightning-icon>
+                                <span>Escalated Cases</span>
+                            </div>
+                            <div class="qa-item" onclick={handleOpenTasks}>
+                                <lightning-icon icon-name="utility:task" size="x-small"></lightning-icon>
+                                <span>Open Tasks</span>
+                            </div>
+                            <div class="qa-item" onclick={handleOpenReports}>
+                                <lightning-icon icon-name="utility:report" size="x-small"></lightning-icon>
+                                <span>Reports</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary card -->
+                    <div class="card card-summary">
+                        <div class="card-header">
+                            <h2 class="card-title">At a Glance</h2>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Open Cases</span>
+                            <span class="summary-value">{openCases}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Escalated</span>
+                            <span class="summary-value">{escalatedCases}</span>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-row">
+                            <span class="summary-label">Warranty / Service</span>
+                            <span class="summary-value">{warrantyCases}</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Avg Resolution</span>
+                            <span class="summary-value">{avgResolutionDays} days</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </template>
+</template>

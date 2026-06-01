@@ -1,0 +1,231 @@
+<template>
+    <div class="console-home">
+
+        <!-- Loading -->
+        <template if:true={isLoading}>
+            <div class="odl-loading">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Error -->
+        <template if:true={hasError}>
+            <div class="odl-error-state">
+                <lightning-icon icon-name="utility:error" size="small" variant="error"></lightning-icon>
+                <p>{error}</p>
+                <lightning-button label="Retry" onclick={handleRefresh}></lightning-button>
+            </div>
+        </template>
+
+        <!-- Main -->
+        <template if:false={isLoading}>
+            <template if:false={hasError}>
+
+                <!-- Page header -->
+                <div class="page-header">
+                    <div class="page-header-icon" style="background:var(--odl-purple)">
+                        <lightning-icon icon-name="utility:chart" size="small" variant="inverse"></lightning-icon>
+                    </div>
+                    <div>
+                        <h1 class="page-title">VP Operations Dashboard</h1>
+                        <p class="page-sub">Workforce, work orders, and action items at a glance</p>
+                    </div>
+                    <lightning-button-icon
+                        icon-name="utility:refresh"
+                        alternative-text="Refresh"
+                        variant="bare"
+                        onclick={handleRefresh}
+                        class="page-refresh"
+                    ></lightning-button-icon>
+                </div>
+
+                <!-- KPI row (5 chips) -->
+                <div class="kpi-row">
+                    <div class="kpi-chip kc-orange" onclick={handleOpenHireRequests} title="Open hire requests">
+                        <div class="kpi-number">{openHireRequests}</div>
+                        <div class="kpi-label">Open Hire Requests</div>
+                    </div>
+                    <div class="kpi-chip kc-blue" onclick={handleOpenOneOnOnes} title="Pending 1:1 meetings">
+                        <div class="kpi-number">{pendingOneOnOnes}</div>
+                        <div class="kpi-label">Pending 1:1s</div>
+                    </div>
+                    <div class="kpi-chip kc-purple" onclick={handleOpenActionItems} title="Open action items">
+                        <div class="kpi-number">{openActionItems}</div>
+                        <div class="kpi-label">Open Action Items</div>
+                    </div>
+                    <div class="kpi-chip kc-teal" onclick={handleOpenWorkOrders} title="Open work orders">
+                        <div class="kpi-number">{openWorkOrders}</div>
+                        <div class="kpi-label">Open Work Orders</div>
+                    </div>
+                    <div class="kpi-chip kc-slate" onclick={handleOpenCrews} title="Active crews">
+                        <div class="kpi-number">{crewCount}</div>
+                        <div class="kpi-label">Active Crews</div>
+                    </div>
+                </div>
+
+                <!-- Body layout -->
+                <div class="body-layout">
+
+                    <!-- Main: two side-by-side cards -->
+                    <div class="body-main">
+
+                        <!-- Hire Requests card -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon" style="background:var(--odl-orange)">
+                                    <lightning-icon icon-name="utility:people" size="x-small" variant="inverse"></lightning-icon>
+                                </div>
+                                <h2 class="card-title">Open Hire Requests</h2>
+                            </div>
+
+                            <template if:true={hasHireRequests}>
+                                <table class="odl-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Priority</th>
+                                            <th>Status</th>
+                                            <th>Created</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template for:each={recentHireRequests} for:item="row">
+                                            <tr key={row.id}>
+                                                <td>
+                                                    <a class="rec-link" data-id={row.id} onclick={handleOpenRecord}>{row.name}</a>
+                                                </td>
+                                                <td>
+                                                    <template if:true={row.priority}>
+                                                        <span class="status-chip chip-alert">{row.priority}</span>
+                                                    </template>
+                                                </td>
+                                                <td>{row.status}</td>
+                                                <td class="muted">{row.createdDateLabel}</td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </template>
+
+                            <template if:false={hasHireRequests}>
+                                <div class="empty-state">
+                                    <lightning-icon icon-name="utility:check" size="small" variant="success"></lightning-icon>
+                                    <p>No open hire requests.</p>
+                                </div>
+                            </template>
+
+                            <div class="card-footer">
+                                <lightning-button
+                                    label="View All Hire Requests"
+                                    variant="neutral"
+                                    onclick={handleOpenHireRequests}
+                                ></lightning-button>
+                            </div>
+                        </div>
+
+                        <!-- Action Items card -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon" style="background:var(--odl-purple)">
+                                    <lightning-icon icon-name="utility:task" size="x-small" variant="inverse"></lightning-icon>
+                                </div>
+                                <h2 class="card-title">Open Action Items</h2>
+                            </div>
+
+                            <template if:true={hasActionItems}>
+                                <table class="odl-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Status</th>
+                                            <th>Due</th>
+                                            <th>Owner</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template for:each={recentActionItems} for:item="row">
+                                            <tr key={row.id}>
+                                                <td>
+                                                    <a class="rec-link" data-id={row.id} onclick={handleOpenRecord}>{row.name}</a>
+                                                </td>
+                                                <td>
+                                                    <span class={row.statusChipFull}>{row.status}</span>
+                                                </td>
+                                                <td>
+                                                    <template if:true={row.isOverdue}>
+                                                        <span class="status-chip chip-overdue">{row.dueDateLabel}</span>
+                                                    </template>
+                                                    <template if:false={row.isOverdue}>
+                                                        <span class="muted">{row.dueDateLabel}</span>
+                                                    </template>
+                                                </td>
+                                                <td class="muted">{row.ownerName}</td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </template>
+
+                            <template if:false={hasActionItems}>
+                                <div class="empty-state">
+                                    <lightning-icon icon-name="utility:check" size="small" variant="success"></lightning-icon>
+                                    <p>No open action items.</p>
+                                </div>
+                            </template>
+
+                            <div class="card-footer">
+                                <lightning-button
+                                    label="View All Action Items"
+                                    variant="neutral"
+                                    onclick={handleOpenActionItems}
+                                ></lightning-button>
+                            </div>
+                        </div>
+
+                    </div><!-- /body-main -->
+
+                    <!-- Rail: Quick Nav -->
+                    <div class="body-rail">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon" style="background:var(--odl-purple)">
+                                    <lightning-icon icon-name="utility:lightning_strike" size="x-small" variant="inverse"></lightning-icon>
+                                </div>
+                                <h2 class="card-title">Quick Navigation</h2>
+                            </div>
+                            <div class="qa-list">
+                                <div class="qa-item" onclick={handleOpenHireRequests}>
+                                    <lightning-icon icon-name="utility:people" size="x-small"></lightning-icon>
+                                    <span>Hire Requests</span>
+                                </div>
+                                <div class="qa-item" onclick={handleOpenOneOnOnes}>
+                                    <lightning-icon icon-name="utility:chat" size="x-small"></lightning-icon>
+                                    <span>1:1 Meetings</span>
+                                </div>
+                                <div class="qa-item" onclick={handleOpenActionItems}>
+                                    <lightning-icon icon-name="utility:task" size="x-small"></lightning-icon>
+                                    <span>Action Items</span>
+                                </div>
+                                <div class="qa-item" onclick={handleOpenWorkOrders}>
+                                    <lightning-icon icon-name="utility:work_order" size="x-small"></lightning-icon>
+                                    <span>Work Orders</span>
+                                </div>
+                                <div class="qa-item" onclick={handleOpenCrews}>
+                                    <lightning-icon icon-name="utility:groups" size="x-small"></lightning-icon>
+                                    <span>Crews</span>
+                                </div>
+                                <div class="qa-item" onclick={handleOpenReports}>
+                                    <lightning-icon icon-name="utility:report" size="x-small"></lightning-icon>
+                                    <span>Reports</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /body-rail -->
+
+                </div>
+
+            </template>
+        </template>
+
+    </div>
+</template>

@@ -1,0 +1,56 @@
+:host {
+    --ol-line: #d8dde6;
+    --ol-gray: #54698d;
+    --ol-navy: #16325c;
+    display: block;
+}
+
+.stack {
+    display: grid;
+    gap: 14px;
+}
+
+.card {
+    background: #fff;
+    border: 1px solid var(--ol-line);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.header {
+    background: #fafaf9;
+    border-bottom: 1px solid var(--ol-line);
+    color: var(--ol-navy);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 10px 12px;
+}
+
+.list,
+.body {
+    display: grid;
+    gap: 8px;
+    padding: 12px;
+}
+
+.list {
+    list-style: disc;
+    margin: 0;
+    padding-left: 28px;
+}
+
+.issue,
+.empty,
+.list {
+    color: var(--ol-gray);
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.issue {
+    background: #fafaf9;
+    border: 1px solid #edf0f5;
+    border-left: 3px solid #fe9339;
+    border-radius: 4px;
+    padding: 8px 9px;
+}

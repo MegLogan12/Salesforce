@@ -3,7 +3,7 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>c:odlConsoleHome</componentName>
+                <componentName>odlConsoleHome</componentName>
                 <identifier>c_odlConsoleHome</identifier>
             </componentInstance>
         </itemInstances>

@@ -84,19 +84,27 @@
     background: #fff;
     padding: 12px 20px;
     border-bottom: 1px solid #e5e5e5;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 .rec-top-row { display: flex; align-items: center; gap: 10px; }
 .rec-icon {
-    width: 28px; height: 28px;
+    width: 32px; height: 32px;
     border-radius: 4px;
     display: flex; align-items: center; justify-content: center;
-    color: #fff; font-size: 12px; font-weight: 700; flex-shrink: 0;
+    color: #fff; font-size: 14px; font-weight: 700; flex-shrink: 0;
 }
+.rec-info { flex: 1; min-width: 0; }
 .rec-title-block { flex: 1; min-width: 0; }
-.rec-breadcrumb { display: none; }
-.rec-title { font-size: 18px; font-weight: 500; color: #16325c; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.rec-breadcrumb { font-size: 10px; color: #54698d; text-transform: uppercase; letter-spacing: .4px; margin-bottom: 2px; }
+.rec-title { font-size: 16px; font-weight: 500; color: #16325c; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .rec-subtitle { font-size: 11px; color: #54698d; margin-top: 2px; }
 .rec-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* ── Record banner (home tab) ──────────────────────────────────────── */
+.record-title { font-size: 18px; font-weight: 500; color: #fff; margin-bottom: 2px; }
+.record-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-left: auto; }
 
 /* ── Buttons ───────────────────────────────────────────────────────── */
 .sf-btn {
@@ -148,6 +156,7 @@
 .g5 { display: grid; grid-template-columns: repeat(5,1fr); gap: 10px; }
 .g6 { display: grid; grid-template-columns: repeat(6,1fr); gap: 10px; }
 .fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; padding: 12px 14px; }
+.field-item { min-width: 0; }
 .field-label { font-size: 10px; color: #54698d; text-transform: uppercase; letter-spacing: .4px; font-weight: 500; margin-bottom: 3px; }
 .field-value { font-size: 12px; color: #16325c; min-height: 18px; }
 
@@ -406,7 +415,8 @@
 .aqua-map svg { display: block; width: 100%; height: 100%; }
 
 /* ── List toolbar ──────────────────────────────────────────────────── */
-.list-toolbar {
+.list-toolbar,
+.toolbar {
     background: #fff;
     padding: 10px 20px;
     border-bottom: 1px solid #e5e5e5;
@@ -634,3 +644,86 @@
 
 /* ── Loading ───────────────────────────────────────────────────────── */
 .loading-wrap { display: flex; justify-content: center; padding: 40px; }
+
+/* ── Link buttons (inline table links) ────────────────────────────── */
+.lnk {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #0a8aa6;
+    font-size: inherit;
+    font-family: inherit;
+    cursor: pointer;
+    font-weight: 500;
+}
+.lnk:hover { text-decoration: underline; }
+
+/* ── Card actions row ──────────────────────────────────────────────── */
+.card-actions {
+    padding: 10px 14px;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* ── Alert row (home tab inventory/tamper alerts) ──────────────────── */
+.alert-row {
+    padding: 8px 14px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 12px;
+    color: #16325c;
+    line-height: 1.5;
+}
+.alert-row:last-child { border-bottom: none; }
+
+/* ── Scope footer ──────────────────────────────────────────────────── */
+.scope-footer {
+    padding: 10px 14px;
+    font-size: 11px;
+    color: #54698d;
+    border-top: 1px solid #f0f0f0;
+    line-height: 1.5;
+    background: #fafaf9;
+}
+
+/* ── sf-table (alias for pickup reconciliation tables) ─────────────── */
+.sf-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+.sf-table th {
+    text-align: left; font-size: 10px; font-weight: 500; color: #54698d;
+    padding: 8px 12px; border-bottom: 1px solid #e5e5e5;
+    text-transform: uppercase; letter-spacing: .4px;
+    background: #fafaf9; white-space: nowrap;
+}
+.sf-table td { padding: 8px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+.sf-table tr:last-child td { border-bottom: none; }
+.sf-table tr:hover td { background: #f4f6f9; }
+
+/* ── Watering rail (home tab sidebar) ──────────────────────────────── */
+.water-rail-body { padding: 14px; text-align: center; }
+.water-big-pct   { font-size: 32px; font-weight: 700; color: #0a8aa6; margin-bottom: 4px; }
+.water-rail-sub  { font-size: 11px; color: #54698d; margin-bottom: 6px; }
+.water-rail-info { font-size: 10px; color: #54698d; line-height: 1.5; }
+
+/* ── Watering schedule adjust current value display ────────────────── */
+.water-current-val {
+    font-size: 28px;
+    font-weight: 700;
+    color: #0a8aa6;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+/* ── Closeout check-list items ─────────────────────────────────────── */
+.check-list .ok  { color: #04844b; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+.check-list .nok { color: #c23934; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+.check-icon { font-size: 12px; }
+
+/* ── Tech route info block ─────────────────────────────────────────── */
+.tech-route-info { flex: 1; min-width: 0; }
+.tech-route-info .tech-name { font-size: 13px; font-weight: 600; color: #075d70; }
+.tech-route-info .tech-meta { font-size: 11px; color: #54698d; margin-top: 2px; }
+
+/* ── SVG map label ─────────────────────────────────────────────────── */
+.map-label { font-size: 10px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }

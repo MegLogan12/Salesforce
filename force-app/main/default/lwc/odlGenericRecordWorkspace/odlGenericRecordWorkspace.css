@@ -1,0 +1,53 @@
+:host {
+    --ol-navy: #16325c;
+    --ol-line: #d8dde6;
+    --ol-soft: #fafaf9;
+    --ol-gray: #54698d;
+    display: block;
+}
+
+.workspace {
+    display: grid;
+    gap: 14px;
+}
+
+.panel {
+    background: #fff;
+    border: 1px solid var(--ol-line);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.hero {
+    align-items: center;
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+}
+
+.eyebrow {
+    color: var(--ol-gray);
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+h1 {
+    color: var(--ol-navy);
+    font-size: 28px;
+    margin: 4px 0 0;
+}
+
+.panel-header {
+    background: var(--ol-soft);
+    border-bottom: 1px solid var(--ol-line);
+    color: var(--ol-navy);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 10px 14px;
+}
+
+.form-wrap,
+.related-wrap {
+    padding: 14px;
+}

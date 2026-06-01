@@ -1,0 +1,134 @@
+<template>
+    <div class="prep-card">
+
+        <!-- Loading -->
+        <template if:true={isLoading}>
+            <div class="odl-loading">
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Error -->
+        <template if:true={hasError}>
+            <div class="odl-error-state">
+                <lightning-icon icon-name="utility:error" size="small" variant="error"></lightning-icon>
+                <p>{error}</p>
+                <lightning-button label="Retry" onclick={handleRefresh}></lightning-button>
+            </div>
+        </template>
+
+        <!-- Main content -->
+        <template if:false={isLoading}>
+            <template if:false={hasError}>
+
+                <!-- Card header -->
+                <div class="card-header">
+                    <div class="card-icon" style="background:var(--odl-blue)">
+                        <lightning-icon icon-name="utility:chat" size="x-small" variant="inverse"></lightning-icon>
+                    </div>
+                    <h2 class="card-title">1:1 Meeting Prep</h2>
+                    <lightning-button-icon
+                        icon-name="utility:refresh"
+                        alternative-text="Refresh"
+                        variant="bare"
+                        onclick={handleRefresh}
+                        class="card-refresh"
+                    ></lightning-button-icon>
+                </div>
+
+                <!-- Meeting details section -->
+                <div class="detail-section">
+                    <div class="detail-row">
+                        <span class="detail-label">Meeting</span>
+                        <span class="detail-value">{recordName}</span>
+                    </div>
+                    <template if:true={hasMeetingDate}>
+                        <div class="detail-row">
+                            <span class="detail-label">Date</span>
+                            <span class="detail-value">{meetingDateLabel}</span>
+                        </div>
+                    </template>
+                    <template if:true={hasStatus}>
+                        <div class="detail-row">
+                            <span class="detail-label">Status</span>
+                            <span class="detail-value">
+                                <span class="status-chip chip-blue">{recordStatus}</span>
+                            </span>
+                        </div>
+                    </template>
+                    <template if:true={hasAttendees}>
+                        <div class="detail-row">
+                            <span class="detail-label">Attendees</span>
+                            <span class="detail-value">{recordAttendees}</span>
+                        </div>
+                    </template>
+                    <template if:true={hasNotes}>
+                        <div class="detail-row detail-row--full">
+                            <span class="detail-label">Notes</span>
+                            <p class="detail-notes">{recordNotes}</p>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Action Items section -->
+                <div class="section-header">
+                    <div class="card-icon" style="background:var(--odl-orange)">
+                        <lightning-icon icon-name="utility:task" size="x-small" variant="inverse"></lightning-icon>
+                    </div>
+                    <h3 class="section-title">Action Items</h3>
+                    <span class="section-count">{actionItemCount}</span>
+                </div>
+
+                <template if:true={hasActionItems}>
+                    <table class="odl-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Status</th>
+                                <th>Due</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={actionItems} for:item="row">
+                                <tr key={row.id}>
+                                    <td>
+                                        <a class="rec-link" data-id={row.id} onclick={handleOpenRecord}>{row.name}</a>
+                                    </td>
+                                    <td>
+                                        <span class={row.statusChipFull}>{row.status}</span>
+                                    </td>
+                                    <td>
+                                        <template if:true={row.isOverdue}>
+                                            <span class="status-chip chip-overdue">{row.dueDateLabel}</span>
+                                        </template>
+                                        <template if:false={row.isOverdue}>
+                                            <span class="muted">{row.dueDateLabel}</span>
+                                        </template>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+
+                <template if:false={hasActionItems}>
+                    <div class="empty-state">
+                        <lightning-icon icon-name="utility:check" size="small" variant="success"></lightning-icon>
+                        <p>No action items linked to this 1:1.</p>
+                    </div>
+                </template>
+
+                <!-- Footer -->
+                <div class="card-footer">
+                    <lightning-button
+                        label="New Action Item"
+                        variant="neutral"
+                        onclick={handleNewActionItem}
+                    ></lightning-button>
+                </div>
+
+            </template>
+        </template>
+
+    </div>
+</template>

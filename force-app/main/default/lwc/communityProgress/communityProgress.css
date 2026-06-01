@@ -1,0 +1,107 @@
+:host {
+    --border: #E0E5EE;
+    --bg-card: #FFFFFF;
+    --radius-card: 8px;
+    --shadow-card: 0 1px 4px rgba(0,0,0,0.10);
+    --text-dark: #181818;
+    --text-light: #6B7280;
+    --odl-blue: #0176D3;
+}
+
+.card {
+    background: var(--bg-card);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.card-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.ci-blue { background: var(--odl-blue); }
+
+.card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.card-body {
+    padding: 16px;
+}
+
+.stats-strip {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.stat-chip {
+    flex: 1;
+    background: #F3F5F8;
+    border-radius: 6px;
+    padding: 12px 14px;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-dark);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 11px;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+}
+
+.progress-section {
+    margin-top: 8px;
+}
+
+.progress-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+}
+
+.progress-caption {
+    font-size: 11px;
+    color: var(--text-light);
+    margin-top: 4px;
+}
+
+.loading-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+}

@@ -1,0 +1,42 @@
+:host {
+    --ol-line: #d8dde6;
+    --ol-navy: #16325c;
+    --ol-blue: #0176d3;
+    display: block;
+}
+
+.stack {
+    display: grid;
+    gap: 14px;
+}
+
+.card {
+    background: #fff;
+    border: 1px solid var(--ol-line);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.header {
+    background: #fafaf9;
+    border-bottom: 1px solid var(--ol-line);
+    color: var(--ol-navy);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 10px 12px;
+}
+
+.form-wrap {
+    padding: 12px;
+}
+
+.body {
+    padding: 12px;
+}
+
+.open-link {
+    color: var(--ol-blue);
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+}

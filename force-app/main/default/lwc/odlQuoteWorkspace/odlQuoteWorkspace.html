@@ -1,0 +1,103 @@
+<template>
+    <section class="workspace-shell">
+        <div class="workspace-header">
+            <div>
+                <p class="eyebrow">Outdoor Living Console</p>
+                <h1>ODL Quotes</h1>
+                <p class="subtitle">Standard Salesforce Quotes linked to ODL opportunities.</p>
+            </div>
+            <div class="header-actions">
+                <button class="secondary-btn" onclick={handleRefresh}>Refresh</button>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <div class="chip-row">
+                <template for:each={filters} for:item="filter">
+                    <button
+                        key={filter.value}
+                        class={filter.className}
+                        data-value={filter.value}
+                        onclick={handleFilterClick}
+                    >
+                        {filter.label}
+                    </button>
+                </template>
+            </div>
+            <lightning-input
+                class="search-input"
+                type="search"
+                variant="label-hidden"
+                placeholder="Search quotes"
+                value={searchTerm}
+                onchange={handleSearchChange}
+            ></lightning-input>
+        </div>
+
+        <template if:true={isLoading}>
+            <div class="state-card">Loading quotes...</div>
+        </template>
+
+        <template if:true={errorMessage}>
+            <div class="state-card error">{errorMessage}</div>
+        </template>
+
+        <template if:true={hasRows}>
+            <div class="list-card">
+                <div class="card-heading">
+                    <div>
+                        <h2>Quote Operating List</h2>
+                        <p>All quotes ordered by creation date, newest first.</p>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table class="workspace-table">
+                        <thead>
+                            <tr>
+                                <th>Quote Name</th>
+                                <th>Opportunity</th>
+                                <th>Account</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Expiry</th>
+                                <th>CTA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={visibleRows} for:item="row">
+                                <tr key={row.id}>
+                                    <td>
+                                        <button class="link-button" data-id={row.id} onclick={handleOpenRecord}>{row.name}</button>
+                                    </td>
+                                    <td>{row.opportunityName}</td>
+                                    <td>{row.accountName}</td>
+                                    <td>
+                                        <template if:true={row.hasGrandTotal}>
+                                            <lightning-formatted-number
+                                                value={row.grandTotal}
+                                                format-style="currency"
+                                                currency-code="USD"
+                                            ></lightning-formatted-number>
+                                        </template>
+                                        <template if:false={row.hasGrandTotal}>--</template>
+                                    </td>
+                                    <td>
+                                        <span class="status-chip">{row.status}</span>
+                                    </td>
+                                    <td>{row.expirationDate}</td>
+                                    <td>
+                                        <button class="primary-btn" data-id={row.id} onclick={handleOpenRecord}>Open</button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </template>
+
+        <template if:true={showEmptyState}>
+            <div class="state-card">No quotes match the current filters.</div>
+        </template>
+    </section>
+</template>
