@@ -11,6 +11,24 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
+        <comment>Keep Home Builder purchase orders on the LOVING command center when they are opened from this console.</comment>
+        <content>LOVING_Purchase_Order_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Purchase_Order__c</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>Keep Home Builder builder purchase orders on the LOVING command center when they are opened from this console.</comment>
+        <content>LOVING_Builder_PO_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Builder_PO__c</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
         <comment>Outdoor Living change order workspace view.</comment>
         <content>ODL_Change_Order_Record_Page</content>
         <formFactor>Large</formFactor>
@@ -119,7 +137,15 @@
     </actionOverrides>
     <actionOverrides>
         <actionName>View</actionName>
-        <comment>Outdoor Living work-order email view.</comment>
+        <content>ODL_ServiceAppointment_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>ServiceAppointment</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>Use the Outdoor Living work order workspace from the ODL console.</comment>
         <content>ODL_WorkOrder_Record_Page</content>
         <formFactor>Large</formFactor>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
@@ -130,49 +156,302 @@
         <headerColor>#16325C</headerColor>
         <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
     </brand>
-    <description>Outdoor Living Console for UpgradeMyBackyard and Design Build.</description>
+    <description>Outdoor Living Console for Upgrade My Backyard and Design Build.</description>
     <formFactors>Large</formFactors>
-    <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
-    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
-    <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
+    <isNavAutoTempTabsDisabled>true</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>true</isNavPersonalizationDisabled>
+    <isNavTabPersistenceDisabled>true</isNavTabPersistenceDisabled>
     <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
     <label>Outdoor Living Console</label>
     <navType>Console</navType>
-    <tabs>Outdoor_Living_Sales</tabs>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>ODL_UMB_Opportunity_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Opportunity</pageOrSobjectType>
+        <recordType>Opportunity.UMB</recordType>
+        <type>Flexipage</type>
+        <profile>SalesforceIQ Integration User</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>ODL_UMB_Opportunity_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Opportunity</pageOrSobjectType>
+        <recordType>Opportunity.UMB</recordType>
+        <type>Flexipage</type>
+        <profile>Standard</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>ODL_UMB_Opportunity_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Opportunity</pageOrSobjectType>
+        <recordType>Opportunity.UMB</recordType>
+        <type>Flexipage</type>
+        <profile>SolutionManager</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>ODL_UMB_Opportunity_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Opportunity</pageOrSobjectType>
+        <recordType>Opportunity.UMB</recordType>
+        <type>Flexipage</type>
+        <profile>Site_Service_Messaging_for_Web_53703831 Profile</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>ODL_Design_Build_Opportunity_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Opportunity</pageOrSobjectType>
+        <recordType>Opportunity.Design_Build</recordType>
+        <type>Flexipage</type>
+        <profile>SalesforceIQ Integration User</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>ODL_Design_Build_Opportunity_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Opportunity</pageOrSobjectType>
+        <recordType>Opportunity.Design_Build</recordType>
+        <type>Flexipage</type>
+        <profile>Standard</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>ODL_Design_Build_Opportunity_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Opportunity</pageOrSobjectType>
+        <recordType>Opportunity.Design_Build</recordType>
+        <type>Flexipage</type>
+        <profile>SolutionManager</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>ODL_Design_Build_Opportunity_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Opportunity</pageOrSobjectType>
+        <recordType>Opportunity.Design_Build</recordType>
+        <type>Flexipage</type>
+        <profile>Site_Service_Messaging_for_Web_53703831 Profile</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Account_Homeowner_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Home_Owner</recordType>
+        <type>Flexipage</type>
+        <profile>SalesforceIQ Integration User</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Account_Homeowner_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Home_Owner</recordType>
+        <type>Flexipage</type>
+        <profile>Admin</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Account_Homeowner_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Home_Owner</recordType>
+        <type>Flexipage</type>
+        <profile>Standard</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Account_Homeowner_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Home_Owner</recordType>
+        <type>Flexipage</type>
+        <profile>SolutionManager</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Account_Homeowner_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Home_Owner</recordType>
+        <type>Flexipage</type>
+        <profile>Site_Service_Messaging_for_Web_53703831 Profile</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Account_Builder_Parent_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Builder_Parent</recordType>
+        <type>Flexipage</type>
+        <profile>SalesforceIQ Integration User</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Account_Builder_Market_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Builder_Market</recordType>
+        <type>Flexipage</type>
+        <profile>SalesforceIQ Integration User</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Account_Builder_Parent_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Builder_Parent</recordType>
+        <type>Flexipage</type>
+        <profile>Admin</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Account_Builder_Market_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Builder_Market</recordType>
+        <type>Flexipage</type>
+        <profile>Admin</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Account_Builder_Parent_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Builder_Parent</recordType>
+        <type>Flexipage</type>
+        <profile>Standard</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Account_Builder_Market_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Builder_Market</recordType>
+        <type>Flexipage</type>
+        <profile>Standard</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Account_Builder_Parent_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Builder_Parent</recordType>
+        <type>Flexipage</type>
+        <profile>SolutionManager</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Account_Builder_Market_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Builder_Market</recordType>
+        <type>Flexipage</type>
+        <profile>SolutionManager</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Account_Builder_Parent_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Builder_Parent</recordType>
+        <type>Flexipage</type>
+        <profile>Site_Service_Messaging_for_Web_53703831 Profile</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Account_Builder_Market_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+        <recordType>Account.Builder_Market</recordType>
+        <type>Flexipage</type>
+        <profile>Site_Service_Messaging_for_Web_53703831 Profile</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>ODL_UMB_Opportunity_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Opportunity</pageOrSobjectType>
+        <recordType>Opportunity.UMB</recordType>
+        <type>Flexipage</type>
+        <profile>Admin</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>ODL_Design_Build_Opportunity_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>Opportunity</pageOrSobjectType>
+        <recordType>Opportunity.Design_Build</recordType>
+        <type>Flexipage</type>
+        <profile>Admin</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Standard_WorkOrder_Workspace_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>WorkOrder</pageOrSobjectType>
+        <recordType>WorkOrder.Production_Install</recordType>
+        <type>Flexipage</type>
+        <profile>Admin</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Standard_WorkOrder_Workspace_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>WorkOrder</pageOrSobjectType>
+        <recordType>WorkOrder.Production_Install</recordType>
+        <type>Flexipage</type>
+        <profile>SalesforceIQ Integration User</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Standard_WorkOrder_Workspace_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>WorkOrder</pageOrSobjectType>
+        <recordType>WorkOrder.Production_Install</recordType>
+        <type>Flexipage</type>
+        <profile>Site_Service_Messaging_for_Web_53703831 Profile</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Standard_WorkOrder_Workspace_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>WorkOrder</pageOrSobjectType>
+        <recordType>WorkOrder.Production_Install</recordType>
+        <type>Flexipage</type>
+        <profile>SolutionManager</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Standard_WorkOrder_Workspace_Page</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>WorkOrder</pageOrSobjectType>
+        <recordType>WorkOrder.Production_Install</recordType>
+        <type>Flexipage</type>
+        <profile>Standard</profile>
+    </profileActionOverrides>
+    <tabs>Outdoor_Living_Home</tabs>
     <tabs>Outdoor_Living_Leads</tabs>
-    <tabs>standard-Account</tabs>
     <tabs>Outdoor_Living_Opportunities</tabs>
     <tabs>Outdoor_Living_Campaigns</tabs>
-    <tabs>Outdoor_Living_Vouchers</tabs>
-    <tabs>Design_Review__c</tabs>
-    <tabs>Homeowner_Property__c</tabs>
-    <tabs>Outdoor_Living_Quotes</tabs>
-    <tabs>standard-Contract</tabs>
     <tabs>Outdoor_Living_Tasks</tabs>
-    <tabs>standard-Event</tabs>
-    <tabs>Payment_Milestone__c</tabs>
-    <tabs>Purchase_Order__c</tabs>
-    <tabs>Outdoor_Living_Work_Orders</tabs>
-    <tabs>standard-ServiceAppointment</tabs>
-    <tabs>Change_Order__c</tabs>
-    <tabs>Warranty_Record__c</tabs>
-    <tabs>standard-Case</tabs>
-    <tabs>standard-report</tabs>
-    <tabs>standard-Dashboard</tabs>
+    <tabs>Outdoor_Living_Quotes</tabs>
+    <tabs>Outdoor_Living_Calendar</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>Outdoor_Living_UtilityBar</utilityBar>
     <workspaceConfig>
         <mappings>
-            <tab>Change_Order__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Design_Review__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Homeowner_Property__c</tab>
+            <tab>Outdoor_Living_Calendar</tab>
         </mappings>
         <mappings>
             <tab>Outdoor_Living_Campaigns</tab>
+        </mappings>
+        <mappings>
+            <tab>Outdoor_Living_Home</tab>
         </mappings>
         <mappings>
             <tab>Outdoor_Living_Leads</tab>
@@ -184,46 +463,7 @@
             <tab>Outdoor_Living_Quotes</tab>
         </mappings>
         <mappings>
-            <tab>Outdoor_Living_Sales</tab>
-        </mappings>
-        <mappings>
-            <tab>Outdoor_Living_Vouchers</tab>
-        </mappings>
-        <mappings>
-            <tab>Outdoor_Living_Work_Orders</tab>
-        </mappings>
-        <mappings>
-            <tab>Payment_Milestone__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Purchase_Order__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Warranty_Record__c</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-Account</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-Case</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-Contract</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-Dashboard</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-Event</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-ServiceAppointment</tab>
-        </mappings>
-        <mappings>
             <tab>Outdoor_Living_Tasks</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-report</tab>
         </mappings>
     </workspaceConfig>
 </CustomApplication>

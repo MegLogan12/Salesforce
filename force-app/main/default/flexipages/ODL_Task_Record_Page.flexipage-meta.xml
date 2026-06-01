@@ -11,9 +11,6 @@
         <type>Region</type>
     </flexiPageRegions>
     <masterLabel>ODL Task Record Page</masterLabel>
-    <pageTemplate>
-        <pageTemplateName>flexipage:defaultRecordHomeTemplate</pageTemplateName>
-    </pageTemplate>
     <sobjectType>Task</sobjectType>
     <template>
         <name>flexipage:defaultRecordHomeTemplate</name>
