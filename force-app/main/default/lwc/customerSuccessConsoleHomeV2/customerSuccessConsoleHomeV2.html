@@ -1,0 +1,331 @@
+<template>
+    <section class="console-shell">
+        <div class="nav">
+            <template for:each={tabs} for:item="tab">
+                <a key={tab.id} href={tab.href} class={tab.cls}>
+                    {tab.label}
+                    <template if:true={tab.badge}>
+                        <span class="count">{tab.badge}</span>
+                    </template>
+                </a>
+            </template>
+        </div>
+
+        <div class="header">
+            <div class="header-row actions-only">
+                <div class="hactions">
+                    <button class="btn" onclick={handleRefresh}>Refresh</button>
+                    <a class="btn" href={agentforceUrl}>Agentforce</a>
+                    <a class="btn" href="/lightning/n/LOVING_PO_Pipeline">PO Queue</a>
+                    <button class="btn primary" onclick={openNewCase}>+ New Case</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="body">
+            <template if:true={hasLoadError}>
+                <div class="card alert">
+                    <div class="ch">
+                        <div class="ci red">!</div>
+                        <h3>Customer Success data unavailable</h3>
+                    </div>
+                    <div class="empty-state">{loadError}</div>
+                </div>
+            </template>
+            <div class="team-card">
+                <div class="avatars">
+                    <div class="av">CS</div>
+                    <div class="av">PO</div>
+                    <div class="av">SV</div>
+                    <div class="av">AR</div>
+                </div>
+                <div class="team-copy">
+                    <div class="team-title">{coverageTitle}</div>
+                    <div class="team-sub">{coverageSubtitle}</div>
+                </div>
+                <a class="btn" href={casesHomeUrl}>Open Cases</a>
+            </div>
+
+            <div class="g6 kpi-row">
+                <template for:each={summaryKpis} for:item="kpi">
+                    <div key={kpi.key} class={kpi.cls}>
+                        <div class="kn">{kpi.value}</div>
+                        <div class="kl">{kpi.label}</div>
+                    </div>
+                </template>
+            </div>
+
+            <div class="grid-main">
+                <div class="main-col">
+                    <div class="card alert">
+                        <div class="ch">
+                            <div class="ci red">!</div>
+                            <h3>{urgentSectionTitle}</h3>
+                            <a class="link" href={workOrderPipelineUrl}>Open queue</a>
+                        </div>
+                        <template if:true={hasUrgentQueue}>
+                            <table class="tbl">
+                                <thead>
+                                    <tr>
+                                        <th>Time In</th>
+                                        <th>Source</th>
+                                        <th>Lot / Community</th>
+                                        <th>Issue</th>
+                                        <th>Assigned</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={urgentQueueRows} for:item="row">
+                                        <tr key={row.woId}>
+                                            <td>{row.timeStr}</td>
+                                            <td>{row.source}</td>
+                                            <td><button class="nl" data-id={row.woId} onclick={openRecord}>{row.lot}</button></td>
+                                            <td>{row.issue}</td>
+                                            <td>{row.assigned}</td>
+                                            <td><span class={row.statusClass}>{row.status}</span></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </template>
+                        <template if:false={hasUrgentQueue}>
+                            <div class="empty-state">0 urgent tickets in the live queue.</div>
+                        </template>
+                    </div>
+
+                    <div class="g2">
+                        <div class="card">
+                            <div class="ch">
+                                <div class="ci orange">IN</div>
+                                <h3>{inboxTitle}</h3>
+                                <a class="link" href={casesHomeUrl}>Open inbox</a>
+                            </div>
+                            <template if:true={hasInbox}>
+                                <div class="queue-list">
+                                    <template for:each={inboxRows} for:item="row">
+                                        <div key={row.woId} class={row.rowClass}>
+                                            <div class="queue-avatar" style={row.avatarStyle}>{row.initials}</div>
+                                            <div class="queue-copy">
+                                                <div class="queue-meta">
+                                                    <span class="queue-from">{row.fromName}</span>
+                                                    <template if:true={row.source}>
+                                                        <span class="queue-source">{row.source}</span>
+                                                    </template>
+                                                    <span class="queue-time">{row.timeStr}</span>
+                                                </div>
+                                                <button class="queue-subject" data-id={row.woId} onclick={openRecord}>{row.subject}</button>
+                                                <div class="queue-preview">{row.preview}</div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                            <template if:false={hasInbox}>
+                                <div class="empty-state">0 new intake items in the live inbox.</div>
+                            </template>
+                        </div>
+
+                        <div class="card">
+                            <div class="ch">
+                                <div class="ci blue">SV</div>
+                                <h3>{siteVisitSectionTitle}</h3>
+                                <a class="link" href={serviceAppointmentsHomeUrl}>Open site visits</a>
+                            </div>
+                            <template if:true={hasSiteVisits}>
+                                <div class="queue-list">
+                                    <template for:each={siteVisitRows} for:item="row">
+                                        <div key={row.woId} class="visit-row">
+                                            <div class="visit-time">{row.timeStr}<span>{row.ampm}</span></div>
+                                            <div class="visit-copy">
+                                                <button class="queue-subject" data-id={row.woId} onclick={openRecord}>{row.title}</button>
+                                                <div class="queue-preview">{row.meta}</div>
+                                            </div>
+                                            <span class={row.chipClass}>{row.chip}</span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                            <template if:false={hasSiteVisits}>
+                                <div class="empty-state">0 site visits scheduled in the live queue today.</div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="card warn">
+                        <div class="ch">
+                            <div class="ci orange">PO</div>
+                            <h3>{epoSectionTitle}</h3>
+                            <a class="link" href="/lightning/n/LOVING_PO_Pipeline">Open PO changes</a>
+                        </div>
+                        <template if:true={hasPendingEpos}>
+                            <table class="tbl">
+                                <thead>
+                                    <tr>
+                                        <th>WO</th>
+                                        <th>Community</th>
+                                        <th>Builder / CM</th>
+                                        <th>Quote Sent</th>
+                                        <th class="num">Quote $</th>
+                                        <th>Day</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={pendingEpoRows} for:item="row">
+                                        <tr key={row.woId}>
+                                            <td><button class="nl" data-id={row.woId} onclick={openRecord}>{row.wo}</button></td>
+                                            <td>{row.lot}</td>
+                                            <td>{row.builder}</td>
+                                            <td>{row.quoteSent}</td>
+                                            <td class="num">{row.quoteAmount}</td>
+                                            <td><span class={row.dayClass}>{row.dayLabel}</span></td>
+                                            <td><button class={row.actionBtnClass} data-id={row.woId} onclick={openRecord}>{row.actionLabel}</button></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </template>
+                        <template if:false={hasPendingEpos}>
+                            <div class="empty-state">0 pending PO / EPO changes in the live queue.</div>
+                        </template>
+                    </div>
+
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci purple">QT</div>
+                            <h3>{quotesSectionTitle}</h3>
+                            <a class="link" href={quotesHomeUrl}>Open quotes</a>
+                        </div>
+                        <template if:true={hasQuotes}>
+                            <table class="tbl">
+                                <thead>
+                                    <tr>
+                                        <th>Quote</th>
+                                        <th>Work Order</th>
+                                        <th>Community</th>
+                                        <th>Builder</th>
+                                        <th>FM</th>
+                                        <th>Sent</th>
+                                        <th class="num">Total</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={quoteRows} for:item="row">
+                                        <tr key={row.quoteId}>
+                                            <td><button class="nl" data-id={row.quoteId} onclick={openRecord}>{row.quoteName}</button></td>
+                                            <td><button class="nl" data-id={row.woId} onclick={openRecord}>{row.woName}</button></td>
+                                            <td>{row.community}</td>
+                                            <td>{row.builder}</td>
+                                            <td>{row.fm}</td>
+                                            <td>{row.sentDate}</td>
+                                            <td class="num">{row.totalAmt}</td>
+                                            <td><span class={row.statusClass}>{row.status}</span></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </template>
+                        <template if:false={hasQuotes}>
+                            <div class="empty-state">0 live quotes in the current Customer Success queue.</div>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="rail-col">
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci teal">Σ</div>
+                            <h3>{liveSummaryTitle}</h3>
+                        </div>
+                        <div class="stats-list">
+                            <template for:each={liveSummaryRows} for:item="row">
+                                <div key={row.label} class="stat-row">
+                                    <span>{row.label}</span>
+                                    <strong>{row.value}</strong>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci purple">AI</div>
+                            <h3>Agentforce</h3>
+                            <a class="link" href={agentforceUrl}>Open agent</a>
+                        </div>
+                        <div class="empty-state">Open the live agent workspace.</div>
+                    </div>
+
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci green">✓</div>
+                            <h3>{closeoutSectionTitle}</h3>
+                            <a class="link" href={workOrderPipelineUrl}>Open queue</a>
+                        </div>
+                        <template if:true={hasCloseoutByOwner}>
+                            <div class="platform-grid">
+                                <template for:each={closeoutOwnerRows} for:item="row">
+                                    <div key={row.owner} class="platform">
+                                        <h4>{row.owner}</h4>
+                                        <div class="platform-value">{row.count}</div>
+                                        <p>Pending closeout work orders</p>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <template if:false={hasCloseoutByOwner}>
+                            <div class="empty-state">0 closeout items owned in the live queue.</div>
+                        </template>
+                    </div>
+
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci blue">⧉</div>
+                            <h3>Recent activity</h3>
+                        </div>
+                        <template if:true={hasRecentActivity}>
+                            <div class="queue-list">
+                                <template for:each={recentActivityRows} for:item="row">
+                                    <div key={row.noteId} class="activity-row">
+                                        <div class="queue-avatar" style={row.avatarStyle}>{row.initials}</div>
+                                        <div class="queue-copy">
+                                            <div class="queue-meta">
+                                                <span class="queue-from">{row.who}</span>
+                                                <span class="queue-time">{row.when_x}</span>
+                                            </div>
+                                            <template if:true={row.woName}>
+                                                <button class="queue-subject" data-id={row.woId} onclick={openRecord}>{row.woName}</button>
+                                            </template>
+                                            <div class="queue-preview wrap">{row.content}</div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <template if:false={hasRecentActivity}>
+                            <div class="empty-state">0 recent Customer Success activity records are available.</div>
+                        </template>
+                    </div>
+
+                    <div class="card last">
+                        <div class="ch">
+                            <div class="ci orange">⚡</div>
+                            <h3>Command actions</h3>
+                        </div>
+                        <div class="qa-list">
+                            <button class="qa-item" onclick={openNewCase}>+ New Case</button>
+                            <a class="qa-item" href={casesHomeUrl}>Open Cases</a>
+                            <a class="qa-item" href={accountsHomeUrl}>Open Builder 360</a>
+                            <a class="qa-item" href={agentforceUrl}>Open Agentforce</a>
+                            <a class="qa-item" href="/lightning/n/LOVING_PO_Pipeline">Open PO Changes</a>
+                            <a class="qa-item" href={workOrderPipelineUrl}>Open Closeout / Same-Day</a>
+                            <a class="qa-item" href={quotesHomeUrl}>Open Quotes</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</template>

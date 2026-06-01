@@ -1,0 +1,34 @@
+<template>
+    <div class="fields-grid">
+        <template for:each={fields} for:item="field">
+            <div key={field.label} class="field-row">
+                <div class="field-topline">
+                    <div>
+                        <div class="field-label">{field.label}</div>
+                        <div class="field-source">{field.source}</div>
+                    </div>
+                    <template if:true={field.editable}>
+                        <lightning-button-icon
+                            class="edit-btn"
+                            icon-name="utility:edit"
+                            variant="bare"
+                            alternative-text="Edit field"
+                            title="Edit field"
+                            size="x-small"
+                            data-field={field.fieldApiName}
+                            data-label={field.label}
+                            data-object={field.objectApiName}
+                            onclick={handleEdit}>
+                        </lightning-button-icon>
+                    </template>
+                </div>
+                <template if:true={field.link}>
+                    <a class="field-value link" href={field.link}>{field.value}</a>
+                </template>
+                <template if:false={field.link}>
+                    <div class="field-value">{field.value}</div>
+                </template>
+            </div>
+        </template>
+    </div>
+</template>

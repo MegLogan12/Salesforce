@@ -1,0 +1,121 @@
+<template>
+    <template lwc:if={hasData}>
+        <section class="workspace">
+            <section class="panel hero">
+                <div class="hero-copy">
+                    <div class="eyebrow">Campaigns</div>
+                    <h1>{pageData.title}</h1>
+                </div>
+                <div class="hero-actions">
+                    <button class="cta cta-secondary" onclick={handleNewTask}>New Task Batch</button>
+                    <button class="cta" onclick={handleNewCampaign}>New Campaign</button>
+                </div>
+            </section>
+
+            <section class="kpi-row">
+                <div class="kpi-card accent-orange">
+                    <div class="kpi-value">{activeCampaignsValue}</div>
+                    <div class="kpi-label">Active campaigns</div>
+                </div>
+                <div class="kpi-card accent-blue">
+                    <div class="kpi-value">{memberCountValue}</div>
+                    <div class="kpi-label">Campaign members</div>
+                </div>
+                <div class="kpi-card accent-green">
+                    <div class="kpi-value">{leadConversionValue}</div>
+                    <div class="kpi-label">Lead conversion</div>
+                </div>
+                <div class="kpi-card accent-purple">
+                    <div class="kpi-value">{voucherPendingValue}</div>
+                    <div class="kpi-label">Voucher pending</div>
+                </div>
+            </section>
+
+            <div class="layout">
+                <div class="layout-main">
+                    <section class="panel">
+                        <div class="panel-header">Campaign List</div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Campaign</th>
+                                    <th>Type</th>
+                                    <th>LOB</th>
+                                    <th>Members</th>
+                                    <th>Leads</th>
+                                    <th>Opportunities</th>
+                                    <th>Revenue</th>
+                                    <th>Owner</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><a href={recordUrl}>{pageData.title}</a></td>
+                                    <td>{campaignType}</td>
+                                    <td><span class="chip">{campaignLob}</span></td>
+                                    <td>{memberCountValue}</td>
+                                    <td>{leadCountValue}</td>
+                                    <td>{opportunityCountValue}</td>
+                                    <td>{revenueValue}</td>
+                                    <td>{ownerValue}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section class="panel" lwc:if={hasMembers}>
+                        <div class="panel-header">Campaign Member Work Queue</div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Member</th>
+                                    <th>Campaign</th>
+                                    <th>Status</th>
+                                    <th>LOB</th>
+                                    <th>Last Activity</th>
+                                    <th>Follow-Up Task</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={memberRows} for:item="row">
+                                    <tr key={row.key}>
+                                        <td><a href={row.url}>{row.label}</a></td>
+                                        <td>{pageData.title}</td>
+                                        <td>{row.status}</td>
+                                        <td>{campaignLob}</td>
+                                        <td>{row.dateText}</td>
+                                        <td>{row.followUpText}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+
+                <aside class="layout-rail">
+                    <section class="panel">
+                        <div class="panel-header">Campaign Actions</div>
+                        <div class="action-list">
+                            <button class="rail-action" onclick={handleNewTask}>Create campaign task batch</button>
+                            <button class="rail-action" onclick={handleOpenVoucherQueue}>Open voucher queue</button>
+                            <button class="rail-action" onclick={handleReviewMembers}>Review campaign members</button>
+                            <button class="rail-action" onclick={handleOpenReports}>Export ROI report</button>
+                        </div>
+                    </section>
+                    <section class="panel" lwc:if={hasOpenItems}>
+                        <div class="panel-header">Open Items</div>
+                        <div class="issue-list">
+                            <template for:each={pageData.openItems} for:item="item">
+                                <div class="issue" key={item}>{item}</div>
+                            </template>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </section>
+    </template>
+
+    <template lwc:elseif={error}>
+        <div class="panel error">{errorMessage}</div>
+    </template>
+</template>

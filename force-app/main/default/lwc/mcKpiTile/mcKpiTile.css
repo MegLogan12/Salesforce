@@ -1,0 +1,26 @@
+.mc-kpi-tile {
+    padding: 12px 14px;
+    border-radius: 6px;
+    background: #534AB7;
+    color: #fff;
+    min-width: 120px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+.mc-kpi-good { background: linear-gradient(135deg, #04844B, #03683C); }
+.mc-kpi-warn { background: linear-gradient(135deg, #FE9339, #D97706); }
+.mc-kpi-bad { background: linear-gradient(135deg, #C23934, #991B1B); }
+.mc-kpi-neutral { background: linear-gradient(135deg, #534AB7, #3F2F8C); }
+
+.mc-kpi-value {
+    font-size: 18px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+}
+.mc-kpi-hero .mc-kpi-value { font-size: 28px; }
+.mc-kpi-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.85;
+    margin-top: 2px;
+}

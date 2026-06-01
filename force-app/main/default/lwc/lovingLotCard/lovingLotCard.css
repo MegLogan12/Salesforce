@@ -1,0 +1,53 @@
+:host {
+    display: block;
+}
+
+.card {
+    background: #fff;
+    border: 1px solid #d8dde6;
+    border-radius: 6px;
+    box-shadow: 0 1px 0 rgba(0, 0, 0, .04);
+    overflow: hidden;
+    padding: 0 16px 16px;
+}
+
+.card.full {
+    margin: 16px 22px 24px;
+}
+
+.card.accent-blue {
+    border-left: 4px solid #256dd9;
+}
+
+.card.accent-purple {
+    border-left: 4px solid #5b52c9;
+}
+
+.card-title {
+    align-items: center;
+    border-bottom: 1px solid #eef1f5;
+    display: flex;
+    gap: 8px;
+    margin: 0 -16px 16px;
+    padding: 12px 16px;
+}
+
+.card-title span {
+    align-items: center;
+    background: #eef4ff;
+    border-radius: 4px;
+    color: #245eb4;
+    display: inline-flex;
+    font-size: 10px;
+    font-weight: 800;
+    height: 22px;
+    justify-content: center;
+    min-width: 22px;
+    padding: 0 4px;
+}
+
+.card-title h2 {
+    color: #16325c;
+    font-size: 15px;
+    margin: 0;
+}

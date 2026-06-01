@@ -1,0 +1,189 @@
+<template>
+    <template if:true={isLoaded}>
+        <template if:true={hasOpp}>
+        <div class="sf-body">
+            <!-- Path -->
+            <div class="card">
+                <div class="ch">
+                    <div class="ci" style="background:#fe9339">PATH</div>
+                    <h3>Opportunity Path</h3>
+                    <span class="chip co">UMB</span>
+                </div>
+                <div class="path">
+                    <template for:each={pathSteps} for:item="step">
+                        <div key={step.label} class={step.cssClass}>{step.label}</div>
+                    </template>
+                    <template if:true={canAdvanceStage}>
+                        <button class="sf-btn primary" style="margin-left:auto;white-space:nowrap" onclick={handleAdvanceStage}>Next Stage →</button>
+                    </template>
+                </div>
+            </div>
+
+            <div class="layout">
+                <div class="layout-main">
+                    <!-- Snapshot -->
+                    <div class="card info">
+                        <div class="ch">
+                            <div class="ci" style="background:#0070d2">SUM</div>
+                            <h3>Opportunity Snapshot</h3>
+                        </div>
+                        <div class="fields-grid">
+                            <div><div class="field-head"><span class="field-label">Opportunity Name</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Opportunity Name" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value">{opp.Name}</div></div>
+                            <div><div class="field-head"><span class="field-label">Account</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Account" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value nl">{opp.Account.Name}</div></div>
+                            <div><div class="field-label">Record Type</div><div class="field-value"><span class="chip co">UMB</span></div></div>
+                            <div><div class="field-label">Stage</div><div class="field-value">{opp.StageName}</div></div>
+                            <div><div class="field-head"><span class="field-label">Amount</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Amount" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value"><strong>{amountFormatted}</strong></div></div>
+                            <div><div class="field-head"><span class="field-label">Close Date</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Close Date" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value">{closeDateFormatted}</div></div>
+                        </div>
+                    </div>
+
+                    <!-- Package Selection -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#fe9339">PKG</div>
+                            <h3>Package Selection</h3>
+                        </div>
+                        <table class="tbl">
+                            <thead><tr><th>Package</th><th>Status</th><th class="num">Price</th><th>Primary Features</th><th></th></tr></thead>
+                            <tbody>
+                                <template for:each={packageOptions} for:item="pkg">
+                                    <tr key={pkg.id}>
+                                        <td><strong>{pkg.name}</strong></td>
+                                        <td><span class={pkg.statusChipClass}>{pkg.statusLabel}</span></td>
+                                        <td class="num">—</td>
+                                        <td>—</td>
+                                        <td><button class="sf-btn" data-package={pkg.name} onclick={handleSelectPackage}>Select</button></td>
+                                    </tr>
+                                </template>
+                                <template if:true={noPackageOptions}>
+                                    <tr><td colspan="5" style="text-align:center;color:#54698d;padding:12px">No package options configured. Add records to UMB_Product_Option__c to enable package selection.</td></tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Activity -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#534ab7">ACT</div>
+                            <h3>Activity and Next Follow-Up</h3>
+                            <lightning-button label="New Task" onclick={createTask} style="margin-left:auto"></lightning-button>
+                            <lightning-button label="Log Call" onclick={logCall} style="margin-left:8px"></lightning-button>
+                        </div>
+                        <table class="tbl">
+                            <thead><tr><th>Last Activity</th><th>Date</th><th>Voicemail</th><th>Next Task</th><th>Due</th><th>Owner</th></tr></thead>
+                            <tbody>
+                                <template if:false={noTasks}>
+                                    <tr>
+                                        <td>{lastActivityLabel}</td>
+                                        <td>{lastTouchFormatted}</td>
+                                        <td>
+                                            <template if:true={opp.Voicemail_Left__c}><span class="chip ca">Yes</span></template>
+                                            <template if:false={opp.Voicemail_Left__c}><span class="chip cgr">No</span></template>
+                                        </td>
+                                        <td>{nextTaskLabel}</td>
+                                        <td>{nextFollowUpFormatted}</td>
+                                        <td>{opp.Owner.Name}</td>
+                                    </tr>
+                                </template>
+                                <template if:true={noTasks}>
+                                    <tr><td colspan="6" style="text-align:center;color:#54698d;padding:12px">No activity yet</td></tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Design Review + Quote side by side -->
+                    <div class="g2">
+                        <div class="card">
+                            <div class="ch">
+                                <div class="ci" style="background:#04844b">DR</div>
+                                <h3>Design Review</h3>
+                            </div>
+                            <div class="fields-grid">
+                                <div><div class="field-head"><span class="field-label">Design Status</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Design Status" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value"><span class={designChipClass}>{opp.Design_Status__c}</span></div></div>
+                                <div><div class="field-head"><span class="field-label">Portal Published</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Portal Published" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value"><span class={portalChipClass}>{portalPublishedLabel}</span></div></div>
+                                <div><div class="field-label">Selected Package</div><div class="field-value">{opp.Selected_Package__c}</div></div>
+                                <div><div class="field-label">Customer Viewed</div><div class="field-value">{customerViewedFormatted}</div></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="ch">
+                                <div class="ci" style="background:#0070d2">$</div>
+                                <h3>Quote, Contract, Payment</h3>
+                            </div>
+                            <div class="fields-grid">
+                                <div><div class="field-head"><span class="field-label">Quote Status</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Quote Status" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value">{opp.Quote_Status__c}</div></div>
+                                <div><div class="field-head"><span class="field-label">Deposit Due</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Deposit Due" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value">{depositDueFormatted}</div></div>
+                                <div><div class="field-head"><span class="field-label">Contract Status</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Contract Status" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value">{opp.Contract_Status__c}</div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Property -->
+                    <template if:true={hasProperty}>
+                        <div class="card">
+                            <div class="ch">
+                                <div class="ci" style="background:#04844b">PROP</div>
+                                <h3>Related Property</h3>
+                                <lightning-button label="Edit Property" variant="neutral" onclick={handleEditProperty} style="margin-left:auto"></lightning-button>
+                            </div>
+                            <div class="fields-grid">
+                                <div><div class="field-head"><span class="field-label">Property</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Property Name" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon></div><div class="field-value">{opp.Homeowner_Property__r.Name}</div></div>
+                                <div><div class="field-head"><span class="field-label">Access Type</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Access Type" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon></div><div class="field-value">{opp.Homeowner_Property__r.Access_Type__c}</div></div>
+                                <div><div class="field-head"><span class="field-label">Drainage Risk</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Drainage Risk" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon></div><div class="field-value"><span class={drainageChipClass}>{opp.Homeowner_Property__r.Drainage_Risk__c}</span></div></div>
+                                <div><div class="field-head"><span class="field-label">Utility Review</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Utility Review" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon></div><div class="field-value"><span class={utilityChipClass}>{opp.Homeowner_Property__r.Utility_Review_Status__c}</span></div></div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Rail -->
+                <div class="layout-rail">
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#fe9339">NEXT</div>
+                            <h3>Next Action</h3>
+                        </div>
+                        <div class="qa-list">
+                            <template for:each={nextActions} for:item="action">
+                                <div key={action} class="qa-item">{action}</div>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#534ab7">AI</div>
+                            <h3>Assistant Panel</h3>
+                        </div>
+                        <div class="qa-list">
+                            <div class="qa-item" onclick={viewActivity}>Summarize latest customer activity</div>
+                            <div class="qa-item" onclick={draftEmail}>Draft follow-up email</div>
+                            <div class="qa-item" onclick={createTask}>Create next task</div>
+                            <div class="qa-item" onclick={viewTasks}>Show overdue items</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#0070d2">SLA</div>
+                            <h3>Activity Health</h3>
+                        </div>
+                        <div style="padding:10px 14px">
+                            <div class="rail-row"><span>Last touch</span><span>{lastTouchFormatted}</span></div>
+                            <div class="rail-row"><span>Voicemail</span><span class={vmChipClass}>{voicemailLabel}</span></div>
+                            <div class="rail-row"><span>Next follow-up</span><span class="chip cb2">{nextFollowUpFormatted}</span></div>
+                            <div class="rail-row"><span>Open tasks</span><span>{tasks.length}</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </template>
+        <template if:false={hasOpp}>
+            <div style="padding:20px;text-align:center;color:#54698d">{loadErrorLabel}</div>
+        </template>
+    </template>
+    <template if:false={isLoaded}>
+        <div style="padding:20px;text-align:center;color:#54698d">Loading...</div>
+    </template>
+</template>

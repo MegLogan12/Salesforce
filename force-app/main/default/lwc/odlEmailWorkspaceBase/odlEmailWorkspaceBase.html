@@ -1,0 +1,78 @@
+<template>
+    <section class="workspace-shell">
+        <div class="record-header">
+            <div class="record-title-block">
+                <div class="record-crumb">Outdoor Living Console</div>
+                <h1>{title}</h1>
+                <p>{subtitle}</p>
+            </div>
+            <div class="header-actions">
+                <button class="ol-btn" onclick={refreshWorkspace}>Refresh</button>
+            </div>
+        </div>
+
+        <template if:true={isLoading}>
+            <div class="state-message">Loading workspace...</div>
+        </template>
+
+        <template if:true={showError}>
+            <div class="state-message error">{errorMessage}</div>
+        </template>
+
+        <template if:true={showBackendMissing}>
+            <div class="state-message warn">{backendMissingReason}</div>
+        </template>
+
+        <template if:true={showWorkspace}>
+            <div class="layout">
+                <div class="main-card">
+                    <div class="card-header">
+                        <div class="card-title">Record List</div>
+                        <div class="card-subtitle">Select a record to inspect its email history.</div>
+                    </div>
+                    <div class="table-wrap">
+                        <table class="record-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>Context</th>
+                                    <th>Owner</th>
+                                    <th>Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={rows} for:item="row">
+                                    <tr key={row.id} class={row.rowClass}>
+                                        <td>
+                                            <button class="link-button" data-id={row.id} data-object={row.objectApiName} onclick={selectRecord}>
+                                                {row.name}
+                                            </button>
+                                        </td>
+                                        <td>{row.status}</td>
+                                        <td>{row.contextValue}</td>
+                                        <td>{row.ownerName}</td>
+                                        <td>
+                                            <template if:true={row.activityDate}>
+                                                <lightning-formatted-date-time value={row.activityDate} year="numeric" month="short" day="2-digit"></lightning-formatted-date-time>
+                                            </template>
+                                        </td>
+                                        <td>
+                                            <button class="ol-btn" data-id={row.id} onclick={openRecord}>Open</button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="rail-card">
+                    <template if:true={selectedRecordId}>
+                        <c-odl-email-view-card record-id={selectedRecordId} object-api-name={selectedObjectApiName}></c-odl-email-view-card>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </section>
+</template>

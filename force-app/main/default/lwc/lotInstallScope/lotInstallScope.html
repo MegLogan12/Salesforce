@@ -1,0 +1,64 @@
+<template>
+    <lightning-card title="Install Scope" icon-name="standard:product">
+        <button slot="actions" type="button" class="action-button" onclick={handleToggleEdit}>{editButtonLabel}</button>
+        <template if:true={scope}>
+            <div class="slds-p-horizontal_medium">
+                <template lwc:if={isEditing}>
+                    <lightning-record-edit-form
+                        object-api-name="Lot__c"
+                        record-id={recordId}
+                        onsuccess={handleSuccess}
+                        onerror={handleError}
+                    >
+                        <div class="form-grid">
+                            <lightning-input-field field-name="Sod_SF__c"></lightning-input-field>
+                            <lightning-input-field field-name="Trees__c"></lightning-input-field>
+                            <lightning-input-field field-name="Shrubs__c"></lightning-input-field>
+                            <lightning-input-field field-name="Aqua_Add_On__c"></lightning-input-field>
+                            <lightning-input-field field-name="Plant_Package__c"></lightning-input-field>
+                            <lightning-input-field field-name="Spec_Type__c"></lightning-input-field>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="action-button action-button_brand">Save Changes</button>
+                            <button type="button" class="action-button" onclick={handleCancel}>Cancel</button>
+                        </div>
+                    </lightning-record-edit-form>
+                </template>
+                <template lwc:else>
+                    <div class="scope-grid">
+                        <div class="scope-tile">
+                            <div class="scope-value">
+                                <lightning-formatted-number value={scope.sodSqft}></lightning-formatted-number>
+                            </div>
+                            <div class="scope-label">SOD SQFT</div>
+                        </div>
+                        <div class="scope-tile">
+                            <div class="scope-value">{scope.trees}</div>
+                            <div class="scope-label">TREES</div>
+                        </div>
+                        <div class="scope-tile">
+                            <div class="scope-value">{scope.shrubs}</div>
+                            <div class="scope-label">SHRUBS</div>
+                        </div>
+                        <div class="scope-tile">
+                            <div class="scope-value">
+                                <lightning-formatted-number value={scope.aquaAddOn} format-style="currency" currency-code="USD" maximum-fraction-digits="0"></lightning-formatted-number>
+                            </div>
+                            <div class="scope-label">AQUA ADD-ON</div>
+                        </div>
+                    </div>
+                    <div class="scope-detail">
+                        <div class="scope-row">
+                            <span class="scope-row-label">Plant Package:</span>
+                            <span>{scope.plantPackage}</span>
+                        </div>
+                        <div class="scope-row">
+                            <span class="scope-row-label">Spec Type:</span>
+                            <span>{scope.specType}</span>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+    </lightning-card>
+</template>

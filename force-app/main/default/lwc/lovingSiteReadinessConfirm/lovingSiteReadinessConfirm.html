@@ -1,0 +1,36 @@
+<template>
+    <div class="lsrc-wrap">
+
+        <template if:true={isLoading}>
+            <div class="lsrc-spinner">
+                <lightning-spinner alternative-text="Processing" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:true={errorMessage}>
+            <div class="lsrc-banner lsrc-banner-red">
+                <span class="lsrc-banner-icon">⚠</span>
+                {errorMessage}
+            </div>
+        </template>
+
+        <div class="lsrc-body">
+            <div class="lsrc-icon">✅</div>
+            <div class="lsrc-title">Confirm Site Ready</div>
+            <div class="lsrc-desc">
+                Confirm that the site has been inspected and is ready for the scheduled install.
+                This will mark Site Readiness as <strong>Complete — Ready</strong> and allow the install to proceed.
+            </div>
+        </div>
+
+        <div class="lsrc-actions">
+            <button class="lsrc-btn lsrc-btn-secondary" onclick={handleCancel} disabled={isLoading}>
+                Cancel
+            </button>
+            <button class="lsrc-btn lsrc-btn-primary" onclick={handleConfirm} disabled={isLoading}>
+                ✅ Confirm Site Ready
+            </button>
+        </div>
+
+    </div>
+</template>

@@ -1,0 +1,92 @@
+<template>
+    <template lwc:if={hasData}>
+        <section class="workspace">
+            <section class="panel hero">
+                <div class="hero-copy">
+                    <div class="eyebrow">{pageData.eyebrow}</div>
+                    <h1>{pageData.title}</h1>
+                    <div class="subtitle">{pageData.subtitle}</div>
+                    <div class="hero-meta">
+                        <template for:each={pageData.badges} for:item="badge">
+                            <span key={badge} class="chip">{badge}</span>
+                        </template>
+                    </div>
+                </div>
+                <div class="hero-actions">
+                    <template for:each={pageData.actions} for:item="action">
+                        <button
+                            key={action.label}
+                            class={action.className}
+                            data-action={action.actionType}
+                            data-url={action.url}
+                            onclick={handleAction}
+                            disabled={action.disabled}
+                            title={action.disabledReason}
+                        >
+                            {action.label}
+                        </button>
+                    </template>
+                </div>
+            </section>
+
+            <template for:each={pageData.sections} for:item="section">
+                <section class="panel" key={section.title}>
+                    <div class="panel-header">{section.title}</div>
+                    <template lwc:if={section.hasFields}>
+                        <div class="grid">
+                            <template for:each={section.fields} for:item="item">
+                                <div key={item.key}>
+                                    <div class="label">{item.label}</div>
+                                    <div class="value">
+                                        <template lwc:if={item.url}>
+                                            <a href={item.url}>{item.value}</a>
+                                        </template>
+                                        <template lwc:else>{item.value}</template>
+                                    </div>
+                                    <template lwc:if={item.subtext}>
+                                        <div class="subvalue">{item.subtext}</div>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <template lwc:if={section.hasRows}>
+                        <div class="row-list">
+                            <template for:each={section.rows} for:item="row">
+                                <div class="row-card" key={row.key}>
+                                    <div class="row-top">
+                                        <div class="row-label">
+                                            <template lwc:if={row.url}>
+                                                <a href={row.url}>{row.label}</a>
+                                            </template>
+                                            <template lwc:else>{row.label}</template>
+                                        </div>
+                                        <template lwc:if={row.status}>
+                                            <div class="row-status">{row.status}</div>
+                                        </template>
+                                    </div>
+                                    <div class="row-meta">
+                                        <template lwc:if={row.subtext}>
+                                            <span>{row.subtext}</span>
+                                        </template>
+                                        <template lwc:if={row.secondaryText}>
+                                            <span>{row.secondaryText}</span>
+                                        </template>
+                                        <template lwc:if={row.dateText}>
+                                            <span>{row.dateText}</span>
+                                        </template>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </section>
+            </template>
+        </section>
+    </template>
+
+    <template lwc:elseif={error}>
+        <div class="panel error">{errorMessage}</div>
+    </template>
+</template>

@@ -1,0 +1,41 @@
+<template>
+    <div class="invt-card">
+        <div class="ch">
+            <h3>Invoices ({count})</h3>
+        </div>
+        <template lwc:if={hasRows}>
+            <div class="tbl-wrap">
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Invoice #</th>
+                            <th>Community</th>
+                            <th>Invoice Date</th>
+                            <th>Amount</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={viewRows} for:item="i">
+                            <tr key={i.id}>
+                                <td><a href={i.recordUrl} class="name-link">{i.name}</a></td>
+                                <td class="sm">{i.communityName}</td>
+                                <td class="sm"><lightning-formatted-date-time value={i.invoiceDate}></lightning-formatted-date-time></td>
+                                <td class="amt"><lightning-formatted-number value={i.amount} format-style="currency" currency-code="USD" maximum-fraction-digits="0"></lightning-formatted-number></td>
+                                <td class="sm"><lightning-formatted-date-time value={i.dueDate}></lightning-formatted-date-time></td>
+                                <td><span class={i.chipCls}>{i.statusLabel}</span></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+        <template lwc:elseif={error}>
+            <div class="err">{error}</div>
+        </template>
+        <template lwc:else>
+            <div class="empty">No invoices yet.</div>
+        </template>
+    </div>
+</template>

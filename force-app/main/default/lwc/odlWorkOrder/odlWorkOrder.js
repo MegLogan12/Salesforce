@@ -53,6 +53,7 @@ export default class OdlWorkOrder extends NavigationMixin(LightningElement) {
         return 'chip cb2';
     }
     get opportunityName() { return this.workOrder.ODL_Opportunity__r ? this.workOrder.ODL_Opportunity__r.Name : '—'; }
+    get recordTypeName() { return this.workOrder.RecordType ? this.workOrder.RecordType.Name : 'Work Order'; }
     get propertyName() { return this.workOrder.Homeowner_Property__r ? this.workOrder.Homeowner_Property__r.Name : '—'; }
     get crewName() { return this.workOrder.Owner ? this.workOrder.Owner.Name : '—'; }
     get fieldManagerName() { return this.workOrder.Field_Manager__r ? this.workOrder.Field_Manager__r.Name : '—'; }
@@ -110,7 +111,7 @@ export default class OdlWorkOrder extends NavigationMixin(LightningElement) {
         this[NavigationMixin.Navigate]({
             type: 'standard__objectPage',
             attributes: { objectApiName: 'Material_Allocation__c', actionName: 'new' },
-            state: { defaultFieldValues: encodeDefaultFieldValues({ Work_Order__c: this.recordId, LOVING_Work_Order__c: this.recordId }) }
+            state: { defaultFieldValues: encodeDefaultFieldValues({ Work_Order__c: this.recordId }) }
         });
     }
     submitPunchNote() {
@@ -122,14 +123,13 @@ export default class OdlWorkOrder extends NavigationMixin(LightningElement) {
     }
 
     get lastTouchDisplay() {
-        return this.workOrder.LastActivityDate
-            ? new Date(this.workOrder.LastActivityDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-            : '—';
+        const d = this.workOrder.LastModifiedDate;
+        return d ? new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—';
     }
     get daysSinceLastTouch() {
-        if (!this.workOrder.LastActivityDate) return null;
-        const diff = Math.floor((Date.now() - new Date(this.workOrder.LastActivityDate + 'T12:00:00').getTime()) / 86400000);
-        return diff;
+        const d = this.workOrder.LastModifiedDate;
+        if (!d) return null;
+        return Math.floor((Date.now() - new Date(d).getTime()) / 86400000);
     }
     get daysSinceLastTouchDisplay() {
         const d = this.daysSinceLastTouch;

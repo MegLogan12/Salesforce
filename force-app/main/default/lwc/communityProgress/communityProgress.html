@@ -1,0 +1,39 @@
+<template>
+    <div class="card last">
+        <div class="card-header">
+            <span class="card-icon">&#128200;</span>
+            <span class="card-title">Lot Progress</span>
+            <template lwc:if={hasLots}>
+                <span class="chip cgr badge-total">{total} lots</span>
+            </template>
+        </div>
+        <div class="card-body">
+            <template lwc:if={isLoaded}>
+                <template lwc:if={hasLots}>
+                    <div class="progress-bar">
+                        <template for:each={statusGroups} for:item="group">
+                            <div key={group.id} class={group.barClass} style={group.barStyle} title={group.label}></div>
+                        </template>
+                    </div>
+                    <div class="legend">
+                        <template for:each={statusGroups} for:item="group">
+                            <div key={group.id} class="legend-item">
+                                <span class={group.chipClass}>{group.label}</span>
+                                <span class="legend-count">{group.count}</span>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+                <template lwc:else>
+                    <div class="empty-state">No lots found for this community.</div>
+                </template>
+            </template>
+            <template lwc:elseif={hasError}>
+                <div class="empty-state error-state">{error}</div>
+            </template>
+            <template lwc:else>
+                <div class="empty-state">Loading lot data...</div>
+            </template>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,17 @@
+<template>
+    <header class="record-header">
+        <div class="record-icon">{objectLabel}</div>
+        <div class="record-title">
+            <div class="crumb">{objectPluralLabel} / {lot.lotRecordLabel}</div>
+            <h1>{lot.lotName} <span class={lotStatusClass}>{lot.lotStatus}</span></h1>
+        </div>
+        <div class="actions">
+            <button class="sf-btn" onclick={handleEditRecord}>Edit</button>
+            <template if:true={lot.mapsLink}>
+                <a class="sf-btn" href={lot.mapsLink} target="_blank" rel="noopener">Open in Maps</a>
+            </template>
+            <button class="sf-btn" onclick={handleViewWorkOrders}>View WOs</button>
+            <button class="sf-btn primary" onclick={handleNewWorkOrder}>+ New Work Order</button>
+        </div>
+    </header>
+</template>

@@ -1,0 +1,77 @@
+.scope-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin: 8px 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 20px;
+    margin: 10px 0 8px;
+}
+.form-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0 12px;
+}
+.action-button {
+    appearance: none;
+    border: 1px solid #c9c9c9;
+    background: #fff;
+    color: #16325c;
+    border-radius: 6px;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.action-button_brand {
+    background: #16325c;
+    border-color: #16325c;
+    color: #fff;
+}
+.scope-tile {
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: #FAFAF9;
+    border: 1px solid #D8DDE6;
+    text-align: center;
+}
+.scope-value {
+    font-size: 18px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    color: #181818;
+}
+.scope-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #54698D;
+    margin-top: 4px;
+}
+.scope-detail {
+    margin-top: 14px;
+    padding: 10px 12px;
+    background: #FAFAF9;
+    border-radius: 4px;
+}
+.scope-row {
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+.scope-row-label {
+    color: #54698D;
+    margin-right: 6px;
+}
+@media (max-width: 900px) {
+    .scope-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}

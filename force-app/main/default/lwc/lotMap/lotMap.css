@@ -1,0 +1,63 @@
+.container {
+    padding: 0.5rem 1rem 1rem 1rem;
+}
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 0.75rem;
+    font-size: 0.75rem;
+}
+.kpi { font-size: 0.875rem; margin-right: 0.5rem; }
+.chip {
+    padding: 0.125rem 0.5rem;
+    border-radius: 12px;
+    border: 1px solid transparent;
+}
+.chip-complete  { background: #ecf7ed; color: #2e844a; border-color: #cbe6d1; }
+.chip-inprod    { background: #ece9fb; color: #5a4bc2; border-color: #d6cfee; }
+.chip-scheduled { background: #e8f2ff; color: #0b5cab; border-color: #c9deff; }
+.chip-pending   { background: #fff6e0; color: #805500; border-color: #f2dda3; }
+.chip-fj        { background: #fdecea; color: #b03024; border-color: #f4c4bf; }
+.chip-available { background: #f3f3f3; color: #555; border-color: #e0e0e0; }
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 0.5rem;
+}
+.lot-tile {
+    all: unset;
+    box-sizing: border-box;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1 / 1;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-align: center;
+    border: 1px solid #d8dde6;
+    transition: transform 0.1s;
+}
+.lot-tile:hover   { transform: scale(1.05); }
+.lot-tile:focus   { outline: 2px solid #1b96ff; }
+.tile-name        { padding: 0.125rem 0.25rem; }
+.tile-complete    { background: #2e844a; color: #ffffff; border-color: #276c3d; }
+.tile-inprod      { background: #6a5acd; color: #ffffff; border-color: #5a4bc2; }
+.tile-scheduled   { background: #0b5cab; color: #ffffff; border-color: #094a8a; }
+.tile-pending     { background: #f4b400; color: #2d2a00; border-color: #c69300; }
+.tile-fj          { background: #c23934; color: #ffffff; border-color: #9f2b27; border-style: dashed; }
+.tile-available   { background: #f3f3f3; color: #555; border-color: #d0d0d0; }
+
+.empty, .error {
+    padding: 1rem;
+    font-size: 0.875rem;
+    color: #706e6b;
+    text-align: center;
+}
+.error { color: #c23934; }

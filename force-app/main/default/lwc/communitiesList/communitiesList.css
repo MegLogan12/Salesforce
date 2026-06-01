@@ -1,0 +1,76 @@
+.comm-card {
+    background: #fff;
+    border: 0.5px solid #e5e5e5;
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    overflow: hidden;
+    font-size: 12px;
+}
+.ch {
+    padding: 10px 14px;
+    border-bottom: 0.5px solid #e5e5e5;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.ch h3 {
+    font-size: 13px;
+    font-weight: 600;
+    flex: 1;
+    margin: 0;
+}
+.head-actions { display: flex; gap: 6px; }
+.tbl-wrap { overflow-x: auto; }
+.tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+.tbl th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 500;
+    color: #6b7280;
+    padding: 8px 14px;
+    border-bottom: 0.5px solid #e5e5e5;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    background: #f9fafb;
+    white-space: nowrap;
+}
+.tbl td {
+    padding: 9px 14px;
+    border-bottom: 0.5px solid #e5e5e5;
+    vertical-align: middle;
+}
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: #f9fafb; }
+.name-link { color: #0070d2; font-weight: 500; text-decoration: none; }
+.sub { font-size: 10px; color: #6b7280; margin-top: 1px; }
+.fm-cell { font-size: 11px; color: #0070d2; }
+.date-cell { font-size: 10px; color: #6b7280; }
+.pb-wrap { display: flex; align-items: center; gap: 8px; min-width: 120px; }
+.pb-bar { flex: 1; height: 6px; background: #f3f4f6; border-radius: 3px; overflow: hidden; }
+.pb-fill { height: 100%; background: #2e844a; border-radius: 3px; transition: width 200ms; }
+.pb-lbl { font-size: 10px; color: #6b7280; white-space: nowrap; }
+.wo-count { text-align: center; color: #9ca3af; }
+.wo-count.has-wo { color: #0070d2; font-weight: 500; }
+.wo-count.wo-amber { color: #ba7517; }
+.pill {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 500;
+    margin-right: 3px;
+}
+.pill.small { font-size: 10px; }
+.pill.tiny { font-size: 9px; padding: 1px 6px; }
+.pill.pg { background: #e8f5e9; color: #2e7d32; }
+.pill.pb { background: #e3f0fb; color: #0c447c; }
+.pill.pa { background: #fef3c7; color: #92400e; }
+.pill.pp { background: #ede9fe; color: #5b21b6; }
+.pill.pgr { background: #f3f4f6; color: #4b5563; }
+.pill.pr { background: #fce8e8; color: #991b1b; }
+.err { padding: 12px 14px; font-size: 11px; color: #991b1b; }
+.empty { padding: 16px; font-size: 11px; color: #6b7280; }

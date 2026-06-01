@@ -1,0 +1,134 @@
+:host {
+    display: block;
+    color: #16325c;
+}
+
+.timeline-header {
+    background: linear-gradient(135deg, #e6f4f7 0%, #d1ecf1 100%);
+    border: 1px solid #0a8aa6;
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+}
+
+.lot-name {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.lot-num {
+    font-size: 11px;
+    color: #54698d;
+    margin-bottom: 6px;
+}
+
+.chip {
+    display: inline-flex;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.status-default {
+    background: #f4f6f9;
+    color: #54698d;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-scheduled {
+    background: #e3f0fb;
+    color: #0c447c;
+}
+
+.status-production {
+    background: #ede9fe;
+    color: #5b21b6;
+}
+
+.status-complete {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-closed {
+    background: #d8dde6;
+    color: #16325c;
+}
+
+.section-block {
+    margin-bottom: 12px;
+    padding: 0 4px;
+}
+
+.section-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-weight: 600;
+    color: #54698d;
+    margin-bottom: 3px;
+}
+
+.section-value {
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.timeline-steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.timeline-steps li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    font-size: 11px;
+    color: #54698d;
+}
+
+.step-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #d8dde6;
+    border: 2px solid #d8dde6;
+    flex-shrink: 0;
+}
+
+.step.done .step-dot {
+    background: #04844b;
+    border-color: #04844b;
+}
+
+.step.current .step-dot {
+    background: #0a8aa6;
+    border-color: #0a8aa6;
+    box-shadow: 0 0 0 3px rgba(10, 138, 166, 0.18);
+}
+
+.step.done .step-label {
+    color: #04844b;
+}
+
+.step.current .step-label {
+    color: #0a8aa6;
+    font-weight: 600;
+}
+
+.notes-text {
+    white-space: pre-wrap;
+    color: #54698d;
+}
+
+.error-text {
+    color: #991b1b;
+}

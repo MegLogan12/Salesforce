@@ -1,0 +1,37 @@
+<template>
+    <div class="card last">
+        <div class="card-header">
+            <span class="card-icon">&#128260;</span>
+            <span class="card-title">Change Orders</span>
+        </div>
+        <div class="info-banner">
+            Change orders are tracked at the lot and work order level. Navigate to a specific lot to view or create change orders for that address.
+        </div>
+        <template lwc:if={isLoaded}>
+            <div class="card-body">
+                <div class="section-label">About This Community</div>
+                <div class="community-summary">
+                    <div class="field-group">
+                        <div class="field-label">Community</div>
+                        <div class="field-value comm-name">{communityName}</div>
+                    </div>
+                    <div class="field-group">
+                        <div class="field-label">Total Lots</div>
+                        <div class="field-value">{numLots}</div>
+                    </div>
+                </div>
+                <div class="section-divider"></div>
+                <div class="action-row">
+                    <p class="action-hint">
+                        To review change orders, navigate to the Lot Tracker tab and open a specific lot record.
+                        Change orders for each lot appear on the lot detail page.
+                    </p>
+                    <button class="sf-btn" onclick={handleViewLots}>View Lot Tracker &#8594;</button>
+                </div>
+            </div>
+        </template>
+        <template lwc:else>
+            <div class="empty-state">Loading...</div>
+        </template>
+    </div>
+</template>

@@ -1,0 +1,50 @@
+<template>
+    <div class="lsrf-wrap">
+
+        <template if:true={isLoading}>
+            <div class="lsrf-spinner">
+                <lightning-spinner alternative-text="Processing" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:true={errorMessage}>
+            <div class="lsrf-banner lsrf-banner-red">
+                <span class="lsrf-banner-icon">⚠</span>
+                {errorMessage}
+            </div>
+        </template>
+
+        <div class="lsrf-banner lsrf-banner-amber">
+            <span class="lsrf-banner-icon">⚠</span>
+            This will place the Work Order <strong>On Hold</strong> until the site is resolved and re-confirmed or waived.
+        </div>
+
+        <div class="lsrf-form">
+            <label class="lsrf-label" for="notes">
+                Site Readiness Notes <span class="lsrf-required">*</span>
+            </label>
+            <textarea
+                id="notes"
+                class={notesClass}
+                placeholder="Describe the site condition and what must be resolved before install can proceed..."
+                value={notes}
+                onchange={handleNotesChange}
+                rows="5"
+                disabled={isLoading}
+            ></textarea>
+            <template if:true={notesError}>
+                <div class="lsrf-field-error">Notes are required when flagging a site as Not Ready.</div>
+            </template>
+        </div>
+
+        <div class="lsrf-actions">
+            <button class="lsrf-btn lsrf-btn-secondary" onclick={handleCancel} disabled={isLoading}>
+                Cancel
+            </button>
+            <button class="lsrf-btn lsrf-btn-danger" onclick={handleFlag} disabled={isLoading}>
+                🚩 Flag Site Not Ready
+            </button>
+        </div>
+
+    </div>
+</template>

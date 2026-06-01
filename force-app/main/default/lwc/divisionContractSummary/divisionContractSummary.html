@@ -1,0 +1,75 @@
+<template>
+    <div class="cs-card">
+        <div class="ch">
+            <h3>Contract Summary</h3>
+        </div>
+        <div class="cb f3">
+            <div>
+                <div class="fl">Contract Status</div>
+                <div class="fv">
+                    <template lwc:if={hasStatus}>
+                        <span class={statusCls}>{status}</span>
+                    </template>
+                    <template lwc:else>
+                        <span class="em">Not set</span>
+                    </template>
+                </div>
+            </div>
+            <div>
+                <div class="fl">Contract Start Date</div>
+                <div class="fv">
+                    <template lwc:if={hasStart}>
+                        <lightning-formatted-date-time value={contractStart}></lightning-formatted-date-time>
+                    </template>
+                    <template lwc:else>
+                        <span class="em">Not set</span>
+                    </template>
+                </div>
+            </div>
+            <div>
+                <div class="fl">Renewal Date</div>
+                <div class="fv">
+                    <template lwc:if={hasRenew}>
+                        <lightning-formatted-date-time value={contractRenew}></lightning-formatted-date-time>
+                    </template>
+                    <template lwc:else>
+                        <span class="em">Not set</span>
+                    </template>
+                </div>
+            </div>
+            <div>
+                <div class="fl">Contract Document</div>
+                <div class="fv">
+                    <template lwc:if={hasContract}>
+                        <a href={contractLink} target="_blank" rel="noopener" class="link">View PDF &#8599;</a>
+                    </template>
+                    <template lwc:else>
+                        <span class="em">Not on file</span>
+                    </template>
+                </div>
+            </div>
+            <div>
+                <div class="fl">BMG Pricing Link</div>
+                <div class="fv">
+                    <template lwc:if={hasBmg}>
+                        <a href={bmgLink} target="_blank" rel="noopener" class="link">View Pricing &#8599;</a>
+                    </template>
+                    <template lwc:else>
+                        <span class="em">Not set</span>
+                    </template>
+                </div>
+            </div>
+            <div>
+                <div class="fl">Insurance COI</div>
+                <div class="fv">
+                    <template lwc:if={hasCoi}>
+                        <a href={coiLink} target="_blank" rel="noopener" class="link">View COI &#8599;</a>
+                    </template>
+                    <template lwc:else>
+                        <span class="em">Not on file</span>
+                    </template>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,338 @@
+<template>
+    <div class="form-wrapper">
+        <!-- Success Message - Full Screen -->
+        <template lwc:if={showSuccess}>
+            <div class="success-container">
+                <h1 class="success-title">You're all set.</h1>
+                <p class="success-message">Your design request has been sent to the UpgradeMyBackyard.com design TEAM. A designer will review your information and follow up within 1-3 business days.</p>
+                <p class="success-message">In the meantime, feel free to explore our <a href="https://www.upgrademybackyard.com/inspiration-gallery" target="_parent" class="success-link">Inspiration Gallery</a> or learn more about <a href="https://www.upgrademybackyard.com/about-us" target="_parent" class="success-link">who we are</a> and how we design and build outdoor spaces.</p>
+            </div>
+        </template>
+
+        <!-- Form Content - Hidden when success -->
+        <template lwc:if={showForm}>
+            <!-- Page Title -->
+            <h2 class="page-title">Begin Your Virtual Design</h2>
+            <p class="page-subtitle">Complete the fields below to get started.</p>
+
+            <!-- Main Form Card -->
+            <div class="main-card">
+                <!-- Step Indicator -->
+                <div class="step-indicator">
+                    <div class="step-item">
+                        <div class={step1NumberClass}>1</div>
+                        <div class={step1LabelClass}>Step One</div>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step-item">
+                        <div class={step2NumberClass}>2</div>
+                        <div class={step2LabelClass}>Step Two</div>
+                    </div>
+                    <div class="step-line"></div>
+                <div class="step-item">
+                    <div class={step3NumberClass}>3</div>
+                    <div class={step3LabelClass}>Step Three</div>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <template lwc:if={isLoading}>
+                <div class="loading-overlay">
+                    <lightning-spinner alternative-text="Loading"></lightning-spinner>
+                </div>
+            </template>
+
+            <!-- Error Messages -->
+            <template lwc:if={errorMessage}>
+                <div class="error-alert">{errorMessage}</div>
+            </template>
+
+            <!-- STEP 1: Lead Information -->
+            <template lwc:if={isStep1}>
+                <div class="step-content">
+                    <!-- Contact Info Section -->
+                    <div class="section-card">
+                        <p class="section-title">Contact Info</p>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label class="field-label">First Name<span class="required-mark">*</span></label>
+                                <input type="text" class="text-input" value={formData.firstName} data-field="firstName" onchange={handleInputChange} required />
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">Last Name<span class="required-mark">*</span></label>
+                                <input type="text" class="text-input" value={formData.lastName} data-field="lastName" onchange={handleInputChange} required />
+                            </div>
+                        </div>
+                        <div class="form-field full-width">
+                            <label class="field-label">Email<span class="required-mark">*</span></label>
+                            <input type="email" class="text-input" value={formData.email} data-field="email" onchange={handleInputChange} required />
+                        </div>
+                        <div class="form-field full-width">
+                            <label class="field-label">Phone<span class="required-mark">*</span></label>
+                            <div class="phone-input-wrapper">
+                                <span class="country-code-prefix">+1</span>
+                                <input type="tel" class="text-input phone-with-prefix" value={formData.phone} data-field="phone" onchange={handleInputChange} required />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Service Address Section -->
+                    <div class="section-card">
+                        <p class="section-title">Service Address</p>
+                        <div class="form-field">
+                            <label class="field-label">Street<span class="required-mark">*</span></label>
+                            <input type="text" class="text-input" value={formData.street} data-field="street" onchange={handleInputChange} required />
+                        </div>
+                        <div class="form-grid" style="margin-top: 14px;">
+                            <div class="form-field">
+                                <label class="field-label">City<span class="required-mark">*</span></label>
+                                <input type="text" class="text-input" value={formData.city} data-field="city" onchange={handleInputChange} required />
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">State<span class="required-mark">*</span></label>
+                                <input type="text" class="text-input" value={formData.state} data-field="state" onchange={handleInputChange} required />
+                            </div>
+                        </div>
+                        <div class="form-field full-width">
+                            <label class="field-label">Zip<span class="required-mark">*</span></label>
+                            <input type="text" class="text-input" value={formData.zip} data-field="zip" onchange={handleInputChange} required />
+                        </div>
+                    </div>
+
+                    <!-- How did you hear about us? -->
+                    <div class="section-card">
+                        <p class="section-title">How did you hear about us?</p>
+                        <div class="form-field full-width">
+                            <label class="field-label">Lead Source<span class="required-mark">*</span></label>
+                            <select class="select-input" data-field="leadSource" onchange={handleLeadSourceChange}>
+                                <option value="">Select</option>
+                                <option value="Homebuilder Event">Homebuilder Event</option>
+                                <option value="Employee Referral">Employee Referral</option>
+                                <option value="External Referral">External Referral</option>
+                                <option value="Google">Google</option>
+                                <option value="Other">Other</option>
+                                <option value="Website">Website</option>
+                                <option value="Lennar Voucher">Lennar Voucher</option>
+                                <option value="Social Media">Social Media</option>
+                            </select>
+                        </div>
+                        <template lwc:if={showCouponField}>
+                            <div class="form-field full-width" style="margin-top: 12px;">
+                                <label class="field-label">Coupon Code<span class="required-mark">*</span></label>
+                                <input type="text" class="text-input" value={couponCode} data-field="couponCode" onchange={handleCouponCodeChange} placeholder="Enter your Lennar voucher code" />
+                            </div>
+                            <template lwc:if={couponValidating}>
+                                <p style="font-size: 12px; color: #888;">Validating coupon code...</p>
+                            </template>
+                            <template lwc:if={couponValid}>
+                                <p style="font-size: 12px; color: #22c55e;">&#10004; Valid coupon! Standard grilling island will be included free.</p>
+                            </template>
+                            <template lwc:if={couponInvalid}>
+                                <p style="font-size: 12px; color: #ef4444;">&#10006; Invalid or expired coupon code. Please try again.</p>
+                            </template>
+                        </template>
+                    </div>
+
+                    <!-- SMS Consent Section -->
+                    <div class="section-card">
+                        <div class="consent-checkbox-container">
+                            <label class="consent-checkbox-wrapper">
+                                <input type="checkbox" class="consent-checkbox-input" checked={smsConsent} onchange={handleSmsConsentChange} />
+                                <span class="consent-checkbox-custom"></span>
+                                <span class="consent-checkbox-text">
+                                    By submitting this form, you agree to receive SMS messages from The Loving Group (UpgradeMyBackyard.com) regarding your project, appointments, and updates. Message frequency varies. Msg &amp; data rates may apply. Reply STOP to opt out or HELP for help. 
+                                    <a href="https://www.thelovingcompanies.com/privacy-policy" target="_blank" class="consent-link">Privacy Policy</a>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="button-container">
+                        <button type="button" class="btn-back" disabled>Back</button>
+                        <button type="button" class="btn-next" onclick={submitStep1}>Next</button>
+                    </div>
+                </div>
+            </template>
+
+            <!-- STEP 2: Project Details -->
+            <template lwc:if={isStep2}>
+                <div class="step-content">
+                    <div class="section-card">
+                        <p class="section-title">Project Details</p>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label class="field-label">Timeline<span class="required-mark">*</span></label>
+                                <select class="select-input" data-field="timeline" onchange={handleSelectChange} required>
+                                    <option value="">Select</option>
+                                    <option value="ASAP (0-2 months)">ASAP (0-2 months)</option>
+                                    <option value="2-4 months">2-4 months</option>
+                                    <option value="4-6 months">4-6 months</option>
+                                    <option value="6+ months">6+ months</option>
+                                    <option value="Just exploring">Just exploring</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label class="field-label">Budget<span class="required-mark">*</span></label>
+                                <select class="select-input" data-field="budget" onchange={handleSelectChange} required>
+                                    <option value="">Select</option>
+                                    <option value="Under $5,000">Under $5,000</option>
+                                    <option value="$5,000-$10,000">$5,000-$10,000</option>
+                                    <option value="$10,000-$20,000">$10,000-$20,000</option>
+                                    <option value="$20,000+">$20,000+</option>
+                                    <option value="Not sure yet">Not sure yet</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-field full-width">
+                            <label class="field-label">Describe Your Desired Backyard Outcome<span class="required-mark">*</span></label>
+                            <textarea class="textarea-input" data-field="description" onchange={handleInputChange} required></textarea>
+                        </div>
+                        <div class="form-field full-width">
+                            <label class="field-label">Upload Backyard Photo <span class="optional-mark">(optional, but recommended)</span></label>
+                            <input type="file" class="hidden-file-input" accept=".jpg,.jpeg,.png,.heic" onchange={handleFileSelect} />
+                            <button type="button" class="file-upload-btn" onclick={handleFileClick}>
+                                <span class="btn-text">Choose an image</span>
+                                <em class="file-types">JPG/PNG/HEIC</em>
+                            </button>
+                            <template lwc:if={uploadedFileName}>
+                                <p class="file-upload-hint">📎 {uploadedFileName}</p>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="button-container">
+                        <button type="button" class="btn-back" onclick={goBack}>Back</button>
+                        <button type="button" class="btn-next" onclick={submitStep2}>Next</button>
+                    </div>
+                </div>
+            </template>
+
+            <!-- STEP 3: Feature Selection -->
+            <template lwc:if={isStep3}>
+                <div class="step-content">
+                    <div class="section-card">
+                        <p class="section-title">Select what you want. See your budget.</p>
+                        <p class="section-subtitle">Toggle features to get an estimate.</p>
+
+                        <!-- Feature Cards -->
+                        <div class="feature-card">
+                            <div class="feature-info">
+                                <p class="feature-name">Grilling Island</p>
+                                <p class="feature-price">{grillingIslandPriceText}</p>
+                            </div>
+                            <label class="toggle-wrapper">
+                                <input type="checkbox" class="toggle-input" data-feature-id="grillingIsland" data-cost="4500" checked={isGrillingIslandSelected} onchange={handleFeatureToggle} />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-info">
+                                <p class="feature-name">Outdoor Fireplace</p>
+                                <p class="feature-price">Prices starting as low as $4,800</p>
+                            </div>
+                            <label class="toggle-wrapper">
+                                <input type="checkbox" class="toggle-input" data-feature-id="outdoorFireplace" data-cost="4800" onchange={handleFeatureToggle} />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-info">
+                                <p class="feature-name">Paver Patio</p>
+                                <p class="feature-price">Prices starting as low as $2,500</p>
+                            </div>
+                            <label class="toggle-wrapper">
+                                <input type="checkbox" class="toggle-input" data-feature-id="paverPatio" data-cost="2500" onchange={handleFeatureToggle} />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-info">
+                                <p class="feature-name">Fire Pit</p>
+                                <p class="feature-price">Prices starting as low as $1,000</p>
+                            </div>
+                            <label class="toggle-wrapper">
+                                <input type="checkbox" class="toggle-input" data-feature-id="firePit" data-cost="1000" onchange={handleFeatureToggle} />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-info">
+                                <p class="feature-name">Sitting Wall</p>
+                                <p class="feature-price">Prices starting as low as $1,500</p>
+                            </div>
+                            <label class="toggle-wrapper">
+                                <input type="checkbox" class="toggle-input" data-feature-id="sittingWall" data-cost="1500" onchange={handleFeatureToggle} />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-info">
+                                <p class="feature-name">Landscape Enhancements</p>
+                                <p class="feature-price">Prices starting as low as $2,000</p>
+                            </div>
+                            <label class="toggle-wrapper">
+                                <input type="checkbox" class="toggle-input" data-feature-id="landscapeEnhancements" data-cost="2000" onchange={handleFeatureToggle} />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-info">
+                                <p class="feature-name">Low Voltage Lighting</p>
+                                <p class="feature-price">Prices starting as low as $1,500</p>
+                            </div>
+                            <label class="toggle-wrapper">
+                                <input type="checkbox" class="toggle-input" data-feature-id="lighting" data-cost="1500" onchange={handleFeatureToggle} />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-info">
+                                <p class="feature-name">Irrigation Upgrades</p>
+                                <p class="feature-price">Prices starting as low as $500</p>
+                            </div>
+                            <label class="toggle-wrapper">
+                                <input type="checkbox" class="toggle-input" data-feature-id="irrigation" data-cost="500" onchange={handleFeatureToggle} />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <!-- Additional Enhancements Toggle -->
+                        <div class="enhancements-toggle">
+                            <strong class="toggle-label">Additional Outdoor Living Enhancements</strong>
+                            <label class="toggle-wrapper">
+                                <input type="checkbox" class="toggle-input" onchange={toggleAdditionalTextarea} />
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <!-- Additional Details Textarea (conditionally shown) -->
+                        <template lwc:if={showAdditionalTextarea}>
+                            <textarea class="textarea-input" style="margin-top: 10px;" placeholder="Tell us what else you want to include…" data-field="additionalDetails" onchange={handleInputChange}></textarea>
+                        </template>
+
+                        <!-- Estimate Summary -->
+                        <div class="estimate-total">Estimated total investment budget as low as ${estimateTotal}</div>
+                        <div class="estimate-monthly">or as low as ${monthlyEstimate}/month</div>
+                        <div class="estimate-disclaimer">Monthly payment estimates are an estimate only and are not final.</div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="button-container">
+                        <button type="button" class="btn-back" onclick={goBack}>Back</button>
+                        <button type="button" class="btn-next" onclick={submitStep3}>Submit</button>
+                    </div>
+                </div>
+            </template>
+        </div>
+        </template>
+    </div>
+</template>

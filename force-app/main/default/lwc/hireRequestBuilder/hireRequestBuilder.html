@@ -1,0 +1,58 @@
+<template>
+    <lightning-card title="Hire Request Builder" icon-name="standard:user">
+        <div class="slds-p-horizontal_medium">
+            <lightning-combobox label="Service Line" value={serviceLine}
+                options={serviceLineOptions} data-field="serviceLine" onchange={handleField}>
+            </lightning-combobox>
+            <lightning-combobox label="Role Type" value={roleType}
+                options={roleTypeOptions} data-field="roleType" onchange={handleField}>
+            </lightning-combobox>
+            <lightning-input type="number" label="Quantity" value={quantity}
+                data-field="quantity" onchange={handleField}>
+            </lightning-input>
+            <lightning-input type="number" label="Annual Cost Per Person" value={annualCost}
+                formatter="currency" data-field="annualCost" onchange={handleField}>
+            </lightning-input>
+            <lightning-input type="number" label="Y1 Revenue Capacity (estimate)" value={y1Revenue}
+                formatter="currency" data-field="y1Revenue" onchange={handleField}>
+            </lightning-input>
+            <lightning-textarea label="Justification" value={justification}
+                data-field="justification" onchange={handleField} max-length="32000">
+            </lightning-textarea>
+
+            <div class="slds-box slds-m-top_medium slds-theme_shade">
+                <h3 class="slds-text-heading_small">ROI Preview</h3>
+                <div class="slds-grid slds-gutters slds-m-top_x-small">
+                    <div class="slds-col">
+                        <div class="slds-text-color_weak slds-text-body_small">Total Annual Cost</div>
+                        <div class="slds-text-heading_medium">
+                            <lightning-formatted-number value={totalCost} format-style="currency" currency-code="USD"></lightning-formatted-number>
+                        </div>
+                    </div>
+                    <div class="slds-col">
+                        <div class="slds-text-color_weak slds-text-body_small">Y1 ROI</div>
+                        <div class="slds-text-heading_medium">
+                            <lightning-formatted-number value={y1ROI} format-style="currency" currency-code="USD"></lightning-formatted-number>
+                        </div>
+                    </div>
+                    <div class="slds-col">
+                        <div class="slds-text-color_weak slds-text-body_small">ROI %</div>
+                        <div class="slds-text-heading_medium">
+                            <lightning-formatted-number value={roiPct} format-style="percent-fixed" maximum-fraction-digits="0"></lightning-formatted-number>
+                        </div>
+                    </div>
+                    <div class="slds-col">
+                        <div class="slds-text-color_weak slds-text-body_small">Months to Payback</div>
+                        <div class="slds-text-heading_medium">
+                            <lightning-formatted-number value={monthsToPayback} maximum-fraction-digits="1"></lightning-formatted-number>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slds-m-top_medium slds-text-align_right">
+                <lightning-button variant="brand" label="Submit for Approval" onclick={submit}></lightning-button>
+            </div>
+        </div>
+    </lightning-card>
+</template>

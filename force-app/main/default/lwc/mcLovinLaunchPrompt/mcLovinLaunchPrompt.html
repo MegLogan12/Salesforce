@@ -1,0 +1,53 @@
+<template>
+    <template if:true={showPrompt}>
+        <section class="overlay" role="dialog" aria-modal="true" aria-label="mcLOVIN launcher">
+            <div class="backdrop"></div>
+            <div class="prompt-card">
+                <div class="eyebrow">LOVING Agentforce</div>
+                <h1>{headline}</h1>
+                <p class="message">{message}</p>
+                <div class="actions">
+                    <lightning-button
+                        label="Yes, open mcLOVIN'"
+                        variant="brand"
+                        onclick={handleOpenWorkspace}>
+                    </lightning-button>
+                    <lightning-button
+                        label="Not now"
+                        variant="neutral"
+                        onclick={handleDismissPrompt}>
+                    </lightning-button>
+                </div>
+            </div>
+        </section>
+    </template>
+
+    <template if:true={showWorkspace}>
+        <section class="workspace-shell" role="dialog" aria-modal="true" aria-label="mcLOVIN workspace">
+            <div class="workspace-backdrop" onclick={handleMinimizeWorkspace}></div>
+            <div class="workspace-panel">
+                <div class="workspace-header">
+                    <div>
+                        <div class="eyebrow">mcLOVIN'</div>
+                        <h2>Need help?</h2>
+                    </div>
+                    <lightning-button-icon
+                        icon-name="utility:close"
+                        variant="bare"
+                        alternative-text="Close mcLOVIN'"
+                        onclick={handleMinimizeWorkspace}>
+                    </lightning-button-icon>
+                </div>
+                <c-mc-lovin-employee-agent-workspace context-key={contextKey}></c-mc-lovin-employee-agent-workspace>
+            </div>
+        </section>
+    </template>
+
+    <template if:true={showLauncherButton}>
+        <div class="floating-launcher">
+            <button class="launcher-button" onclick={handleOpenWorkspace}>
+                <span class="launcher-kicker">mcLOVIN'</span>
+            </button>
+        </div>
+    </template>
+</template>

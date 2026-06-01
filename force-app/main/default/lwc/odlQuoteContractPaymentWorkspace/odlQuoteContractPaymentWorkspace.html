@@ -1,0 +1,121 @@
+<template>
+    <template lwc:if={hasData}>
+        <section class="workspace">
+            <section class="panel hero">
+                <div class="hero-copy">
+                    <h1>Quote, Contract, and Payment</h1>
+                </div>
+                <div class="hero-actions">
+                    <button class="cta cta-secondary" onclick={handlePreview}>Preview</button>
+                    <button class="cta" onclick={handleEditQuote}>Send Quote</button>
+                </div>
+            </section>
+
+            <div class="layout">
+                <div class="layout-main">
+                    <section class="panel info">
+                        <div class="panel-header">Quote Header</div>
+                        <div class="fields-grid">
+                            <div><div class="field-label">Quote Number</div><div class="field-value">{quoteNumber}</div></div>
+                            <div><div class="field-head"><span class="field-label">Opportunity</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Opportunity" variant="bare" size="x-small" onclick={handleEditQuote}></lightning-button-icon></div><div class="field-value"><a href={opportunityUrl}>{opportunityName}</a></div></div>
+                            <div><div class="field-head"><span class="field-label">Status</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Status" variant="bare" size="x-small" onclick={handleEditQuote}></lightning-button-icon></div><div class="field-value"><span class="chip">{statusValue}</span></div></div>
+                            <div><div class="field-label">Quote Amount</div><div class="field-value"><strong>{grandTotalValue}</strong></div></div>
+                            <div><div class="field-label">Deposit</div><div class="field-value">{depositAmountValue}</div></div>
+                            <div><div class="field-label">Final Payment</div><div class="field-value">{finalPaymentAmountValue}</div></div>
+                        </div>
+                    </section>
+
+                    <section class="panel" lwc:if={hasQuoteLines}>
+                        <div class="panel-header">Quote Lines</div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Line</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Unit</th>
+                                    <th>Price</th>
+                                    <th>Billable Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={quoteLineRows} for:item="row">
+                                    <tr key={row.key}>
+                                        <td>{row.lineNumber}</td>
+                                        <td><a href={row.url}>{row.label}</a></td>
+                                        <td>{row.quantityText}</td>
+                                        <td>{row.unitText}</td>
+                                        <td>{row.priceText}</td>
+                                        <td>{row.billableType}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section class="panel" lwc:if={hasPaymentRows}>
+                        <div class="panel-header">Payment Milestones</div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Milestone</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Due Trigger</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={paymentRows} for:item="row">
+                                    <tr key={row.key}>
+                                        <td><a href={row.url}>{row.label}</a></td>
+                                        <td>{row.amountText}</td>
+                                        <td><span class="chip">{row.status}</span></td>
+                                        <td>{row.triggerText}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+
+                <aside class="layout-rail">
+                    <section class="panel">
+                        <div class="panel-header">Quote Actions</div>
+                        <div class="action-list">
+                            <button class="rail-action" onclick={handlePreview}>Preview customer quote</button>
+                            <button class="rail-action" onclick={handleSendEmail}>Send email</button>
+                            <button class="rail-action" onclick={handleCreateContract}>Create contract</button>
+                            <button class="rail-action" onclick={handleCreateInvoice}>Create invoice</button>
+                        </div>
+                    </section>
+                    <section class="panel">
+                        <div class="panel-header">Record Links</div>
+                        <div class="action-list">
+                            <button class="rail-action" onclick={handleOpenOpportunity}>Open opportunity</button>
+                            <button class="rail-action" onclick={handleOpenVoucher} disabled={disableOpenVoucher}>Open voucher</button>
+                            <button class="rail-action" onclick={handleNewTask}>Create next task</button>
+                            <button class="rail-action" onclick={handleOpenActivity}>Open activity history</button>
+                        </div>
+                    </section>
+                    <section class="panel">
+                        <div class="panel-header">Activity Health</div>
+                        <div class="rail-body">
+                            <div class="rail-row"><span>Quote status</span><span>{statusValue}</span></div>
+                            <div class="rail-row"><span>Opportunity stage</span><span>{opportunityStageValue}</span></div>
+                            <div class="rail-row"><span>Voucher</span><span>{voucherStatusValue}</span></div>
+                            <div class="rail-row"><span>Open items</span><span>{openItemsCount}</span></div>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </section>
+    </template>
+
+    <template lwc:elseif={error}>
+        <div class="panel error">{errorMessage}</div>
+    </template>
+
+    <template lwc:else>
+        <div class="panel empty-state">No quote details are available for this record yet.</div>
+    </template>
+</template>

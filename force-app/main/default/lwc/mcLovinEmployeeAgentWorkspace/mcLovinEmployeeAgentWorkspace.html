@@ -1,0 +1,249 @@
+<template>
+    <lightning-card title="mcLOVIN' Employee Intake Agent" icon-name="standard:bot">
+        <div class="shell">
+            <div class="panel context-panel">
+                <div class="eyebrow">Detected Context</div>
+                <div class="context-title">{contextLabel}</div>
+                <div class="context-copy">{contextPurpose}</div>
+                <template if:true={detectedContextLabel}>
+                    <div class="context-meta">{detectedContextLabel}</div>
+                </template>
+            </div>
+
+            <div class="grid answer-grid">
+                <div class="panel answer-card">
+                    <div class="section-title">What Is This Page For?</div>
+                    <div class="context-copy">{contextPurpose}</div>
+                </div>
+                <div class="panel answer-card">
+                    <div class="section-title">What Can I Do Right Now?</div>
+                    <div class="context-copy">{contextDoNow}</div>
+                </div>
+                <div class="panel answer-card caution-card">
+                    <div class="section-title">What Can Break Here?</div>
+                    <div class="context-copy">{contextCaution}</div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="section-title">Relevant Prompts</div>
+                <div class="muted">These are the prompts mcLOVIN should care about on this page, not generic Salesforce filler.</div>
+                <div class="quick-starts">
+                    <template for:each={contextPromptRows} for:item="item">
+                        <lightning-button
+                            key={item.label}
+                            label={item.label}
+                            variant="neutral"
+                            onclick={handlePromptAction}>
+                        </lightning-button>
+                    </template>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="section-title">Action Hub</div>
+                <div class="muted">These actions are wired to the real page lane where possible. Use them instead of freehanding a bad record.</div>
+                <div class="quick-starts">
+                    <template for:each={contextActionRows} for:item="item">
+                        <lightning-button
+                            key={item.label}
+                            label={item.label}
+                            variant="brand-outline"
+                            onclick={handleContextAction}>
+                        </lightning-button>
+                    </template>
+                </div>
+            </div>
+
+            <div class="intro">
+                One stop shop time. Upload a PO, scope, spreadsheet, email, homeowner intake, or new-account packet. mcLOVIN' will sort the details, match what already exists, ask the missing questions, and line up the save.
+            </div>
+
+            <div class="panel">
+                <div class="section-title">Quick Starts</div>
+                <div class="muted">Pick a lane if you want mcLOVIN' to tee up the right questions faster.</div>
+                <div class="quick-starts">
+                    <template for:each={quickStarts} for:item="item">
+                        <lightning-button
+                            key={item.label}
+                            label={item.label}
+                            data-prompt={item.prompt}
+                            data-source-type={item.sourceType}
+                            onclick={handleQuickStart}>
+                        </lightning-button>
+                    </template>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="panel">
+                    <div class="section-title">Knowledge Bank</div>
+                    <template for:each={knowledgeRows} for:item="section">
+                        <div key={section.key} class="knowledge-section">
+                            <div class="knowledge-label">{section.label}</div>
+                            <template for:each={section.values} for:item="row">
+                                <div key={row} class="knowledge-row">{row}</div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="panel">
+                    <div class="section-title">What mcLOVIN' Will Ask</div>
+                    <div class="muted">Expected follow-up depends on the upload, but the usual suspects are builder account, homeowner household, community, lot, PO number, voucher/UMB number, case subject, opportunity name, and whether parsed scope lines belong on an existing Work Order.</div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <lightning-combobox
+                    name="sourceType"
+                    label="Source Type"
+                    value={sourceType}
+                    options={sourceTypeOptions}
+                    onchange={handleSourceTypeChange}>
+                </lightning-combobox>
+
+                <lightning-textarea
+                    name="intakeText"
+                    label="Paste email, notes, scope, or supporting text"
+                    value={intakeText}
+                    onchange={handleTextChange}
+                    class="text-input">
+                </lightning-textarea>
+
+                <template if:true={requestId}>
+                    <lightning-file-upload
+                        label="Upload document or spreadsheet"
+                        name="fileUploader"
+                        record-id={requestId}
+                        multiple
+                        onuploadfinished={handleUploadFinished}>
+                    </lightning-file-upload>
+                </template>
+
+                <div class="button-row">
+                    <lightning-button
+                        label="Analyze"
+                        variant="brand"
+                        onclick={handleAnalyze}
+                        disabled={isBusy}>
+                    </lightning-button>
+                    <template if:true={analysis}>
+                        <lightning-button
+                            label="Save Records"
+                            variant="success"
+                            onclick={handleSave}
+                            disabled={isBusy}>
+                        </lightning-button>
+                    </template>
+                </div>
+            </div>
+
+            <template if:true={analysis}>
+                <div class="grid">
+                    <div class="panel">
+                        <div class="section-title">Analysis</div>
+                        <p><strong>Status:</strong> {analysis.status}</p>
+                        <p><strong>Classification:</strong> {analysis.classification}</p>
+                        <p><strong>Primary Object:</strong> {analysis.suggestedPrimaryObject}</p>
+                        <p><strong>Suggested Action:</strong> {analysis.suggestedAction}</p>
+                        <p><strong>Suggested Record:</strong> {analysis.suggestedRecordName}</p>
+                        <p><strong>Files Linked:</strong> {analysis.linkedFileCount}</p>
+                    </div>
+
+                    <div class="panel">
+                        <div class="section-title">Extracted Detail</div>
+                        <template for:each={extractedRows} for:item="row">
+                            <div key={row.key} class="kv">
+                                <span class="kv-key">{row.keyLabel}</span>
+                                <span class="kv-value">{row.value}</span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <template if:true={hasParsedScopeItems}>
+                    <div class="panel">
+                        <div class="section-title">Parsed Work Order Items</div>
+                        <div class="muted">mcLOVIN' found scope lines in the description. Add an existing Work Order Id before save if these should become real Work Order line items.</div>
+                        <lightning-input
+                            label="Existing Work Order Id"
+                            data-key="workOrderId"
+                            value={workOrderIdValue}
+                            onchange={handleOverrideChange}>
+                        </lightning-input>
+                        <template for:each={parsedScopeItems} for:item="item">
+                            <div key={item.rawLine} class="candidate">
+                                <div>
+                                    <div class="candidate-label">{item.subject}</div>
+                                    <div class="candidate-meta">Qty {item.quantity} · Unit {item.unitOfMeasure}</div>
+                                    <div class="candidate-meta">{item.rawLine}</div>
+                                    <template if:true={item.itemCatalogName}>
+                                        <div class="candidate-meta">Catalog match: {item.itemCatalogName} · score {item.matchScore}</div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <div class="grid">
+                    <div class="panel">
+                        <div class="section-title">Similar Records</div>
+                        <template if:true={candidateRows.length}>
+                            <template for:each={candidateRows} for:item="row">
+                                <div key={row.recordId} class="candidate">
+                                    <div>
+                                        <div class="candidate-label">{row.label}</div>
+                                        <div class="candidate-meta">{row.objectApiName} · score {row.score}</div>
+                                        <div class="candidate-meta">{row.reason}</div>
+                                    </div>
+                                    <a href={row.url} target="_blank">Open</a>
+                                </div>
+                            </template>
+                        </template>
+                        <template if:false={candidateRows.length}>
+                            <div class="muted">No strong matches yet.</div>
+                        </template>
+                    </div>
+
+                    <div class="panel">
+                        <div class="section-title">Required Follow-Up</div>
+                        <template if:true={missingFieldRows.length}>
+                            <template for:each={missingFieldRows} for:item="field">
+                                <div key={field.apiName} class="follow-up">
+                                    <lightning-input
+                                        label={field.label}
+                                        data-key={field.apiName}
+                                        value={field.value}
+                                        message-when-value-missing={field.reason}
+                                        onchange={handleOverrideChange}>
+                                    </lightning-input>
+                                    <div class="muted">{field.reason}</div>
+                                </div>
+                            </template>
+                        </template>
+                        <template if:false={missingFieldRows.length}>
+                            <div class="muted">No mandatory gaps detected. You can save now.</div>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="section-title">Combined Preview</div>
+                    <pre class="preview">{analysis.combinedPreview}</pre>
+                </div>
+            </template>
+
+            <template if:true={saveResult}>
+                <div class="panel success-panel">
+                    <div class="section-title">Saved</div>
+                    <p>{saveResult.message}</p>
+                    <template if:true={saveResult.primaryRecordUrl}>
+                        <a href={saveResult.primaryRecordUrl} target="_blank">{saveResult.primaryRecordName}</a>
+                    </template>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

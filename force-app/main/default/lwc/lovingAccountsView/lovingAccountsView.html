@@ -1,0 +1,281 @@
+<template>
+    <section class="hb-shell">
+        <header class="hb-header">
+            <div>
+                <p class="hb-kicker">LOVING Operations</p>
+                <h1>Homebuilders, Communities, and Lots</h1>
+                <p class="hb-subtitle">Builder Parent &gt; Division Account &gt; Community &gt; Lot</p>
+            </div>
+            <div class="hb-header-actions">
+                <button class="hb-button hb-button-neutral" onclick={handleRefresh}>Refresh</button>
+                <button class="hb-button hb-button-primary" onclick={handleNewAccount}>New Account</button>
+            </div>
+        </header>
+
+        <div class="hb-filterbar">
+            <label class="hb-search">
+                <span>Search</span>
+                <input type="search" value={searchTerm} placeholder="Builder, division, community, lot, address..." oninput={handleSearch} />
+            </label>
+            <label>
+                <span>Market / Territory</span>
+                <input type="text" value={marketFilter} placeholder="Filter by market" oninput={handleMarketFilter} />
+            </label>
+            <label class="hb-checkbox">
+                <input type="checkbox" checked={activeOnly} onchange={handleActiveOnly} />
+                <span>Active/open only</span>
+            </label>
+            <label class="hb-checkbox">
+                <input type="checkbox" checked={openWorkOnly} onchange={handleOpenWorkOnly} />
+                <span>Open work only</span>
+            </label>
+            <label class="hb-checkbox">
+                <input type="checkbox" checked={packageIssuesOnly} onchange={handlePackageIssuesOnly} />
+                <span>Package issues only</span>
+            </label>
+        </div>
+
+        <template lwc:if={isLoading}>
+            <div class="hb-state">Loading live Salesforce hierarchy...</div>
+        </template>
+
+        <template lwc:elseif={hasError}>
+            <div class="hb-state hb-state-error">
+                <strong>Unable to load hierarchy.</strong>
+                <span>{errorMessage}</span>
+            </div>
+        </template>
+
+        <template lwc:else>
+            <div class="hb-kpis">
+                <template for:each={kpis} for:item="kpi">
+                    <button key={kpi.key} class={kpi.className} data-key={kpi.key} onclick={handleKpiClick}>
+                        <strong>{kpi.value}</strong>
+                        <span>{kpi.label}</span>
+                        <em>{kpi.sublabel}</em>
+                    </button>
+                </template>
+            </div>
+
+            <div class="hb-layout">
+                <section class="hb-workbench">
+                    <div class="hb-column">
+                        <div class="hb-column-title">
+                            <h2>Builder Parents</h2>
+                            <span>{parentCount}</span>
+                        </div>
+                        <template lwc:if={hasParents}>
+                            <template for:each={parents} for:item="row">
+                                <article key={row.id} class={row.className} data-id={row.id} onclick={handleParentSelect}>
+                                    <div class="hb-card-main">
+                                        <strong>{row.name}</strong>
+                                        <span>{row.subtitle}</span>
+                                    </div>
+                                    <div class="hb-card-meta">
+                                        <span>{row.divisionCount} divisions</span>
+                                        <span>{row.communityCount} communities</span>
+                                        <span>{row.lotCount} lots</span>
+                                    </div>
+                                    <p>{row.openIssueLabel}</p>
+                                </article>
+                            </template>
+                        </template>
+                        <template lwc:else>
+                            <div class="hb-empty">No Builder Parent accounts found.</div>
+                        </template>
+                    </div>
+
+                    <div class="hb-column">
+                        <div class="hb-column-title">
+                            <h2>Division Accounts</h2>
+                            <span>{divisionCount}</span>
+                        </div>
+                        <template lwc:if={hasDivisions}>
+                            <template for:each={divisions} for:item="row">
+                                <article key={row.id} class={row.className} data-id={row.id} onclick={handleDivisionSelect}>
+                                    <div class="hb-card-main">
+                                        <strong>{row.name}</strong>
+                                        <span>{row.subtitle}</span>
+                                    </div>
+                                    <div class="hb-chip-row">
+                                        <span class="hb-chip">{row.territory}</span>
+                                        <span class={row.statusClass}>{row.status}</span>
+                                    </div>
+                                    <div class="hb-card-meta">
+                                        <span>{row.communityCount} communities</span>
+                                        <span>{row.openPoCount} open POs</span>
+                                    </div>
+                                    <p>FM: {row.fieldManager}</p>
+                                </article>
+                            </template>
+                        </template>
+                        <template lwc:else>
+                            <div class="hb-empty">Select a parent or clear filters to show Division Accounts.</div>
+                        </template>
+                    </div>
+
+                    <div class="hb-column">
+                        <div class="hb-column-title">
+                            <h2>Communities</h2>
+                            <span>{communityCount}</span>
+                        </div>
+                        <template lwc:if={hasCommunities}>
+                            <template for:each={communities} for:item="row">
+                                <article key={row.id} class={row.className} data-id={row.id} onclick={handleCommunitySelect}>
+                                    <div class="hb-card-main">
+                                        <strong>{row.name}</strong>
+                                        <span>{row.subtitle}</span>
+                                    </div>
+                                    <div class="hb-chip-row">
+                                        <span class={row.statusClass}>{row.status}</span>
+                                        <span class={row.packageClass}>{row.packageStatus}</span>
+                                        <template lwc:if={row.aquaActive}>
+                                            <span class="hb-chip hb-chip-blue">Aqua</span>
+                                        </template>
+                                    </div>
+                                    <div class="hb-card-meta">
+                                        <span>{row.lotCount} lots</span>
+                                        <span>{row.openPoCount} open POs</span>
+                                        <span>{row.openWorkOrderCount} open WOs</span>
+                                    </div>
+                                    <p>{row.territory} · FM: {row.fieldManager}</p>
+                                </article>
+                            </template>
+                        </template>
+                        <template lwc:else>
+                            <div class="hb-empty">Select a Division Account to show related Communities.</div>
+                        </template>
+                    </div>
+
+                    <div class="hb-column">
+                        <div class="hb-column-title">
+                            <h2>Lots</h2>
+                            <span>{lotCount}</span>
+                        </div>
+                        <template lwc:if={hasLots}>
+                            <template for:each={lots} for:item="row">
+                                <article key={row.id} class={row.className} data-id={row.id} onclick={handleLotSelect}>
+                                    <div class="hb-card-main">
+                                        <strong>{row.name}</strong>
+                                        <span>{row.subtitle}</span>
+                                    </div>
+                                    <div class="hb-chip-row">
+                                        <span class={row.statusClass}>{row.status}</span>
+                                        <span class={row.packageClass}>{row.packageStatus}</span>
+                                        <span class={row.gpsClass}>{row.gpsStatus}</span>
+                                    </div>
+                                    <p>{row.address}</p>
+                                    <div class="hb-card-meta">
+                                        <span>{row.openPoCount} open POs</span>
+                                        <span>{row.openWorkOrderCount} open WOs</span>
+                                    </div>
+                                </article>
+                            </template>
+                        </template>
+                        <template lwc:else>
+                            <div class="hb-empty">Select a Community to show related Lots.</div>
+                        </template>
+                    </div>
+                </section>
+
+                <aside class="hb-detail">
+                    <div class="hb-detail-head">
+                        <div>
+                            <p class="hb-kicker">{selectedTypeLabel}</p>
+                            <h2>{selectedTitle}</h2>
+                        </div>
+                        <template lwc:if={selectedRecordUrl}>
+                            <button class="hb-button hb-button-neutral" onclick={handleOpenSelected}>Open Record</button>
+                        </template>
+                    </div>
+
+                    <template lwc:if={hasSelection}>
+                        <dl class="hb-detail-grid">
+                            <div>
+                                <dt>Status</dt>
+                                <dd>{selected.status}</dd>
+                            </div>
+                            <div>
+                                <dt>Territory / Market</dt>
+                                <dd>{selected.territory}</dd>
+                            </div>
+                            <div>
+                                <dt>Package</dt>
+                                <dd>{selected.packageLabel}</dd>
+                            </div>
+                            <div>
+                                <dt>Package Status</dt>
+                                <dd>{selected.packageStatus}</dd>
+                            </div>
+                            <div>
+                                <dt>Open POs</dt>
+                                <dd>{selected.openPoCount}</dd>
+                            </div>
+                            <div>
+                                <dt>Open WorkOrders</dt>
+                                <dd>{selected.openWorkOrderCount}</dd>
+                            </div>
+                            <div>
+                                <dt>Current PO</dt>
+                                <dd>{selected.currentPoName}</dd>
+                            </div>
+                            <div>
+                                <dt>Current WorkOrder</dt>
+                                <dd>{selected.currentWorkOrderName}</dd>
+                            </div>
+                            <div class="hb-detail-wide">
+                                <dt>Address / Notes</dt>
+                                <dd>{selected.address}</dd>
+                            </div>
+                        </dl>
+
+                        <div class="hb-action-list">
+                            <template for:each={selectedActions} for:item="action">
+                                <button key={action.key}
+                                        class={action.className}
+                                        data-key={action.key}
+                                        data-object={action.targetObject}
+                                        disabled={action.disabled}
+                                        title={action.disabledReason}
+                                        onclick={handleAction}>
+                                    {action.label}
+                                </button>
+                            </template>
+                        </div>
+                    </template>
+                    <template lwc:else>
+                        <div class="hb-empty hb-empty-large">
+                            Select a Builder Parent, Division, Community, or Lot to inspect details and available actions.
+                        </div>
+                    </template>
+                </aside>
+            </div>
+
+            <details class="hb-audit">
+                <summary>Data model audit from live Salesforce metadata</summary>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Area</th>
+                            <th>Current Object / Field</th>
+                            <th>Exists?</th>
+                            <th>Can Use?</th>
+                            <th>Gap / Fix Needed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={auditRows} for:item="row">
+                            <tr key={row.key}>
+                                <td>{row.area}</td>
+                                <td>{row.currentObjectField}</td>
+                                <td>{row.existsLabel}</td>
+                                <td>{row.canUseLabel}</td>
+                                <td>{row.gapOrFixNeeded}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </details>
+        </template>
+    </section>
+</template>

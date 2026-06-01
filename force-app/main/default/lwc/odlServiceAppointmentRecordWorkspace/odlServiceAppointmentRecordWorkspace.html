@@ -1,0 +1,75 @@
+<template>
+    <section class="workspace" lwc:if={pageData}>
+        <section class="panel hero">
+            <div class="hero-copy">
+                <div class="eyebrow">Field Execution Appointment</div>
+                <h1>{pageData.appointmentNumber}</h1>
+                <div class="subtitle">{pageData.appointmentType} · {pageData.scheduledWindow}</div>
+                <div class="badge-row">
+                    <span class="badge">{pageData.status}</span>
+                    <span class="badge badge-light">{pageData.territory}</span>
+                    <span class="badge badge-light">{pageData.crewName}</span>
+                </div>
+            </div>
+            <div class="hero-actions">
+                <button class="cta cta-secondary" onclick={handleEdit}>Edit Appointment</button>
+                <button class="cta cta-secondary" onclick={handleNewTask}>New Task</button>
+                <button class="cta cta-secondary" onclick={handleNewEvent}>Create Calendar Event</button>
+                <button class="cta" onclick={handleOpenWorkOrder} disabled={disableOpenWorkOrder}>Open Work Order</button>
+            </div>
+        </section>
+        <div class="layout">
+            <div class="layout-main">
+                <section class="panel">
+                    <div class="panel-header">Appointment Overview</div>
+                    <div class="field-grid">
+                        <template for:each={pageData.overviewRows} for:item="row">
+                            <div class="field" key={row.label}><label>{row.label}</label><div>{row.value}</div></div>
+                        </template>
+                    </div>
+                </section>
+                <section class="panel">
+                    <div class="panel-header">Homeowner Context</div>
+                    <div class="field-grid">
+                        <template for:each={pageData.contextRows} for:item="row">
+                            <div class="field" key={row.label}><label>{row.label}</label><div>{row.value}</div></div>
+                        </template>
+                    </div>
+                </section>
+                <section class="panel">
+                    <div class="panel-header">Execution</div>
+                    <div class="field-grid">
+                        <template for:each={pageData.executionRows} for:item="row">
+                            <div class="field" key={row.label}><label>{row.label}</label><div>{row.value}</div></div>
+                        </template>
+                    </div>
+                </section>
+                <section class="panel" lwc:if={hasActivity}>
+                    <div class="panel-header">Activity</div>
+                    <table class="table">
+                        <thead><tr><th>Activity</th><th>Status</th><th>Date</th></tr></thead>
+                        <tbody>
+                            <template for:each={pageData.activityRows} for:item="row">
+                                <tr key={row.id}>
+                                    <td><a href={row.url}>{row.label}</a></td>
+                                    <td>{row.status}</td>
+                                    <td>{row.dateText}</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+            <aside class="layout-rail">
+                <section class="panel" lwc:if={hasOpenItems}>
+                    <div class="panel-header">Open Items</div>
+                    <div class="issue-list">
+                        <template for:each={pageData.openItems} for:item="item">
+                            <div class="issue" key={item}>{item}</div>
+                        </template>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </section>
+</template>

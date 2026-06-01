@@ -1,0 +1,11 @@
+<template>
+    <div class="mc-featured-banner">
+        <div class="mc-banner-content">
+            <h2 class="mc-banner-headline">{headline}</h2>
+            <p class="mc-banner-subhead">{subhead}</p>
+        </div>
+        <template if:true={ctaLabel}>
+            <button class="mc-banner-cta" onclick={handleCtaClick}>{ctaLabel}</button>
+        </template>
+    </div>
+</template>

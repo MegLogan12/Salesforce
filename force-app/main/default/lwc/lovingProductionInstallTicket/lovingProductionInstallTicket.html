@@ -1,0 +1,244 @@
+<template>
+    <div class="lpwi-wrap">
+
+        <!-- Loading -->
+        <template if:true={isLoading}>
+            <div class="lpwi-spinner">
+                <lightning-spinner alternative-text="Loading Work Order" size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Error -->
+        <template if:true={errorMessage}>
+            <div class="lpwi-alert lpwi-alert-red">
+                <strong>Error:</strong> {errorMessage}
+            </div>
+        </template>
+
+        <!-- Toast -->
+        <template if:true={toastMessage}>
+            <div class={toastClass}>{toastMessage}</div>
+        </template>
+
+        <!-- KPI strip -->
+        <div class="lpwi-kpi-strip">
+            <div class="lpwi-kpi lpwi-kpi-blue">
+                <div class="lpwi-kpi-num">{statusDisplay}</div>
+                <div class="lpwi-kpi-lbl">Status</div>
+            </div>
+            <div class="lpwi-kpi lpwi-kpi-amber">
+                <div class="lpwi-kpi-num">{photoDisplay}</div>
+                <div class="lpwi-kpi-lbl">Photos</div>
+            </div>
+            <div class="lpwi-kpi lpwi-kpi-green">
+                <div class="lpwi-kpi-num">Controlled</div>
+                <div class="lpwi-kpi-lbl">Close</div>
+            </div>
+            <div class="lpwi-kpi lpwi-kpi-red">
+                <div class="lpwi-kpi-num">No</div>
+                <div class="lpwi-kpi-lbl">Bypass</div>
+            </div>
+        </div>
+
+        <!-- No record state -->
+        <template if:false={hasRecord}>
+            <div class="lpwi-empty">
+                <div class="lpwi-empty-icon">&#x1F331;</div>
+                <div class="lpwi-empty-msg">Select a Production Install Work Order to view ticket details.</div>
+            </div>
+        </template>
+
+        <!-- Record loaded -->
+        <template if:true={hasRecord}>
+
+            <!-- Record header card -->
+            <div class="lpwi-card">
+                <div class="lpwi-rec-head">
+                    <div class="lpwi-rec-icon">&#x1F331;</div>
+                    <div class="lpwi-rec-meta">
+                        <div class="lpwi-breadcrumb">LOVING Universal Home Builder Workflow</div>
+                        <div class="lpwi-rec-title">{dto.name} · {dto.woType}</div>
+                        <div class="lpwi-rec-chips">
+                            <span class="lpwi-chip lpwi-chip-blue">Work Order ticket</span>
+                            <span class="lpwi-chip lpwi-chip-amber">Real gates required</span>
+                            <template if:true={dto.nfiCount}>
+                                <span class="lpwi-chip lpwi-chip-red">NFI: {dto.nfiCount}</span>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="lpwi-rec-actions">
+                        <template if:true={dto.serviceAppointmentId}>
+                            <button class="lpwi-btn lpwi-btn-primary"
+                                    onclick={handleOpenSa}>Open SA</button>
+                        </template>
+                        <button class="lpwi-btn" onclick={handleAddPhotos}>Add Photos</button>
+                        <button class="lpwi-btn lpwi-btn-success"
+                                disabled={submitDisabled}
+                                onclick={handleSubmitFieldComplete}>Field Complete</button>
+                    </div>
+                </div>
+
+                <!-- Highlights -->
+                <div class="lpwi-highlights">
+                    <div>
+                        <div class="lpwi-hl-label">Division</div>
+                        <div class="lpwi-hl-value">{divisionDisplay}</div>
+                    </div>
+                    <div>
+                        <div class="lpwi-hl-label">Community</div>
+                        <div class="lpwi-hl-value">{communityDisplay}</div>
+                    </div>
+                    <div>
+                        <div class="lpwi-hl-label">Lot</div>
+                        <div class="lpwi-hl-value">{lotDisplay}</div>
+                    </div>
+                    <div>
+                        <div class="lpwi-hl-label">Source</div>
+                        <div class="lpwi-hl-value">{sourcePoDisplay}</div>
+                    </div>
+                    <div>
+                        <div class="lpwi-hl-label">Goal Hours</div>
+                        <div class="lpwi-hl-value">{goalHoursDisplay}</div>
+                    </div>
+                    <div>
+                        <div class="lpwi-hl-label">Status</div>
+                        <div class="lpwi-hl-value">{dto.status}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit blocked reason -->
+            <template if:true={submitBlocked}>
+                <div class="lpwi-alert lpwi-alert-amber">
+                    <strong>Field Complete blocked:</strong> {dto.submitBlockReason}
+                </div>
+            </template>
+
+            <!-- NFI banner -->
+            <template if:true={dto.nfiReason}>
+                <div class="lpwi-alert lpwi-alert-red">
+                    <strong>Last NFI:</strong> {dto.nfiReason}
+                </div>
+            </template>
+
+            <!-- Main 2-col layout -->
+            <div class="lpwi-grid2">
+
+                <!-- Left: Timeline + Line Items -->
+                <div>
+
+                    <!-- Ticket Process timeline -->
+                    <div class="lpwi-card">
+                        <div class="lpwi-card-head">
+                            <div class="lpwi-ico lpwi-ico-blue">&#x1F4CC;</div>
+                            <h3>Ticket Process</h3>
+                        </div>
+                        <div class="lpwi-card-body">
+                            <div class="lpwi-timeline">
+                                <template for:each={gatesWithClasses} for:item="gate">
+                                    <div key={gate.stepNum} class={gate.cssClass}>
+                                        <div class={gate.dotCssClass}>{gate.dotLabel}</div>
+                                        <div>
+                                            <div class="lpwi-step-title">{gate.title}</div>
+                                            <div class="lpwi-step-sub">{gate.description}</div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Line Items -->
+                    <div class="lpwi-card">
+                        <div class="lpwi-card-head">
+                            <div class="lpwi-ico lpwi-ico-green">&#x1F4CB;</div>
+                            <h3>Line Items</h3>
+                        </div>
+                        <template if:true={hasLineItems}>
+                            <table class="lpwi-tbl">
+                                <thead>
+                                    <tr>
+                                        <th>Line</th>
+                                        <th class="lpwi-num">Qty</th>
+                                        <th>Unit</th>
+                                        <th>Status</th>
+                                        <th>Proof</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={dto.lineItems} for:item="li">
+                                        <tr key={li.lineName}>
+                                            <td>{li.lineName}</td>
+                                            <td class="lpwi-num">{li.qty}</td>
+                                            <td>{li.unit}</td>
+                                            <td><span class={li.chipClass}>{li.status}</span></td>
+                                            <td class="lpwi-muted">{li.proof}</td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </template>
+                        <template if:false={hasLineItems}>
+                            <div class="lpwi-empty-inline">No scope lines — verify WO fields are populated.</div>
+                        </template>
+                    </div>
+
+                </div>
+
+                <!-- Right: Action Rules + Photo Gates -->
+                <div>
+
+                    <!-- Action Rules -->
+                    <div class="lpwi-card">
+                        <div class="lpwi-card-head">
+                            <div class="lpwi-ico lpwi-ico-amber">&#x26A1;</div>
+                            <h3>Action Rules</h3>
+                        </div>
+                        <table class="lpwi-tbl">
+                            <thead>
+                                <tr>
+                                    <th>Button</th>
+                                    <th>Real action</th>
+                                    <th>Disabled when</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Open SA</td><td>Navigate to ServiceAppointment record</td><td>No SA linked yet</td></tr>
+                                <tr><td>Add Photos</td><td>Navigate to Files on this record</td><td>Never</td></tr>
+                                <tr><td>Field Complete</td><td>Sets Status to FM QI Review</td><td>No photos, no closeout notes, or not In Progress</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Photo Gates -->
+                    <div class="lpwi-card lpwi-card-last">
+                        <div class="lpwi-card-head">
+                            <div class="lpwi-ico lpwi-ico-purple">&#x1F4F7;</div>
+                            <h3>Proof Gates — {dto.photoCount} photo(s) attached</h3>
+                        </div>
+                        <div class="lpwi-card-body">
+                            <div class="lpwi-photo-grid">
+                                <div class={beforeFrontClass}>Before Front</div>
+                                <div class={beforeBackClass}>Before Back</div>
+                                <div class="lpwi-photo-slot">Issue (if any)</div>
+                                <div class={closeoutClass}>Closeout</div>
+                            </div>
+                            <div class="lpwi-notice">
+                                Photos uploaded as Salesforce Files on this record.
+                                Minimum 1 closeout photo required for Field Complete.
+                            </div>
+                            <template if:true={dto.closeoutNotes}>
+                                <div class="lpwi-notes-preview">
+                                    <div class="lpwi-notes-label">Closeout Notes</div>
+                                    <div class="lpwi-notes-body">{dto.closeoutNotes}</div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </template>
+
+    </div>
+</template>

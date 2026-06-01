@@ -1,0 +1,58 @@
+<template>
+    <section class="workspace">
+        <section class="panel hero">
+            <div class="hero-copy">
+                <div class="eyebrow">Outdoor Living Console</div>
+                <h1>Service Appointment Workspace</h1>
+            </div>
+            <div class="hero-actions">
+                <button class="cta" onclick={handleNewAppointment}>New Appointment</button>
+                <button class="cta cta-secondary" onclick={handleOpenWorkOrders}>Open Work Orders</button>
+                <button class="cta cta-secondary" onclick={handleRefresh}>Refresh</button>
+            </div>
+        </section>
+        <section class="kpi-row">
+            <div class="kpi-card"><div class="kpi-label">Appointments</div><div class="kpi-value">{totalCount}</div></div>
+            <div class="kpi-card"><div class="kpi-label">Scheduled</div><div class="kpi-value">{scheduledCount}</div></div>
+            <div class="kpi-card"><div class="kpi-label">Without Work Order</div><div class="kpi-value">{unscheduledCount}</div></div>
+            <div class="kpi-card"><div class="kpi-label">Linked to Work Order</div><div class="kpi-value">{withWorkOrderCount}</div></div>
+        </section>
+        <section class="panel filters">
+            <div class="field">
+                <label>Search appointments</label>
+                <input type="search" value={searchTerm} oninput={handleSearch} placeholder="Search service appointments" />
+            </div>
+        </section>
+        <section class="panel" lwc:if={hasRows}>
+            <div class="panel-header">Field Execution Schedule</div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Appointment</th>
+                        <th>Status</th>
+                        <th>Window</th>
+                        <th>Work Order</th>
+                        <th>Homeowner</th>
+                        <th>Territory</th>
+                        <th>Crew</th>
+                        <th>Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={filteredRows} for:item="row">
+                        <tr key={row.id}>
+                            <td><a href={row.url}>{row.appointmentNumber}</a></td>
+                            <td>{row.status}</td>
+                            <td>{row.scheduledWindow}</td>
+                            <td><template lwc:if={row.workOrderUrl}><a href={row.workOrderUrl}>{row.workOrderNumber}</a></template><template lwc:else>{row.workOrderNumber}</template></td>
+                            <td><template lwc:if={row.homeownerUrl}><a href={row.homeownerUrl}>{row.homeownerName}</a></template><template lwc:else>{row.homeownerName}</template></td>
+                            <td>{row.territory}</td>
+                            <td>{row.crewName}</td>
+                            <td>{row.address}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </section>
+    </section>
+</template>

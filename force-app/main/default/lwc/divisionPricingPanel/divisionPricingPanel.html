@@ -1,0 +1,209 @@
+<template>
+    <template lwc:if={isLoaded}>
+
+        <!-- Billing Basis -->
+        <div class="card">
+            <div class="card-header">
+                <div class="ch-icon">💰</div>
+                <div class="ch-label">Billing Basis</div>
+            </div>
+            <div class="fields-grid">
+                <div class="field-item">
+                    <div class="field-label">Sod Billing Basis</div>
+                    <div class="field-value">{sodBasis}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Tree Billing Basis</div>
+                    <div class="field-value">{treeBasis}</div>
+                </div>
+                <div class="field-item full-width">
+                    <div class="field-label">Sod Type Notes</div>
+                    <div class="field-value textarea-value">{sodTypeNotes}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Model Home Discount</div>
+                    <div class="field-value">{modelDiscPct}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Discount Notes</div>
+                    <div class="field-value">{modelDiscNotes}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Price Adjustment Notice</div>
+                    <div class="field-value">{priceAdjDays}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Back-Charge Admin Fee</div>
+                    <div class="field-value">{backChargeFee}</div>
+                </div>
+                <div class="field-item full-width">
+                    <div class="field-label">Price Adjustment Process</div>
+                    <div class="field-value textarea-value">{priceAdjProc}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Terms -->
+        <div class="card">
+            <div class="card-header">
+                <div class="ch-icon">🏦</div>
+                <div class="ch-label">Payment Terms</div>
+            </div>
+            <div class="fields-grid">
+                <div class="field-item">
+                    <div class="field-label">Payment Method</div>
+                    <div class="field-value">{paymentMethod}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Invoice Deadline</div>
+                    <div class="field-value">{invDeadline}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Pay Schedule (Inv 1–15)</div>
+                    <div class="field-value">{paySchedule115}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Pay Schedule (Inv 16–End)</div>
+                    <div class="field-value">{paySchedule16E}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Lien Waiver</div>
+                    <div class="field-value"><span class={lienChip}>{lienWaiver}</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Invoice &amp; Portals -->
+        <div class="card">
+            <div class="card-header">
+                <div class="ch-icon">📄</div>
+                <div class="ch-label">Invoice Methods &amp; Portals</div>
+            </div>
+            <div class="fields-grid">
+                <div class="field-item">
+                    <div class="field-label">Invoice Method (Primary)</div>
+                    <div class="field-value">{invMethodPri}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Invoice Method (Non-Portal)</div>
+                    <div class="field-value">{invMethodNon}</div>
+                </div>
+                <div class="field-item full-width">
+                    <div class="field-label">Non-Portal Invoice Requirements</div>
+                    <div class="field-value textarea-value">{nonPortalReq}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Builder Portal</div>
+                    <div class="field-value">
+                        <template lwc:if={builderPortal}>
+                            <a href={builderPortal} target="_blank" class="field-link">Open Builder Portal →</a>
+                        </template>
+                        <template lwc:else>—</template>
+                    </div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Vendor Portal</div>
+                    <div class="field-value">
+                        <template lwc:if={vendorPortal}>
+                            <a href={vendorPortal} target="_blank" class="field-link">Open Vendor Portal →</a>
+                        </template>
+                        <template lwc:else>—</template>
+                    </div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">AP Invoicing Email</div>
+                    <div class="field-value">
+                        <template lwc:if={apEmailHref}>
+                            <a href={apEmailHref} class="field-link">{apEmail}</a>
+                        </template>
+                        <template lwc:else>{apEmail}</template>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agreements -->
+        <div class="card">
+            <div class="card-header">
+                <div class="ch-icon">✍</div>
+                <div class="ch-label">Agreements &amp; Compliance</div>
+            </div>
+            <div class="fields-grid">
+                <div class="field-item">
+                    <div class="field-label">Contractor Agreement Signed</div>
+                    <div class="field-value">{contractDate}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">LOVING License #</div>
+                    <div class="field-value">{lovingLicense}</div>
+                </div>
+            </div>
+            <div class="exhibits-list">
+                <template for:each={agreements} for:item="ag">
+                    <div key={ag.id} class="exhibit-row">
+                        <span class={ag.chipClass}>
+                            <template lwc:if={ag.signed}>✓ Signed</template>
+                            <template lwc:else>Not signed</template>
+                        </span>
+                        <span class="exhibit-label">{ag.label}</span>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Insurance Requirements -->
+        <div class="card card-last">
+            <div class="card-header">
+                <div class="ch-icon">🔒</div>
+                <div class="ch-label">Insurance Requirements</div>
+            </div>
+            <div class="fields-grid">
+                <div class="field-item">
+                    <div class="field-label">Additional Insured</div>
+                    <div class="field-value"><span class={addlInsuredChip}>{addlInsured}</span></div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Waiver of Subrogation</div>
+                    <div class="field-value"><span class={waiverChip}>{waiverSubro}</span></div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">CGL Per Occurrence</div>
+                    <div class="field-value">{cglOcc}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">CGL Aggregate</div>
+                    <div class="field-value">{cglAgg}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Auto Liability</div>
+                    <div class="field-value">{autoLiab}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Umbrella</div>
+                    <div class="field-value">{umbrella}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Workers' Comp</div>
+                    <div class="field-value">{workersComp}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Renewal Cert Lead Time</div>
+                    <div class="field-value">{renewalCert}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Insurance Certs on File</div>
+                    <div class="field-value"><span class={certsChip}>{certsOnFile}</span></div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">W-9 on File</div>
+                    <div class="field-value"><span class={w9Chip}>{w9OnFile}</span></div>
+                </div>
+            </div>
+        </div>
+
+    </template>
+
+    <template lwc:if={hasError}>
+        <div class="card error-state">Unable to load pricing data.</div>
+    </template>
+</template>

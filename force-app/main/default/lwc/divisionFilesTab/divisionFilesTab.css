@@ -1,0 +1,27 @@
+:host { display: block; }
+.files-card { background: #fff; border: 1px solid #d8dde6; border-radius: 6px; overflow: hidden; box-shadow: 0 1px 0 rgba(0,0,0,.04); }
+.ch { padding: 10px 14px; border-bottom: 1px solid #e5e5e5; display: flex; align-items: center; gap: 8px; background: #fafaf9; }
+.ch h3 { font-size: 13px; font-weight: 500; color: #16325c; flex: 1; min-width: 0; display: flex; align-items: center; gap: 6px; }
+.ci { width: 20px; height: 20px; border-radius: 3px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+.ch-actions { display: flex; gap: 6px; }
+.count-badge { background: #e3f0fb; color: #0070d2; font-size: 10px; padding: 1px 6px; border-radius: 8px; font-weight: 500; }
+.filter-bar { padding: 8px 14px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; border-bottom: 1px solid #f0f0f0; background: #fafaf9; }
+.filter-chip { background: #f4f6f9; border: 1px solid #d8dde6; color: #54698d; border-radius: 14px; padding: 3px 10px; font-size: 11px; cursor: pointer; }
+.filter-chip.on { background: #534ab7; border-color: #534ab7; color: #fff; }
+.search-input { margin-left: auto; border: 1px solid #d8dde6; border-radius: 4px; padding: 4px 8px; font-size: 12px; color: #16325c; width: 200px; }
+.section-header { padding: 6px 14px; font-size: 10px; font-weight: 500; color: #54698d; text-transform: uppercase; letter-spacing: .4px; background: #fafaf9; border-bottom: 1px solid #f0f0f0; }
+.tbl { width: 100%; border-collapse: collapse; font-size: 11px; }
+.tbl th { text-align: left; font-size: 10px; font-weight: 500; color: #54698d; padding: 8px 12px; border-bottom: 1px solid #e5e5e5; text-transform: uppercase; letter-spacing: .4px; background: #fafaf9; white-space: nowrap; }
+.tbl td { padding: 8px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+.tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: #f4f6f9; }
+.tbl th.num, .tbl td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.nl { color: #0070d2; font-weight: 500; cursor: pointer; }
+.chip { display: inline-flex; font-size: 10px; padding: 2px 7px; border-radius: 4px; align-items: center; white-space: nowrap; }
+.cgr { background: #f4f6f9; color: #54698d; }
+.sf-btn { background: #fff; border: 1px solid #d8dde6; border-radius: 4px; padding: 3px 8px; font-size: 11px; color: #16325c; cursor: pointer; margin-right: 4px; }
+.sf-btn:hover { background: #f4f6f9; }
+.sf-btn.primary { background: #0070d2; border-color: #0070d2; color: #fff; }
+.action-link { color: #0070d2; font-size: 11px; margin-right: 6px; text-decoration: none; }
+.action-link:hover { text-decoration: underline; }
+.empty-state { padding: 40px; text-align: center; color: #54698d; font-size: 12px; font-style: italic; }

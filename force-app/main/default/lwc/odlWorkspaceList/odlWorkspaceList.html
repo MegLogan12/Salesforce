@@ -1,0 +1,142 @@
+<template>
+    <section class="workspace-shell">
+        <div class="workspace-header">
+            <div>
+                <p class="eyebrow">Outdoor Living Console</p>
+                <h1>{title}</h1>
+                <p class="subtitle">{subtitle}</p>
+            </div>
+            <div class="header-actions">
+                <template for:each={actions} for:item="action">
+                    <button
+                        key={action.label}
+                        class={action.className}
+                        data-action={action.actionType}
+                        data-object-api-name={action.objectApiName}
+                        onclick={handleAction}
+                        disabled={action.disabled}
+                        title={action.disabledReason}
+                    >
+                        {action.label}
+                    </button>
+                </template>
+                <button class="secondary-btn" onclick={handleRefresh}>Refresh</button>
+            </div>
+        </div>
+
+        <template if:true={hasMetrics}>
+            <div class="metric-grid">
+                <template for:each={metricTiles} for:item="tile">
+                    <article key={tile.label} class={tile.className}>
+                        <div class="metric-label">{tile.label}</div>
+                        <div class="metric-value">{tile.value}</div>
+                    </article>
+                </template>
+            </div>
+        </template>
+
+        <div class="toolbar">
+            <lightning-combobox
+                class="filter-select"
+                label={primaryFilterLabel}
+                value={selectedPrimaryFilter}
+                options={primaryFilterOptions}
+                onchange={handlePrimaryFilterChange}
+            ></lightning-combobox>
+            <lightning-combobox
+                class="filter-select"
+                label={secondaryFilterLabel}
+                value={selectedSecondaryFilter}
+                options={secondaryFilterOptions}
+                onchange={handleSecondaryFilterChange}
+            ></lightning-combobox>
+            <lightning-combobox
+                class="filter-select"
+                label={tertiaryFilterLabel}
+                value={selectedTertiaryFilter}
+                options={tertiaryFilterOptions}
+                onchange={handleTertiaryFilterChange}
+            ></lightning-combobox>
+            <lightning-input
+                class="search-input"
+                type="search"
+                label="Search"
+                variant="label-hidden"
+                placeholder={searchPlaceholder}
+                value={searchTerm}
+                onchange={handleSearchChange}
+            ></lightning-input>
+        </div>
+
+        <template if:true={isLoading}>
+            <div class="state-card">Loading workspace...</div>
+        </template>
+
+        <template if:true={errorMessage}>
+            <div class="state-card error">{errorMessage}</div>
+        </template>
+
+        <template if:true={hasRows}>
+            <div class="content-grid">
+                <div class="list-card">
+                    <div class="table-wrap">
+                        <table class="workspace-table">
+                            <thead>
+                                <tr>
+                                    <th>{nameLabel}</th>
+                                    <th>{pathLabel}</th>
+                                    <th>{statusLabel}</th>
+                                    <th>{contextOneLabel}</th>
+                                    <th>{contextTwoLabel}</th>
+                                    <th>{contextThreeLabel}</th>
+                                    <th>{amountLabel}</th>
+                                    <th>{dateLabel}</th>
+                                    <th>{ownerLabel}</th>
+                                    <th>{openItemLabel}</th>
+                                    <th>CTA</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={visibleRows} for:item="row">
+                                    <tr key={row.id}>
+                                        <td><button class="link-button" data-id={row.id} onclick={handleOpenRecord}>{row.name}</button></td>
+                                        <td><span class={row.pathClass}>{row.pathLabel}</span></td>
+                                        <td>{row.statusLabel}</td>
+                                        <td>{row.contextOne}</td>
+                                        <td>{row.contextTwo}</td>
+                                        <td>{row.contextThree}</td>
+                                        <td>
+                                            <template if:true={row.hasAmount}>
+                                                <lightning-formatted-number value={row.amount} format-style="currency" currency-code="USD"></lightning-formatted-number>
+                                            </template>
+                                            <template if:false={row.hasAmount}>--</template>
+                                        </td>
+                                        <td>{row.dateText}</td>
+                                        <td>{row.ownerName}</td>
+                                        <td>{row.openItem}</td>
+                                        <td><button class="primary-btn" data-id={row.id} onclick={handleOpenRecord}>Open</button></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="sidebar-stack">
+                    <section class="sidebar-card">
+                        <div class="sidebar-title">Next Actions</div>
+                        <ul class="bullet-list">
+                            <template for:each={nextActions} for:item="item">
+                                <li key={item}>{item}</li>
+                            </template>
+                        </ul>
+                    </section>
+                </div>
+            </div>
+        </template>
+
+        <template if:true={showEmptyState}>
+            <div class="state-card">{emptyMessage}</div>
+        </template>
+    </section>
+</template>

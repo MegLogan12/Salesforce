@@ -1,0 +1,29 @@
+<template>
+    <template lwc:if={pageData}>
+        <section class="kpi-grid">
+            <article class="kpi-card kpi-warn">
+                <div class="kpi-value">{openOpportunities}</div>
+                <div class="kpi-label">Open Opportunities</div>
+            </article>
+            <article class="kpi-card kpi-good">
+                <div class="kpi-value">{openWorkOrders}</div>
+                <div class="kpi-label">Active Project</div>
+            </article>
+            <article class="kpi-card kpi-blue">
+                <div class="kpi-value">{depositPostedLabel}</div>
+                <div class="kpi-label">Deposit Posted</div>
+            </article>
+            <article class="kpi-card kpi-neutral">
+                <div class="kpi-value">{openTasks}</div>
+                <div class="kpi-label">Open Tasks</div>
+            </article>
+        </section>
+    </template>
+    <template lwc:elseif={errorMessage}>
+        <section class="kpi-grid">
+            <article class="kpi-card kpi-warn">
+                <div class="kpi-label">{errorMessage}</div>
+            </article>
+        </section>
+    </template>
+</template>

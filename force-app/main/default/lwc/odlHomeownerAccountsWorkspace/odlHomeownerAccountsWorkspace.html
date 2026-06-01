@@ -1,0 +1,90 @@
+<template>
+    <section class="page">
+        <nav class="tab-strip">
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Home">Home Page</a>
+            <a class="sf-tab on" href="/lightning/cmp/c__odlHomeownerAccountsTab">Account</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Leads">Leads</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Opportunities">Opportunities</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Campaigns">Campaigns</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Tasks">Tasks</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Quotes">Quote</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Work_Orders">Work Order</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Calendar">Calendar</a>
+        </nav>
+
+        <div class="header">
+            <div>
+                <h1>Homeowner Account List</h1>
+            </div>
+            <div class="actions">
+                <button class="btn primary" type="button" onclick={handleNewHousehold}>New Household</button>
+                <template lwc:if={pageData.latestAccountUrl}>
+                    <a class="btn primary" href={pageData.latestAccountUrl}>Open Latest Household</a>
+                </template>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <button class={allChipClass} data-filter="All Homeowners" onclick={handleFilterClick}>All Homeowners</button>
+            <button class={umbChipClass} data-filter="UMB" onclick={handleFilterClick}>UMB</button>
+            <button class={designChipClass} data-filter="Design Build" onclick={handleFilterClick}>Design Build</button>
+            <button class={lawnChipClass} data-filter="Lawn Care" onclick={handleFilterClick}>Lawn Care</button>
+            <button class={noActivityChipClass} data-filter="No Activity" onclick={handleFilterClick}>No Activity</button>
+            <span class="spacer"></span>
+            <input type="search" class="search" placeholder="Search homeowner households" value={searchText} oninput={handleSearchInput} />
+        </div>
+
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-value">{pageData.totalHouseholds}</div>
+                <div class="kpi-label">Visible Households</div>
+            </div>
+            <div class="kpi-card kpi-blue">
+                <div class="kpi-value">{pageData.activeProjectHouseholds}</div>
+                <div class="kpi-label">Active Projects</div>
+            </div>
+            <div class="kpi-card kpi-orange">
+                <div class="kpi-value">{pageData.voucherLinkedHouseholds}</div>
+                <div class="kpi-label">Voucher Linked</div>
+            </div>
+            <div class="kpi-card kpi-green">
+                <div class="kpi-value">{pageData.fieldExecutionHouseholds}</div>
+                <div class="kpi-label">Field Execution</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="icon">AC</div>
+                <h2>Household Operating List</h2>
+                <span class="chip chip-blue">Project, voucher, work-order, activity</span>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Account Name</th>
+                        <th>Primary Contact</th>
+                        <th>Status</th>
+                        <th>Service</th>
+                        <th>Last Activity</th>
+                        <th>Last Activity Date</th>
+                        <th>Owner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={filteredRows} for:item="row">
+                        <tr key={row.id}>
+                            <td><a class="record-link" href={row.url}>{row.accountName}</a></td>
+                            <td>{row.primaryContact}</td>
+                            <td><span class={row.statusClass}>{row.status}</span></td>
+                            <td><span class={row.serviceClass}>{row.service}</span></td>
+                            <td>{row.lastActivity}</td>
+                            <td>{row.lastActivityDate}</td>
+                            <td>{row.ownerName}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</template>

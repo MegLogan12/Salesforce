@@ -1,0 +1,86 @@
+<template>
+    <div class="files-card">
+        <div class="ch">
+            <div class="ci" style="background:#0070d2">📁</div>
+            <h3>Files <template if:true={fileCount}><span class="count-badge">{fileCount}</span></template></h3>
+            <div class="ch-actions">
+                <button class="sf-btn primary" onclick={handleUpload}>Upload File</button>
+            </div>
+        </div>
+
+        <!-- Category filter chips -->
+        <div class="filter-bar">
+            <template for:each={categoryChips} for:item="chip">
+                <button key={chip.value} class={chip.cls} data-value={chip.value} onclick={handleCategoryFilter}>{chip.label}</button>
+            </template>
+            <input type="text" class="search-input" placeholder="Search files..." oninput={handleSearch} />
+        </div>
+
+        <!-- Pinned files -->
+        <template if:true={hasPinned}>
+            <div class="section-header">📌 Pinned</div>
+            <table class="tbl">
+                <thead>
+                    <tr>
+                        <th>Title</th><th>Category</th><th>Uploaded By</th><th>Date</th><th>Size</th><th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={pinnedFiles} for:item="f">
+                        <tr key={f.id}>
+                            <td class="nl">{f.title}</td>
+                            <td><span class="chip cgr">{f.category}</span></td>
+                            <td>{f.uploadedBy}</td>
+                            <td>{f.dateStr}</td>
+                            <td class="num">{f.sizeStr}</td>
+                            <td>
+                                <a href={f.downloadUrl} target="_blank" class="action-link">Download</a>
+                                <button class="sf-btn" data-id={f.id} onclick={handlePreview}>Preview</button>
+                                <template if:true={canPin}>
+                                    <button class="sf-btn" data-id={f.id} onclick={handleUnpin}>Unpin</button>
+                                </template>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </template>
+
+        <!-- All files -->
+        <template if:true={hasFiles}>
+            <template if:true={hasPinned}>
+                <div class="section-header">All Files</div>
+            </template>
+            <table class="tbl">
+                <thead>
+                    <tr>
+                        <th>Title</th><th>Category</th><th>Uploaded By</th><th>Date</th><th>Size</th><th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={filteredFiles} for:item="f">
+                        <tr key={f.id}>
+                            <td class="nl">{f.title}</td>
+                            <td><span class="chip cgr">{f.category}</span></td>
+                            <td>{f.uploadedBy}</td>
+                            <td>{f.dateStr}</td>
+                            <td class="num">{f.sizeStr}</td>
+                            <td>
+                                <a href={f.downloadUrl} target="_blank" class="action-link">Download</a>
+                                <button class="sf-btn" data-id={f.id} onclick={handlePreview}>Preview</button>
+                                <template if:true={canPin}>
+                                    <button class="sf-btn" data-id={f.id} onclick={handlePin}>Pin</button>
+                                </template>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </template>
+
+        <!-- Empty state -->
+        <template if:false={hasFiles}>
+            <div class="empty-state">No files yet. Upload the MSA and pricing schedule to get started.</div>
+        </template>
+    </div>
+</template>

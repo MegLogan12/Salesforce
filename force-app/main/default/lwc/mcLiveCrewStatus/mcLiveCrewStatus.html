@@ -1,0 +1,16 @@
+<template>
+    <lightning-card title="Live Crew Status" icon-name="standard:event">
+        <div class="slds-p-horizontal_medium">
+            <template if:true={loaded}>
+                <template if:false={crews.length}>
+                    <p class="slds-text-color_weak">No active crews right now.</p>
+                </template>
+                <template for:each={crews} for:item="c">
+                    <div key={c.crewName} class="slds-box slds-m-bottom_x-small">
+                        <strong>{c.crewName}</strong> &middot; {c.foreman} &middot; {c.currentLot}
+                    </div>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>

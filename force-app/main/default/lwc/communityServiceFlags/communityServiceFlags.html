@@ -1,0 +1,84 @@
+<template>
+    <div class="card last">
+        <div class="card-header">
+            <span class="card-icon">&#9873;</span>
+            <span class="card-title">Service Flags</span>
+        </div>
+        <template lwc:if={isLoaded}>
+            <div class="card-body">
+                <div class="flag-row">
+                    <template for:each={serviceFlags} for:item="flag">
+                        <div key={flag.id} class="flag-item">
+                            <div class="field-label">{flag.label}</div>
+                            <span class={flag.chipClass}>{flag.chipLabel}</span>
+                        </div>
+                    </template>
+                </div>
+                <div class="section-divider"></div>
+                <div class="fields-grid">
+                    <div class="field-group">
+                        <div class="field-label">Aqua Zones</div>
+                        <div class="field-value">
+                            <template lwc:if={aquaZones}>
+                                {aquaZones}
+                            </template>
+                            <template lwc:else>
+                                <span>—</span>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <div class="field-label">Irrigation Type</div>
+                        <div class="field-value">{irrigationType}</div>
+                    </div>
+                    <div class="field-group">
+                        <div class="field-label">Irrigation Zone Count</div>
+                        <div class="field-value">
+                            <template lwc:if={irrigationZoneCount}>
+                                {irrigationZoneCount}
+                            </template>
+                            <template lwc:else>
+                                <span>—</span>
+                            </template>
+                        </div>
+                    </div>
+                    <template lwc:if={hasModelHomeDiscount}>
+                        <div class="field-group">
+                            <div class="field-label">Model Home Discount</div>
+                            <div class="field-value">{modelHomeDiscount}</div>
+                        </div>
+                    </template>
+                </div>
+                <template lwc:if={hasAquaNotes}>
+                    <div class="section-divider"></div>
+                    <div class="field-group">
+                        <div class="field-label">Aqua Notes</div>
+                        <div class="field-value long-text">{aquaNotes}</div>
+                    </div>
+                </template>
+                <template lwc:if={hasIrrigationNotes}>
+                    <div class="section-divider"></div>
+                    <div class="field-group">
+                        <div class="field-label">Irrigation Notes</div>
+                        <div class="field-value long-text">{irrigationNotes}</div>
+                    </div>
+                </template>
+                <template lwc:if={hasModelHomeDiscount}>
+                    <template lwc:if={modelHomeDiscountNotes}>
+                        <div class="section-divider"></div>
+                        <div class="field-group">
+                            <div class="field-label">Model Home Discount Notes</div>
+                            <div class="field-value long-text">{modelHomeDiscountNotes}</div>
+                        </div>
+                    </template>
+                </template>
+            </div>
+        </template>
+        <template lwc:elseif={hasError}>
+            <div class="empty-state error-state">{error}</div>
+        </template>
+        <template lwc:else>
+            <div class="empty-state">Loading...</div>
+        </template>
+    </div>
+</template>

@@ -1,0 +1,23 @@
+<template>
+    <div class="card full">
+        <div class="ch"><h3>Community Contacts</h3><span class="note">Community-specific contacts - full division roster lives on the builder division account</span></div>
+        <template lwc:if={hasCards}>
+            <div class="grid">
+                <template for:each={cards} for:item="c">
+                    <div key={c.id} class="con-card">
+                        <div class={c.avatarClass}>{c.initials}</div>
+                        <div class="con-t">
+                            <p><a href={c.recordUrl}>{c.name}</a></p>
+                            <span class="role-tag">{c.role}</span>
+                            <template lwc:if={c.phone}><span>{c.phone}</span></template>
+                            <template lwc:if={c.email}><a href={c.emailHref}>{c.email}</a></template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+        <template lwc:else>
+            <div class="empty">No contacts are linked to this community yet.</div>
+        </template>
+    </div>
+</template>

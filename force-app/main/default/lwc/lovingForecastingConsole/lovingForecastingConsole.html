@@ -1,0 +1,195 @@
+<template>
+    <div class="fc-shell">
+
+        <!-- ── Header ──────────────────────────────────────────────────── -->
+        <div class="fc-header">
+            <span class="fc-header-icon">📈</span>
+            <div class="fc-header-text">
+                <div class="fc-breadcrumb">LOVING Group · Operations Planning</div>
+                <div class="fc-title">{pageTitle}</div>
+                <div class="fc-sub">Capacity vs demand · Open hire requests · ROI modeling</div>
+            </div>
+            <template if:true={snapshot}>
+                <div class="fc-util-badge">
+                    {totalUtilizationPct}% Utilization
+                </div>
+            </template>
+        </div>
+
+        <!-- ── Tab Bar ─────────────────────────────────────────────────── -->
+        <div class="fc-tabs">
+            <template for:each={tabs} for:item="t">
+                <button key={t.id} class={t.css} data-tabid={t.id} onclick={handleTabClick}>
+                    {t.icon}&nbsp;{t.label}
+                </button>
+            </template>
+        </div>
+
+        <!-- ── Body ────────────────────────────────────────────────────── -->
+        <div class="fc-body">
+
+            <template if:true={errorMsg}>
+                <div class="fc-error">⚠️ {errorMsg}</div>
+            </template>
+
+            <!-- ── Capacity vs Demand ──────────────────────────────────── -->
+            <template if:true={tabCapacity}>
+                <div class="fc-tab-header">
+                    <h2>Capacity vs Demand</h2>
+                    <span class="fc-tab-sub">Service line utilization as of {snapshotDate} · {totalDemandHours}h demand / {totalCapacityHours}h capacity</span>
+                </div>
+
+                <template if:true={hasSnapshot}>
+                    <!-- Summary KPIs -->
+                    <div class="fc-summary-row">
+                        <div class="fc-summary-tile">
+                            <div class="fc-s-num">{totalCapacityHours}h</div>
+                            <div class="fc-s-lbl">Total Capacity</div>
+                        </div>
+                        <div class="fc-summary-tile">
+                            <div class="fc-s-num">{totalDemandHours}h</div>
+                            <div class="fc-s-lbl">Total Demand</div>
+                        </div>
+                        <div class="fc-summary-tile">
+                            <div class="fc-s-num">{totalUtilizationPct}%</div>
+                            <div class="fc-s-lbl">Utilization</div>
+                        </div>
+                    </div>
+
+                    <!-- Service line bars -->
+                    <div class="fc-bars-card">
+                        <template for:each={serviceLines} for:item="sl">
+                            <div key={sl.serviceLine} class="fc-bar-row">
+                                <div class="fc-bar-label">
+                                    <span class="fc-bar-name">{sl.serviceLine}</span>
+                                    <span class="fc-bar-pct">{sl.demandHours}h / {sl.capacityHours}h</span>
+                                    <span class={sl.statusChipCss}>{sl.utilizationPct}%</span>
+                                </div>
+                                <div class="fc-bar-track">
+                                    <div class={sl.barCss} style={sl.barStyle}></div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <template if:false={hasSnapshot}>
+                    <div class="fc-empty">
+                        <div class="fc-empty-icon">📊</div>
+                        <div class="fc-empty-title">No Forecast Data</div>
+                        <div class="fc-empty-sub">Run the capacity snapshot job to populate this view.</div>
+                    </div>
+                </template>
+            </template>
+
+            <!-- ── Hire Requests ───────────────────────────────────────── -->
+            <template if:true={tabHireRequests}>
+                <div class="fc-tab-header">
+                    <h2>Open Hire Requests</h2>
+                    <span class="fc-tab-sub">All pending and approved hire requests requiring action</span>
+                </div>
+
+                <template if:true={hasHireRequests}>
+                    <table class="fc-table">
+                        <thead>
+                            <tr>
+                                <th>HR #</th>
+                                <th>Service Line</th>
+                                <th>Role</th>
+                                <th>Submitted By</th>
+                                <th class="text-right">Total Cost</th>
+                                <th class="text-right">Y1 ROI</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={hireRequests} for:item="r">
+                                <tr key={r.id}>
+                                    <td class="fw-600">
+                                        <a href={r.url} onclick={handleNavToRecord} data-recordid={r.id}
+                                           class="fc-link">{r.hrNumber}</a>
+                                    </td>
+                                    <td>{r.serviceLine}</td>
+                                    <td>{r.roleType}</td>
+                                    <td>{r.submittedBy}</td>
+                                    <td class="text-right">{r.costDisplay}</td>
+                                    <td class="text-right">{r.roiDisplay}</td>
+                                    <td><span class={r.statusCss}>{r.status}</span></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+
+                <template if:false={hasHireRequests}>
+                    <div class="fc-empty">
+                        <div class="fc-empty-icon">✅</div>
+                        <div class="fc-empty-title">No Open Hire Requests</div>
+                        <div class="fc-empty-sub">All hire requests have been resolved or none have been submitted.</div>
+                    </div>
+                </template>
+            </template>
+
+            <!-- ── ROI Calculator ──────────────────────────────────────── -->
+            <template if:true={tabRoiCalc}>
+                <div class="fc-tab-header">
+                    <h2>Hire ROI Calculator</h2>
+                    <span class="fc-tab-sub">Model the return on investment for a new hire before submitting a request</span>
+                </div>
+
+                <div class="fc-calc-card">
+                    <div class="fc-calc-grid">
+                        <div class="fc-field">
+                            <label>Quantity</label>
+                            <input type="number" value={calcQuantity} data-field="calcQuantity" onchange={handleCalcField} min="1"/>
+                        </div>
+                        <div class="fc-field">
+                            <label>Annual Cost per Person ($)</label>
+                            <input type="number" value={calcAnnualCost} data-field="calcAnnualCost" onchange={handleCalcField} min="0"/>
+                        </div>
+                        <div class="fc-field">
+                            <label>Hours / Week</label>
+                            <input type="number" value={calcHoursPerWeek} data-field="calcHoursPerWeek" onchange={handleCalcField} min="1" max="60"/>
+                        </div>
+                        <div class="fc-field">
+                            <label>Revenue / Hour ($)</label>
+                            <input type="number" value={calcRevenuePerHour} data-field="calcRevenuePerHour" onchange={handleCalcField} min="0"/>
+                        </div>
+                        <div class="fc-field">
+                            <label>Utilization (%)</label>
+                            <input type="number" value={calcUtilizationPct} data-field="calcUtilizationPct" onchange={handleCalcField} min="0" max="100"/>
+                        </div>
+                    </div>
+
+                    <button class="fc-calc-btn" onclick={computeRoi}>Calculate ROI</button>
+
+                    <template if:true={roiResult}>
+                        <div class="fc-roi-result">
+                            <div class="fc-roi-tile">
+                                <div class="fc-roi-num">{roiResult.y1RevenueCapacityDisplay}</div>
+                                <div class="fc-roi-lbl">Y1 Revenue Capacity</div>
+                            </div>
+                            <div class="fc-roi-tile">
+                                <div class="fc-roi-num">{roiResult.totalAnnualCostDisplay}</div>
+                                <div class="fc-roi-lbl">Total Annual Cost</div>
+                            </div>
+                            <div class="fc-roi-tile fc-roi-tile-highlight">
+                                <div class="fc-roi-num">{roiResult.roiPctDisplay}</div>
+                                <div class="fc-roi-lbl">ROI %</div>
+                            </div>
+                            <div class="fc-roi-tile">
+                                <div class="fc-roi-num">{roiResult.y1RoiDisplay}</div>
+                                <div class="fc-roi-lbl">Y1 Net ROI ($)</div>
+                            </div>
+                            <div class="fc-roi-tile">
+                                <div class="fc-roi-num">{roiResult.monthsToPaybackDisplay}</div>
+                                <div class="fc-roi-lbl">Months to Payback</div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+        </div>
+    </div>
+</template>

@@ -1,0 +1,25 @@
+:host {
+    display: block;
+}
+
+.hierarchy-bar {
+    align-items: center;
+    background: #183965;
+    color: #dce6f7;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 8px 20px;
+}
+
+.hierarchy-bar span {
+    color: #9fb0ca;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.hierarchy-bar strong {
+    font-size: 12px;
+}

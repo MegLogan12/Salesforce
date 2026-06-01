@@ -1,0 +1,135 @@
+/* vpEscalationsTab — escalation queue styles */
+
+.spinner-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 32px 0;
+}
+
+/* Section sub-headers */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+.section-header h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #16325c;
+}
+
+/* Danger button */
+.sf-btn.danger {
+    background: #c23934;
+    color: #fff;
+    border: none;
+}
+.sf-btn.danger:hover {
+    background: #a61c17;
+}
+
+/* Red chip */
+.chip.chip-red {
+    background: #fef2f2;
+    color: #c23934;
+}
+.ci-red {
+    background: linear-gradient(135deg, #c23934 0%, #7f1d1d 100%);
+    color: #fff;
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: #54698d;
+}
+.empty-icon {
+    font-size: 40px;
+    color: #04844b;
+    margin-bottom: 12px;
+}
+.empty-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #04844b;
+    margin-bottom: 6px;
+}
+.empty-sub {
+    font-size: 13px;
+    max-width: 380px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+/* Confirmation Modal */
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(22, 50, 92, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9000;
+}
+.modal-box {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.22);
+    width: 420px;
+    max-width: 92vw;
+    overflow: hidden;
+}
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    background: #f4f6f9;
+    border-bottom: 1px solid #e0e5ee;
+}
+.modal-header h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #16325c;
+}
+.modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #54698d;
+    line-height: 1;
+}
+.modal-body {
+    padding: 18px;
+}
+.modal-body p {
+    margin: 0 0 4px;
+    font-size: 13px;
+    color: #16325c;
+}
+.modal-textarea {
+    width: 100%;
+    min-height: 72px;
+    margin-top: 6px;
+    padding: 8px 10px;
+    border: 1px solid #d8dde6;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #16325c;
+    resize: vertical;
+    box-sizing: border-box;
+}
+.modal-footer {
+    display: flex;
+    gap: 8px;
+    padding: 12px 18px;
+    background: #f4f6f9;
+    border-top: 1px solid #e0e5ee;
+    justify-content: flex-end;
+}

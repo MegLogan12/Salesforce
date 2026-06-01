@@ -1,0 +1,29 @@
+<template>
+    <div class="snap-card">
+        <div class="snap-header">
+            <lightning-icon icon-name="utility:chart" size="x-small" alternative-text="Snapshot"></lightning-icon>
+            <h3>Account Snapshot</h3>
+        </div>
+        <div class="kpi-row">
+            <div class="kpi">
+                <div class="kn">{activeCommunities}</div>
+                <div class="kl">Active communities</div>
+            </div>
+            <div class="kpi">
+                <div class="kn">{openWorkOrders}</div>
+                <div class="kl">Open work orders</div>
+            </div>
+            <div class="kpi">
+                <div class={pendingClass}>{pendingChangeOrders}</div>
+                <div class="kl">Pending change orders</div>
+            </div>
+            <div class="kpi">
+                <div class="kn">{ytdInvoicedDisplay}</div>
+                <div class="kl">YTD invoiced</div>
+            </div>
+        </div>
+        <template lwc:if={error}>
+            <p class="err">{error}</p>
+        </template>
+    </div>
+</template>

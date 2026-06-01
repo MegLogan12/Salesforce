@@ -1,0 +1,30 @@
+:host {
+    display: block;
+}
+
+.related {
+    display: grid;
+    gap: 8px;
+}
+
+.related-row {
+    align-items: center;
+    border-bottom: 1px solid #eef1f5;
+    color: #263f62;
+    display: flex;
+    font-size: 12px;
+    justify-content: space-between;
+    padding: 7px 0;
+}
+
+.related-row:last-child {
+    border-bottom: 0;
+}
+
+.related-row strong {
+    background: #edf4ff;
+    border-radius: 10px;
+    color: #256dd9;
+    font-size: 11px;
+    padding: 2px 8px;
+}

@@ -1,0 +1,59 @@
+<template>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon">🏢</div>
+            <span class="card-title">Company Identity</span>
+            <template lwc:if={accountType}>
+                <span class="chip caqua" style="margin-left:8px;">{accountType}</span>
+            </template>
+        </div>
+        <div class="card-body">
+            <div class="fields-grid">
+                <div>
+                    <div class="field-label">Account Type</div>
+                    <div class="field-value">{accountTypeDisplay}</div>
+                </div>
+                <div>
+                    <div class="field-label">Market</div>
+                    <div class="field-value">{marketDisplay}</div>
+                </div>
+                <div>
+                    <div class="field-label">Territory</div>
+                    <div class="field-value">{territoryDisplay}</div>
+                </div>
+                <div>
+                    <div class="field-label">Trade Type Code</div>
+                    <div class="field-value">{tradeTypeDisplay}</div>
+                </div>
+            </div>
+            <div class="section-divider"></div>
+            <div class="section-label">LOVING Team</div>
+            <div class="team-grid">
+                <div>
+                    <div class="field-label">CSM</div>
+                    <div class="field-value">{csmName}</div>
+                </div>
+                <div>
+                    <div class="field-label">FM</div>
+                    <div class="field-value">{fmName}</div>
+                </div>
+                <div>
+                    <div class="field-label">VP Field Ops</div>
+                    <div class="field-value">{vpName}</div>
+                </div>
+                <div>
+                    <div class="field-label">Scheduler</div>
+                    <div class="field-value">{schedulerName}</div>
+                </div>
+                <div>
+                    <div class="field-label">AP</div>
+                    <div class="field-value">{apName}</div>
+                </div>
+                <div>
+                    <div class="field-label">Warranty</div>
+                    <div class="field-value">{warrantyName}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

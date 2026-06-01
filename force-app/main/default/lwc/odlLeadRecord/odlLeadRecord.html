@@ -1,0 +1,296 @@
+<template>
+    <template if:true={hasError}>
+        <div style="padding:20px;text-align:center;color:#c23934">{errorMessage}</div>
+    </template>
+
+    <template if:true={isLoaded}>
+      <template if:false={hasError}>
+
+        <!-- Record Header -->
+        <div class="rec-header">
+            <div class="rec-top-row">
+                <div class="rec-icon" style="background:linear-gradient(135deg,#fe9339,#c57617)">LD</div>
+                <div class="rec-title-block">
+                    <div class="rec-breadcrumb">Lead</div>
+                    <div class="rec-title">{lead.Name}</div>
+                    <div class="rec-subtitle">{leadSubtitle}</div>
+                </div>
+                <div class="rec-actions">
+                    <button class="sf-btn" onclick={logCall}>Log Call</button>
+                    <button class="sf-btn" onclick={sendText}>Send Text</button>
+                    <button class="sf-btn primary" onclick={convertLead}>Convert Lead</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="sf-body">
+            <!-- Lead Status Path -->
+            <div class="card">
+                <div class="ch">
+                    <div class="ci" style="background:#fe9339">PATH</div>
+                    <h3>Lead Status Path</h3>
+                    <span class={lobChipClass} style="margin-left:8px">{lead.ODL_Path__c}</span>
+                </div>
+                <div class="path">
+                    <template for:each={pathSteps} for:item="step">
+                        <div key={step.label} class={step.cssClass}>{step.label}</div>
+                    </template>
+                </div>
+            </div>
+
+            <div class="layout">
+                <div class="layout-main">
+
+                    <!-- UMB Qualification -->
+                    <template if:true={isUmb}>
+                        <div class="card info">
+                            <div class="ch">
+                                <div class="ci" style="background:#0070d2">Q</div>
+                                <h3>UMB Qualification</h3>
+                            </div>
+                            <div class="fields-grid">
+                                <div>
+                                    <div class="field-head"><span class="field-label">ODL Path</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit ODL Path" variant="bare" size="x-small" onclick={handleEditLead}></lightning-button-icon></div>
+                                    <div class="field-value"><span class="chip co">{lead.ODL_Path__c}</span></div>
+                                </div>
+                                <div>
+                                    <div class="field-head"><span class="field-label">Budget Range</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Budget Range" variant="bare" size="x-small" onclick={handleEditLead}></lightning-button-icon></div>
+                                    <div class="field-value">{lead.Budget_Range__c}</div>
+                                </div>
+                                <div>
+                                    <div class="field-head"><span class="field-label">Service Interest</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Service Interest" variant="bare" size="x-small" onclick={handleEditLead}></lightning-button-icon></div>
+                                    <div class="field-value">{lead.Service_Interest__c}</div>
+                                </div>
+                                <div>
+                                    <div class="field-head"><span class="field-label">Package Fit</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Package Fit" variant="bare" size="x-small" onclick={handleEditLead}></lightning-button-icon></div>
+                                    <div class="field-value"><span class="chip co">{lead.Package_Fit__c}</span></div>
+                                </div>
+                                <div>
+                                    <div class="field-head"><span class="field-label">Desired Timeline</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Desired Timeline" variant="bare" size="x-small" onclick={handleEditLead}></lightning-button-icon></div>
+                                    <div class="field-value">{lead.Desired_Timeline__c}</div>
+                                </div>
+                                <div>
+                                    <div class="field-label">Conversion Target</div>
+                                    <div class="field-value">{conversionTarget}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Source and Campaign (UMB only) -->
+                        <div class="card">
+                            <div class="ch">
+                                <div class="ci" style="background:#04844b">SRC</div>
+                                <h3>Source and Campaign</h3>
+                            </div>
+                            <div class="fields-grid">
+                                <div>
+                                    <div class="field-head"><span class="field-label">Lead Source</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Lead Source" variant="bare" size="x-small" onclick={handleEditLead}></lightning-button-icon></div>
+                                    <div class="field-value">
+                                        {lead.LeadSource}
+                                        <span class="source-pill">Standard LeadSource</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="field-label">Campaign</div>
+                                    <div class="field-value">{campaignDisplay}</div>
+                                </div>
+                                <div>
+                                    <div class="field-label">Voucher Code</div>
+                                    <div class="field-value">—</div>
+                                </div>
+                                <div>
+                                    <div class="field-label">UTM Source</div>
+                                    <div class="field-value">—</div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Custom Build Discovery -->
+                    <template if:true={isCustomBuild}>
+                        <div class="card purple">
+                            <div class="ch">
+                                <div class="ci" style="background:#534ab7">DISC</div>
+                                <h3>Custom Build Discovery</h3>
+                            </div>
+                            <div class="fields-grid">
+                                <div>
+                                    <div class="field-head"><span class="field-label">ODL Path</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit ODL Path" variant="bare" size="x-small" onclick={handleEditLead}></lightning-button-icon></div>
+                                    <div class="field-value"><span class="chip cp">{lead.ODL_Path__c}</span></div>
+                                </div>
+                                <div>
+                                    <div class="field-head"><span class="field-label">Project Vision</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Project Vision" variant="bare" size="x-small" onclick={handleEditLead}></lightning-button-icon></div>
+                                    <div class="field-value">{lead.Project_Vision__c}</div>
+                                </div>
+                                <div>
+                                    <div class="field-head"><span class="field-label">Budget Range</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Budget Range" variant="bare" size="x-small" onclick={handleEditLead}></lightning-button-icon></div>
+                                    <div class="field-value">{lead.Budget_Range__c}</div>
+                                </div>
+                                <div>
+                                    <div class="field-head"><span class="field-label">Decision Makers</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Decision Makers" variant="bare" size="x-small" onclick={handleEditLead}></lightning-button-icon></div>
+                                    <div class="field-value">{lead.Decision_Makers__c}</div>
+                                </div>
+                                <div>
+                                    <div class="field-head"><span class="field-label">Site Visit Needed</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Site Visit Needed" variant="bare" size="x-small" onclick={handleEditLead}></lightning-button-icon></div>
+                                    <div class="field-value">
+                                        <template if:true={lead.Site_Visit_Needed__c}>
+                                            <span class="chip ca">Yes</span>
+                                        </template>
+                                        <template if:false={lead.Site_Visit_Needed__c}>
+                                            <span class="chip cgr">No</span>
+                                        </template>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="field-label">Conversion Target</div>
+                                    <div class="field-value">{conversionTarget}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Scope Complexity (Custom Build only) -->
+                        <div class="card">
+                            <div class="ch">
+                                <div class="ci" style="background:#0070d2">FIT</div>
+                                <h3>Scope Complexity</h3>
+                            </div>
+                            <table class="tbl">
+                                <thead>
+                                    <tr><th>Scope Area</th><th>Need</th><th>Risk</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="3" style="text-align:center;color:#54698d;padding:12px">
+                                            No scope items recorded
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </template>
+
+                    <!-- Lawn Care Qualification -->
+                    <template if:true={isLawnCare}>
+                        <div class="card aqua">
+                            <div class="ch">
+                                <div class="ci" style="background:#1d9e75">LC</div>
+                                <h3>Lawn Care Qualification</h3>
+                            </div>
+                            <div class="fields-grid">
+                                <div>
+                                    <div class="field-head"><span class="field-label">ODL Path</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit ODL Path" variant="bare" size="x-small" onclick={handleEditLead}></lightning-button-icon></div>
+                                    <div class="field-value"><span class="chip ct">{lead.ODL_Path__c}</span></div>
+                                </div>
+                                <div>
+                                    <div class="field-head"><span class="field-label">Service Interest</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Service Interest" variant="bare" size="x-small" onclick={handleEditLead}></lightning-button-icon></div>
+                                    <div class="field-value">{lead.Service_Interest__c}</div>
+                                </div>
+                                <div>
+                                    <div class="field-head"><span class="field-label">Property Size</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Property Size" variant="bare" size="x-small" onclick={handleEditLead}></lightning-button-icon></div>
+                                    <div class="field-value">{lead.Property_Size__c}</div>
+                                </div>
+                                <div>
+                                    <div class="field-head"><span class="field-label">Preferred Frequency</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Preferred Frequency" variant="bare" size="x-small" onclick={handleEditLead}></lightning-button-icon></div>
+                                    <div class="field-value">{lead.Preferred_Frequency__c}</div>
+                                </div>
+                                <div>
+                                    <div class="field-head"><span class="field-label">Start Window</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Start Window" variant="bare" size="x-small" onclick={handleEditLead}></lightning-button-icon></div>
+                                    <div class="field-value">{lead.Start_Window__c}</div>
+                                </div>
+                                <div>
+                                    <div class="field-label">Conversion Target</div>
+                                    <div class="field-value">{conversionTarget}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Activity and Follow-Up -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#534ab7">ACT</div>
+                            <h3>Activity and Follow-Up</h3>
+                            <lightning-button label="New Task" onclick={createTask} style="margin-left:auto"></lightning-button>
+                            <lightning-button label="Log Call" onclick={logCall} style="margin-left:8px"></lightning-button>
+                        </div>
+                        <table class="tbl">
+                            <thead>
+                                <tr>
+                                    <th>Activity</th>
+                                    <th>Date</th>
+                                    <th>Outcome</th>
+                                    <th>Next Task</th>
+                                    <th>Due</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template if:false={noTasks}>
+                                    <template for:each={taskRows} for:item="row">
+                                        <tr key={row.Id}>
+                                            <td>{row.activityLabel}</td>
+                                            <td>{row.dateFormatted}</td>
+                                            <td>{row.outcome}</td>
+                                            <td>{row.nextTask}</td>
+                                            <td>{row.nextDue}</td>
+                                        </tr>
+                                    </template>
+                                </template>
+                                <template if:true={noTasks}>
+                                    <tr>
+                                        <td colspan="5" style="text-align:center;color:#54698d;padding:12px">
+                                            No activity yet
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Rail -->
+                <div class="layout-rail">
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#534ab7">AI</div>
+                            <h3>Assistant Panel</h3>
+                        </div>
+                        <div class="qa-list">
+                            <div class="qa-item" onclick={viewActivity}>Summarize latest customer activity</div>
+                            <div class="qa-item" onclick={draftEmail}>Draft follow-up email</div>
+                            <div class="qa-item" onclick={createTask}>Create next task</div>
+                            <div class="qa-item" onclick={viewTasks}>Show overdue items</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#0070d2">SLA</div>
+                            <h3>Activity Health</h3>
+                        </div>
+                        <div style="padding:10px 14px">
+                            <div class="rail-row">
+                                <span>Last touch</span>
+                                <span>{lastTouchFormatted}</span>
+                            </div>
+                            <div class="rail-row">
+                                <span>Voicemail</span>
+                                <span class={vmChipClass}>{voicemailLabel}</span>
+                            </div>
+                            <div class="rail-row">
+                                <span>Next follow-up</span>
+                                <span class="chip cb2">{nextFollowUpFormatted}</span>
+                            </div>
+                            <div class="rail-row">
+                                <span>Open tasks</span>
+                                <span>{openTaskCount}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </template>
+    </template>
+    <template if:false={isLoaded}>
+        <div style="padding:20px;text-align:center;color:#54698d">Loading...</div>
+    </template>
+</template>

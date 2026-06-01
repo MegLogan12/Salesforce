@@ -1,0 +1,35 @@
+<template>
+    <template lwc:if={isLoaded}>
+        <div class="card">
+            <div class="card-header">
+                <div class="ch-icon">👥</div>
+                <div class="ch-label">Key Builder Contacts</div>
+            </div>
+            <div class="contacts-grid">
+                <template for:each={contacts} for:item="contact">
+                    <div key={contact.id} class="contact-card">
+                        <div class="contact-header">
+                            <span class="contact-icon">{contact.icon}</span>
+                            <span class="contact-role">{contact.role}</span>
+                        </div>
+                        <div class="contact-name">{contact.name}</div>
+                        <div class="contact-meta">
+                            <template lwc:if={contact.email}>
+                                <a href={contact.emailHref} class="contact-link">✉ {contact.email}</a>
+                            </template>
+                        </div>
+                        <div class="contact-meta">
+                            <template lwc:if={contact.phone}>
+                                <a href={contact.phoneHref} class="contact-link">📞 {contact.phone}</a>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </template>
+
+    <template lwc:if={hasError}>
+        <div class="card error-state">Unable to load contact data.</div>
+    </template>
+</template>

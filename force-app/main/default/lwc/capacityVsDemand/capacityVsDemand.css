@@ -1,0 +1,16 @@
+.cap-bar-container {
+    width: 100%;
+    height: 18px;
+    background: #f3f3f3;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 4px;
+}
+.cap-bar {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+.cap-bar-green { background: #04844B; }
+.cap-bar-amber { background: #FE9339; }
+.cap-bar-red { background: #C23934; }
+.cap-bar-gray { background: #54698D; }

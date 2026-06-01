@@ -1,0 +1,88 @@
+<template>
+    <section class="page">
+        <div class="header">
+            <div>
+                <div class="breadcrumb">Setup</div>
+                <h1>Setup Matrix</h1>
+                <p>Field source rules, live page card inventory, and governed picklist scope pulled from live metadata.</p>
+            </div>
+        </div>
+
+        <div class="body">
+            <div class="card">
+                <div class="card-header"><span class="icon">SRC</span><h2>Field Source Rule</h2></div>
+                <div class="note">{pageData.sourceRule}</div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="icon blue">MAP</span><h2>Object and Field Source Matrix</h2></div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Object</th>
+                            <th>Standard First</th>
+                            <th>Existing LOVING Field Reuse</th>
+                            <th>Custom Only If Needed</th>
+                            <th>LOB Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={pageData.objectRows} for:item="row">
+                            <tr key={row.objectApiName}>
+                                <td>{row.objectApiName}</td>
+                                <td>{row.standardFirst}</td>
+                                <td>{row.existingReuse}</td>
+                                <td>{row.customOnlyIfNeeded}</td>
+                                <td>{row.lobNote}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="icon green">CARD</span><h2>Live Page Card Inventory</h2></div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Page</th>
+                            <th>Cards That Should Appear on Live Page</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={pageData.pageRows} for:item="row">
+                            <tr key={row.page}>
+                                <td>{row.page}</td>
+                                <td>{row.cards}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><span class="icon purple">LOB</span><h2>LOB-Specific Picklist Scope</h2></div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Object</th>
+                            <th>API Name</th>
+                            <th>Active Values</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={pageData.picklistRows} for:item="row">
+                            <tr key={row.fieldApiName}>
+                                <td>{row.fieldLabel}</td>
+                                <td>{row.objectApiName}</td>
+                                <td>{row.fieldApiName}</td>
+                                <td>{row.values}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</template>

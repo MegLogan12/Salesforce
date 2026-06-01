@@ -1,0 +1,66 @@
+<template>
+    <template lwc:if={hasError}>
+        <div class="card full">
+            <div class="ch"><h3>Lot Tracker</h3></div>
+            <div class="empty err">{error}</div>
+        </div>
+    </template>
+    <template lwc:elseif={loaded}>
+        <div class="card full">
+            <div class="ch">
+                <h3>Lot Tracker</h3>
+                <span class="chip-group">
+                    <span class="stat-chip chip-g">{data.completeCount} complete</span>
+                    <span class="stat-chip chip-b">{data.scheduledCount} scheduled</span>
+                    <span class="stat-chip chip-a">{data.pendingCount} pending PO</span>
+                </span>
+            </div>
+            <template lwc:if={hasSquares}>
+                <div class="lot-grid">
+                    <template for:each={data.squares} for:item="s">
+                        <div key={s.lotNumber} class={s.squareClass}>{s.lotNumber}</div>
+                    </template>
+                </div>
+            </template>
+            <template lwc:else>
+                <div class="empty">0 lot grid squares available for this community.</div>
+            </template>
+            <div class="legend">
+                <div class="lg"><span class="swatch done"></span>Complete ({data.completeCount})</div>
+                <div class="lg"><span class="swatch sched"></span>Scheduled ({data.scheduledCount})</div>
+                <div class="lg"><span class="swatch pend"></span>Pending PO ({data.pendingCount})</div>
+            </div>
+        </div>
+
+        <div class="card full mt">
+            <div class="ch"><h3>Lot Detail</h3></div>
+            <template lwc:if={hasRows}>
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Lot</th><th>Work Order</th><th>Foreman</th><th>Scheduled</th>
+                            <th>Status</th><th>FM QI</th><th>QI Score</th><th>Closed Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={data.rows} for:item="r">
+                            <tr key={r.workOrderName}>
+                                <td>{r.lotLabel}</td>
+                                <td><a href={r.workOrderUrl} class="name-link">{r.workOrderName}</a></td>
+                                <td>{r.foreman}</td>
+                                <td>{r.scheduled}</td>
+                                <td><span class={r.statusClass}>{r.status}</span></td>
+                                <td><span class={r.qiStatusClass}>{r.qiStatus}</span></td>
+                                <td style={qiStyle}>{r.qiScore}</td>
+                                <td>{r.closedDate}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template lwc:else>
+                <div class="empty">0 lot detail records available for this community.</div>
+            </template>
+        </div>
+    </template>
+</template>

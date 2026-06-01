@@ -1,0 +1,94 @@
+<template>
+    <section class="workspace-shell">
+        <div class="workspace-header">
+            <div>
+                <h1>{title}</h1>
+            </div>
+            <div class="header-actions">
+                <button class="primary-btn" onclick={handleNewLead}>New Lead</button>
+                <button class="secondary-btn" onclick={handleRefresh}>Refresh</button>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <div class="chip-row">
+                <template for:each={filters} for:item="filter">
+                    <button
+                        key={filter.value}
+                        class={filter.className}
+                        data-value={filter.value}
+                        onclick={handleFilterClick}
+                    >
+                        {filter.label}
+                    </button>
+                </template>
+            </div>
+            <lightning-input
+                class="search-input"
+                type="search"
+                variant="label-hidden"
+                placeholder="Search homeowner leads"
+                value={searchTerm}
+                onchange={handleSearchChange}
+            ></lightning-input>
+        </div>
+
+        <template if:true={isLoading}>
+            <div class="state-card">Loading homeowner leads...</div>
+        </template>
+
+        <template if:true={errorMessage}>
+            <div class="state-card error">{errorMessage}</div>
+        </template>
+
+        <template if:true={hasRows}>
+            <div class="list-card">
+                <div class="card-heading">
+                    <div>
+                        <h2>Lead Operating List</h2>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table class="lead-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>LOB</th>
+                                <th>Lead Source</th>
+                                <th>Status</th>
+                                <th>Interest</th>
+                                <th>Last Activity</th>
+                                <th>Last Activity Date</th>
+                                <th>Voicemail</th>
+                                <th>Follow-Up Task</th>
+                                <th>Follow-Up Due</th>
+                                <th>Owner</th>
+                                <th>CTA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={visibleRows} for:item="row">
+                                <tr key={row.id}>
+                                    <td><button class="link-button" data-id={row.id} onclick={handleOpenRecord}>{row.name}</button></td>
+                                    <td><span class={row.pathClass}>{row.odPath}</span></td>
+                                    <td>{row.leadSource}</td>
+                                    <td>{row.status}</td>
+                                    <td>{row.interest}</td>
+                                    <td>{row.lastAction}</td>
+                                    <td>{row.dateOfAction}</td>
+                                    <td>{row.voicemail}</td>
+                                    <td>{row.followUpTask}</td>
+                                    <td>{row.followUpDue}</td>
+                                    <td>{row.ownerName}</td>
+                                    <td><button class="primary-btn" data-id={row.id} onclick={handleOpenRecord}>Open</button></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </template>
+
+    </section>
+</template>

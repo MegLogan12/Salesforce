@@ -1,0 +1,38 @@
+<template>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon">🗺</div>
+            <span class="card-title">Division Accounts ({divisionCount})</span>
+        </div>
+        <template lwc:if={isLoaded}>
+            <template lwc:if={hasDivisions}>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Market</th>
+                            <th>Territory</th>
+                            <th>Account Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={divisions} for:item="div">
+                            <tr key={div.id}>
+                                <td class="division-name">{div.name}</td>
+                                <td>{div.market}</td>
+                                <td>{div.territory}</td>
+                                <td>{div.type}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template lwc:else>
+                <div class="empty-state">No division accounts found.</div>
+            </template>
+        </template>
+        <template lwc:else>
+            <div class="empty-state">Loading...</div>
+        </template>
+    </div>
+</template>

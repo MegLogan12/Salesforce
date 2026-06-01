@@ -1,0 +1,102 @@
+<template>
+    <!-- Record Header -->
+    <div class="rec-header">
+        <div class="rec-top-row">
+            <div class="rec-icon" style="background:linear-gradient(135deg,#fe9339,#c57617)">LD</div>
+            <div class="rec-title-block">
+                <div class="rec-breadcrumb">Leads</div>
+                <div class="rec-title">Homeowner Lead List</div>
+                <div class="rec-subtitle">LOB-specific lead list view. Open a lead to see the UMB, Custom Build, or Lawn Care layout.</div>
+            </div>
+            <div class="rec-actions">
+                <button class="sf-btn primary" onclick={newLead}>New Lead</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Toolbar -->
+    <div class="list-toolbar">
+        <span class={allChipClass} onclick={filterAll}>All Homeowner Leads</span>
+        <span class={umbChipClass} onclick={filterUmb}>UMB</span>
+        <span class={cbChipClass} onclick={filterCb}>Custom Build</span>
+        <span class={lcChipClass} onclick={filterLc}>Lawn Care</span>
+        <span class={vmChipClass} onclick={filterVoicemail}>Voicemail Left</span>
+        <span class={fuChipClass} onclick={filterFollowUp}>Follow-Up Due</span>
+        <span style="margin-left:auto"></span>
+        <select onchange={handleOwnerFilter}>
+            <option value="">All owners</option>
+            <template for:each={ownerOptions} for:item="opt">
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+            </template>
+        </select>
+        <input class="list-search" placeholder="Search leads..." value={searchTerm} onchange={handleSearch} />
+    </div>
+
+    <div class="sf-body">
+        <template if:true={hasError}>
+            <div class="card">
+                <div style="padding:16px;text-align:center;color:#c23934">{errorMessage}</div>
+            </div>
+        </template>
+        <div class="card">
+            <div class="ch">
+                <div class="ci" style="background:#fe9339">LD</div>
+                <h3>Lead Operating List</h3>
+                <span style="margin-left:auto;font-size:11px;color:#54698d">{filteredLeads.length} records</span>
+            </div>
+            <table class="tbl">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>LOB</th>
+                        <th>Lead Source</th>
+                        <th>Status</th>
+                        <th>Interest</th>
+                        <th>Last Activity</th>
+                        <th>Last Activity Date</th>
+                        <th>Voicemail</th>
+                        <th>Follow-Up Task</th>
+                        <th>Follow-Up Due</th>
+                        <th>Owner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={filteredLeads} for:item="lead">
+                        <tr key={lead.Id}>
+                            <td>
+                                <span class="nl" data-id={lead.Id} onclick={navigateToLead}
+                                      style="cursor:pointer">{lead.Name}</span>
+                            </td>
+                            <td><span class={lead.lobChipClass}>{lead.ODL_Path__c}</span></td>
+                            <td>{lead.LeadSource}</td>
+                            <td><span class="chip cgr">{lead.Status}</span></td>
+                            <td>{lead.Service_Interest__c}</td>
+                            <td>{lead.lastActivityDesc}</td>
+                            <td>{lead.lastActivityFormatted}</td>
+                            <td>
+                                <template if:true={lead.Voicemail_Left__c}>
+                                    <span class="chip ca">{lead.voicemailLabel}</span>
+                                </template>
+                                <template if:false={lead.Voicemail_Left__c}>
+                                    <span class="chip cgr">No</span>
+                                </template>
+                            </td>
+                            <td>{lead.followUpTask}</td>
+                            <td>{lead.followUpDue}</td>
+                            <td>{lead.Owner.Name}</td>
+                        </tr>
+                    </template>
+                    <template if:true={noLeads}>
+                        <template if:false={hasError}>
+                            <tr>
+                                <td colspan="11" style="text-align:center;color:#54698d;padding:16px">
+                                    No leads found
+                                </td>
+                            </tr>
+                        </template>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</template>

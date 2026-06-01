@@ -1,0 +1,127 @@
+.overlay,
+.workspace-shell {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+}
+
+.backdrop,
+.workspace-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(8, 25, 55, 0.28);
+    backdrop-filter: blur(6px);
+}
+
+.prompt-card {
+    position: relative;
+    z-index: 1;
+    width: min(32rem, calc(100vw - 2rem));
+    margin: 12vh auto 0;
+    padding: 1.5rem;
+    border-radius: 1.25rem;
+    background: linear-gradient(180deg, #ffffff 0%, #f7fafc 100%);
+    border: 1px solid rgba(11, 92, 171, 0.12);
+    box-shadow: 0 24px 80px rgba(15, 35, 95, 0.18);
+}
+
+.workspace-panel {
+    position: relative;
+    z-index: 1;
+    width: min(74rem, calc(100vw - 2rem));
+    max-height: calc(100vh - 3rem);
+    margin: 1.5rem auto 0;
+    overflow: auto;
+    border-radius: 1rem;
+    background: #eef4fb;
+    box-shadow: 0 24px 80px rgba(15, 35, 95, 0.24);
+}
+
+.workspace-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1rem 0;
+}
+
+.eyebrow {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #0b5cab;
+    margin-bottom: 0.35rem;
+}
+
+h1,
+h2 {
+    margin: 0;
+    color: #16325c;
+    font-weight: 700;
+}
+
+.message {
+    margin: 0.75rem 0 0;
+    color: #425466;
+    line-height: 1.55;
+}
+
+.actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.floating-launcher {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 8990;
+}
+
+.launcher-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    width: 7rem;
+    padding: 0.7rem 0.85rem;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #0b5cab 0%, #16325c 100%);
+    color: #ffffff;
+    cursor: pointer;
+    box-shadow: 0 12px 26px rgba(11, 92, 171, 0.22);
+}
+
+.launcher-kicker {
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    opacity: 0.92;
+}
+
+@media (max-width: 768px) {
+    .prompt-card {
+        margin-top: 8vh;
+    }
+
+    .workspace-panel {
+        width: calc(100vw - 1rem);
+        max-height: calc(100vh - 1rem);
+        margin-top: 0.5rem;
+    }
+
+    .floating-launcher {
+        right: 0.75rem;
+        left: 0.75rem;
+    }
+
+    .launcher-button {
+        width: 100%;
+        min-width: 0;
+    }
+}

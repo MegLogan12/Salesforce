@@ -1,0 +1,54 @@
+:host {
+    display: block;
+}
+
+.fields-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 16px 28px;
+}
+
+.field-row {
+    min-width: 0;
+}
+
+.field-topline {
+    align-items: flex-start;
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+}
+
+.field-label {
+    color: #60708f;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.field-source {
+    color: #8b98ad;
+    font-size: 10px;
+    margin-top: 1px;
+}
+
+.field-value {
+    color: #16325c;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.35;
+    margin-top: 4px;
+    overflow-wrap: anywhere;
+}
+
+.field-value.link {
+    color: #256dd9;
+    text-decoration: none;
+}
+
+@media (max-width: 760px) {
+    .fields-grid {
+        grid-template-columns: 1fr;
+    }
+}

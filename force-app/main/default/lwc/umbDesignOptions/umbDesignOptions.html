@@ -1,0 +1,108 @@
+<template>
+    <div class="umb-wrap">
+        <template if:true={hasOptions}>
+            <div class="house-mockup">
+                <template for:each={options} for:item="opt">
+                    <div key={opt.id} class={opt.cardClass}>
+                        <div class={opt.imgClass}>
+                            <template if:true={opt.hasImage}>
+                                <img src={opt.imageUrl} alt="Your yard with the design applied" class="rendered" />
+                            </template>
+                            <template if:false={opt.hasImage}>
+                                <div class="img-placeholder">
+                                    Your design rendering will appear here once it is generated from your uploaded yard photo.
+                                </div>
+                            </template>
+                            <template if:true={opt.isConcept}>
+                                <div class="concept-badge">Concept</div>
+                            </template>
+                            <div class="overlay">
+                                <template if:true={opt.isConcept}>
+                                    <span>Concept design — add your backyard photo to see your actual yard</span>
+                                </template>
+                                <template if:false={opt.isConcept}>
+                                    <span>Rendering generated from your uploaded photo</span>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="house-info">
+                            <div class="info-head">
+                                <span class={opt.tagClass}>{opt.tier}</span>
+                                <template if:true={opt.packageLabel}>
+                                    <span class="pkg-label">{opt.packageLabel}</span>
+                                </template>
+                            </div>
+                            <div class="price">{opt.priceFormatted}</div>
+                            <template if:true={opt.description}>
+                                <div class="desc">{opt.description}</div>
+                            </template>
+                            <ul class="features">
+                                <template for:each={opt.features} for:item="feat">
+                                    <li key={feat}>{feat}</li>
+                                </template>
+                            </ul>
+
+                            <template if:true={opt.hasElements}>
+                                <div class="elements">
+                                    <template for:each={opt.elements} for:item="el">
+                                        <div key={el.id} class="element-row">
+                                            <lightning-button-icon
+                                                icon-name={el.heartIcon}
+                                                variant={el.heartVariant}
+                                                size="small"
+                                                alternative-text={el.heartTitle}
+                                                title={el.heartTitle}
+                                                data-id={el.id}
+                                                data-hearted={el.hearted}
+                                                onclick={handleHeart}>
+                                            </lightning-button-icon>
+                                            <div class="element-copy">
+                                                <span class="element-name">{el.name}</span>
+                                                <span class="element-cat">{el.category}</span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+
+                            <div class="card-actions">
+                                <lightning-button
+                                    class="redesign-btn"
+                                    label={opt.redesignLabel}
+                                    icon-name="utility:refresh"
+                                    variant="neutral"
+                                    disabled={opt.busy}
+                                    data-id={opt.id}
+                                    onclick={handleRedesign}>
+                                </lightning-button>
+                                <lightning-button
+                                    class="select-btn"
+                                    label={opt.selectLabel}
+                                    variant={opt.selectVariant}
+                                    data-id={opt.id}
+                                    onclick={handleSelect}>
+                                </lightning-button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <template if:true={noOptions}>
+            <div class="empty-state">
+                Your three design options will appear here once your consultant generates them from your backyard photo.
+            </div>
+        </template>
+
+        <template if:true={hasError}>
+            <div class="empty-state">
+                We couldn't load your designs right now. Please refresh the page or try again in a moment.
+            </div>
+        </template>
+
+        <template if:false={isLoaded}>
+            <div class="empty-state">Loading your designs...</div>
+        </template>
+    </div>
+</template>

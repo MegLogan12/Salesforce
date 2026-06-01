@@ -1,0 +1,146 @@
+<template>
+    <div class="console-root">
+
+        <!-- Tab bar -->
+        <div class="sf-nav">
+            <template for:each={tabs} for:item="t">
+                <button key={t.id} class={t.cls} data-id={t.id} onclick={handleTab}>
+                    {t.label}
+                    <template if:true={t.badge}>
+                        <span class="num-badge">{t.badge}</span>
+                    </template>
+                </button>
+            </template>
+        </div>
+
+        <!-- Integration unavailable banner -->
+        <template if:true={errorMsg}>
+            <div class="ab ab-a" style="margin: 8px 20px 0;">
+                <span class="ab-ic">⚠</span>
+                <span>{errorMsg}</span>
+            </div>
+        </template>
+
+        <!-- Loading -->
+        <template if:true={isLoading}>
+            <div class="sc-spinner">
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- ── TAB 1: Overview ── -->
+        <div class={tab1cls}>
+            <div class="rec-header">
+                <div class="rec-icon" style="background: linear-gradient(135deg, #04844b 0%, #1d9e75 100%)">✓</div>
+                <div class="rec-identity">
+                    <div class="rec-breadcrumb">{breadcrumb}</div>
+                    <div class="rec-title">{woTitle}</div>
+                    <div class="rec-subtitle">{woSubtitle}</div>
+                </div>
+                <div class="rec-actions">
+                    <button class="sf-btn" onclick={handleEdit}>Edit</button>
+                </div>
+            </div>
+            <div class="sf-body">
+                <template if:false={hasWoData}>
+                    <div class="ab ab-b">
+                        <span class="ab-ic">ℹ</span>
+                        <span>{emptyStateMessage}</span>
+                    </div>
+                </template>
+                <!-- fields-grid, stage rail, cards populated during implementation -->
+            </div>
+        </div>
+
+        <!-- ── TAB 2: Scope ── -->
+        <div class={tab2cls}>
+            <div class="rec-header">
+                <div class="rec-icon" style="background: #0070d2">📋</div>
+                <div class="rec-identity">
+                    <div class="rec-breadcrumb">{breadcrumb} · Scope</div>
+                    <div class="rec-title">Scope of Work</div>
+                    <div class="rec-subtitle">{scopeSubtitle}</div>
+                </div>
+            </div>
+            <div class="sf-body">
+                <template if:false={hasScopeData}>
+                    <div class="ab ab-b"><span class="ab-ic">ℹ</span><span>{emptyStateMessage}</span></div>
+                </template>
+            </div>
+        </div>
+
+        <!-- ── TAB 3: Closeout ── -->
+        <div class={tab3cls}>
+            <div class="rec-header">
+                <div class="rec-icon" style="background: #04844b">✓</div>
+                <div class="rec-identity">
+                    <div class="rec-breadcrumb">{breadcrumb} · Closeout</div>
+                    <div class="rec-title">Closeout Checklist</div>
+                    <div class="rec-subtitle">{closeoutSubtitle}</div>
+                </div>
+                <div class="rec-actions">
+                    <button class="sf-btn success" onclick={handleEdit}>Edit Closeout</button>
+                </div>
+            </div>
+            <div class="sf-body">
+                <template if:false={hasCloseoutData}>
+                    <div class="ab ab-b"><span class="ab-ic">ℹ</span><span>{emptyStateMessage}</span></div>
+                </template>
+            </div>
+        </div>
+
+        <!-- ── TAB 4: QI Inspection ── -->
+        <div class={tab4cls}>
+            <div class="rec-header">
+                <div class="rec-icon" style="background: #534ab7">🔍</div>
+                <div class="rec-identity">
+                    <div class="rec-breadcrumb">{breadcrumb} · QI Inspection</div>
+                    <div class="rec-title">Quality Inspection</div>
+                    <div class="rec-subtitle">{qiSubtitle}</div>
+                </div>
+            </div>
+            <div class="sf-body">
+                <template if:false={hasQiData}>
+                    <div class="ab ab-b"><span class="ab-ic">ℹ</span><span>{emptyStateMessage}</span></div>
+                </template>
+            </div>
+        </div>
+
+        <!-- ── TAB 5: Photos ── -->
+        <div class={tab5cls}>
+            <div class="rec-header">
+                <div class="rec-icon" style="background: #54698d">📷</div>
+                <div class="rec-identity">
+                    <div class="rec-breadcrumb">{breadcrumb} · Photos</div>
+                    <div class="rec-title">Photo Gallery</div>
+                    <div class="rec-subtitle">{photosSubtitle}</div>
+                </div>
+                <div class="rec-actions">
+                    <button class="sf-btn primary" onclick={handleEdit}>Edit Record</button>
+                </div>
+            </div>
+            <div class="sf-body">
+                <template if:false={hasPhotoData}>
+                    <div class="ab ab-b"><span class="ab-ic">ℹ</span><span>{emptyStateMessage}</span></div>
+                </template>
+            </div>
+        </div>
+
+        <!-- ── TAB 6: Activity ── -->
+        <div class={tab6cls}>
+            <div class="rec-header">
+                <div class="rec-icon" style="background: #54698d">📝</div>
+                <div class="rec-identity">
+                    <div class="rec-breadcrumb">{breadcrumb} · Activity</div>
+                    <div class="rec-title">Activity Feed</div>
+                </div>
+            </div>
+            <div class="sf-body">
+                <template if:false={hasActivityData}>
+                    <div class="ab ab-b"><span class="ab-ic">ℹ</span><span>{emptyStateMessage}</span></div>
+                </template>
+            </div>
+        </div>
+
+    </div>
+</template>

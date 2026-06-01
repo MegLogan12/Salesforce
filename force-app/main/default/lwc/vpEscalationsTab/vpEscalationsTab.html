@@ -1,0 +1,173 @@
+<template>
+
+    <!-- ── Loading spinners ── -->
+    <template if:true={isLoadingHR}>
+        <div class="spinner-wrap">
+            <lightning-spinner alternative-text="Loading hire requests..." size="small"></lightning-spinner>
+        </div>
+    </template>
+
+    <!-- ── Error banners ── -->
+    <template if:true={hrError}>
+        <div class="ab ab-r">
+            <div class="ab-ic">&#9888;</div>
+            <div><strong>Error loading hire requests:</strong> {hrError}</div>
+        </div>
+    </template>
+    <template if:true={taskError}>
+        <div class="ab ab-r">
+            <div class="ab-ic">&#9888;</div>
+            <div><strong>Error loading escalation tasks:</strong> {taskError}</div>
+        </div>
+    </template>
+
+    <!-- ── Nothing escalated ── -->
+    <template if:true={nothingOpen}>
+        <div class="empty-state">
+            <div class="empty-icon">&#10003;</div>
+            <div class="empty-title">All Clear</div>
+            <div class="empty-sub">No open hire requests or high-priority escalation tasks at this time.</div>
+        </div>
+    </template>
+
+    <!-- ═══════════════════════════════════════════
+         HIRE REQUESTS
+    ═══════════════════════════════════════════ -->
+    <template if:true={hasHireRequests}>
+
+        <div class="section-header">
+            <div class="ci ci-purple">HR</div>
+            <h3>Hire Requests &mdash; Pending Decision ({hireRequests.length})</h3>
+        </div>
+
+        <template for:each={hireRequests} for:item="hr">
+            <div key={hr.id} class="strat-card urgent">
+
+                <div class="strat-meta">
+                    &#128204; HIRE REQUEST {hr.index} OF {hr.totalCount}
+                    &nbsp;&bull;&nbsp; {hr.submittedByName}
+                    &nbsp;&bull;&nbsp; {hr.serviceLine}
+                    &nbsp;&bull;&nbsp; Submitted {hr.openedLabel}
+                </div>
+
+                <div class="strat-title">{hr.roleType}</div>
+
+                <div class="strat-body">
+                    <strong>Quantity:</strong> {hr.quantity} &nbsp;&bull;&nbsp;
+                    <strong>Annual Cost:</strong> {hr.costDisplay} &nbsp;&bull;&nbsp;
+                    <strong>Y1 ROI:</strong> {hr.roiDisplay}
+                    <template if:true={hr.justification}>
+                        <br/><br/>{hr.justification}
+                    </template>
+                    <template if:true={hr.driverCommunities}>
+                        <br/><strong>Communities affected:</strong> {hr.driverCommunities}
+                    </template>
+                </div>
+
+                <div class="rec-actions">
+                    <button class="sf-btn success"
+                            data-hrid={hr.id}
+                            data-hrname={hr.name}
+                            onclick={handleApproveClick}>
+                        &#10003; Approve
+                    </button>
+                    <button class="sf-btn warning"
+                            data-hrid={hr.id}
+                            data-hrname={hr.name}
+                            onclick={handleDeferClick}>
+                        Defer
+                    </button>
+                    <button class="sf-btn danger"
+                            data-hrid={hr.id}
+                            data-hrname={hr.name}
+                            onclick={handleDenyClick}>
+                        Deny
+                    </button>
+                    <button class="sf-btn"
+                            data-recordid={hr.id}
+                            onclick={handleNavToRecord}>
+                        View Full Request
+                    </button>
+                </div>
+            </div>
+        </template>
+
+    </template>
+
+    <!-- ═══════════════════════════════════════════
+         HIGH-PRIORITY ESCALATION TASKS
+    ═══════════════════════════════════════════ -->
+    <template if:true={hasEscalTasks}>
+
+        <div class="section-header" style="margin-top:18px;">
+            <div class="ci ci-red">!</div>
+            <h3>System Escalations &mdash; High Priority ({escalTasks.length})</h3>
+        </div>
+
+        <template for:each={escalTasks} for:item="task">
+            <div key={task.id} class={task.cardClass}>
+
+                <div class="strat-meta">
+                    <span class={task.chipCss}>{task.statusLabel}</span>
+                    &nbsp;&bull;&nbsp; {task.type}
+                    &nbsp;&bull;&nbsp; Due: {task.dueDateDisplay}
+                    &nbsp;&bull;&nbsp; Owner: {task.ownerName}
+                </div>
+
+                <div class="strat-title">{task.subject}</div>
+
+                <template if:true={task.description}>
+                    <div class="strat-body">{task.description}</div>
+                </template>
+
+                <div class="rec-actions">
+                    <template if:true={task.relatedToId}>
+                        <button class="sf-btn primary"
+                                data-recordid={task.relatedToId}
+                                onclick={handleNavToRecord}>
+                            View {task.relatedToName}
+                        </button>
+                    </template>
+                    <button class="sf-btn success"
+                            data-taskid={task.id}
+                            onclick={handleTaskComplete}>
+                        &#10003; Mark Complete
+                    </button>
+                </div>
+
+            </div>
+        </template>
+
+    </template>
+
+    <!-- ═══════════════════════════════════════════
+         CONFIRM ACTION MODAL
+    ═══════════════════════════════════════════ -->
+    <template if:true={modalOpen}>
+        <div class="modal-backdrop">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3>{modalTitle}</h3>
+                    <button class="modal-close" onclick={handleModalCancel}>&#10005;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Hire Request: <strong>{modalHrName}</strong></p>
+                    <div class="field-label" style="margin-top:12px;">Decision Notes (optional)</div>
+                    <textarea class="modal-textarea"
+                              value={modalNotes}
+                              onchange={handleNotesChange}
+                              placeholder="Add notes for this decision..."></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button class={modalButtonClass}
+                            disabled={actionInFlight}
+                            onclick={handleModalConfirm}>
+                        {modalButtonLabel}
+                    </button>
+                    <button class="sf-btn" onclick={handleModalCancel}>Cancel</button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+</template>

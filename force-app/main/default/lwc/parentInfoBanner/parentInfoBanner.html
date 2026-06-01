@@ -1,0 +1,38 @@
+<template>
+    <div class="banner">
+        <div class="banner-left">
+            <span class="account-name">{name}</span>
+            <template lwc:if={accountType}>
+                <span class="chip caqua">{accountType}</span>
+            </template>
+            <template lwc:if={tradeTypeCode}>
+                <span class="chip cgr">{tradeTypeCode}</span>
+            </template>
+        </div>
+        <div class="banner-middle">
+            <template lwc:if={market}>
+                <span class="meta-item">
+                    <span class="meta-label">Market</span>
+                    <span class="meta-value">{market}</span>
+                </span>
+            </template>
+            <template lwc:if={territory}>
+                <span class="meta-sep">·</span>
+                <span class="meta-item">
+                    <span class="meta-label">Territory</span>
+                    <span class="meta-value">{territory}</span>
+                </span>
+            </template>
+        </div>
+        <div class="banner-right">
+            <span class={certsClass}>
+                <template lwc:if={certsOnFile}>Certs ✓</template>
+                <template lwc:else>Certs ✗</template>
+            </span>
+            <span class={w9Class}>
+                <template lwc:if={w9OnFile}>W9 ✓</template>
+                <template lwc:else>W9 ✗</template>
+            </span>
+        </div>
+    </div>
+</template>

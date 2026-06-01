@@ -1,0 +1,19 @@
+<template>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon">✓</div>
+            <span class="card-title">Relationship Setup Checklist</span>
+            <template lwc:if={hasPending}>
+                <span class="pending-badge">{pendingCount} pending</span>
+            </template>
+        </div>
+        <div class="check-list">
+            <template for:each={checkItems} for:item="item">
+                <div key={item.id} class="check-row">
+                    <span class="check-label">{item.label}</span>
+                    <span class={item.chipClass}>{item.statusLabel}</span>
+                </div>
+            </template>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,113 @@
+<template>
+    <template if:true={showCase}>
+        <div class="sf-body">
+            <!-- Path -->
+            <div class="card">
+                <div class="ch">
+                    <div class="ci" style="background:#fe9339">PATH</div>
+                    <h3>Case Status</h3>
+                </div>
+                <div class="path">
+                    <template for:each={pathSteps} for:item="step">
+                        <div key={step.label} class={step.cssClass}>{step.label}</div>
+                    </template>
+                </div>
+            </div>
+
+            <div class="layout">
+                <div class="layout-main">
+                    <!-- Case Snapshot -->
+                    <div class="card info">
+                        <div class="ch">
+                            <div class="ci" style="background:#0070d2">CASE</div>
+                            <h3>Case Snapshot</h3>
+                            <lightning-button label="Edit Case" variant="neutral" onclick={handleEditCase} style="margin-left:auto"></lightning-button>
+                        </div>
+                        <div class="fields-grid">
+                            <div><div class="field-label">Case Number</div><div class="field-value">{caseRecord.CaseNumber}</div></div>
+                            <div><div class="field-head"><span class="field-label">Account</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Account" variant="bare" size="x-small" onclick={handleEditCase}></lightning-button-icon></div><div class="field-value nl">{accountName}</div></div>
+                            <div><div class="field-head"><span class="field-label">Case Type</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Case Type" variant="bare" size="x-small" onclick={handleEditCase}></lightning-button-icon></div><div class="field-value"><span class="chip cb2">{caseRecord.Type}</span></div></div>
+                            <div><div class="field-head"><span class="field-label">Priority</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Priority" variant="bare" size="x-small" onclick={handleEditCase}></lightning-button-icon></div><div class="field-value"><span class={priorityChipClass}>{caseRecord.Priority}</span></div></div>
+                            <div><div class="field-label">Related Work Order</div><div class="field-value">—</div></div>
+                            <div><div class="field-label">Related Property</div><div class="field-value">—</div></div>
+                        </div>
+                    </div>
+
+                    <!-- Coverage Review -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#04844b">COV</div>
+                            <h3>Coverage Review</h3>
+                        </div>
+                        <table class="tbl">
+                            <thead><tr><th>Claim Area</th><th>Coverage</th><th>Action</th><th>Status</th></tr></thead>
+                            <tbody>
+                                <template for:each={coverageItems} for:item="item">
+                                    <tr key={item.id}>
+                                        <td>{item.claimArea}</td>
+                                        <td>{item.coverage}</td>
+                                        <td>{item.action}</td>
+                                        <td><span class={item.chipClass}>{item.status}</span></td>
+                                    </tr>
+                                </template>
+                                <template if:true={noCoverageItems}>
+                                    <tr><td colspan="4" style="text-align:center;color:#54698d;padding:12px">No coverage items</td></tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Subject/Description -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#534ab7">DESC</div>
+                            <h3>Issue Description</h3>
+                            <lightning-button label="New Task" onclick={createTask} style="margin-left:auto"></lightning-button>
+                            <lightning-button label="Log Call" onclick={logCall} style="margin-left:8px"></lightning-button>
+                        </div>
+                        <div style="padding:12px 14px;font-size:12px;color:#16325c;line-height:1.5">
+                            <div class="field-head" style="margin-bottom:4px"><span class="field-label">Subject</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Subject" variant="bare" size="x-small" onclick={handleEditCase}></lightning-button-icon></div>
+                            <div style="margin-bottom:12px">{caseRecord.Subject}</div>
+                            <div class="field-head" style="margin-bottom:4px"><span class="field-label">Description</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Description" variant="bare" size="x-small" onclick={handleEditCase}></lightning-button-icon></div>
+                            <div>{caseRecord.Description}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rail -->
+                <div class="layout-rail">
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#534ab7">AI</div>
+                            <h3>Assistant Panel</h3>
+                        </div>
+                        <div class="qa-list">
+                            <div class="qa-item" onclick={viewActivity}>Summarize latest customer activity</div>
+                            <div class="qa-item" onclick={viewActivity}>Draft follow-up email</div>
+                            <div class="qa-item" onclick={createTask}>Create next task</div>
+                            <div class="qa-item" onclick={viewTasks}>Show overdue items</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#0070d2">SLA</div>
+                            <h3>Activity Health</h3>
+                        </div>
+                        <div style="padding:10px 14px">
+                            <div class="rail-row"><span>Last touch</span><span>—</span></div>
+                            <div class="rail-row"><span>Voicemail</span><span class="chip cgr">None</span></div>
+                            <div class="rail-row"><span>Next follow-up</span><span class="chip cb2">—</span></div>
+                            <div class="rail-row"><span>Open tasks</span><span>—</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template if:false={isLoaded}>
+        <div style="padding:20px;text-align:center;color:#54698d">Loading...</div>
+    </template>
+    <template if:true={hasError}>
+        <div style="padding:20px;text-align:center;color:#54698d">{loadError}</div>
+    </template>
+</template>

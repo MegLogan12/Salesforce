@@ -1,0 +1,22 @@
+<template>
+    <lightning-card icon-name="standard:account">
+        <span slot="title">Division Accounts {countLabel}</span>
+        <template lwc:if={hasRows}>
+            <lightning-datatable
+                key-field="id"
+                data={rows}
+                columns={columns}
+                hide-checkbox-column
+                resize-column-disabled>
+            </lightning-datatable>
+        </template>
+        <template lwc:elseif={error}>
+            <p class="slds-p-around_medium slds-text-color_error">{error}</p>
+        </template>
+        <template lwc:else>
+            <p class="slds-p-around_medium slds-text-color_weak">
+                No division accounts connected yet.
+            </p>
+        </template>
+    </lightning-card>
+</template>

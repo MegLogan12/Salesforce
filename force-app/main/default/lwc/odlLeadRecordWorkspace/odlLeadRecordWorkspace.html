@@ -1,0 +1,109 @@
+<template>
+    <template lwc:if={hasData}>
+        <section class="workspace">
+            <section class="panel hero">
+                <div class="hero-copy">
+                    <div class="eyebrow">Lead</div>
+                    <h1>{leadRecord.Name}</h1>
+                    <div class="hero-meta">
+                        <span class="chip">{pathLabel}</span>
+                        <span class="chip">{leadRecord.Status}</span>
+                    </div>
+                </div>
+                <div class="hero-actions">
+                    <button class="cta cta-secondary" onclick={handleEditLead}>Edit Lead</button>
+                    <button class="cta cta-secondary" onclick={handleLogCall}>Log Call</button>
+                    <button class="cta" onclick={handleNewTask}>New Task</button>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header">Lead Status Path</div>
+                <div class="path">
+                    <template for:each={statusPathItems} for:item="step">
+                        <span key={step.label} class={step.className}>{step.label}</span>
+                    </template>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header">Qualification Snapshot</div>
+                <div class="grid">
+                    <div><div class="label">ODL Path</div><div class="value">{pathLabel}</div></div>
+                    <div><div class="label">Lead Source</div><div class="value">{leadRecord.LeadSource}</div></div>
+                    <div><div class="label">Lead Type</div><div class="value">{leadRecord.Lead_Type__c}</div></div>
+                    <div><div class="label">Community</div><div class="value">{leadRecord.Community_Name__c}</div></div>
+                    <div><div class="label">Service Interest</div><div class="value">{serviceInterestText}</div></div>
+                    <div><div class="label">SMS Consent</div><div class="value">{smsConsentLabel}</div></div>
+                    <div><div class="label">Email</div><div class="value">{leadRecord.Email}</div></div>
+                    <div><div class="label">Phone</div><div class="value">{leadRecord.Phone}</div></div>
+                    <div><div class="label">Mobile</div><div class="value">{leadRecord.MobilePhone}</div></div>
+                    <div><div class="label">Company</div><div class="value">{leadRecord.Company}</div></div>
+                    <div><div class="label">Owner</div><div class="value">{leadRecord.Owner.Name}</div></div>
+                    <div><div class="label">Converted Account</div><div class="value"><template lwc:if={hasConvertedAccount}><a href={pageData.convertedAccountUrl}>{pageData.convertedAccountName}</a></template></div></div>
+                </div>
+            </section>
+
+            <div class="two-up">
+                <section class="panel">
+                    <div class="panel-header">Source and Campaign</div>
+                    <div class="grid compact-grid">
+                        <div><div class="label">Lead Source</div><div class="value">{leadRecord.LeadSource}</div></div>
+                        <div><div class="label">Campaign</div><div class="value"><template lwc:if={hasCampaign}><a href={pageData.latestCampaign.url}>{pageData.latestCampaign.label}</a></template></div></div>
+                        <div><div class="label">Campaign Status</div><div class="value"><template lwc:if={hasCampaign}>{pageData.latestCampaign.status}</template></div></div>
+                        <div><div class="label">Voucher</div><div class="value"><template lwc:if={hasVoucher}><a href={pageData.voucherRecord.url}>{pageData.voucherRecord.label}</a></template></div></div>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <div class="panel-header">Activity and Follow-Up</div>
+                    <table class="table">
+                        <thead>
+                            <tr><th>Last Action</th><th>Date</th><th>Voicemail</th><th>Next Task</th><th>Due</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{lastAction}</td>
+                                <td>{lastActionDate}</td>
+                                <td>{voicemailStatus}</td>
+                                <td>{nextFollowUpSubject}</td>
+                                <td>{nextFollowUpDate}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <template lwc:if={hasInteractions}>
+                        <table class="table">
+                            <thead>
+                                <tr><th>Date</th><th>Type</th><th>Subject</th><th>Status</th><th>Open</th></tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={pageData.interactions} for:item="row">
+                                    <tr key={row.id}>
+                                        <td>{row.dateText}</td>
+                                        <td>{row.interactionType}</td>
+                                        <td>{row.label}</td>
+                                        <td>{row.status}</td>
+                                        <td><a href={row.url}>Open</a></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                </section>
+            </div>
+
+            <section class="panel" lwc:if={hasMissingData}>
+                <div class="panel-header">Open Items</div>
+                <div class="issue-list">
+                    <template for:each={pageData.missingData} for:item="item">
+                        <div class="issue" key={item}>{item}</div>
+                    </template>
+                </div>
+            </section>
+        </section>
+    </template>
+
+    <template lwc:elseif={error}>
+        <div class="panel error">{errorMessage}</div>
+    </template>
+</template>

@@ -1,0 +1,33 @@
+<template>
+    <lightning-card title="Lot Map" icon-name="standard:location">
+        <div class="container">
+            <div class="legend">
+                <span class="kpi"><strong>{totalLots}</strong> total</span>
+                <span class="chip chip-complete">Complete {completeCount}</span>
+                <span class="chip chip-inprod">In Production {inProductionCount}</span>
+                <span class="chip chip-scheduled">Scheduled {scheduledCount}</span>
+                <span class="chip chip-pending">Pending {pendingCount}</span>
+                <span class="chip chip-fj">FJ Open {fjOpenCount}</span>
+                <span class="chip chip-available">Available {availableCount}</span>
+            </div>
+
+            <template if:true={hasData}>
+                <div class="grid">
+                    <template for:each={tiles} for:item="t">
+                        <button key={t.id} class={t.tileClass} data-id={t.id} title={t.statusLabel} onclick={handleTileClick}>
+                            <span class="tile-name">{t.name}</span>
+                        </button>
+                    </template>
+                </div>
+            </template>
+
+            <template if:true={showEmpty}>
+                <div class="empty">0 lots available for this map.</div>
+            </template>
+
+            <template if:true={error}>
+                <div class="error">Unable to load lots.</div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

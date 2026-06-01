@@ -1,0 +1,10 @@
+<template>
+    <div class="related">
+        <template for:each={items} for:item="item">
+            <div key={item.label} class="related-row">
+                <span>{item.label}</span>
+                <strong>{item.count}</strong>
+            </div>
+        </template>
+    </div>
+</template>

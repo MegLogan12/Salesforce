@@ -1,0 +1,103 @@
+<template>
+    <div class="ap-shell">
+        <!-- Title bar -->
+        <div class="ap-header">
+            <span class="ap-icon">&#x1F4F7;</span>
+            <span class="ap-title">Add Photo</span>
+        </div>
+
+        <!-- Error -->
+        <template lwc:if={error}>
+            <div class="ap-error">{error}</div>
+        </template>
+
+        <!-- Success -->
+        <template lwc:if={successMsg}>
+            <div class="ap-success">{successMsg}</div>
+        </template>
+
+        <!-- Form -->
+        <template lwc:if={showForm}>
+            <!-- Photo Type -->
+            <div class="ap-field">
+                <label class="ap-lbl" for="photoType">Photo Type *</label>
+                <select id="photoType" class="ap-select" onchange={handleTypeChange}>
+                    <option value="">&#x2014; Select type &#x2014;</option>
+                    <template for:each={photoTypeOptions} for:item="opt">
+                        <option key={opt.value} value={opt.value} selected={opt.selected}>{opt.label}</option>
+                    </template>
+                </select>
+            </div>
+
+            <!-- Notes -->
+            <div class="ap-field">
+                <label class="ap-lbl" for="photoNotes">Notes</label>
+                <textarea id="photoNotes" class="ap-textarea" rows="2" placeholder="Optional description..." onchange={handleNotesChange}>{photoNotes}</textarea>
+            </div>
+
+            <!-- Upload options -->
+            <div class="ap-upload-section">
+                <p class="ap-upload-lbl">Choose how to add your photo:</p>
+
+                <div class="ap-upload-grid">
+                    <!-- File upload (from library / files) -->
+                    <div class="ap-upload-card">
+                        <div class="ap-upload-icon">&#x1F4C2;</div>
+                        <div class="ap-upload-title">Upload from Files</div>
+                        <div class="ap-upload-sub">Choose from your device library</div>
+                        <lightning-file-upload
+                            label="Select Photo"
+                            name="fileUploader"
+                            accept={acceptedFormats}
+                            record-id={recordId}
+                            onuploadfinished={handleFileUpload}
+                            multiple="false">
+                        </lightning-file-upload>
+                    </div>
+
+                    <!-- Live camera capture -->
+                    <div class="ap-upload-card">
+                        <div class="ap-upload-icon">&#x1F4F8;</div>
+                        <div class="ap-upload-title">Take Photo</div>
+                        <div class="ap-upload-sub">Use your device camera</div>
+                        <template lwc:if={photoType}>
+                            <label class="ap-camera-btn" for="cameraInput">&#x1F4F7; Open Camera</label>
+                            <input
+                                type="file"
+                                id="cameraInput"
+                                accept="image/*"
+                                capture="environment"
+                                class="camera-hidden"
+                                onchange={handleCameraCapture} />
+                        </template>
+                        <template lwc:else>
+                            <span class="ap-camera-disabled">Select a photo type first</span>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending camera file preview -->
+            <template lwc:if={pendingFileName}>
+                <div class="ap-preview">
+                    <span class="ap-preview-icon">&#x1F5BC;</span>
+                    <span class="ap-preview-name">{pendingFileName}</span>
+                    <button class="ap-preview-remove" onclick={clearPending} title="Remove">&#x2715;</button>
+                </div>
+                <div class="ap-action-row">
+                    <button class="ap-btn-cancel" onclick={handleCancel}>Cancel</button>
+                    <button class="ap-btn-save" onclick={handleUploadCamera} disabled={uploading}>
+                        <template lwc:if={uploading}>Uploading&#x2026;</template>
+                        <template lwc:else>Save Photo</template>
+                    </button>
+                </div>
+            </template>
+
+            <template lwc:else>
+                <div class="ap-action-row">
+                    <button class="ap-btn-cancel" onclick={handleCancel}>Cancel</button>
+                </div>
+            </template>
+        </template>
+    </div>
+</template>

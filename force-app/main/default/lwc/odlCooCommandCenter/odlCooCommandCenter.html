@@ -1,0 +1,112 @@
+<template>
+    <section class="page">
+        <nav class="tab-strip">
+            <a class="sf-tab on" href="/lightning/n/Outdoor_Living_COO">Home Page</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Accounts">Account</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Leads">Leads</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Opportunities">Opportunities</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Campaigns">Campaigns</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Tasks">Tasks</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Home">Portal</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Quotes">Quote</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Work_Orders">Work Order</a>
+            <a class="sf-tab" href="/lightning/n/Outdoor_Living_Calendar">Calendar</a>
+        </nav>
+
+        <div class="header">
+            <div>
+                <div class="breadcrumb">Home Page</div>
+                <h1>Home Page</h1>
+                <p>Outdoor Living KPI landing page across UMB, Custom Build, Lawn Care, activity risk, and pipeline.</p>
+            </div>
+            <div class="actions">
+                <button class="btn" onclick={handleRefresh}>Refresh</button>
+                <button class="btn primary" onclick={handleOpenReports}>Open Reports</button>
+            </div>
+        </div>
+
+        <div class="body">
+            <template if:true={hasError}>
+                <div style="padding:12px 14px;color:#c23934">{errorMessage}</div>
+            </template>
+            <div class="kpi-grid">
+                <div class="kpi korange"><div class="kn">{pipelineDisplay}</div><div class="kl">Pipeline</div></div>
+                <div class="kpi kb"><div class="kn">{umbPipelineDisplay}</div><div class="kl">UMB</div></div>
+                <div class="kpi kp"><div class="kn">{designBuildPipelineDisplay}</div><div class="kl">Custom Build</div></div>
+                <div class="kpi kt"><div class="kn">{lawnPipelineDisplay}</div><div class="kl">Lawn Care</div></div>
+                <div class="kpi ka"><div class="kn">{followUpsDue}</div><div class="kl">Follow-ups due</div></div>
+                <div class="kpi kr"><div class="kn">{atRiskCount}</div><div class="kl">At risk</div></div>
+            </div>
+
+            <div class="layout">
+                <div class="layout-main">
+                    <div class="card">
+                        <div class="card-header"><span class="icon">PIPE</span><h2>Pipeline by LOB</h2></div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>LOB</th>
+                                    <th>Open Opps</th>
+                                    <th class="num">Pipeline</th>
+                                    <th class="num">Weighted</th>
+                                    <th>Follow-Ups Due</th>
+                                    <th>At Risk</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={pipelineRows} for:item="row">
+                                    <tr key={row.lob}>
+                                        <td>{row.lob}</td>
+                                        <td>{row.openOpps}</td>
+                                        <td class="num">{row.pipelineDisplay}</td>
+                                        <td class="num">{row.weightedDisplay}</td>
+                                        <td>{row.followUpsDue}</td>
+                                        <td>{row.atRisk}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header"><span class="icon purple">ACT</span><h2>Activity Risk</h2></div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Record</th>
+                                    <th>LOB</th>
+                                    <th>Last Activity</th>
+                                    <th>Follow-Up Due</th>
+                                    <th>Risk</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={riskRows} for:item="row">
+                                    <tr key={row.opportunityId}>
+                                        <td><a class="record-link" href={row.opportunityUrl}>{row.opportunityName}</a></td>
+                                        <td>{row.lob}</td>
+                                        <td>{row.lastActivity}</td>
+                                        <td>{row.followUpDue}</td>
+                                        <td><span class="chip chip-amber">{row.risk}</span></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="layout-rail">
+                    <div class="card">
+                        <div class="card-header"><span class="icon">A</span><h2>Home Actions</h2></div>
+                        <div class="qa-list">
+                            <a class="qa-item" href="/lightning/o/Opportunity/list?filterName=Recent">Open overdue follow-ups</a>
+                            <a class="qa-item" href="/lightning/o/Opportunity/list?filterName=Recent">Review Custom Build risk</a>
+                            <a class="qa-item" href="/lightning/o/Payment_Milestone__c/list">Review deposit status</a>
+                            <a class="qa-item" href="/lightning/o/Campaign/list">Review campaign ROI</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</template>

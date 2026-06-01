@@ -1,0 +1,21 @@
+.mc-featured-banner {
+    background: linear-gradient(135deg, #534AB7, #7F77DD);
+    color: #fff;
+    padding: 20px 24px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+.mc-banner-headline { font-size: 22px; font-weight: 700; margin: 0; }
+.mc-banner-subhead { font-size: 14px; margin: 4px 0 0 0; opacity: 0.9; }
+.mc-banner-cta {
+    background: #fff;
+    color: #534AB7;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+}

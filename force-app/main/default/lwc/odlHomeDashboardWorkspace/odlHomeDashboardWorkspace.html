@@ -1,0 +1,81 @@
+<template>
+    <section class="workspace">
+        <section class="panel hero">
+            <div class="hero-actions">
+                <a class="cta cta-secondary" href="/lightning/n/Outdoor_Living_Leads">Open Leads</a>
+                <a class="cta" href="/lightning/n/Outdoor_Living_Opportunities">Open Opportunities</a>
+            </div>
+        </section>
+
+        <section class="panel tabs-panel">
+            <div class="tab-grid">
+                <template for:each={navItems} for:item="item">
+                    <a key={item.label} class="tab-chip" href={item.url}>{item.label}</a>
+                </template>
+            </div>
+        </section>
+
+        <template if:true={hasError}>
+            <section class="panel"><div class="empty-state" style="color:#c23934">{errorMessage}</div></section>
+        </template>
+
+        <section class="kpi-row">
+            <div class="kpi-card"><div class="kpi-value">{grossProfitDisplay}</div><div class="kpi-label">Gross Profit</div></div>
+            <div class="kpi-card"><div class="kpi-value">{pipelineDisplay}</div><div class="kpi-label">Pipeline</div></div>
+            <div class="kpi-card"><div class="kpi-value">{weightedPipelineDisplay}</div><div class="kpi-label">Weighted Pipeline</div></div>
+            <div class="kpi-card"><div class="kpi-value">{followUpsDue}</div><div class="kpi-label">Follow-Ups Due</div></div>
+            <div class="kpi-card"><div class="kpi-value">{atRiskCount}</div><div class="kpi-label">At Risk</div></div>
+            <div class="kpi-card"><div class="kpi-value">{dashboard.opportunityCount}</div><div class="kpi-label">Open Opportunities</div></div>
+            <div class="kpi-card"><div class="kpi-value">{dashboard.workOrderCount}</div><div class="kpi-label">Work Orders</div></div>
+            <div class="kpi-card"><div class="kpi-value">{dashboard.voucherCount}</div><div class="kpi-label">Vouchers</div></div>
+        </section>
+
+        <section class="layout">
+            <section class="panel" lwc:if={hasPipelineRows}>
+                <div class="panel-header">Pipeline by LOB</div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>LOB</th>
+                            <th>Open Opps</th>
+                            <th>Pipeline</th>
+                            <th>Weighted</th>
+                            <th>Follow-Ups Due</th>
+                            <th>At Risk</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={pipelineRows} for:item="row">
+                            <tr key={row.lob}>
+                                <td>{row.lob}</td>
+                                <td>{row.openOpps}</td>
+                                <td>{row.pipeline}</td>
+                                <td>{row.weighted}</td>
+                                <td>{row.followUpsDue}</td>
+                                <td>{row.atRisk}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </section>
+
+            <section class="panel">
+                <div class="panel-header">Gross Profit Snapshot</div>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>GP Tier</th>
+                            <th>Count</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Green</td><td>{gpSummary.greenCount}</td></tr>
+                        <tr><td>Yellow</td><td>{gpSummary.yellowCount}</td></tr>
+                        <tr><td>Red</td><td>{gpSummary.redCount}</td></tr>
+                        <tr><td>Blocked</td><td>{gpSummary.blockedCount}</td></tr>
+                    </tbody>
+                </table>
+            </section>
+        </section>
+    </section>
+</template>

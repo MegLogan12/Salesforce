@@ -1,0 +1,45 @@
+<template>
+    <template lwc:if={hasData}>
+        <section class="stack">
+            <template if:true={hasNextActions}>
+                <section class="panel">
+                    <div class="panel-header">Next Actions</div>
+                    <ul class="bullet-list">
+                        <template for:each={pageData.nextActions} for:item="item">
+                            <li key={item}>{item}</li>
+                        </template>
+                    </ul>
+                </section>
+            </template>
+
+            <template if:true={hasHealthItems}>
+                <section class="panel">
+                    <div class="panel-header">Activity Health</div>
+                    <div class="metric-list">
+                        <template for:each={pageData.healthItems} for:item="item">
+                            <div class="metric" key={item.label}>
+                                <div class="label">{item.label}</div>
+                                <div class="value">{item.value}</div>
+                            </div>
+                        </template>
+                    </div>
+                </section>
+            </template>
+
+            <template if:true={hasOpenItems}>
+                <section class="panel">
+                    <div class="panel-header">Open Items</div>
+                    <ul class="bullet-list">
+                        <template for:each={pageData.openItems} for:item="item">
+                            <li key={item}>{item}</li>
+                        </template>
+                    </ul>
+                </section>
+            </template>
+        </section>
+    </template>
+
+    <template lwc:elseif={error}>
+        <div class="panel error">{errorMessage}</div>
+    </template>
+</template>

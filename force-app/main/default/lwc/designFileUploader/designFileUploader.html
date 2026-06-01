@@ -1,0 +1,23 @@
+<template>
+    <lightning-card title="Upload Design File" icon-name="custom:custom63">
+        <div class="slds-p-around_large slds-grid slds-grid_vertical-align-center slds-grid_align-center" style="min-height: 220px; background: linear-gradient(135deg, #f4f6fb 0%, #e3e7ef 100%); border-radius: 0.5rem;">
+            <div class="slds-size_1-of-1 slds-align_absolute-center">
+                <lightning-file-upload
+                    label="Upload Design"
+                    name="fileUploader"
+                    record-id={recordId}
+                    onuploadfinished={handleUploadFinished}
+                    multiple="false"
+                    class="slds-m-bottom_medium"
+                >
+                </lightning-file-upload>
+            </div>
+            <template if:true={fileUrl}>
+                <div class="slds-box slds-theme_alert-texture slds-theme_success slds-m-top_large slds-align_absolute-center" style="border-radius: 0.25rem;">
+                    <span class="slds-text-title_caps slds-m-right_x-small">Public URL: </span>
+                    <a href={fileUrl} target="_blank" class="slds-text-link_bold">{fileUrl}</a>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

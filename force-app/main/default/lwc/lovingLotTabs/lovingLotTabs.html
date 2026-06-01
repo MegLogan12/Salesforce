@@ -1,0 +1,9 @@
+<template>
+    <nav class="subtabs">
+        <button class={detailsTabClass} data-tab="details" onclick={handleTab}>Details</button>
+        <button class={pipelineTabClass} data-tab="pipeline" onclick={handleTab}>Pipeline &amp; Tasks</button>
+        <button class={workOrdersTabClass} data-tab="workorders" onclick={handleTab}>Work Orders <span>{workOrderCount}</span></button>
+        <button class={photosTabClass} data-tab="photos" onclick={handleTab}>Photos <span>{photoCount}</span></button>
+        <button class={aquaTabClass} data-tab="aqua" onclick={handleTab}>Aqua</button>
+    </nav>
+</template>

@@ -1,0 +1,16 @@
+<template>
+    <section class="po-panel">
+        <div class="panel-title">
+            <span>PO</span>
+            <h2>{title}</h2>
+        </div>
+        <div class="po-grid">
+            <template for:each={fields} for:item="field">
+                <div key={field.fieldApiName}>
+                    <span>{field.label}</span>
+                    <strong>{field.value}</strong>
+                </div>
+            </template>
+        </div>
+    </section>
+</template>

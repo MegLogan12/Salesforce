@@ -1,0 +1,34 @@
+<template>
+    <div class="con-wrap">
+        <div class="ch">
+            <h3>Division Contacts ({count})</h3>
+        </div>
+        <template lwc:if={hasRows}>
+            <div class="contact-grid">
+                <template for:each={viewRows} for:item="c">
+                    <div key={c.id} class="con-card">
+                        <div class={c.avatarCls}>{c.initials}</div>
+                        <div class="con-t">
+                            <p><a href={c.recordUrl}>{c.name}</a></p>
+                            <template lwc:if={c.hasRole}>
+                                <span class="role-tag">{c.roleTag}</span>
+                            </template>
+                            <template lwc:if={c.phone}>
+                                <span>{c.phone}</span>
+                            </template>
+                            <template lwc:if={c.email}>
+                                <a href={c.emailHref}>{c.email}</a>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+        <template lwc:elseif={error}>
+            <div class="err">{error}</div>
+        </template>
+        <template lwc:else>
+            <div class="empty">No contacts on this division yet.</div>
+        </template>
+    </div>
+</template>

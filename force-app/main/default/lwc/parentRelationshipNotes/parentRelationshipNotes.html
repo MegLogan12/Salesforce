@@ -1,0 +1,33 @@
+<template>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon">📋</div>
+            <span class="card-title">Relationship Notes</span>
+        </div>
+        <div class="card-body">
+            <template lwc:if={hasAnyContent}>
+                <template lwc:if={homeTypes}>
+                    <div class="note-block">
+                        <div class="field-label">Home Types</div>
+                        <div class="field-value">{homeTypes}</div>
+                    </div>
+                </template>
+                <template lwc:if={scopeSummary}>
+                    <div class="note-block">
+                        <div class="field-label">Scope Summary</div>
+                        <div class="field-value note-text">{scopeSummary}</div>
+                    </div>
+                </template>
+                <template lwc:if={additionalNotes}>
+                    <div class="note-block">
+                        <div class="field-label">Additional Scope Notes</div>
+                        <div class="field-value note-text">{additionalNotes}</div>
+                    </div>
+                </template>
+            </template>
+            <template lwc:else>
+                <div class="empty-state">No relationship notes on file.</div>
+            </template>
+        </div>
+    </div>
+</template>

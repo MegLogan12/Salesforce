@@ -1,0 +1,54 @@
+<template>
+    <lightning-card title="Lot Identity" icon-name="standard:address">
+        <button slot="actions" type="button" class="action-button" onclick={handleToggleEdit}>{editButtonLabel}</button>
+        <template if:true={header}>
+            <div class="slds-p-horizontal_medium">
+                <template lwc:if={isEditing}>
+                    <lightning-record-edit-form
+                        object-api-name="Lot__c"
+                        record-id={recordId}
+                        onsuccess={handleSuccess}
+                        onerror={handleError}
+                    >
+                        <div class="form-grid">
+                            <lightning-input-field field-name="Name"></lightning-input-field>
+                            <lightning-input-field field-name="Address__c"></lightning-input-field>
+                            <lightning-input-field field-name="Phase__c"></lightning-input-field>
+                            <lightning-input-field field-name="Community__c"></lightning-input-field>
+                            <lightning-input-field field-name="Builder_PO_Number__c"></lightning-input-field>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="action-button action-button_brand">Save Changes</button>
+                            <button type="button" class="action-button" onclick={handleCancel}>Cancel</button>
+                        </div>
+                    </lightning-record-edit-form>
+                </template>
+                <template lwc:else>
+                    <div class="id-grid">
+                        <div class="id-row">
+                            <div class="id-label">Address</div>
+                            <div class="id-value">{header.address}</div>
+                        </div>
+                        <div class="id-row">
+                            <div class="id-label">Phase</div>
+                            <div class="id-value">{header.phase}</div>
+                        </div>
+                        <div class="id-row">
+                            <div class="id-label">Community</div>
+                            <div class="id-value">
+                                <a href={communityUrl}>{header.communityName}</a>
+                            </div>
+                        </div>
+                        <div class="id-row">
+                            <div class="id-label">Builder PO</div>
+                            <div class="id-value">{header.builderPONumber}</div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </template>
+        <template if:true={error}>
+            <div class="id-error">{error}</div>
+        </template>
+    </lightning-card>
+</template>

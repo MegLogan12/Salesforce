@@ -1,0 +1,26 @@
+<template>
+    <lightning-card>
+        <div class="slds-p-around_medium">
+            <lightning-button
+                variant="brand"
+                label="Generate Quote PDF"
+                title="Generate and attach a quote PDF to this opportunity"
+                icon-name="utility:pdf_ext"
+                onclick={handleGeneratePDF}
+                disabled={isLoading}
+                class="slds-m-bottom_small">
+            </lightning-button>
+            
+            <template if:true={isLoading}>
+                <lightning-spinner
+                    alternative-text="Generating PDF..."
+                    size="small">
+                </lightning-spinner>
+            </template>
+            
+            <p class="slds-text-color_weak slds-m-top_small">
+                Click to generate a professional quote PDF and attach it to this opportunity.
+            </p>
+        </div>
+    </lightning-card>
+</template>

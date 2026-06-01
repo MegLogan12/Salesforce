@@ -1,0 +1,10 @@
+<template>
+    <section class="highlights">
+        <div><span>Pipeline Bucket</span><strong><span class={pipelineClass}>{lot.pipelineBucket}</span></strong></div>
+        <div><span>Lot Status</span><strong><span class={lotStatusClass}>{lot.lotStatus}</span></strong></div>
+        <div><span>Community</span><strong>{lot.communityName}</strong></div>
+        <div><span>Division</span><strong>{lot.divisionName}</strong></div>
+        <div><span>FM</span><strong>{lot.fmName}</strong></div>
+        <div><span>Scheduled Close</span><strong class="date">{lot.scheduledCloseDisplay}</strong></div>
+    </section>
+</template>

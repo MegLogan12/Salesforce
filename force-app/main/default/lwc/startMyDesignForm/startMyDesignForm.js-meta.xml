@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <isExposed>true</isExposed>
+  <masterLabel>Start My Design Form</masterLabel>
+  <description>3-step form for initiating backyard design projects via Experience Cloud</description>
+  <targets>
+    <target>lightning__FlowScreen</target>
+    <target>lightning__AppPage</target>
+    <target>lightning__RecordPage</target>
+    <target>lightningCommunity__Page</target>
+    <target>lightningCommunity__Default</target>
+  </targets>
+</LightningComponentBundle>

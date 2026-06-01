@@ -1,0 +1,47 @@
+<template>
+    <div class="card last">
+        <div class="card-header">
+            <span class="card-icon">&#128203;</span>
+            <span class="card-title">Community Stage</span>
+        </div>
+        <template lwc:if={isLoaded}>
+            <div class="card-body">
+                <div class="fields-grid">
+                    <div class="field-group">
+                        <div class="field-label">Service Model</div>
+                        <div class="field-value">{serviceModel}</div>
+                    </div>
+                    <div class="field-group">
+                        <div class="field-label">Pricing Schedule</div>
+                        <div class="field-value">{pricingSchedule}</div>
+                    </div>
+                    <div class="field-group">
+                        <div class="field-label">Phases</div>
+                        <div class="field-value">
+                            <template lwc:if={hasPhases}>
+                                <span class="chip caqua">{phases}</span>
+                            </template>
+                            <template lwc:else>
+                                <span>—</span>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <div class="field-label">Total Lots</div>
+                        <div class="field-value">{numLots}</div>
+                    </div>
+                    <div class="field-group full-width">
+                        <div class="field-label">Lot Numbers Range</div>
+                        <div class="field-value">{lotNumbers}</div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template lwc:elseif={hasError}>
+            <div class="empty-state error-state">{error}</div>
+        </template>
+        <template lwc:else>
+            <div class="empty-state">Loading...</div>
+        </template>
+    </div>
+</template>

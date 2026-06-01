@@ -1,0 +1,124 @@
+<template>
+    <div class="list-toolbar">
+        <span class={allChipClass} onclick={showAll}>All Campaigns</span>
+        <span class={umbChipClass} onclick={filterUmb}>UMB</span>
+        <span class={cbChipClass} onclick={filterCb}>Custom Build</span>
+        <span class={lcChipClass} onclick={filterLc}>Lawn Care</span>
+        <span class={voucherChipClass} onclick={filterVoucher}>Voucher</span>
+        <input class="list-search" placeholder="Search campaigns..." value={searchTerm} onchange={handleSearch} />
+    </div>
+    <div class="sf-body">
+        <div class="layout">
+            <div class="layout-main">
+                <div class="g4">
+                    <div class="kpi korange">
+                        <div class="kn big">{activeCount}</div>
+                        <div class="kl">Active campaigns</div>
+                    </div>
+                    <div class="kpi kb">
+                        <div class="kn big">{totalMembers}</div>
+                        <div class="kl">Campaign members</div>
+                    </div>
+                    <div class="kpi kg">
+                        <div class="kn big">{conversionRate}</div>
+                        <div class="kl">Lead conversion</div>
+                    </div>
+                    <div class="kpi ka">
+                        <div class="kn big">{voucherPending}</div>
+                        <div class="kl">Voucher pending</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci" style="background:#fe9339">CAM</div>
+                        <h3>Campaign List</h3>
+                    </div>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Campaign</th>
+                                <th>Type</th>
+                                <th>LOB</th>
+                                <th class="num">Members</th>
+                                <th class="num">Leads</th>
+                                <th class="num">Opportunities</th>
+                                <th class="num">Revenue</th>
+                                <th>Owner</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={campaigns} for:item="camp">
+                                <tr key={camp.Id}>
+                                    <td><span class="nl">{camp.Name}</span></td>
+                                    <td>{camp.Type}</td>
+                                    <td><span class={camp.lobChipClass}>{camp.lobLabel}</span></td>
+                                    <td class="num">{camp.NumberOfContacts}</td>
+                                    <td class="num">{camp.NumberOfLeads}</td>
+                                    <td class="num">{camp.NumberOfOpportunities}</td>
+                                    <td class="num">{camp.revenueFormatted}</td>
+                                    <td>{camp.Owner.Name}</td>
+                                </tr>
+                            </template>
+                            <template if:true={hasError}>
+                                <tr><td colspan="8" style="text-align:center;color:#991b1b;padding:16px">{error}</td></tr>
+                            </template>
+                            <template if:true={noCampaigns}>
+                                <tr><td colspan="8" style="text-align:center;color:#54698d;padding:16px">No active campaigns</td></tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci" style="background:#04844b">MEM</div>
+                        <h3>Campaign Member Work Queue</h3>
+                    </div>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Member</th>
+                                <th>Campaign</th>
+                                <th>Status</th>
+                                <th>LOB</th>
+                                <th>Last Activity</th>
+                                <th>Follow-Up Task</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={campaignMembers} for:item="mem">
+                                <tr key={mem.Id}>
+                                    <td><span class="nl">{mem.Name}</span></td>
+                                    <td>{mem.campaignName}</td>
+                                    <td>{mem.Status}</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                </tr>
+                            </template>
+                            <template if:true={hasError}>
+                                <tr><td colspan="6" style="text-align:center;color:#991b1b;padding:12px">{error}</td></tr>
+                            </template>
+                            <template if:true={noMembers}>
+                                <tr><td colspan="6" style="text-align:center;color:#54698d;padding:12px">No campaign members</td></tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="layout-rail">
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci" style="background:#534ab7">A</div>
+                        <h3>Campaign Actions</h3>
+                    </div>
+                    <div class="qa-list">
+                        <div class="qa-item">Create campaign task batch</div>
+                        <div class="qa-item">Open voucher queue</div>
+                        <div class="qa-item">Review campaign members</div>
+                        <div class="qa-item">Export ROI report</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

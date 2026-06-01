@@ -1,0 +1,138 @@
+:host {
+    display: block;
+    --text: #16325c;
+    --muted: #66758f;
+    --line: #d8dde6;
+    --green: #3f8a4c;
+    --red: #b33635;
+}
+
+.lot-page {
+    background: #f3f5f8;
+    color: var(--text);
+    min-height: 100vh;
+}
+
+.banner {
+    border-left: 4px solid;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 16px 22px;
+    padding: 13px 16px;
+}
+
+.banner.success {
+    background: #edf8ef;
+    border-color: var(--green);
+    color: #3f7747;
+}
+
+.banner.error {
+    background: #fff0f0;
+    border-color: var(--red);
+    color: var(--red);
+}
+
+.content-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    padding: 0 22px 24px;
+}
+
+.main-col,
+.rail {
+    display: grid;
+    gap: 16px;
+}
+
+.tree {
+    display: grid;
+    gap: 8px;
+}
+
+.tree-row {
+    color: #2d6ed2;
+    font-size: 13px;
+    font-weight: 700;
+    padding-left: 12px;
+}
+
+.empty-state {
+    color: var(--muted);
+    font-size: 13px;
+    padding: 12px 0 4px;
+}
+
+.spinner {
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+}
+
+.modal-backdrop {
+    align-items: center;
+    background: rgba(7, 20, 38, .42);
+    display: flex;
+    inset: 0;
+    justify-content: center;
+    position: fixed;
+    z-index: 50;
+}
+
+.modal {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .25);
+    max-width: 520px;
+    padding: 0 18px 18px;
+    width: calc(100vw - 32px);
+}
+
+.modal header,
+.modal footer {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    padding: 14px 0;
+}
+
+.modal h2 {
+    font-size: 17px;
+    margin: 0;
+}
+
+.modal header button {
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    font-size: 22px;
+}
+
+.modal footer {
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.sf-btn {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 7px 12px;
+}
+
+.sf-btn.primary {
+    background: #256dd9;
+    border-color: #256dd9;
+    color: #fff;
+}
+
+@media (max-width: 1040px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+    }
+}

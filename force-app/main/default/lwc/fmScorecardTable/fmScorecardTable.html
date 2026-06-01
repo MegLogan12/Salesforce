@@ -1,0 +1,131 @@
+<template>
+
+    <!-- Loading -->
+    <template if:true={isLoading}>
+        <div class="spinner-wrap">
+            <lightning-spinner alternative-text="Loading FM scorecards..." size="medium"></lightning-spinner>
+        </div>
+    </template>
+
+    <!-- Error -->
+    <template if:true={errorMsg}>
+        <div class="ab ab-r">
+            <div class="ab-ic">&#9888;</div>
+            <div><strong>Error loading FM scorecard data:</strong> {errorMsg}</div>
+        </div>
+    </template>
+
+    <!-- No data -->
+    <template if:false={isLoading}>
+        <template if:false={errorMsg}>
+            <template if:true={scorecards.length}>
+
+                <!-- ── Scorecard Summary Table ── -->
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci ci-purple">SC</div>
+                        <h3>FM Scorecard &mdash; {monthLabel}</h3>
+                        <span class="badge-count">{scorecards.length} FMs</span>
+                    </div>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>FM</th>
+                                <th>Department</th>
+                                <th class="num">WOs MTD</th>
+                                <th class="num">QI Avg</th>
+                                <th class="num">FJ%</th>
+                                <th class="num">FJ Count</th>
+                                <th class="num">Escalations</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={scorecards} for:item="row">
+                                <tr key={row.id} class={row.rowCss}>
+                                    <td>
+                                        <span class="nl" data-fmid={row.fmId}
+                                              onclick={handleFmClick}
+                                              style="cursor:pointer;">
+                                            {row.fmName}
+                                        </span>
+                                    </td>
+                                    <td>{row.department}</td>
+                                    <td class="num">{row.wosDisplay}</td>
+                                    <td class="num">{row.qiAverageDisplay}</td>
+                                    <td class="num">{row.fjPercentDisplay}</td>
+                                    <td class="num">{row.fjCount}</td>
+                                    <td class="num">{row.escalDisplay}</td>
+                                    <td><span class={row.chipCss}>{row.statusLabel}</span></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- ── FM Detail Cards (2-column grid) ── -->
+                <div class="g2">
+                    <template for:each={scorecards} for:item="row">
+                        <div key={row.id} class="card last" style={row.detailBorderStyle}>
+                            <div class="ch" style={row.detailChBg}>
+                                <div class="fm-avatar" style={row.avatarStyle}>{row.fmInitials}</div>
+                                <h3>{row.fmName} &mdash; {row.department}</h3>
+                                <span class={row.chipCss}>{row.statusLabel}</span>
+                            </div>
+                            <div class="fields-grid">
+                                <div>
+                                    <div class="field-label">QI Average</div>
+                                    <div class="field-value">{row.qiAverageDisplay}</div>
+                                </div>
+                                <div>
+                                    <div class="field-label">Last QI Score</div>
+                                    <div class="field-value">{row.lastQiDisplay}</div>
+                                </div>
+                                <div>
+                                    <div class="field-label">Total QI Inspections</div>
+                                    <div class="field-value">{row.qiCount}</div>
+                                </div>
+                                <div>
+                                    <div class="field-label">WOs MTD</div>
+                                    <div class="field-value">{row.wosDisplay}</div>
+                                </div>
+                                <div>
+                                    <div class="field-label">FJ%</div>
+                                    <div class="field-value">{row.fjPercentDisplay}</div>
+                                </div>
+                                <div>
+                                    <div class="field-label">Finish Jobs</div>
+                                    <div class="field-value">{row.fjCount}</div>
+                                </div>
+                                <div>
+                                    <div class="field-label">Open Escalations</div>
+                                    <div class="field-value">{row.escalDisplay}</div>
+                                </div>
+                                <div>
+                                    <div class="field-label">Last QI Date</div>
+                                    <div class="field-value">{row.lastQiDateDisplay}</div>
+                                </div>
+                            </div>
+                            <div style="padding:8px 14px;">
+                                <button class="sf-btn" data-fmid={row.fmId} onclick={handleFmClick}>
+                                    View FM Profile
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+            </template>
+
+            <!-- Empty state -->
+            <template if:false={scorecards.length}>
+                <div class="empty-state">
+                    <div class="empty-icon">&#128203;</div>
+                    <div class="empty-title">No FM Scorecard Data Yet</div>
+                    <div class="empty-sub">Scorecard records are created automatically when QI inspections are submitted. No FM scorecards exist yet in this org.</div>
+                </div>
+            </template>
+        </template>
+    </template>
+
+</template>

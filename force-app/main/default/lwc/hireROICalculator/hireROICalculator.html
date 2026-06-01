@@ -1,0 +1,50 @@
+<template>
+    <lightning-card title="Hire ROI Calculator" icon-name="standard:account_score">
+        <div class="slds-p-horizontal_medium">
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col">
+                    <lightning-input type="number" label="Quantity" value={quantity} data-field="quantity" onchange={handleField}></lightning-input>
+                    <lightning-input type="number" label="Annual Cost / Person" value={annualCost} data-field="annualCost" onchange={handleField}></lightning-input>
+                    <lightning-input type="number" label="Hours / Week" value={hoursPerWeek} data-field="hoursPerWeek" onchange={handleField}></lightning-input>
+                </div>
+                <div class="slds-col">
+                    <lightning-input type="number" label="Revenue / Hour" value={revenuePerHour} data-field="revenuePerHour" onchange={handleField}></lightning-input>
+                    <lightning-input type="number" label="Utilization %" value={utilizationPct} data-field="utilizationPct" onchange={handleField}></lightning-input>
+                </div>
+            </div>
+            <div class="slds-m-top_small slds-text-align_right">
+                <lightning-button label="Calculate" variant="brand" onclick={compute}></lightning-button>
+            </div>
+            <template if:true={result}>
+                <div class="slds-box slds-m-top_medium">
+                    <div class="slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <div class="slds-text-color_weak slds-text-body_small">Y1 Revenue Capacity</div>
+                            <div class="slds-text-heading_medium">
+                                <lightning-formatted-number value={result.y1RevenueCapacity} format-style="currency" currency-code="USD"></lightning-formatted-number>
+                            </div>
+                        </div>
+                        <div class="slds-col">
+                            <div class="slds-text-color_weak slds-text-body_small">Y1 ROI</div>
+                            <div class="slds-text-heading_medium">
+                                <lightning-formatted-number value={result.y1ROI} format-style="currency" currency-code="USD"></lightning-formatted-number>
+                            </div>
+                        </div>
+                        <div class="slds-col">
+                            <div class="slds-text-color_weak slds-text-body_small">ROI %</div>
+                            <div class="slds-text-heading_medium">
+                                <lightning-formatted-number value={result.roiPct} format-style="percent-fixed" maximum-fraction-digits="0"></lightning-formatted-number>
+                            </div>
+                        </div>
+                        <div class="slds-col">
+                            <div class="slds-text-color_weak slds-text-body_small">Months to Payback</div>
+                            <div class="slds-text-heading_medium">
+                                <lightning-formatted-number value={result.monthsToPayback} maximum-fraction-digits="1"></lightning-formatted-number>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,53 @@
+<template>
+    <lightning-card title={cardLabel} icon-name="utility:location">
+        <div class="slds-var-p-around_small">
+
+            <!-- Loading state -->
+            <template if:true={isLoading}>
+                <div class="slds-align_absolute-center slds-var-p-around_medium">
+                    <lightning-spinner alternative-text="Loading address..." size="small"></lightning-spinner>
+                </div>
+            </template>
+
+            <!-- Error / no address state -->
+            <template if:false={isLoading}>
+                <template if:false={hasDestination}>
+                    <div class="no-address">
+                        <lightning-icon icon-name="utility:warning" size="x-small" class="slds-var-m-right_x-small"></lightning-icon>
+                        <span>No lot address found for this work order.</span>
+                    </div>
+                </template>
+
+                <!-- Destination label -->
+                <template if:true={hasDestination}>
+                    <div class="dest-label">{destinationLabel}</div>
+                    <div class="btn-row">
+                        <!-- Google Maps -->
+                        <a href={googleMapsUrl} target="_blank" rel="noopener noreferrer" class="route-btn gmaps">
+                            <span class="btn-icon">🗺</span>
+                            <span>Google Maps</span>
+                        </a>
+                        <!-- Waze -->
+                        <a href={wazeUrl} target="_blank" rel="noopener noreferrer" class="route-btn waze">
+                            <span class="btn-icon">🚗</span>
+                            <span>Waze</span>
+                        </a>
+                        <!-- Apple Maps (mobile-friendly) -->
+                        <a href={appleMapsUrl} target="_blank" rel="noopener noreferrer" class="route-btn apple">
+                            <span class="btn-icon">📍</span>
+                            <span>Apple Maps</span>
+                        </a>
+                    </div>
+                    <!-- Coordinates row (if available) -->
+                    <template if:true={hasCoordinates}>
+                        <div class="coords-row">
+                            <lightning-icon icon-name="utility:location" size="xx-small" class="slds-var-m-right_xx-small"></lightning-icon>
+                            <span>{latLngLabel}</span>
+                        </div>
+                    </template>
+                </template>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>mcLOVIN' Launch Prompt</masterLabel>
+    <targets>
+        <target>lightning__AppPage</target>
+        <target>lightning__HomePage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__AppPage,lightning__HomePage">
+            <property name="headline" type="String" label="Headline" default="Hey, do you need help?"/>
+            <property name="message" type="String" label="Message" default="mcLOVIN' can review a document, email, text, or spreadsheet, tie it to the right Salesforce records, ask for missing required fields, and save when you confirm."/>
+            <property name="autoOpen" type="Boolean" label="Auto Open Prompt" default="false"/>
+            <property name="contextKey" type="String" label="Context Key"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

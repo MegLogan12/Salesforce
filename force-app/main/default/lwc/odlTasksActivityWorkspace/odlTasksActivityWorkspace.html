@@ -1,0 +1,85 @@
+<template>
+    <section class="workspace">
+        <section class="panel hero">
+            <div class="hero-copy">
+                <h1>Tasks and Activity Calendar</h1>
+            </div>
+            <div class="hero-actions">
+                <button class="cta cta-secondary" onclick={handleNewEvent}>New Event</button>
+                <button class="cta" onclick={handleNewTask}>New Task</button>
+            </div>
+        </section>
+        <section class="kpi-row">
+            <div class="kpi-card overdue"><div class="kpi-value">{overdueCount}</div><div class="kpi-label">Overdue tasks</div></div>
+            <div class="kpi-card"><div class="kpi-value">{dueTodayCount}</div><div class="kpi-label">Due today</div></div>
+            <div class="kpi-card"><div class="kpi-value">{voicemailCount}</div><div class="kpi-label">Voicemail follow-ups</div></div>
+            <div class="kpi-card complete"><div class="kpi-value">{completedTodayCount}</div><div class="kpi-label">Completed today</div></div>
+        </section>
+        <section class="panel toolbar">
+            <input type="search" value={searchTerm} oninput={handleSearch} placeholder="Search tasks" />
+        </section>
+        <section class="layout">
+            <div class="main">
+                <section class="panel" lwc:if={hasRows}>
+                    <div class="panel-header">Task Queue</div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Task</th>
+                                <th>Related To</th>
+                                <th>LOB</th>
+                                <th>Type</th>
+                                <th>Due</th>
+                                <th>Last Activity</th>
+                                <th>Owner</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={filteredRows} for:item="row">
+                                <tr key={row.id}>
+                                    <td><a href={row.url}>{row.subject}</a></td>
+                                    <td><template lwc:if={row.relatedUrl}><a href={row.relatedUrl}>{row.relatedLabel}</a></template><template lwc:else>{row.relatedLabel}</template></td>
+                                    <td>{row.lob}</td>
+                                    <td>{row.type}</td>
+                                    <td>{row.dueDate}</td>
+                                    <td>{row.lastActivity}</td>
+                                    <td>{row.ownerName}</td>
+                                    <td>{row.status}</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </section>
+                <section class="panel empty-state" lwc:if={hasNoRows}>
+                    No tasks matched the current search.
+                </section>
+                <section class="panel empty-state" lwc:if={hasError}>
+                    {error}
+                </section>
+                <section class="panel">
+                    <div class="panel-header">Sales Activity Calendar</div>
+                    <div class="calendar-grid">
+                        <template for:each={calendarDays} for:item="day">
+                            <div class="day-card" key={day.label}>
+                                <div class="day-head"><span>{day.label}</span><span>{day.dateLabel}</span></div>
+                                <template for:each={day.events} for:item="eventLabel">
+                                    <div class="event-pill" key={eventLabel}>{eventLabel}</div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </section>
+            </div>
+            <aside class="rail">
+                <section class="panel">
+                    <div class="panel-header">Activity Health</div>
+                    <div class="rail-row"><span>Last touch</span><span>{lastTouch}</span></div>
+                    <div class="rail-row"><span>Voicemail</span><span>{voicemailStatus}</span></div>
+                    <div class="rail-row"><span>Next follow-up</span><span>{nextFollowUp}</span></div>
+                    <div class="rail-row"><span>Open tasks</span><span>{openTasks}</span></div>
+                </section>
+            </aside>
+        </section>
+    </section>
+</template>

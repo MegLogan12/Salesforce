@@ -1,0 +1,313 @@
+<template>
+    <section class="cs-shell">
+        <div class="record-header">
+            <div class="record-icon">CS</div>
+            <div class="record-title">
+                <div class="crumb">Customer Success Console</div>
+                <h1>Service Cloud Customer Success Workspace</h1>
+                <p>Cases, Omni work, builder changes, field follow-up, approvals, knowledge, reporting, and quote building.</p>
+            </div>
+            <div class="header-actions">
+                <lightning-button label="Refresh" onclick={refresh} variant="neutral"></lightning-button>
+                <lightning-button label="+ New Case" onclick={newCase} variant="brand"></lightning-button>
+            </div>
+        </div>
+
+        <nav class="tab-ribbon" aria-label="Customer Success workstreams">
+            <template for:each={tabs} for:item="tab">
+                <button key={tab.id} class={tab.className} data-id={tab.id} onclick={switchTab}>
+                    <span>{tab.label}</span>
+                    <template if:true={tab.count}>
+                        <span class="num-badge">{tab.count}</span>
+                    </template>
+                </button>
+            </template>
+        </nav>
+
+        <template if:true={isLoading}>
+            <div class="loading">Loading Customer Success workspace...</div>
+        </template>
+
+        <template if:true={hasError}>
+            <div class="alert error">{errorMessage}</div>
+        </template>
+
+        <template if:false={isLoading}>
+            <main class="body">
+                <section class="kpi-grid">
+                    <template for:each={kpis} for:item="kpi">
+                        <article key={kpi.label} class={kpi.className}>
+                            <div class="kpi-value">{kpi.value}</div>
+                            <div class="kpi-label">{kpi.label}</div>
+                        </article>
+                    </template>
+                </section>
+
+                <section class="layout">
+                    <div class="main-col">
+                        <article class={activeCardClass}>
+                            <div class="card-header">
+                                <div class={activeIconClass}>{activeInitials}</div>
+                                <div>
+                                    <h2>{activeTitle}</h2>
+                                    <p>{activeSubtitle}</p>
+                                </div>
+                                <div class="card-actions">
+                                    <lightning-button
+                                        label={activePrimaryLabel}
+                                        onclick={handlePrimaryAction}
+                                        disabled={activePrimaryDisabled}
+                                        title={activePrimaryTitle}
+                                        variant={activePrimaryVariant}>
+                                    </lightning-button>
+                                </div>
+                            </div>
+
+                            <template if:true={hasActiveRecords}>
+                                <div class="table-wrap">
+                                    <table class="record-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Summary</th>
+                                                <th>Status</th>
+                                                <th>Source</th>
+                                                <th>Context</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template for:each={activeRecords} for:item="row">
+                                                <tr key={row.rowKey}>
+                                                    <td>
+                                                        <button class="link-button" data-id={row.id} onclick={openRecord} disabled={row.noRecord}>
+                                                            {row.name}
+                                                        </button>
+                                                    </td>
+                                                    <td>{row.title}</td>
+                                                    <td><span class={row.chipClass}>{row.statusLabel}</span></td>
+                                                    <td>{row.source}</td>
+                                                    <td>{row.detail}</td>
+                                                    <td>
+                                                        <lightning-button
+                                                            label="Open"
+                                                            data-id={row.id}
+                                                            onclick={openRecord}
+                                                            disabled={row.noRecord}
+                                                            variant="neutral">
+                                                        </lightning-button>
+                                                    </td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </template>
+
+                            <template if:false={hasActiveRecords}>
+                                <div class="empty-state">
+                                    <strong>{activeEmptyTitle}</strong>
+                                    <span>{activeEmptyBody}</span>
+                                </div>
+                            </template>
+                        </article>
+
+                        <template if:true={isHome}>
+                            <section class="two-col">
+                                <article class="card warn">
+                                    <div class="card-header compact">
+                                        <div class="mini-icon orange">EPO</div>
+                                        <div>
+                                            <h2>EPO / PO Change watch</h2>
+                                            <p>Builder-requested additions and PO changes remain Case-first until approved flows exist.</p>
+                                        </div>
+                                    </div>
+                                    <div class="guidance-list">
+                                        <div>Use Case as the intake record.</div>
+                                        <div>Use Quote for pricing validation.</div>
+                                        <div>Do not create child Work Orders from this console until approved.</div>
+                                    </div>
+                                </article>
+                                <article class="card info">
+                                    <div class="card-header compact">
+                                        <div class="mini-icon blue">SLA</div>
+                                        <div>
+                                            <h2>Entitlements + milestones</h2>
+                                            <p>SLA cards use Entitlement and CaseMilestone data when present.</p>
+                                        </div>
+                                    </div>
+                                    <div class="guidance-list">
+                                        <template for:each={slaRows} for:item="row">
+                                            <div key={row.label}><span>{row.label}</span><strong>{row.value}</strong></div>
+                                        </template>
+                                    </div>
+                                </article>
+                            </section>
+                        </template>
+
+                        <template if:true={isApprovals}>
+                            <article class="card">
+                                <div class="card-header compact">
+                                    <div class="mini-icon orange">FLOW</div>
+                                    <div>
+                                        <h2>Approval decision rules</h2>
+                                        <p>Buttons stay disabled unless a real approval action, flow, or record update path is approved.</p>
+                                    </div>
+                                </div>
+                                <div class="decision-grid">
+                                    <div><strong>Approve</strong><span>Move work forward after validation.</span></div>
+                                    <div><strong>Return</strong><span>Create correction work with required notes.</span></div>
+                                    <div><strong>Reject</strong><span>Preserve reason and audit trail.</span></div>
+                                    <div><strong>Escalate</strong><span>Assign manager review and priority.</span></div>
+                                </div>
+                            </article>
+                        </template>
+
+                        <template if:true={isQuotes}>
+                            <article class="card">
+                                <div class="card-header compact">
+                                    <div class="mini-icon purple">QB</div>
+                                    <div>
+                                        <h2>Quote Builder foundation</h2>
+                                        <p>Uses standard Quote, QuoteLineItem, and PricebookEntry first. CPQ is not assumed.</p>
+                                    </div>
+                                    <lightning-button label="+ New Quote" onclick={newQuote} variant="brand"></lightning-button>
+                                </div>
+                                <div class="quote-grid">
+                                    <div><span>Pricing source</span><strong>Standard PricebookEntry</strong></div>
+                                    <div><span>Line items</span><strong>QuoteLineItem</strong></div>
+                                    <div><span>Send action</span><strong>Disabled until approved</strong></div>
+                                    <div><span>Child Work Order</span><strong>Audit only</strong></div>
+                                </div>
+                            </article>
+                        </template>
+
+                        <template if:true={isReports}>
+                            <article class="card">
+                                <div class="card-header compact">
+                                    <div class="mini-icon blue">AUD</div>
+                                    <div>
+                                        <h2>Feature enablement audit</h2>
+                                        <p>Setup health stays here as build evidence, not as a daily workstream tab.</p>
+                                    </div>
+                                </div>
+                                <div class="table-wrap">
+                                    <table class="record-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Feature</th>
+                                                <th>Enabled?</th>
+                                                <th>Object/API?</th>
+                                                <th>UI behavior if missing</th>
+                                                <th>Owner</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template for:each={features} for:item="feature">
+                                                <tr key={feature.feature}>
+                                                    <td>{feature.feature}</td>
+                                                    <td><span class={feature.enabledClass}>{feature.enabledLabel}</span></td>
+                                                    <td><span class={feature.availableClass}>{feature.availableLabel}</span></td>
+                                                    <td>{feature.uiBehaviorIfMissing}</td>
+                                                    <td>{feature.setupOwner}</td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </article>
+
+                            <article class="card">
+                                <div class="card-header compact">
+                                    <div class="mini-icon green">MAP</div>
+                                    <div>
+                                        <h2>Source map</h2>
+                                        <p>Standard Salesforce and Service Cloud objects are used first.</p>
+                                    </div>
+                                </div>
+                                <div class="table-wrap">
+                                    <table class="record-table">
+                                        <thead>
+                                            <tr>
+                                                <th>UI Area</th>
+                                                <th>Standard Object</th>
+                                                <th>Field / Relationship</th>
+                                                <th>Exists?</th>
+                                                <th>LOVING Field?</th>
+                                                <th>Recommendation</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template for:each={sourceMap} for:item="row">
+                                                <tr key={row.uiArea}>
+                                                    <td>{row.uiArea}</td>
+                                                    <td>{row.standardObject}</td>
+                                                    <td>{row.standardFieldRelationship}</td>
+                                                    <td><span class={row.existsClass}>{row.existsLabel}</span></td>
+                                                    <td>{row.lovingLabel}</td>
+                                                    <td>{row.recommendation}</td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </article>
+                        </template>
+                    </div>
+
+                    <aside class="rail">
+                        <article class="card agent">
+                            <div class="card-header compact">
+                                <div class="mini-icon purple">AI</div>
+                                <div>
+                                    <h2>Agentforce Assist</h2>
+                                    <p>{agentforceMessage}</p>
+                                </div>
+                            </div>
+                            <div class="rail-actions">
+                                <lightning-button label="Draft reply" disabled title="Requires approved Agentforce action"></lightning-button>
+                                <lightning-button label="Summarize" disabled title="Requires approved Agentforce action"></lightning-button>
+                            </div>
+                        </article>
+
+                        <article class="card">
+                            <div class="card-header compact">
+                                <div class="mini-icon orange">ACT</div>
+                                <div>
+                                    <h2>Action matrix</h2>
+                                    <p>Every action is real navigation or clearly disabled.</p>
+                                </div>
+                            </div>
+                            <div class="action-list">
+                                <template for:each={buttonMatrixPreview} for:item="button">
+                                    <div key={button.button} class="action-row">
+                                        <span>{button.button}</span>
+                                        <span class={button.className}>{button.label}</span>
+                                    </div>
+                                </template>
+                            </div>
+                        </article>
+
+                        <article class="card last">
+                            <div class="card-header compact">
+                                <div class="mini-icon green">TOOLS</div>
+                                <div>
+                                    <h2>Service Cloud tools</h2>
+                                    <p>Supporting features stay inside the workstreams.</p>
+                                </div>
+                            </div>
+                            <div class="tool-list">
+                                <template for:each={toolRows} for:item="tool">
+                                    <div key={tool.feature}>
+                                        <span>{tool.feature}</span>
+                                        <span class={tool.enabledClass}>{tool.enabledLabel}</span>
+                                    </div>
+                                </template>
+                            </div>
+                        </article>
+                    </aside>
+                </section>
+            </main>
+        </template>
+    </section>
+</template>

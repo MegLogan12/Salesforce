@@ -1,0 +1,54 @@
+<template>
+    <div class="card">
+        <div class="ch">
+            <h3>Operational Details</h3>
+            <button type="button" class="action-button" onclick={handleToggleEdit}>{editButtonLabel}</button>
+        </div>
+        <template lwc:if={isEditing}>
+            <div class="cb">
+                <lightning-record-edit-form
+                    object-api-name="Community__c"
+                    record-id={recordId}
+                    onsuccess={handleSuccess}
+                    onerror={handleError}
+                >
+                    <div class="form-grid">
+                        <lightning-input-field field-name="Assigned_FM__c"></lightning-input-field>
+                        <lightning-input-field field-name="OwnerId"></lightning-input-field>
+                        <lightning-input-field field-name="Service_Day__c"></lightning-input-field>
+                        <lightning-input-field field-name="Service_Model__c"></lightning-input-field>
+                        <lightning-input-field field-name="Lot_Layout_Link__c"></lightning-input-field>
+                        <lightning-input-field field-name="Pricing_Schedule__c"></lightning-input-field>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="action-button action-button_brand">Save Changes</button>
+                        <button type="button" class="action-button" onclick={handleCancel}>Cancel</button>
+                    </div>
+                </lightning-record-edit-form>
+            </div>
+        </template>
+        <template lwc:else>
+            <template lwc:if={hasRows}>
+                <div class="cb f2">
+                    <template for:each={rows} for:item="r">
+                        <div key={r.label}>
+                            <div class="fl">{r.label}</div>
+                            <template lwc:if={r.isLink}>
+                                <div class="fv link"><a href={r.url} target="_blank" rel="noopener">{r.value}</a></div>
+                            </template>
+                            <template lwc:elseif={r.isEmpty}>
+                                <div class="fv em">{r.value}</div>
+                            </template>
+                            <template lwc:else>
+                                <div class="fv">{r.value}</div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+            </template>
+            <template lwc:else>
+                <div class="empty">{emptyMessage}</div>
+            </template>
+        </template>
+    </div>
+</template>

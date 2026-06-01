@@ -1,0 +1,29 @@
+<template>
+    <div class="card">
+        <div class="ch"><h3>Key Contacts</h3></div>
+        <template lwc:if={hasRows}>
+            <div class="cb f2">
+                <template for:each={rows} for:item="r">
+                    <div key={r.label}>
+                        <div class="fl">{r.label}</div>
+                        <template lwc:if={r.isLink}>
+                            <div class="fv link"><a href={r.url}>{r.value}</a></div>
+                        </template>
+                        <template lwc:elseif={r.isEmpty}>
+                            <div class="fv em">{r.value}</div>
+                        </template>
+                        <template lwc:else>
+                            <div class="fv">{r.value}</div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </template>
+        <template lwc:elseif={hasError}>
+            <div class="empty err">{error}</div>
+        </template>
+        <template lwc:else>
+            <div class="empty">0 key contacts linked to this community.</div>
+        </template>
+    </div>
+</template>

@@ -1,0 +1,146 @@
+<template>
+    <div class="qb-wrap">
+
+        <!-- Info banner -->
+        <div class="ab ab-b">
+            <div class="ab-ic">ℹ</div>
+            <div><strong>Per-item assessment.</strong> Each line item is assessed by the FM as
+                <span class="chip chip-amber">Billable</span> (homeowner damage / new request) or
+                <span class="chip chip-teal">Warranty</span> (LOVING-responsibility under MSA coverage).
+                Click "Send to Builder" to create the Quote record and notify the builder CM.</div>
+        </div>
+
+        <div class="layout">
+        <div class="layout-main">
+
+            <!-- Quote Header card -->
+            <div class="card">
+                <div class="ch">
+                    <div class="ci ci-blue">📋</div>
+                    <h3>Quote Header</h3>
+                </div>
+                <div class="form-row">
+                    <div class="form-label">Work Order <span class="req">*</span></div>
+                    <div>
+                        <input class="form-input"
+                               placeholder="WO number or search..."
+                               value={builderWo}
+                               onchange={onBuilderWoChange}/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-label">Source <span class="req">*</span></div>
+                    <div>
+                        <select class="form-select" onchange={onBuilderSourceChange}>
+                            <option value="">-- Select --</option>
+                            <option value="Builder request">Builder request</option>
+                            <option value="Homeowner request">Homeowner request</option>
+                            <option value="Construction Manager">Construction Manager</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-label">Notes</div>
+                    <div>
+                        <textarea class="form-input"
+                                  placeholder="Additional notes for the builder..."
+                                  onchange={onBuilderNotesChange}></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Line Items card -->
+            <div class="card">
+                <div class="ch">
+                    <div class="ci" style="background:#534ab7;font-size:11px;">📄</div>
+                    <h3>Line Items</h3>
+                    <span class="ch-link" onclick={addLineItem}>+ Add Line Item</span>
+                </div>
+
+                <template if:true={hasLineItems}>
+                    <div class="line-row line-header">
+                        <div>Item</div>
+                        <div>Issue / Cause</div>
+                        <div>Qty</div>
+                        <div>Type</div>
+                    </div>
+                    <template for:each={lineItems} for:item="li">
+                        <div key={li.idx} class="line-row">
+                            <div>
+                                <input class="line-input"
+                                       value={li.item}
+                                       data-idx={li.idx}
+                                       data-field="item"
+                                       onchange={onLineItemChange}/>
+                            </div>
+                            <div>
+                                <input class="line-input"
+                                       value={li.cause}
+                                       data-idx={li.idx}
+                                       data-field="cause"
+                                       onchange={onLineItemChange}/>
+                            </div>
+                            <div>
+                                <input class="line-input"
+                                       value={li.qty}
+                                       data-idx={li.idx}
+                                       data-field="qty"
+                                       style="width:60px"
+                                       onchange={onLineItemChange}/>
+                            </div>
+                            <div>
+                                <select class="line-select"
+                                        data-idx={li.idx}
+                                        onchange={onLineItemTypeChange}>
+                                    <option value="Billable">Billable</option>
+                                    <option value="Warranty">Warranty</option>
+                                </select>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+
+                <template if:false={hasLineItems}>
+                    <div class="empty-state">
+                        No line items yet. Click "+ Add Line Item" to begin.
+                    </div>
+                </template>
+            </div>
+
+        </div><!-- /layout-main -->
+
+        <div class="layout-rail">
+
+            <!-- Quick Actions card -->
+            <div class="card">
+                <div class="ch">
+                    <div class="ci" style="background:#fe9339;font-size:11px;">⚡</div>
+                    <h3>Quick Actions</h3>
+                </div>
+                <div class="qa-list">
+                    <div class="qa-item" onclick={addLineItem}>📋 Add line item</div>
+                    <div class="qa-item" onclick={saveQuoteDraft}>📄 Save as draft</div>
+                    <div class="qa-item" onclick={sendQuote}>📧 Send to builder</div>
+                </div>
+            </div>
+
+            <!-- Validation summary card -->
+            <template if:true={hasValidationIssues}>
+                <div class="card warn last">
+                    <div class="ch">
+                        <div class="ci" style="background:#fe9339;font-size:11px;">⚠</div>
+                        <h3>Required before sending</h3>
+                    </div>
+                    <div style="padding:10px 14px;font-size:11px;color:#92400e;">
+                        <template for:each={validationIssues} for:item="msg">
+                            <div key={msg} style="padding:3px 0;">• {msg}</div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+
+        </div><!-- /layout-rail -->
+        </div><!-- /layout -->
+
+    </div>
+</template>

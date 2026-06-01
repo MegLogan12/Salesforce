@@ -1,0 +1,11 @@
+<template>
+    <div class="timeline">
+        <template for:each={items} for:item="item">
+            <div key={item.label} class={item.rowClass}>
+                <span class="dot"></span>
+                <span class="label">{item.label}</span>
+                <span class="date">{item.dateLabel}</span>
+            </div>
+        </template>
+    </div>
+</template>

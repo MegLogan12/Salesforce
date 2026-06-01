@@ -1,0 +1,659 @@
+/* startMyDesignForm.css - Exact design match */
+
+/* Main container */
+.form-wrapper {
+    max-width: 860px;
+    margin: 110px auto 0;
+    font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+    color: rgb(17, 17, 17);
+    padding: 20px 12px 0;
+    box-sizing: border-box;
+}
+
+/* Page title */
+.page-title {
+    font-size: 40px;
+    line-height: 43.2px;
+    margin: 0 0 6px;
+    font-weight: 800;
+    letter-spacing: -1.2px;
+}
+
+/* Page subtitle */
+.page-subtitle {
+    margin: 0 0 18px;
+    color: rgb(107, 114, 128);
+    font-size: 14px;
+}
+
+/* Main form card */
+.main-card {
+    border: 1.6px solid rgba(17, 17, 17, 0.1);
+    border-radius: 26px;
+    padding: 22px 22px 26px;
+    background: linear-gradient(rgba(250, 250, 250, 0.9), rgb(255, 255, 255));
+    box-shadow: rgba(17, 17, 17, 0.03) 0px 1px 0px 0px, rgba(17, 17, 17, 0.06) 0px 16px 50px 0px;
+}
+
+/* Step indicator */
+.step-indicator {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 6px 0 18px;
+}
+
+.step-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+}
+
+.step-number {
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    border: 1.6px solid rgba(17, 17, 17, 0.18);
+    color: rgb(107, 114, 128);
+    background: rgb(255, 255, 255);
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: rgba(17, 17, 17, 0.04) 0px 1px 0px 0px;
+}
+
+.step-number.active {
+    background: rgb(17, 17, 17);
+    color: rgb(255, 255, 255);
+    border-color: rgb(17, 17, 17);
+    box-shadow: rgba(0, 0, 0, 0.14) 0px 6px 18px 0px;
+}
+
+.step-label {
+    font-size: 13px;
+    font-weight: 800;
+    color: rgb(107, 114, 128);
+    letter-spacing: -0.13px;
+}
+
+.step-label.active {
+    color: rgb(17, 17, 17);
+}
+
+.step-line {
+    flex: 1 1 0%;
+    height: 1px;
+    background: rgba(17, 17, 17, 0.12);
+}
+
+/* Section cards */
+.section-card {
+    border: 1.6px solid rgba(17, 17, 17, 0.1);
+    border-radius: 22px;
+    padding: 18px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(6px);
+    box-shadow: rgba(17, 17, 17, 0.03) 0px 1px 0px 0px;
+    margin-top: 14px;
+}
+
+/* Section titles */
+.section-title {
+    margin: 0 0 14px;
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: -0.14px;
+}
+
+.section-subtitle {
+    margin: 0 0 12px;
+    color: rgb(107, 114, 128);
+    font-size: 12px;
+}
+
+/* Form grid */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    width: 100%;
+}
+
+.form-grid-3col {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 18px;
+    width: 100%;
+}
+
+.form-field {
+    width: 100%;
+}
+
+.form-field.full-width {
+    margin-top: 14px;
+}
+
+/* Labels */
+.field-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 900;
+    margin: 0 0 8px;
+    letter-spacing: -0.12px;
+}
+
+.required-mark {
+    color: rgb(239, 68, 68);
+    margin-left: 6px;
+    font-weight: 900;
+}
+
+.optional-mark {
+    font-weight: 800;
+    color: rgb(107, 114, 128);
+}
+
+/* Text inputs */
+.text-input {
+    width: 100%;
+    border-radius: 999px;
+    border: 1.6px solid rgba(17, 17, 17, 0.18);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 14px 18px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    box-shadow: rgba(17, 17, 17, 0.04) 0px 1px 0px 0px, rgba(17, 17, 17, 0.06) 0px 10px 25px 0px;
+    transition: box-shadow 0.18s, border-color 0.18s, transform 0.12s;
+    box-sizing: border-box;
+}
+
+.text-input:focus {
+    border-color: rgb(17, 17, 17);
+    box-shadow: rgba(17, 17, 17, 0.08) 0px 1px 0px 0px, rgba(17, 17, 17, 0.12) 0px 12px 30px 0px;
+}
+
+/* Phone input with country code */
+.phone-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.country-code-prefix {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 12px 14px 18px;
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 600;
+    color: rgb(55, 65, 81);
+    background: rgba(243, 244, 246, 0.95);
+    border: 1.6px solid rgba(17, 17, 17, 0.18);
+    border-right: none;
+    border-radius: 999px 0 0 999px;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+.phone-with-prefix {
+    border-radius: 0 999px 999px 0 !important;
+}
+
+/* Select dropdowns */
+.select-input {
+    width: 100%;
+    border-radius: 999px;
+    border: 1.6px solid rgba(17, 17, 17, 0.18);
+    background-color: rgba(255, 255, 255, 0.95);
+    background-image: linear-gradient(45deg, transparent 50%, rgba(17, 17, 17, 0.75) 50%),
+        linear-gradient(135deg, rgba(17, 17, 17, 0.75) 50%, transparent 50%);
+    background-position: calc(100% - 22px) 55%, calc(100% - 16px) 55%;
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;
+    padding: 14px 48px 14px 18px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    box-shadow: rgba(17, 17, 17, 0.04) 0px 1px 0px 0px, rgba(17, 17, 17, 0.06) 0px 10px 25px 0px;
+    transition: box-shadow 0.18s, border-color 0.18s, transform 0.12s;
+    appearance: none;
+    -webkit-appearance: none;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.select-input:focus {
+    border-color: rgb(17, 17, 17);
+}
+
+/* Textarea */
+.textarea-input {
+    width: 100%;
+    border-radius: 18px;
+    border: 1.6px solid rgba(17, 17, 17, 0.18);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 14px 16px;
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    min-height: 110px;
+    resize: vertical;
+    box-shadow: rgba(17, 17, 17, 0.04) 0px 1px 0px 0px, rgba(17, 17, 17, 0.06) 0px 10px 25px 0px;
+    transition: box-shadow 0.18s, border-color 0.18s, transform 0.12s;
+    box-sizing: border-box;
+}
+
+.textarea-input:focus {
+    border-color: rgb(17, 17, 17);
+}
+
+/* Hidden file input */
+.hidden-file-input {
+    display: none;
+}
+
+/* File upload button */
+.file-upload-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-radius: 999px;
+    border: 1.6px solid rgba(17, 17, 17, 0.18);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 14px 18px;
+    font-size: 14px;
+    font-weight: 900;
+    font-family: inherit;
+    box-shadow: rgba(17, 17, 17, 0.04) 0px 1px 0px 0px, rgba(17, 17, 17, 0.06) 0px 10px 25px 0px;
+    cursor: pointer;
+    transition: box-shadow 0.18s, border-color 0.18s, transform 0.12s;
+}
+
+.file-upload-btn:hover {
+    border-color: rgb(17, 17, 17);
+}
+
+.file-upload-btn .btn-text {
+    font-weight: 900;
+}
+
+.file-upload-btn .file-types {
+    font-style: normal;
+    font-weight: 800;
+    color: rgb(107, 114, 128);
+    font-size: 12px;
+}
+
+.file-upload-hint {
+    margin: 8px 0 0;
+    color: rgb(107, 114, 128);
+    font-size: 12px;
+}
+
+/* Feature cards - Step 3 */
+.feature-card {
+    border: 1.6px solid rgba(17, 17, 17, 0.16);
+    border-radius: 22px;
+    padding: 14px 14px 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 12px;
+    background: rgb(255, 255, 255);
+    box-shadow: rgba(17, 17, 17, 0.03) 0px 1px 0px 0px;
+}
+
+.feature-info .feature-name {
+    font-weight: 900;
+    margin: 0;
+    font-size: 15px;
+    letter-spacing: -0.15px;
+}
+
+.feature-info .feature-price {
+    margin: 2px 0 0;
+    font-size: 12px;
+    color: rgb(107, 114, 128);
+}
+
+/* Toggle switch */
+.toggle-wrapper {
+    position: relative;
+    width: 54px;
+    height: 30px;
+    flex: 0 0 auto;
+}
+
+.toggle-input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    border: 1.6px solid rgba(17, 17, 17, 0.18);
+    background: rgb(255, 255, 255);
+    transition: 0.2s;
+    box-shadow: rgba(255, 255, 255, 0.55) 0px 0px 0px 1px inset;
+    cursor: pointer;
+}
+
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgb(200, 200, 200);
+    border-radius: 50%;
+    transition: 0.2s;
+}
+
+.toggle-input:checked+.toggle-slider {
+    background: rgb(17, 17, 17);
+    border-color: rgb(17, 17, 17);
+}
+
+.toggle-input:checked+.toggle-slider::before {
+    left: calc(100% - 25px);
+    background: rgb(255, 255, 255);
+}
+
+/* Additional enhancements toggle row */
+.enhancements-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    border: 1.6px solid rgba(17, 17, 17, 0.1);
+    border-radius: 18px;
+    padding: 12px 14px;
+    margin-top: 10px;
+    background: rgba(250, 250, 250, 0.9);
+}
+
+.enhancements-toggle .toggle-label {
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: -0.13px;
+}
+
+/* Additional textarea (hidden by default) */
+.additional-textarea {
+    display: none;
+    margin-top: 10px;
+}
+
+.additional-textarea.visible {
+    display: block;
+}
+
+/* Estimate summary */
+.estimate-total {
+    margin-top: 10px;
+    font-size: 18px;
+    font-weight: 950;
+    letter-spacing: -0.18px;
+}
+
+.estimate-monthly {
+    margin: 4px 0 0;
+    font-size: 14px;
+    font-weight: 900;
+}
+
+.estimate-disclaimer {
+    margin: 10px 0 0;
+    color: rgb(107, 114, 128);
+    font-size: 12px;
+}
+
+/* Button container */
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+}
+
+/* Back button */
+.btn-back {
+    padding: 14px 18px;
+    border-radius: 999px;
+    border: 1.6px solid rgba(17, 17, 17, 0.16);
+    background: rgb(255, 255, 255);
+    color: rgb(17, 17, 17);
+    font-weight: 950;
+    font-family: inherit;
+    font-size: 14px;
+    min-width: 120px;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.18s, background 0.18s;
+}
+
+.btn-back:hover {
+    background: rgb(250, 250, 250);
+}
+
+.btn-back:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Next/Submit button */
+.btn-next {
+    background: linear-gradient(rgba(17, 17, 17, 0.98), rgba(17, 17, 17, 0.88));
+    color: rgb(255, 255, 255);
+    padding: 14px 18px;
+    border-radius: 999px;
+    border: 1.6px solid rgba(17, 17, 17, 0.16);
+    font-weight: 950;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    min-width: 120px;
+    box-shadow: rgba(17, 17, 17, 0.04) 0px 1px 0px 0px, rgba(17, 17, 17, 0.08) 0px 12px 30px 0px;
+    transition: transform 0.12s, box-shadow 0.18s, background 0.18s;
+}
+
+.btn-next:hover {
+    transform: translateY(-1px);
+    box-shadow: rgba(17, 17, 17, 0.06) 0px 2px 0px 0px, rgba(17, 17, 17, 0.12) 0px 16px 40px 0px;
+}
+
+/* Loading overlay */
+.loading-overlay {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+/* Success container - full display */
+.success-container {
+    text-align: left;
+    padding: 40px 0;
+}
+
+.success-title {
+    font-size: 40px;
+    line-height: 1.1;
+    margin: 0 0 24px;
+    font-weight: 800;
+    letter-spacing: -1.2px;
+    color: rgb(17, 17, 17);
+}
+
+.success-message {
+    font-size: 16px;
+    line-height: 1.6;
+    color: rgb(107, 114, 128);
+    margin: 0 0 16px;
+}
+
+.success-link {
+    color: rgb(17, 17, 17) !important;
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.success-link:hover {
+    color: rgb(59, 130, 246) !important;
+}
+
+/* Error alert */
+.error-alert {
+    border: 1.6px solid rgba(239, 68, 68, 0.3);
+    border-radius: 18px;
+    padding: 14px 18px;
+    background: rgba(254, 242, 242, 0.95);
+    color: rgb(185, 28, 28);
+    margin-bottom: 14px;
+    font-size: 14px;
+}
+
+/* Hide step content */
+.step-content {
+    display: block;
+    opacity: 1;
+    transform: matrix(1, 0, 0, 1, 0, 0);
+    transition: opacity 0.22s, transform 0.22s;
+}
+
+.step-content.hidden {
+    display: none;
+    opacity: 0;
+}
+
+/* Lightning component overrides */
+lightning-input,
+lightning-textarea,
+lightning-combobox {
+    --slds-c-input-radius-border: 999px;
+    --slds-c-input-shadow: rgba(17, 17, 17, 0.04) 0px 1px 0px 0px, rgba(17, 17, 17, 0.06) 0px 10px 25px 0px;
+}
+
+lightning-textarea {
+    --slds-c-textarea-radius-border: 18px;
+}
+
+/* SMS Consent Checkbox Styles */
+.consent-checkbox-container {
+    padding: 4px 0;
+}
+
+.consent-checkbox-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.consent-checkbox-input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.consent-checkbox-custom {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(17, 17, 17, 0.3);
+    border-radius: 4px;
+    background: rgb(255, 255, 255);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    margin-top: 2px;
+}
+
+.consent-checkbox-input:checked+.consent-checkbox-custom {
+    background: rgb(17, 17, 17);
+    border-color: rgb(17, 17, 17);
+}
+
+.consent-checkbox-input:checked+.consent-checkbox-custom::after {
+    content: '';
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    margin-bottom: 2px;
+}
+
+.consent-checkbox-wrapper:hover .consent-checkbox-custom {
+    border-color: rgb(17, 17, 17);
+}
+
+.consent-checkbox-text {
+    font-size: 12px;
+    line-height: 1.5;
+    color: rgb(107, 114, 128);
+}
+
+.consent-link {
+    color: rgb(17, 17, 17);
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.consent-link:hover {
+    color: rgb(59, 130, 246);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .form-wrapper {
+        margin-top: 40px;
+        padding: 16px;
+    }
+
+    .page-title {
+        font-size: 28px;
+        line-height: 32px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-grid-3col {
+        grid-template-columns: 1fr;
+    }
+
+    .step-label {
+        display: none;
+    }
+
+    .button-container {
+        flex-direction: column-reverse;
+    }
+
+    .btn-back,
+    .btn-next {
+        width: 100%;
+    }
+}

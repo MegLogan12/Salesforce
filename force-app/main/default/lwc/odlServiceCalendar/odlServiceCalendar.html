@@ -1,0 +1,106 @@
+<template>
+    <div class="sf-body">
+        <div class="layout">
+            <div class="layout-main">
+                <div class="g4">
+                    <div class="kpi kb">
+                        <div class="kn big">{consultCount}</div>
+                        <div class="kl">Consults this week</div>
+                    </div>
+                    <div class="kpi kp">
+                        <div class="kn big">{siteVisitCount}</div>
+                        <div class="kl">Site visits</div>
+                    </div>
+                    <div class="kpi kg">
+                        <div class="kn big">{installCount}</div>
+                        <div class="kl">Install visits</div>
+                    </div>
+                    <div class="kpi ka">
+                        <div class="kn big">{followUpCount}</div>
+                        <div class="kl">Follow-ups</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci" style="background:#0070d2">CAL</div>
+                        <h3>Homeowner Outdoor Living Calendar</h3>
+                    </div>
+                    <div class="calendar-grid" style="padding:12px 14px">
+                        <template for:each={calendarDays} for:item="day">
+                            <div key={day.dayName} class="day">
+                                <div class="day-head">
+                                    <span>{day.dayName}</span>
+                                    <span>{day.count}</span>
+                                </div>
+                                <template for:each={day.events} for:item="evt">
+                                    <div key={evt.id} class={evt.cssClass}>{evt.label}</div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci" style="background:#fe9339">SA</div>
+                        <h3>Service Appointment List</h3>
+                    </div>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Appointment</th>
+                                <th>Type</th>
+                                <th>Related Record</th>
+                                <th>Date</th>
+                                <th>Window</th>
+                                <th>Assigned</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={appointments} for:item="appt">
+                                <tr key={appt.Id}>
+                                    <td>{appt.AppointmentNumber}</td>
+                                    <td>{appt.appointmentType}</td>
+                                    <td>{appt.relatedRecord}</td>
+                                    <td>{appt.dateFormatted}</td>
+                                    <td>{appt.windowFormatted}</td>
+                                    <td>{appt.Owner.Name}</td>
+                                    <td><span class="chip cb2">{appt.Status}</span></td>
+                                </tr>
+                            </template>
+                            <template if:true={noAppts}>
+                                <tr><td colspan="7" style="text-align:center;color:#54698d;padding:16px">No appointments scheduled</td></tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="layout-rail">
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci" style="background:#534ab7">AI</div>
+                        <h3>Assistant Panel</h3>
+                    </div>
+                    <div class="qa-list">
+                        <div class="qa-item">Summarize latest customer activity</div>
+                        <div class="qa-item">Draft follow-up email</div>
+                        <div class="qa-item">Create next task</div>
+                        <div class="qa-item">Show overdue items</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci" style="background:#0070d2">SLA</div>
+                        <h3>Activity Health</h3>
+                    </div>
+                    <div style="padding:10px 14px">
+                        <div class="rail-row"><span>Consults</span><span>{consultCount}</span></div>
+                        <div class="rail-row"><span>Site visits</span><span>{siteVisitCount}</span></div>
+                        <div class="rail-row"><span>Installs</span><span>{installCount}</span></div>
+                        <div class="rail-row"><span>Follow-ups</span><span>{followUpCount}</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

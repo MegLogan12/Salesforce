@@ -1,0 +1,39 @@
+<template>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon">👤</div>
+            <span class="card-title">National Contacts</span>
+        </div>
+        <template lwc:if={isLoaded}>
+            <template lwc:if={hasContacts}>
+                <div class="contacts-list">
+                    <template for:each={contacts} for:item="contact">
+                        <div key={contact.id} class="contact-card">
+                            <div class="contact-avatar">{contact.initials}</div>
+                            <div class="contact-info">
+                                <div class="contact-name">{contact.name}</div>
+                                <template lwc:if={contact.title}>
+                                    <div class="contact-title">{contact.title}</div>
+                                </template>
+                                <div class="contact-links">
+                                    <template lwc:if={contact.email}>
+                                        <a href={contact.emailHref} class="contact-link">✉ {contact.email}</a>
+                                    </template>
+                                    <template lwc:if={contact.phone}>
+                                        <a href={contact.phoneHref} class="contact-link">📞 {contact.phone}</a>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+            <template lwc:else>
+                <div class="empty-state">No contacts on file.</div>
+            </template>
+        </template>
+        <template lwc:else>
+            <div class="empty-state">Loading...</div>
+        </template>
+    </div>
+</template>

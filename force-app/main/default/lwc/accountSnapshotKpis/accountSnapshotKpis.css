@@ -1,0 +1,57 @@
+.snap-card {
+    background: #fff;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+.snap-header {
+    padding: 12px 16px;
+    border-bottom: 1px solid #e5e5e5;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.snap-header h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0;
+}
+.kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 16px;
+}
+@media (max-width: 900px) {
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+    .kpi-row { grid-template-columns: 1fr; }
+}
+.kpi {
+    background: #f0f7ed;
+    padding: 16px;
+    border-radius: 6px;
+    text-align: center;
+}
+.kn {
+    font-size: 28px;
+    font-weight: 700;
+    color: #2e844a;
+    line-height: 1;
+}
+.kn-amber { color: #ba7517; }
+.kl {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #6b6b6b;
+    letter-spacing: 0.5px;
+    margin-top: 6px;
+}
+.err {
+    padding: 12px 16px;
+    font-size: 11px;
+    color: #991b1b;
+}

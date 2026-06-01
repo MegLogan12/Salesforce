@@ -1,0 +1,123 @@
+<template>
+    <div class="cv-shell">
+        <!-- Toolbar -->
+        <div class="cv-toolbar">
+            <div class="cv-toolbar-left">
+                <h1 class="cv-title">Communities</h1>
+                <span class="cv-count">{rowCount} records</span>
+            </div>
+            <div class="cv-toolbar-right">
+                <div class="cv-filters">
+                    <button class={filterAllCls}    data-filter="All"      onclick={handleFilter}>All</button>
+                    <button class={filterActiveCls}  data-filter="Active"   onclick={handleFilter}>Active</button>
+                    <button class={filterBuiltOutCls} data-filter="Built Out" onclick={handleFilter}>Built Out</button>
+                    <button class={filterOnHoldCls}  data-filter="On Hold"  onclick={handleFilter}>On Hold</button>
+                    <button class={filterClosedCls}  data-filter="Closed"   onclick={handleFilter}>Closed</button>
+                </div>
+                <div class="cv-search-wrap">
+                    <span class="cv-search-icon">🔍</span>
+                    <input class="cv-search" type="text" placeholder="Search communities..." oninput={handleSearch} />
+                </div>
+                <button class="cv-new-btn" onclick={handleNew}>+ New Community</button>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <template lwc:if={isLoading}>
+            <div class="cv-loading">Loading communities…</div>
+        </template>
+
+        <!-- Error -->
+        <template lwc:elseif={hasError}>
+            <div class="cv-error">{errorMessage}</div>
+        </template>
+
+        <!-- Empty -->
+        <template lwc:elseif={isEmpty}>
+            <div class="cv-empty">No communities found.</div>
+        </template>
+
+        <!-- Table -->
+        <template lwc:else>
+            <div class="cv-tbl-wrap">
+                <table class="cv-tbl">
+                    <thead>
+                        <tr>
+                            <th>Community</th>
+                            <th>Builder Account</th>
+                            <th>Parent Builder</th>
+                            <th>Territory</th>
+                            <th class="num-col"># Lots</th>
+                            <th class="num-col">Active Lots</th>
+                            <th>FM</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={viewRows} for:item="row">
+                            <tr key={row.id} class={row.rowCls}>
+                                <td class="name-cell">
+                                    <a href={row.recordUrl} class="cv-link" onclick={handleNav} data-url={row.recordUrl}>{row.name}</a>
+                                </td>
+                                <td>
+                                    <template lwc:if={row.builderAccountId}>
+                                        <a href={row.builderAccountUrl} class="cv-link-sub" onclick={handleNav} data-url={row.builderAccountUrl}>{row.builderAccountName}</a>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="cv-empty-cell">—</span>
+                                    </template>
+                                </td>
+                                <td>
+                                    <template lwc:if={row.parentBuilderAccountId}>
+                                        <a href={row.parentBuilderAccountUrl} class="cv-link-sub" onclick={handleNav} data-url={row.parentBuilderAccountUrl}>{row.parentBuilderAccountName}</a>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="cv-empty-cell">—</span>
+                                    </template>
+                                </td>
+                                <td><span class="cv-territory">{row.territory}</span></td>
+                                <td class="num-col">{row.numberOfLots}</td>
+                                <td class="num-col">{row.activeLotCount}</td>
+                                <td class="fm-cell">{row.assignedFmName}</td>
+                                <td class="status-cell">
+                                    <template lwc:if={row.isEditing}>
+                                        <div class="status-edit-wrap">
+                                            <select class="status-select"
+                                                    data-id={row.id}
+                                                    onchange={handleStatusChange}
+                                                    onblur={handleStatusBlur}>
+                                                <template for:each={row.statusOptions} for:item="opt">
+                                                    <option key={opt.value} value={opt.value} selected={opt.selected}>{opt.label}</option>
+                                                </template>
+                                            </select>
+                                            <template lwc:if={row.isSaving}>
+                                                <span class="cv-saving">…</span>
+                                            </template>
+                                        </div>
+                                    </template>
+                                    <template lwc:else>
+                                        <button class={row.statusChipCls}
+                                                data-id={row.id}
+                                                onclick={handleStatusClick}
+                                                title="Click to change status">
+                                            {row.communityStatus}
+                                            <span class="edit-pencil">✎</span>
+                                        </button>
+                                    </template>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+
+        <!-- Toast -->
+        <template lwc:if={toast.show}>
+            <div class={toast.cls}>
+                <span class="toast-icon">{toast.icon}</span>
+                <span class="toast-msg">{toast.message}</span>
+            </div>
+        </template>
+    </div>
+</template>

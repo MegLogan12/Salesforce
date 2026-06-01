@@ -1,0 +1,43 @@
+:host {
+    display: block;
+}
+
+.timeline {
+    display: grid;
+    gap: 7px;
+}
+
+.timeline-row {
+    align-items: center;
+    display: grid;
+    gap: 7px;
+    grid-template-columns: 10px minmax(0, 1fr) auto;
+    min-width: 0;
+}
+
+.dot {
+    border-radius: 999px;
+    display: block;
+    height: 9px;
+    width: 9px;
+}
+
+.done .dot {
+    background: #4b8b55;
+}
+
+.future .dot {
+    background: #d5dae4;
+}
+
+.label {
+    color: #365070;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.date {
+    color: #7c8798;
+    font-size: 12px;
+    white-space: nowrap;
+}

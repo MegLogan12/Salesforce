@@ -1,0 +1,21 @@
+:host { display: block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; font-size: 13px; color: #16325c; }
+.card { background: #fff; border: 1px solid #d8dde6; border-radius: 6px; overflow: hidden; margin-bottom: 14px; }
+.card.last { margin-bottom: 0; }
+.card-header { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid #e5e5e5; background: #fafaf9; }
+.card-icon { width: 20px; height: 20px; border-radius: 3px; background: #0a8aa6; color: #fff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.card-title { font-size: 13px; font-weight: 500; color: #16325c; }
+.card-body { padding: 12px 14px; }
+.flag-row { display: flex; flex-wrap: wrap; gap: 16px; }
+.flag-item { display: flex; flex-direction: column; gap: 4px; }
+.fields-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; }
+.field-group { display: flex; flex-direction: column; }
+.field-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.4px; font-weight: 500; color: #54698d; margin-bottom: 2px; }
+.field-value { font-size: 12px; color: #16325c; }
+.long-text { line-height: 1.5; white-space: pre-wrap; }
+.chip { display: inline-flex; font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 500; }
+.caqua { background: #e6f4f7; color: #0a8aa6; }
+.cgr { background: #f4f6f9; color: #54698d; }
+.cb2 { background: #e3f0fb; color: #0c447c; }
+.section-divider { border-top: 1px solid #f0f0f0; margin: 12px 0; }
+.empty-state { padding: 20px; text-align: center; color: #54698d; font-size: 12px; }
+.empty-state.error-state { color: #991b1b; }

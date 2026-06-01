@@ -1,0 +1,62 @@
+<template>
+    <section class="workspace">
+        <section class="panel hero">
+            <div class="hero-copy">
+                <div class="eyebrow">Outdoor Living Console</div>
+                <h1>Warranty Workspace</h1>
+            </div>
+            <div class="hero-actions">
+                <button class="cta" onclick={handleNewWarranty}>New Warranty Record</button>
+                <button class="cta cta-secondary" onclick={handleOpenCases}>Open Cases</button>
+                <button class="cta cta-secondary" onclick={handleRefresh}>Refresh</button>
+            </div>
+        </section>
+        <section class="kpi-row">
+            <div class="kpi-card"><div class="kpi-label">Warranty Records</div><div class="kpi-value">{totalCount}</div></div>
+            <div class="kpi-card"><div class="kpi-label">Open</div><div class="kpi-value">{openCount}</div></div>
+            <div class="kpi-card"><div class="kpi-label">Missing Case</div><div class="kpi-value">{noCaseCount}</div></div>
+            <div class="kpi-card"><div class="kpi-label">Missing Work Order</div><div class="kpi-value">{noWorkOrderCount}</div></div>
+        </section>
+        <section class="panel filters">
+            <div class="field">
+                <label>Search warranty records</label>
+                <input type="search" value={searchTerm} oninput={handleSearch} placeholder="Search warranty records" />
+            </div>
+        </section>
+        <section class="panel" lwc:if={hasRows}>
+            <div class="panel-header">Warranty Operating List</div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Warranty Record</th>
+                        <th>Status</th>
+                        <th>Homeowner</th>
+                        <th>Work Order</th>
+                        <th>Case</th>
+                        <th>Case Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={filteredRows} for:item="row">
+                        <tr key={row.id}>
+                            <td><a href={row.url}>{row.name}</a></td>
+                            <td>{row.status}</td>
+                            <td><template lwc:if={row.homeownerUrl}><a href={row.homeownerUrl}>{row.homeownerName}</a></template><template lwc:else>{row.homeownerName}</template></td>
+                            <td><template lwc:if={row.workOrderUrl}><a href={row.workOrderUrl}>{row.workOrderNumber}</a></template><template lwc:else>{row.workOrderNumber}</template></td>
+                            <td><template lwc:if={row.caseUrl}><a href={row.caseUrl}>{row.caseNumber}</a></template><template lwc:else>{row.caseNumber}</template></td>
+                            <td>{row.caseStatus}</td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </section>
+        <section class="panel" lwc:if={showEmptyState}>
+            <div class="panel-header">Warranty Operating List</div>
+            <div class="empty-state">No warranty records match your search.</div>
+        </section>
+        <section class="panel" lwc:if={hasError}>
+            <div class="panel-header">Warranty Operating List</div>
+            <div class="empty-state">{loadError}</div>
+        </section>
+    </section>
+</template>

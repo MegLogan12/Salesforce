@@ -1,0 +1,81 @@
+<template>
+    <div class="card last">
+        <div class="card-header">
+            <span class="card-icon">&#128203;</span>
+            <span class="card-title">Scope of Work</span>
+        </div>
+        <template lwc:if={isLoaded}>
+            <div class="card-body">
+                <template lwc:if={hasScopeNotes}>
+                    <div class="scope-notes-block">
+                        <div class="field-label">Scope Notes</div>
+                        <div class="scope-notes-text">{scopeNotes}</div>
+                    </div>
+                    <div class="section-divider"></div>
+                </template>
+
+                <div class="section-heading">Sod</div>
+                <div class="fields-grid-3">
+                    <div class="field-group">
+                        <div class="field-label">Sod Type</div>
+                        <div class="field-value">{sodType}</div>
+                    </div>
+                    <div class="field-group">
+                        <div class="field-label">Sod Sqft</div>
+                        <div class="field-value">{sodSqft}</div>
+                    </div>
+                    <div class="field-group">
+                        <div class="field-label">Avg Roll Coverage (sqft)</div>
+                        <div class="field-value">{avgSodRollCoverage}</div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+                <div class="section-heading">Ground Cover</div>
+                <div class="fields-grid">
+                    <div class="field-group">
+                        <div class="field-label">Pine Straw or Mulch</div>
+                        <div class="field-value">{pineStrawOrMulch}</div>
+                    </div>
+                    <div class="field-group">
+                        <div class="field-label">Coverage Per Bale</div>
+                        <div class="field-value">{pineStrawCoverage}</div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+                <div class="section-heading">Plantings</div>
+                <template lwc:if={hasPlantTypes}>
+                    <div class="field-group full-width mb10">
+                        <div class="field-label">Plant Types</div>
+                        <div class="field-value long-text">{plantTypes}</div>
+                    </div>
+                </template>
+                <div class="fields-grid">
+                    <div class="field-group">
+                        <div class="field-label">Shrub Package Details</div>
+                        <div class="field-value">{shrubPackageDetails}</div>
+                    </div>
+                    <div class="field-group">
+                        <div class="field-label">Street Tree Species</div>
+                        <div class="field-value">{streetTreeSpecies}</div>
+                    </div>
+                    <div class="field-group">
+                        <div class="field-label">Street Trees Count</div>
+                        <div class="field-value">{streetTreesCount}</div>
+                    </div>
+                    <div class="field-group">
+                        <div class="field-label">Lot Trees Count</div>
+                        <div class="field-value">{lotTreesCount}</div>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <template lwc:elseif={hasError}>
+            <div class="empty-state error-state">{error}</div>
+        </template>
+        <template lwc:else>
+            <div class="empty-state">Loading scope data...</div>
+        </template>
+    </div>
+</template>

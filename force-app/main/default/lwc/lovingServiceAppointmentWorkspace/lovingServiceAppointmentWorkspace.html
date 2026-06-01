@@ -1,0 +1,242 @@
+<template>
+    <div class="sa-shell">
+        <template if:true={error}>
+            <div class="alert red">
+                <div class="alert-icon">!</div>
+                <div>{errorMessage}</div>
+            </div>
+        </template>
+
+        <template if:true={hasData}>
+            <div class="sf-top">
+                <div class="sf-waffle" aria-hidden="true">
+                    <span></span><span></span><span></span>
+                    <span></span><span></span><span></span>
+                    <span></span><span></span><span></span>
+                </div>
+                <div class="sf-app">
+                    <div class="sf-app-icon">HB</div>
+                    <span>{builderAppLabel}</span>
+                </div>
+                <div class="sf-search">{builderSearchPlaceholder}</div>
+                <div class="sf-icons" aria-hidden="true">
+                    <div class="sf-ico">⚙</div>
+                    <div class="sf-ico">?</div>
+                    <div class="sf-ico">🔔</div>
+                    <div class="sf-avatar">{userInitials}</div>
+                </div>
+            </div>
+
+            <div class="sf-nav">
+                <template for:each={builderNavTabs} for:item="tab">
+                    <button
+                        type="button"
+                        key={tab.id}
+                        class={tab.className}
+                        data-id={tab.id}
+                        onclick={handleBuilderTabClick}
+                        disabled={tab.disabled}>
+                        {tab.label}
+                    </button>
+                </template>
+            </div>
+
+            <div class="record-header">
+                <div class="crumbs">
+                    <template for:each={crumbItems} for:item="crumb" for:index="index">
+                        <span key={crumb.value}>{crumb.value}</span>
+                        <span key={crumb.separatorKey} if:false={crumb.isLast}>/</span>
+                    </template>
+                </div>
+
+                <div class="header-body">
+                    <div>
+                        <div class="record-kicker">Home Builder Scheduling</div>
+                        <h1>{header.appointmentNumber}</h1>
+                        <div class="header-meta">
+                            <template for:each={headerMetaItems} for:item="item">
+                                <span key={item.key} class={item.className}>{item.value}</span>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="header-actions">
+                        <button class="button" onclick={handleEditAppointment}>Edit</button>
+                        <button class="button" onclick={handleEmail} disabled={disableEmail}>Email</button>
+                        <button class="button" onclick={handleCall} disabled={disableCall}>Call</button>
+                        <button class="button" onclick={handleLogCall}>Log Call</button>
+                        <button class="button" onclick={handleNewTask}>New Task</button>
+                        <button class="button" onclick={handleNewNote}>Add Note</button>
+                        <button class="button" onclick={handleOpenFiles}>Files</button>
+                        <button class="button" onclick={openAccount} disabled={disableOpenAccount}>Open Account</button>
+                        <button class="button" onclick={openContact} disabled={disableOpenContact}>Open Contact</button>
+                        <button class="button" onclick={handleNewEvent}>Schedule Event</button>
+                        <button class="button" onclick={openWorkOrder} disabled={disableOpenWorkOrder}>Open Work Order</button>
+                        <button class="button" onclick={openCalendarEvent}>Create Calendar Event</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="kpi-grid">
+                <template for:each={visionKpis} for:item="kpi">
+                    <div key={kpi.label} class="kpi">
+                        <div class="label">{kpi.label}</div>
+                        <div class="value">{kpi.value}</div>
+                    </div>
+                </template>
+            </div>
+
+            <div class="surface">
+                <div class="tab-strip">
+                    <template for:each={tabs} for:item="tab">
+                        <button key={tab.id} class={tab.className} data-id={tab.id} onclick={handleTab}>{tab.label}</button>
+                    </template>
+                </div>
+
+                <div class="tab-panel active">
+                    <template if:true={showOverview}>
+                        <div class="grid-2">
+                            <div class="section">
+                                <div class="section-title">
+                                    <div><h2>Overview</h2></div>
+                                </div>
+                                <div class="field-grid">
+                                    <template for:each={overviewRows} for:item="row">
+                                        <div key={row.label} class="field">
+                                            <label>{row.label}</label>
+                                            <div>{row.value}</div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div class="section">
+                                <div class="section-title">
+                                    <div><h3>Execution Chain</h3></div>
+                                </div>
+                                <div class="field-grid single">
+                                    <template for:each={typeRows} for:item="row">
+                                        <div key={row.label} class="field">
+                                            <label>{row.label}</label>
+                                            <div>{row.value}</div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template if:true={showCrew}>
+                        <div class="grid-2">
+                            <div class="section">
+                                <div class="section-title">
+                                    <div><h2>Crew + Route</h2></div>
+                                </div>
+                                <div class="timeline">
+                                    <template for:each={routeTimeline} for:item="row">
+                                        <div key={row.label} class="timeline-row">
+                                            <div class={row.dotClass}>{row.shortLabel}</div>
+                                            <div>
+                                                <div class="timeline-title">{row.label}</div>
+                                            </div>
+                                            <div class="timeline-time">{row.value}</div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div class="section">
+                                <div class="section-title">
+                                    <div><h3>Route Detail</h3></div>
+                                </div>
+                                <div class="field-grid single">
+                                    <template for:each={executionRows} for:item="row">
+                                        <div key={row.label} class="field">
+                                            <label>{row.label}</label>
+                                            <div>{row.value}</div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template if:true={showBuilder}>
+                        <div class="grid-2">
+                            <div class="section">
+                                <div class="section-title">
+                                    <div><h2>Parent Work Order Context</h2></div>
+                                </div>
+                                <div class="field-grid">
+                                    <template for:each={builderRows} for:item="row">
+                                        <div key={row.label} class="field">
+                                            <label>{row.label}</label>
+                                            <div>{row.value}</div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div class="section">
+                                <div class="section-title">
+                                    <div><h3>Recent Activity</h3></div>
+                                </div>
+                                <div class="activity-list">
+                                    <template for:each={activityRows} for:item="row">
+                                        <div key={row.label} class="activity-row">
+                                            <div class="dot blue">•</div>
+                                            <div>
+                                                <div class="activity-title">{row.label}</div>
+                                                <div class="activity-note">{row.detail}</div>
+                                            </div>
+                                            <div class="activity-time">{row.whenLabel}</div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template if:true={showProof}>
+                        <div class="grid-2">
+                            <div class="section">
+                                <div class="section-title">
+                                    <div><h2>Proof + Closeout</h2></div>
+                                </div>
+                                <div class="field-grid">
+                                    <template for:each={proofRows} for:item="row">
+                                        <div key={row.label} class="field">
+                                            <label>{row.label}</label>
+                                            <div>{row.value}</div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template if:true={showActivity}>
+                        <div class="section">
+                            <div class="section-title">
+                                <div><h2>Activity</h2></div>
+                            </div>
+                            <div class="activity-list">
+                                <template for:each={activityRows} for:item="row">
+                                    <div key={row.label} class="activity-row">
+                                        <div class="dot blue">•</div>
+                                        <div>
+                                            <div class="activity-title">{row.label}</div>
+                                            <div class="activity-note">{row.detail}</div>
+                                        </div>
+                                        <div class="activity-time">{row.whenLabel}</div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>

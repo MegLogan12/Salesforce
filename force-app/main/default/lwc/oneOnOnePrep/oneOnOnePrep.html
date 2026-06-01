@@ -1,0 +1,57 @@
+<template>
+    <lightning-card title="1:1 Prep View" icon-name="standard:contact_list">
+        <template if:true={view}>
+            <div class="slds-p-horizontal_medium">
+                <div class="slds-text-heading_small slds-m-bottom_x-small">
+                    {view.managerName} &harr; {view.directReportName}
+                </div>
+
+                <!-- Suggested Topics -->
+                <div class="slds-box slds-m-top_small">
+                    <h3 class="slds-text-heading_small">Topics Suggested by the System</h3>
+                    <ul class="slds-list_dotted slds-m-top_x-small">
+                        <template for:each={view.suggestedTopics} for:item="t">
+                            <li key={t}>{t}</li>
+                        </template>
+                    </ul>
+                </div>
+
+                <!-- Open Action Items -->
+                <div class="slds-box slds-m-top_small">
+                    <h3 class="slds-text-heading_small">Action Items From Previous 1:1s</h3>
+                    <template if:false={view.openActionItems.length}>
+                        <p class="slds-text-color_weak slds-m-top_x-small">No open action items.</p>
+                    </template>
+                    <template for:each={view.openActionItems} for:item="ai">
+                        <div key={ai.Id} class="slds-grid slds-grid_align-spread slds-m-top_x-small">
+                            <div>
+                                <strong>{ai.Description__c}</strong>
+                                <div class="slds-text-body_small slds-text-color_weak">
+                                    {ai.Owner_User__r.Name} &middot; due {ai.Due_Date__c}
+                                </div>
+                            </div>
+                            <lightning-button label="Mark Done" data-id={ai.Id} onclick={markDone} variant="success"></lightning-button>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Free Form Notes -->
+                <div class="slds-box slds-m-top_small">
+                    <h3 class="slds-text-heading_small">Notes</h3>
+                    <lightning-textarea label="Topics discussed during this meeting"
+                        value={view.existingNotes} onchange={handleNotes}>
+                    </lightning-textarea>
+                </div>
+
+                <!-- Add Action Item -->
+                <div class="slds-box slds-m-top_small">
+                    <h3 class="slds-text-heading_small">Add Action Item</h3>
+                    <lightning-input label="Description" value={newDescription} onchange={handleDescription}></lightning-input>
+                    <div class="slds-m-top_x-small slds-text-align_right">
+                        <lightning-button label="Add" variant="brand" onclick={addActionItem}></lightning-button>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </lightning-card>
+</template>

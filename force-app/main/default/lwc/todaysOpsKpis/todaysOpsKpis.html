@@ -1,0 +1,40 @@
+<template>
+    <lightning-card title="Today's Operations Pulse" icon-name="standard:dashboard">
+        <template if:true={kpis}>
+            <div class="kpi-row">
+                <div class="kpi-tile kpi-info">
+                    <div class="kpi-value">{kpis.activeWorkOrders}</div>
+                    <div class="kpi-label">ACTIVE WOs</div>
+                </div>
+                <div class="kpi-tile kpi-info">
+                    <div class="kpi-value">{kpis.scheduledToday}</div>
+                    <div class="kpi-label">SCHEDULED TODAY</div>
+                </div>
+                <div class="kpi-tile kpi-good">
+                    <div class="kpi-value">{kpis.inProgressToday}</div>
+                    <div class="kpi-label">IN PROGRESS</div>
+                </div>
+                <div class={pendingApprovalClass}>
+                    <div class="kpi-value">{kpis.pendingApproval}</div>
+                    <div class="kpi-label">PENDING APPROVAL</div>
+                </div>
+                <div class="kpi-tile">
+                    <div class="kpi-value">{kpis.pendingCloseout}</div>
+                    <div class="kpi-label">PENDING CLOSEOUT</div>
+                </div>
+                <div class={hireRequestsClass}>
+                    <div class="kpi-value">{kpis.openHireRequests}</div>
+                    <div class="kpi-label">OPEN HIRE REQUESTS</div>
+                </div>
+                <div class="kpi-tile">
+                    <div class="kpi-value">{kpis.thisWeekOneOnOnes}</div>
+                    <div class="kpi-label">1:1s THIS WEEK</div>
+                </div>
+                <div class={actionItemsClass}>
+                    <div class="kpi-value">{kpis.openActionItems}</div>
+                    <div class="kpi-label">OPEN ACTION ITEMS</div>
+                </div>
+            </div>
+        </template>
+    </lightning-card>
+</template>

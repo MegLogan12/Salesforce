@@ -1,0 +1,33 @@
+<template>
+    <template if:true={header}>
+        <div class="kpi-row">
+            <div class={statusClass}>
+                <div class="kpi-value">{header.status}</div>
+                <div class="kpi-label">STATUS</div>
+            </div>
+            <div class="kpi-tile kpi-info">
+                <div class="kpi-value">{header.pipelineBucket}</div>
+                <div class="kpi-label">PIPELINE</div>
+            </div>
+            <div class={daysClass}>
+                <div class="kpi-value">{header.daysUntilInstall}</div>
+                <div class="kpi-label">DAYS UNTIL INSTALL</div>
+            </div>
+            <div class={fjClass}>
+                <div class="kpi-value">{fjLabel}</div>
+                <div class="kpi-label">FINISH JOB</div>
+            </div>
+            <div class="kpi-tile kpi-info">
+                <div class="kpi-value">{header.builderPONumber}</div>
+                <div class="kpi-label">BUILDER PO</div>
+            </div>
+            <div class="kpi-tile kpi-info">
+                <div class="kpi-value">{header.phase}</div>
+                <div class="kpi-label">PHASE</div>
+            </div>
+        </div>
+    </template>
+    <template if:true={error}>
+        <div class="kpi-error">{error}</div>
+    </template>
+</template>

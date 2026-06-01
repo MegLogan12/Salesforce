@@ -1,0 +1,58 @@
+<template>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon">📍</div>
+            <span class="card-title">HQ &amp; Contact Information</span>
+        </div>
+        <div class="card-body">
+            <div class="addr-grid">
+                <div class="addr-section">
+                    <div class="field-label">Billing Address</div>
+                    <div class="field-value addr-block">
+                        <template lwc:if={hasBillingAddress}>
+                            <div>{billingStreet}</div>
+                            <div>{billingCityStateZip}</div>
+                            <template lwc:if={billingCountry}>
+                                <div>{billingCountry}</div>
+                            </template>
+                        </template>
+                        <template lwc:else>
+                            <span class="empty-inline">—</span>
+                        </template>
+                    </div>
+                </div>
+                <div class="addr-section">
+                    <div class="field-label">Corporate Office Address</div>
+                    <div class="field-value addr-block">
+                        <template lwc:if={corporateAddress}>
+                            {corporateAddress}
+                        </template>
+                        <template lwc:else>
+                            <span class="empty-inline">—</span>
+                        </template>
+                    </div>
+                </div>
+            </div>
+            <div class="contact-row">
+                <div class="contact-item">
+                    <div class="field-label">Phone</div>
+                    <div class="field-value">
+                        <template lwc:if={phone}>
+                            <a href={phoneHref} class="contact-link">{phone}</a>
+                        </template>
+                        <template lwc:else>—</template>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="field-label">Website</div>
+                    <div class="field-value">
+                        <template lwc:if={website}>
+                            <a href={website} target="_blank" rel="noopener noreferrer" class="contact-link">{website}</a>
+                        </template>
+                        <template lwc:else>—</template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

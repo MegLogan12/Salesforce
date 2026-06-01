@@ -1,0 +1,167 @@
+/* lovingForecastingConsole */
+
+.fc-shell {
+    font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f4f6f9;
+    min-height: 100vh;
+    color: #16325c;
+}
+
+/* ── Header ──────────────────────────────────── */
+.fc-header {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 20px 12px;
+    background: linear-gradient(135deg, #16325c 0%, #1a5276 100%);
+    color: #fff; flex-wrap: wrap;
+}
+.fc-header-icon { font-size: 28px; flex-shrink: 0; }
+.fc-header-text { flex: 1; min-width: 180px; }
+.fc-breadcrumb  { font-size: 11px; opacity: 0.75; text-transform: uppercase; letter-spacing: .05em; }
+.fc-title       { font-size: 20px; font-weight: 700; line-height: 1.2; }
+.fc-sub         { font-size: 11px; opacity: 0.8; margin-top: 2px; }
+.fc-util-badge  {
+    background: #f8ca00; color: #16325c;
+    font-size: 13px; font-weight: 700;
+    border-radius: 12px; padding: 5px 14px; flex-shrink: 0;
+}
+
+/* ── Tab Bar ─────────────────────────────────── */
+.fc-tabs {
+    display: flex; overflow-x: auto;
+    background: #fff; border-bottom: 2px solid #e0e5ee;
+    padding: 0 12px; scrollbar-width: thin;
+}
+.tab-btn {
+    flex-shrink: 0; padding: 10px 16px;
+    font-size: 12px; font-weight: 500; color: #54698d;
+    background: none; border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer; white-space: nowrap;
+    transition: color .15s, border-color .15s;
+}
+.tab-btn:hover  { color: #0070d2; background: #f4f6f9; }
+.tab-btn.active { color: #0070d2; border-bottom-color: #0070d2; font-weight: 700; }
+
+/* ── Body ────────────────────────────────────── */
+.fc-body { padding: 16px 20px 24px; max-width: 1280px; }
+
+/* ── Tab header ──────────────────────────────── */
+.fc-tab-header {
+    display: flex; align-items: baseline; gap: 12px;
+    margin-bottom: 14px; flex-wrap: wrap;
+}
+.fc-tab-header h2 { font-size: 16px; font-weight: 700; color: #16325c; margin: 0; }
+.fc-tab-sub       { font-size: 12px; color: #54698d; flex: 1; min-width: 200px; }
+
+/* ── Error / Empty ───────────────────────────── */
+.fc-error { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; }
+.fc-empty { text-align: center; padding: 56px 24px; color: #54698d; }
+.fc-empty-icon  { font-size: 44px; margin-bottom: 12px; }
+.fc-empty-title { font-size: 16px; font-weight: 700; color: #16325c; margin-bottom: 6px; }
+.fc-empty-sub   { font-size: 13px; max-width: 480px; margin: 0 auto; line-height: 1.6; }
+
+/* ── Summary row ─────────────────────────────── */
+.fc-summary-row {
+    display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;
+}
+.fc-summary-tile {
+    background: #fff; border-radius: 8px; padding: 14px 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08); min-width: 130px;
+}
+.fc-s-num { font-size: 26px; font-weight: 700; color: #16325c; }
+.fc-s-lbl { font-size: 11px; color: #54698d; text-transform: uppercase; letter-spacing: .04em; margin-top: 2px; }
+
+/* ── Capacity bars ───────────────────────────── */
+.fc-bars-card {
+    background: #fff; border-radius: 10px; padding: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+}
+.fc-bar-row { margin-bottom: 16px; }
+.fc-bar-row:last-child { margin-bottom: 0; }
+.fc-bar-label {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;
+}
+.fc-bar-name { font-size: 13px; font-weight: 600; color: #16325c; flex: 1; }
+.fc-bar-pct  { font-size: 12px; color: #54698d; }
+.fc-bar-track {
+    height: 10px; background: #e0e5ee; border-radius: 5px; overflow: hidden;
+}
+.fc-bar-fill {
+    height: 100%; border-radius: 5px; transition: width .4s ease;
+}
+.fc-bar-green { background: #2e7d32; }
+.fc-bar-amber { background: #e65100; }
+.fc-bar-red   { background: #c62828; }
+.fc-bar-gray  { background: #54698d; }
+
+/* ── Chips ───────────────────────────────────── */
+.chip         { font-size: 11px; border-radius: 10px; padding: 2px 9px; font-weight: 600; display: inline-block; }
+.chip-green   { background: #e8f5e9; color: #2e7d32; }
+.chip-blue    { background: #e3f2fd; color: #1565c0; }
+.chip-amber   { background: #fff8e1; color: #e65100; }
+.chip-red     { background: #ffebee; color: #c62828; }
+.chip-gray    { background: #f4f6f9; color: #54698d; }
+
+/* ── Table ───────────────────────────────────── */
+.fc-table {
+    width: 100%; border-collapse: collapse;
+    background: #fff; border-radius: 8px;
+    overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.08); font-size: 13px;
+}
+.fc-table th {
+    background: #f4f6f9; padding: 10px 12px;
+    text-align: left; font-size: 11px; font-weight: 600;
+    color: #54698d; text-transform: uppercase; letter-spacing: .04em;
+    border-bottom: 1px solid #e0e5ee;
+}
+.fc-table td {
+    padding: 10px 12px; border-bottom: 1px solid #f4f6f9;
+    vertical-align: middle; color: #16325c;
+}
+.fc-table tr:last-child td { border-bottom: none; }
+.fc-table tr:hover td      { background: #f8f9fc; }
+.text-right { text-align: right; }
+.fw-600     { font-weight: 600; }
+.fc-link    { color: #0070d2; text-decoration: none; }
+.fc-link:hover { text-decoration: underline; }
+
+/* ── ROI Calculator ──────────────────────────── */
+.fc-calc-card {
+    background: #fff; border-radius: 10px; padding: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08); max-width: 700px;
+}
+.fc-calc-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px; margin-bottom: 20px;
+}
+.fc-field label {
+    display: block; font-size: 11px; font-weight: 600;
+    color: #54698d; text-transform: uppercase; letter-spacing: .04em;
+    margin-bottom: 4px;
+}
+.fc-field input {
+    width: 100%; box-sizing: border-box;
+    padding: 8px 10px; border: 1px solid #d8dde6;
+    border-radius: 4px; font-size: 13px; color: #16325c;
+    outline: none; transition: border-color .15s;
+}
+.fc-field input:focus { border-color: #0070d2; }
+.fc-calc-btn {
+    background: #0070d2; color: #fff;
+    border: none; border-radius: 4px;
+    padding: 10px 24px; font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: background .15s;
+}
+.fc-calc-btn:hover { background: #005fb2; }
+
+.fc-roi-result {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-top: 20px;
+    padding-top: 20px; border-top: 1px solid #e0e5ee;
+}
+.fc-roi-tile {
+    flex: 1; min-width: 110px; background: #f4f6f9;
+    border-radius: 8px; padding: 14px; text-align: center;
+}
+.fc-roi-tile-highlight { background: #e8f5e9; }
+.fc-roi-num { font-size: 22px; font-weight: 700; color: #16325c; line-height: 1.1; }
+.fc-roi-lbl { font-size: 11px; color: #54698d; text-transform: uppercase; letter-spacing: .04em; margin-top: 4px; }

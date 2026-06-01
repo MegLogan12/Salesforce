@@ -1,0 +1,88 @@
+<template>
+    <template lwc:if={isLoaded}>
+        <div class="card">
+            <div class="card-header">
+                <div class="ch-icon">📍</div>
+                <div class="ch-label">Addresses &amp; Contact</div>
+            </div>
+
+            <div class="addr-grid">
+                <!-- Division Office -->
+                <div class="addr-block">
+                    <div class="addr-section-label">Division Office</div>
+                    <div class="field-item">
+                        <div class="field-label">Office Address</div>
+                        <div class="field-value addr-text">{divOfficeAddr}</div>
+                    </div>
+                    <div class="field-item">
+                        <div class="field-label">Physical Address</div>
+                        <div class="field-value">
+                            <template for:each={physAddressLines} for:item="line">
+                                <div key={line.id}>{line.text}</div>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="field-item">
+                        <div class="field-label">Phone</div>
+                        <div class="field-value">
+                            <template lwc:if={divPhoneHref}>
+                                <a href={divPhoneHref} class="field-link">{divPhone}</a>
+                            </template>
+                            <template lwc:else>
+                                <span>{divPhone}</span>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="field-item">
+                        <div class="field-label">Division Email</div>
+                        <div class="field-value">
+                            <template lwc:if={divEmailHref}>
+                                <a href={divEmailHref} class="field-link">{divEmail}</a>
+                            </template>
+                            <template lwc:else>
+                                <span>{divEmail}</span>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Corporate / Mailing -->
+                <div class="addr-block">
+                    <div class="addr-section-label">Corporate Office</div>
+                    <div class="field-item">
+                        <div class="field-label">Corporate Address</div>
+                        <div class="field-value addr-text">{corpAddr}</div>
+                    </div>
+                    <div class="field-item">
+                        <div class="field-label">Mailing Address</div>
+                        <div class="field-value">
+                            <template lwc:if={mailSameLabel}>
+                                <span class="chip cgr">{mailSameLabel}</span>
+                            </template>
+                            <template lwc:else>
+                                <template for:each={mailAddressLines} for:item="line">
+                                    <div key={line.id}>{line.text}</div>
+                                </template>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="field-item">
+                        <div class="field-label">AP Invoicing Email</div>
+                        <div class="field-value">
+                            <template lwc:if={apEmailHref}>
+                                <a href={apEmailHref} class="field-link">{apEmail}</a>
+                            </template>
+                            <template lwc:else>
+                                <span>{apEmail}</span>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template lwc:if={hasError}>
+        <div class="card error-state">Unable to load address data.</div>
+    </template>
+</template>

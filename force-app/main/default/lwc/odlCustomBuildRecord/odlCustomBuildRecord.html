@@ -1,0 +1,186 @@
+<template>
+    <template if:true={isLoaded}>
+        <template if:true={hasOpp}>
+        <div class="sf-body">
+            <!-- Path -->
+            <div class="card">
+                <div class="ch">
+                    <div class="ci" style="background:#fe9339">PATH</div>
+                    <h3>Opportunity Path</h3>
+                    <span class="chip cp">Custom Build</span>
+                </div>
+                <div class="path">
+                    <template for:each={pathSteps} for:item="step">
+                        <div key={step.label} class={step.cssClass}>{step.label}</div>
+                    </template>
+                </div>
+            </div>
+
+            <div class="layout">
+                <div class="layout-main">
+                    <!-- Snapshot -->
+                    <div class="card purple">
+                        <div class="ch">
+                            <div class="ci" style="background:#534ab7">SUM</div>
+                            <h3>Opportunity Snapshot</h3>
+                        </div>
+                        <div class="fields-grid">
+                            <div><div class="field-head"><span class="field-label">Opportunity Name</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Opportunity Name" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value">{opp.Name}</div></div>
+                            <div><div class="field-head"><span class="field-label">Account</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Account" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value nl">{opp.Account.Name}</div></div>
+                            <div><div class="field-label">Record Type</div><div class="field-value"><span class="chip cp">Custom Build</span></div></div>
+                            <div><div class="field-label">Stage</div><div class="field-value">{opp.StageName}</div></div>
+                            <div><div class="field-head"><span class="field-label">Estimated Amount</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Estimated Amount" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value"><strong>{amountFormatted}</strong></div></div>
+                            <div><div class="field-head"><span class="field-label">Close Date</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Close Date" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value">{closeDateFormatted}</div></div>
+                        </div>
+                    </div>
+
+                    <!-- Discovery Summary -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#534ab7">DISC</div>
+                            <h3>Discovery Summary</h3>
+                        </div>
+                        <div class="fields-grid">
+                            <div><div class="field-head"><span class="field-label">Project Vision</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Project Vision" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value">{opp.Project_Vision__c}</div></div>
+                            <div><div class="field-head"><span class="field-label">Budget Comfort</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Budget Comfort" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value">{opp.Budget_Comfort__c}</div></div>
+                            <div><div class="field-head"><span class="field-label">Decision Makers</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Decision Makers" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value">{opp.Decision_Makers__c}</div></div>
+                            <div><div class="field-head"><span class="field-label">Timeline</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Timeline" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value">{opp.Timeline__c}</div></div>
+                        </div>
+                    </div>
+
+                    <!-- Site Visit and Scope -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#0070d2">SV</div>
+                            <h3>Site Visit and Scope</h3>
+                        </div>
+                        <table class="tbl">
+                            <thead><tr><th>Item</th><th>Status</th><th>Owner</th><th>Date</th></tr></thead>
+                            <tbody>
+                                <template for:each={scopeRows} for:item="row">
+                                    <tr key={row.id}>
+                                        <td>{row.item}</td>
+                                        <td><span class={row.statusChipClass}>{row.status}</span></td>
+                                        <td>{row.owner}</td>
+                                        <td>{row.dateFormatted}</td>
+                                    </tr>
+                                </template>
+                                <template if:true={noScopeRows}>
+                                    <tr><td colspan="4" style="text-align:center;color:#54698d;padding:12px">No site visit or scope items recorded yet</td></tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Activity and Next Follow-Up -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#534ab7">ACT</div>
+                            <h3>Activity and Next Follow-Up</h3>
+                            <lightning-button label="New Task" onclick={createTask} style="margin-left:auto"></lightning-button>
+                            <lightning-button label="Log Call" onclick={logCall} style="margin-left:8px"></lightning-button>
+                        </div>
+                        <table class="tbl">
+                            <thead><tr><th>Last Activity</th><th>Date</th><th>Voicemail</th><th>Next Task</th><th>Due</th><th>Owner</th></tr></thead>
+                            <tbody>
+                                <template if:false={noTasks}>
+                                    <tr>
+                                        <td>{lastActivityLabel}</td>
+                                        <td>{lastTouchFormatted}</td>
+                                        <td>
+                                            <template if:true={opp.Voicemail_Left__c}><span class="chip ca">Yes</span></template>
+                                            <template if:false={opp.Voicemail_Left__c}><span class="chip cgr">No</span></template>
+                                        </td>
+                                        <td>{nextTaskLabel}</td>
+                                        <td>{nextFollowUpFormatted}</td>
+                                        <td>{opp.Owner.Name}</td>
+                                    </tr>
+                                </template>
+                                <template if:true={noTasks}>
+                                    <tr><td colspan="6" style="text-align:center;color:#54698d;padding:12px">No activity yet</td></tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Estimate + Property -->
+                    <div class="g2">
+                        <div class="card">
+                            <div class="ch">
+                                <div class="ci" style="background:#04844b">EST</div>
+                                <h3>Estimate</h3>
+                            </div>
+                            <div class="fields-grid">
+                                <div><div class="field-head"><span class="field-label">Estimate Status</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Estimate Status" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value">{opp.Estimate_Status__c}</div></div>
+                                <div><div class="field-head"><span class="field-label">Projected Cost</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Projected Cost" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value">{projectedCostFormatted}</div></div>
+                                <div><div class="field-head"><span class="field-label">Projected Price</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Projected Price" variant="bare" size="x-small" onclick={handleEditOpp}></lightning-button-icon></div><div class="field-value">{amountFormatted}</div></div>
+                                <div><div class="field-label">Estimator</div><div class="field-value">—</div></div>
+                            </div>
+                        </div>
+                        <template if:true={hasProperty}>
+                            <div class="card">
+                                <div class="ch">
+                                    <div class="ci" style="background:#0070d2">PROP</div>
+                                    <h3>Related Property</h3>
+                                    <lightning-button label="Edit Property" variant="neutral" onclick={handleEditProperty} style="margin-left:auto"></lightning-button>
+                                </div>
+                                <div class="fields-grid">
+                                    <div><div class="field-head"><span class="field-label">Property</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Property Name" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon></div><div class="field-value">{opp.Homeowner_Property__r.Name}</div></div>
+                                    <div><div class="field-head"><span class="field-label">Access Type</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Access Type" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon></div><div class="field-value">{opp.Homeowner_Property__r.Access_Type__c}</div></div>
+                                    <div><div class="field-head"><span class="field-label">Drainage Risk</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Drainage Risk" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon></div><div class="field-value"><span class={drainageChipClass}>{opp.Homeowner_Property__r.Drainage_Risk__c}</span></div></div>
+                                    <div><div class="field-head"><span class="field-label">Utility Review</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Utility Review" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon></div><div class="field-value"><span class={utilityChipClass}>{opp.Homeowner_Property__r.Utility_Review_Status__c}</span></div></div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Rail -->
+                <div class="layout-rail">
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#534ab7">NEXT</div>
+                            <h3>Next Action</h3>
+                        </div>
+                        <div class="qa-list">
+                            <template for:each={nextActions} for:item="action">
+                                <div key={action} class="qa-item">{action}</div>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#534ab7">AI</div>
+                            <h3>Assistant Panel</h3>
+                        </div>
+                        <div class="qa-list">
+                            <div class="qa-item" onclick={viewActivity}>Summarize latest customer activity</div>
+                            <div class="qa-item" onclick={draftEmail}>Draft follow-up email</div>
+                            <div class="qa-item" onclick={createTask}>Create next task</div>
+                            <div class="qa-item" onclick={viewTasks}>Show overdue items</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#0070d2">SLA</div>
+                            <h3>Activity Health</h3>
+                        </div>
+                        <div style="padding:10px 14px">
+                            <div class="rail-row"><span>Last touch</span><span>{lastTouchFormatted}</span></div>
+                            <div class="rail-row"><span>Voicemail</span><span class={vmChipClass}>{voicemailLabel}</span></div>
+                            <div class="rail-row"><span>Next follow-up</span><span class="chip cb2">{nextFollowUpFormatted}</span></div>
+                            <div class="rail-row"><span>Open tasks</span><span>{tasks.length}</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </template>
+        <template if:false={hasOpp}>
+            <div style="padding:20px;text-align:center;color:#54698d">{loadErrorLabel}</div>
+        </template>
+    </template>
+    <template if:false={isLoaded}>
+        <div style="padding:20px;text-align:center;color:#54698d">Loading...</div>
+    </template>
+</template>

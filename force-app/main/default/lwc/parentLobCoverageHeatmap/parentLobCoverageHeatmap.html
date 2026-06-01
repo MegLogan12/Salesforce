@@ -1,0 +1,27 @@
+<template>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon">🔷</div>
+            <span class="card-title">Line-of-Business Coverage</span>
+        </div>
+        <div class="card-body">
+            <template lwc:if={isLoaded}>
+                <template lwc:if={hasLobs}>
+                    <div class="lob-chips">
+                        <template for:each={lobCoverage} for:item="lob">
+                            <span key={lob.id} class="chip cb2 lob-chip">
+                                {lob.lob} <span class="lob-count">({lob.count})</span>
+                            </span>
+                        </template>
+                    </div>
+                </template>
+                <template lwc:else>
+                    <div class="empty-state">No line-of-business data available.</div>
+                </template>
+            </template>
+            <template lwc:else>
+                <div class="empty-state">Loading...</div>
+            </template>
+        </div>
+    </div>
+</template>

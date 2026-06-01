@@ -1,0 +1,57 @@
+<template>
+    <div class="ql-card">
+        <div class="ch">
+            <h3>Quick Links</h3>
+            <button type="button" class="action-button" onclick={handleToggleEdit}>{editButtonLabel}</button>
+        </div>
+        <template lwc:if={isEditing}>
+            <div class="edit-panel">
+                <lightning-record-edit-form
+                    object-api-name="Account"
+                    record-id={recordId}
+                    onsuccess={handleSuccess}
+                    onerror={handleError}
+                >
+                    <div class="form-grid">
+                        <lightning-input-field field-name="BMG_Pricing_Link__c"></lightning-input-field>
+                        <lightning-input-field field-name="Contract_Link__c"></lightning-input-field>
+                        <lightning-input-field field-name="Website"></lightning-input-field>
+                        <lightning-input-field field-name="Drive_Folder_Link__c"></lightning-input-field>
+                        <lightning-input-field field-name="Lot_Layout_Link__c"></lightning-input-field>
+                        <lightning-input-field field-name="Insurance_COI_Link__c"></lightning-input-field>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="action-button action-button_brand">Save Changes</button>
+                        <button type="button" class="action-button" onclick={handleCancel}>Cancel</button>
+                    </div>
+                </lightning-record-edit-form>
+            </div>
+        </template>
+        <template lwc:else>
+            <div class="ql-grid">
+                <template for:each={links} for:item="l">
+                    <template lwc:if={l.hasUrl}>
+                        <a key={l.key} href={l.url} target="_blank" rel="noopener" class="ql">
+                            <div class="qldot" style={l.dotStyle}></div>
+                            <div class="ql-t">
+                                <p>{l.label}</p>
+                                <span>{l.sub}</span>
+                            </div>
+                            <div class={l.arrowCls}>{l.arrow}</div>
+                        </a>
+                    </template>
+                    <template lwc:else>
+                        <div key={l.key} class="ql ql-empty">
+                            <div class="qldot" style={l.dotStyle}></div>
+                            <div class="ql-t">
+                                <p>{l.label}</p>
+                                <span>{l.sub}</span>
+                            </div>
+                            <div class={l.arrowCls}>{l.arrow}</div>
+                        </div>
+                    </template>
+                </template>
+            </div>
+        </template>
+    </div>
+</template>

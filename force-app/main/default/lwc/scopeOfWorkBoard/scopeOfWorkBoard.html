@@ -1,0 +1,50 @@
+<template>
+    <div class="sow-wrap">
+        <div class="sow-head-card">
+            <div class="ch">
+                <h3>Scope of Work</h3>
+                <span class="sub-note">{activeLobs} active LOBs / {totalLobs} total</span>
+            </div>
+            <div class="kpi-row">
+                <div class="kpi"><div class="kn" style="color:#2e844a">{activeLobs}</div><div class="kl">Active LOBs</div></div>
+                <div class="kpi"><div class="kn" style="color:#0070d2">{communitiesCount}</div><div class="kl">Communities in scope</div></div>
+                <div class="kpi"><div class="kn" style="color:#534ab7">{contractedLots}</div><div class="kl">Contracted lots</div></div>
+                <div class="kpi"><div class="kn" style="color:#534ab7">{avgRevPerLot}</div><div class="kl">Avg revenue / lot</div></div>
+                <div class="kpi"><div class="kn" style="color:#2e844a">{targetGp}</div><div class="kl">Target GP</div></div>
+            </div>
+        </div>
+
+        <template lwc:if={hasCards}>
+            <div class="sow-grid">
+                <template for:each={cards} for:item="c">
+                    <div key={c.id} class={c.accentCls}>
+                        <div class="sow-h">
+                            <h3><a href={c.recordUrl}>{c.title}</a></h3>
+                            <span class={c.statusCls}>{c.status}</span>
+                        </div>
+                        <template lwc:if={c.hasPrice}>
+                            <div class="sow-price"><div class="price-big">{c.priceBig}</div></div>
+                        </template>
+                        <div class="sow-f">
+                            <template for:each={c.fields} for:item="f">
+                                <div key={f.label}>
+                                    <div class="fl">{f.label}</div>
+                                    <div class={f.emptyCls}>{f.display}</div>
+                                </div>
+                            </template>
+                        </div>
+                        <template lwc:if={c.notes}>
+                            <div class="sow-note"><strong>Notes</strong>{c.notes}</div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </template>
+        <template lwc:elseif={error}>
+            <div class="err">{error}</div>
+        </template>
+        <template lwc:else>
+            <div class="empty">No Scopes of Work defined yet. Add one per Line of Business.</div>
+        </template>
+    </div>
+</template>

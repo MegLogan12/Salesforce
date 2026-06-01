@@ -1,0 +1,52 @@
+<template>
+    <div class="sf-card">
+        <div class="ch">
+            <h3>Service Flag Defaults</h3>
+            <span class="contract-pill">CONTRACT</span>
+        </div>
+        <div class="flag-row">
+            <template for:each={flags} for:item="f">
+                <span key={f.label} class={f.cls}><span class={f.dotCls}></span>{f.label}</span>
+            </template>
+        </div>
+        <div class="sep"></div>
+        <div class="date-row">
+            <div>
+                <div class="fl">Contract Start Date</div>
+                <div class="fv">
+                    <template lwc:if={hasStart}>
+                        <lightning-formatted-date-time value={contractStart}></lightning-formatted-date-time>
+                    </template>
+                    <template lwc:else>
+                        <span class="em">Not set</span>
+                    </template>
+                </div>
+            </div>
+            <div>
+                <div class="fl">Contract Renewal Date</div>
+                <div class="fv">
+                    <template lwc:if={hasRenew}>
+                        <lightning-formatted-date-time value={contractRenew}></lightning-formatted-date-time>
+                    </template>
+                    <template lwc:else>
+                        <span class="em">Not set</span>
+                    </template>
+                </div>
+            </div>
+            <div>
+                <div class="fl">Designated Service Day</div>
+                <div class="fv">
+                    <template lwc:if={hasServiceDay}>{serviceDay}</template>
+                    <template lwc:else><span class="em">Not set</span></template>
+                </div>
+            </div>
+            <div>
+                <div class="fl">Market</div>
+                <div class="fv">
+                    <template lwc:if={hasMarket}>{market}</template>
+                    <template lwc:else><span class="em">Not set</span></template>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

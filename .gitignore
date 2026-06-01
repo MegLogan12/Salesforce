@@ -30,3 +30,7 @@ refresh_token
 
 # macOS metadata
 .DS_Store
+
+# Audit data - may contain org IDs and production data
+audit/data/
+audit/checkpoints/

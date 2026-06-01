@@ -1,0 +1,80 @@
+:host {
+    display: block;
+}
+
+.po-panel {
+    background: #fff;
+    border-bottom: 1px solid #d8dde6;
+    border-top: 1px solid #eef1f5;
+    box-sizing: border-box;
+    display: grid;
+    gap: 18px;
+    grid-template-columns: 220px minmax(0, 1fr);
+    padding: 14px 22px;
+    width: 100%;
+}
+
+.panel-title {
+    align-items: center;
+    display: flex;
+    gap: 10px;
+}
+
+.panel-title > span {
+    align-items: center;
+    background: #173965;
+    border-radius: 5px;
+    color: #fff;
+    display: inline-flex;
+    font-size: 12px;
+    font-weight: 800;
+    height: 30px;
+    justify-content: center;
+    width: 38px;
+}
+
+h2 {
+    color: #16325c;
+    font-size: 14px;
+    margin: 0;
+}
+
+.po-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    width: 100%;
+}
+
+.po-grid span {
+    color: #66758f;
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.po-grid strong {
+    color: #16325c;
+    display: block;
+    font-size: 13px;
+    margin-top: 4px;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 1040px) {
+    .po-panel {
+        grid-template-columns: 1fr;
+    }
+
+    .po-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .po-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}

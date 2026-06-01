@@ -1,0 +1,21 @@
+<template>
+    <div class="card">
+        <div class="card-header">
+            <h3>Relationship Rollup - All Divisions</h3>
+        </div>
+        <template lwc:if={hasError}>
+            <p class="error-state">{error}</p>
+        </template>
+        <template lwc:else>
+            <div class="kpi-row">
+                <div class="kpi"><div class="kn" style="color:#0070d2">{divisions}</div><div class="kl">Divisions</div></div>
+                <div class="kpi"><div class="kn" style="color:#2e844a">{activeCommunities}</div><div class="kl">Active communities</div></div>
+                <div class="kpi"><div class="kn" style="color:#534ab7">{contractedLots}</div><div class="kl">Contracted lots</div></div>
+                <div class="kpi"><div class="kn" style="color:#2e844a">{lotsComplete}</div><div class="kl">Lots complete</div></div>
+                <div class="kpi"><div class="kn" style="color:#ba7517">{openWorkOrders}</div><div class="kl">Open work orders</div></div>
+                <div class="kpi"><div class="kn" style="color:#2e844a">{ytdRevenue}</div><div class="kl">YTD revenue</div></div>
+                <div class="kpi"><div class="kn" style="color:#2e844a">{avgGp}</div><div class="kl">Avg GP</div></div>
+            </div>
+        </template>
+    </div>
+</template>

@@ -1,0 +1,18 @@
+<template>
+    <div class="wrap">
+        <template lwc:if={loaded}>
+            <div class="hl">
+                <div class="hi"><div class="hl-lbl">Builder Division</div><div class="hl-v">{data.builderAccountName}</div></div>
+                <div class="hi"><div class="hl-lbl">Lots Complete</div><div class="hl-v big lots">{data.lotsComplete} / {data.lotsTotal}</div></div>
+                <div class="hi"><div class="hl-lbl">Field Manager</div><div class="hl-v">{data.fieldManager}</div></div>
+                <div class="hi"><div class="hl-lbl">Service Day</div><div class="hl-v">{data.serviceDay}</div></div>
+                <div class="hi"><div class="hl-lbl">Territory</div><div class="hl-v">{data.territory}</div></div>
+                <div class="hi"><div class="hl-lbl">Open WOs</div><div class="hl-v big open">{data.openWorkOrders}</div></div>
+                <div class="hi"><div class="hl-lbl">Change Orders</div><div class="hl-v big co">{data.changeOrders}</div></div>
+            </div>
+        </template>
+        <template lwc:if={hasError}>
+            <div class="hl-err">{err}</div>
+        </template>
+    </div>
+</template>

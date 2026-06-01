@@ -1,0 +1,8 @@
+<template>
+    <div class="hierarchy-bar">
+        <span>Hierarchy:</span>
+        <template for:each={nodes} for:item="node">
+            <strong key={node}>{node}</strong>
+        </template>
+    </div>
+</template>

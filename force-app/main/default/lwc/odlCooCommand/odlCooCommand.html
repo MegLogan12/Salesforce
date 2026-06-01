@@ -1,0 +1,119 @@
+<template>
+    <div class="sf-body">
+        <template if:true={hasError}>
+            <div style="padding:12px 14px;color:#c23934">{errorMessage}</div>
+        </template>
+        <div class="g6">
+            <div class="kpi korange">
+                <div class="kn big">{totalPipelineFormatted}</div>
+                <div class="kl">Pipeline</div>
+            </div>
+            <div class="kpi kb">
+                <div class="kn big">{umbPipelineFormatted}</div>
+                <div class="kl">UMB</div>
+            </div>
+            <div class="kpi kp">
+                <div class="kn big">{cbPipelineFormatted}</div>
+                <div class="kl">Custom Build</div>
+            </div>
+            <div class="kpi kt">
+                <div class="kn big">{lcPipelineFormatted}</div>
+                <div class="kl">Lawn Care Annual</div>
+            </div>
+            <div class="kpi ka">
+                <div class="kn big">{overdueCount}</div>
+                <div class="kl">Follow-ups due</div>
+            </div>
+            <div class="kpi kr">
+                <div class="kn big">{atRiskCount}</div>
+                <div class="kl">At risk</div>
+            </div>
+        </div>
+
+        <div class="layout">
+            <div class="layout-main">
+                <!-- Pipeline by LOB -->
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci" style="background:#fe9339">PIPE</div>
+                        <h3>Pipeline by LOB</h3>
+                    </div>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>LOB</th>
+                                <th class="num">Open Opps</th>
+                                <th class="num">Pipeline</th>
+                                <th class="num">Weighted</th>
+                                <th>Follow-Ups Due</th>
+                                <th>At Risk</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={lobMetrics} for:item="lob">
+                                <tr key={lob.lob}>
+                                    <td><span class={lob.chipClass}>{lob.lob}</span></td>
+                                    <td class="num">{lob.count}</td>
+                                    <td class="num">{lob.totalFormatted}</td>
+                                    <td class="num">{lob.weightedFormatted}</td>
+                                    <td>—</td>
+                                    <td>—</td>
+                                </tr>
+                            </template>
+                            <template if:true={noMetrics}>
+                                <tr><td colspan="6" style="text-align:center;color:#54698d;padding:12px">No pipeline data</td></tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Activity Risk -->
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci" style="background:#534ab7">ACT</div>
+                        <h3>Activity Risk</h3>
+                    </div>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Record</th>
+                                <th>LOB</th>
+                                <th>Last Activity</th>
+                                <th>Follow-Up Due</th>
+                                <th>Risk</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={atRiskOpps} for:item="opp">
+                                <tr key={opp.Id}>
+                                    <td><span class="nl">{opp.Name}</span></td>
+                                    <td><span class={opp.lobChipClass}>{opp.ODL_Path__c}</span></td>
+                                    <td>{opp.lastActivityFormatted}</td>
+                                    <td>—</td>
+                                    <td><span class="chip ca">Needs touch</span></td>
+                                </tr>
+                            </template>
+                            <template if:true={noAtRisk}>
+                                <tr><td colspan="5" style="text-align:center;color:#04844b;padding:12px">No at-risk opportunities</td></tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="layout-rail">
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci" style="background:#fe9339">A</div>
+                        <h3>COO Actions</h3>
+                    </div>
+                    <div class="qa-list">
+                        <div class="qa-item">Open overdue follow-ups</div>
+                        <div class="qa-item">Review Custom Build risk</div>
+                        <div class="qa-item">Review deposit status</div>
+                        <div class="qa-item">Review campaign ROI</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

@@ -1,0 +1,103 @@
+<template>
+    <section class="workspace">
+        <section class="panel hero">
+            <div class="hero-copy">
+                <h1>Campaigns Workspace</h1>
+            </div>
+            <div class="hero-actions">
+                <button class="cta" onclick={handleNewCampaign}>New Campaign</button>
+                <button class="cta cta-secondary" onclick={handleOpenVouchers}>Open Vouchers</button>
+                <button class="cta cta-secondary" onclick={handleRefresh}>Refresh</button>
+            </div>
+        </section>
+
+        <section class="toolbar panel">
+            <div class="chip-row">
+                <span class="toolbar-chip toolbar-chip-active">All Campaigns</span>
+                <span class="toolbar-chip">Voucher Programs</span>
+                <span class="toolbar-chip">Homeowner</span>
+                <span class="toolbar-chip">Marketing Feed</span>
+            </div>
+            <div class="field">
+                <label>Search campaigns</label>
+                <input type="search" value={searchTerm} oninput={handleSearch} placeholder="Search campaigns" />
+            </div>
+        </section>
+
+        <section class="kpi-row">
+            <div class="kpi-card accent-orange"><div class="kpi-label">Active Campaigns</div><div class="kpi-value">{campaignCount}</div></div>
+            <div class="kpi-card accent-blue"><div class="kpi-label">Campaign Members</div><div class="kpi-value">{memberCount}</div></div>
+            <div class="kpi-card accent-green"><div class="kpi-label">Leads in Program</div><div class="kpi-value">{leadCount}</div></div>
+            <div class="kpi-card accent-purple"><div class="kpi-label">Linked Opportunities</div><div class="kpi-value">{opportunityCount}</div></div>
+            <div class="kpi-card accent-orange"><div class="kpi-label">Tracked Revenue</div><div class="kpi-value">{revenueTotalDisplay}</div></div>
+        </section>
+
+        <div class="layout">
+            <div class="layout-main">
+                <section class="panel" lwc:if={hasRows}>
+                    <div class="panel-header">Campaign Operating List</div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Campaign</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Builder Account</th>
+                                <th>Members</th>
+                                <th>Leads</th>
+                                <th>Opportunities</th>
+                                <th>Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={filteredRows} for:item="row">
+                                <tr key={row.id}>
+                                    <td><a href={row.url}>{row.name}</a></td>
+                                    <td>{row.type}</td>
+                                    <td>{row.status}</td>
+                                    <td>
+                                        <template lwc:if={row.builderAccountUrl}>
+                                            <a href={row.builderAccountUrl}>{row.builderAccount}</a>
+                                        </template>
+                                        <template lwc:else>{row.builderAccount}</template>
+                                    </td>
+                                    <td>{row.memberCount}</td>
+                                    <td>{row.leadCount}</td>
+                                    <td>{row.opportunityCount}</td>
+                                    <td>{row.revenueDisplay}</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </section>
+                <section class="panel empty-state" lwc:if={hasNoRows}>
+                    No campaigns matched the current search.
+                </section>
+                <section class="panel empty-state" lwc:if={hasError}>
+                    {error}
+                </section>
+            </div>
+
+            <aside class="layout-rail">
+                <section class="panel">
+                    <div class="panel-header">Voucher Operations</div>
+                    <div class="rail-copy">
+                        <div class="rail-row"><span>Reserved</span><span>{reservedCount}</span></div>
+                        <div class="rail-row"><span>Applied to quote</span><span>{appliedCount}</span></div>
+                        <div class="rail-row"><span>Builder invoiced</span><span>{builderInvoicedCount}</span></div>
+                        <div class="rail-row"><span>Paid by builder</span><span>{paidByBuilderCount}</span></div>
+                        <div class="rail-row"><span>Rejected / expired</span><span>{rejectedOrExpiredCount}</span></div>
+                    </div>
+                </section>
+                <section class="panel">
+                    <div class="panel-header">Next Actions</div>
+                    <div class="action-list">
+                        <button class="rail-action" onclick={handleOpenVouchers}>Open voucher queue</button>
+                        <button class="rail-action" onclick={handleOpenLeads}>Open homeowner leads</button>
+                        <button class="rail-action" onclick={handleOpenReports}>Open reports</button>
+                    </div>
+                </section>
+            </aside>
+        </div>
+    </section>
+</template>

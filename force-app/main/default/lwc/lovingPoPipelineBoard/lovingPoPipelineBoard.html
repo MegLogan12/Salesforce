@@ -1,0 +1,578 @@
+<template>
+    <div class="po-wrap">
+        <div class="sf-top">
+            <div class="sf-waffle" aria-hidden="true">
+                <span></span><span></span><span></span>
+                <span></span><span></span><span></span>
+                <span></span><span></span><span></span>
+            </div>
+            <div class="sf-app">
+                <div class="sf-app-icon">HB</div>
+                <span>{builderAppLabel}</span>
+            </div>
+            <div class="sf-search">{builderSearchPlaceholder}</div>
+            <div class="sf-icons" aria-hidden="true">
+                <div class="sf-ico">⚙</div>
+                <div class="sf-ico">?</div>
+                <div class="sf-ico">🔔</div>
+                <div class="sf-avatar">{userInitials}</div>
+            </div>
+        </div>
+
+        <div class="sf-nav">
+            <template for:each={builderNavTabs} for:item="tab">
+                <button
+                    type="button"
+                    key={tab.id}
+                    class={tab.className}
+                    data-id={tab.id}
+                    onclick={handleBuilderTabClick}
+                    disabled={tab.disabled}>
+                    {tab.label}
+                </button>
+            </template>
+        </div>
+
+        <div class="record-banner">
+            <div class="record-title-row">
+                <div class="object-icon">{recordIconLabel}</div>
+                <div class="banner-text">
+                    <div class="eyebrow">{recordEyebrow}</div>
+                    <div class="record-title">{recordBannerTitle}</div>
+                    <template if:true={recordBannerSub}>
+                        <div class="record-sub">{recordBannerSub}</div>
+                    </template>
+                </div>
+                <div class="banner-actions">
+                    <template if:true={isTakeoffView}>
+                        <button type="button" class="btn" onclick={handleSaveTakeoffReadiness}>Save</button>
+                        <button type="button" class="btn" onclick={handleOpenTakeoffRecord}>Update Scope</button>
+                        <button type="button" class="btn primary" onclick={handleCreateWorkOrder}>Create / Sync Children</button>
+                    </template>
+                    <template if:false={isTakeoffView}>
+                    <template if:true={isRecordContext}>
+                        <button type="button" class="btn" onclick={handleEditRecord}>Edit</button>
+                        <button type="button" class="btn" onclick={handleOpenPoRecord}>{recordButtonLabel}</button>
+                        <button type="button" class="btn primary" onclick={handlePrimaryRecordAction}>{recordPrimaryActionLabel}</button>
+                    </template>
+                    <template if:false={isRecordContext}>
+                        <button type="button" class="btn primary" onclick={handleNewPo}>+ New Builder PO</button>
+                    </template>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <template if:false={isRecordContext}>
+            <div class="subnav">
+                <template for:each={views} for:item="view">
+                    <button type="button" key={view.id} class={view.className} data-id={view.id} onclick={handleViewChange} disabled={view.disabled}>{view.label}</button>
+                </template>
+            </div>
+        </template>
+
+        <template if:true={isLoading}>
+            <div class="loading-wrap">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:true={actionResult}>
+            <div class={validationBannerClass}>
+                <strong>{validationIcon}</strong> {actionResult.message}
+            </div>
+        </template>
+
+        <div class="body">
+            <template if:true={isPipelineView}>
+                    <div class="toolbar">
+                        <button type="button" class="btn primary" onclick={handleNewPo}>+ New Builder PO</button>
+                        <template for:each={stageFilters} for:item="filter">
+                            <button
+                                type="button"
+                                key={filter.id}
+                                class={filter.className}
+                                data-value={filter.id}
+                                onclick={handleFilterClick}>
+                                {filter.label} ({filter.count})
+                            </button>
+                        </template>
+                        <select class="input select-sm" onchange={handleBuilderChange}>
+                            <option value="">All builders</option>
+                            <template for:each={builderNames} for:item="b">
+                                <option key={b} value={b}>{b}</option>
+                            </template>
+                        </select>
+                        <input type="text" class="input search-sm" placeholder="Search PO, community, lot, item…" oninput={handleSearchInput} />
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-head">
+                            <div class="panel-icon">📋</div>
+                            <h3>Builder PO Queue</h3>
+                        </div>
+                        <div class="panel-body">
+                            <template if:true={hasFilteredRecords}>
+                                <div class="table-wrap">
+                                    <table class="data-table wide-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Builder PO</th>
+                                                <th>Builder</th>
+                                                <th>Community</th>
+                                                <th>Lot</th>
+                                                <th>Status</th>
+                                                <th>Pipeline Stage</th>
+                                                <th>Takeoff Status</th>
+                                                <th>Package Match</th>
+                                                <th>Total Amount</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template for:each={filteredRecords} for:item="po">
+                                                <tr key={po.id} data-id={po.id} onclick={handlePoSelect}>
+                                                    <td>{po.name}</td>
+                                                    <td>{po.builderName}</td>
+                                                    <td>{po.communityLabel}</td>
+                                                    <td>{po.lotLabel}</td>
+                                                    <td>{po.status}</td>
+                                                    <td>{po.pipelineStage}</td>
+                                                    <td>{po.takeoffStatus}</td>
+                                                    <td>{po.packageMatchStatus}</td>
+                                                    <td>{po.amountFormatted}</td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </template>
+                            <template if:false={hasFilteredRecords}>
+                                <div class="empty-state">0 Builder PO rows match the current filters.</div>
+                            </template>
+                        </div>
+                    </div>
+            </template>
+
+            <template if:true={isPoDetailView}>
+                <template if:true={hasPoDetail}>
+                    <div class="kpis record-kpis">
+                        <div class="kpi blue">
+                            <div class="kpi-n">{selectedPo.pipelineStage}</div>
+                            <div class="kpi-l">Current stage</div>
+                        </div>
+                        <div class="kpi green">
+                            <div class="kpi-n">{selectedPo.packageMatchStatus}</div>
+                            <div class="kpi-l">Package state</div>
+                        </div>
+                        <div class="kpi purple-tone">
+                            <div class="kpi-n">{recordPrimaryRoute}</div>
+                            <div class="kpi-l">Primary route</div>
+                        </div>
+                        <div class="kpi amber">
+                            <div class="kpi-n">{reviewHoldCount}</div>
+                            <div class="kpi-l">Review holds</div>
+                        </div>
+                        <div class="kpi orange-tone">
+                            <div class="kpi-n">{selectedWorkOrderNumber}</div>
+                            <div class="kpi-l">Parent WO</div>
+                        </div>
+                    </div>
+                    <div class="detail-layout authority-layout">
+                            <div class="detail-main">
+                                <div class="panel">
+                                    <div class="panel-head">
+                                        <div class="panel-icon blue-icon">PO</div>
+                                        <h3>Builder PO Snapshot</h3>
+                                    </div>
+                                    <div class="panel-body fields">
+                                        <div><div class="label">Builder PO Number</div><div class="value emph">{selectedPo.name}</div></div>
+                                        <div><div class="label">Purchase Order</div><div class="value">{selectedPurchaseOrderLabel}</div></div>
+                                        <div><div class="label">Parent Builder</div><div class="value">{selectedPo.builderName}</div></div>
+                                        <div><div class="label">Division Builder</div><div class="value">{selectedPo.divisionName}</div></div>
+                                        <div><div class="label">Community</div><div class="value">{selectedPo.communityName}</div></div>
+                                        <div><div class="label">Lot</div><div class="value">{selectedPo.lotName}</div></div>
+                                        <div><div class="label">Pipeline Stage</div><div class="value"><span class={selectedPo.statusChipClass}>{selectedPo.pipelineStage}</span></div></div>
+                                        <div><div class="label">Package Match</div><div class="value">{selectedPo.packageMatchStatus}</div></div>
+                                    </div>
+                                </div>
+
+                                <div class="panel">
+                                    <div class="panel-head">
+                                        <div class="panel-icon green-icon">LN</div>
+                                        <h3>PO Lines and Package Context</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="table-wrap">
+                                            <table class="data-table wide-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Description</th>
+                                                        <th>Qty</th>
+                                                        <th>Package</th>
+                                                        <th>Execution Scope</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <template for:each={normalizedPoLines} for:item="line">
+                                                        <tr key={line.id}>
+                                                            <td>{line.description}</td>
+                                                            <td>{line.quantity}</td>
+                                                            <td>{line.packageMatch}</td>
+                                                            <td>{line.workType}</td>
+                                                            <td>{line.routingResult}</td>
+                                                        </tr>
+                                                    </template>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="detail-rail">
+                                <div class="panel">
+                                    <div class="panel-head">
+                                        <div class="panel-icon purple-icon">ACT</div>
+                                        <h3>Next Actions</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="flow-list">
+                                            <template for:each={nextActionList} for:item="gate">
+                                                <div key={gate.label} class={gate.className}>
+                                                    <div class="dot">{gate.icon}</div>
+                                                    <div>
+                                                        <div class="flow-title">{gate.label}</div>
+                                                        <div class="flow-sub">{gate.detail}</div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="panel">
+                                    <div class="panel-head">
+                                        <div class="panel-icon red-icon">CS</div>
+                                        <h3>Customer Success</h3>
+                                    </div>
+                                    <div class="panel-body fields single-column-fields">
+                                        <div><div class="label">Review required</div><div class="value">{customerSuccessReview}</div></div>
+                                        <div><div class="label">Return required</div><div class="value">{returnRequiredLabel}</div></div>
+                                        <div><div class="label">Package variance</div><div class="value">{packageVarianceLabel}</div></div>
+                                        <div><div class="label">Builder question</div><div class="value">{builderQuestionLabel}</div></div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </template>
+                <template if:false={hasPoDetail}>
+                    <div class="empty-state">Select a Builder PO to view live detail.</div>
+                </template>
+            </template>
+
+            <template if:true={isActivityView}>
+                <template if:true={hasPoDetail}>
+                    <div class="panel">
+                        <div class="panel-head">
+                            <h3>Activity</h3>
+                        </div>
+                        <div class="panel-body activity-feed">
+                            <template if:true={hasActivityRows}>
+                                <template for:each={activityRows} for:item="row">
+                                    <div key={row.recordId} class="activity-row">
+                                        <div class={row.tone}></div>
+                                        <div class="activity-copy">
+                                            <div class="activity-title">{row.label}</div>
+                                            <div class="activity-detail">{row.detail}</div>
+                                        </div>
+                                        <div class="activity-side">
+                                            <div class="activity-time">{row.whenLabel}</div>
+                                            <template if:true={row.recordId}>
+                                                <button type="button" class="btn" data-id={row.recordId} onclick={handleOpenActivityRecord}>Open</button>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </template>
+                            <template if:false={hasActivityRows}>
+                                <div class="empty-state">0 activity records on this PO branch.</div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </template>
+
+            <template if:true={isTakeoffView}>
+                <template if:true={hasTakeoff}>
+                    <div class="kpis record-kpis">
+                        <div class="kpi blue">
+                            <div class="kpi-n">{takeoffLineCount}</div>
+                            <div class="kpi-l">Lines</div>
+                        </div>
+                        <div class="kpi green">
+                            <div class="kpi-n">{takeoffRoutedCount}</div>
+                            <div class="kpi-l">Routed</div>
+                        </div>
+                        <div class="kpi amber">
+                            <div class="kpi-n">{reviewHoldCount}</div>
+                            <div class="kpi-l">Review hold</div>
+                        </div>
+                        <div class="kpi purple-tone">
+                            <div class="kpi-n">{blankScopeCount}</div>
+                            <div class="kpi-l">Blank scope</div>
+                        </div>
+                        <div class="kpi orange-tone">
+                            <div class="kpi-n">{selectedChildWorkOrderCount}</div>
+                            <div class="kpi-l">Child WOs</div>
+                        </div>
+                    </div>
+                    <div class="detail-layout authority-layout">
+                            <div class="detail-main">
+                                <div class="panel">
+                                    <div class="panel-head">
+                                        <div class="panel-icon green-icon">FM</div>
+                                        <h3>FM Takeoff Checklist</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="table-wrap">
+                                            <table class="data-table wide-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Checklist Item</th>
+                                                        <th>Status</th>
+                                                        <th>Notes</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <template for:each={takeoffChecklistRows} for:item="row">
+                                                        <tr key={row.label}>
+                                                            <td>{row.label}</td>
+                                                            <td>{row.status}</td>
+                                                            <td>{row.notes}</td>
+                                                        </tr>
+                                                    </template>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="panel">
+                                    <div class="panel-head">
+                                        <div class="panel-icon blue-icon">LN</div>
+                                        <h3>Takeoff Lines</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="table-wrap">
+                                            <table class="data-table wide-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Description</th>
+                                                        <th>Qty</th>
+                                                        <th>Unit</th>
+                                                        <th>Execution Scope</th>
+                                                        <th>Routing Result</th>
+                                                        <th>Review</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <template for:each={normalizedTakeoffLines} for:item="line">
+                                                        <tr key={line.id}>
+                                                            <td>{line.description}</td>
+                                                            <td>{line.verifiedQuantity}</td>
+                                                            <td>{line.unit}</td>
+                                                            <td>{line.executionScope}</td>
+                                                            <td>{line.routingResult}</td>
+                                                            <td>{line.reviewStatus}</td>
+                                                        </tr>
+                                                    </template>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="detail-rail">
+                                <div class="panel">
+                                    <div class="panel-head">
+                                        <div class="panel-icon purple-icon">SUM</div>
+                                        <h3>Routing Summary</h3>
+                                    </div>
+                                    <div class="panel-body fields">
+                                        <div><div class="label">Install</div><div class="value">{takeoffInstallCount} lines</div></div>
+                                        <div><div class="label">Aqua</div><div class="value">{takeoffAquaCount} lines</div></div>
+                                        <div><div class="label">Review hold</div><div class="value">{reviewHoldCount} lines</div></div>
+                                        <div><div class="label">Blank scope</div><div class="value">{blankScopeCount} lines</div></div>
+                                        <div><div class="label">Children created</div><div class="value">{selectedChildWorkOrderCount}</div></div>
+                                    </div>
+                                </div>
+
+                                <div class="panel">
+                                    <div class="panel-head">
+                                        <div class="panel-icon red-icon">CS</div>
+                                        <h3>Customer Success Review</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="qa-list">
+                                            <template for:each={customerSuccessReviewItems} for:item="item">
+                                                <div key={item} class="qa-item">{item}</div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </template>
+                <template if:false={hasTakeoff}>
+                    <div class="empty-state">0 takeoff records linked.</div>
+                </template>
+            </template>
+
+            <template if:true={isWorkOrdersView}>
+                <div class="panel">
+                        <div class="panel-head">
+                            <div class="panel-icon">📋</div>
+                            <h3>Work Orders Created from Builder PO</h3>
+                        </div>
+                        <div class="panel-body">
+                            <template if:true={hasWorkOrderRows}>
+                                <div class="work-card-list">
+                                    <template for:each={workOrderRows} for:item="row">
+                                        <div key={row.id} class="work-card" data-po-id={row.id} onclick={handleWorkOrderRowSelect}>
+                                            <div class="work-card-main">
+                                                <div class="work-card-title">{row.name}</div>
+                                                <div class="work-card-sub">{row.builderName} · {row.communityLabel} · {row.lotLabel}</div>
+                                            </div>
+                                            <div class="work-card-side">
+                                                <span class={row.workOrderTone}>{row.workOrderState}</span>
+                                                <span class="money">{row.amountFormatted}</span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                            <template if:false={hasWorkOrderRows}>
+                                <div class="empty-state">0 downstream WorkOrders linked.</div>
+                            </template>
+                        </div>
+                </div>
+            </template>
+
+            <template if:true={isWoDetailView}>
+                <template if:true={hasWorkOrder}>
+                    <div class="detail-layout">
+                            <div class="detail-main">
+                                <div class="panel">
+                                    <div class="panel-head">
+                                        <div class="panel-icon">🧰</div>
+                                        <h3>{selectedWorkOrder.workOrderNumber}</h3>
+                                        <button type="button" class="btn" onclick={handleOpenWorkOrderRecord}>Open WorkOrder</button>
+                                    </div>
+                                    <div class="panel-body fields">
+                                        <div><div class="label">Subject</div><div class="value emph">{selectedWorkOrder.subject}</div></div>
+                                        <div><div class="label">Description</div><div class="value wrap">{selectedWorkOrder.description}</div></div>
+                                        <div><div class="label">Status</div><div class="value">{selectedWorkOrder.status}</div></div>
+                                        <div><div class="label">Field Manager</div><div class="value">{selectedWorkOrder.fieldManagerName}</div></div>
+                                        <div><div class="label">Work Type</div><div class="value">{selectedWorkOrder.workType}</div></div>
+                                        <div><div class="label">Territory</div><div class="value">{selectedWorkOrder.serviceTerritoryName}</div></div>
+                                        <div><div class="label">Scope Lines</div><div class="value">{selectedWorkOrder.lineItemCount}</div></div>
+                                    </div>
+                                </div>
+
+                                <div class="panel">
+                                    <div class="panel-head">
+                                        <div class="panel-icon">🌱</div>
+                                        <h3>Work Order Lines</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="table-wrap">
+                                            <table class="data-table wide-table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Description</th>
+                                                        <th>Qty</th>
+                                                        <th>Unit Price</th>
+                                                        <th>Status</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <template for:each={selectedWorkOrder.lines} for:item="line">
+                                                        <tr key={line.id}>
+                                                            <td>{line.description}</td>
+                                                            <td>{line.quantity}</td>
+                                                            <td>{line.unitPrice}</td>
+                                                            <td>{line.status}</td>
+                                                        </tr>
+                                                    </template>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="panel">
+                                    <div class="panel-head">
+                                        <div class="panel-icon">🗓️</div>
+                                        <h3>Scheduling Handoff</h3>
+                                        <button type="button" class="btn" onclick={handleOpenServiceAppointmentRecord} disabled={disableOpenServiceAppointment}>Open Service Appointment</button>
+                                    </div>
+                                    <div class="panel-body fields">
+                                        <div><div class="label">Service Appointment</div><div class="value">{serviceAppointmentNumber}</div></div>
+                                        <div><div class="label">Status</div><div class="value">{serviceAppointmentStatus}</div></div>
+                                        <div><div class="label">Scheduled Start</div><div class="value">{serviceAppointmentScheduledStart}</div></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="detail-rail">
+                                <div class="panel">
+                                    <div class="panel-head">
+                                        <div class="panel-icon">⚡</div>
+                                        <h3>WO Actions</h3>
+                                    </div>
+                                    <div class="panel-body panel-actions">
+                                        <button type="button" class="btn primary wide" onclick={handleCreateScheduleHandoff} disabled={disableCreateScheduleHandoff}>Create Schedule Handoff</button>
+                                        <button type="button" class="btn wide" onclick={handleOpenWorkOrderRecord}>Open WorkOrder</button>
+                                        <button type="button" class="btn wide" onclick={handleOpenServiceAppointmentRecord} disabled={disableOpenServiceAppointment}>Open Service Appointment</button>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                </template>
+                <template if:false={hasWorkOrder}>
+                    <div class="empty-state">0 WorkOrders linked to this Builder PO.</div>
+                </template>
+            </template>
+        </div>
+
+        <template if:true={showModal}>
+            <div class="modal-backdrop" onclick={handleModalBackdropClick}>
+                <div class="modal" onclick={handleModalClick}>
+                    <div class="modal-head">
+                        <div class="modal-title">Move Builder PO</div>
+                        <div class="modal-sub">Select the new status for this Builder PO.</div>
+                    </div>
+                    <div class="modal-body">
+                        <label class="modal-label" for="poStatusSelect">Status</label>
+                        <select id="poStatusSelect" class="input" onchange={handleStatusChange}>
+                            <option value="">Choose status</option>
+                            <template for:each={statusOptions} for:item="opt">
+                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                            </template>
+                        </select>
+                        <template if:true={modalError}>
+                            <div class="modal-error">{modalError}</div>
+                        </template>
+                    </div>
+                    <div class="modal-foot">
+                        <button type="button" class="btn" onclick={handleCloseModal}>Cancel</button>
+                        <button type="button" class="btn primary" onclick={handleSaveValidation}>{saveLabel}</button>
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>

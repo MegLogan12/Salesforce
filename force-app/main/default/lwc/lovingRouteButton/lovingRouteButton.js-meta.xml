@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Route Button (Maps / Waze)</masterLabel>
+    <description>Opens Google Maps, Waze, or Apple Maps to the lot address for a Work Order. Place on Work_Order__c record pages via App Builder. ServiceAppointment support will be added post Phase 5 deploy once LOVING_Work_Order__c field is live.</description>
+    <targets>
+        <target>lightning__RecordPage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__RecordPage">
+            <objects>
+                <object>Work_Order__c</object>
+            </objects>
+            <property name="labelOverride" type="String" label="Card Label" description="Override the card label. Default: 'Navigate to Job Site'." default="Navigate to Job Site"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

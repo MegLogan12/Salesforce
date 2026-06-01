@@ -1,0 +1,38 @@
+:host {
+    display: block;
+}
+
+.subtabs {
+    background: #fff;
+    border-bottom: 1px solid #d8dde6;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding: 0 22px;
+}
+
+.subtab {
+    background: transparent;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    color: #2f3f56;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 13px 18px 10px;
+    white-space: nowrap;
+}
+
+.subtab.on {
+    border-bottom-color: #256dd9;
+    color: #256dd9;
+}
+
+.subtab span {
+    background: #edf4ff;
+    border-radius: 10px;
+    color: #256dd9;
+    font-size: 10px;
+    margin-left: 4px;
+    padding: 2px 7px;
+}

@@ -1,0 +1,267 @@
+<template>
+    <div class="lwcc-wrap">
+
+        <!-- Loading -->
+        <template if:true={isLoading}>
+            <div class="lwcc-spinner">
+                <lightning-spinner alternative-text="Loading Work Orders" size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Error -->
+        <template if:true={errorMessage}>
+            <div class="lwcc-alert lwcc-alert-red">
+                <strong>Error:</strong> {errorMessage}
+            </div>
+        </template>
+
+        <!-- KPI Strip -->
+        <div class="lwcc-kpi-strip">
+            <div class="lwcc-kpi lwcc-kpi-blue">
+                <div class="lwcc-kpi-num">{kpi.openWos}</div>
+                <div class="lwcc-kpi-lbl">Open WOs</div>
+            </div>
+            <div class="lwcc-kpi lwcc-kpi-green">
+                <div class="lwcc-kpi-num">{kpi.scheduled}</div>
+                <div class="lwcc-kpi-lbl">Scheduled</div>
+            </div>
+            <div class="lwcc-kpi lwcc-kpi-amber">
+                <div class="lwcc-kpi-num">{kpi.fmReview}</div>
+                <div class="lwcc-kpi-lbl">FM Review</div>
+            </div>
+            <div class="lwcc-kpi lwcc-kpi-red">
+                <div class="lwcc-kpi-num">{kpi.blocked}</div>
+                <div class="lwcc-kpi-lbl">Blocked</div>
+            </div>
+        </div>
+
+        <!-- Rule alert -->
+        <div class="lwcc-alert lwcc-alert-amber">
+            <strong>Rule:</strong> Production Install work orders come from approved PO and Takeoff. Exception work orders can be created only through controlled type-specific paths.
+        </div>
+
+        <!-- Pipeline board -->
+        <div class="lwcc-pipeline">
+
+            <!-- Production Install -->
+            <div class="lwcc-stage">
+                <div class="lwcc-stage-head">
+                    <span class="lwcc-stage-title">Production Install</span>
+                    <span class="lwcc-stage-count">{productionInstallCount}</span>
+                </div>
+                <div class="lwcc-stage-body">
+                    <template if:true={hasProductionInstall}>
+                        <template for:each={productionInstallCards} for:item="card">
+                            <div key={card.id} class="lwcc-mini-card" onclick={handleOpenWo} data-id={card.id}>
+                                <div class="lwcc-mini-title">{card.name}<template if:true={card.lotName}> · {card.lotName}</template></div>
+                                <div class="lwcc-mini-meta">{card.communityName}</div>
+                                <div class="lwcc-mini-line">
+                                    <span class={card.statusChipClass}>{card.status}</span>
+                                    <template if:true={card.woAmount}><span class="lwcc-money">{card.woAmountFormatted}</span></template>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <template if:false={hasProductionInstall}>
+                        <div class="lwcc-stage-empty">No open records</div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Finish Job -->
+            <div class="lwcc-stage">
+                <div class="lwcc-stage-head">
+                    <span class="lwcc-stage-title">Finished Job</span>
+                    <span class="lwcc-stage-count">{finishJobCount}</span>
+                </div>
+                <div class="lwcc-stage-body">
+                    <template if:true={hasFinishJob}>
+                        <template for:each={finishJobCards} for:item="card">
+                            <div key={card.id} class="lwcc-mini-card" onclick={handleOpenWo} data-id={card.id}>
+                                <div class="lwcc-mini-title">{card.name}</div>
+                                <div class="lwcc-mini-meta">{card.communityName}<template if:true={card.fieldManagerName}><br/>{card.fieldManagerName}</template></div>
+                                <div class="lwcc-mini-line">
+                                    <span class={card.statusChipClass}>{card.status}</span>
+                                    <template if:true={card.hasBlocker}><span class="lwcc-warn-txt">NFI</span></template>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <template if:false={hasFinishJob}>
+                        <div class="lwcc-stage-empty">No open records</div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Warranty -->
+            <div class="lwcc-stage">
+                <div class="lwcc-stage-head">
+                    <span class="lwcc-stage-title">Warranty</span>
+                    <span class="lwcc-stage-count">{warrantyCount}</span>
+                </div>
+                <div class="lwcc-stage-body">
+                    <template if:true={hasWarranty}>
+                        <template for:each={warrantyCards} for:item="card">
+                            <div key={card.id} class="lwcc-mini-card" onclick={handleOpenWo} data-id={card.id}>
+                                <div class="lwcc-mini-title">{card.name}</div>
+                                <div class="lwcc-mini-meta">{card.communityName}</div>
+                                <div class="lwcc-mini-line">
+                                    <span class={card.statusChipClass}>{card.status}</span>
+                                    <template if:true={card.hasBlocker}><span class="lwcc-warn-txt">NFI</span></template>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <template if:false={hasWarranty}>
+                        <div class="lwcc-stage-empty">No open records</div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Customer Success -->
+            <div class="lwcc-stage">
+                <div class="lwcc-stage-head">
+                    <span class="lwcc-stage-title">Customer Success</span>
+                    <span class="lwcc-stage-count">{customerCareCount}</span>
+                </div>
+                <div class="lwcc-stage-body">
+                    <template if:true={hasCustomerCare}>
+                        <template for:each={customerCareCards} for:item="card">
+                            <div key={card.id} class="lwcc-mini-card" onclick={handleOpenWo} data-id={card.id}>
+                                <div class="lwcc-mini-title">{card.name}</div>
+                                <div class="lwcc-mini-meta">{card.communityName}</div>
+                                <div class="lwcc-mini-line">
+                                    <span class={card.statusChipClass}>{card.status}</span>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <template if:false={hasCustomerCare}>
+                        <div class="lwcc-stage-empty">No open records</div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Aqua -->
+            <div class="lwcc-stage">
+                <div class="lwcc-stage-head">
+                    <span class="lwcc-stage-title">Aqua</span>
+                    <span class="lwcc-stage-count">{aquaCount}</span>
+                </div>
+                <div class="lwcc-stage-body">
+                    <template if:true={hasAqua}>
+                        <template for:each={aquaCards} for:item="card">
+                            <div key={card.id} class="lwcc-mini-card" onclick={handleOpenWo} data-id={card.id}>
+                                <div class="lwcc-mini-title">{card.name}</div>
+                                <div class="lwcc-mini-meta">{card.woType}<template if:true={card.communityName}><br/>{card.communityName}</template></div>
+                                <div class="lwcc-mini-line">
+                                    <span class={card.statusChipClass}>{card.status}</span>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <template if:false={hasAqua}>
+                        <div class="lwcc-stage-empty">No open records</div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Site / Grading / Irrigation -->
+            <div class="lwcc-stage">
+                <div class="lwcc-stage-head">
+                    <span class="lwcc-stage-title">Site / Grading / Irrigation</span>
+                    <span class="lwcc-stage-count">{siteGradingCount}</span>
+                </div>
+                <div class="lwcc-stage-body">
+                    <template if:true={hasSiteGrading}>
+                        <template for:each={siteGradingCards} for:item="card">
+                            <div key={card.id} class="lwcc-mini-card" onclick={handleOpenWo} data-id={card.id}>
+                                <div class="lwcc-mini-title">{card.name}</div>
+                                <div class="lwcc-mini-meta">{card.woType}<template if:true={card.communityName}><br/>{card.communityName}</template></div>
+                                <div class="lwcc-mini-line">
+                                    <span class={card.statusChipClass}>{card.status}</span>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <template if:false={hasSiteGrading}>
+                        <div class="lwcc-stage-empty">No open records</div>
+                    </template>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom grid: Type Rules + Trigger Contract -->
+        <div class="lwcc-grid2">
+
+            <!-- WO Type Rules -->
+            <div class="lwcc-card">
+                <div class="lwcc-card-head">
+                    <div class="lwcc-ico lwcc-ico-purple">&#x1F9FE;</div>
+                    <h3>Work Order Type Rules</h3>
+                </div>
+                <table class="lwcc-tbl">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Created by</th>
+                            <th>Can foreman close?</th>
+                            <th>Next gate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Production Install</td><td>Approved PO / Takeoff</td><td>Field complete only</td><td>QI / invoice handoff</td></tr>
+                        <tr><td>Finished Job</td><td>FM after cannot-complete</td><td>No</td><td>FM approval</td></tr>
+                        <tr><td>Warranty</td><td>Customer Success / FM</td><td>No</td><td>Coverage decision</td></tr>
+                        <tr><td>Customer Success</td><td>Success intake</td><td>No</td><td>Triage / assign</td></tr>
+                        <tr><td>Aqua</td><td>Aqua process</td><td>No</td><td>Runtime / check / pickup</td></tr>
+                        <tr><td>Site Visit</td><td>Scheduler / FM</td><td>Field notes only</td><td>Decision</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Universal Trigger Contract -->
+            <div class="lwcc-card">
+                <div class="lwcc-card-head">
+                    <div class="lwcc-ico lwcc-ico-blue">&#x26A1;</div>
+                    <h3>Universal Trigger Contract</h3>
+                </div>
+                <div class="lwcc-card-body">
+                    <div class="lwcc-timeline">
+                        <div class="lwcc-step lwcc-step-done">
+                            <div class="lwcc-dot lwcc-dot-done">&#x2713;</div>
+                            <div>
+                                <div class="lwcc-step-title">Approved Takeoff</div>
+                                <div class="lwcc-step-sub">Creates or updates the correct work order type and execution lines.</div>
+                            </div>
+                        </div>
+                        <div class="lwcc-step lwcc-step-active">
+                            <div class="lwcc-dot lwcc-dot-active">2</div>
+                            <div>
+                                <div class="lwcc-step-title">WO Ready</div>
+                                <div class="lwcc-step-sub">Creates or updates ServiceAppointment with territory, duration, and crew rules.</div>
+                            </div>
+                        </div>
+                        <div class="lwcc-step">
+                            <div class="lwcc-dot">3</div>
+                            <div>
+                                <div class="lwcc-step-title">Foreman Arrival</div>
+                                <div class="lwcc-step-sub">Shows arrival checklist and DQC section only when supplier-delivered sod/mulch exists.</div>
+                            </div>
+                        </div>
+                        <div class="lwcc-step">
+                            <div class="lwcc-dot">4</div>
+                            <div>
+                                <div class="lwcc-step-title">Closeout</div>
+                                <div class="lwcc-step-sub">Requires photos, line status, notes, and escalation decisions.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</template>

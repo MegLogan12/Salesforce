@@ -1,0 +1,65 @@
+<template>
+    <div class="comm-card">
+        <div class="ch">
+            <h3>Communities</h3>
+            <div class="head-actions">
+                <span class="pill pg small">{activeCount} active</span>
+                <span class="pill pgr small">{closingCount} closing</span>
+            </div>
+        </div>
+        <template lwc:if={hasRows}>
+            <div class="tbl-wrap">
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Community</th>
+                            <th>Stage</th>
+                            <th>FM</th>
+                            <th>Lot Progress</th>
+                            <th>Open WOs</th>
+                            <th>Service Flags</th>
+                            <th>Activated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={viewRows} for:item="c">
+                            <tr key={c.id}>
+                                <td>
+                                    <a href={c.recordUrl} class="name-link">{c.name}</a>
+                                    <div class="sub">{c.subLine}</div>
+                                </td>
+                                <td>
+                                    <template lwc:if={c.stage}>
+                                        <span class={c.stageClass}>{c.stage}</span>
+                                    </template>
+                                </td>
+                                <td class="fm-cell">{c.fmName}</td>
+                                <td>
+                                    <div class="pb-wrap">
+                                        <div class="pb-bar"><div class="pb-fill" style={c.progressStyle}></div></div>
+                                        <div class="pb-lbl">{c.lotsDisplay}</div>
+                                    </div>
+                                </td>
+                                <td class={c.woCls}>{c.woDisplay}</td>
+                                <td>
+                                    <template lwc:if={c.hasFlags}>
+                                        <template for:each={c.flags} for:item="f">
+                                            <span key={f.key} class="pill pg tiny">{f.label}</span>
+                                        </template>
+                                    </template>
+                                </td>
+                                <td class="date-cell">{c.activatedDisplay}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </template>
+        <template lwc:elseif={error}>
+            <div class="err">{error}</div>
+        </template>
+        <template lwc:else>
+            <div class="empty">0 communities linked to this division.</div>
+        </template>
+    </div>
+</template>

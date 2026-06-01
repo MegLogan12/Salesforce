@@ -1,0 +1,64 @@
+<template>
+    <template lwc:if={isLoaded}>
+        <div class="timeline-header">
+            <div class="lot-name">{name}</div>
+            <div lwc:if={lotNumber} class="lot-num">Lot {lotNumber}</div>
+            <span class={statusChipClass}>{statusLabel}</span>
+        </div>
+
+        <template lwc:if={hasAddress}>
+            <div class="section-block">
+                <div class="section-label">Address</div>
+                <div class="section-value">{address}</div>
+            </div>
+        </template>
+
+        <div class="section-block">
+            <div class="section-label">Lifecycle</div>
+            <ul class="timeline-steps">
+                <template for:each={statusSteps} for:item="step">
+                    <li key={step.label} class={step.cssClass}>
+                        <span class="step-dot"></span>
+                        <span class="step-label">{step.label}</span>
+                    </li>
+                </template>
+            </ul>
+        </div>
+
+        <div class="section-block">
+            <div class="section-label">Requested Install</div>
+            <div class="section-value">{requestedInstallDisplay}</div>
+        </div>
+
+        <div class="section-block">
+            <div class="section-label">Actual Install</div>
+            <div class="section-value">{installDateDisplay}</div>
+        </div>
+
+        <template lwc:if={hasPlantPackage}>
+            <div class="section-block">
+                <div class="section-label">Plant Package</div>
+                <div class="section-value">{plantPackage}</div>
+            </div>
+        </template>
+
+        <template lwc:if={hasNotes}>
+            <div class="section-block section-notes">
+                <div class="section-label">Package Notes</div>
+                <div class="section-value notes-text">{notes}</div>
+            </div>
+        </template>
+    </template>
+    <template lwc:elseif={hasError}>
+        <div class="section-block">
+            <div class="section-label">Lifecycle</div>
+            <div class="section-value error-text">{error}</div>
+        </div>
+    </template>
+    <template lwc:else>
+        <div class="section-block">
+            <div class="section-label">Lifecycle</div>
+            <div class="section-value">0 lot timeline milestones available.</div>
+        </div>
+    </template>
+</template>

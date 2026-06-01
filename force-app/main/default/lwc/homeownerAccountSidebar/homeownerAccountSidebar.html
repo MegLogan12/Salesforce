@@ -1,0 +1,79 @@
+<template>
+    <section class="rail-stack">
+        <template lwc:if={errorMessage}>
+            <section class="rail-card">
+                <div class="rail-body rail-empty">{errorMessage}</div>
+            </section>
+        </template>
+
+        <section class="rail-card">
+            <div class="rail-header">
+                <span class="rail-header-title">
+                    <span class="section-icon section-icon-purple">AI</span>
+                    <span>Assistant Panel</span>
+                </span>
+            </div>
+            <template if:true={hasNextActions}>
+                <ul class="rail-list">
+                    <template for:each={nextActions} for:item="item">
+                        <li key={item}>{item}</li>
+                    </template>
+                </ul>
+            </template>
+            <template if:false={hasNextActions}>
+                <div class="rail-body rail-empty"></div>
+            </template>
+        </section>
+
+        <section class="rail-card">
+            <div class="rail-header">
+                <span class="rail-header-title">
+                    <span class="section-icon section-icon-blue">SLA</span>
+                    <span>Activity Health</span>
+                </span>
+            </div>
+            <div class="rail-body">
+                <div class="detail-row">
+                    <span class="detail-label">Last touch</span>
+                    <span>{lastTouchDate}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Voicemail</span>
+                    <span class="status-chip">{voicemailStatus}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Next follow-up</span>
+                    <span class="status-chip">{nextFollowUp}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Open tasks</span>
+                    <span>{openTaskCount}</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="rail-card">
+            <div class="rail-header">
+                <span class="rail-header-title">
+                    <span class="section-icon section-icon-green">$</span>
+                    <span>Payment Summary</span>
+                </span>
+            </div>
+            <div class="rail-body">
+                <div class="detail-row">
+                    <span class="detail-label">Open deposit</span>
+                    <span>{openDepositLabel}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Deposit posted</span>
+                    <span>{depositPostedLabel}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Final due later</span>
+                    <span>{finalDueLaterLabel}</span>
+                </div>
+            </div>
+        </section>
+
+    </section>
+</template>

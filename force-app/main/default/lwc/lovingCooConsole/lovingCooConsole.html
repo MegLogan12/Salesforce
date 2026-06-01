@@ -1,0 +1,498 @@
+<template>
+<div class="coo-shell">
+
+    <div class="coo-header">
+        <div class="coo-header-text">
+            <div class="coo-title">{pageTitle}</div>
+            <div class="coo-sub">{headerSubtitle}</div>
+        </div>
+    </div>
+
+    <!-- Error -->
+    <template if:true={errorMsg}>
+        <div class="ab ab-r" style="margin:0 16px 8px;">
+            <div class="ab-ic">⚠</div>
+            <div><strong>Error:</strong> {errorMsg}</div>
+        </div>
+    </template>
+
+    <!-- Loading -->
+    <template if:true={isLoading}>
+        <div class="coo-spinner">
+            <lightning-spinner alternative-text="Loading..." size="small"></lightning-spinner>
+        </div>
+    </template>
+
+    <template if:true={tabOverview}>
+        <div class="coo-body">
+            <div class="g4">
+                <div class="kpi kpi-blue">
+                    <div class="kn">{kpiActiveWOs}</div>
+                    <div class="kl">Active Work Orders</div>
+                </div>
+                <div class="kpi kpi-purple">
+                    <div class="kn">{kpiScheduledToday}</div>
+                    <div class="kl">Scheduled Today</div>
+                </div>
+                <div class="kpi kpi-amber">
+                    <div class="kn">{kpiPendingCloseout}</div>
+                    <div class="kl">Pending Closeout</div>
+                </div>
+                <div class="kpi kpi-green">
+                    <div class="kn">{kpiPaidThisMonth}</div>
+                    <div class="kl">Paid This Month</div>
+                </div>
+                <div class="kpi kpi-amber">
+                    <div class="kn">{kpiPendingProposals}</div>
+                    <div class="kl">Pending Proposals</div>
+                </div>
+                <div class="kpi kpi-red">
+                    <div class="kn">{kpiOpenEscalations}</div>
+                    <div class="kl">Open Escalations</div>
+                </div>
+                <div class="kpi kpi-blue">
+                    <div class="kn">{kpiOpenHireRequests}</div>
+                    <div class="kl">Open Hire Requests</div>
+                </div>
+                <div class="kpi kpi-amber">
+                    <div class="kn">{kpiSiteReadinessOverdue}</div>
+                    <div class="kl">Site Readiness Overdue</div>
+                </div>
+            </div>
+
+            <div class="g2">
+                <div class="ch">
+                    <div class="ci ci-blue">📅</div>
+                    <h3>Scheduling</h3>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-row">
+                        <span>Clear to schedule</span>
+                        <strong>{schedKpiCtsQueue}</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Active crews</span>
+                        <strong>{schedKpiActiveCrews}</strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>30-day pipeline</span>
+                        <strong>{schedKpiThirtyDay}</strong>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci ci-green">💰</div>
+                        <h3>Finance / GP</h3>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-row">
+                            <span>Pending revenue</span>
+                            <strong>{gpRevenueDisplay}</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Green invoices</span>
+                            <strong>{gpGreenCount}</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Blocked review</span>
+                            <strong>{gpBlockedCount}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="g2">
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci ci-amber">📞</div>
+                        <h3>Customer Success</h3>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-row">
+                            <span>Pending proposals</span>
+                            <strong>{kpiPendingProposals}</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Open escalations</span>
+                            <strong>{kpiOpenEscalations}</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Status</span>
+                            <strong>{customerCareSubtitle}</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci ci-blue">💧</div>
+                        <h3>Aqua</h3>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-row">
+                            <span>Upcoming installs</span>
+                            <strong>{aquaUpcomingInstalls}</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Upcoming checks</span>
+                            <strong>{aquaUpcomingChecks}</strong>
+                        </div>
+                        <div class="summary-row">
+                            <span>Open pickups</span>
+                            <strong>{aquaOpenPickups}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- ══════════════════════════════════════════════════════════
+         TAB 2 — WORK ORDERS
+    ═══════════════════════════════════════════════════════════ -->
+    <template if:true={tabWorkOrders}>
+        <div class="coo-body">
+            <div class="coo-tab-header">
+                <h2>Work Order Pipeline</h2>
+                <div class="coo-tab-sub">Active Work Orders grouped by status across all territories.</div>
+            </div>
+            <template if:true={hasWoPipeline}>
+                <div class="card">
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th class="num">Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={woPipeline} for:item="row">
+                                <tr key={row.status}>
+                                    <td><span class={row.chipCss}>{row.status}</span></td>
+                                    <td class="num">{row.count}</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </template>
+            <template if:false={hasWoPipeline}>
+                <div class="coo-empty">
+                    <div class="coo-empty-icon">📋</div>
+                    <div class="coo-empty-title">No Active Work Orders</div>
+                </div>
+            </template>
+        </div>
+    </template>
+
+    <!-- ══════════════════════════════════════════════════════════
+         TAB 3 — SCHEDULING
+    ═══════════════════════════════════════════════════════════ -->
+    <template if:true={tabScheduling}>
+        <div class="coo-body">
+            <div class="coo-tab-header">
+                <h2>Scheduling Overview</h2>
+                <div class="coo-tab-sub">Key scheduling KPIs from the Schedule Console.</div>
+            </div>
+            <div class="g4">
+                <div class="kpi kpi-amber">
+                    <div class="kn">{schedKpiPendingProposals}</div>
+                    <div class="kl">Pending Proposals</div>
+                </div>
+                <div class="kpi kpi-green">
+                    <div class="kn">{schedKpiCtsQueue}</div>
+                    <div class="kl">Clear to Schedule</div>
+                </div>
+                <div class="kpi kpi-purple">
+                    <div class="kn">{schedKpiLockedToday}</div>
+                    <div class="kl">Locked Today</div>
+                </div>
+                <div class="kpi kpi-blue">
+                    <div class="kn">{schedKpiActiveCrews}</div>
+                    <div class="kl">Active Crews</div>
+                </div>
+                <div class="kpi kpi-amber">
+                    <div class="kn">{schedKpiSiteReadinessOverdue}</div>
+                    <div class="kl">Site Readiness Overdue</div>
+                </div>
+                <div class="kpi kpi-blue">
+                    <div class="kn">{schedKpiOpenPullTickets}</div>
+                    <div class="kl">Open Pull Tickets</div>
+                </div>
+                <div class="kpi kpi-blue">
+                    <div class="kn">{schedKpiOpenLoadingTickets}</div>
+                    <div class="kl">Open Loading Tickets</div>
+                </div>
+                <div class="kpi kpi-blue">
+                    <div class="kn">{schedKpiThirtyDay}</div>
+                    <div class="kl">30-Day Pipeline</div>
+                </div>
+            </div>
+            <div class="ab ab-b" style="margin-top:12px;">
+                <div class="ab-ic">ℹ</div>
+                <div>Open <strong>Scheduling Console</strong> for the live route board and crew detail.</div>
+            </div>
+        </div>
+    </template>
+
+    <!-- ══════════════════════════════════════════════════════════
+         TAB 4 — FINANCE / GP
+    ═══════════════════════════════════════════════════════════ -->
+    <template if:true={tabFinance}>
+        <div class="coo-body">
+            <div class="coo-tab-header">
+                <h2>Finance &amp; GP Health</h2>
+                <div class="coo-tab-sub">Pending and sent invoices broken down by GP tier. Blocked invoices require operations leadership review.</div>
+            </div>
+            <div class="g4" style="margin-bottom:16px;">
+                <div class="kpi kpi-green">
+                    <div class="kn">{gpGreenCount}</div>
+                    <div class="kl">Green GP Invoices (≥28%)</div>
+                </div>
+                <div class="kpi kpi-amber">
+                    <div class="kn">{gpYellowCount}</div>
+                    <div class="kl">Yellow GP Invoices (22–27%)</div>
+                </div>
+                <div class="kpi kpi-red">
+                    <div class="kn">{gpRedCount}</div>
+                    <div class="kl">Red GP (below 22%)</div>
+                </div>
+                <div class="kpi kpi-red">
+                    <div class="kn">{gpBlockedCount}</div>
+                    <div class="kl">Blocked — Leadership Review</div>
+                </div>
+            </div>
+            <template if:true={gpBlockedCount}>
+                <div class="ab ab-r">
+                    <div class="ab-ic">🚫</div>
+                    <div>
+                        <strong>{gpBlockedCount} invoice(s) are blocked</strong> awaiting operations leadership review.
+                        GP% is below the 22% floor. Open the Invoices list to review and release.
+                    </div>
+                </div>
+            </template>
+            <div class="card" style="margin-top:12px;">
+                <div class="ch">
+                    <div class="ci ci-green">💰</div>
+                    <h3>Pending Revenue</h3>
+                </div>
+                <div style="padding:12px 14px;font-size:22px;font-weight:700;color:#2e7d32;">
+                    {gpRevenueDisplay}
+                </div>
+                <div style="padding:0 14px 12px;font-size:12px;color:#54698d;">
+                    Sum of Green + Yellow GP invoices in Pending Send or Sent status.
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- ══════════════════════════════════════════════════════════
+         TAB 5 — QUALITY
+    ═══════════════════════════════════════════════════════════ -->
+    <template if:true={tabQuality}>
+        <div class="coo-body">
+            <div class="coo-tab-header">
+                <h2>Quality — FM Scorecards</h2>
+                <div class="coo-tab-sub">{qualitySubtitle}</div>
+            </div>
+            <template if:true={hasScorecards}>
+                <div class="card">
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>FM</th>
+                                <th class="num">QI Avg</th>
+                                <th class="num">Last QI</th>
+                                <th class="num">QI Count</th>
+                                <th class="num">FJ %</th>
+                                <th class="num">WOs MTD</th>
+                                <th class="num">Escalations</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={scorecards} for:item="row">
+                                <tr key={row.id} class={row.rowClass}>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:8px;">
+                                            <div class="fm-avatar" style={row.avatarStyle}>{row.fmInitials}</div>
+                                            <span>{row.fmName}</span>
+                                        </div>
+                                    </td>
+                                    <td class="num">{row.qiAvgDisplay}</td>
+                                    <td class="num">{row.lastQiDisplay}</td>
+                                    <td class="num">{row.qiCount}</td>
+                                    <td class="num">{row.fjPctDisplay}</td>
+                                    <td class="num">{row.wosMtd}</td>
+                                    <td class="num">{row.openEscalations}</td>
+                                    <td><span class={row.statusClass}>{row.statusLabel}</span></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </template>
+            <template if:false={hasScorecards}>
+                <div class="coo-empty">
+                    <div class="coo-empty-icon">⭐</div>
+                    <div class="coo-empty-title">No FM Scorecards Found</div>
+                    <div class="coo-empty-sub">Live FM scorecard data unavailable.</div>
+                </div>
+            </template>
+        </div>
+    </template>
+
+    <!-- ══════════════════════════════════════════════════════════
+         TAB 6 — CUSTOMER CARE
+    ═══════════════════════════════════════════════════════════ -->
+    <template if:true={tabCustomerCare}>
+        <div class="coo-body">
+            <div class="coo-tab-header">
+                <h2>Customer Success</h2>
+                <div class="coo-tab-sub">{customerCareSubtitle}</div>
+            </div>
+            <div class="ab ab-b">
+                <div class="ab-ic">ℹ</div>
+                <div>{customerCareBanner}</div>
+            </div>
+            <div class="card" style="margin-top:12px;">
+                <div class="ch">
+                    <div class="ci ci-blue">📞</div>
+                    <h3>Customer Success</h3>
+                </div>
+                <div style="padding:12px 14px;font-size:13px;color:#16325c;line-height:1.7;">
+                    <p>{customerCareDetail}</p>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- ══════════════════════════════════════════════════════════
+         TAB 7 — PEOPLE
+    ═══════════════════════════════════════════════════════════ -->
+    <template if:true={tabPeople}>
+        <div class="coo-body">
+            <div class="coo-tab-header">
+                <h2>People</h2>
+                <div class="coo-tab-sub">Open hire requests and this week's 1:1 meetings.</div>
+            </div>
+
+            <!-- Hire Requests -->
+            <div class="card">
+                <div class="ch">
+                    <div class="ci ci-blue">👤</div>
+                    <h3>Open Hire Requests <span class="badge-count">{hireRequests.length}</span></h3>
+                </div>
+                <template if:true={hasHireRequests}>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Request #</th>
+                                <th>Service Line</th>
+                                <th>Role Type</th>
+                                <th>Submitted By</th>
+                                <th class="num">Annual Cost</th>
+                                <th class="num">Y1 ROI</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={hireRequests} for:item="hr">
+                                <tr key={hr.id}>
+                                    <td>
+                                        <span class="nl" data-recordid={hr.id}
+                                              onclick={handleNavToRecord}
+                                              style="cursor:pointer;">{hr.hrNumber}</span>
+                                    </td>
+                                    <td>{hr.serviceLine}</td>
+                                    <td>{hr.roleType}</td>
+                                    <td>{hr.submittedBy}</td>
+                                    <td class="num">{hr.costDisplay}</td>
+                                    <td class="num">{hr.roiDisplay}</td>
+                                    <td><span class="chip chip-amber">{hr.status}</span></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+                <template if:false={hasHireRequests}>
+                    <div style="padding:16px;font-size:13px;color:#54698d;">No open hire requests.</div>
+                </template>
+            </div>
+
+            <!-- 1:1 Meetings -->
+            <div class="card" style="margin-top:14px;">
+                <div class="ch">
+                    <div class="ci ci-purple">🤝</div>
+                    <h3>This Week's 1:1 Meetings <span class="badge-count">{oneOnOnes.length}</span></h3>
+                </div>
+                <template if:true={hasOneOnOnes}>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Meeting</th>
+                                <th>Manager</th>
+                                <th>Direct Report</th>
+                                <th class="num">Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={oneOnOnes} for:item="o">
+                                <tr key={o.id}>
+                                    <td>
+                                        <span class="nl" data-recordid={o.id}
+                                              onclick={handleNavToRecord}
+                                              style="cursor:pointer;">{o.name}</span>
+                                    </td>
+                                    <td>{o.manager}</td>
+                                    <td>{o.directReport}</td>
+                                    <td class="num">{o.dateDisplay}</td>
+                                    <td><span class="chip chip-blue">{o.status}</span></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+                <template if:false={hasOneOnOnes}>
+                    <div style="padding:16px;font-size:13px;color:#54698d;">No 1:1s scheduled this week.</div>
+                </template>
+            </div>
+        </div>
+    </template>
+
+    <!-- ══════════════════════════════════════════════════════════
+         TAB 8 — AQUA
+    ═══════════════════════════════════════════════════════════ -->
+    <template if:true={tabAqua}>
+        <div class="coo-body">
+            <div class="coo-tab-header">
+                <h2>Aqua Service</h2>
+                <div class="coo-tab-sub">Aqua install, check, and pickup ticket counts. Open the Aqua Console for full schedule and inventory management.</div>
+            </div>
+            <div class="g4" style="margin-bottom:16px;">
+                <div class="kpi kpi-blue">
+                    <div class="kn">{aquaUpcomingInstalls}</div>
+                    <div class="kl">Upcoming Installs</div>
+                </div>
+                <div class="kpi kpi-aqua">
+                    <div class="kn">{aquaUpcomingChecks}</div>
+                    <div class="kl">Upcoming Checks</div>
+                </div>
+                <div class="kpi kpi-amber">
+                    <div class="kn">{aquaOpenPickups}</div>
+                    <div class="kl">Open Pickup Tickets</div>
+                </div>
+            </div>
+            <div class="ab ab-b">
+                <div class="ab-ic">💧</div>
+                <div>
+                    <strong>Aqua Service Console</strong> provides full watering schedule editing, community-level inventory management, and per-ticket status tracking.
+                    Open the Aqua app for complete detail.
+                </div>
+            </div>
+        </div>
+    </template>
+
+</div>
+</template>

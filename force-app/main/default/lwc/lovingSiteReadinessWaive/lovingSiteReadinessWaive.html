@@ -1,0 +1,53 @@
+<template>
+    <div class="lsrw-wrap">
+
+        <template if:true={isLoading}>
+            <div class="lsrw-spinner">
+                <lightning-spinner alternative-text="Processing" size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:true={errorMessage}>
+            <div class="lsrw-banner lsrw-banner-red">
+                <span class="lsrw-banner-icon">⚠</span>
+                {errorMessage}
+            </div>
+        </template>
+
+        <div class="lsrw-banner lsrw-banner-amber">
+            <span class="lsrw-banner-icon">⚠</span>
+            <span>
+                <strong>FM/COO Authorization Required.</strong> Waiving site readiness allows the install to proceed
+                despite site issues. This action is logged and audited. A documented reason is required.
+            </span>
+        </div>
+
+        <div class="lsrw-form">
+            <label class="lsrw-label" for="reason">
+                Waiver Reason <span class="lsrw-required">*</span>
+            </label>
+            <textarea
+                id="reason"
+                class={reasonClass}
+                placeholder="Document the authorization basis for waiving site readiness (e.g., Builder confirmed access, COO authorization received, emergency scheduling)..."
+                value={reason}
+                onchange={handleReasonChange}
+                rows="5"
+                disabled={isLoading}
+            ></textarea>
+            <template if:true={reasonError}>
+                <div class="lsrw-field-error">A waiver reason is required.</div>
+            </template>
+        </div>
+
+        <div class="lsrw-actions">
+            <button class="lsrw-btn lsrw-btn-secondary" onclick={handleCancel} disabled={isLoading}>
+                Cancel
+            </button>
+            <button class="lsrw-btn lsrw-btn-primary" onclick={handleWaive} disabled={isLoading}>
+                ✓ Waive Site Readiness
+            </button>
+        </div>
+
+    </div>
+</template>

@@ -1,0 +1,196 @@
+<template>
+    <template lwc:if={isLoaded}>
+
+        <!-- Scope of Work -->
+        <div class="card">
+            <div class="card-header">
+                <div class="ch-icon">📋</div>
+                <div class="ch-label">Scope of Work</div>
+            </div>
+            <div class="fields-grid">
+                <div class="field-item full-width">
+                    <div class="field-label">Scope Summary</div>
+                    <div class="field-value textarea-value">{scopeSummary}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Home Types</div>
+                    <div class="field-value">{homeTypes}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Scope Applies To</div>
+                    <div class="field-value">{scopeApplies}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Scope of Work Source</div>
+                    <div class="field-value">{scopeSource}</div>
+                </div>
+                <div class="field-item full-width">
+                    <div class="field-label">Cost Categories</div>
+                    <div class="field-value textarea-value">{scopeCats}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scheduling Rules -->
+        <div class="card">
+            <div class="card-header">
+                <div class="ch-icon">📅</div>
+                <div class="ch-label">Scheduling Rules</div>
+            </div>
+            <div class="fields-grid">
+                <div class="field-item">
+                    <div class="field-label">Scheduling Lead Time</div>
+                    <div class="field-value">{schedLead}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Service Call Response</div>
+                    <div class="field-value">{svcRespHrs}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Lot Readiness Approver</div>
+                    <div class="field-value">{lotReadyApprover}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Lot Release Trigger</div>
+                    <div class="field-value">{lotReleaseTrigger}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Utility Locate Lead Time</div>
+                    <div class="field-value">{utilLocate}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">FWO Required (Out of Scope)</div>
+                    <div class="field-value"><span class={fwoChip}>{fwoOos}</span></div>
+                </div>
+                <div class="field-item full-width">
+                    <div class="field-label">Seasonal Tree Lead Time Notes</div>
+                    <div class="field-value textarea-value">{seasonalTree}</div>
+                </div>
+            </div>
+
+            <!-- Job Duration Estimates -->
+            <div class="subsection-label">Job Duration Estimates</div>
+            <div class="fields-grid-4">
+                <div class="field-item">
+                    <div class="field-label">SFD Small</div>
+                    <div class="field-value">{durSfdSm}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">SFD Large</div>
+                    <div class="field-value">{durSfdLg}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Condo</div>
+                    <div class="field-value">{durCondo}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Townhome</div>
+                    <div class="field-value">{durTownhome}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Site Rules -->
+        <div class="card">
+            <div class="card-header">
+                <div class="ch-icon">🚧</div>
+                <div class="ch-label">Site Rules</div>
+            </div>
+            <div class="fields-grid">
+                <div class="field-item">
+                    <div class="field-label">English-Speaking Crew</div>
+                    <div class="field-value"><span class={englishCrewChip}>{englishCrew}</span></div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Speed Limit</div>
+                    <div class="field-value">{speedLimit}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Staging Area Rule</div>
+                    <div class="field-value">{stagingRule}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Pine Straw or Mulch</div>
+                    <div class="field-value">{pineMulch}</div>
+                </div>
+                <div class="field-item full-width">
+                    <div class="field-label">Drainage Standard</div>
+                    <div class="field-value textarea-value">{drainageStd}</div>
+                </div>
+                <div class="field-item full-width">
+                    <div class="field-label">Erosion Control Rule</div>
+                    <div class="field-value textarea-value">{erosionRule}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Warranty & Repair Policies -->
+        <div class="card">
+            <div class="card-header">
+                <div class="ch-icon">🛡</div>
+                <div class="ch-label">Warranty &amp; Repair Policies</div>
+            </div>
+            <div class="fields-grid">
+                <div class="field-item">
+                    <div class="field-label">Warranty Program</div>
+                    <div class="field-value">{warrantyPgm}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Warranty Period</div>
+                    <div class="field-value">{warrantyPeriod}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Punch Response Window</div>
+                    <div class="field-value">{punchDays}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Foundation Water Tolerance</div>
+                    <div class="field-value">{foundWaterTol}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Swale Tolerance</div>
+                    <div class="field-value">{swaleTol}</div>
+                </div>
+                <div class="field-item">
+                    <div class="field-label">Plant Health Warranty</div>
+                    <div class="field-value">{plantHealth}</div>
+                </div>
+                <div class="field-item full-width">
+                    <div class="field-label">Drainage Warranty Policy</div>
+                    <div class="field-value textarea-value">{drainageWp}</div>
+                </div>
+                <div class="field-item full-width">
+                    <div class="field-label">Reseed Policy</div>
+                    <div class="field-value textarea-value">{reseedPol}</div>
+                </div>
+                <div class="field-item full-width">
+                    <div class="field-label">Erosion / Gully Repair Policy</div>
+                    <div class="field-value textarea-value">{erosionGully}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Care & Notes -->
+        <div class="card card-last">
+            <div class="card-header">
+                <div class="ch-icon">🌿</div>
+                <div class="ch-label">Care &amp; Notes</div>
+            </div>
+            <div class="fields-grid">
+                <div class="field-item full-width">
+                    <div class="field-label">Care Guide Required</div>
+                    <div class="field-value"><span class={careGuideChip}>{careGuide}</span></div>
+                </div>
+                <div class="field-item full-width">
+                    <div class="field-label">Additional Scope Notes</div>
+                    <div class="field-value textarea-value">{additionalNotes}</div>
+                </div>
+            </div>
+        </div>
+
+    </template>
+
+    <template lwc:if={hasError}>
+        <div class="card error-state">Unable to load scope data.</div>
+    </template>
+</template>

@@ -1,0 +1,70 @@
+<template>
+    <div class="list-toolbar">
+        <span class={allChipClass} onclick={filterAll}>All Homeowner Opportunities</span>
+        <span class={umbChipClass} onclick={filterUmb}>UMB</span>
+        <span class={cbChipClass} onclick={filterCb}>Custom Build</span>
+        <span class={lcChipClass} onclick={filterLc}>Lawn Care</span>
+        <span class="filter-chip" onclick={filterVoicemail}>Voicemail Left</span>
+        <input class="list-search" placeholder="Search opportunities..." value={searchTerm} onchange={handleSearch} />
+    </div>
+    <div class="sf-body">
+        <div class="card">
+            <div class="ch">
+                <div class="ci" style="background:#fe9339">OPP</div>
+                <h3>Opportunity Operating List</h3>
+                <span style="margin-left:auto;font-size:11px;color:#54698d">{filteredOpps.length} records</span>
+            </div>
+            <table class="tbl">
+                <thead>
+                    <tr>
+                        <th>Opportunity</th>
+                        <th>Account</th>
+                        <th>LOB</th>
+                        <th>Stage</th>
+                        <th class="num">Amount</th>
+                        <th>Package / Service</th>
+                        <th>Last Activity</th>
+                        <th>Last Activity Date</th>
+                        <th>Voicemail</th>
+                        <th>Follow-Up Task</th>
+                        <th>Follow-Up Due</th>
+                        <th>Owner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={filteredOpps} for:item="opp">
+                        <tr key={opp.Id}>
+                            <td><span class="nl">{opp.Name}</span></td>
+                            <td>{opp.Account.Name}</td>
+                            <td><span class={opp.lobChipClass}>{opp.ODL_Path__c}</span></td>
+                            <td>{opp.StageName}</td>
+                            <td class="num">{opp.amountFormatted}</td>
+                            <td>{opp.Selected_Package__c}</td>
+                            <td>{opp.lastActivityLabel}</td>
+                            <td>{opp.lastActivityFormatted}</td>
+                            <td>
+                                <template if:true={opp.Voicemail_Left__c}>
+                                    <span class="chip ca">Yes</span>
+                                </template>
+                                <template if:false={opp.Voicemail_Left__c}>
+                                    <span class="chip cgr">No</span>
+                                </template>
+                            </td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>{opp.Owner.Name}</td>
+                        </tr>
+                    </template>
+                    <template if:true={hasLoadError}>
+                        <tr><td colspan="12" style="text-align:center;color:#c23934;padding:16px">{loadError}</td></tr>
+                    </template>
+                    <template if:false={hasLoadError}>
+                        <template if:true={noOpps}>
+                            <tr><td colspan="12" style="text-align:center;color:#54698d;padding:16px">No opportunities found</td></tr>
+                        </template>
+                    </template>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</template>

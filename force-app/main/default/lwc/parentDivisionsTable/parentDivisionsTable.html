@@ -1,0 +1,40 @@
+<template>
+    <div class="card">
+        <div class="card-header">
+            <div class="card-icon">🏢</div>
+            <span class="card-title">All Division Accounts</span>
+        </div>
+        <template lwc:if={isLoaded}>
+            <template lwc:if={hasDivisions}>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Division Name</th>
+                            <th>Market</th>
+                            <th>Territory</th>
+                            <th>Trade Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={divisions} for:item="division">
+                            <tr key={division.id}>
+                                <td>
+                                    <a href={division.recordUrl} class="record-link">{division.name}</a>
+                                </td>
+                                <td>{division.market}</td>
+                                <td>{division.territory}</td>
+                                <td>{division.tradeType}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template lwc:else>
+                <div class="empty-state">No division accounts found.</div>
+            </template>
+        </template>
+        <template lwc:else>
+            <div class="empty-state">Loading...</div>
+        </template>
+    </div>
+</template>

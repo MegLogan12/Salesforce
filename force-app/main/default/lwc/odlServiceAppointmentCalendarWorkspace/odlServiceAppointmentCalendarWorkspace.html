@@ -1,0 +1,92 @@
+<template>
+    <section class="workspace">
+        <section class="panel hero">
+            <div class="hero-copy">
+                <h1>Service Appointment Calendar</h1>
+            </div>
+            <div class="hero-actions">
+                <button class="cta cta-secondary" onclick={handleToday}>Today</button>
+                <button class="cta-link" onclick={handleNewAppointment}>New Appointment</button>
+            </div>
+        </section>
+        <section class="panel toolbar">
+            <div class="chip-row">
+                <span class="toolbar-chip toolbar-chip-active">Calendar</span>
+                <span class="toolbar-chip">Consults</span>
+                <span class="toolbar-chip">Site Visits</span>
+                <span class="toolbar-chip">Install</span>
+                <span class="toolbar-chip">Follow-Ups</span>
+            </div>
+        </section>
+        <section class="kpi-row">
+            <div class="kpi-card"><div class="kpi-value">{consultCount}</div><div class="kpi-label">Consults this week</div></div>
+            <div class="kpi-card"><div class="kpi-value">{siteVisitCount}</div><div class="kpi-label">Site visits</div></div>
+            <div class="kpi-card"><div class="kpi-value">{installCount}</div><div class="kpi-label">Install visits</div></div>
+            <div class="kpi-card"><div class="kpi-value">{followUpCount}</div><div class="kpi-label">Follow-ups</div></div>
+        </section>
+        <section class="layout">
+            <div class="main">
+                <section class="panel">
+                    <div class="panel-header">Service Appointment Calendar</div>
+                    <div class="calendar-grid">
+                        <template for:each={calendarDays} for:item="day">
+                            <div class="day-card" key={day.label}>
+                                <div class="day-head"><span>{day.label}</span><span>{day.dateLabel}</span></div>
+                                <template for:each={day.events} for:item="eventLabel">
+                                    <div class="event-pill" key={eventLabel}>{eventLabel}</div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </section>
+                <section class="panel">
+                    <div class="panel-header">Service Appointment List</div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Appointment</th>
+                                <th>Type</th>
+                                <th>Related Record</th>
+                                <th>Date</th>
+                                <th>Window</th>
+                                <th>Assigned</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={rows} for:item="row">
+                                <tr key={row.id}>
+                                    <td><a href={row.url}>{row.appointmentNumber}</a></td>
+                                    <td>{row.type}</td>
+                                    <td><a href={row.relatedUrl}>{row.relatedLabel}</a></td>
+                                    <td>{row.dateText}</td>
+                                    <td>{row.windowText}</td>
+                                    <td>{row.assignedTo}</td>
+                                    <td>{row.status}</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+            <aside class="rail">
+                <section class="panel">
+                    <div class="panel-header">Activity Health</div>
+                    <div class="rail-row"><span>Last touch</span><span>{lastTouch}</span></div>
+                    <div class="rail-row"><span>Voicemail</span><span>{voicemailStatus}</span></div>
+                    <div class="rail-row"><span>Next follow-up</span><span>{nextFollowUp}</span></div>
+                    <div class="rail-row"><span>Open tasks</span><span>{openTasks}</span></div>
+                </section>
+                <section class="panel">
+                    <div class="panel-header">Assistant Panel</div>
+                    <div class="assistant-list">
+                        <div class="assistant-item">Summarize latest customer activity</div>
+                        <div class="assistant-item">Draft follow-up email</div>
+                        <div class="assistant-item">Create next task</div>
+                        <div class="assistant-item">Show overdue items</div>
+                    </div>
+                </section>
+            </aside>
+        </section>
+    </section>
+</template>

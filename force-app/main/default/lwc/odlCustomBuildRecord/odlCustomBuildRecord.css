@@ -1,0 +1,13 @@
+:host { display: block; }
+
+.field-head {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.field-head .field-label {
+    margin: 0;
+}
+.field-head lightning-button-icon {
+    --slds-c-icon-color-foreground-default: #54698d;
+}

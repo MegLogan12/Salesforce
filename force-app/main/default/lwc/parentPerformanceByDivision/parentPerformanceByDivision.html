@@ -1,0 +1,34 @@
+<template>
+    <div class="card">
+        <div class="card-header">
+            <h3>Performance by Division</h3>
+            <span class="ch-note">YTD : All divisions</span>
+        </div>
+        <template lwc:if={hasError}>
+            <p class="empty-state">{error}</p>
+        </template>
+        <template lwc:elseif={hasRows}>
+            <div class="grid">
+                <template for:each={cards} for:item="c">
+                    <div key={c.key} class="div-card">
+                        <div class="row-head">
+                            <div class="div-name">{c.name}</div>
+                            <span class={c.pillClass}>{c.pillLabel}</span>
+                        </div>
+                        <div class="ytd">{c.ytdRevenue}</div>
+                        <div class="sub">{c.subLine}</div>
+                        <div class="mini-wrap">
+                            <div class="mini-bar"><div class="mini-fill" style={c.fillStyle}></div></div>
+                            <div class="sub">{c.lotsRatio}</div>
+                        </div>
+                        <div class="footer">{c.footer}</div>
+                        <div class="footer">{c.renewLabel}</div>
+                    </div>
+                </template>
+            </div>
+        </template>
+        <template lwc:else>
+            <p class="empty-state">No divisions to show.</p>
+        </template>
+    </div>
+</template>

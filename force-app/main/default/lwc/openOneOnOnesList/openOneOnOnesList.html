@@ -1,0 +1,18 @@
+<template>
+    <lightning-card title="This Week's 1:1s" icon-name="standard:contact_list">
+        <span slot="actions" class="slds-badge">{count}</span>
+        <div class="slds-p-horizontal_small">
+            <template if:true={rows.length}>
+                <lightning-datatable
+                    key-field="id"
+                    data={rows}
+                    columns={columns}
+                    hide-checkbox-column>
+                </lightning-datatable>
+            </template>
+            <template if:false={rows.length}>
+                <p class="slds-p-around_small slds-text-color_weak">No 1:1s scheduled this week.</p>
+            </template>
+        </div>
+    </lightning-card>
+</template>

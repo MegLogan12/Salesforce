@@ -1,0 +1,1071 @@
+<template>
+<div class="cc-wrap">
+
+    <!-- Tab Nav -->
+    <div class="sf-nav">
+        <div class={tcHome}    data-tab="home"    onclick={switchTab}>&#127968; Home</div>
+        <div class={tcFms}     data-tab="fms"     onclick={switchTab}>&#11088; My FMs
+            <template if:true={fmCount}><span class="num-badge">{fmCount}</span></template>
+        </div>
+        <div class={tcInstall} data-tab="install" onclick={switchTab}>&#127807; Production Install</div>
+        <div class={tcLawn}    data-tab="lawn"    onclick={switchTab}>&#127807; Lawn Care</div>
+        <div class={tcEscal}   data-tab="escal"   onclick={switchTab}>&#128680; Escalations
+            <template if:true={escalCount}><span class="num-badge">{escalCount}</span></template>
+        </div>
+        <div class={tcFjroll}  data-tab="fjroll"  onclick={switchTab}>&#9889; FJ Roll-up
+            <template if:true={fjCount}><span class="num-badge">{fjCount}</span></template>
+        </div>
+        <div class={tcHealth}  data-tab="health"  onclick={switchTab}>&#128202; 2 PM Health Roll-up</div>
+        <div class={tcQuality} data-tab="quality" onclick={switchTab}>&#127919; Quality KPIs</div>
+        <div class={tcOnes}    data-tab="ones"    onclick={switchTab}>&#128221; Weekly 1:1s</div>
+    </div>
+
+    <!-- ═══════════════════════════ HOME TAB ═══════════════════════════ -->
+    <template if:true={tabHome}>
+
+        <!-- Record Header -->
+        <div class="rec-header">
+            <div class="rec-top-row">
+                <div class="rec-icon">VP</div>
+                <div class="rec-title-block">
+                    <div class="rec-breadcrumb">VP Field Operations · Home</div>
+                    <div class="rec-title">Jimbo's Day, Friday April 25, 2026</div>
+                    <div class="rec-sub">VP Field Operations · 5 FMs · 4 service lines · ~42 techs · weekly board update due Monday</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cc-body">
+
+            <!-- VP Identity Card — FM count from live FMScorecardController -->
+            <div class="vp-id-card">
+                <div class="vp-id-avatar">VP</div>
+                <div class="vp-id-info">
+                    <div class="vp-id-name">VP Field Operations</div>
+                    <div class="vp-id-role">VP, Field Operations · reports to COO</div>
+                    <div class="vp-id-stats">
+                        <div>
+                            <div class="vp-id-stat-num">{fmCount}</div>
+                            <div class="vp-id-stat-lbl">FMs</div>
+                        </div>
+                        <div>
+                            <div class="vp-id-stat-num">{activeWoCount}</div>
+                            <div class="vp-id-stat-lbl">Active WOs</div>
+                        </div>
+                        <div>
+                            <div class="vp-id-stat-num">{scheduledToday}</div>
+                            <div class="vp-id-stat-lbl">Scheduled Today</div>
+                        </div>
+                        <div>
+                            <div class="vp-id-stat-num">{inProgressToday}</div>
+                            <div class="vp-id-stat-lbl">In Progress</div>
+                        </div>
+                        <div>
+                            <div class="vp-id-stat-num">{openHireCount}</div>
+                            <div class="vp-id-stat-lbl">Open Hire Reqs</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPI Grid — live from HomeDashboardController.getKpis() -->
+            <div class="g6">
+                <div class="kpi kpi-purple">
+                    <div class="kn">{scheduledToday}</div>
+                    <div class="kl">Scheduled Today</div>
+                </div>
+                <div class="kpi kpi-green">
+                    <div class="kn">{inProgressToday}</div>
+                    <div class="kl">In Progress</div>
+                </div>
+                <div class="kpi kpi-green">
+                    <div class="kn">{activeWoCount}</div>
+                    <div class="kl">Active WOs</div>
+                </div>
+                <div class="kpi kpi-amber">
+                    <div class="kn">{pendingApproval}</div>
+                    <div class="kl">FM QI Review</div>
+                </div>
+                <div class="kpi kpi-red">
+                    <div class="kn">{escalCount}</div>
+                    <div class="kl">Open Escalations</div>
+                </div>
+                <div class="kpi kpi-gold">
+                    <div class="kn">{oneOnOnesCount}</div>
+                    <div class="kl">1:1s This Week</div>
+                </div>
+            </div>
+
+            <!-- Main Layout -->
+            <div class="layout">
+                <div class="layout-main">
+
+                    <!-- Service Line Health -->
+                    <div class="card info">
+                        <div class="ch">
+                            <div class="ci ci-indigo">SL</div>
+                            <h3>Service Line Health</h3>
+                        </div>
+                        <div style="padding:12px 14px;">
+                            <div class="g4">
+                                <div class="sl-tile landscape">
+                                    <div class="sl-tile-icon">&#127807;</div>
+                                    <div class="sl-tile-name">Landscape</div>
+                                    <div class="sl-tile-fm">Tyler + Scott</div>
+                                    <div class="sl-tile-stats">
+                                        <div class="sl-tile-stat">
+                                            <div class="sl-tile-stat-num">8</div>
+                                            <div class="sl-tile-stat-lbl">SAs</div>
+                                        </div>
+                                        <div class="sl-tile-stat">
+                                            <div class="sl-tile-stat-num">96%</div>
+                                            <div class="sl-tile-stat-lbl">Goal</div>
+                                        </div>
+                                    </div>
+                                    <div style="margin-top:6px;"><span class="chip chip-amber">1 FJ pending</span></div>
+                                </div>
+                                <div class="sl-tile aqua">
+                                    <div class="sl-tile-icon">&#128167;</div>
+                                    <div class="sl-tile-name">Aqua</div>
+                                    <div class="sl-tile-fm">FM Josh</div>
+                                    <div class="sl-tile-stats">
+                                        <div class="sl-tile-stat">
+                                            <div class="sl-tile-stat-num">14</div>
+                                            <div class="sl-tile-stat-lbl">SAs</div>
+                                        </div>
+                                        <div class="sl-tile-stat">
+                                            <div class="sl-tile-stat-num">98%</div>
+                                            <div class="sl-tile-stat-lbl">Goal</div>
+                                        </div>
+                                    </div>
+                                    <div style="margin-top:6px;"><span class="chip chip-green">All Green</span></div>
+                                </div>
+                                <div class="sl-tile irrigation">
+                                    <div class="sl-tile-icon">&#128167;</div>
+                                    <div class="sl-tile-name">Irrigation</div>
+                                    <div class="sl-tile-fm">FM Jersain</div>
+                                    <div class="sl-tile-stats">
+                                        <div class="sl-tile-stat">
+                                            <div class="sl-tile-stat-num">6</div>
+                                            <div class="sl-tile-stat-lbl">SAs</div>
+                                        </div>
+                                        <div class="sl-tile-stat">
+                                            <div class="sl-tile-stat-num">88%</div>
+                                            <div class="sl-tile-stat-lbl">Goal</div>
+                                        </div>
+                                    </div>
+                                    <div style="margin-top:6px;"><span class="chip chip-amber">Capacity tight</span></div>
+                                </div>
+                                <div class="sl-tile lawn">
+                                    <div class="sl-tile-icon">&#127807;</div>
+                                    <div class="sl-tile-name">Lawn Care</div>
+                                    <div class="sl-tile-fm">FM Nick</div>
+                                    <div class="sl-tile-stats">
+                                        <div class="sl-tile-stat">
+                                            <div class="sl-tile-stat-num">40</div>
+                                            <div class="sl-tile-stat-lbl">SAs</div>
+                                        </div>
+                                        <div class="sl-tile-stat">
+                                            <div class="sl-tile-stat-num">93%</div>
+                                            <div class="sl-tile-stat-lbl">Goal</div>
+                                        </div>
+                                    </div>
+                                    <div style="margin-top:6px;"><span class="chip chip-green">On track</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Escalations Summary -->
+                    <div class="card alert">
+                        <div class="ch">
+                            <div class="ci ci-red">!</div>
+                            <h3>Active Escalations (3)</h3>
+                            <span class="ch-link" data-tab="escal" onclick={switchTab}>Open queue &rsaquo;</span>
+                        </div>
+                        <table class="tbl">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>FM</th>
+                                    <th>Impact</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Hire request - irrigation tech</td>
+                                    <td>Jersain</td>
+                                    <td>$55K base · ROI $336K/yr</td>
+                                    <td><span class="chip chip-amber">Pending approval</span></td>
+                                </tr>
+                                <tr>
+                                    <td>DRH MSA sod allowance renegotiation</td>
+                                    <td>Tyler</td>
+                                    <td>Contract renewal at risk</td>
+                                    <td><span class="chip chip-red">Join call needed</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Truck T-014 capex replacement</td>
+                                    <td>Nick</td>
+                                    <td>$42K capex · $4K/wk downtime</td>
+                                    <td><span class="chip chip-amber">Pending approval</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- FM Variance Heat Map -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci ci-purple">HR</div>
+                            <h3>FM Variance Heat Map (today)</h3>
+                        </div>
+                        <div class="heat-cell cool">
+                            <div class="fm-avatar" style="background:#4f46e5;">TY</div>
+                            <div style="flex:1;"><strong>Tyler</strong> - Landscape</div>
+                            <div><span class="chip chip-blue">-0.4 hr avg</span></div>
+                        </div>
+                        <div class="heat-cell cool">
+                            <div class="fm-avatar" style="background:#0070d2;">SC</div>
+                            <div style="flex:1;"><strong>Scott</strong> - Landscape</div>
+                            <div><span class="chip chip-blue">-0.2 hr avg</span></div>
+                        </div>
+                        <div class="heat-cell cool">
+                            <div class="fm-avatar" style="background:#0f6e56;">JO</div>
+                            <div style="flex:1;"><strong>Josh</strong> - Aqua</div>
+                            <div><span class="chip chip-teal">-0.3 hr avg</span></div>
+                        </div>
+                        <div class="heat-cell warm">
+                            <div class="fm-avatar" style="background:#b45309;">JR</div>
+                            <div style="flex:1;"><strong>Jersain</strong> - Irrigation &#9888;</div>
+                            <div><span class="chip chip-amber">+0.6 hr avg WARM</span></div>
+                        </div>
+                        <div class="heat-cell cool">
+                            <div class="fm-avatar" style="background:#04844b;">NI</div>
+                            <div style="flex:1;"><strong>Nick</strong> - Lawn Care</div>
+                            <div><span class="chip chip-blue">-0.1 hr avg</span></div>
+                        </div>
+                        <div style="padding:8px 14px;background:#fafaf9;border-top:1px solid #e5e5e5;font-size:11px;color:#54698d;">
+                            &#9888; Jersain running over on irrigation jobs - capacity discussion in today's 1:1 at 3 PM.
+                        </div>
+                    </div>
+
+                    <!-- Today at a Glance -->
+                    <div class="card last">
+                        <div class="ch">
+                            <div class="ci ci-blue">i</div>
+                            <h3>Today at a Glance</h3>
+                        </div>
+                        <div class="fields-grid">
+                            <div>
+                                <div class="field-label">Total SAs</div>
+                                <div class="field-value">68</div>
+                            </div>
+                            <div>
+                                <div class="field-label">Combined Goal Hours</div>
+                                <div class="field-value">281</div>
+                            </div>
+                            <div>
+                                <div class="field-label">Active Communities</div>
+                                <div class="field-value">52</div>
+                            </div>
+                            <div>
+                                <div class="field-label">Crews on Road</div>
+                                <div class="field-value">6</div>
+                            </div>
+                            <div>
+                                <div class="field-label">Weather Risk</div>
+                                <div class="field-value">None</div>
+                            </div>
+                            <div>
+                                <div class="field-label">PTO / Absences</div>
+                                <div class="field-value">2 lawn techs out</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Rail -->
+                <div class="layout-rail">
+
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci ci-purple">&#9889;</div>
+                            <h3>Quick Actions</h3>
+                        </div>
+                        <div class="qa-list">
+                            <div class="qa-item" data-action="callFm" onclick={handleVpQaAction}>&#128222; Call FM</div>
+                            <div class="qa-item" data-action="addNote" onclick={handleVpQaAction}>&#128221; Add 1:1 note</div>
+                            <div class="qa-item" data-action="approveHire" onclick={handleVpQaAction}>&#10003; Approve hire request</div>
+                            <div class="qa-item" data-action="requestCapex" onclick={handleVpQaAction}>&#128679; Request capex</div>
+                            <div class="qa-item" data-action="weeklyBoard" onclick={handleVpQaAction}>&#128196; Pull weekly board update</div>
+                            <div class="qa-item" data-action="pageOnCall" onclick={handleVpQaAction}>&#128276; Page on-call FM</div>
+                            <div class="qa-item" data-action="reschedule" onclick={handleVpQaAction}>&#128197; Re-schedule with Megan</div>
+                        </div>
+                    </div>
+
+                    <!-- This Week's 1:1s -->
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci ci-purple">1:1</div>
+                            <h3>This Week's 1:1s</h3>
+                        </div>
+                        <table class="tbl">
+                            <thead>
+                                <tr><th>FM</th><th>Day / Time</th><th>Status</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Tyler</td>
+                                    <td>Mon 9 AM</td>
+                                    <td><span class="chip chip-green">&#10003; Done</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Scott</td>
+                                    <td>Mon 9:30 AM</td>
+                                    <td><span class="chip chip-green">&#10003; Done</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Josh</td>
+                                    <td>Tue 9 AM</td>
+                                    <td><span class="chip chip-green">&#10003; Done</span></td>
+                                </tr>
+                                <tr class="row-amber">
+                                    <td><strong>Jersain</strong></td>
+                                    <td><strong>TODAY 3 PM</strong></td>
+                                    <td><span class="chip chip-amber">Today</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Nick</td>
+                                    <td>Fri 4 PM</td>
+                                    <td><span class="chip chip-gray">Upcoming</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Board Update -->
+                    <div class="card last" style="border-left:4px solid #b45309;">
+                        <div class="ch">
+                            <div class="ci" style="background:#b45309;">BD</div>
+                            <h3>Board Update - Due Monday</h3>
+                        </div>
+                        <div style="padding:12px 14px;font-size:11px;line-height:1.8;color:#16325c;">
+                            <ul style="margin:0;padding-left:16px;">
+                                <li>Org-wide goal hit 94% MTD - above 90% target</li>
+                                <li>Irrigation capacity constraint - Jersain hire request pending</li>
+                                <li>DRH MSA sod allowance renegotiation in progress</li>
+                                <li>Truck T-014 capex $42K - ops risk if delayed past May 1</li>
+                                <li>Josh / Aqua team leading org at 98% goal - Trenton promotion path Q3</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- ═══════════════════════════ MY FMs TAB ═══════════════════════════ -->
+    <template if:true={tabFms}>
+
+        <div class="rec-header">
+            <div class="rec-top-row">
+                <div class="rec-icon">FM</div>
+                <div class="rec-title-block">
+                    <div class="rec-breadcrumb">VP Field Operations</div>
+                    <div class="rec-title">Field Managers (5 direct reports)</div>
+                    <div class="rec-sub">All FMs · April MTD performance</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cc-body">
+            <c-fm-scorecard-table></c-fm-scorecard-table>
+        </div>
+    </template>
+
+    <!-- ═══════════════════════════ PRODUCTION INSTALL TAB ═══════════════════════════ -->
+    <template if:true={tabInstall}>
+
+        <div class="rec-header">
+            <div class="rec-top-row">
+                <div class="rec-icon">&#127807;</div>
+                <div class="rec-title-block">
+                    <div class="rec-breadcrumb">VP Field Operations</div>
+                    <div class="rec-title">Production Install Department</div>
+                    <div class="rec-sub">3 sub-services: Landscape, Aqua, Irrigation. 4 FMs total. ~25 techs.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cc-body">
+            <div class="g3">
+
+                <!-- Landscape -->
+                <div class="card last">
+                    <div class="ch" style="background:#f0fdf4;">
+                        <div class="ci" style="background:#04844b;">LS</div>
+                        <h3>Landscape</h3>
+                        <span class="chip chip-green">Strong</span>
+                    </div>
+                    <div style="padding:10px 14px;">
+                        <div class="g3" style="margin-bottom:10px;">
+                            <div class="kpi kpi-purple"><div class="kn">280</div><div class="kl">SAs MTD</div></div>
+                            <div class="kpi kpi-green"><div class="kn">95%</div><div class="kl">Goal Hit</div></div>
+                            <div class="kpi kpi-aqua"><div class="kn">$112K</div><div class="kl">Revenue</div></div>
+                        </div>
+                        <div style="font-size:11px;color:#54698d;margin-bottom:6px;">FMs: Tyler + Scott · 16 FJs this month</div>
+                    </div>
+                    <table class="tbl">
+                        <thead><tr><th>Builder</th><th class="num">SAs</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <tr><td>DRH</td><td class="num">128</td><td><span class="chip chip-green">Strong</span></td></tr>
+                            <tr><td>Lennar</td><td class="num">82</td><td><span class="chip chip-green">On track</span></td></tr>
+                            <tr><td>Davidson</td><td class="num">28</td><td><span class="chip chip-green">On track</span></td></tr>
+                            <tr><td>Meritage</td><td class="num">22</td><td><span class="chip chip-green">On track</span></td></tr>
+                            <tr><td>Other</td><td class="num">20</td><td><span class="chip chip-gray">Misc</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Aqua -->
+                <div class="card last">
+                    <div class="ch" style="background:#ecfdf5;">
+                        <div class="ci" style="background:#0f6e56;">AQ</div>
+                        <h3>Aqua</h3>
+                        <span class="chip chip-teal">All Green</span>
+                    </div>
+                    <div style="padding:10px 14px;">
+                        <div class="g3" style="margin-bottom:10px;">
+                            <div class="kpi kpi-aqua"><div class="kn">218</div><div class="kl">SAs MTD</div></div>
+                            <div class="kpi kpi-green"><div class="kn">98%</div><div class="kl">Goal Hit</div></div>
+                            <div class="kpi kpi-blue"><div class="kn">$48K</div><div class="kl">Revenue</div></div>
+                        </div>
+                        <div style="font-size:11px;color:#54698d;margin-bottom:6px;">FM: Josh · 2 FJs this month</div>
+                    </div>
+                    <table class="tbl">
+                        <thead><tr><th>Category</th><th class="num">SAs</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <tr><td>Pool installs</td><td class="num">42</td><td><span class="chip chip-green">All on time</span></td></tr>
+                            <tr><td>Aqua checks</td><td class="num">158</td><td><span class="chip chip-green">98%</span></td></tr>
+                            <tr><td>Same-day calls</td><td class="num">14</td><td><span class="chip chip-green">Resolved</span></td></tr>
+                            <tr><td>Pickup visits</td><td class="num">4</td><td><span class="chip chip-teal">Clean</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Irrigation -->
+                <div class="card last" style="border-left:4px solid #b45309;">
+                    <div class="ch" style="background:#fffbeb;">
+                        <div class="ci ci-amber">IR</div>
+                        <h3>Irrigation</h3>
+                        <span class="chip chip-amber">Watch</span>
+                    </div>
+                    <div style="padding:10px 14px;">
+                        <div class="g3" style="margin-bottom:10px;">
+                            <div class="kpi kpi-blue"><div class="kn">52</div><div class="kl">SAs MTD</div></div>
+                            <div class="kpi kpi-amber"><div class="kn">88%</div><div class="kl">Goal Hit</div></div>
+                            <div class="kpi kpi-purple"><div class="kn">$84K</div><div class="kl">Revenue</div></div>
+                        </div>
+                        <div style="font-size:11px;color:#b45309;margin-bottom:6px;">FM: Jersain · 3 FJs · hire request pending approval</div>
+                    </div>
+                    <table class="tbl">
+                        <thead><tr><th>Category</th><th class="num">SAs</th><th>Status</th></tr></thead>
+                        <tbody>
+                            <tr><td>New install</td><td class="num">38</td><td><span class="chip chip-amber">Capacity tight</span></td></tr>
+                            <tr><td>Service calls</td><td class="num">10</td><td><span class="chip chip-green">On time</span></td></tr>
+                            <tr><td>Spring startup</td><td class="num">4</td><td><span class="chip chip-blue">Wrapping</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </template>
+
+    <!-- ═══════════════════════════ LAWN CARE TAB ═══════════════════════════ -->
+    <template if:true={tabLawn}>
+
+        <div class="rec-header">
+            <div class="rec-top-row">
+                <div class="rec-icon">&#127807;</div>
+                <div class="rec-title-block">
+                    <div class="rec-breadcrumb">VP Field Operations</div>
+                    <div class="rec-title">Lawn Care Department</div>
+                    <div class="rec-sub">FM Nick · 4 crews · 11 techs · 40 SAs/day · 93% goal hit MTD · $24K/week recurring revenue</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cc-body">
+
+            <!-- KPI Row -->
+            <div class="g4">
+                <div class="kpi kpi-purple"><div class="kn">428</div><div class="kl">SAs MTD</div></div>
+                <div class="kpi kpi-green"><div class="kn">93%</div><div class="kl">Goal Hit MTD</div></div>
+                <div class="kpi kpi-aqua"><div class="kn">$24K</div><div class="kl">Weekly Revenue</div></div>
+                <div class="kpi kpi-amber"><div class="kn">5</div><div class="kl">FJs This Month</div></div>
+            </div>
+
+            <!-- Crew Route Table -->
+            <div class="card">
+                <div class="ch">
+                    <div class="ci ci-green">CR</div>
+                    <h3>Crew Routes - April MTD</h3>
+                </div>
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Crew</th>
+                            <th class="num">Stops/Day</th>
+                            <th class="num">SAs MTD</th>
+                            <th class="num">Goal Hit%</th>
+                            <th>Truck</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>LC-1</td>
+                            <td class="num">10</td>
+                            <td class="num">108</td>
+                            <td class="num">96%</td>
+                            <td>T-010</td>
+                            <td><span class="chip chip-green">On track</span></td>
+                        </tr>
+                        <tr>
+                            <td>LC-2</td>
+                            <td class="num">11</td>
+                            <td class="num">112</td>
+                            <td class="num">94%</td>
+                            <td>T-011</td>
+                            <td><span class="chip chip-green">On track</span></td>
+                        </tr>
+                        <tr class="row-amber">
+                            <td>LC-3</td>
+                            <td class="num">9</td>
+                            <td class="num">98</td>
+                            <td class="num">89%</td>
+                            <td style="color:#c23934;font-weight:500;">T-014 &#9888;</td>
+                            <td><span class="chip chip-red">Truck issue</span></td>
+                        </tr>
+                        <tr>
+                            <td>LC-4</td>
+                            <td class="num">11</td>
+                            <td class="num">110</td>
+                            <td class="num">93%</td>
+                            <td>T-015</td>
+                            <td><span class="chip chip-green">On track</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- T-014 Alert -->
+            <div class="ab ab-r">
+                <div class="ab-ic">&#128680;</div>
+                <div>
+                    <strong>Truck T-014 - Transmission Failure Risk</strong><br/>
+                    2018 Ford F-250 · 142,000 miles · Transmission failing. Repair estimate $7K (no warranty). Replacement $42K. Downtime cost ~$4K/week while LC-3 is reduced capacity.<br/>
+                    <strong>Capex request $42K is in the escalation queue pending VP approval.</strong>
+                </div>
+            </div>
+
+        </div>
+    </template>
+
+    <!-- ═══════════════════════════ ESCALATIONS TAB ═══════════════════════════ -->
+    <template if:true={tabEscal}>
+
+        <div class="rec-header">
+            <div class="rec-top-row">
+                <div class="rec-icon" style="background:linear-gradient(135deg,#c23934 0%,#7f1d1d 100%);">!</div>
+                <div class="rec-title-block">
+                    <div class="rec-breadcrumb">VP Field Operations</div>
+                    <div class="rec-title">Escalations &amp; Hire Requests — Require VP Action</div>
+                    <div class="rec-sub">Live data: open hire requests + high-priority system escalations</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cc-body">
+            <c-vp-escalations-tab></c-vp-escalations-tab>
+        </div>
+    </template>
+
+    <!-- ═══════════════════════════ FJ ROLL-UP TAB ═══════════════════════════ -->
+    <template if:true={tabFjroll}>
+
+        <div class="rec-header">
+            <div class="rec-top-row">
+                <div class="rec-icon">FJ</div>
+                <div class="rec-title-block">
+                    <div class="rec-breadcrumb">VP Field Operations</div>
+                    <div class="rec-title">All FJs across my org (read-only roll-up)</div>
+                    <div class="rec-sub">Finish Jobs created by FMs - VP visibility only. FMs own resolution.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cc-body">
+
+            <div class="ab ab-b">
+                <div class="ab-ic">&#128202;</div>
+                <div>
+                    <strong>FJ Governance:</strong> FJs are created by FMs at the lot level when a service appointment requires a follow-up visit. VP role is to monitor rate and trends, not to resolve individual FJs. Flag to FM if rate exceeds 5% of SAs.
+                </div>
+            </div>
+
+            <!-- KPIs -->
+            <div class="g4">
+                <div class="kpi kpi-amber"><div class="kn">11</div><div class="kl">Active FJs</div></div>
+                <div class="kpi kpi-green"><div class="kn">26</div><div class="kl">Resolved MTD</div></div>
+                <div class="kpi kpi-blue"><div class="kn">3.2</div><div class="kl">Avg Days to Close</div></div>
+                <div class="kpi kpi-purple"><div class="kn">4.2%</div><div class="kl">FJ Rate (org avg)</div></div>
+            </div>
+
+            <!-- By FM Summary -->
+            <div class="card">
+                <div class="ch">
+                    <div class="ci ci-purple">FM</div>
+                    <h3>FJ Rate by FM - April MTD</h3>
+                </div>
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>FM</th>
+                            <th>Service Line</th>
+                            <th class="num">FJs Created</th>
+                            <th class="num">Total SAs</th>
+                            <th class="num">FJ Rate</th>
+                            <th>Trend</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tyler</td><td>Landscape</td><td class="num">7</td><td class="num">142</td><td class="num">4.9%</td>
+                            <td><span class="chip chip-gray">Stable</span></td>
+                        </tr>
+                        <tr class="row-amber">
+                            <td>Scott</td><td>Landscape</td><td class="num">9</td><td class="num">138</td><td class="num">6.5%</td>
+                            <td><span class="chip chip-amber">Watch</span></td>
+                        </tr>
+                        <tr>
+                            <td>Josh</td><td>Aqua</td><td class="num">2</td><td class="num">218</td><td class="num">0.9%</td>
+                            <td><span class="chip chip-green">Best in org</span></td>
+                        </tr>
+                        <tr>
+                            <td>Jersain</td><td>Irrigation</td><td class="num">3</td><td class="num">52</td><td class="num">5.8%</td>
+                            <td><span class="chip chip-amber">Watch</span></td>
+                        </tr>
+                        <tr>
+                            <td>Nick</td><td>Lawn Care</td><td class="num">5</td><td class="num">428</td><td class="num">1.2%</td>
+                            <td><span class="chip chip-green">Good</span></td>
+                        </tr>
+                        <tr style="background:#fafaf9;font-weight:500;">
+                            <td><strong>Total</strong></td><td></td><td class="num"><strong>26</strong></td><td class="num"><strong>978</strong></td><td class="num"><strong>2.7%</strong></td>
+                            <td><span class="chip chip-green">Under 5% target</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Active FJs Table -->
+            <div class="card last">
+                <div class="ch">
+                    <div class="ci ci-amber">!</div>
+                    <h3>Active FJs (11)</h3>
+                </div>
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>FJ #</th>
+                            <th>Source SA</th>
+                            <th>Lot</th>
+                            <th>FM</th>
+                            <th>Created</th>
+                            <th>Scheduled</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="nl">FJ-1041</td><td>SA-9821</td><td>DRH Lot 44B</td><td>Tyler</td><td>Apr 18</td><td>Apr 28</td><td><span class="chip chip-amber">Scheduled</span></td></tr>
+                        <tr><td class="nl">FJ-1042</td><td>SA-9834</td><td>DRH Lot 51</td><td>Tyler</td><td>Apr 19</td><td>Apr 29</td><td><span class="chip chip-amber">Scheduled</span></td></tr>
+                        <tr><td class="nl">FJ-1043</td><td>SA-9840</td><td>Lennar 22</td><td>Scott</td><td>Apr 20</td><td>Apr 27</td><td><span class="chip chip-amber">Scheduled</span></td></tr>
+                        <tr><td class="nl">FJ-1044</td><td>SA-9845</td><td>Lennar 31</td><td>Scott</td><td>Apr 21</td><td>Apr 30</td><td><span class="chip chip-blue">Pending parts</span></td></tr>
+                        <tr><td class="nl">FJ-1045</td><td>SA-9848</td><td>Lennar 38</td><td>Scott</td><td>Apr 22</td><td>May 2</td><td><span class="chip chip-gray">Unscheduled</span></td></tr>
+                        <tr><td class="nl">FJ-1046</td><td>SA-9852</td><td>DRH Lot 88</td><td>Scott</td><td>Apr 23</td><td>May 3</td><td><span class="chip chip-gray">Unscheduled</span></td></tr>
+                        <tr><td class="nl">FJ-1047</td><td>SA-9860</td><td>Davidson 9</td><td>Jersain</td><td>Apr 21</td><td>Apr 28</td><td><span class="chip chip-amber">Scheduled</span></td></tr>
+                        <tr><td class="nl">FJ-1048</td><td>SA-9862</td><td>Davidson 12</td><td>Jersain</td><td>Apr 22</td><td>May 1</td><td><span class="chip chip-amber">Scheduled</span></td></tr>
+                        <tr><td class="nl">FJ-1049</td><td>SA-9870</td><td>Mallard LC-3</td><td>Nick</td><td>Apr 20</td><td>Apr 26</td><td><span class="chip chip-green">Tomorrow</span></td></tr>
+                        <tr><td class="nl">FJ-1050</td><td>SA-9875</td><td>Mallard LC-7</td><td>Nick</td><td>Apr 23</td><td>Apr 28</td><td><span class="chip chip-amber">Scheduled</span></td></tr>
+                        <tr><td class="nl">FJ-1051</td><td>SA-9881</td><td>Aqua Lot 4</td><td>Josh</td><td>Apr 24</td><td>Apr 27</td><td><span class="chip chip-teal">On track</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </template>
+
+    <!-- ═══════════════════════════ 2 PM HEALTH ROLL-UP TAB ═══════════════════════════ -->
+    <template if:true={tabHealth}>
+
+        <div class="rec-header">
+            <div class="rec-top-row">
+                <div class="rec-icon">2P</div>
+                <div class="rec-title-block">
+                    <div class="rec-breadcrumb">VP Field Operations</div>
+                    <div class="rec-title">2 PM Health Check, all FMs (live)</div>
+                    <div class="rec-sub">Daily 2 PM quality gate · FMs flag all SAs Green or Red · VP sees roll-up</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cc-body">
+
+            <!-- KPIs -->
+            <div class="g4">
+                <div class="kpi kpi-green"><div class="kn">62</div><div class="kl">Green Flags</div></div>
+                <div class="kpi kpi-red"><div class="kn">3</div><div class="kl">Red Flags</div></div>
+                <div class="kpi kpi-purple"><div class="kn">100%</div><div class="kl">Compliance</div></div>
+                <div class="kpi kpi-aqua"><div class="kn">0</div><div class="kl">Escalations</div></div>
+            </div>
+
+            <!-- Health Check Table -->
+            <div class="card">
+                <div class="ch">
+                    <div class="ci ci-green">HC</div>
+                    <h3>Health Check by FM - Today Apr 25</h3>
+                </div>
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>FM</th>
+                            <th>Service Line</th>
+                            <th class="num">SAs Flagged</th>
+                            <th class="num">Green</th>
+                            <th class="num">Red</th>
+                            <th>Compliance</th>
+                            <th class="num">FJs from Reds</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tyler</td><td>Landscape</td><td class="num">8</td><td class="num">8</td><td class="num">0</td>
+                            <td><span class="chip chip-green">100%</span></td><td class="num">0</td>
+                        </tr>
+                        <tr>
+                            <td>Scott</td><td>Landscape</td><td class="num">8</td><td class="num">7</td><td class="num">1</td>
+                            <td><span class="chip chip-green">100%</span></td><td class="num">1</td>
+                        </tr>
+                        <tr>
+                            <td>Josh</td><td>Aqua</td><td class="num">14</td><td class="num">14</td><td class="num">0</td>
+                            <td><span class="chip chip-green">100%</span></td><td class="num">0</td>
+                        </tr>
+                        <tr>
+                            <td>Jersain</td><td>Irrigation</td><td class="num">6</td><td class="num">4</td><td class="num">2</td>
+                            <td><span class="chip chip-green">100%</span></td><td class="num">2</td>
+                        </tr>
+                        <tr>
+                            <td>Nick</td><td>Lawn Care</td><td class="num">32</td><td class="num">29</td><td class="num">0</td>
+                            <td><span class="chip chip-green">100%</span></td><td class="num">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Green Banner -->
+            <div class="ab ab-g">
+                <div class="ab-ic">&#10003;</div>
+                <div>
+                    <strong>Org-wide Health Check today: clean.</strong> 65 of 68 SAs flagged Green by 2 PM. 3 reds (Jersain x2, Scott x1) all resulted in FJ creation per protocol. 0 compliance misses - all 5 FMs checked in before 2 PM. Zero VP escalations required today.
+                </div>
+            </div>
+
+        </div>
+    </template>
+
+    <!-- ═══════════════════════════ QUALITY KPIs TAB ═══════════════════════════ -->
+    <template if:true={tabQuality}>
+
+        <div class="rec-header">
+            <div class="rec-top-row">
+                <div class="rec-icon">QI</div>
+                <div class="rec-title-block">
+                    <div class="rec-breadcrumb">VP Field Operations</div>
+                    <div class="rec-title">Quality Metrics Roll-up, April MTD</div>
+                    <div class="rec-sub">Photo compliance, QI scores, on-time rate, customer complaints</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cc-body">
+
+            <!-- Quality Scorecard Table -->
+            <div class="card">
+                <div class="ch">
+                    <div class="ci ci-purple">QS</div>
+                    <h3>Quality Scorecard by FM - April MTD</h3>
+                </div>
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>FM</th>
+                            <th class="num">Photo %</th>
+                            <th class="num">On-Time %</th>
+                            <th class="num">Completion %</th>
+                            <th class="num">QI Avg</th>
+                            <th class="num">CM Complaints</th>
+                            <th>Trend</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Tyler</td><td class="num">98%</td><td class="num">96%</td><td class="num">100%</td><td class="num">9.4</td><td class="num">0</td>
+                            <td><span class="chip chip-green">Stable</span></td>
+                        </tr>
+                        <tr>
+                            <td>Scott</td><td class="num">95%</td><td class="num">93%</td><td class="num">99%</td><td class="num">9.2</td><td class="num">1</td>
+                            <td><span class="chip chip-green">Stable</span></td>
+                        </tr>
+                        <tr>
+                            <td>Josh</td><td class="num">100%</td><td class="num">99%</td><td class="num">100%</td><td class="num">9.5</td><td class="num">0</td>
+                            <td><span class="chip chip-teal">Best in org</span></td>
+                        </tr>
+                        <tr class="row-amber">
+                            <td>Jersain</td><td class="num">92%</td><td class="num">88%</td><td class="num">96%</td><td class="num">9.1</td><td class="num">2</td>
+                            <td><span class="chip chip-amber">Declining</span></td>
+                        </tr>
+                        <tr>
+                            <td>Nick</td><td class="num">96%</td><td class="num">94%</td><td class="num">98%</td><td class="num">8.9</td><td class="num">1</td>
+                            <td><span class="chip chip-green">Stable</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Warning for Jersain -->
+            <div class="ab ab-a">
+                <div class="ab-ic">&#9888;</div>
+                <div>
+                    <strong>Jersain - Declining Quality Trend:</strong> Photo compliance dropped from 97% to 92% over last 3 weeks. On-time rate down to 88% (target 95%). Likely linked to capacity constraints - discuss in today's 1:1 at 3 PM. Also 2 CM complaints flagged this month.
+                </div>
+            </div>
+
+            <!-- Bottom Grid: By Service Line + Honor Roll -->
+            <div class="g2">
+
+                <div class="card last">
+                    <div class="ch">
+                        <div class="ci ci-blue">SL</div>
+                        <h3>QI by Service Line</h3>
+                    </div>
+                    <table class="tbl">
+                        <thead>
+                            <tr><th>Service Line</th><th class="num">Avg QI</th><th class="num">SAs MTD</th><th>Rating</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Aqua</td><td class="num">9.5</td><td class="num">218</td><td><span class="chip chip-teal">Excellent</span></td></tr>
+                            <tr><td>Landscape</td><td class="num">9.3</td><td class="num">280</td><td><span class="chip chip-green">Strong</span></td></tr>
+                            <tr><td>Lawn Care</td><td class="num">8.9</td><td class="num">428</td><td><span class="chip chip-green">Good</span></td></tr>
+                            <tr><td>Irrigation</td><td class="num">8.9</td><td class="num">52</td><td><span class="chip chip-amber">Watch</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card last">
+                    <div class="ch">
+                        <div class="ci" style="background:#b45309;">&#11088;</div>
+                        <h3>Honor Roll - April</h3>
+                    </div>
+                    <div style="padding:12px 14px;">
+                        <div class="feed-item" style="padding:8px 0;border-bottom:1px solid #f0f0f0;">
+                            <div class="feed-avatar" style="background:#0f6e56;">JO</div>
+                            <div class="feed-body">
+                                <div class="feed-meta"><strong>Top FM: Josh</strong> - Aqua</div>
+                                <div class="feed-content">100% photo compliance, 9.5 QI, 0 complaints April MTD</div>
+                            </div>
+                        </div>
+                        <div class="feed-item" style="padding:8px 0;border-bottom:1px solid #f0f0f0;">
+                            <div class="feed-avatar" style="background:#4f46e5;">TK</div>
+                            <div class="feed-body">
+                                <div class="feed-meta"><strong>Top Tech: Trenton Kinard</strong> - Aqua</div>
+                                <div class="feed-content">Perfect QI streak 8 weeks. Promotion path to Supervisor Q3.</div>
+                            </div>
+                        </div>
+                        <div class="feed-item" style="padding:8px 0;border-bottom:1px solid #f0f0f0;">
+                            <div class="feed-avatar" style="background:#04844b;">CA</div>
+                            <div class="feed-body">
+                                <div class="feed-meta"><strong>Top Crew: Crew A</strong> - Tyler / Landscape</div>
+                                <div class="feed-content">9.6 QI average, 0 FJs in April</div>
+                            </div>
+                        </div>
+                        <div class="feed-item" style="padding:8px 0;">
+                            <div class="feed-avatar" style="background:#b45309;">L4</div>
+                            <div class="feed-body">
+                                <div class="feed-meta"><strong>Most Improved: LC-4</strong> - Nick / Lawn Care</div>
+                                <div class="feed-content">QI up from 8.4 to 9.1 over 4 weeks</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </template>
+
+    <!-- ═══════════════════════════ WEEKLY 1:1s TAB ═══════════════════════════ -->
+    <template if:true={tabOnes}>
+
+        <div class="rec-header">
+            <div class="rec-top-row">
+                <div class="rec-icon">1:1</div>
+                <div class="rec-title-block">
+                    <div class="rec-breadcrumb">VP Field Operations</div>
+                    <div class="rec-title">Weekly 1:1s with my FMs</div>
+                    <div class="rec-sub">VP cadence: every FM weekly, 30 min, structured agenda</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="cc-body">
+
+            <div class="ab ab-b">
+                <div class="ab-ic">&#128221;</div>
+                <div>
+                    <strong>VP 1:1 Cadence:</strong> All 5 FMs weekly. Format: (1) goal hit review, (2) FJ rate, (3) team issues, (4) escalations, (5) wins. Notes captured here for coaching record and Megan board prep.
+                </div>
+            </div>
+
+            <!-- 5 One-on-One Cards -->
+
+            <!-- Tyler -->
+            <div class="one-on-one-card">
+                <div class="fm-avatar" style="background:#4f46e5;">TY</div>
+                <div style="flex:1;">
+                    <div class="ooo-header">
+                        <div>
+                            <div class="ooo-day">Tyler - Monday Apr 21, 9:00 AM</div>
+                            <div class="ooo-fm">Landscape FM · 8 techs · Crews A+B</div>
+                        </div>
+                        <span class="chip chip-green">Done</span>
+                    </div>
+                    <div style="font-size:12px;color:#16325c;line-height:1.6;">
+                        <strong>Discussed:</strong> April variance trending slightly high on DRH lots 40-50 range. J. Reyes performance review - no improvement in 3 weeks, PIP discussion initiated. Tyler confident on Lennar schedule for rest of month. DRH MSA renegotiation - VP to join call.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scott -->
+            <div class="one-on-one-card">
+                <div class="fm-avatar" style="background:#0070d2;">SC</div>
+                <div style="flex:1;">
+                    <div class="ooo-header">
+                        <div>
+                            <div class="ooo-day">Scott - Monday Apr 21, 9:30 AM</div>
+                            <div class="ooo-fm">Landscape FM · 8 techs · Crews C+D</div>
+                        </div>
+                        <span class="chip chip-green">Done</span>
+                    </div>
+                    <div style="font-size:12px;color:#16325c;line-height:1.6;">
+                        <strong>Discussed:</strong> Lennar FJ rate at 6.5% - above 5% target. Root cause: two techs on Lennar route struggling with sod identification. Coaching plan in progress. Scott requesting permission to re-route one tech from Crew C to D during peak. Approved.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Josh -->
+            <div class="one-on-one-card">
+                <div class="fm-avatar" style="background:#0f6e56;">JO</div>
+                <div style="flex:1;">
+                    <div class="ooo-header">
+                        <div>
+                            <div class="ooo-day">Josh - Tuesday Apr 22, 9:00 AM</div>
+                            <div class="ooo-fm">Aqua FM · 5 techs</div>
+                        </div>
+                        <span class="chip chip-green">Done</span>
+                    </div>
+                    <div style="font-size:12px;color:#16325c;line-height:1.6;">
+                        <strong>Discussed:</strong> Trenton Kinard promotion path - Josh recommending Trenton as Crew Supervisor Q3. Skills assessment completed, training plan drafted. Aqua team at 100% photo compliance - third month in a row. Josh requesting 1 additional tech for summer expansion - noted, pending budget review.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jersain - TODAY -->
+            <div class="one-on-one-card highlight">
+                <div class="fm-avatar" style="background:#b45309;">JR</div>
+                <div style="flex:1;">
+                    <div class="ooo-header">
+                        <div>
+                            <div class="ooo-day">Jersain - TODAY Friday Apr 25, 3:00 PM</div>
+                            <div class="ooo-fm">Irrigation FM · 6 techs</div>
+                        </div>
+                        <span class="chip chip-amber">Today - 3 PM</span>
+                    </div>
+                    <div style="font-size:12px;color:#92400e;line-height:1.6;margin-bottom:8px;">
+                        <strong>Agenda topics:</strong>
+                        <ol style="margin:4px 0 0 0;padding-left:18px;">
+                            <li>Hire request status - $55K irrigation tech, Mallard Ph3 readiness</li>
+                            <li>Capacity + variance discussion - +0.6 hr running over, root cause</li>
+                            <li>Quality decline - photo compliance 92%, 2 CM complaints</li>
+                            <li>Mallard Creek Phase 3 timeline - May 15 start date, crew readiness</li>
+                        </ol>
+                    </div>
+                    <button class="sf-btn warning" onclick={handleOpenPrepDoc}>Open Prep Doc</button>
+                </div>
+            </div>
+
+            <!-- Nick -->
+            <div class="one-on-one-card">
+                <div class="fm-avatar" style="background:#04844b;">NI</div>
+                <div style="flex:1;">
+                    <div class="ooo-header">
+                        <div>
+                            <div class="ooo-day">Nick - Friday Apr 25, 4:00 PM</div>
+                            <div class="ooo-fm">Lawn Care FM · 11 techs · 4 crews</div>
+                        </div>
+                        <span class="chip chip-gray">Upcoming</span>
+                    </div>
+                    <div style="font-size:12px;color:#16325c;line-height:1.6;">
+                        <strong>Planned agenda:</strong> T-014 capex status update. Peak season staffing - 2 lawn techs on PTO this week, coverage plan. LC-4 crew improvement - QI up to 9.1, recognize win. May schedule density - 428 SAs/mo target vs current 93% goal.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent History - Tyler -->
+            <div class="card last">
+                <div class="ch">
+                    <div class="ci ci-purple">HX</div>
+                    <h3>Recent 1:1 History - Tyler (last 3)</h3>
+                </div>
+                <div class="feed-item">
+                    <div class="feed-avatar" style="background:#4f46e5;">TY</div>
+                    <div class="feed-body">
+                        <div class="feed-meta">Apr 21 · Mon 9 AM</div>
+                        <div class="feed-content">DRH MSA call, J. Reyes PIP initiated, Lennar on track</div>
+                    </div>
+                </div>
+                <div class="feed-item">
+                    <div class="feed-avatar" style="background:#4f46e5;">TY</div>
+                    <div class="feed-body">
+                        <div class="feed-meta">Apr 14 · Mon 9 AM</div>
+                        <div class="feed-content">Goal hit 97% for week, variance improving on Meritage lots, crew A recognition</div>
+                    </div>
+                </div>
+                <div class="feed-item">
+                    <div class="feed-avatar" style="background:#4f46e5;">TY</div>
+                    <div class="feed-body">
+                        <div class="feed-meta">Apr 7 · Mon 9 AM</div>
+                        <div class="feed-content">Spring startup check-in, DRH volume increase confirmed for Apr-May, no open issues</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </template>
+
+</div>
+</template>
