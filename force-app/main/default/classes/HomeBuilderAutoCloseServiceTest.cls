@@ -1,16 +1,30 @@
 @IsTest(SeeAllData=true)
 private class HomeBuilderAutoCloseServiceTest {
+    // Placeholder used only for invoice-key format tests that don't need a real record.
+    private static final String PLACEHOLDER_WO_ID = '0WO000000000001AAA';
+
     private static String standardInvoiceKey(Id workOrderId) {
         return 'HB-WO:' + String.valueOf(workOrderId);
     }
 
     private static WorkOrder getBuilderParentWorkOrder() {
+        // Salesforce SOQL forbids self-referential subquery on the same SObject type,
+        // so we find a child row first and then query its parent.
+        List<WorkOrder> childRows = [
+            SELECT ParentWorkOrderId
+            FROM WorkOrder
+            WHERE ParentWorkOrderId != null
+            ORDER BY CreatedDate DESC
+            LIMIT 1
+        ];
+        if (childRows.isEmpty()) {
+            return null;
+        }
         List<WorkOrder> rows = [
             SELECT Id, Status
             FROM WorkOrder
-            WHERE Status != 'Closed'
-              AND Id IN (SELECT ParentWorkOrderId FROM WorkOrder WHERE ParentWorkOrderId != null)
-            ORDER BY CreatedDate DESC
+            WHERE Id = :childRows[0].ParentWorkOrderId
+              AND Status != 'Closed'
             LIMIT 1
         ];
         return rows.isEmpty() ? null : rows[0];
@@ -115,7 +129,7 @@ private class HomeBuilderAutoCloseServiceTest {
         System.assertEquals(
             true,
             HomeBuilderAutoCloseService.isStandardHomeBuilderInvoice(
-                new Invoice__c(External_Invoice_ID__c = 'HB-AQUA:' + String.valueOf(BUILDER_PARENT_ID) + ':Stolen')
+                new Invoice__c(External_Invoice_ID__c = 'HB-AQUA:' + PLACEHOLDER_WO_ID + ':Stolen')
             )
         );
 
