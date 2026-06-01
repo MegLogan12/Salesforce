@@ -270,6 +270,8 @@
                 <componentName>runtime_sales_activities:activityPanel</componentName>
                 <identifier>wo_sidebar_activity</identifier>
             </componentInstance>
+        </itemInstances>
+        <itemInstances>
             <componentInstance>
                 <componentName>flexipage:relatedListContainer</componentName>
                 <identifier>wo_sidebar_related</identifier>
