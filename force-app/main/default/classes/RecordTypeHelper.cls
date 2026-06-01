@@ -22,13 +22,13 @@ public with sharing class RecordTypeHelper {
     private static Id getRecordTypeId(String sObjectType, String developerName) {
         String key = sObjectType + ':' + developerName;
         if (!cache.containsKey(key)) {
-            List<RecordType> rts = [
-                SELECT Id FROM RecordType
-                WHERE SObjectType = :sObjectType
-                AND DeveloperName = :developerName
-                LIMIT 1
-            ];
-            cache.put(key, rts.isEmpty() ? null : rts[0].Id);
+            Id rtId = null;
+            Schema.SObjectType sot = Schema.getGlobalDescribe().get(sObjectType);
+            if (sot != null) {
+                RecordTypeInfo rti = sot.getDescribe().getRecordTypeInfosByDeveloperName().get(developerName);
+                rtId = (rti != null && rti.isAvailable()) ? rti.getRecordTypeId() : null;
+            }
+            cache.put(key, rtId);
         }
         return cache.get(key);
     }
