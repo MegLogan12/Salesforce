@@ -3,8 +3,8 @@
         <div class="sf-body">
             <!-- Path -->
             <div class="card">
-                <div class="ch">
-                    <div class="ci" style="background:#fe9339">PATH</div>
+                <div class="ch" style="--ch-bg:#fe9339">
+                    <div class="ci">PATH</div>
                     <h3>Work Order Status</h3>
                     <span class="chip co">Outdoor Living</span>
                 </div>
@@ -19,9 +19,9 @@
                 <div class="layout-main">
                     <!-- Header -->
                     <div class="card info">
-                        <div class="ch">
-                            <div class="ci" style="background:#0070d2">WO</div>
-                            <h3>Work Order Header</h3>
+                        <div class="ch" style="--ch-bg:#0070d2">
+                            <div class="ci">WO</div>
+                            <h3>Work Order</h3>
                             <lightning-button label="Edit Work Order" variant="neutral" onclick={handleEditWorkOrder} style="margin-left:auto"></lightning-button>
                         </div>
                         <div class="fields-grid">
@@ -37,8 +37,8 @@
                     <!-- Crew + Photos side by side -->
                     <div class="g2">
                         <div class="card">
-                            <div class="ch">
-                                <div class="ci" style="background:#04844b">CREW</div>
+                            <div class="ch" style="--ch-bg:#04844b">
+                                <div class="ci">CREW</div>
                                 <h3>Crew and Schedule</h3>
                             </div>
                             <div class="fields-grid">
@@ -49,8 +49,8 @@
                             </div>
                         </div>
                         <div class="card">
-                            <div class="ch">
-                                <div class="ci" style="background:#534ab7">PHOTO</div>
+                            <div class="ch" style="--ch-bg:#534ab7">
+                                <div class="ci">PHOTO</div>
                                 <h3>Photos</h3>
                             </div>
                             <div style="padding:12px 14px">
@@ -63,8 +63,8 @@
 
                     <!-- Punch Items -->
                     <div class="card">
-                        <div class="ch">
-                            <div class="ci" style="background:#fe9339">PUNCH</div>
+                        <div class="ch" style="--ch-bg:#fe9339">
+                            <div class="ci">PUNCH</div>
                             <h3>Punch Items</h3>
                             <lightning-button label="New Task" onclick={createTask} style="margin-left:auto"></lightning-button>
                             <lightning-button label="Log Call" onclick={logCall} style="margin-left:8px"></lightning-button>
@@ -91,8 +91,8 @@
                 <!-- Rail -->
                 <div class="layout-rail">
                     <div class="card">
-                        <div class="ch">
-                            <div class="ci" style="background:#04844b">MOB</div>
+                        <div class="ch" style="--ch-bg:#04844b">
+                            <div class="ci">MOB</div>
                             <h3>Foreman Mobile Actions</h3>
                         </div>
                         <div class="qa-list">
@@ -103,8 +103,8 @@
                         </div>
                     </div>
                     <div class="card">
-                        <div class="ch">
-                            <div class="ci" style="background:#534ab7">AI</div>
+                        <div class="ch" style="--ch-bg:#534ab7">
+                            <div class="ci">AI</div>
                             <h3>Assistant Panel</h3>
                         </div>
                         <div class="qa-list">
@@ -114,8 +114,8 @@
                         </div>
                     </div>
                     <div class="card">
-                        <div class="ch">
-                            <div class="ci" style="background:#0070d2">SLA</div>
+                        <div class="ch" style="--ch-bg:#0070d2">
+                            <div class="ci">SLA</div>
                             <h3>Activity Health</h3>
                         </div>
                         <div style="padding:10px 14px">
