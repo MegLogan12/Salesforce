@@ -1,62 +1,76 @@
 /**
+ * ODLWorkOrderController
+ *
  * Controller for the Outdoor Living Work Order Field Execution page (Spec page 14).
+ * Built on the STANDARD Salesforce WorkOrder + FSL objects.
  *
- * Built on the CUSTOM Work_Order__c object — NOT the standard FSL WorkOrder — per the
- * org-reality override in the build prompt. All values are bound to live fields; nothing
- * here is hardwired. Where a source is not confirmed in the org, the DTO carries a flag
- * and the LWC renders the spec's empty-state copy rather than fabricating a value.
+ * Gate fields added to WorkOrder this session:
+ *   QI_Complete__c, QI_Held__c, QI_Score__c
+ *   Takeoff_Photo_Count__c, Closeout_Photo_Count__c
+ *   Crew_Completed__c, Field_Complete_Date__c, Loading_Check_Completed__c
  *
- * Confirmed sources (audited):
- *   Site/customer .. Lot__r.Street_Address__c/City__c/State__c, Construction_Manager__r (Contact)
- *   Scope ......... child Work_Order__c via Parent_Work_Order__c
- *   Photos ........ Takeoff_Photo_Count__c, Closeout_Photo_Count__c (maintained on the WO;
- *                   Photo__c has no Work_Order__c lookup, so counts are the canonical source)
- *   QI ............ QI_Complete__c, QI_Held__c, QI_Score__c
- *   Crew .......... Crew__c (Text)
- *   Schedule ...... Scheduled_Start/End_DateTime__c, Territory__c, Calculated_Duration_Minutes__c
- *   Open/closed ... WO_Status_Mapping__mdt (finance-editable; Is_Terminal__c / Display_Stage__c)
+ * Pre-existing standard WorkOrder fields used:
+ *   Crew__c (Lookup → Crew__c custom object, Crew__r.Name)
+ *   Field_Manager__c (Lookup → User)
+ *   ODL_Opportunity__c (pre-existing Opportunity lookup — canonical for OL WOs)
+ *   Lot_Address__c (Text 255 — pre-existing formatted site address)
+ *   ServiceTerritoryId (Lookup → ServiceTerritory)
+ *   StartDate / EndDate (Datetime), Duration (Number)
  *
- * Flagged gaps (blank truth over a filled-in lie, Spec §9/§12):
- *   - No Opportunity lookup on Work_Order__c -> Source Opportunity card is empty.
- *   - No dedicated customer-signoff field -> signoff gate is informational, not blocking.
- *   - No confirmed materials object -> Materials panel is empty.
- *   - Division__c is geographic, not OL/Design Build -> page is not division-scoped here.
+ * Flagged gaps:
+ *   - Customer signoff: no signoff datetime field exists — gate is informational only.
+ *   - Progress photo count: no dedicated count field — shown as "Ongoing".
  */
 public with sharing class ODLWorkOrderController {
 
     private static final Integer TAKEOFF_MIN  = 1;
     private static final Integer CLOSEOUT_MIN = 4;
 
+    private static final Map<String, String> STATUS_TO_STAGE = new Map<String, String>{
+        'New'             => 'Setup',
+        'In Progress'     => 'In Progress',
+        'On Hold'         => 'Closeout',
+        'Cannot Complete' => 'Closeout',
+        'Completed'       => 'Closed',
+        'Cancelled'       => 'Closed'
+    };
+
+    private static final Set<String> TERMINAL_STATUSES = new Set<String>{
+        'Completed', 'Cancelled'
+    };
+
     @AuraEnabled(cacheable=true)
     public static WorkOrderView getWorkOrder(Id recordId) {
-        if (!Schema.sObjectType.Work_Order__c.isAccessible()) {
+        if (!Schema.sObjectType.WorkOrder.isAccessible()) {
             throw new AuraHandledException('You do not have access to view this information.');
         }
 
-        Work_Order__c wo = queryWorkOrder(recordId);
+        WorkOrder wo = queryWorkOrder(recordId);
         if (wo == null) {
             throw new AuraHandledException('This work order could not be found or you do not have access to it.');
         }
 
-        WorkOrderView v = new WorkOrderView();
-        v.header   = buildHeader(wo);
-        v.stepper  = buildStepper(wo);
-        v.gates    = buildGates(wo);
-        v.photos   = buildPhotos(wo);
-        v.scope    = buildScope(recordId);
-        v.schedule = buildSchedule(wo);
-        v.customer = buildCustomer(wo);
-        v.nextAction = buildNextAction(wo, v.gates);
+        return buildView(wo, buildScope(recordId));
+    }
 
-        // Readiness: ready only when every REQUIRED gate passes.
+    @TestVisible
+    private static WorkOrderView buildView(WorkOrder wo, List<ScopeLine> scope) {
+        WorkOrderView v = new WorkOrderView();
+        v.header      = buildHeader(wo);
+        v.stepper     = buildStepper(wo.Status);
+        v.gates       = buildGates(wo);
+        v.photos      = buildPhotos(wo);
+        v.scope       = scope;
+        v.schedule    = buildSchedule(wo);
+        v.customer    = buildCustomer(wo);
+        v.nextAction  = buildNextAction(wo, v.gates);
+
         v.readyToComplete = true;
         v.blocker = null;
         for (Gate g : v.gates) {
             if (g.required && !g.passed) {
                 v.readyToComplete = false;
-                if (v.blocker == null) {
-                    v.blocker = g.blockerReason;
-                }
+                if (v.blocker == null) v.blocker = g.blockerReason;
             }
         }
         return v;
@@ -64,12 +78,11 @@ public with sharing class ODLWorkOrderController {
 
     /**
      * Marks the work order field-complete. Server-side re-checks EVERY required gate so
-     * completion can never bypass a gate, regardless of what the client sends (Spec §5/§10).
-     * Does not force a terminal/closed status — that remains a separate, approval-gated step.
+     * completion can never bypass a gate regardless of what the client sends (Spec §5/§10).
      */
     @AuraEnabled
     public static WorkOrderView completeJob(Id recordId) {
-        if (!Schema.sObjectType.Work_Order__c.isUpdateable()) {
+        if (!Schema.sObjectType.WorkOrder.isUpdateable()) {
             throw new AuraHandledException('Work order edit access is missing.');
         }
         WorkOrderView v = getWorkOrder(recordId);
@@ -78,67 +91,79 @@ public with sharing class ODLWorkOrderController {
                 'Blocked until install, closeout photos, and QI are complete: ' + v.blocker
             );
         }
-        Work_Order__c wo = new Work_Order__c(Id = recordId);
-        if (Schema.sObjectType.Work_Order__c.fields.Field_Complete_Date__c.isUpdateable()) {
+        WorkOrder wo = new WorkOrder(Id = recordId);
+        if (Schema.sObjectType.WorkOrder.fields.Field_Complete_Date__c.isUpdateable()) {
             wo.Field_Complete_Date__c = System.now();
         }
-        if (Schema.sObjectType.Work_Order__c.fields.Crew_Completed__c.isUpdateable()) {
+        if (Schema.sObjectType.WorkOrder.fields.Crew_Completed__c.isUpdateable()) {
             wo.Crew_Completed__c = true;
         }
         update wo;
         return getWorkOrder(recordId);
     }
 
-    private static Work_Order__c queryWorkOrder(Id recordId) {
-        List<Work_Order__c> rows = [
-            SELECT Id, Name, Status__c, Pipeline_Stage__c, Division__c, Territory__c,
-                   Crew__c, Crew_Completed__c, Loading_Check_Completed__c,
-                   Takeoff_Photo_Count__c, Closeout_Photo_Count__c,
-                   Field_Complete_Date__c,
+    // ---- query helpers -------------------------------------------------------
+
+    private static WorkOrder queryWorkOrder(Id recordId) {
+        List<WorkOrder> rows = [
+            SELECT Id, WorkOrderNumber, Subject, Status,
+                   AccountId, Account.Name,
+                   ContactId, Contact.Name, Contact.Phone,
+                   Lot_Address__c,
+                   ServiceTerritoryId, ServiceTerritory.Name,
+                   StartDate, EndDate, Duration,
+                   Crew__c, Crew__r.Name,
+                   ODL_Opportunity__c, ODL_Opportunity__r.Name,
                    QI_Complete__c, QI_Held__c, QI_Score__c,
-                   Scheduled_Start_DateTime__c, Scheduled_End_DateTime__c,
-                   Scheduled_Date__c, Calculated_Duration_Minutes__c,
-                   Schedule_Proposal_Status__c,
-                   Builder_Market_Account__r.Name,
-                   Construction_Manager__r.Name, Construction_Manager__r.Phone,
-                   Lot__r.Street_Address__c, Lot__r.City__c, Lot__r.State__c, Lot__r.Lot_Number__c
-            FROM Work_Order__c
+                   Takeoff_Photo_Count__c, Closeout_Photo_Count__c,
+                   Crew_Completed__c, Field_Complete_Date__c,
+                   Loading_Check_Completed__c
+            FROM WorkOrder
             WHERE Id = :recordId
-            WITH SECURITY_ENFORCED
             LIMIT 1
         ];
         return rows.isEmpty() ? null : rows[0];
     }
 
-    private static Header buildHeader(Work_Order__c wo) {
+    private static List<ScopeLine> buildScope(Id recordId) {
+        List<ScopeLine> lines = new List<ScopeLine>();
+        for (WorkOrderLineItem woli : [
+            SELECT Id, LineItemNumber, Status, Subject, Description
+            FROM WorkOrderLineItem
+            WHERE WorkOrderId = :recordId
+            ORDER BY LineItemNumber
+            LIMIT 200
+        ]) {
+            ScopeLine l = new ScopeLine();
+            l.name   = String.isNotBlank(woli.Subject) ? woli.Subject : woli.LineItemNumber;
+            l.detail = woli.Description;
+            l.status = woli.Status;
+            lines.add(l);
+        }
+        return lines;
+    }
+
+    // ---- builders -----------------------------------------------------------
+
+    private static Header buildHeader(WorkOrder wo) {
         Header h = new Header();
-        h.workOrderName = wo.Name;
-        h.status = wo.Status__c;
-        h.pipelineStage = wo.Pipeline_Stage__c;
-        h.territory = wo.Territory__c;
-        h.builderName = wo.Builder_Market_Account__r != null ? wo.Builder_Market_Account__r.Name : null;
-        h.scheduledStart = wo.Scheduled_Start_DateTime__c;
-        h.scheduledEnd = wo.Scheduled_End_DateTime__c;
-        h.crew = wo.Crew__c;
-        h.qiStatus = qiLabel(wo);
+        h.workOrderName      = String.isNotBlank(wo.Subject) ? wo.Subject : wo.WorkOrderNumber;
+        h.status             = wo.Status;
+        h.pipelineStage      = STATUS_TO_STAGE.get(wo.Status);
+        h.territory          = wo.ServiceTerritory != null ? wo.ServiceTerritory.Name : null;
+        h.builderName        = wo.Account != null ? wo.Account.Name : null;
+        h.scheduledStart     = wo.StartDate;
+        h.scheduledEnd       = wo.EndDate;
+        h.crew               = wo.Crew__r != null ? wo.Crew__r.Name : null;
+        h.qiStatus           = qiLabel(wo);
         h.closeoutPhotoCount = intOf(wo.Closeout_Photo_Count__c);
-        h.closeoutPhotoMin = CLOSEOUT_MIN;
+        h.closeoutPhotoMin   = CLOSEOUT_MIN;
         return h;
     }
 
-    /**
-     * Lifecycle stepper. Display_Stage__c from WO_Status_Mapping__mdt drives the current step;
-     * unmapped statuses fall back to "Open" so the stepper never invents a stage.
-     */
-    private static List<Step> buildStepper(Work_Order__c wo) {
-        Map<String, WO_Status_Mapping__mdt> statusMap = mappingByStatus();
-        String currentStage = null;
-        if (wo.Status__c != null && statusMap.containsKey(wo.Status__c)) {
-            currentStage = statusMap.get(wo.Status__c).Display_Stage__c;
-        }
-        List<String> stages = new List<String>{
-            'Setup', 'Scheduled', 'In Progress', 'Closeout', 'Closed'
-        };
+    private static List<Step> buildStepper(String status) {
+        String currentStage = STATUS_TO_STAGE.get(status);
+        List<String> stages = new List<String>{ 'Setup', 'Scheduled', 'In Progress', 'Closeout', 'Closed' };
         List<Step> steps = new List<Step>();
         Boolean passedCurrent = false;
         for (String stage : stages) {
@@ -154,18 +179,19 @@ public with sharing class ODLWorkOrderController {
             }
             steps.add(s);
         }
-        // If the status was unmapped, no step is marked current; show all as upcoming.
         if (currentStage == null) {
             for (Step s : steps) { s.state = 'upcoming'; }
         }
         return steps;
     }
 
-    private static List<Gate> buildGates(Work_Order__c wo) {
+    private static List<Gate> buildGates(WorkOrder wo) {
         List<Gate> gates = new List<Gate>();
+        String crewName = wo.Crew__r != null ? wo.Crew__r.Name : null;
 
-        gates.add(gate('Crew assigned', String.isNotBlank(wo.Crew__c),
-            true, wo.Crew__c, 'No crew is assigned.'));
+        gates.add(gate('Crew assigned', String.isNotBlank(crewName),
+            true, String.isNotBlank(crewName) ? crewName : 'No crew assigned',
+            'A crew must be assigned before proceeding.'));
 
         gates.add(gate('Materials loaded', wo.Loading_Check_Completed__c == true,
             true, wo.Loading_Check_Completed__c == true ? 'Loaded or staged' : 'Not loaded',
@@ -190,88 +216,58 @@ public with sharing class ODLWorkOrderController {
         gates.add(gate('QI inspection', qiPass,
             true, qiLabel(wo), 'QI inspection must be recorded and passing.'));
 
-        // Customer signoff: no dedicated homeowner-signoff field exists. Render as informational
-        // (NOT required, NOT auto-passed) and flag the missing field rather than fake the gate.
         Gate signoff = gate('Customer signoff', false, false, 'Field not confirmed', null);
-        signoff.flag = 'Requires a customer-signoff field. Recommend Customer_Signoff_DateTime__c on Work_Order__c.';
+        signoff.flag = 'Requires a customer-signoff field on WorkOrder (e.g. Customer_Signoff_DateTime__c).';
         gates.add(signoff);
 
         return gates;
     }
 
-    private static Photos buildPhotos(Work_Order__c wo) {
+    private static Photos buildPhotos(WorkOrder wo) {
         Photos p = new Photos();
-        p.takeoffCount = intOf(wo.Takeoff_Photo_Count__c);
-        p.takeoffMin = TAKEOFF_MIN;
-        p.takeoffStatus = p.takeoffCount >= TAKEOFF_MIN ? 'Met' : 'Pending';
-
-        // No progress-photo count field is confirmed; show as ongoing without inventing a number.
-        p.progressCount = null;
+        p.takeoffCount   = intOf(wo.Takeoff_Photo_Count__c);
+        p.takeoffMin     = TAKEOFF_MIN;
+        p.takeoffStatus  = p.takeoffCount >= TAKEOFF_MIN ? 'Met' : 'Pending';
+        p.progressCount  = null;
         p.progressStatus = 'Ongoing';
-
-        p.closeoutCount = intOf(wo.Closeout_Photo_Count__c);
-        p.closeoutMin = CLOSEOUT_MIN;
+        p.closeoutCount  = intOf(wo.Closeout_Photo_Count__c);
+        p.closeoutMin    = CLOSEOUT_MIN;
         p.closeoutStatus = p.closeoutCount >= CLOSEOUT_MIN ? 'Met' : 'Pending';
         return p;
     }
 
-    private static List<ScopeLine> buildScope(Id recordId) {
-        List<ScopeLine> lines = new List<ScopeLine>();
-        for (Work_Order__c child : [
-            SELECT Id, Name, Status__c, Pipeline_Stage__c, Repair_Scope__c
-            FROM Work_Order__c
-            WHERE Parent_Work_Order__c = :recordId
-            WITH SECURITY_ENFORCED
-            ORDER BY Name
-            LIMIT 200
-        ]) {
-            ScopeLine l = new ScopeLine();
-            l.name = child.Name;
-            l.detail = child.Repair_Scope__c;
-            l.status = child.Status__c;
-            lines.add(l);
-        }
-        return lines;
-    }
-
-    private static Schedule buildSchedule(Work_Order__c wo) {
+    private static Schedule buildSchedule(WorkOrder wo) {
         Schedule s = new Schedule();
-        s.start = wo.Scheduled_Start_DateTime__c;
-        s.finish = wo.Scheduled_End_DateTime__c;
-        s.scheduledDate = wo.Scheduled_Date__c;
-        s.durationMinutes = wo.Calculated_Duration_Minutes__c;
-        s.territory = wo.Territory__c;
-        s.crew = wo.Crew__c;
-        s.proposalStatus = wo.Schedule_Proposal_Status__c;
+        s.start           = wo.StartDate;
+        s.finish          = wo.EndDate;
+        s.scheduledDate   = wo.StartDate != null ? wo.StartDate.date() : null;
+        s.durationMinutes = wo.Duration;
+        s.territory       = wo.ServiceTerritory != null ? wo.ServiceTerritory.Name : null;
+        s.crew            = wo.Crew__r != null ? wo.Crew__r.Name : null;
+        s.proposalStatus  = null; // FSL scheduling status lives on ServiceAppointment, not WorkOrder
         return s;
     }
 
-    private static Customer buildCustomer(Work_Order__c wo) {
+    private static Customer buildCustomer(WorkOrder wo) {
         Customer c = new Customer();
-        if (wo.Construction_Manager__r != null) {
-            c.contactName = wo.Construction_Manager__r.Name;
-            c.phone = wo.Construction_Manager__r.Phone;
+        if (wo.Contact != null) {
+            c.contactName = wo.Contact.Name;
+            c.phone       = wo.Contact.Phone;
         }
-        if (wo.Lot__r != null) {
-            List<String> parts = new List<String>();
-            if (String.isNotBlank(wo.Lot__r.Street_Address__c)) parts.add(wo.Lot__r.Street_Address__c);
-            if (String.isNotBlank(wo.Lot__r.City__c)) parts.add(wo.Lot__r.City__c);
-            if (String.isNotBlank(wo.Lot__r.State__c)) parts.add(wo.Lot__r.State__c);
-            c.siteAddress = parts.isEmpty() ? null : String.join(parts, ', ');
-            c.lotNumber = wo.Lot__r.Lot_Number__c;
-        }
-        c.builderName = wo.Builder_Market_Account__r != null ? wo.Builder_Market_Account__r.Name : null;
+        c.siteAddress     = wo.Lot_Address__c;
+        c.lotNumber       = null;
+        c.builderName     = wo.Account != null ? wo.Account.Name : null;
+        c.opportunityName = wo.ODL_Opportunity__r != null ? wo.ODL_Opportunity__r.Name : null;
         return c;
     }
 
-    /** Rule engine, first match wins (Spec §9). */
-    private static NextAction buildNextAction(Work_Order__c wo, List<Gate> gates) {
+    private static NextAction buildNextAction(WorkOrder wo, List<Gate> gates) {
         Map<String, Gate> byName = new Map<String, Gate>();
         for (Gate g : gates) { byName.put(g.label, g); }
-        Boolean installDone   = byName.get('Install complete').passed;
-        Boolean closeoutMet   = byName.get('Closeout photos').passed;
-        Boolean qiPass        = byName.get('QI inspection').passed;
-        Boolean isTerminal    = isTerminalStatus(wo.Status__c);
+        Boolean installDone = byName.get('Install complete').passed;
+        Boolean closeoutMet = byName.get('Closeout photos').passed;
+        Boolean qiPass      = byName.get('QI inspection').passed;
+        Boolean isTerminal  = TERMINAL_STATUSES.contains(wo.Status);
 
         NextAction na = new NextAction();
         if (isTerminal) {
@@ -282,9 +278,9 @@ public with sharing class ODLWorkOrderController {
             na.text = 'Run QI inspection'; na.button = 'Start QI';
         } else if (installDone) {
             na.text = 'Capture closeout photos'; na.button = 'Field app';
-        } else if (wo.Field_Complete_Date__c == null && isInProgress(wo)) {
+        } else if (wo.Field_Complete_Date__c == null && wo.Status == 'In Progress') {
             na.text = 'Continue install'; na.button = 'Open field app';
-        } else if (wo.Scheduled_Start_DateTime__c != null) {
+        } else if (wo.StartDate != null) {
             na.text = 'Dispatch crew'; na.button = 'Dispatch';
         } else {
             na.text = 'Schedule the appointment'; na.button = 'Schedule';
@@ -292,14 +288,9 @@ public with sharing class ODLWorkOrderController {
         return na;
     }
 
-    // ---- helpers -----------------------------------------------------------
+    // ---- helpers ------------------------------------------------------------
 
-    private static Boolean isInProgress(Work_Order__c wo) {
-        return wo.Status__c == 'In Progress'
-            || (wo.Scheduled_Start_DateTime__c != null && wo.Scheduled_Start_DateTime__c <= System.now());
-    }
-
-    private static String qiLabel(Work_Order__c wo) {
+    private static String qiLabel(WorkOrder wo) {
         if (wo.QI_Held__c == true) return 'On hold';
         if (wo.QI_Complete__c == true) {
             return wo.QI_Score__c != null ? 'Passed (' + wo.QI_Score__c + ')' : 'Passed';
@@ -313,57 +304,41 @@ public with sharing class ODLWorkOrderController {
 
     private static Gate gate(String label, Boolean passed, Boolean required, String detail, String blockerReason) {
         Gate g = new Gate();
-        g.label = label;
-        g.passed = passed;
-        g.required = required;
-        g.detail = detail;
+        g.label         = label;
+        g.passed        = passed;
+        g.required      = required;
+        g.detail        = detail;
         g.blockerReason = blockerReason;
         return g;
     }
 
-    private static Map<String, WO_Status_Mapping__mdt> mappingByStatus() {
-        Map<String, WO_Status_Mapping__mdt> byStatus = new Map<String, WO_Status_Mapping__mdt>();
-        for (WO_Status_Mapping__mdt m : WO_Status_Mapping__mdt.getAll().values()) {
-            if (String.isNotBlank(m.Status_Label__c)) {
-                byStatus.put(m.Status_Label__c, m);
-            }
-        }
-        return byStatus;
-    }
-
-    private static Boolean isTerminalStatus(String status) {
-        if (status == null) return false;
-        Map<String, WO_Status_Mapping__mdt> statusMap = mappingByStatus();
-        return statusMap.containsKey(status) && statusMap.get(status).Is_Terminal__c == true;
-    }
-
-    // ---- DTOs --------------------------------------------------------------
+    // ---- DTOs ---------------------------------------------------------------
 
     public class WorkOrderView {
-        @AuraEnabled public Header header;
-        @AuraEnabled public List<Step> stepper;
-        @AuraEnabled public List<Gate> gates;
-        @AuraEnabled public Photos photos;
+        @AuraEnabled public Header         header;
+        @AuraEnabled public List<Step>     stepper;
+        @AuraEnabled public List<Gate>     gates;
+        @AuraEnabled public Photos         photos;
         @AuraEnabled public List<ScopeLine> scope;
-        @AuraEnabled public Schedule schedule;
-        @AuraEnabled public Customer customer;
-        @AuraEnabled public NextAction nextAction;
-        @AuraEnabled public Boolean readyToComplete;
-        @AuraEnabled public String blocker;
+        @AuraEnabled public Schedule       schedule;
+        @AuraEnabled public Customer       customer;
+        @AuraEnabled public NextAction     nextAction;
+        @AuraEnabled public Boolean        readyToComplete;
+        @AuraEnabled public String         blocker;
     }
 
     public class Header {
-        @AuraEnabled public String workOrderName;
-        @AuraEnabled public String status;
-        @AuraEnabled public String pipelineStage;
-        @AuraEnabled public String territory;
-        @AuraEnabled public String builderName;
+        @AuraEnabled public String   workOrderName;
+        @AuraEnabled public String   status;
+        @AuraEnabled public String   pipelineStage;
+        @AuraEnabled public String   territory;
+        @AuraEnabled public String   builderName;
         @AuraEnabled public Datetime scheduledStart;
         @AuraEnabled public Datetime scheduledEnd;
-        @AuraEnabled public String crew;
-        @AuraEnabled public String qiStatus;
-        @AuraEnabled public Integer closeoutPhotoCount;
-        @AuraEnabled public Integer closeoutPhotoMin;
+        @AuraEnabled public String   crew;
+        @AuraEnabled public String   qiStatus;
+        @AuraEnabled public Integer  closeoutPhotoCount;
+        @AuraEnabled public Integer  closeoutPhotoMin;
     }
 
     public class Step {
@@ -372,23 +347,23 @@ public with sharing class ODLWorkOrderController {
     }
 
     public class Gate {
-        @AuraEnabled public String label;
+        @AuraEnabled public String  label;
         @AuraEnabled public Boolean passed;
         @AuraEnabled public Boolean required;
-        @AuraEnabled public String detail;
-        @AuraEnabled public String blockerReason;
-        @AuraEnabled public String flag; // non-null when a source field is missing/unconfirmed
+        @AuraEnabled public String  detail;
+        @AuraEnabled public String  blockerReason;
+        @AuraEnabled public String  flag; // non-null when a source field is missing/unconfirmed
     }
 
     public class Photos {
         @AuraEnabled public Integer takeoffCount;
         @AuraEnabled public Integer takeoffMin;
-        @AuraEnabled public String takeoffStatus;
+        @AuraEnabled public String  takeoffStatus;
         @AuraEnabled public Integer progressCount;
-        @AuraEnabled public String progressStatus;
+        @AuraEnabled public String  progressStatus;
         @AuraEnabled public Integer closeoutCount;
         @AuraEnabled public Integer closeoutMin;
-        @AuraEnabled public String closeoutStatus;
+        @AuraEnabled public String  closeoutStatus;
     }
 
     public class ScopeLine {
@@ -400,11 +375,11 @@ public with sharing class ODLWorkOrderController {
     public class Schedule {
         @AuraEnabled public Datetime start;
         @AuraEnabled public Datetime finish;
-        @AuraEnabled public Date scheduledDate;
-        @AuraEnabled public Decimal durationMinutes;
-        @AuraEnabled public String territory;
-        @AuraEnabled public String crew;
-        @AuraEnabled public String proposalStatus;
+        @AuraEnabled public Date     scheduledDate;
+        @AuraEnabled public Decimal  durationMinutes;
+        @AuraEnabled public String   territory;
+        @AuraEnabled public String   crew;
+        @AuraEnabled public String   proposalStatus;
     }
 
     public class Customer {
@@ -413,6 +388,7 @@ public with sharing class ODLWorkOrderController {
         @AuraEnabled public String siteAddress;
         @AuraEnabled public String lotNumber;
         @AuraEnabled public String builderName;
+        @AuraEnabled public String opportunityName;
     }
 
     public class NextAction {
