@@ -21,18 +21,20 @@ public class DivisionKpiRecalcBatch implements Database.Batchable<SObject> {
         Set<Id> divIds = (new Map<Id, Account>(scope)).keySet();
 
         // Revenue and GP cost from Invoice in one query.
-        // Invoice__c.Work_Order__c links to the standard WorkOrder object (not custom Work_Order__c),
-        // so GP cost is taken from Invoice__c.Total_Cost__c directly — no WO traversal.
+        // GP logic lives in declarative formula fields, not Apex:
+        //   Adjusted_Revenue__c = Total_Revenue__c - Customer_Revenue_Adjustment__c (customer credits)
+        //   Adjusted_Cost__c    = Total_Cost__c    - Internal_Cost_Recovery__c      (vendor/crew back-charges)
+        // Back-charges are no longer blanket-excluded; their effect is captured per-type via those
+        // two adjustment fields, so finance can see and tune the rule on each invoice.
         Map<Id, Decimal> revByDiv = new Map<Id, Decimal>();
         Map<Id, Decimal> costByDiv = new Map<Id, Decimal>();
         for (AggregateResult ar : [
             SELECT Builder_Market_Account__c div,
-                   SUM(Total_Revenue__c) rev,
-                   SUM(Total_Cost__c) cost
+                   SUM(Adjusted_Revenue__c) rev,
+                   SUM(Adjusted_Cost__c) cost
             FROM Invoice__c
             WHERE Status__c = 'Paid'
               AND Date_Paid__c >= :T12M
-              AND Back_Charge__c = false
               AND Builder_Market_Account__c IN :divIds
             GROUP BY Builder_Market_Account__c
         ]) {

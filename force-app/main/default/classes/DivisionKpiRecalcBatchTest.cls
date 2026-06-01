@@ -24,14 +24,19 @@ private class DivisionKpiRecalcBatchTest {
         );
         insert wo;
 
-        // Paid T12M invoice with both revenue and cost on the invoice itself
+        // Paid T12M invoice exercising both adjustment types:
+        //   Adjusted_Revenue = 10000 - 1000 = 9000
+        //   Adjusted_Cost    = 7000  - 500  = 6500
+        //   GP%              = (9000 - 6500) / 9000 * 100 = 27.78
         Invoice__c inv = new Invoice__c(
             Back_Charge__c = false,
             Temp_Irrigation_Billed__c = false,
             Status__c = 'Paid',
             Date_Paid__c = Date.today().addDays(-10),
             Total_Revenue__c = 10000,
+            Customer_Revenue_Adjustment__c = 1000,
             Total_Cost__c = 7000,
+            Internal_Cost_Recovery__c = 500,
             Builder_Market_Account__c = div.Id
         );
         insert inv;
@@ -63,8 +68,8 @@ private class DivisionKpiRecalcBatchTest {
               AND Name = 'Test Division'
             LIMIT 1
         ];
-        System.assert(div.Division_Revenue_T12M__c > 0, 'Revenue should be populated');
-        System.assert(div.Division_GP_Pct__c != null, 'GP should be populated');
+        System.assertEquals(9000, div.Division_Revenue_T12M__c, 'Revenue should be adjusted revenue (10000-1000)');
+        System.assertEquals(27.78, div.Division_GP_Pct__c, 'GP% from adjusted rev/cost: (9000-6500)/9000*100');
         System.assertEquals(1, (Integer) div.Open_WO_Count__c, 'One open WO expected');
         System.assertEquals(1, (Integer) div.Active_Communities_Count__c, 'One active community expected');
     }
