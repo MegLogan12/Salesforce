@@ -1,0 +1,15 @@
+Name,Zone__c,ServiceTerritory__c,Service_Territory_Name__c,FM_Assignment__c,Assigned_FM__c,Community_City__c,Community_State__c,Community_Zip__c,Active__c
+Overbrook Estates,1,0HhVu0000001LSDKA2,Huntersville,005Vu00000J7hQHIAZ,005Vu00000J7hQHIAZ,Huntersville,NC,28078,true
+Spring Grove,1,0HhVu0000001LSDKA2,Huntersville,005Vu00000J7hQHIAZ,005Vu00000J7hQHIAZ,Huntersville,NC,28078,true
+Windgate,1,0HhVu0000001LSDKA2,Mooresville,005Vu00000J7hQHIAZ,005Vu00000J7hQHIAZ,Mooresville,NC,28115,true
+Townes at Lake Norman,1,0HhVu0000001LSDKA2,Mooresville,005Vu00000J7hQHIAZ,005Vu00000J7hQHIAZ,Mooresville,NC,28117,true
+English Farm,2,0HhVu0000001LTpKAM,Archdale,005Vu00000HRvzhIAD,005Vu00000HRvzhIAD,Archdale,NC,27263,true
+Monterra,2,0HhVu0000001LTpKAM,Kernersville,005Vu00000HRvzhIAD,005Vu00000HRvzhIAD,Kernersville,NC,27284,true
+Neal Farm,2,0HhVu0000001LTpKAM,Stokesdale,005Vu00000HRvzhIAD,005Vu00000HRvzhIAD,Stokesdale,NC,27357,true
+Preston Oaks,2,0HhVu0000001LTpKAM,King,005Vu00000HRvzhIAD,005Vu00000HRvzhIAD,King,NC,27021,true
+Calebs Creek Glen THs,2,0HhVu0000001LTpKAM,Kernersville,005Vu00000HRvzhIAD,005Vu00000HRvzhIAD,Kernersville,NC,27284,true
+Bellamore,3,0HhVu0000001LYfKAM,York,005Vu00000JHMZ3IAP,005Vu00000JHMZ3IAP,York,SC,29745,true
+Huffman Ridge,4,0HhVu0000001LVRKA2,Hickory,005Vu00000HRhdOIAT,005Vu00000HRhdOIAT,Hickory,NC,28602,true
+Nolen Farm 60s,4,0HhVu0000001LVRKA2,Gastonia,005Vu00000HRhdOIAT,005Vu00000HRhdOIAT,Gastonia,NC,28056,true
+Nolen Farm 70s,4,0HhVu0000001LVRKA2,Gastonia,005Vu00000HRhdOIAT,005Vu00000HRhdOIAT,Gastonia,NC,28056,true
+The Vines Pines,4,0HhVu0000001LVRKA2,Charlotte,005Vu00000HRhdOIAT,005Vu00000HRhdOIAT,Charlotte,NC,28214,true
