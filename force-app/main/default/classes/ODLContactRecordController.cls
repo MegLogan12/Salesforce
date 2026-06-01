@@ -327,8 +327,11 @@ public with sharing class ODLContactRecordController {
         }
 
         items.sort(new ActivitySorter());
-        if (items.size() > 6) items = items.subList(0, 6);
-        return items;
+        List<ActivityItem> limited = new List<ActivityItem>();
+        for (Integer i = 0; i < Math.min(6, items.size()); i++) {
+            limited.add(items[i]);
+        }
+        return limited;
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
