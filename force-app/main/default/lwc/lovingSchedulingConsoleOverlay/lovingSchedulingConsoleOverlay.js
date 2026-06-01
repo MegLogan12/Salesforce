@@ -517,7 +517,7 @@ export default class LovingSchedulingConsoleOverlay extends NavigationMixin(Ligh
     handleOpenFslDispatcher() {
         this[NavigationMixin.Navigate]({
             type: 'standard__navItemPage',
-            attributes: { apiName: 'FSL_Dispatcher' }
+            attributes: { apiName: 'Dispatch_Map' }
         });
     }
 

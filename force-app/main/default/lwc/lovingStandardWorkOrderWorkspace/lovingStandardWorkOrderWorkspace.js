@@ -497,7 +497,7 @@ export default class LovingStandardWorkOrderWorkspace extends NavigationMixin(Li
             case 'scheduling':
                 this[NavigationMixin.Navigate]({
                     type: 'standard__navItemPage',
-                    attributes: { apiName: 'Scheduling_Console_Home' }
+                    attributes: { apiName: 'Scheduling_Console' }
                 });
                 break;
             case 'customerSuccess':
