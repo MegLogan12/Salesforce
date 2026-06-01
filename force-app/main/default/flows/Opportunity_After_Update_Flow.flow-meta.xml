@@ -10,7 +10,9 @@
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
             <name>recipientAddresses</name>
-            <value/>
+            <value>
+                <stringValue>hr@thelovingcompanies.com</stringValue>
+            </value>
         </inputParameters>
         <inputParameters>
             <name>senderType</name>
@@ -76,10 +78,6 @@
         </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <inputParameters>
-            <name>recipientAddresses</name>
-            <value/>
-        </inputParameters>
-        <inputParameters>
             <name>composeEmailContent</name>
             <value>
                 <stringValue>True</stringValue>
@@ -142,14 +140,7 @@
             <targetReference>Contract_Sent_Internal_Mail</targetReference>
         </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
-        <inputParameters>
-            <name>recipientAddresses</name>
-            <value/>
-        </inputParameters>
-        <inputParameters>
-            <name>ccAddresses</name>
-            <value/>
-        </inputParameters>
+
         <inputParameters>
             <name>senderType</name>
             <value>
