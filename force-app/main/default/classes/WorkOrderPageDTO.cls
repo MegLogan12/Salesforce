@@ -145,6 +145,7 @@ public with sharing class WorkOrderPageDTO {
         @AuraEnabled public Boolean materialVerified;
         @AuraEnabled public Boolean substitutionRequired;
         @AuraEnabled public String  substitutionNotes;
+        @AuraEnabled public String  notes;
         @AuraEnabled public String  lineStatus;
     }
 
