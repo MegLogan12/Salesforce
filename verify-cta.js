@@ -26,7 +26,7 @@ const woId = process.argv[4] || '0WOVu000006sntBOAQ';
   const locator = page.getByText(ctaText, { exact: true }).first();
   await locator.waitFor({ timeout: 15000 });
   await locator.click();
-  await page.waitForTimeout(5000);
+  await page.waitForTimeout(12000);
 
   const out = `verification/screenshots/${shotName}.png`;
   await page.screenshot({ path: out, fullPage: true });

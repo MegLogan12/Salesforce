@@ -110,7 +110,7 @@ export default class OdlWorkOrder extends NavigationMixin(LightningElement) {
         this[NavigationMixin.Navigate]({
             type: 'standard__objectPage',
             attributes: { objectApiName: 'Material_Allocation__c', actionName: 'new' },
-            state: { defaultFieldValues: encodeDefaultFieldValues({ Work_Order__c: this.recordId, LOVING_Work_Order__c: this.recordId }) }
+            state: { defaultFieldValues: encodeDefaultFieldValues({ Work_Order__c: this.recordId }) }
         });
     }
     submitPunchNote() {
