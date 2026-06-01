@@ -10,10 +10,14 @@
         <name>main</name>
         <type>Region</type>
     </flexiPageRegions>
+    <flexiPageRegions>
+        <name>sidebar</name>
+        <type>Region</type>
+    </flexiPageRegions>
     <masterLabel>ODL Task Record Page</masterLabel>
     <sobjectType>Task</sobjectType>
     <template>
-        <name>flexipage:defaultRecordHomeTemplate</name>
+        <name>flexipage:recordHomeTemplateDesktop</name>
     </template>
     <type>RecordPage</type>
 </FlexiPage>
