@@ -97,7 +97,7 @@ public with sharing class CommunityRecordController {
             dto.workOrderNumber = wo.WorkOrderNumber;
             dto.status = wo.Status;
             dto.workType = wo.WorkType != null ? wo.WorkType.Name : null;
-            dto.scheduledDate = wo.StartDate;
+            dto.scheduledDate = wo.StartDate != null ? wo.StartDate.date() : null;
             result.openWorkOrders.add(dto);
         }
 
@@ -175,7 +175,7 @@ public with sharing class CommunityRecordController {
             dto.status = wo.Status;
             dto.subject = wo.Subject;
             dto.workType = wo.WorkType != null ? wo.WorkType.Name : null;
-            dto.scheduledDate = wo.StartDate;
+            dto.scheduledDate = wo.StartDate != null ? wo.StartDate.date() : null;
             dto.lotName = wo.Lot__r != null ? wo.Lot__r.Name : null;
             result.rows.add(dto);
 

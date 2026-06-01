@@ -5,6 +5,7 @@ import getEmails from '@salesforce/apex/ODLEmailViewController.getEmails';
 
 export default class OdlEmailViewCard extends NavigationMixin(LightningElement) {
     @api recordId;
+    @api cardSubtitle;  // accepted from FlexiPage config; display not yet implemented
 
     @track emailData  = null;
     @track error      = null;

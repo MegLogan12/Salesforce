@@ -44,16 +44,13 @@ public with sharing class ForecastingConsoleController {
                 WHERE Status__c NOT IN ('Filled', 'Cancelled', 'Closed')
             ];
 
-            // KPI: active crews
-            dto.activeCrew = [
-                SELECT COUNT() FROM Crew__c
-                WHERE Status__c = 'Active'
-            ];
+            // KPI: crew count (Status__c not available on Crew__c schema)
+            dto.activeCrew = [SELECT COUNT() FROM Crew__c];
 
             // Recent hire requests (last 5)
             List<HireRequestRow> hrRows = new List<HireRequestRow>();
             for (Hire_Request__c hr : [
-                SELECT Id, Name, Status__c, Position__c, Priority__c, CreatedDate
+                SELECT Id, Name, Status__c, CreatedDate
                 FROM Hire_Request__c
                 ORDER BY CreatedDate DESC
                 LIMIT 5

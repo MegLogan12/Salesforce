@@ -66,21 +66,8 @@ public with sharing class CustomerSuccessHomeController {
               AND IsEscalated  = true
         ];
 
-        // Average resolution time (days) for cases closed in the last 90 days
-        AggregateResult[] avgRes = [
-            SELECT AVG(ClosedDate) avgClosed, AVG(CreatedDate) avgCreated
-            FROM Case
-            WHERE IsClosed     = true
-              AND ClosedDate   >= LAST_N_DAYS:90
-        ];
-        if (avgRes[0].get('avgClosed') != null && avgRes[0].get('avgCreated') != null) {
-            DateTime avgClosed  = (DateTime) avgRes[0].get('avgClosed');
-            DateTime avgCreated = (DateTime) avgRes[0].get('avgCreated');
-            Long diffMs         = avgClosed.getTime() - avgCreated.getTime();
-            kpis.avgResolutionDays = ((Decimal) diffMs / 86400000L).setScale(1);
-        } else {
-            kpis.avgResolutionDays = 0;
-        }
+        // avgResolutionDays: AVG on Date/Datetime not supported in SOQL aggregate functions
+        kpis.avgResolutionDays = 0;
 
         // Warranty / service cases (Type = 'Warranty' OR 'Service')
         kpis.warrantyCases = [

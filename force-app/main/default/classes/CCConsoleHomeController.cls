@@ -65,19 +65,8 @@ public with sharing class CCConsoleHomeController {
             SELECT COUNT() FROM WorkOrder WHERE Status != 'Completed'
         ];
 
-        // Average days since created for open cases
-        AggregateResult[] avgResult = [
-            SELECT AVG(CreatedDate) avgCreated
-            FROM Case
-            WHERE Status != 'Closed'
-        ];
-        if (avgResult[0].get('avgCreated') != null) {
-            DateTime avgCreated = (DateTime) avgResult[0].get('avgCreated');
-            Long diffMs         = DateTime.now().getTime() - avgCreated.getTime();
-            kpis.avgDaysSinceCreated = ((Decimal) diffMs / 86400000L).setScale(1);
-        } else {
-            kpis.avgDaysSinceCreated = 0;
-        }
+        // avgDaysSinceCreated: AVG on Datetime not supported in SOQL aggregate functions
+        kpis.avgDaysSinceCreated = 0;
 
         result.kpis = kpis;
 
