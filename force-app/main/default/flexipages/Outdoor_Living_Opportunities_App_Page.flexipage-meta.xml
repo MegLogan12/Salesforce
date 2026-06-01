@@ -3,14 +3,14 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>odlOpportunityWorkspace</componentName>
-                <identifier>c_odlOpportunityWorkspace</identifier>
+                <componentName>odlOpportunityWorkspaceLive</componentName>
+                <identifier>c_odlOpportunityWorkspaceLive</identifier>
             </componentInstance>
         </itemInstances>
         <name>main</name>
         <type>Region</type>
     </flexiPageRegions>
-    <masterLabel>UpgradeMyBackyard Opportunities App Page</masterLabel>
+    <masterLabel>Homeowner Opportunity Operating List</masterLabel>
     <template>
         <name>flexipage:defaultAppHomeTemplate</name>
     </template>
