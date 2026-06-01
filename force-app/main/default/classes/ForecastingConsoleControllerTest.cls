@@ -3,7 +3,6 @@ private class ForecastingConsoleControllerTest {
     @TestSetup
     static void setup() {
         Hire_Request__c hr = new Hire_Request__c(
-            Name      = 'Test Hire Request',
             Status__c = 'Submitted'
         );
         insert hr;
