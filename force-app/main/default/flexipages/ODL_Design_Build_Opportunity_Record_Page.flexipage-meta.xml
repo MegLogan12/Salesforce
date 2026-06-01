@@ -3,14 +3,20 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>odlCustomBuildRecord</componentName>
-                <identifier>c_odlCustomBuildRecord</identifier>
+                <componentName>odlOpportunityRecordWorkspace</componentName>
+                <identifier>c_odlOpportunityRecordWorkspace</identifier>
             </componentInstance>
         </itemInstances>
         <name>main</name>
         <type>Region</type>
     </flexiPageRegions>
     <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>odlOpportunityRecordSidebar</componentName>
+                <identifier>c_odlOpportunityRecordSidebar</identifier>
+            </componentInstance>
+        </itemInstances>
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
