@@ -232,9 +232,6 @@ public with sharing class ForemanMobileController {
 
     @AuraEnabled(cacheable=true)
     public static JobDto getJob(Id workOrderId) {
-        if (workOrderId != null && workOrderId.getSObjectType() == ServiceAppointment.sObjectType) {
-            return getJobFromServiceAppointment(workOrderId);
-        }
         Id resolvedId = workOrderId == null ? getTodaysJobId() : workOrderId;
         if (resolvedId == null) {
             return newJob();
@@ -261,10 +258,6 @@ public with sharing class ForemanMobileController {
         ctx.closeoutGates = new List<String>();
         ctx.vehicleChecklist = newVehicleChecklist();
         ctx.loadedChecklist = newLoadedChecklist();
-
-        if (workOrderId != null && workOrderId.getSObjectType() == ServiceAppointment.sObjectType) {
-            return buildContextFromStandardWo(workOrderId, ctx);
-        }
 
         Id resolvedId = workOrderId == null ? getTodaysJobId() : workOrderId;
         ctx.workOrderId = resolvedId;
@@ -1554,122 +1547,6 @@ public with sharing class ForemanMobileController {
             return e.getDmlMessage(0);
         }
         return e.getMessage();
-    }
-
-    private static JobDto getJobFromServiceAppointment(Id saId) {
-        List<ServiceAppointment> saList = [
-            SELECT Id, AppointmentNumber, Status, SchedStartTime, ParentRecordId
-            FROM ServiceAppointment
-            WHERE Id = :saId
-            LIMIT 1
-        ];
-        if (saList.isEmpty()) {
-            return newJob();
-        }
-        ServiceAppointment sa = saList[0];
-        if (sa.ParentRecordId == null || sa.ParentRecordId.getSObjectType() != WorkOrder.sObjectType) {
-            return newJob();
-        }
-        List<WorkOrder> woList = [
-            SELECT Id, WorkOrderNumber, Subject, Status, Work_Order_Type__c
-            FROM WorkOrder
-            WHERE Id = :sa.ParentRecordId
-            LIMIT 1
-        ];
-        if (woList.isEmpty()) {
-            return newJob();
-        }
-        WorkOrder wo = woList[0];
-        JobDto j = newJob();
-        j.id = wo.Id;
-        j.woNumber = wo.WorkOrderNumber;
-        j.subject = wo.Subject;
-        j.status = wo.Status;
-        j.statusLabel = wo.Status;
-        j.workOrderType = wo.Work_Order_Type__c;
-        j.builderName = null;
-        j.appointmentNumber = sa.AppointmentNumber;
-        j.appointmentStatus = sa.Status;
-        j.appointmentStart = sa.SchedStartTime;
-        return j;
-    }
-
-    private static MobileContextDto buildContextFromStandardWo(Id saId, MobileContextDto ctx) {
-        List<ServiceAppointment> saList = [
-            SELECT Id, AppointmentNumber, Status, SchedStartTime, ParentRecordId
-            FROM ServiceAppointment
-            WHERE Id = :saId
-            LIMIT 1
-        ];
-        if (saList.isEmpty() || saList[0].ParentRecordId == null) {
-            ctx.activeJob = newJob();
-            ctx.canBeginDrive = false;
-            ctx.beginDriveReason = 'Service appointment not found.';
-            ctx.canSubmitCloseout = false;
-            return ctx;
-        }
-        ServiceAppointment sa = saList[0];
-        if (sa.ParentRecordId.getSObjectType() != WorkOrder.sObjectType) {
-            ctx.activeJob = newJob();
-            ctx.canBeginDrive = false;
-            ctx.beginDriveReason = 'Service appointment is not linked to a standard work order.';
-            ctx.canSubmitCloseout = false;
-            return ctx;
-        }
-        ctx.workOrderId = sa.ParentRecordId;
-        List<WorkOrder> woList = [
-            SELECT Id, WorkOrderNumber, Subject, Status, Work_Order_Type__c
-            FROM WorkOrder
-            WHERE Id = :sa.ParentRecordId
-            LIMIT 1
-        ];
-        if (woList.isEmpty()) {
-            ctx.activeJob = newJob();
-            ctx.canBeginDrive = false;
-            ctx.beginDriveReason = 'Work order not found.';
-            ctx.canSubmitCloseout = false;
-            return ctx;
-        }
-        WorkOrder wo = woList[0];
-        JobDto j = newJob();
-        j.id = wo.Id;
-        j.woNumber = wo.WorkOrderNumber;
-        j.subject = wo.Subject;
-        j.status = wo.Status;
-        j.statusLabel = wo.Status;
-        j.workOrderType = wo.Work_Order_Type__c;
-        j.builderName = null;
-        j.appointmentNumber = sa.AppointmentNumber;
-        j.appointmentStatus = sa.Status;
-        j.appointmentStart = sa.SchedStartTime;
-        ctx.activeJob = j;
-        ctx.lineItems = queryStandardWoliLineItems(wo.Id);
-        ctx.canBeginDrive = false;
-        ctx.beginDriveReason = null;
-        ctx.canSubmitCloseout = false;
-        return ctx;
-    }
-
-    private static List<ScopeLineItemDto> queryStandardWoliLineItems(Id workOrderId) {
-        List<ScopeLineItemDto> out = new List<ScopeLineItemDto>();
-        if (workOrderId == null) {
-            return out;
-        }
-        for (WorkOrderLineItem li : [
-            SELECT Id, Description, Quantity
-            FROM WorkOrderLineItem
-            WHERE WorkOrderId = :workOrderId
-            ORDER BY CreatedDate ASC
-            LIMIT 200
-        ]) {
-            ScopeLineItemDto dto = new ScopeLineItemDto();
-            dto.id = li.Id;
-            dto.description = li.Description;
-            dto.quantity = li.Quantity;
-            dto.source = 'WorkOrderLineItem';
-            out.add(dto);
-        }
-        return out;
     }
 
     @TestVisible

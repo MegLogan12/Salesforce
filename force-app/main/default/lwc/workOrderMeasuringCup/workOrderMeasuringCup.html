@@ -1,0 +1,25 @@
+<template>
+    <template lwc:if={loaded}>
+        <div class="card">
+            <h3 class="ttl">Measuring Cup</h3>
+            <div class="grid">
+                <div class="cell"><div class="lbl">Goal Minutes</div><div class="val">{data.goalMinutes}</div></div>
+                <div class="cell"><div class="lbl">Goal Hours</div><div class="val">{data.goalHours}</div></div>
+                <div class="cell"><div class="lbl">Actual Hours</div><div class="val">{data.actualHours}</div></div>
+                <div class="cell"><div class="lbl">Variance</div><div class="val">{data.varianceHours}</div></div>
+                <div class="cell"><div class="lbl">Goal HC</div><div class="val">{data.goalHc}</div></div>
+                <div class="cell"><div class="lbl">Actual HC</div><div class="val">{data.actualHc}</div></div>
+            </div>
+            <div class="rtn-bar">
+                <span class="rlbl">RTN</span>
+                <span class="rval">{data.rtn}</span>
+                <span class="sub">Shift {data.shiftStartTime} / Lunch {data.lunchMinutes}m / Cushion {data.cushionMinutes}m / Travel {data.travelMinutes}m</span>
+            </div>
+            <div class="guard">
+                <template for:each={guardrails} for:item="g">
+                    <div class="grow" key={g.key}><span class="glbl">{g.label}</span><span class={g.cls}>{g.text}</span></div>
+                </template>
+            </div>
+        </div>
+    </template>
+</template>

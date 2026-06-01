@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Photo_Type__c</fullName>
+    <label>Photo Type</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Pre-Install</fullName>
+                <default>false</default>
+                <label>Pre-Install</label>
+            </value>
+            <value>
+                <fullName>Hero</fullName>
+                <default>false</default>
+                <label>Hero</label>
+            </value>
+            <value>
+                <fullName>Line Item Submission</fullName>
+                <default>false</default>
+                <label>Line Item Submission</label>
+            </value>
+            <value>
+                <fullName>QI</fullName>
+                <default>false</default>
+                <label>QI</label>
+            </value>
+            <value>
+                <fullName>Issue</fullName>
+                <default>false</default>
+                <label>Issue</label>
+            </value>
+            <value>
+                <fullName>Incomplete</fullName>
+                <default>false</default>
+                <label>Incomplete</label>
+            </value>
+            <value>
+                <fullName>Site Not Ready</fullName>
+                <default>false</default>
+                <label>Site Not Ready</label>
+            </value>
+            <value>
+                <fullName>FJ Evidence</fullName>
+                <default>false</default>
+                <label>FJ Evidence</label>
+            </value>
+            <value>
+                <fullName>FJ Complete</fullName>
+                <default>false</default>
+                <label>FJ Complete</label>
+            </value>
+            <value>
+                <fullName>Takeoff</fullName>
+                <default>false</default>
+                <label>Takeoff</label>
+            </value>
+            <value>
+                <fullName>Site Check</fullName>
+                <default>false</default>
+                <label>Site Check</label>
+            </value>
+            <value>
+                <fullName>Before</fullName>
+                <default>false</default>
+                <label>Before</label>
+            </value>
+            <value>
+                <fullName>After</fullName>
+                <default>false</default>
+                <label>After</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

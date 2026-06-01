@@ -21,10 +21,10 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>numVisibleActions</name>
-                    <value>5</value>
+                    <value>6</value>
                 </componentInstanceProperties>
                 <componentName>force:highlightsPanel</componentName>
-                <identifier>force_highlightsPanel</identifier>
+                <identifier>homeowner_highlights_panel</identifier>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>
@@ -32,6 +32,12 @@
         <type>Region</type>
     </flexiPageRegions>
     <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>homeownerAccountHeaderKpis</componentName>
+                <identifier>c_homeownerAccountHeaderKpis</identifier>
+            </componentInstance>
+        </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentName>homeownerAccountCommandCenter</componentName>
@@ -43,12 +49,6 @@
         <type>Region</type>
     </flexiPageRegions>
     <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentName>homeownerAccountSidebar</componentName>
-                <identifier>c_homeownerAccountSidebar</identifier>
-            </componentInstance>
-        </itemInstances>
         <mode>Replace</mode>
         <name>sidebar</name>
         <type>Region</type>

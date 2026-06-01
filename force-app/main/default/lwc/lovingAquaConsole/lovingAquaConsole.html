@@ -1,0 +1,968 @@
+<template>
+    <!-- ── Tab bar ── -->
+    <div class="sf-nav">
+        <template for:each={tabs} for:item="t">
+            <a href="#" key={t.id} class={t.css} data-tab={t.id} onclick={handleTabClick}>
+                {t.label}
+                <template if:true={t.showBadge}>
+                    <span class="num-badge">{t.badgeLabel}</span>
+                </template>
+            </a>
+        </template>
+    </div>
+
+    <!-- ── Body ── -->
+    <div class="sf-body">
+
+        <!-- ═══════════ HOME TAB ═══════════ -->
+        <template if:true={showHomeTab}>
+            <div class="record-banner aqua-banner">
+                <div class="record-title-row">
+                    <div class="object-icon">💧</div>
+                    <div class="record-copy">
+                        <div class="record-kicker">Aqua Service</div>
+                        <div class="record-title">{homeTitle}</div>
+                    <div class="record-sub">{homeSubtitle}</div>
+                    </div>
+                    <div class="record-actions">
+                        <button type="button" class="sf-btn" onclick={handleManageTeam}>Manage Team</button>
+                        <button type="button" class="sf-btn primary" onclick={handleNewAquaTicket}>+ New Aqua Ticket</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="team-card">
+                <div class="team-avatars">
+                    <template for:each={teamMembers} for:item="m">
+                        <div key={m.id} class="team-avatar" style={m.avatarStyle}>{m.initials}</div>
+                    </template>
+                </div>
+                <div class="team-info">
+                    <div class="team-title">{teamLeadTitle}</div>
+                    <div class="team-sub">{homeData.teamSub}</div>
+                </div>
+                <button type="button" class="sf-btn" onclick={handleManageTeam}>Manage team</button>
+            </div>
+
+            <div class="g6" style="margin-bottom:14px">
+                <div class="kpi kaqua">
+                    <div class="kn">{homeData.kpiInstallsToday}</div>
+                    <div class="kl">Installs today</div>
+                </div>
+                <div class="kpi kaqua">
+                    <div class="kn">{homeData.kpiChecksToday}</div>
+                    <div class="kl">Communities today</div>
+                </div>
+                <div class="kpi kr">
+                    <div class="kn">{homeData.kpiSameDay}</div>
+                    <div class="kl">Same-day repairs</div>
+                </div>
+                <div class="kpi kg">
+                    <div class="kn">{homeData.kpiOnSiteLots}</div>
+                    <div class="kl">On-site lots</div>
+                </div>
+                <div class="kpi ka">
+                    <div class="kn">{homeData.kpiAwaitingCloseout}</div>
+                    <div class="kl">Awaiting closeout</div>
+                </div>
+                <div class="kpi kb">
+                    <div class="kn">{homeData.kpiRunTimePct}%</div>
+                    <div class="kl">Schedule {homeData.wateringCurrentMonthLabel}</div>
+                </div>
+            </div>
+
+            <div class="layout">
+                <div class="layout-main">
+
+                    <div class="card aqua">
+                        <div class="ch" style="background:#e6f4f7">
+                            <div class="ci" style="background:#0a8aa6">💧</div>
+                            <h3>Today's Aqua Installs</h3>
+                            <button type="button" class="ch-link" data-target="installs" onclick={handleNavToTab}>View all {homeData.kpiInstallsToday} →</button>
+                        </div>
+                        <table class="tbl">
+                            <thead><tr><th>WO</th><th>Lot</th><th>Community</th><th>Install Crew</th><th>Field manager</th><th>Status</th></tr></thead>
+                            <tbody>
+                                <template for:each={installsToday} for:item="row">
+                                    <tr key={row.id}>
+                                        <td><button type="button" class="lnk" data-id={row.id} onclick={handleNavToRecord}>{row.woName}</button></td>
+                                        <td>{row.lotName}</td>
+                                        <td>{row.communityName}</td>
+                                        <td>{row.crewName}</td>
+                                        <td>{row.techName}</td>
+                                        <td><span class={row.statusChip}>{row.statusLabel}</span></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                        <template if:false={installsToday.length}>
+                            <div class="empty-state">0 installs scheduled today.</div>
+                        </template>
+                    </div>
+
+                    <div class="card alert">
+                        <div class="ch" style="background:#fffbeb">
+                            <div class="ci" style="background:#c23934">🚨</div>
+                            <h3>{sameDayCardTitle}</h3>
+                            <button type="button" class="ch-link" data-target="sameday" onclick={handleNavToTab}>Open queue →</button>
+                        </div>
+                        <table class="tbl">
+                            <thead><tr><th>Time in</th><th>Lot</th><th>Issue</th><th>Source</th><th>Field owner</th><th>SLA</th></tr></thead>
+                            <tbody>
+                                <template for:each={sameDayRepairs} for:item="row">
+                                    <tr key={row.id} style={row.rowBg}>
+                                        <td>{row.timeIn}</td>
+                                        <td>{row.lotName}</td>
+                                        <td>{row.issue}</td>
+                                        <td>{row.sourceType}</td>
+                                        <td>{row.techName}</td>
+                                        <td><span class={row.slaChip}>{row.slaLabel}</span></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                        <template if:false={sameDayRepairs.length}>
+                            <div class="empty-state">0 same-day repairs active.</div>
+                        </template>
+                    </div>
+
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#0a8aa6">👥</div>
+                            <h3>Field Manager Schedule Coverage</h3>
+                        </div>
+                        <table class="tbl">
+                            <thead><tr><th>Field manager</th><th>Service day</th><th>Communities today</th><th>Done</th><th>Remaining</th><th>Status</th><th>Coverage</th></tr></thead>
+                            <tbody>
+                                <template for:each={techStatus} for:item="row">
+                                    <tr key={row.id}>
+                                        <td>{row.techName}</td>
+                                        <td>{row.routeLabel}</td>
+                                        <td>{row.stopsPlanned}</td>
+                                        <td>{row.stopsDone}</td>
+                                        <td>{row.stopsRemaining}</td>
+                                        <td><span class={row.statusChip}>{row.statusLabel}</span></td>
+                                        <td>{row.locationLabel}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                        <template if:false={hasTechStatus}>
+                            <div class="empty-state">0 field managers covering Aqua communities today.</div>
+                        </template>
+                    </div>
+
+                    <div class="g2">
+                        <div class="card warn">
+                            <div class="ch" style="background:#fffbeb">
+                                <div class="ci" style="background:#fe9339">📦</div>
+                                <h3>Inventory alerts</h3>
+                            </div>
+                            <template if:true={hasInvAlerts}>
+                                <template for:each={inventoryAlerts} for:item="a">
+                                    <div key={a.id} class="alert-row">
+                                        <strong style="color:#92400e">{a.itemName}</strong>&nbsp;{a.description}
+                                    </div>
+                                </template>
+                            </template>
+                            <template if:false={hasInvAlerts}>
+                                <div class="empty-state">0 inventory alerts.</div>
+                            </template>
+                        </div>
+                        <div class="card warn">
+                            <div class="ch" style="background:#fffbeb">
+                                <div class="ci" style="background:#fe9339">⚠</div>
+                                <h3>Tamper / quality flags</h3>
+                            </div>
+                            <template if:true={hasTamperFlags}>
+                                <template for:each={tamperFlags} for:item="f">
+                                    <div key={f.id} class="alert-row">
+                                        <strong style="color:#92400e">{f.lotName}</strong>&nbsp;{f.flagDescription}
+                                    </div>
+                                </template>
+                            </template>
+                            <template if:false={hasTamperFlags}>
+                                <div class="empty-state">0 quality flags.</div>
+                            </template>
+                        </div>
+                    </div>
+
+                </div><!-- /layout-main -->
+
+                <div class="layout-rail">
+
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#0a8aa6">⚡</div>
+                            <h3>Quick Actions</h3>
+                        </div>
+                        <div class="qa-list">
+                            <button type="button" class="qa-item" onclick={handleNewInstallTicket}>💧 + New Aqua Install Ticket</button>
+                            <button type="button" class="qa-item" onclick={handleNewCheckTicket}>🔧 + New Aqua Check Ticket</button>
+                            <button type="button" class="qa-item" onclick={handleNewSameDayRepair}>🚨 + Same-Day Repair</button>
+                            <button type="button" class="qa-item" data-target="inventory" onclick={handleNavToTab}>📦 Adjust inventory</button>
+                            <button type="button" class="qa-item" data-target="assign" onclick={handleNavToTab}>👤 Reassign community</button>
+                            <button type="button" class="qa-item" data-target="water" onclick={handleNavToTab}>🌡 Adjust schedule %</button>
+                            <button type="button" class="qa-item" data-target="pickup" onclick={handleNavToTab}>📅 Mark home closed (pickup)</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="ch">
+                            <div class="ci" style="background:#06b6d4">🌡</div>
+                            <h3>{wateringRailTitle}</h3>
+                        </div>
+                        <div class="water-rail-body">
+                            <div class="water-big-pct">{homeData.wateringCurrentMonthPct}%</div>
+                            <div class="water-rail-sub">Current month schedule</div>
+                            <div class="water-rail-info">Affects {homeData.wateringAffectedLots} active lots · adjusted by {homeData.wateringAdjustedBy} {homeData.wateringAdjustedDate}</div>
+                        </div>
+                        <div style="padding:0 14px 12px">
+                            <button type="button" class="sf-btn primary" style="width:100%" data-target="water" onclick={handleNavToTab}>Adjust schedule →</button>
+                        </div>
+                    </div>
+
+                    <div class="card last">
+                        <div class="ch">
+                            <div class="ci" style="background:#54698d">📋</div>
+                            <h3>Recent activity</h3>
+                        </div>
+                        <template if:true={hasActivity}>
+                            <template for:each={activityFeed} for:item="a">
+                                <div key={a.id} class="feed-item">
+                                    <div class="feed-avatar" style={a.avatarStyle}>{a.initials}</div>
+                                    <div class="feed-body">
+                                        <div class="feed-meta">{a.authorName} · {a.timeAgo}</div>
+                                        <div class="feed-content">{a.body}</div>
+                                    </div>
+                                </div>
+                            </template>
+                        </template>
+                    </div>
+
+                </div><!-- /layout-rail -->
+            </div><!-- /layout -->
+        </template>
+
+        <!-- ═══════════ INSTALLS TODAY TAB ═══════════ -->
+        <template if:true={showInstallsTab}>
+            <div class="rec-header">
+                <div class="rec-icon" style="background:#0a8aa6">💧</div>
+                <div class="rec-info">
+                    <div class="rec-breadcrumb">Aqua Service · Installs Today</div>
+                    <div class="rec-title">Today's Aqua Install Schedule — {homeData.todayLabel}</div>
+                    <div class="rec-subtitle">{homeData.kpiInstallsToday} installs scheduled under field manager coverage</div>
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <template for:each={installFilterChips} for:item="f">
+                    <button key={f.label} class={f.css} data-label={f.label} onclick={handleInstallFilterClick}>{f.label}</button>
+                </template>
+            </div>
+
+            <div class="card">
+                <div class="ch">
+                    <div class="ci" style="background:#0a8aa6">💧</div>
+                    <h3>Today's Aqua install schedule</h3>
+                </div>
+                <table class="tbl">
+                    <thead><tr><th>Aqua WO</th><th>Lot</th><th>Community · Builder</th><th>Install WO (Crew)</th><th>Field manager</th><th>Time</th><th>Goal min</th><th>Status</th></tr></thead>
+                    <tbody>
+                        <template for:each={filteredInstalls} for:item="row">
+                            <tr key={row.id}>
+                                <td><button class="lnk" data-id={row.id} onclick={handleNavToRecord}>{row.aquaWoName}</button></td>
+                                <td>{row.lotName}</td>
+                                <td>{row.communityBuilder}</td>
+                                <td>{row.installWoCrew}</td>
+                                <td>{row.techName}</td>
+                                <td>{row.scheduledTime}</td>
+                                <td>{row.goalMin}</td>
+                                <td><span class={row.statusChip}>{row.statusLabel}</span></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+                <template if:false={filteredInstalls.length}>
+                    <div class="empty-state">0 installs match this filter.</div>
+                </template>
+            </div>
+
+            <div class="card last">
+                <div class="ch">
+                    <div class="ci" style="background:#0a8aa6">📋</div>
+                    <h3>Standard install scope</h3>
+                </div>
+                <table class="tbl">
+                    <thead><tr><th>Component</th><th>Standard qty / lot</th><th>Goal min</th><th>Validation at close</th></tr></thead>
+                    <tbody>
+                        <template for:each={standardScopeRows} for:item="row">
+                            <tr key={row.id}>
+                                <td>{row.component}</td>
+                                <td>{row.standardQty}</td>
+                                <td>{row.goalMin}</td>
+                                <td>{row.validationNote}</td>
+                            </tr>
+                        </template>
+                        <template if:true={totalScopeRow}>
+                            <tr style="font-weight:500;border-top:2px solid #e5e5e5">
+                                <td colspan="2">Total goal time</td>
+                                <td>{totalScopeRow.goalMin}</td>
+                                <td></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+                <div class="scope-footer">
+                    On close: system validates installed quantities, transfers count to next-day Check ticket, decrements van inventory, increments on-site inventory.
+                </div>
+            </div>
+        </template>
+
+        <!-- ═══════════ CHECK ROUTES TAB ═══════════ -->
+        <template if:true={showRoutesTab}>
+            <div class="rec-header">
+                <div class="rec-icon" style="background:#06b6d4">🗺</div>
+                <div class="rec-info">
+                    <div class="rec-breadcrumb">Aqua Service · Field Routes</div>
+                    <div class="rec-title">Today's Community Watering Routes — by Field Manager</div>
+                    <div class="rec-subtitle">{routesSubtitle}</div>
+                </div>
+                <div class="rec-actions">
+                    <button class="sf-btn primary" onclick={handleReoptimizeRoutes}>Re-optimize routes</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="ch">
+                            <div class="ci" style="background:#06b6d4">📍</div>
+                            <h3>Live route map — {homeData.divisionTerritory}</h3>
+                            <span class="ch-link">WEX GPS · refreshes every 3 min</span>
+                </div>
+                <div class="aqua-map">
+                    <template if:true={techRouteMap.length}>
+                        <svg width="680" height="280" viewBox="0 0 680 280" xmlns="http://www.w3.org/2000/svg">
+                            <template for:each={techRouteMap} for:item="t">
+                                <g key={t.id}>
+                                    <polygon points={t.svgPoints} fill="#0a8aa6" opacity="0.9" />
+                                    <text x={t.labelX} y={t.labelY} class="map-label" fill="#16325c" font-size="10">{t.techInitials} · {t.techName}</text>
+                                </g>
+                            </template>
+                        </svg>
+                    </template>
+                    <template if:false={techRouteMap.length}>
+                        <div class="empty-state" style="margin:14px">0 live WEX GPS route positions in the current scope.</div>
+                    </template>
+                </div>
+            </div>
+
+            <template if:true={techRoutesWithStops.length}>
+                <template for:each={techRoutesWithStops} for:item="tech">
+                    <div key={tech.id} class="tech-route">
+                        <div class="tech-route-header">
+                            <div class="tech-avatar" style={tech.avatarStyle}>{tech.initials}</div>
+                            <div class="tech-route-info">
+                                <div class="tech-name">{tech.techName} · Service days: {tech.communityList}</div>
+                                <div class="tech-meta">{tech.stopsPlanned} communities scheduled today · {tech.stopsRemaining} remaining</div>
+                            </div>
+                            <span class={tech.statusChip}>{tech.statusLabel}</span>
+                        </div>
+                        <template for:each={tech.stops} for:item="stop">
+                            <div key={stop.id} class="stop-row" style={stop.rowBg}>
+                                <div class={stop.stopNumClass}>{stop.stopNumLabel}</div>
+                                <div class="stop-info">
+                                    <div class="stop-title">{stop.lotName} · {stop.stopType}</div>
+                                    <div class="stop-sub">{stop.completionNotes}</div>
+                                </div>
+                                <div>
+                                    <template if:true={stop.typeChip}>
+                                        <span class={stop.typeChipCss}>{stop.typeChip}</span>
+                                    </template>
+                                </div>
+                                <div class="stop-time">{stop.scheduledTime}</div>
+                                <div>
+                                    <template if:true={stop.isSameDay}>
+                                        <button class="sf-btn danger" data-id={stop.ticketId} onclick={handleNavToRecord}>Open</button>
+                                    </template>
+                                    <template if:true={stop.isCurrent}>
+                                        <template if:false={stop.isSameDay}>
+                                            <button class="sf-btn primary" data-id={stop.ticketId} onclick={handleNavToRecord}>Open</button>
+                                        </template>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </template>
+            <template if:false={techRoutesWithStops.length}>
+                <div class="card last"><div class="empty-state">0 field-manager routes built for today.</div></div>
+            </template>
+        </template>
+
+        <!-- ═══════════ SAME-DAY TAB ═══════════ -->
+        <template if:true={showSameDayTab}>
+            <div class="rec-header">
+                <div class="rec-icon" style="background:#c23934">🚨</div>
+                <div class="rec-info">
+                    <div class="rec-breadcrumb">Aqua Service · Same-Day Repairs</div>
+                    <div class="rec-title">Same-Day Repair Queue — {homeData.todayLabel}</div>
+                    <div class="rec-subtitle">{sameDayCardTitle}</div>
+                </div>
+                <div class="rec-actions">
+                    <button class="sf-btn danger" onclick={handleNewSameDayRepair}>+ Same-Day Repair</button>
+                </div>
+            </div>
+
+            <template if:true={hasSameDayTickets}>
+                <template for:each={sameDayQueue} for:item="ticket">
+                    <div key={ticket.id} class="card alert">
+                        <div class="ch" style="background:#fef9f9">
+                            <div class="ci" style="background:#c23934">🚨</div>
+                            <h3>{ticket.lotName} · {ticket.communityName}</h3>
+                            <span class="chip cr" style="margin-left:8px">SAME-DAY</span>
+                            <span class="chip cr" style="margin-left:4px">{ticket.timeInLabel}</span>
+                        </div>
+                        <div class="fields-grid">
+                            <div class="field-item"><div class="field-label">Reported by</div><div class="field-value">{ticket.reportedBy}</div></div>
+                            <div class="field-item"><div class="field-label">Time in</div><div class="field-value">{ticket.timeIn}</div></div>
+                            <div class="field-item"><div class="field-label">Issue</div><div class="field-value">{ticket.issue}</div></div>
+                            <div class="field-item"><div class="field-label">Source type</div><div class="field-value">{ticket.sourceType}</div></div>
+                            <div class="field-item"><div class="field-label">Field manager</div><div class="field-value">{ticket.techName}</div></div>
+                            <div class="field-item"><div class="field-label">Dispatch ETA</div><div class="field-value">{ticket.dispatchEta}</div></div>
+                            <div class="field-item"><div class="field-label">Van inventory status</div><div class="field-value">{ticket.vanInventoryStatus}</div></div>
+                            <div class="field-item"><div class="field-label">Weather risk</div><div class="field-value">{ticket.weatherRisk}</div></div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="sf-btn" data-id={ticket.id} onclick={handleCallContact}>Call Contact</button>
+                            <button class="sf-btn" data-id={ticket.id} onclick={handleViewTechLocation}>Open Route Map</button>
+                            <button class="sf-btn success" data-id={ticket.id} onclick={handleMarkResolved}>Mark Resolved</button>
+                            <button class="sf-btn primary" data-id={ticket.id} onclick={handleNavToRecord}>Open Ticket</button>
+                        </div>
+                        <div class="status-timeline">
+                            <div class={ticket.tlStep1Class}>Reported</div>
+                            <div class="tl-arrow">→</div>
+                            <div class={ticket.tlStep2Class}>Dispatched</div>
+                            <div class="tl-arrow">→</div>
+                            <div class={ticket.tlStep3Class}>En Route</div>
+                            <div class="tl-arrow">→</div>
+                            <div class={ticket.tlStep4Class}>Arrived</div>
+                            <div class="tl-arrow">→</div>
+                            <div class={ticket.tlStep5Class}>Resolved</div>
+                        </div>
+                    </div>
+                </template>
+            </template>
+            <template if:false={hasSameDayTickets}>
+                <div class="card last"><div class="empty-state">0 same-day repairs in queue.</div></div>
+            </template>
+        </template>
+
+        <!-- ═══════════ INVENTORY TAB ═══════════ -->
+        <template if:true={showInventoryTab}>
+            <div class="rec-header">
+                <div class="rec-icon" style="background:#0a8aa6">📦</div>
+                <div class="rec-info">
+                    <div class="rec-breadcrumb">Aqua Service · Inventory</div>
+                    <div class="rec-title">Aqua Inventory — {homeData.todayLabel}</div>
+                    <div class="rec-subtitle">{inventorySubtitle}</div>
+                </div>
+                <div class="rec-actions">
+                    <button class="sf-btn primary" onclick={handleCreateInvAdjustment}>Create Inventory Adjustment</button>
+                    <button class="sf-btn" onclick={handleExport}>Export</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="ch">
+                    <div class="ci" style="background:#0a8aa6">📦</div>
+                    <h3>Inventory by part — distribution across Shop / Van / On-Site</h3>
+                </div>
+                <template if:true={invPartRows.length}>
+                    <template for:each={invPartRows} for:item="row">
+                        <div key={row.id} class="inv-row" style={row.rowBg}>
+                            <div class="inv-row-header">
+                                <span class="inv-name">{row.itemName}</span>
+                                <span class="inv-total">Total: {row.totalQty}</span>
+                            </div>
+                            <div class="inv-bar">
+                                <div class="inv-segment shop" style={row.shopStyle}></div>
+                                <div class="inv-segment van" style={row.vanStyle}></div>
+                                <div class="inv-segment onsite" style={row.onsiteStyle}></div>
+                            </div>
+                            <div class="inv-legend">
+                                <span>Shop: {row.shopQty}</span>
+                                <span style="margin-left:12px">Van: {row.vanQty}</span>
+                                <span style="margin-left:12px">On-site: {row.onsiteQty}</span>
+                            </div>
+                        </div>
+                    </template>
+                </template>
+                <template if:false={invPartRows.length}>
+                    <div class="empty-state">0 inventory records.</div>
+                </template>
+            </div>
+
+            <div class="card">
+                <div class="ch">
+                    <div class="ci" style="background:#06b6d4">🚐</div>
+                    <h3>Van inventory by assigned owner</h3>
+                </div>
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Owner</th>
+                            <th>Vehicle</th>
+                            <template for:each={vanPartHeaders} for:item="h">
+                                <th key={h}>{h}</th>
+                            </template>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={invVanRows} for:item="row">
+                            <tr key={row.id}>
+                                <td>{row.techName}</td>
+                                <td>{row.vehicleName}</td>
+                                <template for:each={row.partCounts} for:item="p">
+                                    <td key={p.itemType} style={p.cellBg}>{p.qty}</td>
+                                </template>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+                <template if:false={invVanRows.length}>
+                    <div class="empty-state">0 van inventory rows.</div>
+                </template>
+            </div>
+
+            <div class="card last">
+                <div class="ch">
+                    <div class="ci" style="background:#04844b">➕</div>
+                    <h3>Material additions log this week</h3>
+                </div>
+                <table class="tbl">
+                    <thead><tr><th>Date</th><th>Owner</th><th>Part</th><th>Qty added</th><th>Reason</th><th>Location</th></tr></thead>
+                    <tbody>
+                        <template for:each={invLogRows} for:item="row">
+                            <tr key={row.id}>
+                                <td>{row.dateLabel}</td>
+                                <td>{row.techName}</td>
+                                <td>{row.partName}</td>
+                                <td>{row.qtyAdded}</td>
+                                <td>{row.reasonCode}</td>
+                                <td>{row.location}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+                <template if:false={invLogRows.length}>
+                    <div class="empty-state">0 additions logged this week.</div>
+                </template>
+            </div>
+        </template>
+
+        <!-- ═══════════ COMMUNITY ASSIGNMENTS TAB ═══════════ -->
+        <template if:true={showAssignTab}>
+            <div class="rec-header">
+                <div class="rec-icon" style="background:#0a8aa6">👤</div>
+                <div class="rec-info">
+                    <div class="rec-breadcrumb">Aqua Service · Field Manager Assignments</div>
+                    <div class="rec-title">Community Coverage — all Aqua-enabled communities</div>
+                    <div class="rec-subtitle">{assignmentsSubtitle}</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="ch">
+                    <div class="ci" style="background:#0a8aa6">👤</div>
+                    <h3>All Aqua-enabled communities</h3>
+                </div>
+                <div class="assign-row header">
+                    <span>Community · Builder</span>
+                    <span>Assigned FM</span>
+                    <span>Market FM</span>
+                    <span>Active lots</span>
+                    <span>Service days</span>
+                    <span>Actions</span>
+                </div>
+                <template for:each={communityRows} for:item="row">
+                    <div key={row.id} class="assign-row">
+                        <span>{row.communityBuilder}</span>
+                        <span>{row.primaryTechName}</span>
+                        <span>{row.backupTechName}</span>
+                        <span>{row.activeLots}</span>
+                        <span>{row.serviceDays}</span>
+                        <span><button class="sf-btn" data-id={row.id} onclick={handleNavToRecord}>Edit</button></span>
+                    </div>
+                </template>
+                <template if:false={communityRows.length}>
+                    <div class="empty-state">0 Aqua-enabled communities found.</div>
+                </template>
+            </div>
+
+            <div class="card last">
+                <div class="ch">
+                    <div class="ci" style="background:#06b6d4">📊</div>
+                    <h3>Field manager capacity utilization</h3>
+                </div>
+                <table class="tbl">
+                    <thead><tr><th>Field manager</th><th>Communities assigned</th><th>Active lots</th><th>Communities today</th><th>Capacity status</th></tr></thead>
+                    <tbody>
+                        <template for:each={techCapacityRows} for:item="row">
+                            <tr key={row.id}>
+                                <td>{row.techName}</td>
+                                <td>{row.communitiesAssigned}</td>
+                                <td>{row.activeLots}</td>
+                                <td>{row.dailyAvgStops}</td>
+                                <td><span class={row.capacityChip}>{row.capacityLabel}</span></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+                <template if:false={techCapacityRows.length}>
+                    <div class="empty-state">0 field-manager capacity rows.</div>
+                </template>
+            </div>
+        </template>
+
+        <!-- ═══════════ WATERING SCHEDULE TAB ═══════════ -->
+        <template if:true={showWaterTab}>
+            <div class="rec-header">
+                <div class="rec-icon" style="background:#06b6d4">🌡</div>
+                <div class="rec-info">
+                    <div class="rec-title">Watering Schedule</div>
+                    <div class="rec-subtitle">{wateringSubtitle}</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="ch">
+                    <div class="ci" style="background:#0f6e56">💧</div>
+                    <h3>{waterCoverageTitle}</h3>
+                </div>
+                <table class="tbl">
+                    <thead><tr><th>Community</th><th>Builder</th><th>Field manager</th><th>Watering days</th><th>Cadence</th><th>Run Duration</th><th class="num">Active Aqua lots</th><th class="num">Scheduled %</th></tr></thead>
+                    <tbody>
+                        <template for:each={communityWateringRows} for:item="row">
+                            <tr key={row.id}>
+                                <td>{row.communityName}</td>
+                                <td>{row.builderName}</td>
+                                <td>{row.fieldManagerLabel}</td>
+                                <td>{row.serviceDaysLabel}</td>
+                                <td>{row.frequencyLabel}</td>
+                                <td>{row.runDurationLabel}</td>
+                                <td class="num">{row.activeLotsLabel}</td>
+                                <td class="num">{row.scheduledPctLabel}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+                <template if:false={communityWateringRows.length}>
+                    <div class="empty-state">0 Aqua communities are tagged to the selected watering schedule.</div>
+                </template>
+            </div>
+
+            <div class="card">
+                <div class="ch">
+                    <div class="ci" style="background:#06b6d4">🌡</div>
+                    <h3>{waterGridTitle}</h3>
+                </div>
+                <div class="water-control-grid">
+                    <div>
+                        <div class="field-label">Schedule Type</div>
+                        <select class="water-select" value={_selectedWaterScheduleType} onchange={handleWaterScheduleTypeChange}>
+                            <template for:each={waterScheduleTypeOptions} for:item="opt">
+                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                            </template>
+                        </select>
+                    </div>
+                    <div>
+                        <div class="field-label">Period</div>
+                        <select class="water-select" value={_selectedWaterScheduleKey} onchange={handleWaterPeriodChange}>
+                            <template for:each={waterPeriodOptions} for:item="opt">
+                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                            </template>
+                        </select>
+                    </div>
+                    <div>
+                        <div class="field-label">Frequency / Cadence</div>
+                        <select class="water-select" value={_selectedWaterFrequency} onchange={handleWaterFrequencyChange}>
+                            <template for:each={waterFrequencyOptions} for:item="opt">
+                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                            </template>
+                        </select>
+                    </div>
+                    <div>
+                        <div class="field-label">Run Duration (Min)</div>
+                        <input class="water-input" type="number" min="0" value={_selectedWaterDurationMin} onchange={handleWaterDurationChange} />
+                    </div>
+                    <div class="water-note" style="grid-column:1 / -1">
+                        <strong>Service day(s)</strong> {waterServiceDayNote}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="ch">
+                    <div class="ci" style="background:#fe9339">✏️</div>
+                    <h3>{waterAdjustTitle}</h3>
+                </div>
+                <div style="padding:14px">
+                        <div class="water-current-val">{waterCurrentPctLabel}</div>
+                    <template if:true={isOffSeason}>
+                        <div class="ab ab-b" style="margin-bottom:12px">
+                            <span class="ab-ic">🌨</span>
+                            Off-season month — schedule % is saved but has no effect until the season resumes in {offSeasonResumeMonth}.
+                        </div>
+                    </template>
+                    <input type="range" min="0" max="100" value={newRunTimePct} onchange={handleRangeChange} style={sodSliderStyle} />
+                    <div style="display:flex;justify-content:space-between;font-size:10px;color:#54698d;margin-top:-4px;margin-bottom:8px">
+                        <span>🟫 Dry (0%)</span>
+                        <span style="font-size:12px;color:#16325c;font-weight:500">{newRunTimePctLabel}</span>
+                        <span>🟩 Healthy (100%)</span>
+                    </div>
+                    <div class="ab ab-a" style="margin-bottom:12px">
+                        <span class="ab-ic">⚠</span>
+                        {waterWarnLabel}
+                    </div>
+                    <div style="font-size:11px;color:#54698d;margin-bottom:12px">
+                        Last adjusted by {waterData.lastAdjustedBy} on {waterData.lastAdjustedDate}
+                    </div>
+                    <button class="sf-btn primary" onclick={handleApplyRunTime}>Apply Schedule Update</button>
+                </div>
+            </div>
+
+            <div class="card last">
+                <div class="ch">
+                    <div class="ci" style="background:#0a8aa6">📋</div>
+                    <h3>Schedule history</h3>
+                </div>
+                <table class="tbl">
+                    <thead><tr><th>Month</th><th>Scheduled %</th><th>Actual avg</th><th>Adjusted by</th><th>Date set</th></tr></thead>
+                    <tbody>
+                        <template for:each={waterHistory} for:item="row">
+                            <tr key={row.id}>
+                                <td>{row.monthLabel}</td>
+                                <td>{row.scheduledPct}%</td>
+                                <td>{row.actualAvgPct}%</td>
+                                <td>{row.adjustedBy}</td>
+                                <td>{row.dateSet}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+                <template if:false={waterHistory.length}>
+                    <div class="empty-state">0 adjustment history rows.</div>
+                </template>
+            </div>
+        </template>
+
+        <!-- ═══════════ CLOSEOUT QUEUE TAB ═══════════ -->
+        <template if:true={showCloseoutTab}>
+            <div class="rec-header">
+                <div class="rec-icon" style="background:#04844b">✓</div>
+                <div class="rec-info">
+                    <div class="rec-breadcrumb">Aqua Service · Closeout Queue</div>
+                    <div class="rec-title">{closeoutQueueTitle}</div>
+                    <div class="rec-subtitle">{closeoutSubtitle}</div>
+                </div>
+                <div class="rec-actions">
+                    <button class="sf-btn success" onclick={handleApproveAllEligible}>Approve All Eligible</button>
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <template for:each={closeoutFilterChips} for:item="f">
+                    <button key={f.label} class={f.css} data-label={f.label} onclick={handleCloseoutFilterClick}>{f.label}</button>
+                </template>
+            </div>
+
+            <template if:true={closeoutWithChecks.length}>
+                <template for:each={closeoutWithChecks} for:item="ticket">
+                    <div key={ticket.id} class={ticket.cardClass}>
+                        <div class="ch">
+                            <div class="ci" style="background:#04844b">✓</div>
+                            <h3>{ticket.lotName} · {ticket.communityName}</h3>
+                            <span class={ticket.ageChipCss} style="margin-left:8px">{ticket.ageLabel}</span>
+                        </div>
+                        <div class="fields-grid">
+                            <div class="field-item"><div class="field-label">Field manager</div><div class="field-value">{ticket.techName}</div></div>
+                            <div class="field-item"><div class="field-label">Ticket type</div><div class="field-value">{ticket.ticketType}</div></div>
+                            <div class="field-item"><div class="field-label">Scheduled date</div><div class="field-value">{ticket.scheduledDate}</div></div>
+                            <div class="field-item"><div class="field-label">Issues found</div><div class="field-value">{ticket.issuesFound}</div></div>
+                        </div>
+                        <div class="check-list">
+                            <div class={ticket.deviceClass}><span class="check-icon">{ticket.deviceIcon}</span> Device installed</div>
+                            <div class={ticket.timerClass}><span class="check-icon">{ticket.timerIcon}</span> Timer tested</div>
+                            <div class={ticket.coverageClass}><span class="check-icon">{ticket.coverageIcon}</span> Coverage verified</div>
+                            <div class={ticket.photosClass}><span class="check-icon">{ticket.photosIcon}</span> Photos uploaded</div>
+                            <div class={ticket.notesClass}><span class="check-icon">{ticket.notesIcon}</span> Closeout notes</div>
+                            <div class={ticket.inventoryClass}><span class="check-icon">{ticket.inventoryIcon}</span> Inventory recorded</div>
+                        </div>
+                        <div class="card-actions">
+                            <button class={ticket.approveBtnCss} disabled={ticket.approveDisabled} data-id={ticket.id} data-type={ticket.ticketType} onclick={handleApproveCloseout}>Approve Closeout</button>
+                            <button class="sf-btn warning" data-id={ticket.id} data-type={ticket.ticketType} onclick={handleReturnNfi}>Return as NFI</button>
+                            <button class="sf-btn primary" data-id={ticket.id} onclick={handleNavToRecord}>Open Ticket</button>
+                        </div>
+                    </div>
+                </template>
+            </template>
+            <template if:false={closeoutWithChecks.length}>
+                <div class="card last"><div class="empty-state">0 tickets awaiting closeout.</div></div>
+            </template>
+        </template>
+
+        <!-- ═══════════ END-OF-SEASON PICKUP TAB ═══════════ -->
+        <template if:true={showPickupTab}>
+            <div class="season-banner">
+                <div class="season-title">{seasonTitle}</div>
+                <div class="season-sub">{pickupData.seasonSubLabel} · {homeData.divisionTerritory} territory</div>
+                <div class="season-stats">
+                    <div class="season-stat">
+                        <div class="season-stat-num">{pickupData.activeLots}</div>
+                        <div class="season-stat-label">Active on-site lots</div>
+                    </div>
+                    <div class="season-stat">
+                        <div class="season-stat-num">{pickupData.pendingPickups}</div>
+                        <div class="season-stat-label">Pending pickup</div>
+                    </div>
+                    <div class="season-stat">
+                        <div class="season-stat-num">{pickupData.closedPickups}</div>
+                        <div class="season-stat-label">Closed (auto-pickup)</div>
+                    </div>
+                    <div class="season-stat">
+                        <div class="season-stat-num">{pickupData.seasonDaysUntilRetrieve}</div>
+                        <div class="season-stat-label">Days until Retrieve</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ab ab-b" style="margin:0 0 14px">
+                <span class="ab-ic">ℹ</span>
+                <span>Two pickup paths: <strong>Home Closed</strong> — triggered automatically when lot is marked closed with Aqua installed. <strong>End-of-Season Retrieve</strong> — bulk action to retrieve all remaining equipment at season end.</span>
+            </div>
+
+            <div class="card warn">
+                <div class="ch" style="background:#fffbeb">
+                    <div class="ci" style="background:#fe9339">📋</div>
+                    <h3>{pickupQueueTitle}</h3>
+                </div>
+                <div class="pickup-row header">
+                    <span>Lot · Community</span>
+                    <span>Closed by</span>
+                    <span>Original install date</span>
+                    <span>Days on-site</span>
+                    <span>Field owner</span>
+                    <span>Status</span>
+                </div>
+                <template for:each={pickupRows} for:item="row">
+                    <div key={row.id} class="pickup-row" style={row.rowBg}>
+                        <span>{row.lotCommunity}</span>
+                        <span>{row.closedBy}</span>
+                        <span>{row.installDate}</span>
+                        <span>{row.daysOnSite}</span>
+                        <span>{row.techName}</span>
+                        <span><span class={row.statusChipClass}>{row.statusLabel}</span> <button class="sf-btn" data-id={row.id} onclick={handleSelectPickup} style="margin-left:4px;font-size:10px;padding:2px 6px">Reconcile</button></span>
+                    </div>
+                </template>
+                <template if:false={pickupRows.length}>
+                    <div class="empty-state">0 pending pickups.</div>
+                </template>
+            </div>
+
+            <!-- Reconciliation + Variance cards (.g2) -->
+            <div class="g2" style="margin-bottom:14px">
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci" style="background:#04844b">✓</div>
+                        <h3>Pickup reconciliation — {selectedPickupLot}</h3>
+                    </div>
+                    <table class="sf-table">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Expected on-site</th>
+                                <th>Retrieved</th>
+                                <th>Variance</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={reconciliationRows} for:item="row">
+                                <tr key={row.itemType}>
+                                    <td>{row.itemType}</td>
+                                    <td>{row.expectedQty}</td>
+                                    <td>{row.retrievedQty}</td>
+                                    <td><span class={row.varianceChip}>{row.varianceLabel}</span></td>
+                                    <td>{row.action}</td>
+                                </tr>
+                            </template>
+                            <template if:false={reconciliationRows.length}>
+                                <tr><td colspan="5" class="empty-state" style="padding:12px 14px">Select a row in the pickup queue to reconcile</td></tr>
+                            </template>
+                        </tbody>
+                    </table>
+                    <template if:true={reconciliationClean}>
+                        <template if:true={reconciliationRows.length}>
+                            <div class="ab ab-g" style="margin:0"><span class="ab-ic">✓</span><span>Clean pickup — all items accounted for. Equipment returned to van inventory.</span></div>
+                        </template>
+                    </template>
+                    <template if:false={reconciliationClean}>
+                        <div class="ab ab-r" style="margin:0"><span class="ab-ic">!</span><span>Variance detected — billing workflow will trigger for missing material. Community Manager will be notified.</span></div>
+                    </template>
+                </div>
+
+                <template if:true={hasVarianceFlagRow}>
+                    <div class="card alert">
+                        <div class="ch" style="background:#fef9f9">
+                            <div class="ci" style="background:#c23934">!</div>
+                            <h3>Variance flag — {selectedPickupLot}</h3>
+                        </div>
+                        <table class="sf-table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Expected</th>
+                                    <th>Retrieved</th>
+                                    <th>Missing</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={varianceRows} for:item="row">
+                                    <tr key={row.itemType} style="background:#fef9f9">
+                                        <td>{row.itemType}</td>
+                                        <td>{row.expectedQty}</td>
+                                        <td>{row.retrievedQty}</td>
+                                        <td><span class="chip cr">−{row.missingQty}</span></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                        <div style="padding:10px 14px;font-size:11px;color:#991b1b">
+                            Variance triggers billing workflow for missing material. Notification to {varianceData.cmName}. Estimated bill: ${varianceData.estimatedBill}
+                        </div>
+                    </div>
+                </template>
+                <template if:false={hasVarianceFlagRow}>
+                    <div class="card" style="display:flex;align-items:center;justify-content:center;min-height:100px">
+                        <div class="empty-state">0 variance rows. All items match.</div>
+                    </div>
+                </template>
+            </div>
+
+            <div class="card last">
+                <div class="ch">
+                    <div class="ci" style="background:#06b6d4">🚨</div>
+                    <h3>End-of-Season Retrieve — bulk action</h3>
+                </div>
+                <div class="retrieve-panel">
+                    <div class="retrieve-title">End-of-Season Bulk Equipment Retrieval</div>
+                    <div class="retrieve-desc">Creates pickup tickets for all active on-site lots. Batches by field manager and community. All equipment must be reconciled within 5 business days.</div>
+                    <button class="bigbutton danger" onclick={handleRetrieveAll} disabled={retrieveDisabled}>🚨 RETRIEVE ALL — End of Season</button>
+                    <div class="retrieve-sub">{retrieveSubLabel}</div>
+                </div>
+            </div>
+        </template>
+
+    </div><!-- /sf-body -->
+</template>

@@ -1,0 +1,21 @@
+<template>
+    <div class="wrap">
+        <template lwc:if={loaded}>
+            <div class="hl">
+                <div class="hi"><div class="hl-lbl">WO</div><div class="hl-v big">{data.woNumber}</div></div>
+                <div class="hi"><div class="hl-lbl">Status</div><div class="hl-v"><span class={statusClass}>{data.status}</span></div></div>
+                <div class="hi"><div class="hl-lbl">Job Type</div><div class="hl-v">{data.jobType}</div></div>
+                <div class="hi"><div class="hl-lbl">Goal Hours</div><div class="hl-v big">{data.goalHours}</div></div>
+                <div class="hi"><div class="hl-lbl">Actual Hours</div><div class="hl-v big">{data.actualHours}</div></div>
+                <div class="hi"><div class="hl-lbl">Variance</div><div class="hl-v big">{data.varianceHours}</div></div>
+                <div class="hi"><div class="hl-lbl">RTN</div><div class="hl-v">{data.rtn}</div></div>
+                <template lwc:if={data.bonusEligible}>
+                    <div class="hi"><div class="hl-lbl">Bonus</div><div class="hl-v"><span class="pill pg">Eligible</span></div></div>
+                </template>
+                <template lwc:if={showCountdown}>
+                    <div class="hi"><div class="hl-lbl">QI Clock</div><div class="hl-v"><span class="pill pa">{countdown}</span></div></div>
+                </template>
+            </div>
+        </template>
+    </div>
+</template>

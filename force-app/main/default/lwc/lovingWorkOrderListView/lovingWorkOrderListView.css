@@ -1,0 +1,362 @@
+:host {
+    display: block;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    color: #16325c;
+    background: #f3f3f3;
+}
+
+/* ── Record header ──────────────────────────────────────────────────────── */
+.rec-header {
+    background: #fff;
+    border-bottom: 1px solid #d8dde6;
+    padding: 12px 20px 10px;
+}
+
+.rec-top-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.rec-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.rec-title-block {
+    flex: 1;
+    min-width: 0;
+}
+
+.rec-breadcrumb {
+    font-size: 11px;
+    color: #54698d;
+    margin-bottom: 2px;
+}
+
+.rec-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rec-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #16325c;
+}
+
+.rec-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+/* ── Buttons ────────────────────────────────────────────────────────────── */
+.sf-btn {
+    background: #fff;
+    border: 1px solid #d8dde6;
+    border-radius: 4px;
+    padding: 5px 12px;
+    font-size: 12px;
+    color: #16325c;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.sf-btn:hover {
+    background: #f4f6f9;
+}
+
+.sf-btn.primary {
+    background: #0070d2;
+    border-color: #0070d2;
+    color: #fff;
+}
+
+.sf-btn.primary:hover {
+    background: #005fb2;
+}
+
+/* ── List toolbar ───────────────────────────────────────────────────────── */
+.list-toolbar {
+    background: #fff;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 8px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.filter-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.filter-chip {
+    border: 1px solid #d8dde6;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-family: inherit;
+    color: #54698d;
+    background: #fff;
+    cursor: pointer;
+}
+
+.filter-chip:hover {
+    background: #f4f6f9;
+}
+
+.filter-chip.on {
+    background: #e3f0fb;
+    border-color: #0070d2;
+    color: #0070d2;
+    font-weight: 500;
+}
+
+.toolbar-controls {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.sf-select {
+    border: 1px solid #d8dde6;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    color: #16325c;
+    background: #fff;
+    font-family: inherit;
+}
+
+.sf-search {
+    border: 1px solid #d8dde6;
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 12px;
+    color: #16325c;
+    width: 200px;
+    font-family: inherit;
+}
+
+.sf-search:focus,
+.sf-select:focus {
+    outline: none;
+    border-color: #0070d2;
+    box-shadow: 0 0 0 2px rgba(0,112,210,.15);
+}
+
+/* ── Revenue KPI strip ──────────────────────────────────────────────────── */
+.rev-kpi-strip {
+    padding: 12px 20px;
+    background: #fafaf9;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.g6 {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+}
+
+.kpi {
+    background: #fafaf9;
+    border-radius: 6px;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #f0f0f0;
+}
+
+.kpi.kb {
+    background: #e3f0fb;
+    border-color: #b5d4f4;
+}
+
+.kpi.kg {
+    background: #e8f5e9;
+    border-color: #a5d6a7;
+}
+
+.kpi.ka {
+    background: #fef3c7;
+    border-color: #f9c725;
+}
+
+.kpi.kr {
+    background: #fce8e8;
+    border-color: #f09595;
+}
+
+.kn {
+    font-size: 18px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    color: #16325c;
+    line-height: 1.2;
+}
+
+.kn.big {
+    font-size: 22px;
+}
+
+.kl {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    font-weight: 500;
+    color: #54698d;
+    margin-top: 4px;
+}
+
+/* ── Table card ─────────────────────────────────────────────────────────── */
+.card {
+    background: #fff;
+    border: 1px solid #d8dde6;
+    border-radius: 6px;
+    box-shadow: 0 1px 0 rgba(0,0,0,.04);
+    overflow: hidden;
+    margin: 14px 20px;
+}
+
+.card.last {
+    margin-bottom: 0;
+}
+
+.tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+}
+
+.tbl th {
+    padding: 8px 10px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    color: #54698d;
+    background: #fafaf9;
+    border-bottom: 1px solid #e5e5e5;
+    white-space: nowrap;
+}
+
+.tbl th.num,
+.tbl td.num {
+    text-align: right;
+}
+
+.tbl td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    color: #16325c;
+    vertical-align: middle;
+}
+
+.tbl tr:last-child td {
+    border-bottom: none;
+}
+
+.tbl tr:hover td {
+    background: #f4f6f9;
+}
+
+.tbl tr.row-fj-triggered td {
+    background: #fef9f9;
+}
+
+/* ── Chips ──────────────────────────────────────────────────────────────── */
+.chip {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    gap: 3px;
+    white-space: nowrap;
+}
+
+.cg  { background: #e8f5e9; color: #2e7d32; }
+.cr  { background: #fce8e8; color: #991b1b; }
+.ca  { background: #fef3c7; color: #92400e; }
+.cb2 { background: #e3f0fb; color: #0c447c; }
+.cp  { background: #ede9fe; color: #5b21b6; }
+.cgr { background: #f4f6f9; color: #54698d; }
+.ct  { background: #e1f5ee; color: #0f6e56; }
+
+/* ── Job type chips ─────────────────────────────────────────────────────── */
+.jt-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.jt-chip.jt-install  { background: #ede9fe; color: #534ab7; }
+.jt-chip.jt-fj       { background: #fce8e8; color: #c23934; }
+.jt-chip.jt-warranty { background: #e1f5ee; color: #0f6e56; }
+.jt-chip.jt-cc       { background: #fef3c7; color: #92400e; }
+
+/* ── WO link ────────────────────────────────────────────────────────────── */
+.nl {
+    color: #0070d2;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.nl:hover {
+    text-decoration: underline;
+}
+
+/* ── Alert banner ───────────────────────────────────────────────────────── */
+.ab {
+    padding: 10px 14px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-left: 3px solid;
+    border-radius: 0 4px 4px 0;
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.ab.ab-r {
+    background: #fce8e8;
+    border-color: #c23934;
+    color: #991b1b;
+}
+
+.ab-ic {
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+/* ── Loading / empty states ─────────────────────────────────────────────── */
+.tbl-loading {
+    padding: 32px;
+    text-align: center;
+}
+
+.empty-state {
+    padding: 32px;
+    text-align: center;
+    color: #54698d;
+    font-size: 13px;
+}

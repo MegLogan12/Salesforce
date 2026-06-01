@@ -1,0 +1,121 @@
+<template>
+    <template lwc:if={showHomeBuilderWorkspace}>
+        <c-loving-standard-work-order-workspace record-id={recordId}></c-loving-standard-work-order-workspace>
+    </template>
+    <template lwc:elseif={hasData}>
+        <section class="workspace">
+            <section class="panel hero">
+                <div class="hero-copy">
+                    <h1>{pageData.title}</h1>
+                </div>
+                <div class="hero-actions">
+                    <button class="cta cta-secondary" onclick={handleOpenMobileView}>Open Mobile View</button>
+                    <button class="cta" onclick={handleEditWorkOrder}>Update Status</button>
+                </div>
+            </section>
+
+            <div class="layout">
+                <div class="layout-main">
+                    <section class="panel">
+                        <div class="panel-header">Work Order Status</div>
+                        <div class="path">
+                            <template for:each={statusPath} for:item="step">
+                                <span key={step.label} class={step.className}>{step.label}</span>
+                            </template>
+                        </div>
+                    </section>
+
+                    <section class="panel info">
+                        <div class="panel-header">Work Order Header</div>
+                        <div class="fields-grid">
+                            <div><div class="field-label">Work Order</div><div class="field-value">{workOrderNumber}</div></div>
+                            <div><div class="field-label">Opportunity</div><div class="field-value"><a href={opportunityUrl}>{opportunityName}</a></div></div>
+                            <div><div class="field-label">Division</div><div class="field-value">{divisionValue}</div></div>
+                            <div><div class="field-label">Job Type</div><div class="field-value">{jobTypeValue}</div></div>
+                            <div><div class="field-label">Customer Visible Status</div><div class="field-value">{statusValue}</div></div>
+                            <div><div class="field-label">Property</div><div class="field-value"><a href={accountUrl}>{accountName}</a></div></div>
+                        </div>
+                    </section>
+
+                    <div class="two-up">
+                        <section class="panel">
+                            <div class="panel-header">Crew and Schedule</div>
+                            <div class="fields-grid compact">
+                                <div><div class="field-label">Crew</div><div class="field-value">{divisionValue}</div></div>
+                                <div><div class="field-label">Field Manager</div><div class="field-value">{fieldManagerValue}</div></div>
+                                <div><div class="field-label">Start Date</div><div class="field-value">{scheduledDateValue}</div></div>
+                                <div><div class="field-label">Target Completion</div><div class="field-value">{targetCompletionValue}</div></div>
+                            </div>
+                        </section>
+                        <section class="panel" lwc:if={hasFiles}>
+                            <div class="panel-header">Photos</div>
+                            <div class="photo-grid">
+                                <template for:each={fileRows} for:item="row">
+                                    <a key={row.key} class="photo-tile" href={row.url}>{row.label}</a>
+                                </template>
+                            </div>
+                        </section>
+                    </div>
+
+                    <section class="panel" lwc:if={hasPunchItems}>
+                        <div class="panel-header">Punch Items</div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Owner</th>
+                                    <th>Status</th>
+                                    <th>Due</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={punchRows} for:item="row">
+                                    <tr key={row.key}>
+                                        <td><a href={row.url}>{row.label}</a></td>
+                                        <td>{row.ownerText}</td>
+                                        <td><span class="chip">{row.status}</span></td>
+                                        <td>{row.dueText}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+
+                <aside class="layout-rail">
+                    <section class="panel">
+                        <div class="panel-header">Foreman Mobile Actions</div>
+                        <div class="action-list">
+                            <button class="rail-action" onclick={handleOpenFiles}>Open files and photos</button>
+                            <button class="rail-action" onclick={handleNewTask}>Create field task</button>
+                            <button class="rail-action" onclick={handleOpenAppointments}>Open appointments</button>
+                            <button class="rail-action" onclick={handleOpenActivity}>Open activity history</button>
+                        </div>
+                    </section>
+                    <section class="panel">
+                        <div class="panel-header">Record Links</div>
+                        <div class="action-list">
+                            <button class="rail-action" onclick={handleOpenOpportunity} disabled={disableOpenOpportunity}>Open opportunity</button>
+                            <button class="rail-action" onclick={handleOpenAccount} disabled={disableOpenAccount}>Open property</button>
+                            <button class="rail-action" onclick={handleEditWorkOrder}>Edit work order</button>
+                            <button class="rail-action" onclick={handleOpenAppointments}>Open related appointments</button>
+                        </div>
+                    </section>
+                    <section class="panel">
+                        <div class="panel-header">Activity Health</div>
+                        <div class="rail-body">
+                            <div class="rail-row"><span>Work order status</span><span>{statusValue}</span></div>
+                            <div class="rail-row"><span>Scheduled date</span><span>{scheduledDateValue}</span></div>
+                            <div class="rail-row"><span>Appointments</span><span>{appointmentCount}</span></div>
+                            <div class="rail-row"><span>Open items</span><span>{openItemsCount}</span></div>
+                        </div>
+                    </section>
+                </aside>
+            </div>
+        </section>
+    </template>
+
+    <template lwc:elseif={error}>
+        <div class="panel error">{errorMessage}</div>
+    </template>
+</template>

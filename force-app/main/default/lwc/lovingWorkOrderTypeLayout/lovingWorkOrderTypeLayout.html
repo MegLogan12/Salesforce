@@ -1,0 +1,916 @@
+<template>
+    <!-- Loading state -->
+    <template if:true={isLoading}>
+        <div class="lwtl-loading">
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </div>
+    </template>
+
+    <!-- Error state -->
+    <template if:true={hasError}>
+        <div class="lwtl-error-banner">
+            <span class="lwtl-error-icon">!</span>
+            <span>{errorMessage}</span>
+        </div>
+    </template>
+
+    <!-- Main content -->
+    <template if:true={dto}>
+
+        <!-- Lifecycle path -->
+        <div class="lwtl-path-wrap">
+            <div class="lwtl-path" style={pathStyle}>
+                <template for:each={stagesWithClasses} for:item="stage">
+                    <div key={stage.num} class={stage.cssClass}>
+                        <small>Stage {stage.num}</small>
+                        <b>{stage.label}</b>
+                        <span>{stage.sub}</span>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <!-- Type-specific notice banner -->
+        <template if:true={noticeText}>
+            <div class={noticeClass}>{noticeText}</div>
+        </template>
+
+        <!-- KPI strip -->
+        <div class="lwtl-kpis">
+            <div class="lwtl-kpi">
+                <div class="lwtl-kpinum">{statusLabel}</div>
+                <div class="lwtl-kpilabel">Status</div>
+            </div>
+            <div class="lwtl-kpi">
+                <div class="lwtl-kpinum">{woTypeLabel}</div>
+                <div class="lwtl-kpilabel">Type</div>
+            </div>
+            <div class="lwtl-kpi">
+                <div class="lwtl-kpinum">{photoCountDisplay}</div>
+                <div class="lwtl-kpilabel">Photos</div>
+            </div>
+            <div class="lwtl-kpi">
+                <div class="lwtl-kpinum">{divisionDisplay}</div>
+                <div class="lwtl-kpilabel">Division</div>
+            </div>
+        </div>
+
+        <!-- Two-column grid -->
+        <div class="lwtl-grid">
+            <!-- Main column -->
+            <section class="lwtl-main">
+
+                <!-- Core details card -->
+                <div class="lwtl-card">
+                <div class="lwtl-cardhead">
+                    <h3>Work Order Details</h3>
+                    <span class={statusBadgeClass}>{statusLabel}</span>
+                    <span class={typeBadgeClass}>{woTypeLabel}</span>
+                    <template if:false={isEditingTypeStage}>
+                        <button class="lwtl-edit-btn" onclick={handleEditTypeStage}>Edit Type/Stage</button>
+                    </template>
+                    <template if:true={isEditingTypeStage}>
+                        <button class="lwtl-edit-btn" onclick={handleCancelTypeStage}>Cancel</button>
+                        <button class="lwtl-edit-btn lwtl-edit-btn-primary" onclick={handleSaveTypeStage}>Save</button>
+                    </template>
+                    <button class="lwtl-edit-btn" onclick={handleEditRecord}>Edit</button>
+                </div>
+                    <div class="lwtl-cardbody">
+
+                        <!-- Identity fields -->
+                        <div class="lwtl-fields">
+                            <div class="lwtl-field">
+                                <label>WO Number</label>
+                                <div>{dto.woNumber}</div>
+                            </div>
+                            <div class="lwtl-field">
+                                <label>Status</label>
+                                <template if:true={isEditingTypeStage}>
+                                    <lightning-combobox value={selectedStatusValue} options={statusOptions} onchange={handleStatusChange}></lightning-combobox>
+                                </template>
+                                <template if:false={isEditingTypeStage}>
+                                    <div>{statusLabel}</div>
+                                </template>
+                            </div>
+                            <div class="lwtl-field">
+                                <label>Work Type</label>
+                                <template if:true={isEditingTypeStage}>
+                                    <lightning-combobox value={selectedTypeValue} options={woTypeOptions} onchange={handleTypeChange}></lightning-combobox>
+                                </template>
+                                <template if:false={isEditingTypeStage}>
+                                    <div>{woTypeLabel}</div>
+                                </template>
+                            </div>
+                            <div class="lwtl-field">
+                                <label>Priority</label>
+                                <div>{priorityDisplay}</div>
+                            </div>
+                        </div>
+
+                        <!-- Account / people -->
+                        <div class="lwtl-divider"></div>
+                        <div class="lwtl-fields">
+                            <div class="lwtl-field">
+                                <label>Builder / Account</label>
+                                <div class={builderField.css}>{builderField.value}</div>
+                            </div>
+                            <div class="lwtl-field">
+                                <label>Contact</label>
+                                <div>{contactDisplay}</div>
+                            </div>
+                            <!-- Case — Warranty and Customer Success -->
+                            <template if:true={showCaseLink}>
+                                <div class="lwtl-field">
+                                    <label>Source Case</label>
+                                    <div>{caseDisplay}</div>
+                                </div>
+                            </template>
+                            <!-- Source WO — Finished Job and QI/Closeout -->
+                            <template if:true={showParentWoLink}>
+                                <div class="lwtl-field">
+                                    <label>Source Work Order</label>
+                                    <div>{parentWoDisplay}</div>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="lwtl-divider"></div>
+                        <div class="lwtl-fields">
+                            <div class="lwtl-field">
+                                <label>Division</label>
+                                <div class={divisionField.css}>{divisionField.value}</div>
+                            </div>
+                            <div class="lwtl-field">
+                                <label>Community</label>
+                                <div class={communityField.css}>{communityField.value}</div>
+                            </div>
+                            <div class="lwtl-field">
+                                <label>Lot</label>
+                                <div class={lotField.css}>{lotField.value}</div>
+                            </div>
+                        </div>
+
+                        <!-- Team -->
+                        <div class="lwtl-divider"></div>
+                        <div class="lwtl-fields">
+                            <div class="lwtl-field">
+                                <label>Field Manager</label>
+                                <div class={fmField.css}>{fmField.value}</div>
+                            </div>
+                            <div class="lwtl-field">
+                                <label>Foreman</label>
+                                <div class={foremanField.css}>{foremanField.value}</div>
+                            </div>
+                            <div class="lwtl-field">
+                                <label>Proposed Crew</label>
+                                <div class={crewField.css}>{crewField.value}</div>
+                            </div>
+                        </div>
+
+                        <!-- PO / Reference -->
+                        <div class="lwtl-divider"></div>
+                        <div class="lwtl-fields">
+                            <div class="lwtl-field">
+                                <label>PO Number</label>
+                                <div class={poField.css}>{poField.value}</div>
+                            </div>
+                            <div class="lwtl-field">
+                                <label>Builder WO #</label>
+                                <div class={builderWoField.css}>{builderWoField.value}</div>
+                            </div>
+                        </div>
+
+                        <!-- ============================================================ -->
+                        <!-- TYPE-SPECIFIC SECTIONS — one block per record type           -->
+                        <!-- ============================================================ -->
+
+                        <!-- Finished Job: Return Work Details -->
+                        <template if:true={showFinishedJobSection}>
+                            <div class="lwtl-divider"></div>
+                            <div class="lwtl-section-label">Return Work Details</div>
+                            <div class="lwtl-fields">
+                                <div class="lwtl-field">
+                                    <label>Reason / Return Scope</label>
+                                    <div>{descriptionDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Return Crew</label>
+                                    <div>{crewDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>FM Decision</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Billable</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Return Date</label>
+                                    <div>{scheduledDateDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Closeout Gate</label>
+                                    <div>FM approval</div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Warranty: Coverage Review -->
+                        <template if:true={showWarrantySection}>
+                            <div class="lwtl-divider"></div>
+                            <div class="lwtl-section-label">Coverage Review</div>
+                            <div class="lwtl-fields">
+                                <div class="lwtl-field">
+                                    <label>Coverage Status</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Decision Owner</label>
+                                    <div>{fmDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Warranty Reason</label>
+                                    <div>{descriptionDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Decision Date</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Billable</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Resolution Owner</label>
+                                    <div>Customer Success</div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Customer Success: CC Details -->
+                        <template if:true={showCustomerCareSection}>
+                            <div class="lwtl-divider"></div>
+                            <div class="lwtl-section-label">Customer Success Details</div>
+                            <div class="lwtl-fields">
+                                <div class="lwtl-field">
+                                    <label>Issue Source</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Issue Type</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Coverage Status</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Communication Status</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Issue Description</label>
+                                    <div>{descriptionDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Escalation</label>
+                                    <div>—</div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Aqua Check: Check Results -->
+                        <template if:true={showAquaCheckSection}>
+                            <div class="lwtl-divider"></div>
+                            <div class="lwtl-section-label">Check Results</div>
+                            <div class="lwtl-fields">
+                                <div class="lwtl-field">
+                                    <label>Assigned Tech</label>
+                                    <div>{aquaTechDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Check Window</label>
+                                    <div>{aquaRouteWindowDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Sod Score</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Dry Spots</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Brown Patch</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Runoff</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Tampered</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Timer Issue</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Pet Damage</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Builder Escalation</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Check Notes</label>
+                                    <div>{descriptionDisplay}</div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Aqua Pickup: Pickup Details -->
+                        <template if:true={showAquaPickupSection}>
+                            <div class="lwtl-divider"></div>
+                            <div class="lwtl-section-label">Pickup Details</div>
+                            <div class="lwtl-fields">
+                                <div class="lwtl-field">
+                                    <label>Assigned Tech</label>
+                                    <div>{aquaTechDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Pickup Date</label>
+                                    <div>{aquaRouteWindowDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Equipment to Retrieve</label>
+                                    <div>{descriptionDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Inventory Status</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Home Status</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Reconciliation</label>
+                                    <div>—</div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Aqua Emergency: Emergency Details -->
+                        <template if:true={showAquaEmergencySection}>
+                            <div class="lwtl-divider"></div>
+                            <div class="lwtl-section-label">Emergency Details</div>
+                            <div class="lwtl-fields">
+                                <div class="lwtl-field">
+                                    <label>Reported By</label>
+                                    <div>{contactDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Assigned Tech</label>
+                                    <div>{aquaTechDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Issue</label>
+                                    <div>{descriptionDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Emergency Source</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>SLA</label>
+                                    <div>Same-day</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Van Inventory Status</label>
+                                    <div>—</div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Site Visit: Visit Details -->
+                        <template if:true={showSiteVisitSection}>
+                            <div class="lwtl-divider"></div>
+                            <div class="lwtl-section-label">Site Visit Details</div>
+                            <div class="lwtl-fields">
+                                <div class="lwtl-field">
+                                    <label>Visit Reason</label>
+                                    <div>{descriptionDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Requested Date</label>
+                                    <div>{scheduledDateDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Access</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>811 Status</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Measurements Collected</label>
+                                    <div>{siteVisitMeasurementsDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Ready Decision</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Blocks Scheduling</label>
+                                    <div>—</div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Irrigation: Irrigation Details -->
+                        <template if:true={showIrrigationSection}>
+                            <div class="lwtl-divider"></div>
+                            <div class="lwtl-section-label">Irrigation Details</div>
+                            <div class="lwtl-fields">
+                                <div class="lwtl-field">
+                                    <label>Issue</label>
+                                    <div>{descriptionDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Assigned Tech</label>
+                                    <div>{foremanDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Controller / Zone</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Valve</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Solenoid Count</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Sprinkler Heads</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Water Source</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Billable</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Tech Skill Required</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>SLA</label>
+                                    <div>—</div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Grading: Grading Details -->
+                        <template if:true={showGradingSection}>
+                            <div class="lwtl-divider"></div>
+                            <div class="lwtl-section-label">Grading Details</div>
+                            <div class="lwtl-fields">
+                                <div class="lwtl-field">
+                                    <label>Issue</label>
+                                    <div>{descriptionDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>FM Owner</label>
+                                    <div>{fmDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Drainage Concern</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Access Issue</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Slope Risk</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Equipment Needed</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Builder Responsibility</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Blocks Install</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Decision Needed</label>
+                                    <div>—</div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Loading Ticket: Loading Details -->
+                        <template if:true={showLoadingSection}>
+                            <div class="lwtl-divider"></div>
+                            <div class="lwtl-section-label">Loading Details</div>
+                            <div class="lwtl-fields">
+                                <div class="lwtl-field">
+                                    <label>Loader</label>
+                                    <div>{foremanDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Truck / Crew</label>
+                                    <div>{crewDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Route</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Loaded Status</label>
+                                    <div>{dto.status}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Departure Time</label>
+                                    <div>{saScheduledDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Supervisor Approval</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Loading Notes</label>
+                                    <div>{descriptionDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Digital Movement</label>
+                                    <div>—</div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- QI / Closeout: Inspection Details -->
+                        <template if:true={showQiSection}>
+                            <div class="lwtl-divider"></div>
+                            <div class="lwtl-section-label">QI / Closeout Details</div>
+                            <div class="lwtl-fields">
+                                <div class="lwtl-field">
+                                    <label>Inspector</label>
+                                    <div>{fmDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Completion Status</label>
+                                    <div>{dto.status}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>QI Score</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Failed Items</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Correction Required</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Invoice Handoff</label>
+                                    <div>—</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Closeout Owner</label>
+                                    <div>{fmDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Closeout Notes</label>
+                                    <div>{descriptionDisplay}</div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- ============================================================ -->
+                        <!-- END TYPE-SPECIFIC SECTIONS                                   -->
+                        <!-- ============================================================ -->
+
+                        <!-- Scheduling: Service Appointment (FSL) -->
+                        <template if:true={showSaSection}>
+                            <div class="lwtl-divider"></div>
+                            <div class="lwtl-section-label">Service Appointment (FSL)</div>
+                            <div class="lwtl-fields">
+                                <div class="lwtl-field">
+                                    <label>SA Number</label>
+                                    <div>{saNumberDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>SA Status</label>
+                                    <div>{saStatusDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Scheduled Start</label>
+                                    <div>{saScheduledDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Duration</label>
+                                    <div>{saDurationDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Service Territory</label>
+                                    <div>{saTerritoryDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Actual Start</label>
+                                    <div>{saActualStartDisplay}</div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Scheduling fallback (no SA yet) -->
+                        <template if:false={showSaSection}>
+                            <div class="lwtl-divider"></div>
+                            <div class="lwtl-fields">
+                                <div class="lwtl-field">
+                                    <label>Scheduled Date</label>
+                                    <div>{scheduledDateDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Schedule Proposal</label>
+                                    <div>{schedProposalDisplay}</div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Financial -->
+                        <div class="lwtl-divider"></div>
+                        <div class="lwtl-fields">
+                            <div class="lwtl-field">
+                                <label>Total Price</label>
+                                <div>{totalPriceDisplay}</div>
+                            </div>
+                            <div class="lwtl-field">
+                                <label>Invoice Amount</label>
+                                <div>{invoiceAmountDisplay}</div>
+                            </div>
+                            <div class="lwtl-field">
+                                <label>Line Items</label>
+                                <div>{lineItemCountDisplay}</div>
+                            </div>
+                            <div class="lwtl-field">
+                                <label>Job Health</label>
+                                <div>{jobHealthDisplay}</div>
+                            </div>
+                        </div>
+
+                        <div class="lwtl-divider"></div>
+                        <div class="lwtl-section-label">Work Order Scope Lines</div>
+                        <template if:true={hasLineItems}>
+                            <div class="lwtl-fields">
+                                <template for:each={lineItems} for:item="line">
+                                    <div key={line.id} class="lwtl-field">
+                                        <label>{line.lineNumber}</label>
+                                        <div>{line.description}</div>
+                                        <small>{line.status}</small>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                        <template if:false={hasLineItems}>
+                            <div class="lwtl-banner lwtl-banner-warn">
+                                <span class="lwtl-banner-icon">i</span>
+                                <div>{lineItemEmptyMessage}</div>
+                            </div>
+                        </template>
+
+                        <!-- Job complete timestamp -->
+                        <template if:true={showJobCompleteTimestamp}>
+                            <div class="lwtl-divider"></div>
+                            <div class="lwtl-fields">
+                                <div class="lwtl-field">
+                                    <label>Job Complete Submitted</label>
+                                    <div>{jobCompleteDisplay}</div>
+                                </div>
+                            </div>
+                        </template>
+
+                        <!-- Production Install / Plant Sod Install scope -->
+                        <template if:true={showInstallScope}>
+                            <div class="lwtl-divider"></div>
+                            <div class="lwtl-section-label">Scope</div>
+                            <div class="lwtl-fields">
+                                <div class="lwtl-field">
+                                    <label>Sod Sqft</label>
+                                    <div>{sodDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Mulch CY</label>
+                                    <div>{mulchDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Trees</label>
+                                    <div>{treeDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Plants / Shrubs</label>
+                                    <div>{plantDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Sod Species</label>
+                                    <div>{sodSpeciesDisplay}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Takeoff Complete</label>
+                                    <div>{takeoffLabel}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Takeoff Mismatch</label>
+                                    <div>{takeoffMismatchLabel}</div>
+                                </div>
+                                <div class="lwtl-field">
+                                    <label>Delivery QC</label>
+                                    <div>{deliveryQcDisplay}</div>
+                                </div>
+                            </div>
+                        </template>
+
+                    </div>
+                </div>
+
+                <!-- Description / Job Description card (generic types only) -->
+                <template if:true={showDescriptionSection}>
+                    <div class="lwtl-card">
+                        <div class="lwtl-cardhead"><h3>Description</h3></div>
+                        <div class="lwtl-cardbody">
+                            <div class="lwtl-note-body">{descriptionDisplay}</div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Additional notes card -->
+                <template if:true={hasNotes}>
+                    <div class="lwtl-card">
+                        <div class="lwtl-cardhead"><h3>Notes</h3></div>
+                        <div class="lwtl-cardbody">
+                            <template if:true={dto.invoiceNotes}>
+                                <div class="lwtl-note-section">
+                                    <div class="lwtl-note-label">Invoice Notes</div>
+                                    <div class="lwtl-note-body">{dto.invoiceNotes}</div>
+                                </div>
+                            </template>
+                            <template if:true={dto.outsidePoNotes}>
+                                <div class="lwtl-note-section">
+                                    <div class="lwtl-note-label">Outside PO Notes</div>
+                                    <div class="lwtl-note-body">{dto.outsidePoNotes}</div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Red flag banner -->
+                <template if:true={dto.redFlagNotes}>
+                    <div class="lwtl-banner lwtl-banner-red">
+                        <span class="lwtl-banner-icon">!</span>
+                        <div>
+                            <b>Red Flag</b>
+                            <div>{dto.redFlagNotes}</div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Submit job complete -->
+                <div class="lwtl-card">
+                    <div class="lwtl-cardhead"><h3>Submit Job Complete</h3></div>
+                    <div class="lwtl-cardbody">
+                        <template if:true={dto.canSubmitComplete}>
+                            <button class="lwtl-btn lwtl-btn-success"
+                                    onclick={handleSubmitComplete}
+                                    disabled={isSubmitting}>
+                                Submit Job Complete
+                            </button>
+                        </template>
+                        <template if:false={dto.canSubmitComplete}>
+                            <div class="lwtl-banner lwtl-banner-warn">
+                                <span class="lwtl-banner-icon">i</span>
+                                <div>{dto.submitBlockReason}</div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Sidebar -->
+            <aside class="lwtl-side">
+
+                <!-- Quick Actions -->
+                <div class="lwtl-card">
+                    <div class="lwtl-cardhead"><h3>Quick Actions</h3></div>
+                    <div class="lwtl-cardbody lwtl-pa0">
+                        <template for:each={quickActions} for:item="action">
+                            <div key={action.label} class={action.rowClass}
+                                 onclick={handleActionClick}
+                                 data-label={action.label}
+                                 data-target={action.target}
+                                 data-type={action.actionType}>
+                                <span class="lwtl-action-icon">{action.icon}</span>
+                                <div>
+                                    <b>{action.label}</b>
+                                    <template if:true={action.note}>
+                                        <div class="lwtl-action-note">{action.note}</div>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Gate checklist -->
+                <div class="lwtl-card">
+                    <div class="lwtl-cardhead"><h3>Gate Checklist</h3></div>
+                    <div class="lwtl-cardbody lwtl-pa0">
+                        <template for:each={gatesWithClasses} for:item="gate">
+                            <div key={gate.label} class={gate.rowClass}>
+                                <span class={gate.iconClass}>{gate.icon}</span>
+                                <div>
+                                    <b>{gate.label}</b>
+                                    <div class="lwtl-action-note">{gate.note}</div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Record Summary -->
+                <div class="lwtl-card">
+                    <div class="lwtl-cardhead"><h3>Record Summary</h3></div>
+                    <div class="lwtl-cardbody lwtl-pa0">
+                        <div class="lwtl-rel-row">
+                            <span>Work Order #</span>
+                            <b>{dto.woNumber}</b>
+                        </div>
+                        <template if:true={showSaSection}>
+                            <div class="lwtl-rel-row">
+                                <span>SA Number</span>
+                                <b>{saNumberDisplay}</b>
+                            </div>
+                        </template>
+                        <div class="lwtl-rel-row">
+                            <span>Status</span>
+                            <b>{dto.status}</b>
+                        </div>
+                        <div class="lwtl-rel-row">
+                            <span>Type</span>
+                            <b>{dto.recordTypeLabel}</b>
+                        </div>
+                        <div class="lwtl-rel-row">
+                            <span>Photos</span>
+                            <b>{photoCountDisplay}</b>
+                        </div>
+                        <div class="lwtl-rel-row">
+                            <span>Line Items</span>
+                            <b>{lineItemCountDisplay}</b>
+                        </div>
+                        <template if:true={showCaseLink}>
+                            <div class="lwtl-rel-row">
+                                <span>Source Case</span>
+                                <b>{caseDisplay}</b>
+                            </div>
+                        </template>
+                        <template if:true={showParentWoLink}>
+                            <div class="lwtl-rel-row">
+                                <span>Source WO</span>
+                                <b>{parentWoDisplay}</b>
+                            </div>
+                        </template>
+                        <div class="lwtl-rel-row">
+                            <span>Total Price</span>
+                            <b>{totalPriceDisplay}</b>
+                        </div>
+                        <div class="lwtl-rel-row">
+                            <span>Invoice</span>
+                            <b>{invoiceAmountDisplay}</b>
+                        </div>
+                    </div>
+                </div>
+
+            </aside>
+        </div>
+
+    </template>
+</template>

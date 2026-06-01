@@ -1,0 +1,10 @@
+<template>
+    <div class="rail">
+        <template for:each={nodes} for:item="n">
+            <div key={n.key} class="step">
+                <div class={n.circleClass}></div>
+                <div class={n.labelClass}>{n.label}</div>
+            </div>
+        </template>
+    </div>
+</template>

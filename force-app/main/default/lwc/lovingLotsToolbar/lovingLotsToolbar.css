@@ -1,0 +1,61 @@
+:host {
+    display: block;
+}
+
+.toolbar {
+    align-items: center;
+    background: #fff;
+    border-bottom: 1px solid #d8dde6;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px 22px;
+}
+
+.toolbar strong {
+    color: #66758f;
+    font-size: 11px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.pill {
+    background: #f5f7fb;
+    border: 1px solid #d8dde6;
+    border-radius: 16px;
+    color: #384966;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 5px 13px;
+}
+
+.pill.on {
+    background: #5b52c9;
+    border-color: #5b52c9;
+    color: #fff;
+}
+
+select,
+input {
+    border: 1px solid #d8dde6;
+    border-radius: 4px;
+    color: #16325c;
+    font-size: 12px;
+    padding: 7px 10px;
+}
+
+select {
+    margin-left: auto;
+    min-width: 150px;
+}
+
+input {
+    min-width: 260px;
+}
+
+@media (max-width: 900px) {
+    select {
+        margin-left: 0;
+    }
+}

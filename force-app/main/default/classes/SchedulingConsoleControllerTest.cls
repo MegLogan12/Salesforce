@@ -1290,4 +1290,17 @@ private class SchedulingConsoleControllerTest {
 
         System.assert(true, 'syncFslAppointments main path covered');
     }
+
+    @IsTest
+    static void testGetDivisions() {
+        Test.startTest();
+        List<SchedulingConsoleController.DivisionDto> divs = SchedulingConsoleController.getDivisions();
+        Test.stopTest();
+
+        System.assertNotEquals(null, divs, 'getDivisions must not return null');
+        for (SchedulingConsoleController.DivisionDto d : divs) {
+            System.assertNotEquals(null, d.value, 'value required');
+            System.assertNotEquals(null, d.label, 'label required');
+        }
+    }
 }

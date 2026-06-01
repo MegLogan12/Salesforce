@@ -1,0 +1,144 @@
+<template>
+    <!-- ── Record header ──────────────────────────────────────────────────── -->
+    <div class="rec-header">
+        <div class="rec-top-row">
+            <div class="rec-icon" style="background:#1d9e75;">📋</div>
+            <div class="rec-title-block">
+                <div class="rec-breadcrumb">Work Orders</div>
+                <div class="rec-title-row">
+                    <span class="rec-title">All Active Work Orders</span>
+                    <span class="chip cgr">{headerChip}</span>
+                </div>
+            </div>
+            <div class="rec-actions">
+                <button class="sf-btn" onclick={handleImport}>Import</button>
+                <button class="sf-btn" onclick={handleListSettings}>List Settings</button>
+                <button class="sf-btn primary" onclick={handleNewWO}>+ New Work Order</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── List toolbar ───────────────────────────────────────────────────── -->
+    <div class="list-toolbar">
+        <div class="filter-chips">
+            <template for:each={typeFilterChips} for:item="chip">
+                <button key={chip.value} class={chip.chipClass}
+                        data-value={chip.value}
+                        onclick={handleTypeChip}>{chip.label}</button>
+            </template>
+        </div>
+        <div class="toolbar-controls">
+            <select class="sf-select" onchange={handleFmChange}>
+                <template for:each={fmOptions} for:item="opt">
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                </template>
+            </select>
+            <select class="sf-select" onchange={handleStatusChange}>
+                <template for:each={statusOptions} for:item="opt">
+                    <option key={opt.value} value={opt.value}>{opt.label}</option>
+                </template>
+            </select>
+            <input class="sf-search"
+                   type="text"
+                   placeholder="Search this list..."
+                   value={_searchInput}
+                   oninput={handleSearchInput}
+                   onkeydown={handleSearchKey} />
+        </div>
+    </div>
+
+    <!-- ── Revenue KPI strip ─────────────────────────────────────────────── -->
+    <div class="rev-kpi-strip">
+        <div class="g6">
+            <div class="kpi kb">
+                <div class="kn">{kpiWoCount}</div>
+                <div class="kl">WOs in view</div>
+            </div>
+            <div class="kpi kg">
+                <div class="kn">{kpiProjected}</div>
+                <div class="kl">Projected Revenue</div>
+            </div>
+            <div class="kpi kb">
+                <div class="kn">{kpiInvoiced}</div>
+                <div class="kl">Invoiced</div>
+            </div>
+            <div class="kpi kg">
+                <div class="kn">{kpiPaid}</div>
+                <div class="kl">Paid</div>
+            </div>
+            <div class="kpi ka">
+                <div class="kn">{kpiUnbilled}</div>
+                <div class="kl">Unbilled (Proj − Inv)</div>
+            </div>
+            <div class={kpiOutstandingClass}>
+                <div class="kn">{kpiOutstanding}</div>
+                <div class="kl">Outstanding (Inv − Paid)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Table card ────────────────────────────────────────────────────── -->
+    <div class="card last">
+        <template if:true={isLoading}>
+            <div class="tbl-loading">
+                <lightning-spinner alternative-text="Loading..." size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:true={hasListError}>
+            <div class="ab ab-r">
+                <span class="ab-ic">⚠</span>
+                <span>{listErrorMsg}</span>
+            </div>
+        </template>
+
+        <template if:false={isLoading}>
+            <template if:true={hasRows}>
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th style="width:32px;"><input type="checkbox" /></th>
+                            <th>WO #</th>
+                            <th>Type</th>
+                            <th>Account / Builder</th>
+                            <th>Community</th>
+                            <th>Lot</th>
+                            <th>FM</th>
+                            <th>Status</th>
+                            <th class="num">Goal hrs</th>
+                            <th class="num">Actual</th>
+                            <th>Scheduled</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={rows} for:item="row">
+                            <tr key={row.id} class={row.rowClass}
+                                data-id={row.id}
+                                onclick={handleRowClick}>
+                                <td onclick={stopProp}>
+                                    <input type="checkbox" />
+                                </td>
+                                <td><a class="nl" data-id={row.id} onclick={handleRowClick}>{row.name}</a></td>
+                                <td><span class={row.typeChipClass}>{row.workOrderType}</span></td>
+                                <td>{row.accountName}</td>
+                                <td>{row.communityName}</td>
+                                <td>{row.lotName}</td>
+                                <td>{row.fmName}</td>
+                                <td><span class={row.statusChipClass}>{row.status}</span></td>
+                                <td class="num">{row.goalHrs}</td>
+                                <td class="num">{row.actualHrs}</td>
+                                <td>{row.scheduledDate}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+
+            <template if:false={hasRows}>
+                <div class="empty-state">
+                    <p>No work orders match the current filters.</p>
+                </div>
+            </template>
+        </template>
+    </div>
+</template>

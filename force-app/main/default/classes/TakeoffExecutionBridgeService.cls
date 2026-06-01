@@ -211,9 +211,6 @@ public with sharing class TakeoffExecutionBridgeService {
             'Production_Install', 'Plant_Sod_Grading', 'Inground_Irrigation', 'Aqua_New_Install'
         });
         Id standardPricebookId = getStandardPricebookId();
-        if (standardPricebookId == null) {
-            return;
-        }
         Map<Id, PricebookEntry> genericPbeByPricebookId = new Map<Id, PricebookEntry>();
 
         List<WorkOrder> bridgeParentsToInsert = new List<WorkOrder>();

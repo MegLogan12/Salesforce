@@ -1,90 +1,41 @@
 <template>
-    <div class="pipeline-board">
-
-        <div class="pipeline-header">
-            <div class="ph-left">
-                <lightning-icon icon-name="utility:kanban" size="small" class="ph-icon"></lightning-icon>
-                <span class="ph-title">LOT PIPELINE</span>
-                <span class="ph-sub">{todayLabel}</span>
-            </div>
-            <div class="ph-right">
-                <lightning-input
-                    type="search"
-                    placeholder="Search lots..."
-                    value={searchTerm}
-                    onchange={handleSearch}
-                    class="ph-search"
-                    variant="label-hidden"
-                    label="Search lots">
-                </lightning-input>
-                <span class="ph-total">{filteredTotal} lots</span>
-                <lightning-button-icon
-                    icon-name="utility:refresh"
-                    variant="bare-inverse"
-                    title="Refresh pipeline"
-                    onclick={handleRefresh}
-                    class="ph-refresh">
-                </lightning-button-icon>
-            </div>
-        </div>
-
-        <template if:true={hasError}>
-            <div class="error-banner">
-                <lightning-icon icon-name="utility:warning" size="x-small" class="err-icon"></lightning-icon>
-                <span>{errorMsg}</span>
-            </div>
-        </template>
-
-        <template if:true={isLoading}>
-            <div class="loading-wrap">
-                <lightning-spinner alternative-text="Loading pipeline..." size="medium"></lightning-spinner>
-            </div>
-        </template>
-
-        <template if:false={isLoading}>
-            <template if:true={hasColumns}>
-                <div class="kanban-scroll">
-                    <template for:each={columns} for:item="col">
-                        <div key={col.bucket} class="kanban-col">
-                            <div class="col-header">
-                                <span class={col.chipCss}>{col.count}</span>
-                                <span class="col-title">{col.bucket}</span>
-                            </div>
-                            <div class="col-body">
-                                <template for:each={col.lots} for:item="lot">
-                                    <div key={lot.lotId} class="lot-card" data-id={lot.lotId} onclick={handleNavigateLot}>
-                                        <div class="lot-name">{lot.name}</div>
-                                        <div class="lot-meta">
-                                            <span class="lot-fm">{lot.fmName}</span>
-                                            <span class="lot-days">{lot.targetDateDisplay}</span>
-                                        </div>
-                                        <div class="lot-flags">
-                                            <template if:true={lot.takeoffDone}>
-                                                <span class="lot-flag flag-done" title="Takeoff complete">T✓</span>
-                                            </template>
-                                            <template if:true={lot.woCreated}>
-                                                <span class="lot-flag flag-wo" title="Work order exists">WO✓</span>
-                                            </template>
-                                        </div>
+    <lightning-card title="Work Order Pipeline" icon-name="standard:work_order">
+        <span slot="actions" class="slds-badge">{totalCount} total</span>
+        <lightning-button slot="actions" label="New Work Order" icon-name="utility:add" onclick={handleNewWorkOrder}></lightning-button>
+        <div class="kanban-container">
+            <template for:each={columns} for:item="col">
+                <div key={col.stage} class="kanban-column">
+                    <div class="kanban-header">
+                        <span class="kanban-stage-label">{col.label}</span>
+                        <span class="kanban-stage-count">{col.count}</span>
+                    </div>
+                    <div class="kanban-body">
+                        <template for:each={col.cards} for:item="card">
+                            <a key={card.id} href={card.url} class={card.cardClass} data-id={card.id}>
+                                <div class="card-number">{card.woNumber}</div>
+                                <div class="card-meta">
+                                    <span class="card-builder">{card.builder}</span>
+                                    <span class="card-foreman">{card.foreman}</span>
+                                </div>
+                                <div class="card-lot">{card.lotName}</div>
+                                <template if:true={card.releaseDate}>
+                                    <div class="card-date">
+                                        <lightning-formatted-date-time value={card.releaseDate}
+                                            year="numeric" month="short" day="numeric">
+                                        </lightning-formatted-date-time>
                                     </div>
                                 </template>
-                                <template if:false={col.lots.length}>
-                                    <div class="col-empty">No lots</div>
+                                <template if:true={card.takeoffStatus}>
+                                    <div class="card-takeoff">Takeoff: {card.takeoffStatus}</div>
                                 </template>
-                            </div>
-                        </div>
-                    </template>
+                            </a>
+                        </template>
+                        <template if:false={col.cards.length}>
+                            <div class="kanban-empty">No work orders</div>
+                        </template>
+                    </div>
                 </div>
             </template>
-            <template if:false={hasColumns}>
-                <template if:false={hasError}>
-                    <div class="empty-state">
-                        <lightning-icon icon-name="utility:check" size="medium"></lightning-icon>
-                        <p>No active lots in pipeline.</p>
-                    </div>
-                </template>
-            </template>
-        </template>
-
-    </div>
+        </div>
+    </lightning-card>
 </template>

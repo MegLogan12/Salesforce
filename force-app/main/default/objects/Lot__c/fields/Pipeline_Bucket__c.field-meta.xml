@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Pipeline_Bucket__c</fullName>
+    <externalId>false</externalId>
     <label>Pipeline Bucket</label>
     <required>false</required>
-    <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>
     <valueSet>
+        <restricted>false</restricted>
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
@@ -58,6 +59,54 @@
                 <fullName>Invoiced</fullName>
                 <default>false</default>
                 <label>Invoiced</label>
+            </value>
+            <value>
+                <fullName>90+ Days</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>90+ Days</label>
+            </value>
+            <value>
+                <fullName>60+ Days</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>60+ Days</label>
+            </value>
+            <value>
+                <fullName>31 Days</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>31 Days</label>
+            </value>
+            <value>
+                <fullName>30 Days</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>30 Days</label>
+            </value>
+            <value>
+                <fullName>15 Days</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>15 Days</label>
+            </value>
+            <value>
+                <fullName>Pending Takeoff</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Pending Takeoff</label>
+            </value>
+            <value>
+                <fullName>Clear for Schedule</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Clear for Schedule</label>
+            </value>
+            <value>
+                <fullName>Pending Closeout</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Pending Closeout</label>
             </value>
         </valueSetDefinition>
     </valueSet>
