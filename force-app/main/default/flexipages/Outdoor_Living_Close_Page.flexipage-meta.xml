@@ -1,28 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
-    <flexiPageType>RecordPage</flexiPageType>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>odlOpportunityClose</componentName>
+                <identifier>c_odlOpportunityClose</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>main</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <name>sidebar</name>
+        <type>Region</type>
+    </flexiPageRegions>
     <masterLabel>Outdoor Living Close Page</masterLabel>
     <sobjectType>Opportunity</sobjectType>
     <template>
-        <name>force_recordLayout:RecordLayout</name>
-        <properties>
-            <name>rightWidth</name>
-            <value>medium</value>
-        </properties>
+        <name>flexipage:recordHomeTemplateDesktop</name>
     </template>
-    <regions>
-        <mode>DropZone</mode>
-        <name>main</name>
-        <type>Region</type>
-        <itemInstances>
-            <componentInstance>
-                <componentName>c:odlOpportunityClose</componentName>
-            </componentInstance>
-        </itemInstances>
-    </regions>
-    <regions>
-        <mode>DropZone</mode>
-        <name>sidebar</name>
-        <type>Region</type>
-    </regions>
+    <type>RecordPage</type>
 </FlexiPage>
