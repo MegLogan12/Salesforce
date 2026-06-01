@@ -1,0 +1,187 @@
+/* ── Design tokens ──────────────────────────────────────────────────────────── */
+:host {
+    --odl-orange:      #E86826;
+    --odl-orange-dark: #C05318;
+    --odl-blue:        #0176D3;
+    --odl-blue-dark:   #014486;
+    --odl-teal:        #0D7A5E;
+    --odl-slate:       #54698D;
+    --text-dark:       #181818;
+    --text-mid:        #444444;
+    --text-light:      #6B7280;
+    --border:          #E0E5EE;
+    --bg-page:         #F3F5F8;
+    --bg-card:         #FFFFFF;
+    --radius-card:     8px;
+    --shadow-card:     0 1px 4px rgba(0,0,0,0.10);
+}
+
+.console-home {
+    background: var(--bg-page);
+    min-height: 100%;
+    padding: 16px 20px 24px;
+    box-sizing: border-box;
+    font-family: 'Salesforce Sans', Arial, sans-serif;
+}
+
+/* ── Page header ──────────────────────────────────────────────────────────── */
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.page-header-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.page-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0 0 2px;
+}
+
+.page-sub {
+    font-size: 13px;
+    color: var(--text-light);
+    margin: 0;
+}
+
+.page-refresh { margin-left: auto; }
+
+/* ── Loading / Error ──────────────────────────────────────────────────────── */
+.odl-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 240px;
+}
+
+.odl-error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 48px;
+    color: var(--text-mid);
+    text-align: center;
+}
+
+/* ── Search bar ───────────────────────────────────────────────────────────── */
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.search-input {
+    flex: 1;
+    max-width: 480px;
+}
+
+.search-count {
+    font-size: 12px;
+    color: var(--text-light);
+    white-space: nowrap;
+}
+
+/* ── Card ─────────────────────────────────────────────────────────────────── */
+.card {
+    background: var(--bg-card);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid var(--border);
+    background: #FAFBFD;
+}
+
+.card-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+    flex: 1;
+}
+
+.card-refresh { margin-left: auto; }
+
+/* ── Table ────────────────────────────────────────────────────────────────── */
+.odl-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.odl-table thead tr { background: #F8F9FB; }
+
+.odl-table th {
+    padding: 8px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border);
+}
+
+.odl-table td {
+    padding: 10px 16px;
+    color: var(--text-dark);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+.odl-table tbody tr:last-child td { border-bottom: none; }
+.odl-table tbody tr:hover { background: #F8F9FB; }
+
+/* ── Links ────────────────────────────────────────────────────────────────── */
+.rec-link {
+    color: var(--odl-blue);
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.rec-link:hover { text-decoration: underline; }
+
+/* ── Muted / Empty ────────────────────────────────────────────────────────── */
+.muted { color: var(--text-light); }
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 48px 16px;
+    color: var(--text-light);
+    font-size: 13px;
+    text-align: center;
+}
