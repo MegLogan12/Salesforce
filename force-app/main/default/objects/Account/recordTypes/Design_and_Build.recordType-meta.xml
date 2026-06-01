@@ -552,31 +552,6 @@
             <fullName>Commercial</fullName>
             <default>false</default>
         </values>
-
-        <values>
-            <fullName>Homeowner</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Other</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Partner</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Prospect</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Residential</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Subcontractor</fullName>
-            <default>false</default>
-        </values>
     </picklistValues>
     <picklistValues>
         <picklist>Vendor_Portal__c</picklist>
