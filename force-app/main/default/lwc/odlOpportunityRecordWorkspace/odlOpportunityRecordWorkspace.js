@@ -83,6 +83,10 @@ export default class OdlOpportunityRecordWorkspace extends NavigationMixin(Light
     get hasFiles() { return (this.pageData?.files || []).length > 0; }
     get hasVoucher() { return Boolean(this.pageData?.voucherRecord); }
     get hasProperty() { return Boolean(this.pageData?.propertyRecord); }
+    get engagement() { return this.pageData?.engagement ?? null; }
+    get engagementState() { return this.pageData?.engagement?.state ?? ''; }
+    get isDesignBuild() { return this.pageData?.opportunityRecord?.RecordType?.DeveloperName === 'Design_Build'; }
+
     get missingData() { return this.pageData?.missingData || []; }
     get hasMissingData() { return this.missingData.length > 0; }
     get neitherQuoteNorPayment() { return !this.hasQuotes && !this.hasPaymentMilestones; }

@@ -1,0 +1,120 @@
+.engagement-card {
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    border: 2px solid transparent;
+    background: #fff;
+}
+
+.engagement-card.engagement-active { border-color: #2e7d32; background: #f1f8e9; }
+.engagement-card.engagement-slowing { border-color: #f57c00; background: #fff8e1; }
+.engagement-card.engagement-dark { border-color: #c62828; background: #ffeaea; }
+.engagement-card.engagement-reengaged { border-color: #1565c0; background: #e3f2fd; }
+.engagement-card.engagement-na { border-color: #757575; background: #f5f5f5; }
+
+.engagement-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.engagement-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #333;
+}
+
+.engagement-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 20px;
+    text-transform: uppercase;
+}
+
+.engagement-badge.engagement-active { background: #2e7d32; color: #fff; }
+.engagement-badge.engagement-slowing { background: #f57c00; color: #fff; }
+.engagement-badge.engagement-dark { background: #c62828; color: #fff; }
+.engagement-badge.engagement-reengaged { background: #1565c0; color: #fff; }
+
+.engagement-metrics {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+}
+
+.metric-block {
+    display: flex;
+    flex-direction: column;
+}
+
+.metric-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #111;
+}
+
+.metric-date {
+    font-size: 0.85rem;
+}
+
+.metric-label {
+    font-size: 0.7rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.engagement-cta-bar {
+    margin-top: 0.75rem;
+    padding: 0.6rem 0.75rem;
+    background: rgba(0,0,0,0.04);
+    border-radius: 6px;
+}
+
+.engagement-cta-text {
+    margin: 0 0 0.5rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.engagement-exits {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.4rem;
+}
+
+.btn-exit-nurture,
+.btn-exit-lost {
+    padding: 0.35rem 0.75rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-exit-nurture { background: #e3f2fd; color: #1565c0; }
+.btn-exit-nurture:hover { background: #bbdefb; }
+.btn-exit-lost { background: #ffeaea; color: #c62828; }
+.btn-exit-lost:hover { background: #ffcdd2; }
+
+.engagement-no-auto-close {
+    margin: 0;
+    font-size: 0.68rem;
+    color: #888;
+    font-style: italic;
+}
+
+.engagement-closed-msg {
+    margin: 0;
+    font-size: 0.82rem;
+    color: #757575;
+}

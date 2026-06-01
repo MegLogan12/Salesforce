@@ -222,11 +222,9 @@ private class ODLOpportunityRecordControllerTest {
     }
 
     @isTest
-    static void testGetPageData_stagePathOrdering() {
+    static void testGetPageData_stagePathOrdering_UMB() {
         Map<String, Id> rtIds = getRecordTypeIds();
-        if (rtIds.isEmpty()) {
-            return;
-        }
+        if (rtIds.isEmpty()) return;
 
         Account acc = new Account(Name = 'Stage Path Homeowner', Type = 'Home Owner');
         insert acc;
@@ -235,7 +233,7 @@ private class ODLOpportunityRecordControllerTest {
         Opportunity opp = new Opportunity(
             Name = 'Stage Path Opp',
             AccountId = acc.Id,
-            StageName = 'Design In Progress',
+            StageName = 'Consult Scheduled',
             CloseDate = Date.today().addDays(30),
             RecordTypeId = rtId,
             Amount = 22000,
@@ -251,12 +249,53 @@ private class ODLOpportunityRecordControllerTest {
             ODLOpportunityRecordController.getPageData(opp.Id);
         Test.stopTest();
 
+        // New UMB Sales Path — spec section 4
         List<String> expectedStages = new List<String>{
-            'Discovery', 'Consult Scheduled', 'Design In Progress',
-            'Quote Review', 'Contract Sent', 'Deposit Pending', 'Closed Won'
+            'Qualifying', 'Package Selected', 'Consult Scheduled',
+            'Quote Sent', 'Quote Accepted', 'Proposal Presented', 'Closed Won'
         };
         System.assertEquals(expectedStages.size(), result.stagePath.size(),
-            'Stage path should have exactly 7 stages');
+            'UMB stage path should have ' + expectedStages.size() + ' stages. Got: ' + result.stagePath);
+        for (Integer i = 0; i < expectedStages.size(); i++) {
+            System.assertEquals(expectedStages[i], result.stagePath[i],
+                'Stage at index ' + i + ' mismatch');
+        }
+    }
+
+    @isTest
+    static void testGetPageData_stagePathOrdering_DB() {
+        Map<String, Id> rtIds = getRecordTypeIds();
+        if (!rtIds.containsKey('Design_Build')) return;
+
+        Account acc = new Account(Name = 'DB Stage Path Homeowner', Type = 'Home Owner');
+        insert acc;
+
+        Opportunity opp = new Opportunity(
+            Name = 'DB Stage Path Opp',
+            AccountId = acc.Id,
+            StageName = 'Consult Scheduled',
+            CloseDate = Date.today().addDays(30),
+            RecordTypeId = rtIds.get('Design_Build'),
+            Amount = 75000,
+            Quote_Status__c = 'Not Sent',
+            Contract_Status__c = 'Not Sent',
+            Deposit_Paid__c = false,
+            Voicemail_Left__c = false
+        );
+        insert opp;
+
+        Test.startTest();
+        ODLOpportunityRecordController.PageData result =
+            ODLOpportunityRecordController.getPageData(opp.Id);
+        Test.stopTest();
+
+        // New Design Build Sales Path — spec section 4
+        List<String> expectedStages = new List<String>{
+            'Discovery Consult', 'Design Agreement', 'Consult Scheduled',
+            'Design Development', 'Proposal Presented', 'Closed Won'
+        };
+        System.assertEquals(expectedStages.size(), result.stagePath.size(),
+            'Design Build stage path should have ' + expectedStages.size() + ' stages. Got: ' + result.stagePath);
         for (Integer i = 0; i < expectedStages.size(); i++) {
             System.assertEquals(expectedStages[i], result.stagePath[i],
                 'Stage at index ' + i + ' mismatch');
@@ -303,20 +342,18 @@ private class ODLOpportunityRecordControllerTest {
     }
 
     @isTest
-    static void testGetPageData_overdueFollowUp() {
+    static void testGetPageData_packageSelected_bookConsult() {
         Map<String, Id> rtIds = getRecordTypeIds();
-        if (rtIds.isEmpty()) {
-            return;
-        }
+        if (rtIds.isEmpty()) return;
 
-        Account acc = new Account(Name = 'Overdue Homeowner 08', Type = 'Home Owner');
+        Account acc = new Account(Name = 'Package Selected Homeowner', Type = 'Home Owner');
         insert acc;
 
         Id rtId = rtIds.containsKey('UMB') ? rtIds.get('UMB') : rtIds.values()[0];
         Opportunity opp = new Opportunity(
-            Name = 'Overdue Follow Up Opp',
+            Name = 'Package Selected Opp',
             AccountId = acc.Id,
-            StageName = 'Discovery',
+            StageName = 'Package Selected',
             CloseDate = Date.today().addDays(30),
             RecordTypeId = rtId,
             Amount = 15000,
@@ -329,9 +366,9 @@ private class ODLOpportunityRecordControllerTest {
 
         insert new Task(
             WhatId = opp.Id,
-            Subject = 'Check in call',
+            Subject = 'Package confirmation call',
             Status = 'Completed',
-            ActivityDate = Date.today().addDays(-3)
+            ActivityDate = Date.today().addDays(-1)
         );
 
         Test.startTest();
@@ -339,7 +376,7 @@ private class ODLOpportunityRecordControllerTest {
             ODLOpportunityRecordController.getPageData(opp.Id);
         Test.stopTest();
 
-        // Stage = Discovery with activity → Rule 10: Book consult / Schedule
+        // UMB Package Selected → Book consult / Schedule
         System.assert(
             result.nextActionText.toLowerCase().contains('book') ||
             result.nextActionText.toLowerCase().contains('consult'),
@@ -502,6 +539,196 @@ private class ODLOpportunityRecordControllerTest {
 
         System.assertNotEquals(null, result.interactions);
         System.assert(result.interactions.size() >= 1, 'Should have at least 1 interaction from events/tasks');
+    }
+
+    // ─── Engagement health tests ─────────────────────────────────────────────────
+
+    @isTest
+    static void testEngagement_activeWhenResponseRecent() {
+        Map<String, Id> rtIds = getRecordTypeIds();
+        if (!rtIds.containsKey('UMB')) return;
+
+        Account acc = new Account(Name = 'Active Eng Homeowner', Type = 'Home Owner');
+        insert acc;
+        Opportunity opp = new Opportunity(
+            Name = 'Active Engagement Opp', AccountId = acc.Id, StageName = 'Consult Scheduled',
+            CloseDate = Date.today().addDays(30), RecordTypeId = rtIds.get('UMB'),
+            Quote_Status__c = 'Not Sent', Contract_Status__c = 'Not Sent',
+            Last_Customer_Response_Date__c = Date.today().addDays(-3)
+        );
+        insert opp;
+
+        Test.startTest();
+        ODLOpportunityRecordController.PageData result = ODLOpportunityRecordController.getPageData(opp.Id);
+        Test.stopTest();
+
+        System.assertEquals('Active', result.engagement.state, 'Should be Active at 3 days');
+        System.assertEquals(3, result.engagement.daysSinceResponse, 'Days should be 3');
+    }
+
+    @isTest
+    static void testEngagement_slowing_UMB_at7Days() {
+        Map<String, Id> rtIds = getRecordTypeIds();
+        if (!rtIds.containsKey('UMB')) return;
+
+        Account acc = new Account(Name = 'Slowing UMB Homeowner', Type = 'Home Owner');
+        insert acc;
+        Opportunity opp = new Opportunity(
+            Name = 'Slowing UMB Opp', AccountId = acc.Id, StageName = 'Quote Sent',
+            CloseDate = Date.today().addDays(30), RecordTypeId = rtIds.get('UMB'),
+            Quote_Status__c = 'Sent', Contract_Status__c = 'Not Sent',
+            Last_Customer_Response_Date__c = Date.today().addDays(-8)
+        );
+        insert opp;
+
+        Test.startTest();
+        ODLOpportunityRecordController.PageData result = ODLOpportunityRecordController.getPageData(opp.Id);
+        Test.stopTest();
+
+        System.assertEquals('Slowing', result.engagement.state, 'UMB should be Slowing at 8 days');
+        System.assert(result.nextActionText.toLowerCase().contains('slowing') ||
+                      result.nextActionText.toLowerCase().contains('re-engage'),
+                      'Next action should mention re-engage: ' + result.nextActionText);
+        System.assertEquals('Call', result.nextActionButton);
+    }
+
+    @isTest
+    static void testEngagement_goingDark_UMB_at14Days() {
+        Map<String, Id> rtIds = getRecordTypeIds();
+        if (!rtIds.containsKey('UMB')) return;
+
+        Account acc = new Account(Name = 'Dark UMB Homeowner', Type = 'Home Owner');
+        insert acc;
+        Opportunity opp = new Opportunity(
+            Name = 'Going Dark UMB Opp', AccountId = acc.Id, StageName = 'Quote Sent',
+            CloseDate = Date.today().addDays(30), RecordTypeId = rtIds.get('UMB'),
+            Quote_Status__c = 'Sent', Contract_Status__c = 'Not Sent',
+            Last_Customer_Response_Date__c = Date.today().addDays(-15)
+        );
+        insert opp;
+
+        Test.startTest();
+        ODLOpportunityRecordController.PageData result = ODLOpportunityRecordController.getPageData(opp.Id);
+        Test.stopTest();
+
+        System.assertEquals('Going Dark', result.engagement.state, 'UMB should be Going Dark at 15 days');
+        System.assert(result.nextActionText.toLowerCase().contains('going dark') ||
+                      result.nextActionText.toLowerCase().contains('final follow'),
+                      'Next action should flag going dark: ' + result.nextActionText);
+        System.assertEquals('Follow Up', result.nextActionButton);
+        System.assertNotNull(result.engagement.callToAction);
+    }
+
+    @isTest
+    static void testEngagement_slowing_DB_at14Days() {
+        Map<String, Id> rtIds = getRecordTypeIds();
+        if (!rtIds.containsKey('Design_Build')) return;
+
+        Account acc = new Account(Name = 'Slowing DB Homeowner', Type = 'Home Owner');
+        insert acc;
+        Opportunity opp = new Opportunity(
+            Name = 'Slowing DB Opp', AccountId = acc.Id, StageName = 'Design Development',
+            CloseDate = Date.today().addDays(30), RecordTypeId = rtIds.get('Design_Build'),
+            Quote_Status__c = 'Not Sent', Contract_Status__c = 'Not Sent',
+            Last_Customer_Response_Date__c = Date.today().addDays(-16)
+        );
+        insert opp;
+
+        Test.startTest();
+        ODLOpportunityRecordController.PageData result = ODLOpportunityRecordController.getPageData(opp.Id);
+        Test.stopTest();
+
+        System.assertEquals('Slowing', result.engagement.state, 'Design Build should be Slowing at 16 days');
+    }
+
+    @isTest
+    static void testEngagement_goingDark_DB_at30Days() {
+        Map<String, Id> rtIds = getRecordTypeIds();
+        if (!rtIds.containsKey('Design_Build')) return;
+
+        Account acc = new Account(Name = 'Dark DB Homeowner', Type = 'Home Owner');
+        insert acc;
+        Opportunity opp = new Opportunity(
+            Name = 'Going Dark DB Opp', AccountId = acc.Id, StageName = 'Proposal Presented',
+            CloseDate = Date.today().addDays(30), RecordTypeId = rtIds.get('Design_Build'),
+            Quote_Status__c = 'Sent', Contract_Status__c = 'Not Sent',
+            Last_Customer_Response_Date__c = Date.today().addDays(-31)
+        );
+        insert opp;
+
+        Test.startTest();
+        ODLOpportunityRecordController.PageData result = ODLOpportunityRecordController.getPageData(opp.Id);
+        Test.stopTest();
+
+        System.assertEquals('Going Dark', result.engagement.state, 'Design Build should be Going Dark at 31 days');
+    }
+
+    @isTest
+    static void testEngagement_closedWon_isNA() {
+        Map<String, Id> rtIds = getRecordTypeIds();
+        if (!rtIds.containsKey('UMB')) return;
+
+        Account acc = new Account(Name = 'Won Homeowner', Type = 'Home Owner');
+        insert acc;
+        Opportunity opp = new Opportunity(
+            Name = 'Closed Won Opp', AccountId = acc.Id, StageName = 'Closed Won',
+            CloseDate = Date.today(), RecordTypeId = rtIds.get('UMB'),
+            Quote_Status__c = 'Accepted', Contract_Status__c = 'Signed'
+        );
+        insert opp;
+
+        Test.startTest();
+        ODLOpportunityRecordController.PageData result = ODLOpportunityRecordController.getPageData(opp.Id);
+        Test.stopTest();
+
+        System.assertEquals('N/A', result.engagement.state, 'Closed Won should have N/A engagement');
+        System.assertNull(result.nextActionButton, 'Closed Won should have null button');
+    }
+
+    @isTest
+    static void testEngagement_noResponseNoAttempts_isActive() {
+        Map<String, Id> rtIds = getRecordTypeIds();
+        if (!rtIds.containsKey('UMB')) return;
+
+        Account acc = new Account(Name = 'No Response Homeowner', Type = 'Home Owner');
+        insert acc;
+        Opportunity opp = new Opportunity(
+            Name = 'No Response Opp', AccountId = acc.Id, StageName = 'Qualifying',
+            CloseDate = Date.today().addDays(30), RecordTypeId = rtIds.get('UMB'),
+            Quote_Status__c = 'Not Sent', Contract_Status__c = 'Not Sent'
+        );
+        insert opp;
+
+        Test.startTest();
+        ODLOpportunityRecordController.PageData result = ODLOpportunityRecordController.getPageData(opp.Id);
+        Test.stopTest();
+
+        System.assertEquals('Active', result.engagement.state, 'No response + no attempts should be Active');
+        System.assertNull(result.engagement.lastResponseDate);
+    }
+
+    @isTest
+    static void testEngagement_designFeeStatus_populated() {
+        Map<String, Id> rtIds = getRecordTypeIds();
+        if (!rtIds.containsKey('Design_Build')) return;
+
+        Account acc = new Account(Name = 'Design Fee Homeowner', Type = 'Home Owner');
+        insert acc;
+        Opportunity opp = new Opportunity(
+            Name = 'Design Fee Opp', AccountId = acc.Id, StageName = 'Design Agreement',
+            CloseDate = Date.today().addDays(30), RecordTypeId = rtIds.get('Design_Build'),
+            Quote_Status__c = 'Not Sent', Contract_Status__c = 'Not Sent',
+            Design_Fee_Status__c = 'Paid',
+            Design_Fee_Paid_Date__c = Date.today().addDays(-5)
+        );
+        insert opp;
+
+        Test.startTest();
+        ODLOpportunityRecordController.PageData result = ODLOpportunityRecordController.getPageData(opp.Id);
+        Test.stopTest();
+
+        System.assertEquals('Paid', result.designFeeStatus, 'Design fee status should be Paid');
+        System.assertNotNull(result.designFeePaidDate, 'Paid date should be present');
     }
 
     @isTest

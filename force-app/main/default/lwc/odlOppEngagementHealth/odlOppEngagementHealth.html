@@ -1,0 +1,50 @@
+<template>
+    <div class={cardClass}>
+        <div class="engagement-header">
+            <span class="engagement-title">Engagement Health</span>
+            <template lwc:if={hasState}>
+                <span class={stateBadgeClass}>{stateLabelText}</span>
+            </template>
+        </div>
+
+        <template lwc:if={isClosed}>
+            <p class="engagement-closed-msg">Opportunity is closed.</p>
+        </template>
+
+        <template lwc:else>
+            <div class="engagement-metrics">
+                <div class="metric-block">
+                    <span class="metric-value">{daysSinceDisplay}</span>
+                    <span class="metric-label">days since reply</span>
+                </div>
+                <div class="metric-block">
+                    <span class="metric-value">{outreachDisplay}</span>
+                    <span class="metric-label">outreach attempts</span>
+                </div>
+                <template lwc:if={lastResponseDate}>
+                    <div class="metric-block">
+                        <span class="metric-label">Last reply</span>
+                        <span class="metric-value metric-date">{lastResponseDate}</span>
+                    </div>
+                </template>
+            </div>
+
+            <template lwc:if={callToAction}>
+                <div class="engagement-cta-bar">
+                    <p class="engagement-cta-text">{callToAction}</p>
+                    <div class="engagement-exits">
+                        <button class="btn-exit-nurture" onclick={handleMoveToNurture}
+                                title="Recycle to Marketing Cloud nurture — does not close the opportunity">
+                            Move to Nurture
+                        </button>
+                        <button class="btn-exit-lost" onclick={handleMarkLost}
+                                title="Mark Closed Lost — No Decision / Non-Responsive. Cannot be undone automatically.">
+                            Mark Lost (No Response)
+                        </button>
+                    </div>
+                    <p class="engagement-no-auto-close">Rep action required — deals are never closed automatically.</p>
+                </div>
+            </template>
+        </template>
+    </div>
+</template>

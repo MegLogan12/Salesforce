@@ -41,8 +41,22 @@
                 next-action-text={nextActionText}
                 next-action-button={nextActionButton}
                 record-id={recordId}
-                wo-ready={woReady}>
+                wo-ready={woReady}
+                engagement-state={engagementState}>
             </c-odl-opp-next-action>
+
+            <!-- Engagement Health Hero (UMB) or Confirming Panel (Design Build) -->
+            <c-odl-opp-engagement-health
+                engagement={engagement}
+                opportunity-id={recordId}>
+            </c-odl-opp-engagement-health>
+
+            <!-- Design Phase Hero (Design Build only) -->
+            <template lwc:if={isDesignBuild}>
+                <c-odl-opp-design-phase
+                    page-data={pageData}>
+                </c-odl-opp-design-phase>
+            </template>
 
             <!-- Work Order Readiness Gate -->
             <c-odl-opp-readiness-gate
