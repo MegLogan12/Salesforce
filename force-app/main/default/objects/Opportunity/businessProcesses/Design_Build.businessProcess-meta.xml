@@ -5,7 +5,7 @@
     <isActive>true</isActive>
     <values>
         <fullName>Discovery Consult</fullName>
-        <default>true</default>
+        <default>false</default>
     </values>
     <values>
         <fullName>Design Agreement</fullName>

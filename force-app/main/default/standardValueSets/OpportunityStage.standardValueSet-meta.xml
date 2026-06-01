@@ -236,7 +236,7 @@
         <description>Homeowner accepted quote; contract in progress.</description>
         <label>Quote Accepted</label>
         <closed>false</closed>
-        <forecastCategory>Commit</forecastCategory>
+        <forecastCategory>Forecast</forecastCategory>
         <probability>60</probability>
         <won>false</won>
     </standardValue>
