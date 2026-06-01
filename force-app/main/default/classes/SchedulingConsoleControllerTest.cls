@@ -178,6 +178,16 @@ private class SchedulingConsoleControllerTest {
             );
             insert emp;
         } catch (Exception e) {}
+
+        // Work_Order__c record for pipeline summary coverage
+        try {
+            Work_Order__c pipelineWO = new Work_Order__c(
+                Status__c                = 'Pending Takeoff',
+                Pipeline_Bucket__c       = '30 Days',
+                Requested_Install_Date__c = Date.today().addDays(25)
+            );
+            insert pipelineWO;
+        } catch (Exception e) {}
     }
 
     // ─── Helper to fetch wo1 Id ──────────────────────────────────────────────
@@ -1179,6 +1189,40 @@ private class SchedulingConsoleControllerTest {
         Test.stopTest();
         SchedulingConsoleService.mockScheduleIssues = null;
         System.assert(true, 'buildScheduleRequests loop body covered');
+    }
+
+    // ─── Pipeline summary ────────────────────────────────────────────────────
+    @IsTest
+    static void testGetPipelineSummary_success() {
+        Test.startTest();
+        List<SchedulingConsoleController.PipelineSummaryDto> result =
+            SchedulingConsoleController.getPipelineSummary(null);
+        Test.stopTest();
+        System.assertNotEquals(null, result);
+        System.assert(result.size() > 0, 'Expected staged pipeline columns');
+        for (SchedulingConsoleController.PipelineSummaryDto col : result) {
+            System.assertNotEquals(null, col.bucket,  'bucket must not be null');
+            System.assertNotEquals(null, col.chipCss, 'chipCss must not be null');
+            System.assertNotEquals(null, col.lots,    'lots list must not be null');
+        }
+        Integer totalLots = 0;
+        for (SchedulingConsoleController.PipelineSummaryDto col : result) {
+            totalLots += col.count;
+        }
+        System.assert(totalLots >= 1, 'SC Pipeline Lot 1 should appear in pipeline summary');
+    }
+
+    @IsTest
+    static void testGetPipelineSummary_forceThrow() {
+        SchedulingConsoleService.throwForCoverageTest = true;
+        Test.startTest();
+        try {
+            SchedulingConsoleController.getPipelineSummary(null);
+            System.assert(false, 'Should throw');
+        } catch (AuraHandledException e) {
+            System.assertNotEquals(null, e.getMessage());
+        }
+        Test.stopTest();
     }
 
     @IsTest

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ClosingCare_Status__c</fullName>
+    <label>ClosingCare Status</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Not Enrolled</fullName>
+                <default>true</default>
+                <label>Not Enrolled</label>
+            </value>
+            <value>
+                <fullName>Active</fullName>
+                <default>false</default>
+                <label>Active</label>
+            </value>
+            <value>
+                <fullName>Exited - Closed</fullName>
+                <default>false</default>
+                <label>Exited - Closed</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

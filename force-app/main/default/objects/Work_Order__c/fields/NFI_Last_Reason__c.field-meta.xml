@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NFI_Last_Reason__c</fullName>
+    <label>NFI Last Reason</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Missing Photos</fullName>
+                <default>false</default>
+                <label>Missing Photos</label>
+            </value>
+            <value>
+                <fullName>Quantity Variance</fullName>
+                <default>false</default>
+                <label>Quantity Variance</label>
+            </value>
+            <value>
+                <fullName>Missing Scope</fullName>
+                <default>false</default>
+                <label>Missing Scope</label>
+            </value>
+            <value>
+                <fullName>Incomplete Aqua Entry</fullName>
+                <default>false</default>
+                <label>Incomplete Aqua Entry</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

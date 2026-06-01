@@ -92,6 +92,10 @@ export default class OdlOpportunityRecordWorkspace extends NavigationMixin(Light
         return (this.pageData?.quotes || []).length > 0;
     }
 
+    get noQuotes() {
+        return this.hasData && !this.hasQuotes;
+    }
+
     get hasFiles() {
         return (this.pageData?.files || []).length > 0;
     }
@@ -125,12 +129,30 @@ export default class OdlOpportunityRecordWorkspace extends NavigationMixin(Light
     handleNewTask() {
         this[NavigationMixin.Navigate]({
             type: 'standard__quickAction',
-            attributes: {
-                apiName: NEW_TASK_ACTION
-            },
-            state: {
-                recordId: this.recordId
-            }
+            attributes: { apiName: NEW_TASK_ACTION },
+            state: { recordId: this.recordId }
+        });
+    }
+
+    handleEditOpportunity() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: { recordId: this.recordId, actionName: 'edit' }
+        });
+    }
+
+    handleLogCall() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.LogACall' },
+            state: { recordId: this.recordId }
+        });
+    }
+
+    handleCreateQuote() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Quote', actionName: 'new' }
         });
     }
 }

@@ -1288,4 +1288,94 @@ public without sharing class SchedulingConsoleService {
         d.suggestedFix = fix;
         return d;
     }
+
+    // ─── Pipeline Summary ─────────────────────────────────────────────────────
+    public static List<SchedulingConsoleController.PipelineSummaryDto> buildPipelineSummary(String division) {
+        if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
+
+        List<Work_Order__c> wos = [
+            SELECT Id, Name, Requested_Install_Date__c,
+                   Pipeline_Bucket__c, Takeoff_Task_Complete__c,
+                   Field_Manager__r.Name
+            FROM Work_Order__c
+            WHERE Status__c NOT IN ('Closed', 'Cancelled', 'Field Complete',
+                                    'Pending Closeout', 'Closeout Approved',
+                                    'Paid', 'Invoiced', 'Ready for Invoice')
+            AND (Pipeline_Bucket__c = null
+                 OR Pipeline_Bucket__c NOT IN ('Complete', 'Cancelled', 'Closed'))
+            ORDER BY Requested_Install_Date__c ASC NULLS LAST
+            LIMIT 500
+        ];
+
+        Map<String, List<SchedulingConsoleController.PipelineLotDto>> bucketMap =
+            new Map<String, List<SchedulingConsoleController.PipelineLotDto>>();
+        Date today = Date.today();
+
+        for (Work_Order__c wo : wos) {
+            String bucket = String.isNotBlank(wo.Pipeline_Bucket__c) ? wo.Pipeline_Bucket__c : 'Ready to Schedule';
+            if (!bucketMap.containsKey(bucket)) {
+                bucketMap.put(bucket, new List<SchedulingConsoleController.PipelineLotDto>());
+            }
+            SchedulingConsoleController.PipelineLotDto d = new SchedulingConsoleController.PipelineLotDto();
+            d.lotId       = wo.Id;
+            d.name        = wo.Name;
+            d.fmName      = wo.Field_Manager__r != null ? wo.Field_Manager__r.Name : '—';
+            d.takeoffDone = wo.Takeoff_Task_Complete__c == true;
+            d.woCreated   = true;
+            if (wo.Requested_Install_Date__c != null) {
+                d.daysUntil         = today.daysBetween(wo.Requested_Install_Date__c);
+                d.targetDateDisplay = wo.Requested_Install_Date__c.format();
+            } else {
+                d.daysUntil         = null;
+                d.targetDateDisplay = 'No date';
+            }
+            bucketMap.get(bucket).add(d);
+        }
+
+        List<String> stages = new List<String>{
+            '90+ Days', '60+ Days', '30 Days', 'Ready to Schedule',
+            'Takeoff In Progress', 'Takeoff Complete',
+            'Scheduled', 'In Progress', 'On Hold'
+        };
+        Map<String, String> chipMap = new Map<String, String>{
+            '90+ Days'            => 'chip gray',
+            '60+ Days'            => 'chip blue',
+            '30 Days'             => 'chip amber',
+            'Ready to Schedule'   => 'chip green',
+            'Takeoff In Progress' => 'chip purple',
+            'Takeoff Complete'    => 'chip purple',
+            'Scheduled'           => 'chip blue',
+            'In Progress'         => 'chip green',
+            'On Hold'             => 'chip amber'
+        };
+
+        List<SchedulingConsoleController.PipelineSummaryDto> result =
+            new List<SchedulingConsoleController.PipelineSummaryDto>();
+        Set<String> stageSet = new Set<String>(stages);
+
+        for (String stage : stages) {
+            List<SchedulingConsoleController.PipelineLotDto> stageLots =
+                bucketMap.containsKey(stage) ? bucketMap.get(stage)
+                : new List<SchedulingConsoleController.PipelineLotDto>();
+            SchedulingConsoleController.PipelineSummaryDto s = new SchedulingConsoleController.PipelineSummaryDto();
+            s.bucket  = stage;
+            s.count   = stageLots.size();
+            s.chipCss = chipMap.get(stage);
+            s.lots    = stageLots;
+            result.add(s);
+        }
+
+        for (String bucket : bucketMap.keySet()) {
+            if (!stageSet.contains(bucket)) {
+                SchedulingConsoleController.PipelineSummaryDto s = new SchedulingConsoleController.PipelineSummaryDto();
+                s.bucket  = bucket;
+                s.count   = bucketMap.get(bucket).size();
+                s.chipCss = 'chip gray';
+                s.lots    = bucketMap.get(bucket);
+                result.add(s);
+            }
+        }
+
+        return result;
+    }
 }

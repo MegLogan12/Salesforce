@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Aqua_Active__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>When true, this community is enrolled in the Aqua irrigation service and participates in daily check routes.</description>
+    <label>Aqua Active</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

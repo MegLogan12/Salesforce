@@ -62,3 +62,22 @@
     border-radius: 4px;
     padding: 8px 9px;
 }
+
+.sidebar-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.action-btn {
+    flex: 1;
+    background: #fff;
+    border: 1px solid var(--ol-line);
+    border-radius: 4px;
+    color: #0176d3;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 8px;
+    text-align: center;
+}
+.action-btn:hover { background: #f0f5ff; }

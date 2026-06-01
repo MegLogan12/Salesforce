@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Market_Loving_CSM__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(ISBLANK(Builder_Account__r.Loving_CSM__r.Id), &quot;&quot;, Builder_Account__r.Loving_CSM__r.FirstName &amp; &quot; &quot; &amp; Builder_Account__r.Loving_CSM__r.LastName)</formula>
+    <inlineHelpText>LOVING CSM on the parent Market Account.</inlineHelpText>
+    <label>LOVING CSM (from Market)</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

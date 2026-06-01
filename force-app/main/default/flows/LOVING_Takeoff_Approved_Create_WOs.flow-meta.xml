@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Create_Trade_Work_Orders</name>
+        <label>Create Trade Work Orders</label>
+        <locationX>176</locationX>
+        <locationY>120</locationY>
+        <actionName>TakeoffWorkOrderService</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>takeoffIds</name>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>TakeoffWorkOrderService</nameSegment>
+    </actionCalls>
+    <apiVersion>62.0</apiVersion>
+    <description>When a Takeoff is Approved, creates one trade Work Order per trade (classified by material) with line items. Idempotent via WorkOrder.Source_Takeoff__c.</description>
+    <label>LOVING Takeoff Approved Create WOs</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>176</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Create_Trade_Work_Orders</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Approved</stringValue>
+            </value>
+        </filters>
+        <object>Takeoff__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Draft</status>
+</Flow>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WO_PO_Amount__c</fullName>
+    <description>Builder PO dollar value carried on this Work Order for invoice cross-check. Populated from Builder_PO__c.PO_Amount__c by LOVING_WorkOrder_Derive_From_Lot flow. Display only — source of truth is Builder_PO__c.</description>
+    <label>PO Amount</label>
+    <precision>12</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Currency</type>
+</CustomField>

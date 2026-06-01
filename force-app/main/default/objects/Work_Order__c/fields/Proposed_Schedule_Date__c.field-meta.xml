@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Proposed_Schedule_Date__c</fullName>
+    <description>Stage 7 (Scheduling). Date AutoScheduleService proposed for this WO during the daily 2:30pm ET batch. Promoted to Scheduled_Date when manager sets Schedule_Proposal_Status to Manager Approved.</description>
+    <label>Proposed Schedule Date</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

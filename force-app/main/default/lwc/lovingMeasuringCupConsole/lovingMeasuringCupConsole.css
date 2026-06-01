@@ -1,0 +1,125 @@
+/* lovingMeasuringCupConsole */
+
+.mc-shell {
+    font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f4f6f9;
+    min-height: 100vh;
+    color: #16325c;
+}
+
+/* ── Header ──────────────────────────────────── */
+.mc-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 20px 12px;
+    background: linear-gradient(135deg, #16325c 0%, #5c3317 100%);
+    color: #fff;
+    flex-wrap: wrap;
+}
+.mc-header-icon { font-size: 28px; flex-shrink: 0; }
+.mc-header-text { flex: 1; min-width: 180px; }
+.mc-breadcrumb  { font-size: 11px; opacity: 0.75; text-transform: uppercase; letter-spacing: .05em; }
+.mc-title       { font-size: 20px; font-weight: 700; line-height: 1.2; }
+.mc-sub         { font-size: 11px; opacity: 0.8; margin-top: 2px; }
+
+.mc-kpi-strip {
+    display: flex; gap: 8px; flex-wrap: wrap; flex-shrink: 0;
+}
+.mc-kpi-chip {
+    background: rgba(255,255,255,.15);
+    border-radius: 8px;
+    padding: 6px 12px;
+    text-align: center;
+    min-width: 70px;
+}
+.mc-kpi-num { display: block; font-size: 18px; font-weight: 700; line-height: 1.1; }
+.mc-kpi-lbl { display: block; font-size: 10px; opacity: 0.8; text-transform: uppercase; letter-spacing: .04em; }
+
+/* ── Tab Bar ─────────────────────────────────── */
+.mc-tabs {
+    display: flex; overflow-x: auto;
+    background: #fff; border-bottom: 2px solid #e0e5ee;
+    padding: 0 12px; scrollbar-width: thin;
+}
+.tab-btn {
+    flex-shrink: 0; padding: 10px 16px;
+    font-size: 12px; font-weight: 500; color: #54698d;
+    background: none; border: none;
+    border-bottom: 3px solid transparent;
+    cursor: pointer; white-space: nowrap;
+    transition: color .15s, border-color .15s;
+}
+.tab-btn:hover  { color: #0070d2; background: #f4f6f9; }
+.tab-btn.active { color: #0070d2; border-bottom-color: #0070d2; font-weight: 700; }
+
+/* ── Body ────────────────────────────────────── */
+.mc-body { padding: 16px 20px 24px; max-width: 1280px; }
+
+/* ── Tab header ──────────────────────────────── */
+.mc-tab-header {
+    display: flex; align-items: baseline; gap: 12px;
+    margin-bottom: 14px; flex-wrap: wrap;
+}
+.mc-tab-header h2 { font-size: 16px; font-weight: 700; color: #16325c; margin: 0; }
+.mc-tab-sub       { font-size: 12px; color: #54698d; flex: 1; min-width: 200px; }
+
+/* ── Error / Empty ───────────────────────────── */
+.mc-error { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; }
+.mc-empty { text-align: center; padding: 56px 24px; color: #54698d; }
+.mc-empty-icon  { font-size: 44px; margin-bottom: 12px; }
+.mc-empty-title { font-size: 16px; font-weight: 700; color: #16325c; margin-bottom: 6px; }
+.mc-empty-sub   { font-size: 13px; max-width: 480px; margin: 0 auto; line-height: 1.6; }
+
+/* ── Table ───────────────────────────────────── */
+.mc-table {
+    width: 100%; border-collapse: collapse;
+    background: #fff; border-radius: 8px;
+    overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    font-size: 13px;
+}
+.mc-table th {
+    background: #f4f6f9; padding: 10px 12px;
+    text-align: left; font-size: 11px; font-weight: 600;
+    color: #54698d; text-transform: uppercase; letter-spacing: .04em;
+    border-bottom: 1px solid #e0e5ee;
+}
+.mc-table td {
+    padding: 10px 12px; border-bottom: 1px solid #f4f6f9;
+    vertical-align: middle; color: #16325c;
+}
+.mc-table tr:last-child td { border-bottom: none; }
+.mc-table tr:hover td { background: #f8f9fc; }
+.text-right { text-align: right; }
+.fw-600     { font-weight: 600; }
+td[data-negative="true"] { color: #c62828; font-weight: 600; }
+
+/* ── KPI Grid ────────────────────────────────── */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px; margin-top: 4px;
+}
+.kpi-tile {
+    background: #fff; border-radius: 10px;
+    padding: 16px; text-align: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+}
+.kpi-tile-warn { border-left: 4px solid #f8ca00; }
+.kpi-icon { font-size: 24px; margin-bottom: 6px; }
+.kpi-num  { font-size: 28px; font-weight: 700; color: #16325c; line-height: 1; margin-bottom: 4px; }
+.kpi-lbl  { font-size: 11px; color: #54698d; text-transform: uppercase; letter-spacing: .04em; }
+.kpi-tile[data-negative="true"] .kpi-num { color: #c62828; }
+
+/* ── Chips ───────────────────────────────────── */
+.chip         { font-size: 11px; border-radius: 10px; padding: 2px 9px; font-weight: 600; display: inline-block; }
+.chip-green   { background: #e8f5e9; color: #2e7d32; }
+.chip-blue    { background: #e3f2fd; color: #1565c0; }
+.chip-amber   { background: #fff8e1; color: #e65100; }
+.chip-red     { background: #ffebee; color: #c62828; }
+.chip-gray    { background: #f4f6f9; color: #54698d; }
+/* ── CTA additions ─────────────────────────────── */
+.mc-refresh-btn { margin-left: auto; --lwc-colorTextIconDefault: #54698d; }
+.mc-row-link    { cursor: pointer; }
+.mc-row-link:hover { background: #f0f7ff; }
+.mc-lot-link    { color: #0070d2; font-weight: 600; }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Estimated_Labor_Minutes__c</fullName>
+    <description>Sum of Estimated_Line_Minutes__c across all active Work Order Line Items. Populated by WLRDurationCalculationService (invocable from flow). This is the raw labor time before crew-size adjustment. Used to set Service Appointment Duration.</description>
+    <externalId>false</externalId>
+    <label>Estimated Labor Minutes</label>
+    <precision>10</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

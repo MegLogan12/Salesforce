@@ -239,7 +239,7 @@ private class RipplingSyncServiceTest {
 
         Test.setMock(HttpCalloutMock.class, new RipplingMultiMock());
         Test.startTest();
-        RipplingSyncService.syncTimeEntries(null);
+        RipplingSyncService.syncTimeEntriesSync(null);
         Test.stopTest();
 
         List<Rippling_Time_Entry__c> entries = [SELECT Id, Clock_Out__c FROM Rippling_Time_Entry__c WHERE Employee__c = :e.Id];

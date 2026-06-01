@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Utility_Marking_Dispatched_At__c</fullName>
+    <description>System-stamped when the 811 locate request email is sent to the utility marking vendor. Used to gate against duplicate sends.</description>
+    <label>811 Dispatched At</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>DateTime</type>
+</CustomField>

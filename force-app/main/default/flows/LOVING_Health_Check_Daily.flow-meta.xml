@@ -21,7 +21,7 @@
         <schedule>
             <frequency>Daily</frequency>
             <startDate>2025-01-01</startDate>
-            <startTime>14:00:00.000Z</startTime>
+            <startTime>18:00:00.000Z</startTime>
         </schedule>
         <triggerType>Scheduled</triggerType>
     </start>

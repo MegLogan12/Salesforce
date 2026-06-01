@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Takeoff_Geotag_Within_150m</fullName>
+    <active>true</active>
+    <description>Takeoff GPS must be within 150m of Lot GPS</description>
+    <errorConditionFormula>AND(
+    NOT($Profile.Name = &quot;System Administrator&quot;),
+    (AND(
+        NOT(ISBLANK(Takeoff_Geotag_Lat__c)),
+        NOT(ISBLANK(Takeoff_Geotag_Lng__c)),
+        NOT(ISBLANK(Lot_Latitude__c)),
+        NOT(ISBLANK(Lot_Longitude__c)),
+        SQRT(((Takeoff_Geotag_Lat__c - Lot_Latitude__c) * 111000)^2 + ((Takeoff_Geotag_Lng__c - Lot_Longitude__c) * 88000)^2) &gt; 150
+    ))
+)</errorConditionFormula>
+    <errorDisplayField>Takeoff_Geotag_Lat__c</errorDisplayField>
+    <errorMessage>Takeoff GPS out of range — must be on-site</errorMessage>
+</ValidationRule>

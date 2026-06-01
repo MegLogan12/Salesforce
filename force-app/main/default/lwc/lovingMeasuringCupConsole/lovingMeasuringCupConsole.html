@@ -1,0 +1,190 @@
+<template>
+    <div class="mc-shell">
+
+        <!-- ── Header ──────────────────────────────────────────────────── -->
+        <div class="mc-header">
+            <span class="mc-header-icon">☕</span>
+            <div class="mc-header-text">
+                <div class="mc-breadcrumb">LOVING Group · Field Operations</div>
+                <div class="mc-title">{pageTitle}</div>
+                <div class="mc-sub">Live crew tracking · Today's production · Work order status</div>
+            </div>
+            <template if:true={kpiData}>
+                <div class="mc-kpi-strip">
+                    <div class="mc-kpi-chip">
+                        <span class="mc-kpi-num">{activeCrews}</span>
+                        <span class="mc-kpi-lbl">Active Crews</span>
+                    </div>
+                    <div class="mc-kpi-chip">
+                        <span class="mc-kpi-num">{bonusEligible}</span>
+                        <span class="mc-kpi-lbl">Bonus Eligible</span>
+                    </div>
+                    <div class="mc-kpi-chip">
+                        <span class="mc-kpi-num">{goalHoursDisplay}</span>
+                        <span class="mc-kpi-lbl">Goal Hrs</span>
+                    </div>
+                    <div class="mc-kpi-chip">
+                        <span class="mc-kpi-num">{actualHoursDisplay}</span>
+                        <span class="mc-kpi-lbl">Actual Hrs</span>
+                    </div>
+                    <div class="mc-kpi-chip" data-type="variance">
+                        <span class="mc-kpi-num">{varianceDisplay}</span>
+                        <span class="mc-kpi-lbl">Variance</span>
+                    </div>
+                </div>
+            </template>
+        </div>
+
+        <!-- ── Tab Bar ─────────────────────────────────────────────────── -->
+        <div class="mc-tabs">
+            <template for:each={tabs} for:item="t">
+                <button key={t.id} class={t.css} data-tabid={t.id} onclick={handleTabClick}>
+                    {t.icon}&nbsp;{t.label}
+                </button>
+            </template>
+            <lightning-button-icon
+                icon-name="utility:refresh"
+                variant="bare"
+                title="Refresh"
+                onclick={handleRefresh}
+                class="mc-refresh-btn">
+            </lightning-button-icon>
+        </div>
+
+        <!-- ── Body ────────────────────────────────────────────────────── -->
+        <div class="mc-body">
+
+            <template if:true={errorMsg}>
+                <div class="mc-error">⚠️ {errorMsg}</div>
+            </template>
+
+            <!-- ── Live Crews ──────────────────────────────────────────── -->
+            <template if:true={tabLiveCrews}>
+                <div class="mc-tab-header">
+                    <h2>Live Crew Status</h2>
+                    <span class="mc-tab-sub">Real-time grid of all active crews and their current lot assignments</span>
+                </div>
+
+                <template if:true={hasCrews}>
+                    <table class="mc-table">
+                        <thead>
+                            <tr>
+                                <th>Crew</th>
+                                <th>Foreman</th>
+                                <th>Current Lot</th>
+                                <th class="text-right">Goal Hrs</th>
+                                <th class="text-right">Actual Hrs</th>
+                                <th class="text-right">Variance</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={crewRows} for:item="r">
+                                <tr key={r.crewName} class="mc-row-link" data-id={r.workOrderId} onclick={handleCrewRowClick} title="Open Work Order">
+                                    <td class="fw-600">{r.crewName}</td>
+                                    <td>{r.foreman}</td>
+                                    <td class="mc-lot-link">{r.currentLot}</td>
+                                    <td class="text-right">{r.goalDisplay}</td>
+                                    <td class="text-right">{r.actualDisplay}</td>
+                                    <td class="text-right" data-negative={r.isNegative}>{r.varianceDisplay}</td>
+                                    <td><span class={r.statusCss}>{r.status}</span></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+
+                <template if:false={hasCrews}>
+                    <div class="mc-empty">
+                        <div class="mc-empty-icon">☕</div>
+                        <div class="mc-empty-title">No Active Crews</div>
+                        <div class="mc-empty-sub">No crews are currently active. Check back once the day gets started.</div>
+                    </div>
+                </template>
+            </template>
+
+            <!-- ── Today's KPIs ────────────────────────────────────────── -->
+            <template if:true={tabDailyKpis}>
+                <div class="mc-tab-header">
+                    <h2>Today's Production KPIs</h2>
+                    <span class="mc-tab-sub">Goal vs. actual hours, crew performance, and bonus eligibility</span>
+                </div>
+
+                <div class="kpi-grid">
+                    <div class="kpi-tile">
+                        <div class="kpi-icon">👥</div>
+                        <div class="kpi-num">{activeCrews}</div>
+                        <div class="kpi-lbl">Active Crews</div>
+                    </div>
+                    <div class="kpi-tile">
+                        <div class="kpi-icon">🏆</div>
+                        <div class="kpi-num">{bonusEligible}</div>
+                        <div class="kpi-lbl">Bonus Eligible</div>
+                    </div>
+                    <div class="kpi-tile">
+                        <div class="kpi-icon">🎯</div>
+                        <div class="kpi-num">{goalHoursDisplay}</div>
+                        <div class="kpi-lbl">Goal Hours Today</div>
+                    </div>
+                    <div class="kpi-tile">
+                        <div class="kpi-icon">⏱️</div>
+                        <div class="kpi-num">{actualHoursDisplay}</div>
+                        <div class="kpi-lbl">Actual Hours</div>
+                    </div>
+                    <div class="kpi-tile" data-negative={isVarianceNegative}>
+                        <div class="kpi-icon">📊</div>
+                        <div class="kpi-num">{varianceDisplay}</div>
+                        <div class="kpi-lbl">Variance</div>
+                    </div>
+                    <div class="kpi-tile">
+                        <div class="kpi-icon">📈</div>
+                        <div class="kpi-num">{utilizationDisplay}</div>
+                        <div class="kpi-lbl">Utilization</div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- ── Scheduling Pipeline ─────────────────────────────────── -->
+            <template if:true={tabPipeline}>
+                <div class="mc-tab-header">
+                    <h2>30-Day Scheduling Pipeline</h2>
+                    <span class="mc-tab-sub">Work orders locked, pending approval, and site readiness status</span>
+                </div>
+
+                <div class="kpi-grid">
+                    <div class="kpi-tile">
+                        <div class="kpi-icon">🔒</div>
+                        <div class="kpi-num">{schedLockedToday}</div>
+                        <div class="kpi-lbl">Locked Today</div>
+                    </div>
+                    <div class="kpi-tile">
+                        <div class="kpi-icon">📋</div>
+                        <div class="kpi-num">{schedPendingProposals}</div>
+                        <div class="kpi-lbl">Pending Proposals</div>
+                    </div>
+                    <div class="kpi-tile">
+                        <div class="kpi-icon">✅</div>
+                        <div class="kpi-num">{schedCtsQueue}</div>
+                        <div class="kpi-lbl">Clear to Schedule</div>
+                    </div>
+                    <div class="kpi-tile">
+                        <div class="kpi-icon">🗓️</div>
+                        <div class="kpi-num">{schedThirtyDay}</div>
+                        <div class="kpi-lbl">30-Day Pipeline</div>
+                    </div>
+                    <div class="kpi-tile kpi-tile-warn">
+                        <div class="kpi-icon">⚠️</div>
+                        <div class="kpi-num">{schedSiteReadinessOverdue}</div>
+                        <div class="kpi-lbl">Site Readiness Overdue</div>
+                    </div>
+                    <div class="kpi-tile">
+                        <div class="kpi-icon">🚛</div>
+                        <div class="kpi-num">{schedOpenPullTickets}</div>
+                        <div class="kpi-lbl">Open Pull Tickets</div>
+                    </div>
+                </div>
+            </template>
+
+        </div>
+    </div>
+</template>

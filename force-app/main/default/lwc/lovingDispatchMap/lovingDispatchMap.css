@@ -167,7 +167,34 @@
     font-size: 11px;
     font-weight: 700;
     color: #333;
+    margin-bottom: 8px;
 }
+
+.tc-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+    border-top: 1px solid #f0f4f9;
+    padding-top: 7px;
+}
+
+.tc-btn { --slds-c-button-neutral-color-border: #d8dde6; }
+
+.tc-call-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #2e7d32;
+    background: #e8f5e9;
+    border: 1px solid #a5d6a7;
+    border-radius: 4px;
+    padding: 3px 8px;
+    text-decoration: none;
+    cursor: pointer;
+}
+.tc-call-btn:hover { background: #c8e6c9; }
 
 /* Status chips */
 .tc-status {

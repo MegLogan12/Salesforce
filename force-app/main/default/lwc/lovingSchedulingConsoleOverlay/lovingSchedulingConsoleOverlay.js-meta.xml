@@ -5,14 +5,10 @@
     <targets>
         <target>lightning__AppPage</target>
         <target>lightning__HomePage</target>
-        <target>lightning__UtilityBar</target>
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__AppPage,lightning__HomePage">
-            <property name="pageTitle" type="String" label="Page Title" default="Scheduling Console"/>
-        </targetConfig>
-        <targetConfig targets="lightning__UtilityBar">
-            <property name="pageTitle" type="String" label="Page Title" default="Scheduling Console"/>
+            <property name="defaultDivision" type="String" label="Default Division" default="Charlotte"/>
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>

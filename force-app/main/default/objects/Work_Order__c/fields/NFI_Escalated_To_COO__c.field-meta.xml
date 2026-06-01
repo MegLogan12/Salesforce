@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>NFI_Escalated_To_COO__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Set true when count &gt; 2</description>
+    <label>NFI Escalated To COO</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

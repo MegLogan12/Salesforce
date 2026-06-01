@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Aqua_Customer__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Yes = this community is on the Aqua program.</description>
+    <label>Aqua Customer</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

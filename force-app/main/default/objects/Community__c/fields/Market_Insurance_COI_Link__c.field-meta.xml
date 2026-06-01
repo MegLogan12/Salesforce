@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Market_Insurance_COI_Link__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(ISBLANK(Builder_Account__r.Insurance_COI_Link__c), &quot;&quot;, HYPERLINK(Builder_Account__r.Insurance_COI_Link__c, Builder_Account__r.Insurance_COI_Link__c, &quot;_blank&quot;))</formula>
+    <inlineHelpText>Insurance COI link pulled from Market Account.</inlineHelpText>
+    <label>Insurance COI Link</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>
