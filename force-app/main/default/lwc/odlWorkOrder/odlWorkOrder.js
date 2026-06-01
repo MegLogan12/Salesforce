@@ -99,4 +99,52 @@ export default class OdlWorkOrder extends NavigationMixin(LightningElement) {
             attributes: { recordId: this.recordId, objectApiName: 'WorkOrder', relationshipApiName: 'ActivityHistories', actionName: 'view' }
         });
     }
+    logLabor() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Time_Entry__c', actionName: 'new' },
+            state: { defaultFieldValues: encodeDefaultFieldValues({ Work_Order__c: this.recordId }) }
+        });
+    }
+    updateMaterials() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Material_Allocation__c', actionName: 'new' },
+            state: { defaultFieldValues: encodeDefaultFieldValues({ Work_Order__c: this.recordId, LOVING_Work_Order__c: this.recordId }) }
+        });
+    }
+    submitPunchNote() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Task', actionName: 'new' },
+            state: { defaultFieldValues: encodeDefaultFieldValues({ WhatId: this.recordId, Subject: 'Punch Note', Type: 'Note' }) }
+        });
+    }
+
+    get lastTouchDisplay() {
+        return this.workOrder.LastActivityDate
+            ? new Date(this.workOrder.LastActivityDate + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+            : '—';
+    }
+    get daysSinceLastTouch() {
+        if (!this.workOrder.LastActivityDate) return null;
+        const diff = Math.floor((Date.now() - new Date(this.workOrder.LastActivityDate + 'T12:00:00').getTime()) / 86400000);
+        return diff;
+    }
+    get daysSinceLastTouchDisplay() {
+        const d = this.daysSinceLastTouch;
+        if (d === null) return '—';
+        if (d === 0) return 'today';
+        if (d === 1) return '1 day ago';
+        return `${d} days ago`;
+    }
+    get stalenessChipClass() {
+        const d = this.daysSinceLastTouch;
+        if (d === null) return 'chip cgr';
+        if (d <= 1) return 'chip cg';
+        if (d <= 3) return 'chip ca';
+        return 'chip cgr';
+    }
+    get completedPunchCount() { return this.lineItems.filter(li => li.Status === 'Completed').length; }
+    get totalPunchCount() { return this.lineItems.length; }
 }

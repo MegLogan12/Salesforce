@@ -273,7 +273,7 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
-                <componentName>flexipage:relatedListContainer</componentName>
+                <componentName>force:relatedListContainer</componentName>
                 <identifier>wo_sidebar_related</identifier>
             </componentInstance>
         </itemInstances>

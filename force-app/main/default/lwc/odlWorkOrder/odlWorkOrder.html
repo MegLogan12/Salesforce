@@ -97,20 +97,20 @@
                         </div>
                         <div class="qa-list">
                             <div class="qa-item" onclick={viewFiles}>Upload progress photos</div>
-                            <div class="qa-item" onclick={createTask}>Log labor</div>
-                            <div class="qa-item" onclick={createTask}>Update materials used</div>
-                            <div class="qa-item" onclick={createTask}>Submit punch notes</div>
+                            <div class="qa-item" onclick={logLabor}>Log labor</div>
+                            <div class="qa-item" onclick={updateMaterials}>Update materials used</div>
+                            <div class="qa-item" onclick={submitPunchNote}>Submit punch notes</div>
                         </div>
                     </div>
                     <div class="card">
                         <div class="ch" style="--ch-bg:#534ab7">
-                            <div class="ci">AI</div>
-                            <h3>Assistant Panel</h3>
+                            <div class="ci">STATS</div>
+                            <h3>Quick Stats</h3>
                         </div>
-                        <div class="qa-list">
-                            <div class="qa-item" onclick={viewActivity}>Summarize work order status</div>
-                            <div class="qa-item" onclick={viewActivity}>Draft customer update</div>
-                            <div class="qa-item" onclick={createTask}>Show open punch items</div>
+                        <div style="padding:10px 14px">
+                            <div class="rail-row"><span>Open punches</span><span class="chip cb2">{openPunchCount}</span></div>
+                            <div class="rail-row"><span>Completed punches</span><span class="chip cg">{completedPunchCount}</span></div>
+                            <div class="rail-row"><span>Total punches</span><span>{totalPunchCount}</span></div>
                         </div>
                     </div>
                     <div class="card">
@@ -119,9 +119,8 @@
                             <h3>Activity Health</h3>
                         </div>
                         <div style="padding:10px 14px">
-                            <div class="rail-row"><span>Last touch</span><span>—</span></div>
-                            <div class="rail-row"><span>Voicemail</span><span class="chip cgr">None</span></div>
-                            <div class="rail-row"><span>Next follow-up</span><span class="chip cb2">—</span></div>
+                            <div class="rail-row"><span>Last touch</span><span>{lastTouchDisplay}</span></div>
+                            <div class="rail-row"><span>Days since</span><span class={stalenessChipClass}>{daysSinceLastTouchDisplay}</span></div>
                             <div class="rail-row"><span>Open tasks</span><span>{openPunchCount}</span></div>
                         </div>
                     </div>
