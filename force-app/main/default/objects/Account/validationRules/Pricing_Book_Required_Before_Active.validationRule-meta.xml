@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pricing_Book_Required_Before_Active</fullName>
+    <active>false</active>
+    <description>Prevents a Builder Division from being set Active without an active pricing book. Work Orders cannot be priced without it. Deployed inactive; activate after sandbox T12 passes. Spec VR 7.5.</description>
+    <errorConditionFormula>AND(
+  ISCHANGED(Account_Status__c),
+  ISPICKVAL(Account_Status__c, &quot;Active&quot;),
+  RecordType.DeveloperName = &quot;Builder_Market&quot;,
+  Pricing_Book_Active__c = false
+)</errorConditionFormula>
+    <errorMessage>Activate the BMG pricing book before setting this division Active. Work Orders cannot be priced without it.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PO_Must_Attach_To_Division</fullName>
+    <active>false</active>
+    <description>Prevents a Builder PO from attaching to a Builder Parent (roll-up only). Builder_Account__c must point to a Builder_Market Division. Deployed inactive; activate after sandbox T4 passes. Spec VR 7.4.</description>
+    <errorConditionFormula>AND(
+  NOT(ISBLANK(Builder_Account__c)),
+  Builder_Account__r.RecordType.DeveloperName = &quot;Builder_Parent&quot;
+)</errorConditionFormula>
+    <errorDisplayField>Builder_Account__c</errorDisplayField>
+    <errorMessage>Builder POs attach to a Builder Division, not a Builder Parent. The Parent is roll-up only.</errorMessage>
+</ValidationRule>

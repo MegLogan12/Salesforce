@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Parent_Must_Be_Parent_Type</fullName>
+    <active>false</active>
+    <description>Prevents a Builder Division from being parented to another Division. Parent must be a Builder_Parent account. Deployed inactive; activate after sandbox T3 passes. Spec VR 7.3.</description>
+    <errorConditionFormula>AND(
+  RecordType.DeveloperName = &quot;Builder_Market&quot;,
+  NOT(ISBLANK(ParentId)),
+  Parent.RecordType.DeveloperName &lt;&gt; &quot;Builder_Parent&quot;
+)</errorConditionFormula>
+    <errorDisplayField>ParentId</errorDisplayField>
+    <errorMessage>A Builder Division can only roll up to a Builder Parent, not to another Division.</errorMessage>
+</ValidationRule>

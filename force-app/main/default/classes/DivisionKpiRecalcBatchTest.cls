@@ -1,0 +1,93 @@
+@IsTest
+private class DivisionKpiRecalcBatchTest {
+
+    private static final Id PARENT_RT = Schema.SObjectType.Account
+        .getRecordTypeInfosByDeveloperName().get('Builder_Parent').getRecordTypeId();
+    private static final Id DIVISION_RT = Schema.SObjectType.Account
+        .getRecordTypeInfosByDeveloperName().get('Builder_Market').getRecordTypeId();
+
+    @TestSetup
+    static void makeData() {
+        Account parent = new Account(Name = 'Test Corp', RecordTypeId = PARENT_RT);
+        insert parent;
+
+        Account div = new Account(
+            Name = 'Test Division', RecordTypeId = DIVISION_RT,
+            ParentId = parent.Id, Account_Status__c = 'Active', Market__c = 'Greenville'
+        );
+        insert div;
+
+        // Open WO linked to division
+        Work_Order__c wo = new Work_Order__c(
+            Builder_Market_Account__c = div.Id,
+            Status__c = 'Scheduled'
+        );
+        insert wo;
+
+        // Paid T12M invoice with both revenue and cost on the invoice itself
+        Invoice__c inv = new Invoice__c(
+            Back_Charge__c = false,
+            Temp_Irrigation_Billed__c = false,
+            Status__c = 'Paid',
+            Date_Paid__c = Date.today().addDays(-10),
+            Total_Revenue__c = 10000,
+            Total_Cost__c = 7000,
+            Builder_Market_Account__c = div.Id
+        );
+        insert inv;
+
+        Community__c comm = new Community__c(
+            Name = 'Test Community',
+            Builder_Account__c = div.Id,
+            Active__c = true,
+            Aqua_Customer__c = false,
+            Temp_Irrigation_Included__c = false,
+            Aqua_Included__c = false,
+            Lawn_Care_Customer__c = false,
+            Aqua_Active__c = false
+        );
+        insert comm;
+    }
+
+    @IsTest
+    static void batch_populatesKpiFields() {
+        Test.startTest();
+        DivisionKpiRecalcBatch.run();
+        Test.stopTest();
+
+        Account div = [
+            SELECT Division_Revenue_T12M__c, Division_GP_Pct__c,
+                   Open_WO_Count__c, Active_Communities_Count__c
+            FROM Account
+            WHERE RecordType.DeveloperName = 'Builder_Market'
+              AND Name = 'Test Division'
+            LIMIT 1
+        ];
+        System.assert(div.Division_Revenue_T12M__c > 0, 'Revenue should be populated');
+        System.assert(div.Division_GP_Pct__c != null, 'GP should be populated');
+        System.assertEquals(1, (Integer) div.Open_WO_Count__c, 'One open WO expected');
+        System.assertEquals(1, (Integer) div.Active_Communities_Count__c, 'One active community expected');
+    }
+
+    @IsTest
+    static void batch_zeroData_setsCounts() {
+        Id parentId = [SELECT Id FROM Account WHERE RecordType.DeveloperName = 'Builder_Parent' LIMIT 1].Id;
+        Account zeroDiv = new Account(
+            Name = 'Empty Division', RecordTypeId = DIVISION_RT,
+            ParentId = parentId, Account_Status__c = 'Active', Market__c = 'Asheville'
+        );
+        insert zeroDiv;
+
+        Test.startTest();
+        DivisionKpiRecalcBatch.run();
+        Test.stopTest();
+
+        Account div = [
+            SELECT Division_Revenue_T12M__c, Open_WO_Count__c, Open_NFI_Count__c
+            FROM Account WHERE Id = :zeroDiv.Id
+        ];
+        System.assertEquals(null, div.Division_Revenue_T12M__c, 'No invoices — revenue should stay null');
+        System.assertEquals(0, (Integer) div.Open_WO_Count__c, 'No WOs — count should be 0');
+        System.assertEquals(0, (Integer) div.Open_NFI_Count__c, 'No NFI WOs — count should be 0');
+    }
+}

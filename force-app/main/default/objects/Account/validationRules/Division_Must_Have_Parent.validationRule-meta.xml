@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Division_Must_Have_Parent</fullName>
+    <active>false</active>
+    <description>A Builder Division (Builder_Market) without a Parent Account breaks the revenue roll-up and concentration formula. Deployed inactive; activate after sandbox T2 passes. Spec VR 7.2.</description>
+    <errorConditionFormula>AND(
+  RecordType.DeveloperName = &quot;Builder_Market&quot;,
+  ISBLANK(ParentId)
+)</errorConditionFormula>
+    <errorDisplayField>ParentId</errorDisplayField>
+    <errorMessage>A Builder Division must roll up to a Builder Parent. Set the Parent Account.</errorMessage>
+</ValidationRule>

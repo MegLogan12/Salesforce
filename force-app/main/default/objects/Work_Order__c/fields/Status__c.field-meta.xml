@@ -89,7 +89,6 @@
             <value>
                 <fullName>Need Further Info (NFI)</fullName>
                 <default>false</default>
-                <isActive>false</isActive>
                 <label>Need Further Info (NFI)</label>
             </value>
             <value>
@@ -105,6 +104,7 @@
             <value>
                 <fullName>NFI</fullName>
                 <default>false</default>
+                <isActive>false</isActive>
                 <label>NFI</label>
             </value>
             <value>
