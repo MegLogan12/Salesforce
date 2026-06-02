@@ -152,15 +152,6 @@
         <type>Flexipage</type>
         <pageOrSobjectType>WorkOrder</pageOrSobjectType>
     </actionOverrides>
-    <actionOverrides>
-        <actionName>View</actionName>
-        <comment>Outdoor Living field execution work order view.</comment>
-        <content>Outdoor_Living_Work_Order_Record_Page</content>
-        <formFactor>Large</formFactor>
-        <skipRecordTypeSelect>false</skipRecordTypeSelect>
-        <type>Flexipage</type>
-        <pageOrSobjectType>Work_Order__c</pageOrSobjectType>
-    </actionOverrides>
     <brand>
         <headerColor>#16325C</headerColor>
         <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
