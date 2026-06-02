@@ -28,6 +28,7 @@ public with sharing class ODLContactRecordController {
         @AuraEnabled public Id      nextActionCaseId;
         @AuraEnabled public Id      nextActionOppId;
         // Related
+        @AuraEnabled public String  accountUrl;
         @AuraEnabled public List<DealRow>        dealsAndService;
         @AuraEnabled public List<HouseholdMember> householdMembers;
         @AuraEnabled public List<ActivityItem>    recentActivity;
@@ -36,6 +37,7 @@ public with sharing class ODLContactRecordController {
 
     public class DealRow {
         @AuraEnabled public Id     recordId;
+        @AuraEnabled public String recordUrl;
         @AuraEnabled public String label;
         @AuraEnabled public String type;
         @AuraEnabled public String status;
@@ -45,6 +47,7 @@ public with sharing class ODLContactRecordController {
 
     public class HouseholdMember {
         @AuraEnabled public Id     contactId;
+        @AuraEnabled public String recordUrl;
         @AuraEnabled public String name;
         @AuraEnabled public String subtitle;
         @AuraEnabled public String initials;
@@ -79,6 +82,8 @@ public with sharing class ODLContactRecordController {
         pd.contactRecord = con;
         pd.accountId     = con.AccountId;
         pd.accountName   = con.Account?.Name;
+        pd.accountUrl    = con.AccountId != null
+                            ? '/lightning/r/Account/' + con.AccountId + '/view' : null;
         pd.contactInitials = initials(con.FirstName, con.LastName);
         pd.location      = location(con.Account?.BillingCity, con.Account?.BillingState);
         pd.ownerName     = con.Owner?.Name;
@@ -219,6 +224,7 @@ public with sharing class ODLContactRecordController {
         for (OpportunityContactRole r : roles) {
             DealRow row = new DealRow();
             row.recordId  = r.OpportunityId;
+            row.recordUrl = '/lightning/r/Opportunity/' + r.OpportunityId + '/view';
             row.label     = r.Opportunity.Name;
             row.type      = oppType(r.Opportunity.RecordType?.DeveloperName);
             row.status    = r.Opportunity.StageName;
@@ -232,6 +238,7 @@ public with sharing class ODLContactRecordController {
         for (Case c : cases) {
             DealRow row = new DealRow();
             row.recordId  = c.Id;
+            row.recordUrl = '/lightning/r/Case/' + c.Id + '/view';
             row.label     = c.CaseNumber;
             row.type      = String.isNotBlank(c.Type) ? c.Type : 'Case';
             row.status    = c.Status;
@@ -243,6 +250,7 @@ public with sharing class ODLContactRecordController {
         for (Quote q : quotes) {
             DealRow row = new DealRow();
             row.recordId  = q.Id;
+            row.recordUrl = '/lightning/r/Quote/' + q.Id + '/view';
             row.label     = q.Name;
             row.type      = 'Quote';
             row.status    = q.Status;
@@ -270,6 +278,7 @@ public with sharing class ODLContactRecordController {
         ]) {
             HouseholdMember m = new HouseholdMember();
             m.contactId = c.Id;
+            m.recordUrl = '/lightning/r/Contact/' + c.Id + '/view';
             m.name      = c.Name;
             m.subtitle  = String.isNotBlank(c.Title) ? c.Title : 'Contact';
             m.initials  = initials(c.FirstName, c.LastName);

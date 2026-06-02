@@ -97,7 +97,7 @@
                     <tbody>
                         <template for:each={pageData.dealsAndService} for:item="row">
                             <tr key={row.recordId}>
-                                <td><a href={row.recordId} class="tbl-link">{row.label}</a></td>
+                                <td><a href={row.recordUrl} class="tbl-link">{row.label}</a></td>
                                 <td>{row.type}</td>
                                 <td><span class={row.chipClass}>{row.status}</span></td>
                                 <td class="tbl-r">{row.value}</td>
@@ -107,7 +107,7 @@
                 </table>
                 <div class="card-note">
                     Lifetime value rolls up on the
-                    <a href={pageData.accountId} class="tbl-link">{pageData.accountName}</a>
+                    <a href={pageData.accountUrl} class="tbl-link">{pageData.accountName}</a>
                     account.
                 </div>
             </template>

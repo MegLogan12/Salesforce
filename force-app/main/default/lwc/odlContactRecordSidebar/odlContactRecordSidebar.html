@@ -7,14 +7,14 @@
             <div class="card-head">
                 <span class="card-icon ci-blue">HH</span>
                 <span class="card-title">Household</span>
-                <a href={pageData.accountId} class="card-link">Open</a>
+                <a href={pageData.accountUrl} class="card-link">Open</a>
             </div>
             <div class="card-body">
                 <div class="mini">
                     <span class="mini-icon" style="background:#2d5f8a">{accountInitials}</span>
                     <div>
                         <div class="mini-name">
-                            <a href={pageData.accountId} class="link-blue">{pageData.accountName}</a>
+                            <a href={pageData.accountUrl} class="link-blue">{pageData.accountName}</a>
                         </div>
                         <div class="mini-sub">{pageData.location}</div>
                     </div>
@@ -23,7 +23,9 @@
                     <div key={m.contactId} class="mini">
                         <span class="mini-icon" style="background:#5b6470">{m.initials}</span>
                         <div>
-                            <div class="mini-name">{m.name}</div>
+                            <div class="mini-name">
+                                <a href={m.recordUrl} class="link-blue">{m.name}</a>
+                            </div>
                             <div class="mini-sub">{m.subtitle}</div>
                         </div>
                     </div>
