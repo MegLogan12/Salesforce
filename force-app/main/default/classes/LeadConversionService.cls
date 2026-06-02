@@ -28,10 +28,33 @@
  */
 public with sharing class LeadConversionService {
 
+    // ─────────────────────────────────────────────
+    // SOURCE → RECORD TYPE MAP (CMDT-driven)
+    // Loaded once per transaction. Exposed for @TestVisible override.
+    // ─────────────────────────────────────────────
+    @TestVisible
+    private static Map<String, String> sourceToRecordTypeMap {
+        get {
+            if (sourceToRecordTypeMap == null) {
+                sourceToRecordTypeMap = new Map<String, String>();
+                for (ODL_Source_Record_Type__mdt row : [
+                    SELECT Lead_Source__c, Opportunity_Record_Type__c
+                    FROM ODL_Source_Record_Type__mdt
+                ]) {
+                    if (row.Lead_Source__c != null && row.Opportunity_Record_Type__c != null) {
+                        sourceToRecordTypeMap.put(row.Lead_Source__c, row.Opportunity_Record_Type__c);
+                    }
+                }
+            }
+            return sourceToRecordTypeMap;
+        }
+        set;
+    }
+
     public static void routeConversion(List<Id> leadIds) {
         List<Lead> leads = [
             SELECT Id, Lead_Type__c, Company, FirstName, LastName, Email, Phone,
-                   Community_Name__c, Market__c,
+                   Community_Name__c, Market__c, LeadSource,
                    Builder_Parent_Account__c, Builder_Market_Account__c,
                    ConvertedAccountId, ConvertedContactId, ConvertedOpportunityId,
                    Estimated_Lot_Count__c, Estimated_Annual_Value__c,
@@ -110,14 +133,20 @@ public with sharing class LeadConversionService {
             Type         = 'Home Owner'
         );
 
-        // Set Opportunity Type to UpgradeMyBackyard so ODLHomeownerPropertyIdentityService
-        // classifies it as ODL for all homeowner LeadSource values (Google, Social Media, etc.)
-        // that aren't in the ODL_LEAD_SOURCES set. The trigger fires on update and creates
-        // or finds the Homeowner_Property__c record.
+        // Determine RecordType and Type from LeadSource via CMDT map.
+        // Falls back to Design_Build if LeadSource is unmapped.
         if (l.ConvertedOpportunityId != null) {
+            String mappedRT = sourceToRecordTypeMap.get(l.LeadSource);
+            if (mappedRT == null) {
+                System.debug('[LeadConversionService] convertScenarioB: LeadSource "' + l.LeadSource + '" is not mapped in ODL_Source_Record_Type__mdt. Defaulting to Design_Build.');
+                mappedRT = 'Design_Build';
+            }
+            String oppType = (mappedRT == 'UMB') ? 'UpgradeMyBackyard' : 'Design Build';
+            Id recordTypeId = RecordTypeHelper.getOpportunityRT(mappedRT);
             update new Opportunity(
-                Id   = l.ConvertedOpportunityId,
-                Type = 'UpgradeMyBackyard'
+                Id           = l.ConvertedOpportunityId,
+                Type         = oppType,
+                RecordTypeId = recordTypeId
             );
         }
     }

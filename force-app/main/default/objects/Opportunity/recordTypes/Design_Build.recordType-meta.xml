@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Design_Build</fullName>
+    <active>true</active>
+    <businessProcess>Design_Build</businessProcess>
+    <label>Design Build</label>
+    <picklistValues>
+        <picklist>ForecastCategoryName</picklist>
+        <values>
+            <fullName>Best Case</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Closed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Commit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Omitted</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pipeline</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>LeadSource</picklist>
+        <values>
+            <fullName>Employee Referral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>External Referral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Google</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Homebuilder Event</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inbound Call</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lennar Voucher</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Social Media</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>UMB Builder Pop Up</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Web - Consultation Form</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Web - Design Form</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Website</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Type</picklist>
+        <values>
+            <fullName>Design and Build</fullName>
+            <default>true</default>
+        </values>
+    </picklistValues>
+</RecordType>

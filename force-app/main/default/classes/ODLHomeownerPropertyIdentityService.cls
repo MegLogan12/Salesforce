@@ -1,4 +1,6 @@
 public without sharing class ODLHomeownerPropertyIdentityService {
+    // Legacy heuristic sets kept for insert-time classification only.
+    // Post-conversion identity check delegates to ODLOpportunityService.isOdlOpportunity().
     private static final Set<String> ODL_TYPES = new Set<String>{
         'UpgradeMyBackyard',
         'Design Build',
@@ -161,18 +163,14 @@ public without sharing class ODLHomeownerPropertyIdentityService {
         }
     }
 
+    /**
+     * Delegates to the canonical ODLOpportunityService.isOdlOpportunity().
+     * That method uses RecordType when set (post-conversion) and falls back to
+     * the Type + LeadSource + BMG heuristic at insert time or during migration.
+     */
     @TestVisible
     private static Boolean isOdlOpportunity(Opportunity opp) {
-        if (opp == null) {
-            return false;
-        }
-        if (!String.isBlank(opp.Type) && ODL_TYPES.contains(opp.Type)) {
-            return true;
-        }
-        if (!String.isBlank(opp.LeadSource) && ODL_LEAD_SOURCES.contains(opp.LeadSource)) {
-            return true;
-        }
-        return !String.isBlank(opp.BMG_Package__c);
+        return ODLOpportunityService.isOdlOpportunity(opp);
     }
 
     private static Map<Id, Id> resolveOpportunityContactIds(Set<Id> opportunityIds, List<Opportunity> opportunities) {

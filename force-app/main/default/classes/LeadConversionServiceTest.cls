@@ -44,8 +44,99 @@ private class LeadConversionServiceTest {
         System.assertEquals(homeOwnerRtId, acct.RecordTypeId, 'Account should have Home_Owner record type.');
         System.assertEquals('Home Owner', acct.Type);
 
-        Opportunity opp = [SELECT Type FROM Opportunity WHERE Id = :result.getOpportunityId()];
-        System.assertEquals('UpgradeMyBackyard', opp.Type, 'Opportunity should be classified as UpgradeMyBackyard.');
+        Opportunity opp = [SELECT Type, RecordType.DeveloperName FROM Opportunity WHERE Id = :result.getOpportunityId()];
+        System.assertEquals('UpgradeMyBackyard', opp.Type, 'Lennar Voucher lead should produce UpgradeMyBackyard type.');
+        System.assertEquals('UMB', opp.RecordType.DeveloperName, 'Lennar Voucher lead should produce UMB record type.');
+    }
+
+    @isTest
+    static void testVoucherSourceConvertsToUMB() {
+        // Inject map override so test does not depend on CMDT being deployed
+        LeadConversionService.sourceToRecordTypeMap = new Map<String, String>{
+            'Lennar Voucher' => 'UMB',
+            'UMB Builder Pop Up' => 'UMB',
+            'Homebuilder Event' => 'UMB',
+            'Web - Design Form' => 'Design_Build',
+            'Web - Consultation Form' => 'Design_Build',
+            'Website' => 'Design_Build'
+        };
+
+        Lead l = new Lead(
+            FirstName    = 'Voucher',
+            LastName     = 'Test',
+            Company      = 'Homeowner',
+            LeadSource   = 'Lennar Voucher',
+            Lead_Type__c = 'Homeowner',
+            Status       = 'New'
+        );
+        insert l;
+
+        Test.startTest();
+        Database.LeadConvertResult result = doConvert(l.Id, false);
+        Test.stopTest();
+
+        System.assert(result.isSuccess(), 'Conversion should succeed: ' + result.getErrors());
+        Opportunity opp = [SELECT Type, RecordType.DeveloperName FROM Opportunity WHERE Id = :result.getOpportunityId()];
+        System.assertEquals('UMB', opp.RecordType.DeveloperName, 'Lennar Voucher should map to UMB record type.');
+        System.assertEquals('UpgradeMyBackyard', opp.Type, 'UMB record type should set Type = UpgradeMyBackyard.');
+    }
+
+    @isTest
+    static void testWebSourceConvertsToDesignBuild() {
+        LeadConversionService.sourceToRecordTypeMap = new Map<String, String>{
+            'Lennar Voucher' => 'UMB',
+            'UMB Builder Pop Up' => 'UMB',
+            'Homebuilder Event' => 'UMB',
+            'Web - Design Form' => 'Design_Build',
+            'Web - Consultation Form' => 'Design_Build',
+            'Website' => 'Design_Build'
+        };
+
+        Lead l = new Lead(
+            FirstName    = 'Design',
+            LastName     = 'Test',
+            Company      = 'Homeowner',
+            LeadSource   = 'Web - Design Form',
+            Lead_Type__c = 'Homeowner',
+            Status       = 'New'
+        );
+        insert l;
+
+        Test.startTest();
+        Database.LeadConvertResult result = doConvert(l.Id, false);
+        Test.stopTest();
+
+        System.assert(result.isSuccess(), 'Conversion should succeed: ' + result.getErrors());
+        Opportunity opp = [SELECT Type, RecordType.DeveloperName FROM Opportunity WHERE Id = :result.getOpportunityId()];
+        System.assertEquals('Design_Build', opp.RecordType.DeveloperName, 'Web - Design Form should map to Design_Build record type.');
+        System.assertEquals('Design Build', opp.Type, 'Design_Build record type should set Type = Design Build.');
+    }
+
+    @isTest
+    static void testUnmappedSourceDefaultsToDesignBuild() {
+        LeadConversionService.sourceToRecordTypeMap = new Map<String, String>{
+            'Lennar Voucher' => 'UMB',
+            'Web - Design Form' => 'Design_Build'
+        };
+
+        Lead l = new Lead(
+            FirstName    = 'Unmapped',
+            LastName     = 'Test',
+            Company      = 'Homeowner',
+            LeadSource   = 'Other',
+            Lead_Type__c = 'Homeowner',
+            Status       = 'New'
+        );
+        insert l;
+
+        Test.startTest();
+        Database.LeadConvertResult result = doConvert(l.Id, false);
+        Test.stopTest();
+
+        System.assert(result.isSuccess(), 'Conversion should succeed: ' + result.getErrors());
+        Opportunity opp = [SELECT Type, RecordType.DeveloperName FROM Opportunity WHERE Id = :result.getOpportunityId()];
+        System.assertEquals('Design_Build', opp.RecordType.DeveloperName, 'Unmapped source should default to Design_Build record type.');
+        System.assertEquals('Design Build', opp.Type, 'Design_Build default should set Type = Design Build.');
     }
 
     @isTest
@@ -198,9 +289,17 @@ private class LeadConversionServiceTest {
 
     @isTest
     static void testScenarioCMatchesExistingContact() {
+        Account parentAcct2 = new Account(
+            Name         = 'Test Market Parent',
+            RecordTypeId = RecordTypeHelper.getAccountRT('Builder_Parent'),
+            Type         = 'Builder Parent'
+        );
+        insert parentAcct2;
+
         Account marketAcct = new Account(
             Name         = 'Test Market Co',
             RecordTypeId = RecordTypeHelper.getAccountRT('Builder_Market'),
+            ParentId     = parentAcct2.Id,
             Type         = 'Builder Market'
         );
         insert marketAcct;
