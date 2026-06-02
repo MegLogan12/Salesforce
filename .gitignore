@@ -30,3 +30,4 @@ refresh_token
 
 # macOS metadata
 .DS_Store
+.flow-scan/
