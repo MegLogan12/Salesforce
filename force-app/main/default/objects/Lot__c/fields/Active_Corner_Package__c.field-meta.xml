@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Active_Corner_Package__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Resolved Community Package for this lot when Corner_Lot__c = true. Derived from Community.Active_Corner_Package__c. Used by LOVING_BuilderPO_Derive_From_Lot and Work Order creation.</description>
+    <label>Active Corner Package</label>
+    <referenceTo>Community_Package__c</referenceTo>
+    <relationshipLabel>Lots (Corner Package)</relationshipLabel>
+    <relationshipName>Corner_Package_Lots</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

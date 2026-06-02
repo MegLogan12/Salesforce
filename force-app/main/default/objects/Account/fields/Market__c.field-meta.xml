@@ -12,6 +12,31 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
+                <fullName>Triad</fullName>
+                <default>false</default>
+                <label>Triad</label>
+            </value>
+            <value>
+                <fullName>Columbia</fullName>
+                <default>false</default>
+                <label>Columbia</label>
+            </value>
+            <value>
+                <fullName>Greenville</fullName>
+                <default>false</default>
+                <label>Greenville</label>
+            </value>
+            <value>
+                <fullName>Charlotte-North</fullName>
+                <default>false</default>
+                <label>Charlotte-North</label>
+            </value>
+            <value>
+                <fullName>Charlotte-South</fullName>
+                <default>false</default>
+                <label>Charlotte-South</label>
+            </value>
+            <value>
                 <fullName>Asheville</fullName>
                 <default>false</default>
                 <label>Asheville</label>
@@ -22,32 +47,16 @@
                 <label>Charlotte</label>
             </value>
             <value>
-                <fullName>Greenville</fullName>
-                <default>false</default>
-                <label>Greenville</label>
-            </value>
-            <value>
-                <fullName>Spartanburg</fullName>
-                <default>false</default>
-                <label>Spartanburg</label>
-            </value>
-            <value>
-                <fullName>Columbia</fullName>
-                <default>false</default>
-                <isActive>false</isActive>
-                <label>Columbia</label>
-            </value>
-            <value>
                 <fullName>Other</fullName>
                 <default>false</default>
                 <isActive>false</isActive>
                 <label>Other</label>
             </value>
             <value>
-                <fullName>Triad</fullName>
+                <fullName>Spartanburg</fullName>
                 <default>false</default>
                 <isActive>false</isActive>
-                <label>Triad</label>
+                <label>Spartanburg</label>
             </value>
         </valueSetDefinition>
     </valueSet>

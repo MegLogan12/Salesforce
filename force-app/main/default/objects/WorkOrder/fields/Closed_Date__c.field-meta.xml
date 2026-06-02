@@ -3,5 +3,7 @@
     <fullName>Closed_Date__c</fullName>
     <label>Closed Date</label>
     <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
     <type>Date</type>
 </CustomField>

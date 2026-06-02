@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CM_Contact__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Contact to notify for variance billing and Aqua service escalations.</description>
+    <label>Community Manager Contact</label>
+    <referenceTo>Contact</referenceTo>
+    <relationshipLabel>Communities (Aqua CM)</relationshipLabel>
+    <relationshipName>Communities_Aqua_CM</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

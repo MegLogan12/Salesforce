@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Site_Not_Ready_Requires_Record</fullName>
+    <active>true</active>
+    <description>Site Not Ready issues must be linked to a Work Order or Service Appointment.</description>
+    <errorConditionFormula>AND(ISPICKVAL(Issue_Type__c, &quot;Site Not Ready&quot;), ISBLANK(Work_Order__c), ISBLANK(Service_Appointment__c))</errorConditionFormula>
+    <errorMessage>Site Not Ready issues require a Work Order or Service Appointment. Please link at least one before saving.</errorMessage>
+</ValidationRule>

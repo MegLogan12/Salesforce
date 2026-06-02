@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>RTN__c</fullName>
+    <externalId>false</externalId>
+    <formula>TEXT( FLOOR( (NULLVALUE(Shift_Start_Minutes__c,0) + NULLVALUE(Goal_Minutes__c,0) + NULLVALUE(Travel_Minutes__c,0) + NULLVALUE(Lunch_Minutes__c,0) + NULLVALUE(Cushion_Minutes__c,0)) / 60) ) &amp; &quot;:&quot; &amp; IF( MOD( NULLVALUE(Shift_Start_Minutes__c,0) + NULLVALUE(Goal_Minutes__c,0) + NULLVALUE(Travel_Minutes__c,0) + NULLVALUE(Lunch_Minutes__c,0) + NULLVALUE(Cushion_Minutes__c,0), 60) &lt; 10, &quot;0&quot;, &quot;&quot;) &amp; TEXT( MOD( NULLVALUE(Shift_Start_Minutes__c,0) + NULLVALUE(Goal_Minutes__c,0) + NULLVALUE(Travel_Minutes__c,0) + NULLVALUE(Lunch_Minutes__c,0) + NULLVALUE(Cushion_Minutes__c,0), 60))</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>RTN</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

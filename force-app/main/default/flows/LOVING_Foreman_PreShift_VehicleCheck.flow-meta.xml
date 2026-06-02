@@ -17,7 +17,7 @@
             <stringValue>Español</stringValue>
         </value>
     </choices>
-    <description>Pre-shift Screen Flow for foreman in FSL Mobile. Language selection, vehicle safety check, loaded manifest confirm. Sod and mulch excluded. Creates Morning_Vehicle_Checklist__c. Updates WorkOrder.Morning_Check_Complete__c = true. Activated 2026-05-30. Reactivated 2026-05-30.</description>
+    <description>Pre-shift Screen Flow for foreman in FSL Mobile. Language selection, vehicle safety check, loaded manifest confirm. Sod and mulch excluded. Creates Morning_Vehicle_Checklist__c. Updates WorkOrder.Morning_Check_Complete__c = true.</description>
     <environments>Default</environments>
     <interviewLabel>LOVING Foreman Pre-Shift Vehicle Check {!$Flow.CurrentDateTime}</interviewLabel>
     <label>LOVING Foreman Pre-Shift Vehicle Check</label>
@@ -395,7 +395,7 @@
             <targetReference>Get_Loading_Ticket</targetReference>
         </connector>
     </start>
-    <status>Active</status>
+    <status>Draft</status>
     <variables>
         <name>recordId</name>
         <dataType>String</dataType>

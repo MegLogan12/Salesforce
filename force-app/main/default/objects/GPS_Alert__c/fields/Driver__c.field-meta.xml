@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Driver__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Employee linked to this alert. Resolved by WEX driver ID to Driver_Assignment__c to Employee__c.</description>
+    <label>Driver</label>
+    <referenceTo>Employee__c</referenceTo>
+    <relationshipLabel>GPS Alerts</relationshipLabel>
+    <relationshipName>GPS_Alerts</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

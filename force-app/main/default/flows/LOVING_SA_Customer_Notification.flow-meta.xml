@@ -139,6 +139,57 @@
         </rules>
     </decisions>
     <description>Sends a customer email when a ServiceAppointment is Scheduled or Rescheduled. For Rescheduled appointments, includes the previous and new appointment windows in the body.</description>
+    <interviewLabel>LOVING SA Customer Notification {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING SA Customer Notification</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Contact</name>
+        <label>Get Contact for Email</label>
+        <locationX>200</locationX>
+        <locationY>110</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Status_Changed</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.ContactId</elementReference>
+            </value>
+        </filters>
+        <object>Contact</object>
+        <outputReference>varContact</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>FirstName</queriedFields>
+        <queriedFields>Email</queriedFields>
+    </recordLookups>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Contact</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Status</field>
+            <operator>IsChanged</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <object>ServiceAppointment</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Draft</status>
     <textTemplates>
         <name>Rescheduled_Email_Body</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>
@@ -178,58 +229,6 @@ Thank you for choosing LOVING Group. We look forward to seeing you!
 Warm regards,
 LOVING Group Scheduling Team</text>
     </textTemplates>
-    <interviewLabel>LOVING SA Customer Notification {!$Flow.CurrentDateTime}</interviewLabel>
-    <label>LOVING SA Customer Notification</label>
-    <processMetadataValues>
-        <name>BuilderType</name>
-        <value>
-            <stringValue>LightningFlowBuilder</stringValue>
-        </value>
-    </processMetadataValues>
-    <processType>AutoLaunchedFlow</processType>
-    <recordLookups>
-        <name>Get_Contact</name>
-        <label>Get Contact for Email</label>
-        <locationX>200</locationX>
-        <locationY>110</locationY>
-        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Check_Status_Changed</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Id</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>$Record.ContactId</elementReference>
-            </value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>Contact</object>
-        <outputReference>varContact</outputReference>
-        <queriedFields>Id</queriedFields>
-        <queriedFields>FirstName</queriedFields>
-        <queriedFields>Email</queriedFields>
-    </recordLookups>
-    <start>
-        <locationX>50</locationX>
-        <locationY>0</locationY>
-        <connector>
-            <targetReference>Get_Contact</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Status</field>
-            <operator>IsChanged</operator>
-            <value>
-                <booleanValue>true</booleanValue>
-            </value>
-        </filters>
-        <object>ServiceAppointment</object>
-        <recordTriggerType>CreateAndUpdate</recordTriggerType>
-        <triggerType>RecordAfterSave</triggerType>
-    </start>
-    <status>Active</status>
     <variables>
         <name>varContact</name>
         <dataType>SObject</dataType>

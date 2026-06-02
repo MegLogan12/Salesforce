@@ -4,7 +4,7 @@ private class AquaPickupServiceTest {
     @TestSetup
     static void makeData() {
         // Community__c for lot lookup
-        Community__c comm = new Community__c(Name = 'Pickup Test Community', Aqua_Active__c = true);
+        Community__c comm = new Community__c(Name = 'Pickup Test Community', Aqua_Customer__c = true, Aqua_Active__c = true);
         insert comm;
 
         // Aqua_Pickup_Ticket__c.Community__c is a lookup to Opportunity

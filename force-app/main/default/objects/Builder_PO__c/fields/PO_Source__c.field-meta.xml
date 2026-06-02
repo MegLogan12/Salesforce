@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PO_Source__c</fullName>
+    <label>PO Source</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>SupplyPro - DR Horton</fullName>
+                <default>false</default>
+                <label>SupplyPro - DR Horton</label>
+            </value>
+            <value>
+                <fullName>SupplyPro - Lennar</fullName>
+                <default>false</default>
+                <label>SupplyPro - Lennar</label>
+            </value>
+            <value>
+                <fullName>Manual Upload</fullName>
+                <default>false</default>
+                <label>Manual Upload</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

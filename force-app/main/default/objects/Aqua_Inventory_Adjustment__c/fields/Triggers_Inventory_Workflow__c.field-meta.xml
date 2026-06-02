@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Triggers_Inventory_Workflow__c</fullName>
+    <formula>NOT(ISBLANK(TEXT(Aqua_Inventory_Reason_Code__c)))</formula>
+    <label>Triggers Inventory Workflow</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

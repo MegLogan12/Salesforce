@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>59.0</apiVersion>
+    <assignments>
+        <name>Assign_FM_Values</name>
+        <label>Capture FM Decision Values</label>
+        <locationX>176</locationX>
+        <locationY>612</locationY>
+        <assignmentItems>
+            <assignToReference>vFMDecision</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>InputFMDecision</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>vFMNotes</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>InputFMNotes</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Decision_Needs_Schedule_Issue</targetReference>
+        </connector>
+    </assignments>
+    <choices>
+        <name>ChoiceAccept</name>
+        <choiceText>Accept</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Accept</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>ChoicePartialProceed</name>
+        <choiceText>Partial Proceed</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Partial Proceed</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>ChoiceReplaceToday</name>
+        <choiceText>Replace Today</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Replace Today</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>ChoiceReschedule</name>
+        <choiceText>Reschedule</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Reschedule</stringValue>
+        </value>
+    </choices>
+    <decisions>
+        <name>Check_DQC_Loaded</name>
+        <label>Check DQC Loaded</label>
+        <locationX>176</locationX>
+        <locationY>288</locationY>
+        <defaultConnector>
+            <targetReference>DQC_Not_Found_Screen</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>DQC Not Found</defaultConnectorLabel>
+        <rules>
+            <name>DQC_Found</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_DQC_Record</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>FM_Decision_Screen</targetReference>
+            </connector>
+            <label>DQC Found</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Decision_Needs_Schedule_Issue</name>
+        <label>Needs Schedule Issue?</label>
+        <locationX>176</locationX>
+        <locationY>720</locationY>
+        <defaultConnector>
+            <targetReference>Save_FM_Decision</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No Issue Needed</defaultConnectorLabel>
+        <rules>
+            <name>Needs_Issue</name>
+            <conditionLogic>1 OR 2</conditionLogic>
+            <conditions>
+                <leftValueReference>vFMDecision</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Replace Today</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>vFMDecision</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Reschedule</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Create_Schedule_Issue</targetReference>
+            </connector>
+            <label>Replace Today or Reschedule</label>
+        </rules>
+    </decisions>
+    <description>Screen flow for FM to record their decision on a flagged Delivery Quality Check. Launched from DQC record via quick action. FM selects Accept, Partial Proceed, Replace Today, or Reschedule. For Replace Today or Reschedule, creates a Schedule_Issue__c linked to the Work Order. Updates FM_Decision__c and FM_Notified__c. INACTIVE — activate after PKG-DQC-PARENT-01 complete and Meg approves.</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>fScheduleIssueSummary</name>
+        <dataType>String</dataType>
+        <expression>{!vFMDecision} &amp; &quot; — Delivery QC flagged&quot;</expression>
+    </formulas>
+    <interviewLabel>LOVING Delivery QC FM Decision {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING Delivery QC FM Decision</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordCreates>
+        <name>Create_Schedule_Issue</name>
+        <label>Create Schedule Issue</label>
+        <locationX>396</locationX>
+        <locationY>828</locationY>
+        <connector>
+            <targetReference>Save_FM_Decision</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Issue_Type__c</field>
+            <value>
+                <stringValue>Delivery Issue</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Standard_WorkOrder__c</field>
+            <value>
+                <elementReference>Get_DQC_Record.Work_Order__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>Open</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Summary__c</field>
+            <value>
+                <elementReference>fScheduleIssueSummary</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Schedule_Issue__c</object>
+    </recordCreates>
+    <recordLookups>
+        <name>Get_DQC_Record</name>
+        <label>Get DQC Record</label>
+        <locationX>176</locationX>
+        <locationY>180</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_DQC_Loaded</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>vRecordId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Delivery_Quality_Check__c</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Issue_Flag__c</queriedFields>
+        <queriedFields>Issue_Notes__c</queriedFields>
+        <queriedFields>FM_Decision__c</queriedFields>
+        <queriedFields>FM_Notified__c</queriedFields>
+        <queriedFields>Delivery_Issue_Type__c</queriedFields>
+        <queriedFields>Work_Order__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Save_FM_Decision</name>
+        <label>Save FM Decision</label>
+        <locationX>176</locationX>
+        <locationY>936</locationY>
+        <connector>
+            <targetReference>Confirmation_Screen</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>vRecordId</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>FM_Decision__c</field>
+            <value>
+                <elementReference>vFMDecision</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>FM_Notified__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <object>Delivery_Quality_Check__c</object>
+    </recordUpdates>
+    <screens>
+        <name>Confirmation_Screen</name>
+        <label>Decision Saved</label>
+        <locationX>176</locationX>
+        <locationY>1044</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>DisplayConfirmation</name>
+            <fieldText>&lt;p&gt;FM Decision saved: &lt;b&gt;{!vFMDecision}&lt;/b&gt;. You have been marked as notified on this Delivery Quality Check.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>DQC_Not_Found_Screen</name>
+        <label>DQC Not Found</label>
+        <locationX>396</locationX>
+        <locationY>396</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>DisplayNotFound</name>
+            <fieldText>&lt;p&gt;The Delivery Quality Check record could not be found. Please close this window and try again, or contact your system administrator.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>FM_Decision_Screen</name>
+        <label>FM Decision</label>
+        <locationX>176</locationX>
+        <locationY>396</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Assign_FM_Values</targetReference>
+        </connector>
+        <fields>
+            <name>DisplayIssueType</name>
+            <fieldText>&lt;p&gt;&lt;b&gt;Issue Type:&lt;/b&gt; {!Get_DQC_Record.Delivery_Issue_Type__c}&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Foreman Notes:&lt;/b&gt; {!Get_DQC_Record.Issue_Notes__c}&lt;/p&gt;
+&lt;p&gt;Record your decision below. This will mark you as notified and allow the foreman to proceed or requeue the delivery.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>InputFMDecision</name>
+            <choiceReferences>ChoiceAccept</choiceReferences>
+            <choiceReferences>ChoicePartialProceed</choiceReferences>
+            <choiceReferences>ChoiceReplaceToday</choiceReferences>
+            <choiceReferences>ChoiceReschedule</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>FM Decision</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>InputFMNotes</name>
+            <fieldText>Notes (required for Replace Today, Reschedule, or Partial Proceed)</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>false</isRequired>
+            <visibilityRule>
+                <conditionLogic>1 OR 2 OR 3</conditionLogic>
+                <conditions>
+                    <leftValueReference>InputFMDecision</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <stringValue>Replace Today</stringValue>
+                    </rightValue>
+                </conditions>
+                <conditions>
+                    <leftValueReference>InputFMDecision</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <stringValue>Reschedule</stringValue>
+                    </rightValue>
+                </conditions>
+                <conditions>
+                    <leftValueReference>InputFMDecision</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <stringValue>Partial Proceed</stringValue>
+                    </rightValue>
+                </conditions>
+            </visibilityRule>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_DQC_Record</targetReference>
+        </connector>
+    </start>
+    <status>Draft</status>
+    <variables>
+        <name>vFMDecision</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>vFMNotes</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>vRecordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

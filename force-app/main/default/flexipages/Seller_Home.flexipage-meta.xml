@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
     <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>contextKey</name>
+                    <value>SELLER_HOME</value>
+                </componentInstanceProperties>
+                <componentName>mcLovinLaunchPrompt</componentName>
+                <identifier>mclovin_launch_prompt_seller_home</identifier>
+            </componentInstance>
+        </itemInstances>
         <mode>Replace</mode>
         <name>defaultPanel</name>
         <type>Region</type>

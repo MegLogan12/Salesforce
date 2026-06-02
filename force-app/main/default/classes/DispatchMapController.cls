@@ -14,6 +14,9 @@ public with sharing class DispatchMapController {
         @AuraEnabled public Integer sortKey;
         @AuraEnabled public String  truckNumber;
         @AuraEnabled public String  lastSeen;
+        @AuraEnabled public String  workOrderId;
+        @AuraEnabled public String  foremanPhone;
+        @AuraEnabled public String  crewId;
     }
 
     @AuraEnabled(cacheable=true)
@@ -24,7 +27,7 @@ public with sharing class DispatchMapController {
         // Active crews with a linked vehicle that has GPS data from the last 10 hours
         List<Crew__c> crews = [
             SELECT Id, Name, Truck_Number__c,
-                   Foreman__r.Name,
+                   Foreman__r.Name, Foreman__r.MobilePhone,
                    Vehicle__r.GPS_Latitude__c,
                    Vehicle__r.GPS_Longitude__c,
                    Vehicle__r.GPS_Status__c,
@@ -62,6 +65,8 @@ public with sharing class DispatchMapController {
             p.truckNumber = c.Truck_Number__c;
             p.unitName    = c.Name + (c.Truck_Number__c != null ? ' · T' + c.Truck_Number__c : '');
             p.driverName  = c.Foreman__r != null ? c.Foreman__r.Name : 'Unassigned';
+            p.foremanPhone = c.Foreman__r != null ? c.Foreman__r.MobilePhone : null;
+            p.crewId       = c.Id;
             p.lat         = c.Vehicle__r.GPS_Latitude__c;
             p.lng         = c.Vehicle__r.GPS_Longitude__c;
             p.status      = c.Vehicle__r.GPS_Status__c != null ? c.Vehicle__r.GPS_Status__c : 'Unknown';
@@ -75,9 +80,11 @@ public with sharing class DispatchMapController {
                 p.appointmentNumber = wo.WorkOrderNumber;
                 p.street            = wo.Street;
                 p.city              = wo.City;
+                p.workOrderId       = wo.Id;
             } else {
                 p.subject           = 'No jobs scheduled today';
                 p.appointmentNumber = (String)c.Id;
+                p.workOrderId       = null;
             }
             pins.add(p);
         }

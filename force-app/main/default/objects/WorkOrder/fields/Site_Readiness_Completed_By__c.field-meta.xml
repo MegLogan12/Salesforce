@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Site_Readiness_Completed_By__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>FM or crew lead who confirmed site readiness. Populated by SiteReadinessService.</description>
+    <label>Site Readiness Completed By</label>
+    <referenceTo>User</referenceTo>
+    <relationshipLabel>Work Orders (Site Readiness Completed By)</relationshipLabel>
+    <relationshipName>SiteReadinessCompletedBy_WorkOrders</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Lookup</type>
+</CustomField>

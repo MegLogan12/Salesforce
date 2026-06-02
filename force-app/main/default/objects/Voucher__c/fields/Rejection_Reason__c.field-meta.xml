@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Rejection_Reason__c</fullName>
+    <label>Rejection Reason</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Invalid Code</fullName>
+                <default>false</default>
+                <label>Invalid Code</label>
+            </value>
+            <value>
+                <fullName>Expired</fullName>
+                <default>false</default>
+                <label>Expired</label>
+            </value>
+            <value>
+                <fullName>Duplicate Use</fullName>
+                <default>false</default>
+                <label>Duplicate Use</label>
+            </value>
+            <value>
+                <fullName>Ineligible Package</fullName>
+                <default>false</default>
+                <label>Ineligible Package</label>
+            </value>
+            <value>
+                <fullName>Outside Service Area</fullName>
+                <default>false</default>
+                <label>Outside Service Area</label>
+            </value>
+            <value>
+                <fullName>Minimum Project Value Not Met</fullName>
+                <default>false</default>
+                <label>Minimum Project Value Not Met</label>
+            </value>
+            <value>
+                <fullName>Already Redeemed</fullName>
+                <default>false</default>
+                <label>Already Redeemed</label>
+            </value>
+            <value>
+                <fullName>Cancelled by Builder</fullName>
+                <default>false</default>
+                <label>Cancelled by Builder</label>
+            </value>
+            <value>
+                <fullName>Cancelled by Homeowner</fullName>
+                <default>false</default>
+                <label>Cancelled by Homeowner</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Route_Status__c</fullName>
+    <description>Schema repair v2 2026-04-30</description>
+    <label>Route Status</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Proposed</fullName>
+                <default>true</default>
+                <label>Proposed</label>
+            </value>
+            <value>
+                <fullName>Confirmed</fullName>
+                <default>false</default>
+                <label>Confirmed</label>
+            </value>
+            <value>
+                <fullName>Released</fullName>
+                <default>false</default>
+                <label>Released</label>
+            </value>
+            <value>
+                <fullName>In Route</fullName>
+                <default>false</default>
+                <label>In Route</label>
+            </value>
+            <value>
+                <fullName>On Site</fullName>
+                <default>false</default>
+                <label>On Site</label>
+            </value>
+            <value>
+                <fullName>Complete</fullName>
+                <default>false</default>
+                <label>Complete</label>
+            </value>
+            <value>
+                <fullName>Skipped</fullName>
+                <default>false</default>
+                <label>Skipped</label>
+            </value>
+            <value>
+                <fullName>Reassigned</fullName>
+                <default>false</default>
+                <label>Reassigned</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

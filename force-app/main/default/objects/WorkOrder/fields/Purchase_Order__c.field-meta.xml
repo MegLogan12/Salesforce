@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Purchase_Order__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>The Builder Purchase Order that triggered creation of this Work Order. Set by PO_to_Work_Order_Automation_Prod at WO creation. Used by LovingTakeoffGateController to advance WO status when Takeoff is approved.</description>
+    <label>Purchase Order</label>
+    <referenceTo>Purchase_Order__c</referenceTo>
+    <relationshipLabel>Work Orders</relationshipLabel>
+    <relationshipName>Work_Orders</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Lookup</type>
+</CustomField>

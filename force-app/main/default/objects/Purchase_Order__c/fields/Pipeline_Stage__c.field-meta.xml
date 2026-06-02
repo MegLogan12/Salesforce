@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pipeline_Stage__c</fullName>
+    <description>Launch pipeline stage for Builder PO intake through takeoff and scheduling readiness.</description>
+    <inlineHelpText>Use launch PO stages only. The 90/60/30 timing buckets are retired and should not drive the board.</inlineHelpText>
+    <label>Pipeline Stage</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>PO Received</fullName>
+                <default>true</default>
+                <label>PO Received</label>
+            </value>
+            <value>
+                <fullName>Package Match Check</fullName>
+                <default>false</default>
+                <label>Package Match Check</label>
+            </value>
+            <value>
+                <fullName>CSM Review</fullName>
+                <default>false</default>
+                <label>CSM Review</label>
+            </value>
+            <value>
+                <fullName>Takeoff Requested</fullName>
+                <default>false</default>
+                <label>Takeoff Requested</label>
+            </value>
+            <value>
+                <fullName>Takeoff Scheduled</fullName>
+                <default>false</default>
+                <label>Takeoff Scheduled</label>
+            </value>
+            <value>
+                <fullName>Takeoff In Progress</fullName>
+                <default>false</default>
+                <label>Takeoff In Progress</label>
+            </value>
+            <value>
+                <fullName>Takeoff Complete</fullName>
+                <default>false</default>
+                <label>Takeoff Complete</label>
+            </value>
+            <value>
+                <fullName>WorkOrder Created</fullName>
+                <default>false</default>
+                <label>WorkOrder Created</label>
+            </value>
+            <value>
+                <fullName>Clear for Schedule</fullName>
+                <default>false</default>
+                <label>Clear for Schedule</label>
+            </value>
+            <value>
+                <fullName>Closed / Converted</fullName>
+                <default>false</default>
+                <label>Closed / Converted</label>
+            </value>
+            <value>
+                <fullName>Cancelled / Void</fullName>
+                <default>false</default>
+                <label>Cancelled / Void</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

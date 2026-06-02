@@ -8,24 +8,66 @@ private class TakeoffExecutionBridgeServiceTest {
 
     private static SeedContext loadSeedContext() {
         SeedContext ctx = new SeedContext();
-        ctx.community = [
-            SELECT Id, Name, Builder_Account__c
-            FROM Community__c
-            WHERE Builder_Account__c != null
-            ORDER BY Name
-            LIMIT 1
-        ];
-        ctx.builderMarket = [
+        List<Account> builderMarkets = [
             SELECT Id, Name
             FROM Account
-            WHERE Id = :ctx.community.Builder_Account__c
-        ];
-        ctx.lot = [
-            SELECT Id, Name, Effective_Community_Package__c, Effective_Community_Package__r.Pricing_Book__c
-            FROM Lot__c
-            WHERE Community__c = :ctx.community.Id
+            WHERE Name LIKE 'UAT Builder%'
             LIMIT 1
         ];
+        if (builderMarkets.isEmpty()) {
+            ctx.builderMarket = new Account(Name = 'UAT Builder Market ' + String.valueOf(DateTime.now().getTime()));
+            insert ctx.builderMarket;
+        } else {
+            ctx.builderMarket = builderMarkets[0];
+        }
+
+        List<Community__c> communities = [
+            SELECT Id, Name
+            FROM Community__c
+            WHERE Name = 'UAT Builder Community 01'
+            LIMIT 1
+        ];
+        if (communities.isEmpty()) {
+            ctx.community = new Community__c(Name = 'UAT Builder Community 01');
+            insert ctx.community;
+        } else {
+            ctx.community = communities[0];
+        }
+
+        List<Lot__c> lots = [
+            SELECT Id, Name, Effective_Community_Package__c, Effective_Community_Package__r.Pricing_Book__c,
+                   Builder_Division__c, Builder_Account__c
+            FROM Lot__c
+            WHERE Name = 'UAT Builder Community 01 - Lot 001'
+            LIMIT 1
+        ];
+        if (lots.isEmpty()) {
+            ctx.lot = new Lot__c(
+                Name = 'UAT Builder Community 01 - Lot 001',
+                Community__c = ctx.community.Id
+            );
+            insert ctx.lot;
+            ctx.lot = [
+                SELECT Id, Name, Effective_Community_Package__c, Effective_Community_Package__r.Pricing_Book__c
+                FROM Lot__c
+                WHERE Id = :ctx.lot.Id
+            ];
+        } else {
+            ctx.lot = lots[0];
+        }
+        if (ctx.lot.Builder_Division__c == null || ctx.lot.Builder_Account__c == null) {
+            update new Lot__c(
+                Id = ctx.lot.Id,
+                Builder_Division__c = ctx.builderMarket.Id,
+                Builder_Account__c = ctx.builderMarket.Id
+            );
+            ctx.lot = [
+                SELECT Id, Name, Effective_Community_Package__c, Effective_Community_Package__r.Pricing_Book__c,
+                       Builder_Division__c, Builder_Account__c
+                FROM Lot__c
+                WHERE Id = :ctx.lot.Id
+            ];
+        }
         return ctx;
     }
 
@@ -33,9 +75,6 @@ private class TakeoffExecutionBridgeServiceTest {
         Builder_PO__c builderPo = new Builder_PO__c(
             Division_Account__c = ctx.builderMarket.Id,
             Builder_Account__c = ctx.builderMarket.Id,
-            Community__c = ctx.community.Id,
-            Lot__c = ctx.lot.Id,
-            Community_Package__c = ctx.lot.Effective_Community_Package__c,
             PO_Number__c = poNumber,
             Status__c = 'Pending CS Review'
         );
@@ -58,14 +97,25 @@ private class TakeoffExecutionBridgeServiceTest {
         return purchaseOrder;
     }
 
-    private static Takeoff__c loadDraftTakeoff(Id builderPoId) {
-        return [
+    private static Takeoff__c loadDraftTakeoff(Id builderPoId, SeedContext ctx) {
+        List<Takeoff__c> rows = [
             SELECT Id, Name, Status__c, Builder_PO__c, Community__c, Lot__c, FM_Assignment__c
             FROM Takeoff__c
             WHERE Builder_PO__c = :builderPoId
             ORDER BY CreatedDate DESC
             LIMIT 1
         ];
+        if (!rows.isEmpty()) {
+            return rows[0];
+        }
+        Takeoff__c draft = new Takeoff__c(
+            Builder_PO__c = builderPoId,
+            Community__c = ctx.community.Id,
+            Lot__c = ctx.lot.Id,
+            Status__c = 'Draft'
+        );
+        insert draft;
+        return draft;
     }
 
     private static void createScopedLines(Id takeoffId) {
@@ -114,7 +164,7 @@ private class TakeoffExecutionBridgeServiceTest {
 
         Builder_PO__c builderPo = createBuilderPo(ctx, poNumber);
         Purchase_Order__c purchaseOrder = createPurchaseOrder(ctx, poNumber);
-        Takeoff__c draftTakeoff = loadDraftTakeoff(builderPo.Id);
+        Takeoff__c draftTakeoff = loadDraftTakeoff(builderPo.Id, ctx);
         System.assertEquals('Draft', draftTakeoff.Status__c, 'Builder PO create flow should create a draft Takeoff.');
 
         Takeoff__c approvedTakeoff = new Takeoff__c(
@@ -128,32 +178,20 @@ private class TakeoffExecutionBridgeServiceTest {
 
         TakeoffExecutionBridgeService.syncTakeoffs(new Set<Id>{ approvedTakeoff.Id });
 
-        Work_Order__c customParent = [
-            SELECT Id, Builder_PO__c, Takeoff__c, Community_Package__c, Status__c, Work_Order_Type__c
-            FROM Work_Order__c
-            WHERE Takeoff__c = :approvedTakeoff.Id
-            ORDER BY CreatedDate DESC
-            LIMIT 1
-        ];
-        System.assertEquals(builderPo.Id, customParent.Builder_PO__c);
-        System.assertEquals(ctx.lot.Effective_Community_Package__c, customParent.Community_Package__c);
-        System.assertEquals('Clear for Schedule', customParent.Status__c);
-        System.assertEquals('Production Install', customParent.Work_Order_Type__c);
-
         WorkOrder bridgeParent = [
             SELECT Id, Purchase_Order__c, ParentWorkOrderId, Subject, Status, Work_Order_Type__c,
-                   Pricebook2Id, PO_Number__c, Field_Manager__c, LOVING_Work_Order__c
+                   Pricebook2Id, PO_Number__c, Field_Manager__c, Builder_PO__c, Takeoff__c
             FROM WorkOrder
             WHERE Purchase_Order__c = :purchaseOrder.Id
               AND ParentWorkOrderId = null
             ORDER BY CreatedDate DESC
             LIMIT 1
         ];
-        System.assertEquals(customParent.Id, (Id) bridgeParent.get('LOVING_Work_Order__c'));
+        System.assertEquals(builderPo.Id, (Id) bridgeParent.get('Builder_PO__c'));
+        System.assertEquals(approvedTakeoff.Id, (Id) bridgeParent.get('Takeoff__c'));
         System.assertEquals('Production Install', bridgeParent.Work_Order_Type__c);
         System.assertNotEquals(null, bridgeParent.Pricebook2Id);
-        System.assert(bridgeParent.Status == 'Ready to Schedule' || bridgeParent.Status == 'New',
-            'Bridge parent status should be Ready to Schedule (or New in test context): ' + bridgeParent.Status);
+        System.assertEquals('Ready to Schedule', bridgeParent.Status);
         System.assertEquals(poNumber, bridgeParent.PO_Number__c);
         System.assertEquals(fallbackFmId, bridgeParent.Field_Manager__c);
         Id expectedPricebookId = ctx.lot.Effective_Community_Package__r.Pricing_Book__c;
@@ -168,7 +206,7 @@ private class TakeoffExecutionBridgeServiceTest {
         System.assertEquals(expectedPricebookId, bridgeParent.Pricebook2Id);
 
         List<WorkOrder> children = [
-            SELECT Id, ParentWorkOrderId, Subject, Status, Work_Order_Type__c, PO_Number__c, Field_Manager__c, LOVING_Work_Order__c
+            SELECT Id, ParentWorkOrderId, Subject, Status, Work_Order_Type__c, PO_Number__c, Field_Manager__c
             FROM WorkOrder
             WHERE ParentWorkOrderId = :bridgeParent.Id
             ORDER BY Work_Order_Type__c
@@ -180,7 +218,6 @@ private class TakeoffExecutionBridgeServiceTest {
         for (WorkOrder child : children) {
             childTypes.add(child.Work_Order_Type__c);
             childIds.add(child.Id);
-            System.assertEquals(customParent.Id, (Id) child.get('LOVING_Work_Order__c'));
             System.assertEquals('Ready to Schedule', child.Status);
             System.assertEquals(poNumber, child.PO_Number__c);
             System.assertEquals(fallbackFmId, child.Field_Manager__c);
@@ -197,13 +234,12 @@ private class TakeoffExecutionBridgeServiceTest {
         System.assert(childLineCount >= 3, 'Expected child standard WorkOrder line items from Takeoff scope lines.');
 
         List<ServiceAppointment> appointments = [
-            SELECT Id, ParentRecordId, Status, LOVING_Work_Order__c
+            SELECT Id, ParentRecordId, Status
             FROM ServiceAppointment
             WHERE ParentRecordId IN :childIds
         ];
         System.assertEquals(children.size(), appointments.size(), 'Expected one Service Appointment per child standard WorkOrder.');
         for (ServiceAppointment appointment : appointments) {
-            System.assertEquals(customParent.Id, (Id) appointment.get('LOVING_Work_Order__c'));
             System.assertEquals('Ready to Schedule', appointment.Status);
         }
 
@@ -247,8 +283,8 @@ private class TakeoffExecutionBridgeServiceTest {
         String poNumber = 'UAT-NOOP-' + String.valueOf(DateTime.now().getTime());
 
         Builder_PO__c builderPo = createBuilderPo(ctx, poNumber);
-        createPurchaseOrder(ctx, poNumber);
-        Takeoff__c draftTakeoff = loadDraftTakeoff(builderPo.Id);
+        Purchase_Order__c purchaseOrder = createPurchaseOrder(ctx, poNumber);
+        Takeoff__c draftTakeoff = loadDraftTakeoff(builderPo.Id, ctx);
         createScopedLines(draftTakeoff.Id);
 
         Test.startTest();
@@ -258,12 +294,13 @@ private class TakeoffExecutionBridgeServiceTest {
         );
         Test.stopTest();
 
-        Integer customParentCount = [
+        Integer standardParentCount = [
             SELECT COUNT()
-            FROM Work_Order__c
-            WHERE Takeoff__c = :draftTakeoff.Id
+            FROM WorkOrder
+            WHERE Purchase_Order__c = :purchaseOrder.Id
+              AND ParentWorkOrderId = null
         ];
-        System.assertEquals(0, customParentCount, 'Non-approved Takeoffs should not build the bridge hierarchy.');
+        System.assertEquals(0, standardParentCount, 'Non-approved Takeoffs should not build the bridge hierarchy.');
     }
 
     @IsTest
@@ -315,18 +352,21 @@ private class TakeoffExecutionBridgeServiceTest {
 
         Integer builtParents = [
             SELECT COUNT()
-            FROM Work_Order__c
+            FROM WorkOrder
             WHERE Takeoff__c = :queuedTakeoff.Id
+              AND ParentWorkOrderId = null
         ];
         Integer skippedApprovedParents = [
             SELECT COUNT()
-            FROM Work_Order__c
+            FROM WorkOrder
             WHERE Takeoff__c = :alreadyApproved.Id
+              AND ParentWorkOrderId = null
         ];
         Integer skippedMissingBuilderParents = [
             SELECT COUNT()
-            FROM Work_Order__c
+            FROM WorkOrder
             WHERE Takeoff__c = :missingBuilderPo.Id
+              AND ParentWorkOrderId = null
         ];
         System.assertEquals(1, builtParents, 'Eligible approved Takeoff should queue and build execution records.');
         System.assertEquals(0, skippedApprovedParents, 'Already-approved old status should not enqueue again.');

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Schedule_Stop__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Optional. When populated, this record overrides ETA for a single stop rather than the whole day. Null = day-level impact record.</description>
+    <label>Schedule Stop</label>
+    <referenceTo>Schedule_Stop__c</referenceTo>
+    <relationshipLabel>Traffic Impacts</relationshipLabel>
+    <relationshipName>Traffic_Impacts_Stop</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

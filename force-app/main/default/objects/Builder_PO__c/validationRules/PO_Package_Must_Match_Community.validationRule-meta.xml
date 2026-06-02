@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PO_Package_Must_Match_Community</fullName>
+    <active>true</active>
+    <description>If a Community Package is set on this Builder PO, it must belong to the same Community as the PO. Prevents scope mismatches where a package from a different community is applied.</description>
+    <errorConditionFormula>AND(
+  NOT(ISBLANK(Community_Package__c)),
+  NOT(ISBLANK(Community__c)),
+  Community_Package__r.Community__c != Community__c
+)</errorConditionFormula>
+    <errorDisplayField>Community__c</errorDisplayField>
+    <errorMessage>Community Package must belong to the selected Community. Select a Community Package associated with this Community, or clear the Community Package field.</errorMessage>
+</ValidationRule>

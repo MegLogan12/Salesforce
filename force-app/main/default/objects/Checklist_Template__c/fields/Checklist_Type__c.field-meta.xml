@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Checklist_Type__c</fullName>
+    <label>Checklist Type</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Takeoff</fullName>
+                <default>true</default>
+                <label>Takeoff</label>
+            </value>
+            <value>
+                <fullName>Site Readiness</fullName>
+                <default>false</default>
+                <label>Site Readiness</label>
+            </value>
+            <value>
+                <fullName>Closeout</fullName>
+                <default>false</default>
+                <label>Closeout</label>
+            </value>
+            <value>
+                <fullName>Quality Inspection</fullName>
+                <default>false</default>
+                <label>Quality Inspection</label>
+            </value>
+            <value>
+                <fullName>Customer Care</fullName>
+                <default>false</default>
+                <label>Customer Care</label>
+            </value>
+            <value>
+                <fullName>Aqua Install</fullName>
+                <default>false</default>
+                <label>Aqua Install</label>
+            </value>
+            <value>
+                <fullName>Aqua Check</fullName>
+                <default>false</default>
+                <label>Aqua Check</label>
+            </value>
+            <value>
+                <fullName>Warranty</fullName>
+                <default>false</default>
+                <label>Warranty</label>
+            </value>
+            <value>
+                <fullName>Finished Job</fullName>
+                <default>false</default>
+                <label>Finished Job</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

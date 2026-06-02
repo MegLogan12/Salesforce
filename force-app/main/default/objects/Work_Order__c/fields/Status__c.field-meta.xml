@@ -89,7 +89,6 @@
             <value>
                 <fullName>Need Further Info (NFI)</fullName>
                 <default>false</default>
-                <isActive>false</isActive>
                 <label>Need Further Info (NFI)</label>
             </value>
             <value>
@@ -103,20 +102,9 @@
                 <label>Approved</label>
             </value>
             <value>
-                <fullName>NFI</fullName>
-                <default>false</default>
-                <label>NFI</label>
-            </value>
-            <value>
                 <fullName>New</fullName>
                 <default>false</default>
                 <label>New</label>
-            </value>
-            <value>
-                <fullName>Open</fullName>
-                <default>false</default>
-                <isActive>false</isActive>
-                <label>Open</label>
             </value>
             <value>
                 <fullName>Paid</fullName>
@@ -137,18 +125,6 @@
                 <fullName>Ready to Schedule</fullName>
                 <default>false</default>
                 <label>Ready to Schedule</label>
-            </value>
-            <value>
-                <fullName>Pending Scheduling</fullName>
-                <default>false</default>
-                <isActive>false</isActive>
-                <label>Pending Scheduling</label>
-            </value>
-            <value>
-                <fullName>Ready for Scheduling</fullName>
-                <default>false</default>
-                <isActive>false</isActive>
-                <label>Ready for Scheduling</label>
             </value>
             <value>
                 <fullName>Pending Material</fullName>
@@ -214,6 +190,30 @@
                 <fullName>On Hold</fullName>
                 <default>false</default>
                 <label>On Hold</label>
+            </value>
+            <value>
+                <fullName>NFI</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>NFI</label>
+            </value>
+            <value>
+                <fullName>Open</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Open</label>
+            </value>
+            <value>
+                <fullName>Pending Scheduling</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Pending Scheduling</label>
+            </value>
+            <value>
+                <fullName>Ready for Scheduling</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Ready for Scheduling</label>
             </value>
         </valueSetDefinition>
     </valueSet>

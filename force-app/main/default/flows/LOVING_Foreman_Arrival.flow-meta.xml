@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <decisions>
+        <name>Check_Sod_In_Scope</name>
+        <label>Sod In Scope?</label>
+        <locationX>176</locationX>
+        <locationY>288</locationY>
+        <defaultConnector>
+            <targetReference>Screen_Arrival_NoSod</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No Sod</defaultConnectorLabel>
+        <rules>
+            <name>Sod_In_Scope</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_WorkOrder.Sod_Square_Footage__c</leftValueReference>
+                <operator>GreaterThan</operator>
+                <rightValue>
+                    <numberValue>0.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Screen_Arrival_WithSod</targetReference>
+            </connector>
+            <label>Sod In Scope</label>
+        </rules>
+    </decisions>
+    <description>Foreman arrival screen flow for FSL Mobile. Records arrival time. Instructs foreman to upload arrival photo. If sod is in scope, adds dual sod photo instruction. Updates WorkOrder Status to In Progress and sets Arrived_At__c. Activated 2026-05-30. Reactivated 2026-05-30.</description>
+    <environments>Default</environments>
+    <interviewLabel>LOVING Foreman Arrival {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING Foreman Arrival</label>
+    <processType>Flow</processType>
+    <recordLookups>
+        <name>Get_WorkOrder</name>
+        <label>Get Work Order Details</label>
+        <locationX>176</locationX>
+        <locationY>168</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Sod_In_Scope</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkOrder</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_WO_Arrived</name>
+        <label>Record Arrival on Work Order</label>
+        <locationX>176</locationX>
+        <locationY>528</locationY>
+        <connector>
+            <targetReference>Screen_ArrivalConfirm</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Arrived_At__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>In Progress</stringValue>
+            </value>
+        </inputAssignments>
+        <object>WorkOrder</object>
+    </recordUpdates>
+    <runInMode>DefaultMode</runInMode>
+    <screens>
+        <name>Screen_Arrival_NoSod</name>
+        <label>Arrived at Job Site</label>
+        <locationX>44</locationX>
+        <locationY>408</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Update_WO_Arrived</targetReference>
+        </connector>
+        <fields>
+            <name>ArrivalTitle_NoSod</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;font-size: 16px;&quot;&gt;Arrived at Job Site / Llegada al Sitio&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Job:&lt;/strong&gt; {!Get_WorkOrder.Subject}&lt;/p&gt;&lt;p style=&quot;color: #0a8aa6;&quot;&gt;&lt;strong&gt;TAKE ARRIVAL PHOTO now — upload in Files tab before submitting closeout.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;&lt;em&gt;TOMA LA FOTO DE LLEGADA — Súbela en Archivos antes del cierre.&lt;/em&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>ArrivalNotes_NoSod</name>
+            <fieldText>Arrival notes — site conditions (optional) / Notas de llegada (opcional)</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_Arrival_WithSod</name>
+        <label>Arrived at Job Site — Sod In Scope</label>
+        <locationX>308</locationX>
+        <locationY>408</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Update_WO_Arrived</targetReference>
+        </connector>
+        <fields>
+            <name>ArrivalTitle_Sod</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;font-size: 16px;&quot;&gt;Arrived at Job Site — Sod In Scope / Llegada — Césped Incluido&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Job:&lt;/strong&gt; {!Get_WorkOrder.Subject}&lt;/p&gt;&lt;p style=&quot;color: #c23934;&quot;&gt;&lt;strong&gt;SOD QUALITY CHECK: Take TWO photos — BEFORE and AFTER sod installation.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;&lt;em&gt;CALIDAD DEL CÉSPED: Toma DOS fotos — ANTES y DESPUÉS de la instalación.&lt;/em&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>ArrivalNotes_Sod</name>
+            <fieldText>Arrival notes — site and sod conditions (optional) / Notas de llegada y condiciones del césped (opcional)</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_ArrivalConfirm</name>
+        <label>Arrival Recorded</label>
+        <locationX>176</locationX>
+        <locationY>648</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>ArrivalConfirmText</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;font-size: 16px; color: #04844b;&quot;&gt;✓ Arrival Recorded / Llegada Registrada&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Your arrival time has been recorded. Work Order is now In Progress.&lt;/p&gt;&lt;p&gt;&lt;em&gt;Tu hora de llegada ha sido registrada. La orden de trabajo está En Progreso.&lt;/em&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <start>
+        <locationX>176</locationX>
+        <locationY>48</locationY>
+        <connector>
+            <targetReference>Get_WorkOrder</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

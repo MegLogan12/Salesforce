@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Is_Driver__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Indicates the employee is authorized to drive a company vehicle.</description>
+    <label>Is Driver</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

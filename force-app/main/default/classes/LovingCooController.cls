@@ -85,22 +85,22 @@ public with sharing class LovingCooController {
         k.siteReadinessOverdue = 0;
         try {
             k.activeWOs = [
-                SELECT COUNT() FROM Work_Order__c
-                WHERE Status__c NOT IN ('Closed', 'Cancelled')
+                SELECT COUNT() FROM WorkOrder
+                WHERE Status NOT IN ('Closed', 'Canceled')
             ];
             k.scheduledToday = [
-                SELECT COUNT() FROM Work_Order__c
+                SELECT COUNT() FROM WorkOrder
                 WHERE Schedule_Locked__c = true
                   AND Scheduled_Date__c = TODAY
             ];
             k.pendingProposals = [
-                SELECT COUNT() FROM Work_Order__c
+                SELECT COUNT() FROM WorkOrder
                 WHERE Schedule_Proposal_Status__c = 'Pending Review'
                   AND Schedule_Locked__c = false
             ];
             k.pendingCloseout = [
-                SELECT COUNT() FROM Work_Order__c
-                WHERE Status__c = 'Pending Closeout'
+                SELECT COUNT() FROM WorkOrder
+                WHERE Status = 'Pending Closeout'
             ];
             Date firstOfMonth = Date.today().toStartOfMonth();
             k.paidThisMonth = [
@@ -135,10 +135,10 @@ public with sharing class LovingCooController {
         List<WoPipelineRow> rows = new List<WoPipelineRow>();
         try {
             for (AggregateResult ar : [
-                SELECT Status__c s, COUNT(Id) cnt
-                FROM Work_Order__c
-                WHERE Status__c != null
-                GROUP BY Status__c
+                SELECT Status s, COUNT(Id) cnt
+                FROM WorkOrder
+                WHERE Status != null
+                GROUP BY Status
                 ORDER BY COUNT(Id) DESC
                 LIMIT 20
             ]) {
@@ -350,6 +350,7 @@ public with sharing class LovingCooController {
     // ─────────────────────────────────────────────
     // HELPER
     // ─────────────────────────────────────────────
+    @TestVisible
     private static String chipForStatus(String s) {
         if (s == null) return 'chip chip-gray';
         if (s == 'Scheduled'     || s == 'In Progress')          return 'chip chip-blue';

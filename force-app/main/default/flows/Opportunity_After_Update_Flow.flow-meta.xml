@@ -140,7 +140,6 @@
             <targetReference>Contract_Sent_Internal_Mail</targetReference>
         </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
-
         <inputParameters>
             <name>senderType</name>
             <value>
@@ -411,35 +410,6 @@
         </connector>
     </assignments>
     <decisions>
-        <name>Exclude_ODL_Record_Types</name>
-        <label>Exclude ODL Record Types</label>
-        <locationX>0</locationX>
-        <locationY>0</locationY>
-        <defaultConnector>
-            <targetReference>Check_Conditions</targetReference>
-        </defaultConnector>
-        <defaultConnectorLabel>Not ODL</defaultConnectorLabel>
-        <rules>
-            <name>Is_ODL_Record_Type</name>
-            <conditionLogic>or</conditionLogic>
-            <conditions>
-                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>UMB</stringValue>
-                </rightValue>
-            </conditions>
-            <conditions>
-                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
-                <operator>EqualTo</operator>
-                <rightValue>
-                    <stringValue>Design_Build</stringValue>
-                </rightValue>
-            </conditions>
-            <label>Is ODL Record Type</label>
-        </rules>
-    </decisions>
-    <decisions>
         <name>Check_Conditions</name>
         <label>Check Conditions</label>
         <locationX>0</locationX>
@@ -559,6 +529,35 @@
                 <targetReference>Update_Stage</targetReference>
             </connector>
             <label>Update Stage to Financing Review</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Exclude_ODL_Record_Types</name>
+        <label>Exclude ODL Record Types</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Check_Conditions</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Not ODL</defaultConnectorLabel>
+        <rules>
+            <name>Is_ODL_Record_Type</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>UMB</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.RecordType.DeveloperName</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Design_Build</stringValue>
+                </rightValue>
+            </conditions>
+            <label>Is ODL Record Type</label>
         </rules>
     </decisions>
     <environments>Default</environments>
@@ -809,7 +808,7 @@
         <recordTriggerType>Update</recordTriggerType>
         <triggerType>RecordAfterSave</triggerType>
     </start>
-    <status>Active</status>
+    <status>InvalidDraft</status>
     <textTemplates>
         <name>smsBody</name>
         <isViewedAsPlainText>true</isViewedAsPlainText>

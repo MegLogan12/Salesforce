@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Item_Type__c</fullName>
+    <label>Item Type</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Controller</fullName>
+                <default>true</default>
+                <label>Controller</label>
+            </value>
+            <value>
+                <fullName>Heads</fullName>
+                <default>false</default>
+                <label>Heads</label>
+            </value>
+            <value>
+                <fullName>Flags</fullName>
+                <default>false</default>
+                <label>Flags</label>
+            </value>
+            <value>
+                <fullName>Measuring Cups</fullName>
+                <default>false</default>
+                <label>Measuring Cups</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

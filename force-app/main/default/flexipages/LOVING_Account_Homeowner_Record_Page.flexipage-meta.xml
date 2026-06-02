@@ -34,14 +34,94 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>homeownerAccountHeaderKpis</componentName>
-                <identifier>c_homeownerAccountHeaderKpis</identifier>
+                <componentName>odlAccountHealthService</componentName>
+                <identifier>c_odlAccountHealthService</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-tab-ho-overview</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>odlAccountActivityTimeline</componentName>
+                <identifier>c_odlAccountActivityTimeline</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-tab-ho-activity</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>force:detailPanel</componentName>
+                <identifier>homeowner_detail_panel</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-tab-ho-details</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-tab-ho-overview</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Overview</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>homeowner_tab_overview</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
             <componentInstance>
-                <componentName>homeownerAccountCommandCenter</componentName>
-                <identifier>c_homeownerAccountCommandCenter</identifier>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-tab-ho-activity</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Activity</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>homeowner_tab_activity</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-tab-ho-details</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Details</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>homeowner_tab_details</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-tabset-ho-main</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>odlAccountNextAction</componentName>
+                <identifier>c_odlAccountNextAction</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>tabs</name>
+                    <value>Facet-tabset-ho-main</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tabset</componentName>
+                <identifier>homeowner_main_tabset</identifier>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>

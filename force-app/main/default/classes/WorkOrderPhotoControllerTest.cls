@@ -3,16 +3,19 @@ private class WorkOrderPhotoControllerTest {
 
     @TestSetup
     static void setup() {
-        Work_Order__c wo = new Work_Order__c(Status__c = 'Scheduled');
-        insert wo;
+        insert new Account(Name = 'Photo Link Test Record');
+    }
+
+    private static Id getLinkedRecordId() {
+        return [SELECT Id FROM Account WHERE Name = 'Photo Link Test Record' LIMIT 1].Id;
     }
 
     @IsTest
     static void testGetPhotosEmpty() {
-        Work_Order__c wo = [SELECT Id FROM Work_Order__c LIMIT 1];
+        Id recordId = getLinkedRecordId();
         Test.startTest();
         List<WorkOrderPhotoController.PhotoDto> photos =
-            WorkOrderPhotoController.getPhotos(wo.Id);
+            WorkOrderPhotoController.getPhotos(recordId);
         Test.stopTest();
         System.assertEquals(0, photos.size(), 'Should return 0 photos for new WO');
     }
@@ -28,13 +31,13 @@ private class WorkOrderPhotoControllerTest {
 
     @IsTest
     static void testUploadCameraPhoto() {
-        Work_Order__c wo = [SELECT Id FROM Work_Order__c LIMIT 1];
+        Id recordId = getLinkedRecordId();
         // Minimal base64 PNG (1x1 white pixel)
         String base64Data = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI6QAAAABJRU5ErkJggg==';
 
         Test.startTest();
         WorkOrderPhotoController.uploadCameraPhoto(
-            wo.Id, base64Data, 'test.png', 'image/png', 'Before', 'Test notes'
+            recordId, base64Data, 'test.png', 'image/png', 'Before', 'Test notes'
         );
         Test.stopTest();
 
@@ -47,11 +50,11 @@ private class WorkOrderPhotoControllerTest {
 
     @IsTest
     static void testUploadCameraPhotoBlankBase64() {
-        Work_Order__c wo = [SELECT Id FROM Work_Order__c LIMIT 1];
+        Id recordId = getLinkedRecordId();
         Boolean threw = false;
         Test.startTest();
         try {
-            WorkOrderPhotoController.uploadCameraPhoto(wo.Id, '', 'test.jpg', 'image/jpeg', 'After', '');
+            WorkOrderPhotoController.uploadCameraPhoto(recordId, '', 'test.jpg', 'image/jpeg', 'After', '');
         } catch (AuraHandledException e) {
             threw = true;
         }
@@ -61,7 +64,7 @@ private class WorkOrderPhotoControllerTest {
 
     @IsTest
     static void testCreatePhotoRecord() {
-        Work_Order__c wo = [SELECT Id FROM Work_Order__c LIMIT 1];
+        Id recordId = getLinkedRecordId();
         // Create a ContentVersion/ContentDocument to simulate file upload
         ContentVersion cv = new ContentVersion(
             Title        = 'test_photo.jpg',
@@ -74,7 +77,7 @@ private class WorkOrderPhotoControllerTest {
 
         // First link the ContentDocument to the WO so createPhotoRecord can find it
         ContentDocumentLink woLink = new ContentDocumentLink(
-            LinkedEntityId    = wo.Id,
+            LinkedEntityId    = recordId,
             ContentDocumentId = contentDocId,
             ShareType         = 'V',
             Visibility        = 'AllUsers'
@@ -82,7 +85,7 @@ private class WorkOrderPhotoControllerTest {
         insert woLink;
 
         Test.startTest();
-        WorkOrderPhotoController.createPhotoRecord(wo.Id, contentDocId, 'After', 'After photo');
+        WorkOrderPhotoController.createPhotoRecord(recordId, contentDocId, 'After', 'After photo');
         Test.stopTest();
 
         // Photo__c.Work_Order__c references standard WorkOrder; query by Photo_Type__c instead
@@ -93,12 +96,12 @@ private class WorkOrderPhotoControllerTest {
 
     @IsTest
     static void testGetPhotosAfterUpload() {
-        Work_Order__c wo = [SELECT Id FROM Work_Order__c LIMIT 1];
+        Id recordId = getLinkedRecordId();
         String base64Data = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI6QAAAABJRU5ErkJggg==';
 
         Test.startTest();
-        WorkOrderPhotoController.uploadCameraPhoto(wo.Id, base64Data, 'test.png', 'image/png', 'QI', 'Notes');
-        List<WorkOrderPhotoController.PhotoDto> photos = WorkOrderPhotoController.getPhotos(wo.Id);
+        WorkOrderPhotoController.uploadCameraPhoto(recordId, base64Data, 'test.png', 'image/png', 'QI', 'Notes');
+        List<WorkOrderPhotoController.PhotoDto> photos = WorkOrderPhotoController.getPhotos(recordId);
         Test.stopTest();
 
         // Should find the photo via ContentDocumentLink chain

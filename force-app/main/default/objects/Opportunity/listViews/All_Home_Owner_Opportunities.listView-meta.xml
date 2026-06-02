@@ -15,6 +15,6 @@
     </filters>
     <label>All Home Owner Opportunities</label>
     <sharedTo>
-        <allInternalUsers/>
+        <allInternalUsers></allInternalUsers>
     </sharedTo>
 </ListView>

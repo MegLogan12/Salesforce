@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Determination__c</fullName>
+    <label>Determination</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Match</fullName>
+                <default>true</default>
+                <label>Match</label>
+            </value>
+            <value>
+                <fullName>Variance</fullName>
+                <default>false</default>
+                <label>Variance</label>
+            </value>
+            <value>
+                <fullName>Substitution</fullName>
+                <default>false</default>
+                <label>Substitution</label>
+            </value>
+            <value>
+                <fullName>Exception</fullName>
+                <default>false</default>
+                <label>Exception</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

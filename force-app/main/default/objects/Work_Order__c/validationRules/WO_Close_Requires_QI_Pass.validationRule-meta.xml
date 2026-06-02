@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WO_Close_Requires_QI_Pass</fullName>
+    <active>true</active>
+    <description>A job cannot close without a passing Quality Inspection. The paid gate is added when the billing chain lands. Spec Section 8.</description>
+    <errorConditionFormula>AND( OR(RecordType.DeveloperName=&quot;Production_Install&quot;,RecordType.DeveloperName=&quot;Finish_Job&quot;), ISCHANGED(Status__c), ISPICKVAL(Status__c,&quot;Closed&quot;), NOT(ISPICKVAL(QI_Outcome__c,&quot;Pass&quot;)) )</errorConditionFormula>
+    <errorDisplayField>QI_Outcome__c</errorDisplayField>
+    <errorMessage>A job cannot close until the Quality Inspection passes.</errorMessage>
+</ValidationRule>

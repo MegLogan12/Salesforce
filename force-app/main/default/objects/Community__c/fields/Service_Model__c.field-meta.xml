@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Service_Model__c</fullName>
+    <label>Service Model</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>All-Inclusive Maintenance</fullName>
+                <default>false</default>
+                <label>All-Inclusive Maintenance</label>
+            </value>
+            <value>
+                <fullName>By Request Only (Lawn Care)</fullName>
+                <default>false</default>
+                <label>By Request Only (Lawn Care)</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

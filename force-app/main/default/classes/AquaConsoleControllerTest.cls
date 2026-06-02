@@ -29,6 +29,7 @@ private class AquaConsoleControllerTest {
         Community__c comm = new Community__c(
             Name = 'Test Community Aqua',
             Aqua_Included__c = true,
+            Aqua_Customer__c = true,
             Aqua_Active__c = true,
             Builder_Account__c = acct.Id,
             Service_Day__c = todayServiceDay,

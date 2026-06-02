@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Aqua_Active__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Operational state. Aqua is installed and running on at least one lot. Drives the Aqua Console and Aqua install-ticket auto-create. Can be true only when Aqua Customer is true.</description>
+    <inlineHelpText>Active means Aqua is installed and running on at least one lot. Can only be true if Aqua Customer is true. (Customer means the community bought Aqua.)</inlineHelpText>
+    <label>Aqua Active</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

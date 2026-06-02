@@ -3,6 +3,7 @@
     <fullName>Is_First_Visit__c</fullName>
     <defaultValue>false</defaultValue>
     <label>Is First Visit</label>
-    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
     <type>Checkbox</type>
 </CustomField>

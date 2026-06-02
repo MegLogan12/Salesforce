@@ -4,8 +4,8 @@
     <active>true</active>
     <description>Closeout_Quantities_Confirmed__c must be true before status can change to Pending Closeout Approval.</description>
     <errorConditionFormula>AND(
-        ISPICKVAL(Status, "Pending Closeout Approval"),
-        NOT(ISPICKVAL(PRIORVALUE(Status), "Pending Closeout Approval")),
+        ISPICKVAL(Status, &quot;Pending Closeout Approval&quot;),
+        NOT(ISPICKVAL(PRIORVALUE(Status), &quot;Pending Closeout Approval&quot;)),
         NOT(Closeout_Quantities_Confirmed__c)
     )</errorConditionFormula>
     <errorMessage>Installed quantities must be confirmed before closeout approval. Review each WO Line Item, enter actual quantities, check Closeout Quantities Confirmed. Note any outside-PO scope in Outside PO Notes.</errorMessage>

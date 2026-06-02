@@ -102,7 +102,7 @@ public with sharing class AccountCommunityLotWorkbenchController {
             dto.communities.add(cd);
         }
 
-        // Lots — with child takeoff (most recent) and custom WO count
+        // Lots — with child takeoff (most recent) and standard WorkOrder count
         List<Lot__c> lots = [
             SELECT Id, Name, Lot_Number__c, Community__c,
                    Builder_Division__c,
@@ -113,7 +113,7 @@ public with sharing class AccountCommunityLotWorkbenchController {
                    Latitude__c, Longitude__c,
                    (SELECT Status__c, Scheduled_Date__c FROM Takeoffs__r
                     ORDER BY CreatedDate DESC LIMIT 1),
-                   (SELECT Id FROM Work_Orders_Lot__r LIMIT 200)
+                   (SELECT Id FROM Work_Orders__r LIMIT 200)
             FROM Lot__c
             ORDER BY Community__r.Name, Lot_Number__c NULLS LAST, Name
         ];
@@ -145,7 +145,7 @@ public with sharing class AccountCommunityLotWorkbenchController {
             ld.sodSf        = l.Sod_Sf__c;
             ld.goalHrs      = null;
             ld.crew         = '';
-            ld.woCount      = l.Work_Orders_Lot__r.size();
+            ld.woCount      = l.Work_Orders__r.size();
             ld.photoCount   = 0;
             dto.lots.add(ld);
         }

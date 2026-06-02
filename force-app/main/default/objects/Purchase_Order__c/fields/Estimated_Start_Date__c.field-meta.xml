@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Estimated_Start_Date__c</fullName>
+    <description>Estimated start date used as the preferred date for Purchase Order pipeline timing.</description>
+    <inlineHelpText>Preferred timing date for the PO pipeline. If blank, Requested Install Date is used.</inlineHelpText>
+    <label>Estimated Start Date</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Date</type>
+</CustomField>

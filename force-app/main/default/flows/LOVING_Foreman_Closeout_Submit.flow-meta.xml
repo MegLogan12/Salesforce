@@ -26,7 +26,7 @@
             <label>FJ Flagged</label>
         </rules>
     </decisions>
-    <description>Foreman closeout submission flow for FSL Mobile. Foreman enters closeout notes, sees photo reminder, optionally flags Finished Job. Sets WorkOrder to Pending Closeout. FJ flag sets FJ_Recommended__c — Customer Care notification handled by separate record-triggered flow. Activated 2026-05-30. Reactivated 2026-05-30.</description>
+    <description>Foreman closeout submission flow for FSL Mobile. Foreman enters closeout notes, sees photo reminder, optionally flags Finished Job. Sets WorkOrder to Pending Closeout. FJ flag sets FJ_Recommended__c — Customer Care notification handled by separate record-triggered flow.</description>
     <environments>Default</environments>
     <interviewLabel>LOVING Foreman Closeout Submit {!$Flow.CurrentDateTime}</interviewLabel>
     <label>LOVING Foreman Closeout Submit</label>
@@ -236,7 +236,7 @@
             <targetReference>Get_WO_For_Closeout</targetReference>
         </connector>
     </start>
-    <status>Active</status>
+    <status>Draft</status>
     <variables>
         <name>recordId</name>
         <dataType>String</dataType>

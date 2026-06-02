@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Schedule_Proposal_Created_At__c</fullName>
+    <description>Stage 7 (Scheduling). Timestamp when AutoScheduleService wrote the proposal. Used to drive the 3:00pm ET Manager Review Task due time. Cleared when proposal is promoted or rejected.</description>
+    <label>Schedule Proposal Created At</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>DateTime</type>
+</CustomField>

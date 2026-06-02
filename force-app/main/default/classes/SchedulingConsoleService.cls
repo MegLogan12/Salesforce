@@ -101,13 +101,10 @@ public without sharing class SchedulingConsoleService {
         if (!days.isEmpty()) {
             board.scheduleDay = days[0];
             List<Schedule_Stop__c> stops = mockScheduleStops != null ? mockScheduleStops : [
-                SELECT Id, Work_Order__c, Crew__c, Crew__r.Name, Field_Manager__c, Field_Manager__r.Name,
+                SELECT Id, Crew__c, Crew__r.Name, Field_Manager__c, Field_Manager__r.Name,
                        Stop_Number__c, Estimated_Duration_Minutes__c, Estimated_Drive_Time_Minutes__c,
                        Route_Status__c, GPS_Latitude__c, GPS_Longitude__c, Address__c,
-                       Weather_Risk__c, Traffic_Risk__c, Notes__c,
-                       Work_Order__r.Name, Work_Order__r.Community__r.Name,
-                       Work_Order__r.Work_Order_Type__c, Work_Order__r.Sod_Sqft__c,
-                       Work_Order__r.Route_Distance_Miles__c
+                       Weather_Risk__c, Traffic_Risk__c, Notes__c
                 FROM Schedule_Stop__c
                 WHERE Schedule_Day__c = :days[0].Id
                 ORDER BY Crew__c, Stop_Number__c ASC NULLS LAST
@@ -166,16 +163,16 @@ public without sharing class SchedulingConsoleService {
             for (Schedule_Stop__c s : cStops) {
                 SchedulingConsoleController.StopDto st = new SchedulingConsoleController.StopDto();
                 st.stopId    = s.Id;
-                st.workOrderId   = s.Work_Order__c;
-                st.workOrderName = s.Work_Order__r != null ? s.Work_Order__r.Name : '—';
-                st.workOrderUrl  = s.Work_Order__c != null ? '/' + s.Work_Order__c : '#';
+                st.workOrderId   = null;
+                st.workOrderName = '—';
+                st.workOrderUrl  = '#';
                 st.stopNumber    = s.Stop_Number__c != null ? (Integer)s.Stop_Number__c : 0;
-                st.communityName = s.Work_Order__r?.Community__r != null ? s.Work_Order__r.Community__r.Name : '—';
-                st.workType      = s.Work_Order__r?.Work_Order_Type__c != null ? s.Work_Order__r.Work_Order_Type__c : 'PL';
+                st.communityName = '—';
+                st.workType      = 'PL';
                 st.estimatedDurationMinutes = s.Estimated_Duration_Minutes__c;
                 st.estimatedDriveMinutes    = s.Estimated_Drive_Time_Minutes__c;
-                st.distanceMiles = s.Work_Order__r?.Route_Distance_Miles__c;
-                st.sodSqft       = s.Work_Order__r?.Sod_Sqft__c;
+                st.distanceMiles = null;
+                st.sodSqft       = null;
                 st.routeStatus   = s.Route_Status__c;
                 st.weatherRisk   = s.Weather_Risk__c;
                 st.trafficRisk   = s.Traffic_Risk__c;
@@ -187,7 +184,6 @@ public without sharing class SchedulingConsoleService {
                 st.hasWarning  = hi;
                 st.warningNote = hi ? s.Weather_Risk__c + ' risk' : '';
                 if (st.hasWarning) { hasFlag = true; flagNote = st.warningNote; flagCount++; }
-                if (s.Work_Order__r?.Route_Distance_Miles__c != null) crewMiles += s.Work_Order__r.Route_Distance_Miles__c;
                 crew.stops.add(st);
                 totalStops++;
             }
@@ -284,7 +280,7 @@ public without sharing class SchedulingConsoleService {
             final Decimal PIN_H_TOP = 12;   // pixels above center to pin apex
             final Decimal PIN_H_BOT = 4;    // pixels below center to pin base
 
-            DateTime cutoff = DateTime.now().addHours(-8);
+            DateTime cutoff = DateTime.now().addHours(-24);
             Integer ci = 0;
             for (WEX_GPS_Position__c gps : [
                 SELECT Id, Driver__c, Driver__r.Name, Crew__c, Crew__r.Name,
@@ -293,7 +289,7 @@ public without sharing class SchedulingConsoleService {
                 FROM WEX_GPS_Position__c
                 WHERE Last_Seen_DateTime__c >= :cutoff
                 ORDER BY Last_Seen_DateTime__c DESC NULLS LAST
-                LIMIT 20
+                LIMIT 50
             ]) {
                 if (gps.Latitude__c == null || gps.Longitude__c == null) { continue; }
 
@@ -1287,5 +1283,95 @@ public without sharing class SchedulingConsoleService {
         d.severity     = severity;
         d.suggestedFix = fix;
         return d;
+    }
+
+    // ─── Pipeline Summary ─────────────────────────────────────────────────────
+    public static List<SchedulingConsoleController.PipelineSummaryDto> buildPipelineSummary(String division) {
+        if (throwForCoverageTest) throw new IllegalArgumentException('coverage');
+
+        List<WorkOrder> wos = [
+            SELECT Id, WorkOrderNumber, Requested_Install_Date__c,
+                   Pipeline_Bucket__c, Takeoff_Complete__c,
+                   Field_Manager__r.Name
+            FROM WorkOrder
+            WHERE Status NOT IN ('Closed', 'Canceled', 'Field Complete',
+                                    'Pending Closeout', 'Closeout Approved',
+                                    'Paid', 'Invoiced', 'Ready for Invoice')
+            AND (Pipeline_Bucket__c = null
+                 OR Pipeline_Bucket__c NOT IN ('Complete', 'Canceled', 'Closed'))
+            ORDER BY Requested_Install_Date__c ASC NULLS LAST
+            LIMIT 500
+        ];
+
+        Map<String, List<SchedulingConsoleController.PipelineLotDto>> bucketMap =
+            new Map<String, List<SchedulingConsoleController.PipelineLotDto>>();
+        Date today = Date.today();
+
+        for (WorkOrder wo : wos) {
+            String bucket = String.isNotBlank(wo.Pipeline_Bucket__c) ? wo.Pipeline_Bucket__c : 'Ready to Schedule';
+            if (!bucketMap.containsKey(bucket)) {
+                bucketMap.put(bucket, new List<SchedulingConsoleController.PipelineLotDto>());
+            }
+            SchedulingConsoleController.PipelineLotDto d = new SchedulingConsoleController.PipelineLotDto();
+            d.lotId       = wo.Id;
+            d.name        = wo.WorkOrderNumber;
+            d.fmName      = wo.Field_Manager__r != null ? wo.Field_Manager__r.Name : '—';
+            d.takeoffDone = wo.Takeoff_Complete__c == true;
+            d.woCreated   = true;
+            if (wo.Requested_Install_Date__c != null) {
+                d.daysUntil         = today.daysBetween(wo.Requested_Install_Date__c);
+                d.targetDateDisplay = wo.Requested_Install_Date__c.format();
+            } else {
+                d.daysUntil         = null;
+                d.targetDateDisplay = 'No date';
+            }
+            bucketMap.get(bucket).add(d);
+        }
+
+        List<String> stages = new List<String>{
+            '90+ Days', '60+ Days', '30 Days', 'Ready to Schedule',
+            'Takeoff In Progress', 'Takeoff Complete',
+            'Scheduled', 'In Progress', 'On Hold'
+        };
+        Map<String, String> chipMap = new Map<String, String>{
+            '90+ Days'            => 'chip gray',
+            '60+ Days'            => 'chip blue',
+            '30 Days'             => 'chip amber',
+            'Ready to Schedule'   => 'chip green',
+            'Takeoff In Progress' => 'chip purple',
+            'Takeoff Complete'    => 'chip purple',
+            'Scheduled'           => 'chip blue',
+            'In Progress'         => 'chip green',
+            'On Hold'             => 'chip amber'
+        };
+
+        List<SchedulingConsoleController.PipelineSummaryDto> result =
+            new List<SchedulingConsoleController.PipelineSummaryDto>();
+        Set<String> stageSet = new Set<String>(stages);
+
+        for (String stage : stages) {
+            List<SchedulingConsoleController.PipelineLotDto> stageLots =
+                bucketMap.containsKey(stage) ? bucketMap.get(stage)
+                : new List<SchedulingConsoleController.PipelineLotDto>();
+            SchedulingConsoleController.PipelineSummaryDto s = new SchedulingConsoleController.PipelineSummaryDto();
+            s.bucket  = stage;
+            s.count   = stageLots.size();
+            s.chipCss = chipMap.get(stage);
+            s.lots    = stageLots;
+            result.add(s);
+        }
+
+        for (String bucket : bucketMap.keySet()) {
+            if (!stageSet.contains(bucket)) {
+                SchedulingConsoleController.PipelineSummaryDto s = new SchedulingConsoleController.PipelineSummaryDto();
+                s.bucket  = bucket;
+                s.count   = bucketMap.get(bucket).size();
+                s.chipCss = 'chip gray';
+                s.lots    = bucketMap.get(bucket);
+                result.add(s);
+            }
+        }
+
+        return result;
     }
 }

@@ -1,45 +1,73 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
     <flexiPageRegions>
-        <name>header</name>
-        <type>Region</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
         <itemInstances>
             <componentInstance>
                 <componentName>divisionIdentity</componentName>
-                <identifier>divisionIdentityCmp</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentName>divisionCorporateAddress</componentName>
-                <identifier>divisionCorporateAddressCmp</identifier>
+                <identifier>builder_division_identity</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentName>divisionKeyContacts</componentName>
-                <identifier>divisionKeyContactsCmp</identifier>
+                <identifier>builder_division_contacts</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>divisionCorporateAddress</componentName>
+                <identifier>builder_division_address</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentName>divisionServiceScopeDetail</componentName>
-                <identifier>divisionServiceScopeDetailCmp</identifier>
+                <identifier>builder_division_scope</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-tab-overview</name>
+        <name>Facet-tab-division-overview</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>communitiesList</componentName>
+                <identifier>builder_division_communities</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>workOrdersList</componentName>
+                <identifier>builder_division_work_orders</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-tab-division-operations</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
                 <componentName>divisionPricingPanel</componentName>
-                <identifier>divisionPricingPanelCmp</identifier>
+                <identifier>builder_division_pricing</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-tab-pricing</name>
+        <itemInstances>
+            <componentInstance>
+                <componentName>accountQuickLinks</componentName>
+                <identifier>builder_division_quick_links</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-tab-division-commercial</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>divisionFilesTab</componentName>
+                <identifier>builder_division_files</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-tab-division-files</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -50,10 +78,10 @@
                     <value>false</value>
                 </componentInstanceProperties>
                 <componentName>runtime_sales_activities:activityPanel</componentName>
-                <identifier>activityPanel_div</identifier>
+                <identifier>builder_division_activity</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-tab-activity</name>
+        <name>Facet-tab-division-activity</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -61,45 +89,73 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-tab-overview</value>
+                    <value>Facet-tab-division-overview</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
                     <value>Overview</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
-                <identifier>tab_overview</identifier>
+                <identifier>builder_division_tab_overview</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-tab-pricing</value>
+                    <value>Facet-tab-division-operations</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
-                    <value>BMG Pricing</value>
+                    <value>Operations</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
-                <identifier>tab_pricing</identifier>
+                <identifier>builder_division_tab_operations</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-tab-activity</value>
+                    <value>Facet-tab-division-commercial</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Commercial</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>builder_division_tab_commercial</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-tab-division-files</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Files</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>builder_division_tab_files</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-tab-division-activity</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
                     <value>Activity</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
-                <identifier>tab_activity</identifier>
+                <identifier>builder_division_tab_activity</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-tabset-main</name>
+        <name>Facet-tabset-division-main</name>
         <type>Facet</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -107,28 +163,36 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>collapsed</name>
-                    <value>true</value>
+                    <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>enableActionsConfiguration</name>
                     <value>false</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
+                    <name>enableActionsInNative</name>
+                    <value>false</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
                     <name>hideChatterActions</name>
                     <value>false</value>
                 </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>numVisibleActions</name>
+                    <value>6</value>
+                </componentInstanceProperties>
                 <componentName>force:highlightsPanel</componentName>
-                <identifier>highlightsPanel</identifier>
+                <identifier>builder_division_highlights</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentInstanceProperties>
                     <name>tabs</name>
-                    <value>Facet-tabset-main</value>
+                    <value>Facet-tabset-division-main</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tabset</componentName>
-                <identifier>mainTabset</identifier>
+                <identifier>builder_division_main_tabset</identifier>
             </componentInstance>
         </itemInstances>
         <name>main</name>
@@ -138,7 +202,11 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
-    <masterLabel>LOVING Account: Builder Market (Division)</masterLabel>
+    <flexiPageRegions>
+        <name>header</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <masterLabel>LOVING Account: Builder Market</masterLabel>
     <sobjectType>Account</sobjectType>
     <template>
         <name>flexipage:recordHomeTemplateDesktop</name>

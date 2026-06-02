@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>On_PTO_Today__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Set true by the Rippling sync when today falls within an approved time-off window.</description>
+    <label>On PTO Today</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

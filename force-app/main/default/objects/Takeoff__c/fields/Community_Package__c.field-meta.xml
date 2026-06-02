@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Community_Package__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Effective Community Package at time of Takeoff. Drives scope verification and Work Order line creation.</description>
+    <label>Community Package</label>
+    <referenceTo>Community_Package__c</referenceTo>
+    <relationshipLabel>Takeoffs</relationshipLabel>
+    <relationshipName>Takeoffs_By_Package</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

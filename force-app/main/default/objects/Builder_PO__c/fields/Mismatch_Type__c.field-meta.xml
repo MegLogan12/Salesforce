@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Mismatch_Type__c</fullName>
+    <description>Type of mismatch found during CS PO review.</description>
+    <label>Mismatch Type</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Price Variance</fullName>
+                <default>false</default>
+                <label>Price Variance</label>
+            </value>
+            <value>
+                <fullName>Scope Variance</fullName>
+                <default>false</default>
+                <label>Scope Variance</label>
+            </value>
+            <value>
+                <fullName>Package Mismatch</fullName>
+                <default>false</default>
+                <label>Package Mismatch</label>
+            </value>
+            <value>
+                <fullName>Missing Info</fullName>
+                <default>false</default>
+                <label>Missing Info</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

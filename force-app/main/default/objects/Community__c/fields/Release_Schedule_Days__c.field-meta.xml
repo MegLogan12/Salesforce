@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Release_Schedule_Days__c</fullName>
+    <description>Community-level override of the Division Account Release Schedule (Days). Days between PO release date and expected landscape start for this specific community. If blank, Work_Order__c.Calculated_Start_Date falls back to the Division Account value.</description>
+    <externalId>false</externalId>
+    <label>Release Schedule (Days)</label>
+    <precision>5</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

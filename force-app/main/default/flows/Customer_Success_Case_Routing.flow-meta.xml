@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <assignments>
+        <name>Assign_Closeout_Queue</name>
+        <label>Assign Closeout Queue</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.OwnerId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>00GVu00000FGLr3MAH</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>Assign_EPO_PO_Queue</name>
+        <label>Assign EPO PO Queue</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.OwnerId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>00GVu00000FGLr5MAH</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>Assign_Intake_Queue</name>
+        <label>Assign Intake Queue</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.OwnerId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>00GVu00000FGLr4MAH</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>Assign_Same_Day_Queue</name>
+        <label>Assign Same Day Queue</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.OwnerId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>00GVu00000FGLr6MAH</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>Assign_Warranty_Queue</name>
+        <label>Assign Warranty Queue</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.OwnerId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>00GVu00000FGLr7MAH</stringValue>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <decisions>
+        <name>Route_By_Type</name>
+        <label>Route By Type</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Assign_Intake_Queue</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default to Intake</defaultConnectorLabel>
+        <rules>
+            <name>Warranty</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Warranty</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Warranty_Queue</targetReference>
+            </connector>
+            <label>Warranty</label>
+        </rules>
+        <rules>
+            <name>Same_Day</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Same-Day Escalation</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Same_Day_Queue</targetReference>
+            </connector>
+            <label>Same-Day Escalation</label>
+        </rules>
+        <rules>
+            <name>EPO_PO</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>EPO / PO Change</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_EPO_PO_Queue</targetReference>
+            </connector>
+            <label>EPO / PO Change</label>
+        </rules>
+        <rules>
+            <name>Closeout</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Closeout Review</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Closeout_Queue</targetReference>
+            </connector>
+            <label>Closeout Review</label>
+        </rules>
+        <rules>
+            <name>Customer_Success</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Customer Success</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Intake_Queue</targetReference>
+            </connector>
+            <label>Customer Success</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Route_When_New_Or_Type_Changed</name>
+        <label>Route When New Or Type Changed</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnectorLabel>No Routing Change</defaultConnectorLabel>
+        <rules>
+            <name>Create_Or_Type_Changed</name>
+            <conditionLogic>or</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record__Prior.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Type</leftValueReference>
+                <operator>IsChanged</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Route_By_Type</targetReference>
+            </connector>
+            <label>Create or Type Changed</label>
+        </rules>
+    </decisions>
+    <description>Routes Customer Success cases to the correct queue based on Case.Type. Only routes on create or when Type changes, preserving manual reassignment on ordinary edits.</description>
+    <environments>Default</environments>
+    <interviewLabel>Customer Success Case Routing {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Customer Success Case Routing</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Route_When_New_Or_Type_Changed</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>RecordTypeId</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>012Vu000005LVAnIAO</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>IsClosed</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <object>Case</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

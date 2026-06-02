@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PO_Source__c</fullName>
+    <label>PO Source</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>SupplyPro</fullName>
+                <default>true</default>
+                <label>SupplyPro</label>
+            </value>
+            <value>
+                <fullName>Email</fullName>
+                <default>false</default>
+                <label>Email</label>
+            </value>
+            <value>
+                <fullName>Builder Portal</fullName>
+                <default>false</default>
+                <label>Builder Portal</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

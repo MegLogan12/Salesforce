@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Model_Pricing_Link__c</fullName>
+    <inlineHelpText>Link to the model home pricing sheet / unit pricing file.</inlineHelpText>
+    <label>Model Pricing Link</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Url</type>
+</CustomField>

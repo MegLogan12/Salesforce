@@ -3,8 +3,8 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>lovingAccountCommunityLotWorkbench</componentName>
-                <identifier>loving_account_community_lot_workbench</identifier>
+                <componentName>lovingLotsWorkspace</componentName>
+                <identifier>loving_lots_workspace</identifier>
             </componentInstance>
         </itemInstances>
         <name>main</name>

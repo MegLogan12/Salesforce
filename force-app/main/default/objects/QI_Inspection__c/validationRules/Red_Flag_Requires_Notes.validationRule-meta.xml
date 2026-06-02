@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Red_Flag_Requires_Notes</fullName>
+    <active>true</active>
+    <description>FM Notes required when any inspection score is 3 or below</description>
+    <errorConditionFormula>AND(
+    NOT($Profile.Name = &quot;System Administrator&quot;),
+    (AND(
+        OR(
+            Score_Sod_Install__c &lt;= 3,
+            Score_Sod_Health__c &lt;= 3,
+            Score_Plant_Install__c &lt;= 3,
+            Score_Plant_Health__c &lt;= 3,
+            Score_Cleanup__c &lt;= 3,
+            Score_Site_Condition__c &lt;= 3,
+            Score_Overall__c &lt;= 3
+        ),
+        ISBLANK(FM_Notes__c)
+    ))
+)</errorConditionFormula>
+    <errorDisplayField>FM_Notes__c</errorDisplayField>
+    <errorMessage>Red-flagged item requires FM notes</errorMessage>
+</ValidationRule>

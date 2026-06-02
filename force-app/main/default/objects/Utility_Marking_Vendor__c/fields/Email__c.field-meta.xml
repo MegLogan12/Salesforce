@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Email__c</fullName>
+    <description>Distribution email for the state&apos;s 811 / utility marking service. UtilityMarkingService sends locate requests here.</description>
+    <externalId>false</externalId>
+    <label>Distribution Email</label>
+    <required>true</required>
+    <trackTrending>false</trackTrending>
+    <type>Email</type>
+    <unique>false</unique>
+</CustomField>

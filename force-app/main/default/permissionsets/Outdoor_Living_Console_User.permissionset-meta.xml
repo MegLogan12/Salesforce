@@ -1,18 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
-    <description>Grants Apex class access and field-level security for the Outdoor Living Console — Opportunity and Contact record pages, workspace, and engagement health.</description>
-    <hasActivationRequired>false</hasActivationRequired>
-    <label>Outdoor Living Console User</label>
     <classAccesses>
         <apexClass>ODLContactRecordController</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>ODLOpportunityRecordController</apexClass>
-        <enabled>true</enabled>
-    </classAccesses>
-    <classAccesses>
-        <apexClass>ODLOpportunityWorkspaceController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
     <classAccesses>
@@ -23,64 +12,76 @@
         <apexClass>ODLOpportunityCloseController</apexClass>
         <enabled>true</enabled>
     </classAccesses>
+    <classAccesses>
+        <apexClass>ODLOpportunityRecordController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <classAccesses>
+        <apexClass>ODLOpportunityWorkspaceController</apexClass>
+        <enabled>true</enabled>
+    </classAccesses>
+    <description>Grants Apex class access and field-level security for the Outdoor Living Console — Opportunity and Contact record pages, workspace, and engagement health.</description>
     <fieldPermissions>
-        <field>Contact.SMS_Consent__c</field>
         <editable>false</editable>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <field>Contact.SMS_Opt_In_Date__c</field>
-        <editable>false</editable>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
-        <field>Contact.SMS_Opt_In_Source__c</field>
-        <editable>false</editable>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
         <field>Contact.Last_Activity_DateTime__c</field>
-        <editable>false</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
         <field>Contact.Last_Activity_Summary__c</field>
-        <editable>false</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
+        <editable>false</editable>
         <field>Contact.Next_Follow_Up_DateTime__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
         <editable>false</editable>
+        <field>Contact.SMS_Consent__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <field>Opportunity.Last_Customer_Response_Date__c</field>
-        <editable>true</editable>
+        <editable>false</editable>
+        <field>Contact.SMS_Opt_In_Date__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <field>Opportunity.Design_Fee_Status__c</field>
-        <editable>true</editable>
+        <editable>false</editable>
+        <field>Contact.SMS_Opt_In_Source__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <field>Opportunity.Design_Fee_Paid_Date__c</field>
-        <editable>true</editable>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
+        <editable>false</editable>
         <field>Opportunity.Deposit_Due__c</field>
-        <editable>false</editable>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <field>Opportunity.Deposit_Paid__c</field>
         <editable>false</editable>
-        <readable>true</readable>
-    </fieldPermissions>
-    <fieldPermissions>
         <field>Opportunity.Deposit_Paid_Date__c</field>
-        <editable>false</editable>
         <readable>true</readable>
     </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Opportunity.Deposit_Paid__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Opportunity.Design_Fee_Paid_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Opportunity.Design_Fee_Status__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Opportunity.Last_Customer_Response_Date__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Outdoor Living Console User</label>
+    <license>Salesforce</license>
 </PermissionSet>

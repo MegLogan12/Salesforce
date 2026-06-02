@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Closeout_Submitted_DateTime__c</fullName>
+    <description>Date and time when the Work Order was submitted for closeout review. Set by flow alongside Closeout_Submitted_By__c. Used for SLA tracking and closeout queue aging.</description>
+    <label>Closeout Submitted Date/Time</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>DateTime</type>
+</CustomField>

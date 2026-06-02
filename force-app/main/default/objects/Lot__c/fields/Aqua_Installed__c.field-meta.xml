@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Aqua_Installed__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Set to true when the irrigation system has been installed at this lot. Triggers Aqua Check ticket generation and activates the lot for the Aqua pickup queue.</description>
+    <label>Aqua Installed</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>59.0</apiVersion>
+    <decisions>
+        <name>Has_Aqua_And_Closed</name>
+        <label>Has Aqua And Just Closed</label>
+        <locationX>176</locationX>
+        <locationY>278</locationY>
+        <defaultConnectorLabel>Not Applicable</defaultConnectorLabel>
+        <rules>
+            <name>Aqua_Lot_Closed</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Aqua_Installed__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Closing_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record__Prior.Closing_Date__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Create_Pickup_Ticket</targetReference>
+            </connector>
+            <label>Aqua Lot Just Closed</label>
+        </rules>
+    </decisions>
+    <description>When a Lot with an Aqua system gets a Closed_Date set, create an Aqua Pickup Ticket to schedule equipment retrieval.</description>
+    <interviewLabel>LOVING Aqua Pickup On Lot Close {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING Aqua Pickup On Lot Close</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>Create_Pickup_Ticket</name>
+        <label>Create Aqua Pickup Ticket</label>
+        <locationX>176</locationX>
+        <locationY>458</locationY>
+        <inputAssignments>
+            <field>Community__c</field>
+            <value>
+                <elementReference>$Record.Community__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lot__c</field>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>Open</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Aqua_Pickup_Ticket__c</object>
+    </recordCreates>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Has_Aqua_And_Closed</targetReference>
+        </connector>
+        <object>Lot__c</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

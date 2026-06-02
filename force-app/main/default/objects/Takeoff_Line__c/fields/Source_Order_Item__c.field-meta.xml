@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Source_Order_Item__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Standard OrderItem source line that created this takeoff line.</description>
+    <label>Source Order Item</label>
+    <referenceTo>OrderItem</referenceTo>
+    <relationshipLabel>Takeoff Lines</relationshipLabel>
+    <relationshipName>SourceOrderItemTakeoffLines</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

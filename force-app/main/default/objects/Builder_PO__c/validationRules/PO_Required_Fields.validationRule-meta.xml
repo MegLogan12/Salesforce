@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PO_Required_Fields</fullName>
+    <active>true</active>
+    <description>Blocks CS approval and downstream creation until the required Builder PO header fields exist.</description>
+    <errorConditionFormula>AND(
+    OR(
+        ISPICKVAL(Status__c, &quot;CS Approved&quot;),
+        ISPICKVAL(Status__c, &quot;Work Order Created&quot;),
+        ISPICKVAL(Status__c, &quot;Closed&quot;)
+    ),
+    OR(
+        ISBLANK(PO_Number__c),
+        ISBLANK(Builder_Division__r.Id),
+        ISBLANK(Community__r.Id),
+        ISBLANK(Lot__r.Id),
+        ISBLANK(TEXT(Requested_Install_Date__c))
+    )
+)</errorConditionFormula>
+    <errorMessage>Complete the PO header before CS approval or work order creation.</errorMessage>
+</ValidationRule>

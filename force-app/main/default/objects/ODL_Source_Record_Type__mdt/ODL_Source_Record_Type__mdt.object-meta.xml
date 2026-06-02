@@ -2,19 +2,5 @@
 <CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
     <label>ODL Source Record Type</label>
     <pluralLabel>ODL Source Record Types</pluralLabel>
-    <fields>
-        <fullName>Lead_Source__c</fullName>
-        <fieldManageability>DeveloperControlled</fieldManageability>
-        <label>Lead Source</label>
-        <type>Text</type>
-        <length>255</length>
-    </fields>
-    <fields>
-        <fullName>Opportunity_Record_Type__c</fullName>
-        <fieldManageability>DeveloperControlled</fieldManageability>
-        <label>Opportunity Record Type</label>
-        <type>Text</type>
-        <length>80</length>
-    </fields>
     <visibility>Public</visibility>
 </CustomObject>

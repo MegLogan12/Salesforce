@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Lot__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Lot lookup associated with the canonical Purchase Order.</description>
+    <inlineHelpText>Lot for the Purchase Order. Builder PO Lot maps here during migration.</inlineHelpText>
+    <label>Lot</label>
+    <referenceTo>Lot__c</referenceTo>
+    <relationshipLabel>Purchase Orders</relationshipLabel>
+    <relationshipName>Purchase_Orders</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Required_Action__c</fullName>
+    <label>Required Action</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Assign Field Manager</fullName>
+                <default>false</default>
+                <label>Assign Field Manager</label>
+            </value>
+            <value>
+                <fullName>Assign Resource / Crew</fullName>
+                <default>false</default>
+                <label>Assign Resource / Crew</label>
+            </value>
+            <value>
+                <fullName>Complete Takeoff</fullName>
+                <default>false</default>
+                <label>Complete Takeoff</label>
+            </value>
+            <value>
+                <fullName>Confirm Site Ready</fullName>
+                <default>false</default>
+                <label>Confirm Site Ready</label>
+            </value>
+            <value>
+                <fullName>Resolve Inventory Hold</fullName>
+                <default>false</default>
+                <label>Resolve Inventory Hold</label>
+            </value>
+            <value>
+                <fullName>Add Coordinates</fullName>
+                <default>false</default>
+                <label>Add Coordinates</label>
+            </value>
+            <value>
+                <fullName>Review Weather Hold</fullName>
+                <default>false</default>
+                <label>Review Weather Hold</label>
+            </value>
+            <value>
+                <fullName>Review Traffic Impact</fullName>
+                <default>false</default>
+                <label>Review Traffic Impact</label>
+            </value>
+            <value>
+                <fullName>Contact Builder</fullName>
+                <default>false</default>
+                <label>Contact Builder</label>
+            </value>
+            <value>
+                <fullName>Contact Customer Success</fullName>
+                <default>false</default>
+                <label>Contact Customer Success</label>
+            </value>
+            <value>
+                <fullName>Create Finished Job</fullName>
+                <default>false</default>
+                <label>Create Finished Job</label>
+            </value>
+            <value>
+                <fullName>Review Backcharge Risk</fullName>
+                <default>false</default>
+                <label>Review Backcharge Risk</label>
+            </value>
+            <value>
+                <fullName>Reschedule</fullName>
+                <default>false</default>
+                <label>Reschedule</label>
+            </value>
+            <value>
+                <fullName>Release Schedule</fullName>
+                <default>false</default>
+                <label>Release Schedule</label>
+            </value>
+            <value>
+                <fullName>Cancel Appointment</fullName>
+                <default>false</default>
+                <label>Cancel Appointment</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

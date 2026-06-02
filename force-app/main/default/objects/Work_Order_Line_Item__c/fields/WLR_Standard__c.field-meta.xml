@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WLR_Standard__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Lookup to the WLR_Time_Standard__c record matched to this line item. When populated, Estimated_Line_Minutes__c uses this standard&apos;s Minutes_Per_Unit__c for duration calculation. When blank, falls back to legacy Time_Standard__c number field.</description>
+    <label>WLR Time Standard</label>
+    <referenceTo>WLR_Time_Standard__c</referenceTo>
+    <relationshipLabel>Work Order Line Items</relationshipLabel>
+    <relationshipName>Work_Order_Line_Items</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

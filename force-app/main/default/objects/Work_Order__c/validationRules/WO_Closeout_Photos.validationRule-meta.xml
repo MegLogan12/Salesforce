@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WO_Closeout_Photos</fullName>
+    <active>true</active>
+    <description>Field Complete requires at least four closeout photos. Scoped to Home Builder WO record types. Spec Section 8.</description>
+    <errorConditionFormula>AND( OR(RecordType.DeveloperName=&quot;Production_Install&quot;,RecordType.DeveloperName=&quot;Finish_Job&quot;), ISCHANGED(Status__c), OR(ISPICKVAL(Status__c,&quot;Field Complete&quot;),ISPICKVAL(Status__c,&quot;Pending Closeout&quot;)), Closeout_Photo_Count__c &lt; 4 )</errorConditionFormula>
+    <errorDisplayField>Closeout_Photo_Count__c</errorDisplayField>
+    <errorMessage>Field Complete needs at least four closeout photos.</errorMessage>
+</ValidationRule>

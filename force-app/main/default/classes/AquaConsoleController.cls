@@ -828,8 +828,8 @@ public with sharing class AquaConsoleController {
             if (t.Work_Order__c != null) woIds.add(t.Work_Order__c);
         }
         Map<Id,String> woNameMap = new Map<Id,String>();
-        for (Work_Order__c wo : [SELECT Id, Name FROM Work_Order__c WHERE Id IN :woIds]) {
-            woNameMap.put(wo.Id, wo.Name);
+        for (WorkOrder wo : [SELECT Id, WorkOrderNumber FROM WorkOrder WHERE Id IN :woIds]) {
+            woNameMap.put(wo.Id, wo.WorkOrderNumber);
         }
         for (Aqua_Install_Ticket__c t : tickets) {
             TodayInstallRow r = new TodayInstallRow();

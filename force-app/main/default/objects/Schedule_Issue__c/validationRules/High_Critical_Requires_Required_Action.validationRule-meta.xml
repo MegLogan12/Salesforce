@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>High_Critical_Requires_Required_Action</fullName>
+    <active>true</active>
+    <description>High or Critical severity issues require a Required Action to be specified.</description>
+    <errorConditionFormula>AND(OR(ISPICKVAL(Severity__c, &quot;High&quot;), ISPICKVAL(Severity__c, &quot;Critical&quot;)), ISBLANK(TEXT(Required_Action__c)))</errorConditionFormula>
+    <errorMessage>High and Critical issues require a Required Action. Please select a Required Action before saving.</errorMessage>
+</ValidationRule>

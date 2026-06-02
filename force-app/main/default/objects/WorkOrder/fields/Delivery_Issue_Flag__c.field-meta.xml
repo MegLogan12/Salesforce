@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Delivery_Issue_Flag__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Set to true when a Delivery_Quality_Check__c record linked to this work order has Overall_Pass__c = false (any sod or mulch check failed or was flagged). Set by the Flag Delivery Issue flow in FSL Mobile during Scene 6B. When true: blocks Begin Install button in FSL Mobile until FM decision is recorded, triggers FM push notification, and creates Quality_Case__c. Used on dashboard and work order list views to surface delivery failures without opening individual records.</description>
+    <label>Delivery Issue Flag</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

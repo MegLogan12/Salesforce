@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Duration_Calc_Status__c</fullName>
+    <description>Status of the WLR duration match for this line item. Set by WLRDurationCalculationService or by flow. Matched = WLR standard found and applied. Missing Standard = no WLR match, line item not counted. Missing Quantity = Quantity__c is null, cannot calculate. Manual Override = scheduler entered duration manually. Needs Review = exception requiring human review.</description>
+    <label>Duration Calc Status</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Matched</fullName>
+                <default>false</default>
+                <label>Matched</label>
+            </value>
+            <value>
+                <fullName>Missing Standard</fullName>
+                <default>false</default>
+                <label>Missing Standard</label>
+            </value>
+            <value>
+                <fullName>Missing Quantity</fullName>
+                <default>false</default>
+                <label>Missing Quantity</label>
+            </value>
+            <value>
+                <fullName>Manual Override</fullName>
+                <default>false</default>
+                <label>Manual Override</label>
+            </value>
+            <value>
+                <fullName>Needs Review</fullName>
+                <default>false</default>
+                <label>Needs Review</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

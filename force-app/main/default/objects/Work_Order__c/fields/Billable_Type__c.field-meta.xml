@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Billable_Type__c</fullName>
+    <label>Billable Type</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Billable (PO)</fullName>
+                <default>false</default>
+                <label>Billable (PO)</label>
+            </value>
+            <value>
+                <fullName>Warranty (No Charge)</fullName>
+                <default>false</default>
+                <label>Warranty (No Charge)</label>
+            </value>
+            <value>
+                <fullName>FJ Internal</fullName>
+                <default>false</default>
+                <label>FJ Internal</label>
+            </value>
+            <value>
+                <fullName>Customer Care</fullName>
+                <default>false</default>
+                <label>Customer Care</label>
+            </value>
+            <value>
+                <fullName>Internal</fullName>
+                <default>false</default>
+                <label>Internal</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

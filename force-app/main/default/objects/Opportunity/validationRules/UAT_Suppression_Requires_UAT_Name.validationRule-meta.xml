@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>UAT_Suppression_Requires_UAT_Name</fullName>
+    <active>true</active>
+    <description>Prevents the UAT automation suppression flag from being used on non-UAT opportunities.</description>
+    <errorConditionFormula>AND(
+    Suppress_Automation_For_UAT__c,
+    NOT(BEGINS(Name, &quot;UAT - DO NOT SEND&quot;))
+)</errorConditionFormula>
+    <errorDisplayField>Name</errorDisplayField>
+    <errorMessage>Suppress Automation For UAT can only be enabled on opportunities whose Name starts with UAT - DO NOT SEND.</errorMessage>
+</ValidationRule>

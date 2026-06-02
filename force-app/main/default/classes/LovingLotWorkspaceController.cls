@@ -47,6 +47,9 @@ public with sharing class LovingLotWorkspaceController {
         @AuraEnabled public Integer communityCount;
         @AuraEnabled public Integer lotCount;
         @AuraEnabled public Integer activeLotCount;
+        @AuraEnabled public Integer missingLayoutCount;
+        @AuraEnabled public Integer missingGpsCount;
+        @AuraEnabled public Integer aquaPickupDueCount;
         @AuraEnabled public List<ColumnDTO> columns;
         @AuraEnabled public List<OptionDTO> pipelineOptions;
         @AuraEnabled public List<OptionDTO> builderOptions;
@@ -105,17 +108,25 @@ public with sharing class LovingLotWorkspaceController {
         @AuraEnabled public String pipelineClass;
         @AuraEnabled public String lotStatus;
         @AuraEnabled public String lotStatusClass;
+        @AuraEnabled public String productionStatus;
         @AuraEnabled public String scheduledCloseDisplay;
+        @AuraEnabled public String installDateDisplay;
         @AuraEnabled public String installBanner;
         @AuraEnabled public Integer workOrderCount;
         @AuraEnabled public Integer photoCount;
         @AuraEnabled public String lotLayoutLink;
         @AuraEnabled public String mapsLink;
+        @AuraEnabled public String readinessPctDisplay;
+        @AuraEnabled public String layoutStatus;
+        @AuraEnabled public String gpsStatus;
+        @AuraEnabled public Boolean aquaPickupDue;
         @AuraEnabled public String latestPoNumber;
         @AuraEnabled public String latestPoStatus;
         @AuraEnabled public String latestPoAmountDisplay;
         @AuraEnabled public String latestPoEstimatedStartDisplay;
         @AuraEnabled public String latestPoEight11Status;
+        @AuraEnabled public Id latestPoDivisionAccountId;
+        @AuraEnabled public Id latestPoBuilderAccountId;
         @AuraEnabled public String latestTakeoffStatus;
         @AuraEnabled public List<DetailFieldDTO> poSummaryFields;
         @AuraEnabled public List<DetailFieldDTO> lotInformationLeft;
@@ -154,17 +165,25 @@ public with sharing class LovingLotWorkspaceController {
         dto.communityCount = [SELECT COUNT() FROM Community__c];
         dto.lotCount = [SELECT COUNT() FROM Lot__c];
         dto.activeLotCount = [SELECT COUNT() FROM Lot__c WHERE Lot_Status__c != 'Closed'];
+        dto.missingLayoutCount = 0;
+        dto.missingGpsCount = 0;
+        dto.aquaPickupDueCount = 0;
 
         List<Lot__c> lots = [
             SELECT Id, Name, Lot_Number__c, Lot_Status__c, Status__c, Pipeline_Bucket__c,
-                   Community__c, Community__r.Name, Community__r.Builder_Account__r.Name,
+                   Community__c, Builder_Account__c, Builder_Division__c,
+                   Community__r.Name, Community__r.Builder_Account__r.Name,
                    Community__r.Assigned_FM__r.Name, Community__r.Aqua_Customer__c,
                    Street_Address__c, Requested_Install_Date__c, PO_Received_Date__c,
                    Frame_Complete_Date__c, Final_Inspection_Date__c, Closing_Date__c,
                    Lawn_Care_Start_Date__c, Aqua_Add_On__c, Aqua_Installed__c,
                    Eight11_Task_Status__c, Builder_PO_Number__c, Spec_Type__c,
                    Sod_SF__c, Trees__c, Shrubs__c, Plant_Package__c, Phase__c,
-                   Lot_Latitude__c, Lot_Longitude__c, Parent_Builder_Account__c
+                   Lot_Latitude__c, Lot_Longitude__c, GPS_Coordinates__c,
+                   Lot_Layout_Attached__c, Lot_Layout_Link__c, Takeoff_Approved_Date__c,
+                   PO_Validated__c, Lot_Readiness_Pct__c, Aqua_Pickup_Created__c,
+                   Aqua_Pickup_Due__c, Active_WO_Count__c, Sod_Species__c,
+                   Parent_Builder_Account__c
             FROM Lot__c
             WHERE Community__c != null
             ORDER BY LastModifiedDate DESC, Name
@@ -209,9 +228,12 @@ public with sharing class LovingLotWorkspaceController {
             row.poAmount = po == null ? null : po.PO_Amount__c;
             row.poAmountDisplay = formatCurrency(row.poAmount);
             row.specType = String.isBlank(lot.Spec_Type__c) ? '-' : lot.Spec_Type__c;
-            row.workOrderCount = context == null ? 0 : context.workOrderCount;
+            row.workOrderCount = lot.Active_WO_Count__c == null ? (context == null ? 0 : context.workOrderCount) : Integer.valueOf(lot.Active_WO_Count__c);
             row.photoCount = context == null ? 0 : context.photoCount;
             dto.rows.add(row);
+            if (!lot.Lot_Layout_Attached__c) dto.missingLayoutCount++;
+            if (String.isBlank(lot.GPS_Coordinates__c)) dto.missingGpsCount++;
+            if (lot.Aqua_Pickup_Due__c) dto.aquaPickupDueCount++;
 
             if (String.isNotBlank(row.pipelineBucket)) pipelineValues.add(row.pipelineBucket);
             if (String.isNotBlank(row.builderDivisionName)) builderNames.add(row.builderDivisionName);
@@ -243,14 +265,19 @@ public with sharing class LovingLotWorkspaceController {
 
         List<Lot__c> lots = [
             SELECT Id, Name, Lot_Number__c, Lot_Status__c, Status__c, Pipeline_Bucket__c,
-                   Community__c, Community__r.Name, Community__r.Builder_Account__r.Name,
+                   Community__c, Builder_Account__c, Builder_Division__c,
+                   Community__r.Name, Community__r.Builder_Account__r.Name,
                    Community__r.Assigned_FM__r.Name, Community__r.Aqua_Customer__c,
                    Community__r.Lot_Layout_Link__c, Street_Address__c, Requested_Install_Date__c,
                    PO_Received_Date__c, Frame_Complete_Date__c, Final_Inspection_Date__c,
-                   Closing_Date__c, Lawn_Care_Start_Date__c, Aqua_Add_On__c,
+                   Closing_Date__c, Install_Date__c, Lawn_Care_Start_Date__c, Aqua_Add_On__c,
                    Aqua_Installed__c, Eight11_Task_Status__c, Builder_PO_Number__c,
                    Spec_Type__c, Sod_SF__c, Trees__c, Shrubs__c, Plant_Package__c,
-                   Phase__c, Lot_Latitude__c, Lot_Longitude__c, Parent_Builder_Account__c
+                   Phase__c, Lot_Latitude__c, Lot_Longitude__c, GPS_Coordinates__c,
+                   Lot_Layout_Attached__c, Lot_Layout_Link__c, Takeoff_Approved_Date__c,
+                   PO_Validated__c, Lot_Readiness_Pct__c, Aqua_Pickup_Created__c,
+                   Aqua_Pickup_Due__c, Active_WO_Count__c, Sod_Species__c,
+                   Parent_Builder_Account__c
             FROM Lot__c
             WHERE Id = :lotId
             LIMIT 1
@@ -282,17 +309,25 @@ public with sharing class LovingLotWorkspaceController {
         dto.pipelineClass = pipelineClass(dto.pipelineBucket);
         dto.lotStatus = canonicalLotStatus(lot);
         dto.lotStatusClass = lotStatusClass(dto.lotStatus);
+        dto.productionStatus = String.isBlank(lot.Status__c) ? '-' : lot.Status__c;
         dto.scheduledCloseDisplay = formatDate(lot.Closing_Date__c);
+        dto.installDateDisplay = formatDate(lot.Install_Date__c == null ? lot.Requested_Install_Date__c : lot.Install_Date__c);
         dto.installBanner = buildInstallBanner(lot, po, takeoff, latestWo);
-        dto.workOrderCount = context == null ? 0 : context.workOrderCount;
+        dto.workOrderCount = lot.Active_WO_Count__c == null ? (context == null ? 0 : context.workOrderCount) : Integer.valueOf(lot.Active_WO_Count__c);
         dto.photoCount = context == null ? 0 : context.photoCount;
-        dto.lotLayoutLink = lot.Community__r == null ? null : lot.Community__r.Lot_Layout_Link__c;
+        dto.lotLayoutLink = firstNonBlank(lot.Lot_Layout_Link__c, lot.Community__r == null ? null : lot.Community__r.Lot_Layout_Link__c);
         dto.mapsLink = buildMapsLink(lot.Street_Address__c, lot.Lot_Latitude__c, lot.Lot_Longitude__c);
+        dto.readinessPctDisplay = lot.Lot_Readiness_Pct__c == null ? '-' : String.valueOf(lot.Lot_Readiness_Pct__c.setScale(0)) + '%';
+        dto.layoutStatus = lot.Lot_Layout_Attached__c ? 'Attached' : 'Missing';
+        dto.gpsStatus = String.isBlank(lot.GPS_Coordinates__c) ? 'Missing' : lot.GPS_Coordinates__c;
+        dto.aquaPickupDue = lot.Aqua_Pickup_Due__c;
         dto.latestPoNumber = po == null ? firstNonBlank(lot.Builder_PO_Number__c, null) : po.PO_Number__c;
         dto.latestPoStatus = po == null ? null : po.Status__c;
         dto.latestPoAmountDisplay = po == null ? null : formatCurrency(po.PO_Amount__c);
         dto.latestPoEstimatedStartDisplay = po == null ? null : formatDate(po.Estimated_Start_Date__c);
         dto.latestPoEight11Status = firstNonBlank(po == null ? null : po.Eight11_Task_Status__c, lot.Eight11_Task_Status__c);
+        dto.latestPoDivisionAccountId = po != null && po.Division_Account__c != null ? po.Division_Account__c : lot.Builder_Division__c;
+        dto.latestPoBuilderAccountId = po != null && po.Builder_Account__c != null ? po.Builder_Account__c : lot.Builder_Account__c;
         dto.latestTakeoffStatus = deriveTakeoffStatus(po, takeoff);
 
         addLotFields(dto, lot, po, takeoff);
@@ -351,6 +386,7 @@ public with sharing class LovingLotWorkspaceController {
 
     private static void addLotFields(LotDetailDTO dto, Lot__c lot, Builder_PO__c po, Takeoff__c takeoff) {
         dto.lotInformationLeft.add(field(fieldLabel(Lot__c.Name), lot.Name, 'text', null, 'Lot__c', 'Name', 'Lot record name', false));
+        dto.lotInformationLeft.add(field(fieldLabel(Lot__c.Pipeline_Bucket__c), dto.pipelineBucket, 'picklist', null, 'Lot__c', 'Pipeline_Bucket__c', 'Lot field', true, picklistOptions(Lot__c.Pipeline_Bucket__c.getDescribe())));
         dto.lotInformationLeft.add(field(fieldLabel(Lot__c.Community__c), dto.communityName, 'link', dto.communityId == null ? null : '/lightning/r/Community__c/' + dto.communityId + '/view', 'Lot__c', 'Community__c', 'Lot lookup', true, picklistOptions(null)));
         dto.lotInformationLeft.add(field(fieldLabel(Lot__c.Parent_Builder_Account__c), dto.parentBuilderName, 'text', null, 'Lot__c', 'Parent_Builder_Account__c', 'Formula / inherited builder rollup', false));
         dto.lotInformationLeft.add(field(fieldLabel(Lot__c.Street_Address__c), lot.Street_Address__c, 'text', null, 'Lot__c', 'Street_Address__c', 'Lot field', true));
@@ -362,10 +398,15 @@ public with sharing class LovingLotWorkspaceController {
         dto.lotInformationRight.add(field(fieldLabel(Community__c.Builder_Account__c), dto.divisionName, 'text', null, 'Community__c', 'Builder_Account__c', 'Inherited from Community', false));
         dto.lotInformationRight.add(field(fieldLabel(Lot__c.Phase__c), lot.Phase__c, 'text', null, 'Lot__c', 'Phase__c', 'Lot field', true));
         dto.lotInformationRight.add(field('GPS', coordinateLabel(lot.Lot_Latitude__c, lot.Lot_Longitude__c), 'text', null, 'Lot__c', 'Lot_Latitude__c', 'Derived from Lot latitude and longitude', false));
+        dto.lotInformationRight.add(field(fieldLabel(Lot__c.GPS_Coordinates__c), lot.GPS_Coordinates__c, 'text', null, 'Lot__c', 'GPS_Coordinates__c', 'Readiness gate', false));
         dto.lotInformationRight.add(field(fieldLabel(Lot__c.Spec_Type__c), lot.Spec_Type__c, 'picklist', null, 'Lot__c', 'Spec_Type__c', 'Lot field', true, picklistOptions(Lot__c.Spec_Type__c.getDescribe())));
         dto.lotInformationRight.add(field(fieldLabel(Lot__c.Requested_Install_Date__c), formatDate(lot.Requested_Install_Date__c), 'date', null, 'Lot__c', 'Requested_Install_Date__c', 'Lot field', true));
+        dto.lotInformationRight.add(field(fieldLabel(Lot__c.Lot_Layout_Attached__c), lot.Lot_Layout_Attached__c ? 'Attached' : 'Missing', 'checkbox', null, 'Lot__c', 'Lot_Layout_Attached__c', 'Readiness gate', true));
+        dto.lotInformationRight.add(field(fieldLabel(Lot__c.Lot_Layout_Link__c), String.isBlank(lot.Lot_Layout_Link__c) ? dto.lotLayoutLink : lot.Lot_Layout_Link__c, 'link', dto.lotLayoutLink, 'Lot__c', 'Lot_Layout_Link__c', 'Lot layout', true));
+        dto.lotInformationRight.add(field(fieldLabel(Lot__c.Lot_Readiness_Pct__c), dto.readinessPctDisplay, 'percent', null, 'Lot__c', 'Lot_Readiness_Pct__c', 'Readiness formula', false));
 
         dto.propertyDetailsLeft.add(field(fieldLabel(Lot__c.Sod_SF__c), lot.Sod_SF__c == null ? null : formatWhole(lot.Sod_SF__c) + ' sf', 'number', null, 'Lot__c', 'Sod_SF__c', 'Lot field', true));
+        dto.propertyDetailsLeft.add(field(fieldLabel(Lot__c.Sod_Species__c), lot.Sod_Species__c, 'picklist', null, 'Lot__c', 'Sod_Species__c', 'Lot field', true, picklistOptions(Lot__c.Sod_Species__c.getDescribe())));
         dto.propertyDetailsLeft.add(field(fieldLabel(Lot__c.Trees__c), quantityLabel(lot.Trees__c == null ? null : Integer.valueOf(lot.Trees__c), 'tree'), 'number', null, 'Lot__c', 'Trees__c', 'Lot field', true));
         dto.propertyDetailsLeft.add(field(fieldLabel(Takeoff__c.Mulch_Measured_CY__c), takeoff == null || takeoff.Mulch_Measured_CY__c == null ? null : formatWhole(takeoff.Mulch_Measured_CY__c) + ' cy', 'number', null, 'Takeoff__c', 'Mulch_Measured_CY__c', 'Latest Takeoff measurement', false));
         dto.propertyDetailsLeft.add(field(fieldLabel(Lot__c.Aqua_Add_On__c), lot.Aqua_Add_On__c == null ? deriveAquaStatus(lot) : formatCurrency(lot.Aqua_Add_On__c), 'currency', null, 'Lot__c', 'Aqua_Add_On__c', 'Lot field', true));
@@ -376,6 +417,10 @@ public with sharing class LovingLotWorkspaceController {
         dto.propertyDetailsRight.add(field('Aqua Service', deriveAquaStatus(lot), 'text', null, 'Derived', 'Aqua status', 'Derived from Aqua fields and Community', false));
 
         dto.pipelineTaskRows.add(field(fieldLabel(Lot__c.Pipeline_Bucket__c), dto.pipelineBucket, 'picklist', null, 'Lot__c', 'Pipeline_Bucket__c', 'Latest derived bucket, editable stored field when set directly', true, picklistOptions(Lot__c.Pipeline_Bucket__c.getDescribe())));
+        dto.pipelineTaskRows.add(field(fieldLabel(Lot__c.PO_Validated__c), lot.PO_Validated__c ? 'Yes' : 'No', 'checkbox', null, 'Lot__c', 'PO_Validated__c', 'Readiness gate', true));
+        dto.pipelineTaskRows.add(field(fieldLabel(Lot__c.Takeoff_Approved_Date__c), formatDate(lot.Takeoff_Approved_Date__c), 'date', null, 'Lot__c', 'Takeoff_Approved_Date__c', 'Readiness gate', true));
+        dto.pipelineTaskRows.add(field(fieldLabel(Lot__c.Aqua_Pickup_Created__c), lot.Aqua_Pickup_Created__c ? 'Yes' : 'No', 'checkbox', null, 'Lot__c', 'Aqua_Pickup_Created__c', 'Aqua closeout gate', true));
+        dto.pipelineTaskRows.add(field(fieldLabel(Lot__c.Aqua_Pickup_Due__c), lot.Aqua_Pickup_Due__c ? 'Due' : 'Not due', 'checkbox', null, 'Lot__c', 'Aqua_Pickup_Due__c', 'Aqua formula', false));
         dto.pipelineTaskRows.add(field(fieldLabel(Lot__c.Eight11_Task_Status__c), String.isBlank(lot.Eight11_Task_Status__c) ? 'Not Filed' : lot.Eight11_Task_Status__c, 'picklist', null, 'Lot__c', 'Eight11_Task_Status__c', 'Lot field', true, picklistOptions(Lot__c.Eight11_Task_Status__c.getDescribe())));
         dto.pipelineTaskRows.add(field(fieldLabel(Builder_PO__c.Takeoff_Status__c), deriveTakeoffStatus(po, takeoff), 'text', null, po == null ? 'Takeoff__c' : 'Builder_PO__c', po == null ? 'Status__c' : 'Takeoff_Status__c', 'Latest PO/Takeoff status', false));
         dto.pipelineTaskRows.add(field(fieldLabel(Builder_PO__c.Status__c), po == null ? null : po.Status__c, 'text', null, 'Builder_PO__c', 'Status__c', 'Latest Builder PO', false));
@@ -412,7 +457,8 @@ public with sharing class LovingLotWorkspaceController {
         Map<String, Id> lotIdByPoNumber = new Map<String, Id>();
         Map<Id, Id> lotIdByWorkOrderId = new Map<Id, Id>();
         for (Builder_PO__c po : [
-            SELECT Id, PO_Number__c, Lot__c, Status__c, Takeoff_Status__c, Eight11_Task_Status__c,
+            SELECT Id, PO_Number__c, Lot__c, Division_Account__c, Builder_Account__c, Community__c,
+                   Status__c, Takeoff_Status__c, Eight11_Task_Status__c,
                    Estimated_Start_Date__c, PO_Amount__c, LastModifiedDate
             FROM Builder_PO__c
             WHERE Lot__c IN :lotIds
@@ -626,60 +672,47 @@ public with sharing class LovingLotWorkspaceController {
         if (latestWo != null) {
             if (latestWo.Status == 'In Progress' || latestWo.Status == 'Dispatched') return 'In Progress';
             if (latestWo.Status == 'Ready to Schedule' || latestWo.Status == 'Scheduled') return 'Scheduled';
-            if (latestWo.Status == 'Pending Closeout') return 'QI';
+            if (latestWo.Status == 'Pending Closeout') return 'Pending Closeout';
         }
         if (po != null) {
             if (po.Status__c == 'Scheduled') return 'Scheduled';
-            if ((po.Takeoff_Status__c == 'Approved' || po.Takeoff_Status__c == 'Locked') && po.Eight11_Task_Status__c == 'Cleared') return 'Site Ready';
-            if (po.Takeoff_Status__c == 'Approved' || po.Takeoff_Status__c == 'Locked') return 'Takeoff Complete';
-            if (po.Takeoff_Status__c == 'Scheduled' || po.Takeoff_Status__c == 'In Progress' || po.Takeoff_Status__c == 'Submitted' || po.Takeoff_Status__c == 'Submitted for Approval') return 'Pending Scheduling';
+            if ((po.Takeoff_Status__c == 'Approved' || po.Takeoff_Status__c == 'Locked') && po.Eight11_Task_Status__c == 'Cleared') return 'Clear for Schedule';
+            if (po.Takeoff_Status__c == 'Approved' || po.Takeoff_Status__c == 'Locked') return 'Pending Takeoff';
+            if (po.Takeoff_Status__c == 'Scheduled') return 'Takeoff Scheduled';
+            if (po.Takeoff_Status__c == 'In Progress' || po.Takeoff_Status__c == 'Submitted' || po.Takeoff_Status__c == 'Submitted for Approval') return 'Pending Takeoff';
         }
         if (takeoff != null && (takeoff.Status__c == 'Approved' || takeoff.Status__c == 'Locked' || takeoff.Status__c == 'Complete' || takeoff.Status__c == 'Completed')) {
-            return lot.Eight11_Task_Status__c == 'Cleared' ? 'Site Ready' : 'Takeoff Complete';
+            return lot.Eight11_Task_Status__c == 'Cleared' ? 'Clear for Schedule' : 'Pending Takeoff';
         }
-        if (takeoff != null && takeoff.Scheduled_Date__c != null) return 'Pending Scheduling';
-        if (takeoff != null && takeoff.Status__c == 'In Progress') return 'Pending Scheduling';
+        if (takeoff != null && takeoff.Scheduled_Date__c != null) return 'Takeoff Scheduled';
+        if (takeoff != null && takeoff.Status__c == 'In Progress') return 'Pending Takeoff';
         if (lot.Requested_Install_Date__c != null) {
             Integer days = Date.today().daysBetween(lot.Requested_Install_Date__c);
-            if (days > 90) return 'New';
-            return 'Pending Scheduling';
+            if (days > 90) return '90+ Days';
+            if (days >= 61) return '60+ Days';
+            if (days >= 31) return '31 Days';
+            if (days >= 0) return '30 Days';
         }
-        return 'New';
+        return '30 Days';
     }
 
     private static String normalizePipeline(String rawValue) {
-        if (String.isBlank(rawValue)) return rawValue;
-        if (rawValue == 'New') return 'New';
-        if (rawValue == 'Pending Scheduling') return 'Pending Scheduling';
-        if (rawValue == 'Scheduled') return 'Scheduled';
-        if (rawValue == 'Takeoff Complete') return 'Takeoff Complete';
-        if (rawValue == 'Site Ready') return 'Site Ready';
-        if (rawValue == 'In Progress') return 'In Progress';
-        if (rawValue == 'QI') return 'QI';
-        if (rawValue == 'Closed') return 'Closed';
-        if (rawValue == 'Ready to Invoice') return 'Ready to Invoice';
-        if (rawValue == 'Invoiced') return 'Invoiced';
-        if (rawValue == '90+ Days') return 'New';
-        if (rawValue == '60+ Days') return 'Pending Scheduling';
-        if (rawValue == '31 Days' || rawValue == '30 Days' || rawValue == '15 Days') return 'Pending Scheduling';
-        if (rawValue == 'Clear to Schedule' || rawValue == 'Ready to Schedule' || rawValue == 'Clear for Schedule') return 'Site Ready';
-        if (rawValue == 'In Production' || rawValue == 'Active Today') return 'In Progress';
-        if (rawValue == 'Pending Takeoff' || rawValue == 'Under Construction' || rawValue == 'Takeoff Scheduled') return 'Pending Scheduling';
-        if (rawValue == 'Installed' || rawValue == 'Pending Closeout') return 'QI';
+        if (rawValue == 'Clear to Schedule' || rawValue == 'Ready to Schedule') return 'Clear for Schedule';
+        if (rawValue == '15 Days') return '30 Days';
+        if (rawValue == 'In Production') return 'In Progress';
+        if (rawValue == 'Under Construction') return 'Pending Takeoff';
+        if (rawValue == 'Installed') return 'Pending Closeout';
         return rawValue;
     }
 
     private static Boolean isPipelineStage(String value) {
-        return value == 'New'
-            || value == 'Pending Scheduling'
+        return value == 'Pending Takeoff'
+            || value == 'Takeoff Scheduled'
+            || value == 'Clear for Schedule'
             || value == 'Scheduled'
-            || value == 'Takeoff Complete'
-            || value == 'Site Ready'
             || value == 'In Progress'
-            || value == 'QI'
-            || value == 'Closed'
-            || value == 'Ready to Invoice'
-            || value == 'Invoiced';
+            || value == 'Pending Closeout'
+            || value == 'Closed';
     }
 
     private static String pipelineFromServiceAppointmentStatus(String status) {
@@ -687,23 +720,24 @@ public with sharing class LovingLotWorkspaceController {
         if (status == 'None' || status == 'New' || status == 'Open') return 'Scheduled';
         if (status == 'Scheduled' || status == 'Dispatched') return 'Scheduled';
         if (status == 'In Progress' || status == 'On Site') return 'In Progress';
-        if (status == 'Cannot Complete' || status == 'Canceled' || status == 'Cancelled') return 'QI';
-        if (status == 'Completed') return 'QI';
+        if (status == 'Cannot Complete' || status == 'Canceled' || status == 'Cancelled') return 'Pending Closeout';
+        if (status == 'Completed') return 'Pending Closeout';
         return null;
     }
 
     private static String pipelineClass(String bucket) {
-        if (bucket == 'New') return 'pb-new';
-        if (bucket == 'Pending Scheduling') return 'pb-pending';
+        if (bucket == '90+ Days') return 'pb-90';
+        if (bucket == '60+ Days') return 'pb-60';
+        if (bucket == '31 Days') return 'pb-31';
+        if (bucket == '30 Days') return 'pb-30';
+        if (bucket == 'Pending Takeoff') return 'pb-takeoff';
+        if (bucket == 'Takeoff Scheduled') return 'pb-takeoff';
+        if (bucket == 'Clear for Schedule') return 'pb-clear';
         if (bucket == 'Scheduled') return 'pb-sched';
-        if (bucket == 'Takeoff Complete') return 'pb-takeoff';
-        if (bucket == 'Site Ready') return 'pb-clear';
-        if (bucket == 'In Progress') return 'pb-active';
-        if (bucket == 'QI') return 'pb-qi';
+        if (bucket == 'Active Today' || bucket == 'In Progress') return 'pb-active';
+        if (bucket == 'Pending Closeout') return 'ca';
         if (bucket == 'Closed') return 'pb-closed';
-        if (bucket == 'Ready to Invoice') return 'pb-invoice';
-        if (bucket == 'Invoiced') return 'pb-invoiced';
-        return 'pb-new';
+        return 'pb-30';
     }
 
     private static String lotStatusClass(String status) {

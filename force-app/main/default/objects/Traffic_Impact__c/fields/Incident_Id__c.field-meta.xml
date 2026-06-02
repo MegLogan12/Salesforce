@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Incident_Id__c</fullName>
+    <description>External incident identifier from the traffic provider (TomTom or HERE). Used to deduplicate on re-sync — if this ID already exists for today, skip re-insert. Blank for OSRM-sourced records.</description>
+    <externalId>false</externalId>
+    <label>Incident ID</label>
+    <length>50</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

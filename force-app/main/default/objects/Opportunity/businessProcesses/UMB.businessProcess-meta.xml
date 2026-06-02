@@ -4,27 +4,7 @@
     <description>Outdoor Living UMB packaged opportunity sales process.</description>
     <isActive>true</isActive>
     <values>
-        <fullName>Qualifying</fullName>
-        <default>false</default>
-    </values>
-    <values>
-        <fullName>Package Selected</fullName>
-        <default>false</default>
-    </values>
-    <values>
-        <fullName>Consult Scheduled</fullName>
-        <default>false</default>
-    </values>
-    <values>
-        <fullName>Quote Sent</fullName>
-        <default>false</default>
-    </values>
-    <values>
-        <fullName>Quote Accepted</fullName>
-        <default>false</default>
-    </values>
-    <values>
-        <fullName>Proposal Presented</fullName>
+        <fullName>Closed Lost</fullName>
         <default>false</default>
     </values>
     <values>
@@ -32,7 +12,35 @@
         <default>false</default>
     </values>
     <values>
-        <fullName>Closed Lost</fullName>
+        <fullName>Consult Scheduled</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Inquiry Received</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Package Selected</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Proposal Presented</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Propsal Presented</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Qualifying</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Quote Accepted</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Quote Sent</fullName>
         <default>false</default>
     </values>
 </BusinessProcess>

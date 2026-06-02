@@ -3,21 +3,37 @@
     <fullName>Pipeline_Bucket__c</fullName>
     <label>Pipeline Bucket</label>
     <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
     <type>Picklist</type>
     <valueSet>
-        <restricted>false</restricted>
         <valueSetDefinition>
             <sorted>false</sorted>
-            <value><fullName>New</fullName><default>false</default><label>New</label></value>
-            <value><fullName>Pending Scheduling</fullName><default>false</default><label>Pending Scheduling</label></value>
-            <value><fullName>Scheduled</fullName><default>false</default><label>Scheduled</label></value>
-            <value><fullName>Takeoff Complete</fullName><default>false</default><label>Takeoff Complete</label></value>
-            <value><fullName>Site Ready</fullName><default>false</default><label>Site Ready</label></value>
-            <value><fullName>In Progress</fullName><default>false</default><label>In Progress</label></value>
-            <value><fullName>QI</fullName><default>false</default><label>QI</label></value>
-            <value><fullName>Closed</fullName><default>false</default><label>Closed</label></value>
-            <value><fullName>Ready to Invoice</fullName><default>false</default><label>Ready to Invoice</label></value>
-            <value><fullName>Invoiced</fullName><default>false</default><label>Invoiced</label></value>
+            <value>
+                <fullName>90+ Days</fullName>
+                <default>true</default>
+                <label>90+ Days</label>
+            </value>
+            <value>
+                <fullName>60+ Days</fullName>
+                <default>false</default>
+                <label>60+ Days</label>
+            </value>
+            <value>
+                <fullName>30 Days</fullName>
+                <default>false</default>
+                <label>30 Days</label>
+            </value>
+            <value>
+                <fullName>Ready to Schedule</fullName>
+                <default>false</default>
+                <label>Ready to Schedule</label>
+            </value>
+            <value>
+                <fullName>Takeoff In Progress</fullName>
+                <default>false</default>
+                <label>Takeoff In Progress</label>
+            </value>
         </valueSetDefinition>
     </valueSet>
 </CustomField>

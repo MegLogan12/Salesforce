@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Unit__c</fullName>
+    <label>Unit</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Sq Ft</fullName>
+                <default>true</default>
+                <label>Sq Ft</label>
+            </value>
+            <value>
+                <fullName>Each</fullName>
+                <default>false</default>
+                <label>Each</label>
+            </value>
+            <value>
+                <fullName>Linear Ft</fullName>
+                <default>false</default>
+                <label>Linear Ft</label>
+            </value>
+            <value>
+                <fullName>Acre</fullName>
+                <default>false</default>
+                <label>Acre</label>
+            </value>
+            <value>
+                <fullName>Gallon</fullName>
+                <default>false</default>
+                <label>Gallon</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

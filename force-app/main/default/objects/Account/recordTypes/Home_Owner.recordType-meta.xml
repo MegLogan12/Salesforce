@@ -225,6 +225,29 @@
         </values>
     </picklistValues>
     <picklistValues>
+        <picklist>Lifecycle_Stage__c</picklist>
+        <values>
+            <fullName>Active Customer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lead</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Past Customer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Prospect</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Repeat Customer</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
         <picklist>Lot_Status__c</picklist>
         <values>
             <fullName>Active</fullName>
@@ -251,10 +274,6 @@
         <picklist>Market__c</picklist>
         <values>
             <fullName>Asheville</fullName>
-            <default>false</default>
-        </values>
-        <values>
-            <fullName>Charlotte</fullName>
             <default>false</default>
         </values>
         <values>
@@ -427,6 +446,21 @@
         </values>
         <values>
             <fullName>Warm</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Relationship_Tier__c</picklist>
+        <values>
+            <fullName>Standard</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Strategic</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Watch</fullName>
             <default>false</default>
         </values>
     </picklistValues>

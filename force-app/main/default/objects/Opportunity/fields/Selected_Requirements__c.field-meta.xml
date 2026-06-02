@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Selected_Requirements__c</fullName>
+    <label>Selected Requirements</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Grilling Island</fullName>
+                <default>false</default>
+                <label>Grilling Island</label>
+            </value>
+            <value>
+                <fullName>Outdoor Fireplace</fullName>
+                <default>false</default>
+                <label>Outdoor Fireplace</label>
+            </value>
+            <value>
+                <fullName>Paver Patio</fullName>
+                <default>false</default>
+                <label>Paver Patio</label>
+            </value>
+            <value>
+                <fullName>Fire Pit</fullName>
+                <default>false</default>
+                <label>Fire Pit</label>
+            </value>
+            <value>
+                <fullName>Sitting Wall</fullName>
+                <default>false</default>
+                <label>Sitting Wall</label>
+            </value>
+            <value>
+                <fullName>Landscape Enhancements</fullName>
+                <default>false</default>
+                <label>Landscape Enhancements</label>
+            </value>
+            <value>
+                <fullName>Low Voltage Lighting</fullName>
+                <default>false</default>
+                <label>Low Voltage Lighting</label>
+            </value>
+            <value>
+                <fullName>Irrigation Upgrades</fullName>
+                <default>false</default>
+                <label>Irrigation Upgrades</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>8</visibleLines>
+</CustomField>

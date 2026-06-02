@@ -40,7 +40,7 @@ public with sharing class RipplingSyncService {
         'Mowing',
         'Farm',
         'Land Development',
-        'Logisitics'
+        'Logistics'
     };
 
     // Normalize Rippling department names to the Salesforce picklist values we use.
@@ -105,28 +105,102 @@ public with sharing class RipplingSyncService {
             return;
         }
         try {
-            String since = String.isBlank(sinceIso)
-                ? DateTime.now().addHours(-24).formatGmt('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'')
-                : sinceIso;
-            String path = TIME_ENTRIES_PATH + '?since=' + EncodingUtil.urlEncode(since, 'UTF-8');
-            List<Map<String, Object>> raw = fetchAllPages(path);
+            // The Rippling time-entries API returns entries OLDEST-FIRST, cursor-paginated (50/page),
+            // and IGNORES since/date/sort/limit filters. The old logic re-read the oldest page every
+            // run and never reached current data. We page forward, upserting AND saving the cursor
+            // PAGE-BY-PAGE (low heap, progress persists even if a later page hits a limit), so each
+            // self-rescheduling batch run advances toward — and then stays at — the most recent entries.
+            final Integer MAX_PAGES = 90; // callout-bound; old pages skip DML so we can page fast
+            final Date RECENT_CUTOFF = Date.today().addDays(-60); // only upsert entries newer than this
+            Schema.SObjectField extIdField = Rippling_Time_Entry__c.Fields.Rippling_Time_Entry_Id__c;
 
-            Map<String, Id> empByRipplingId = queryEmployeeMapForEntries(raw);
-            List<Rippling_Time_Entry__c> toUpsert = new List<Rippling_Time_Entry__c>();
-            for (Map<String, Object> rec : raw) {
-                Rippling_Time_Entry__c te = mapTimeEntryResponse(rec, empByRipplingId);
-                if (te != null) {
-                    toUpsert.add(te);
+            Rippling_Sync_State__c state = Rippling_Sync_State__c.getValues('TimeEntry');
+            String startCursor = (state != null) ? state.Time_Entry_Cursor__c : null;
+            String nextPath = String.isNotBlank(startCursor)
+                ? TIME_ENTRIES_PATH + '?cursor=' + startCursor
+                : TIME_ENTRIES_PATH;
+            String currentCursor = extractCursor(nextPath);
+
+            Set<Id> touchedEmps = new Set<Id>();
+            Integer pages = 0;
+            while (String.isNotBlank(nextPath) && pages < MAX_PAGES) {
+                pages++;
+                HttpRequest req = new HttpRequest();
+                req.setEndpoint(BASE_URL + nextPath);
+                req.setMethod('GET');
+                req.setHeader('Accept', 'application/json');
+                IntegrationSecrets.applyAuth(req, 'Rippling');
+                req.setTimeout(60000);
+                HttpResponse res = new Http().send(req);
+                if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
+                    System.debug(LoggingLevel.ERROR, 'RipplingSyncService: HTTP ' + res.getStatusCode());
+                    break;
                 }
+                Map<String, Object> body = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
+                Object results = body.get('results');
+                if (results == null) { results = body.get('data'); }
+
+                List<Map<String, Object>> pageRaw = new List<Map<String, Object>>();
+                if (results instanceof List<Object>) {
+                    for (Object o : (List<Object>) results) {
+                        if (o instanceof Map<String, Object>) { pageRaw.add((Map<String, Object>) o); }
+                    }
+                }
+                // Fast-forward through the historical backlog: the expensive employee-query + upsert
+                // (DML) runs ONLY for RECENT entries. Old pages just advance the cursor cheaply
+                // (callout only), so the sync blows through months of old data and reaches today fast.
+                List<Map<String, Object>> recentRaw = new List<Map<String, Object>>();
+                for (Map<String, Object> rec : pageRaw) {
+                    Object stObj = rec.get('start_time');
+                    Date wd = null;
+                    if (stObj != null && String.valueOf(stObj).length() >= 10) {
+                        try { wd = Date.valueOf(String.valueOf(stObj).substring(0, 10)); } catch (Exception ignore) {}
+                    }
+                    if (wd == null || wd >= RECENT_CUTOFF) { recentRaw.add(rec); }
+                }
+                if (!recentRaw.isEmpty()) {
+                    Map<String, Id> empMap = queryEmployeeMapForEntries(recentRaw);
+                    List<Rippling_Time_Entry__c> toUpsert = new List<Rippling_Time_Entry__c>();
+                    for (Map<String, Object> rec : recentRaw) {
+                        Rippling_Time_Entry__c te = mapTimeEntryResponse(rec, empMap);
+                        if (te != null) { toUpsert.add(te); }
+                    }
+                    if (!toUpsert.isEmpty()) { Database.upsert(toUpsert, extIdField, false); }
+                    touchedEmps.addAll(empMap.values());
+                }
+
+                // Decide the resume cursor and PERSIST it now (so progress survives a later limit).
+                String nextLink = toStr(body.get('next_link'));
+                String saveCursor;
+                if (String.isBlank(nextLink)) {
+                    // End reached — resume from this page next run to pick up newly appended entries.
+                    saveCursor = currentCursor;
+                    nextPath = null;
+                } else {
+                    saveCursor = extractCursor(nextLink);
+                    currentCursor = saveCursor;
+                    nextPath = TIME_ENTRIES_PATH + '?cursor=' + saveCursor;
+                }
+                if (state == null) { state = new Rippling_Sync_State__c(Name = 'TimeEntry'); }
+                state.Time_Entry_Cursor__c = saveCursor;
+                upsert state;
             }
-            if (!toUpsert.isEmpty()) {
-                Schema.SObjectField extIdField = Rippling_Time_Entry__c.Fields.Rippling_Time_Entry_Id__c;
-                Database.upsert(toUpsert, extIdField, false);
-            }
-            recomputeClockedInFlags(empByRipplingId.values());
+
+            recomputeClockedInFlags(new List<Id>(touchedEmps));
         } catch (Exception e) {
             System.debug(LoggingLevel.ERROR, 'RipplingSyncService.syncTimeEntries failed: ' + e.getMessage());
         }
+    }
+
+    /** Pull the (already URL-encoded) cursor token out of a Rippling URL or path; blank if none. */
+    private static String extractCursor(String url) {
+        if (String.isBlank(url)) { return ''; }
+        Integer i = url.indexOf('cursor=');
+        if (i < 0) { return ''; }
+        String c = url.substring(i + 'cursor='.length());
+        Integer amp = c.indexOf('&');
+        if (amp >= 0) { c = c.substring(0, amp); }
+        return c;
     }
 
     @future(callout=true)

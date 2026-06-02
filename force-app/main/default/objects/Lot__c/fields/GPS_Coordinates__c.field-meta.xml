@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>GPS_Coordinates__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(
+  OR(
+    ISBLANK(Lot_Latitude__c),
+    ISBLANK(Lot_Longitude__c),
+    AND(Lot_Latitude__c = 0, Lot_Longitude__c = 0)
+  ),
+  &quot;&quot;,
+  TEXT(Lot_Latitude__c) &amp; &quot;, &quot; &amp; TEXT(Lot_Longitude__c)
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>GPS Coordinates</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

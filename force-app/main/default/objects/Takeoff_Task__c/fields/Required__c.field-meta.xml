@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Required__c</fullName>
+    <defaultValue>true</defaultValue>
+    <description>When true, this task must be Completed or Not Needed before the Takeoff can be CS Approved.</description>
+    <label>Required</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

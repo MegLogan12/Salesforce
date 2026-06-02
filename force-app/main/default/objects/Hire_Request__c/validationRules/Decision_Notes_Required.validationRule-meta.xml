@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Decision_Notes_Required</fullName>
+    <active>true</active>
+    <description>Decision notes required when not approved</description>
+    <errorConditionFormula>AND(
+    NOT($Profile.Name = &quot;System Administrator&quot;),
+    (AND(
+        OR(
+            ISPICKVAL(Status__c, &quot;Denied&quot;),
+            ISPICKVAL(Status__c, &quot;Deferred&quot;)
+        ),
+        ISBLANK(Decision_Notes__c)
+    ))
+)</errorConditionFormula>
+    <errorDisplayField>Decision_Notes__c</errorDisplayField>
+    <errorMessage>Decision notes required for non-approve outcomes</errorMessage>
+</ValidationRule>

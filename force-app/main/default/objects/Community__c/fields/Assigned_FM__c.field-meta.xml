@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Assigned_FM__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Default Field Manager for this community.</description>
+    <label>Assigned FM</label>
+    <referenceTo>User</referenceTo>
+    <relationshipName>Communitys</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

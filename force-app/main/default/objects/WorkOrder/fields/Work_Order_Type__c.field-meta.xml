@@ -1,20 +1,138 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Work_Order_Type__c</fullName><label>Work Order Type</label><required>true</required><type>Picklist</type>
-    <valueSet><restricted>true</restricted><valueSetDefinition><sorted>false</sorted>
-        <value><fullName>Production Install</fullName><default>true</default><label>Production Install</label></value>
-        <value><fullName>Finish Job</fullName><default>false</default><label>Finish Job</label></value>
-        <value><fullName>Warranty</fullName><default>false</default><label>Warranty</label></value>
-        <value><fullName>Aqua Install</fullName><default>false</default><label>Aqua Install</label></value>
-        <value><fullName>Aqua Check</fullName><default>false</default><label>Aqua Check</label></value>
-        <value><fullName>Aqua Pickup</fullName><default>false</default><label>Aqua Pickup</label></value>
-        <value><fullName>Loading Ticket</fullName><default>false</default><label>Loading Ticket</label></value>
-        <value><fullName>Pull Ticket</fullName><default>false</default><label>Pull Ticket</label></value>
-        <value><fullName>Lawn Care</fullName><default>false</default><label>Lawn Care</label></value>
-        <value><fullName>Grading</fullName><default>false</default><label>Grading</label></value>
-        <value><fullName>Site Visit</fullName><default>false</default><label>Site Visit</label></value>
-        <value><fullName>Customer Care</fullName><default>false</default><label>Customer Care</label></value>
-        <value><fullName>Training</fullName><default>false</default><label>Training</label></value>
-        <value><fullName>Admin</fullName><default>false</default><label>Admin</label></value>
-    </valueSetDefinition></valueSet>
+    <fullName>Work_Order_Type__c</fullName>
+    <label>Work Order Type</label>
+    <required>true</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Production Install</fullName>
+                <default>true</default>
+                <label>Production Install</label>
+            </value>
+            <value>
+                <fullName>Finish Job</fullName>
+                <default>false</default>
+                <label>Finish Job</label>
+            </value>
+            <value>
+                <fullName>Warranty</fullName>
+                <default>false</default>
+                <label>Warranty</label>
+            </value>
+            <value>
+                <fullName>Aqua Install</fullName>
+                <default>false</default>
+                <label>Aqua Install</label>
+            </value>
+            <value>
+                <fullName>Aqua Check</fullName>
+                <default>false</default>
+                <label>Aqua Check</label>
+            </value>
+            <value>
+                <fullName>Aqua Pickup</fullName>
+                <default>false</default>
+                <label>Aqua Pickup</label>
+            </value>
+            <value>
+                <fullName>Loading Ticket</fullName>
+                <default>false</default>
+                <label>Loading Ticket</label>
+            </value>
+            <value>
+                <fullName>Pull Ticket</fullName>
+                <default>false</default>
+                <label>Pull Ticket</label>
+            </value>
+            <value>
+                <fullName>Lawn Care</fullName>
+                <default>false</default>
+                <label>Lawn Care</label>
+            </value>
+            <value>
+                <fullName>Grading</fullName>
+                <default>false</default>
+                <label>Grading</label>
+            </value>
+            <value>
+                <fullName>Site Visit</fullName>
+                <default>false</default>
+                <label>Site Visit</label>
+            </value>
+            <value>
+                <fullName>Customer Care</fullName>
+                <default>false</default>
+                <label>Customer Care</label>
+            </value>
+            <value>
+                <fullName>Training</fullName>
+                <default>false</default>
+                <label>Training</label>
+            </value>
+            <value>
+                <fullName>Admin</fullName>
+                <default>false</default>
+                <label>Admin</label>
+            </value>
+            <value>
+                <fullName>Irrigation</fullName>
+                <default>false</default>
+                <label>Irrigation</label>
+            </value>
+            <value>
+                <fullName>Aqua Emergency</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Aqua Emergency</label>
+            </value>
+            <value>
+                <fullName>Aqua New Install</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Aqua New Install</label>
+            </value>
+            <value>
+                <fullName>Commercial</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Commercial</label>
+            </value>
+            <value>
+                <fullName>Customer Success</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Customer Success</label>
+            </value>
+            <value>
+                <fullName>Finished Job</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Finished Job</label>
+            </value>
+            <value>
+                <fullName>Hardscape</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Hardscape</label>
+            </value>
+            <value>
+                <fullName>Land Development</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Land Development</label>
+            </value>
+            <value>
+                <fullName>Outdoor Living Install</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Outdoor Living Install</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
 </CustomField>

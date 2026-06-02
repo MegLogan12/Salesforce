@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sub_Status__c</fullName>
+    <label>Sub Status</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <controllingField>Work_Order_Type__c</controllingField>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Pending Inventory</fullName>
+                <default>false</default>
+                <label>Pending Inventory</label>
+            </value>
+            <value>
+                <fullName>Pending Site</fullName>
+                <default>false</default>
+                <label>Pending Site</label>
+            </value>
+            <value>
+                <fullName>Loaded</fullName>
+                <default>false</default>
+                <label>Loaded</label>
+            </value>
+            <value>
+                <fullName>In Route</fullName>
+                <default>false</default>
+                <label>In Route</label>
+            </value>
+            <value>
+                <fullName>On Site</fullName>
+                <default>false</default>
+                <label>On Site</label>
+            </value>
+            <value>
+                <fullName>Cleaned Up</fullName>
+                <default>false</default>
+                <label>Cleaned Up</label>
+            </value>
+            <value>
+                <fullName>Request Received</fullName>
+                <default>false</default>
+                <label>Request Received</label>
+            </value>
+            <value>
+                <fullName>Site Visit Scheduled</fullName>
+                <default>false</default>
+                <label>Site Visit Scheduled</label>
+            </value>
+            <value>
+                <fullName>Site Visit Complete</fullName>
+                <default>false</default>
+                <label>Site Visit Complete</label>
+            </value>
+            <value>
+                <fullName>Quote Sent</fullName>
+                <default>false</default>
+                <label>Quote Sent</label>
+            </value>
+            <value>
+                <fullName>Pending EPO</fullName>
+                <default>false</default>
+                <label>Pending EPO</label>
+            </value>
+            <value>
+                <fullName>Approved</fullName>
+                <default>false</default>
+                <label>Approved</label>
+            </value>
+            <value>
+                <fullName>Scheduled</fullName>
+                <default>false</default>
+                <label>Scheduled</label>
+            </value>
+            <value>
+                <fullName>Complete</fullName>
+                <default>false</default>
+                <label>Complete</label>
+            </value>
+            <value>
+                <fullName>Reported</fullName>
+                <default>false</default>
+                <label>Reported</label>
+            </value>
+            <value>
+                <fullName>Coverage Determined</fullName>
+                <default>false</default>
+                <label>Coverage Determined</label>
+            </value>
+            <value>
+                <fullName>FJ Triggered</fullName>
+                <default>false</default>
+                <label>FJ Triggered</label>
+            </value>
+            <value>
+                <fullName>Pending Schedule</fullName>
+                <default>false</default>
+                <label>Pending Schedule</label>
+            </value>
+        </valueSetDefinition>
+        <valueSettings>
+            <controllingFieldValue>Install</controllingFieldValue>
+            <valueName>Pending Inventory</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Install</controllingFieldValue>
+            <valueName>Pending Site</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Install</controllingFieldValue>
+            <valueName>Loaded</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Install</controllingFieldValue>
+            <valueName>In Route</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Install</controllingFieldValue>
+            <valueName>On Site</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Install</controllingFieldValue>
+            <valueName>Cleaned Up</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Customer Care</controllingFieldValue>
+            <valueName>Request Received</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Customer Care</controllingFieldValue>
+            <valueName>Quote Sent</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Customer Care</controllingFieldValue>
+            <valueName>Pending EPO</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Warranty</controllingFieldValue>
+            <valueName>Site Visit Scheduled</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Warranty</controllingFieldValue>
+            <valueName>Site Visit Complete</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Warranty</controllingFieldValue>
+            <valueName>Approved</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Warranty</controllingFieldValue>
+            <valueName>Reported</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Warranty</controllingFieldValue>
+            <valueName>Coverage Determined</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Finish Job</controllingFieldValue>
+            <valueName>Scheduled</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Finish Job</controllingFieldValue>
+            <valueName>Complete</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Finish Job</controllingFieldValue>
+            <valueName>FJ Triggered</valueName>
+        </valueSettings>
+        <valueSettings>
+            <controllingFieldValue>Finish Job</controllingFieldValue>
+            <valueName>Pending Schedule</valueName>
+        </valueSettings>
+    </valueSet>
+</CustomField>

@@ -3,8 +3,8 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>odlCampaignWorkspace</componentName>
-                <identifier>c_odlCampaignWorkspace</identifier>
+                <componentName>odlCampaigns</componentName>
+                <identifier>c_odlCampaigns</identifier>
             </componentInstance>
         </itemInstances>
         <name>main</name>

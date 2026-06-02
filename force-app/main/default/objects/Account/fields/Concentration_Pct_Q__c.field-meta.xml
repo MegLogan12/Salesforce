@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Concentration_Pct_Q__c</fullName>
+    <description>Division revenue as a percent of parent total. Spec Section 5.1. Multiplied by 100 because Percent formula fields display the raw value (not auto-scaled); produces the spec expected 46.9 percent. Null renders as a dash on the console.</description>
+    <formula>IF(
+  OR( ISBLANK(Parent.Parent_Revenue_T12M__c), Parent.Parent_Revenue_T12M__c = 0 ),
+  null,
+  Division_Revenue_T12M__c / Parent.Parent_Revenue_T12M__c * 100
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Revenue Concentration %</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <type>Percent</type>
+</CustomField>

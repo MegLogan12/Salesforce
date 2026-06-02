@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Temp_Irrigation_Included__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Flags if temporary irrigation is included in the install PO scope for billing.</description>
+    <label>Temp Irrigation Included</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

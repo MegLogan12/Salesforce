@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Customer_Care</fullName>
+    <active>true</active>
+    <description>Quote for a customer care, repair, EPO, or warranty resolution job. Created from CC Console.</description>
+    <label>Customer Care</label>
+    <picklistValues>
+        <picklist>Status__c</picklist>
+        <values>
+            <fullName>Approved</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Draft</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>EPO Received</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending EPO</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rejected</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sent</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Voided</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

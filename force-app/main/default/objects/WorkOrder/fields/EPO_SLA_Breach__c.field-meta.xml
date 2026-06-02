@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>EPO_SLA_Breach__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Flags standard FSL Work Orders whose linked EPO quote has exceeded the approval SLA.</description>
+    <label>EPO SLA Breach</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

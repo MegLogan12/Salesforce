@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status__c</fullName>
+    <label>Status</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Pending Takeoff</fullName>
+                <default>true</default>
+                <label>PO Received</label>
+            </value>
+            <value>
+                <fullName>Package Match Check</fullName>
+                <default>false</default>
+                <label>Package Match Check</label>
+            </value>
+            <value>
+                <fullName>Pending CS Review</fullName>
+                <default>false</default>
+                <label>CSM Review</label>
+            </value>
+            <value>
+                <fullName>Ready for Takeoff</fullName>
+                <default>false</default>
+                <label>Takeoff Requested</label>
+            </value>
+            <value>
+                <fullName>Takeoff Scheduled</fullName>
+                <default>false</default>
+                <label>Takeoff Scheduled</label>
+            </value>
+            <value>
+                <fullName>Takeoff In Progress</fullName>
+                <default>false</default>
+                <label>Takeoff In Progress</label>
+            </value>
+            <value>
+                <fullName>Takeoff Complete</fullName>
+                <default>false</default>
+                <label>Takeoff Complete</label>
+            </value>
+            <value>
+                <fullName>Work Order Created</fullName>
+                <default>false</default>
+                <label>WorkOrder Created</label>
+            </value>
+            <value>
+                <fullName>Clear for Schedule</fullName>
+                <default>false</default>
+                <label>Clear for Schedule</label>
+            </value>
+            <value>
+                <fullName>Cancelled</fullName>
+                <default>false</default>
+                <label>Cancelled/Void</label>
+            </value>
+            <value>
+                <fullName>Closed</fullName>
+                <default>false</default>
+                <label>Closed/Converted</label>
+            </value>
+            <value>
+                <fullName>NFI</fullName>
+                <default>false</default>
+                <label>NFI</label>
+            </value>
+            <value>
+                <fullName>Exception</fullName>
+                <default>false</default>
+                <label>Exception</label>
+            </value>
+            <value>
+                <fullName>New</fullName>
+                <default>false</default>
+                <label>New (Legacy)</label>
+            </value>
+            <value>
+                <fullName>Processed</fullName>
+                <default>false</default>
+                <label>Processed (Legacy)</label>
+            </value>
+            <value>
+                <fullName>Open</fullName>
+                <default>false</default>
+                <label>Open (Legacy)</label>
+            </value>
+            <value>
+                <fullName>Processing</fullName>
+                <default>false</default>
+                <label>Processing (Legacy)</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

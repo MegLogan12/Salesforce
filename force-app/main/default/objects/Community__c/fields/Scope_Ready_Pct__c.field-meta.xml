@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Scope_Ready_Pct__c</fullName>
+    <description>Eight release-critical checks, percent ready. Spec Section 7.1. Multiplied by 100 to match the spec expected 100 percent on a Percent formula field.</description>
+    <formula>(
+  IF(NOT(ISBLANK(TEXT(Sod_Type__c))), 1, 0) +
+  IF(Sod_Sqft__c &gt; 0, 1, 0) +
+  IF(NOT(ISBLANK(TEXT(Irrigation_Type__c))), 1, 0) +
+  IF(NOT(ISBLANK(Lot_Layout_Link__c)), 1, 0) +
+  IF(NOT(ISBLANK(BMG_Package_Code__c)), 1, 0) +
+  IF(NOT(ISBLANK(Assigned_FM__c)), 1, 0) +
+  IF(NOT(ISBLANK(ServiceTerritory__c)), 1, 0) +
+  IF(Number_Of_Lots__c &gt; 0, 1, 0)
+) / 8 * 100</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Scope Ready %</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Percent</type>
+</CustomField>

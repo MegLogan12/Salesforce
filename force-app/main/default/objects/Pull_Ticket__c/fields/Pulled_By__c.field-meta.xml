@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pulled_By__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <label>Pulled By</label>
+    <referenceTo>User</referenceTo>
+    <relationshipLabel>Pull Tickets (Pulled By)</relationshipLabel>
+    <relationshipName>Pull_Tickets_Pulled_By</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

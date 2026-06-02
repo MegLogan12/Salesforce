@@ -1,31 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>62.0</apiVersion>
-    <description>Scheduled Flow: fires daily at 2PM on weekdays. Sends health check prompt tasks to all FMs with In Progress Production Install WOs where health check has not yet been submitted today. Escalation at 3PM is handled by LOVING_HealthCheckEscalationScheduler (Apex).</description>
-    <environments>Default</environments>
-    <interviewLabel>LOVING Health Check Daily {!$Flow.CurrentDateTime}</interviewLabel>
-    <label>LOVING Health Check Daily 2PM</label>
-    <processMetadataValues>
-        <name>BuilderType</name>
-        <value>
-            <stringValue>LightningFlowBuilder</stringValue>
-        </value>
-    </processMetadataValues>
-    <processType>AutoLaunchedFlow</processType>
-    <start>
-        <locationX>50</locationX>
-        <locationY>0</locationY>
-        <connector>
-            <targetReference>Get_Active_WOs</targetReference>
-        </connector>
-        <schedule>
-            <frequency>Daily</frequency>
-            <startDate>2025-01-01</startDate>
-            <startTime>14:00:00.000Z</startTime>
-        </schedule>
-        <triggerType>Scheduled</triggerType>
-    </start>
-    <status>Active</status>
     <assignments>
         <name>Build_HC_Task</name>
         <label>Build Health Check Task Record</label>
@@ -96,10 +71,10 @@
         <label>Health Check Not Yet Submitted Today?</label>
         <locationX>400</locationX>
         <locationY>200</locationY>
-        <defaultConnectorLabel>Already Submitted — Skip</defaultConnectorLabel>
         <defaultConnector>
             <targetReference>Loop_Active_WOs</targetReference>
         </defaultConnector>
+        <defaultConnectorLabel>Already Submitted — Skip</defaultConnectorLabel>
         <rules>
             <name>HC_Not_Yet_Done</name>
             <conditionLogic>or</conditionLogic>
@@ -123,6 +98,10 @@
             <label>Not Yet Submitted Today</label>
         </rules>
     </decisions>
+    <description>Scheduled Flow: fires daily at 2PM on weekdays. Sends health check prompt tasks to all FMs with In Progress Production Install WOs where health check has not yet been submitted today. Escalation at 3PM is handled by LOVING_HealthCheckEscalationScheduler (Apex).</description>
+    <environments>Default</environments>
+    <interviewLabel>LOVING Health Check Daily {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING Health Check Daily 2PM</label>
     <loops>
         <name>Loop_Active_WOs</name>
         <label>Loop Active Work Orders</label>
@@ -137,13 +116,19 @@
             <targetReference>Create_All_HC_Tasks</targetReference>
         </noMoreValuesConnector>
     </loops>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
     <recordCreates>
         <name>Create_All_HC_Tasks</name>
         <label>Create All Health Check Tasks</label>
         <locationX>200</locationX>
         <locationY>300</locationY>
         <inputReference>varTasksToCreate</inputReference>
-        <storeOutputAutomatically>false</storeOutputAutomatically>
     </recordCreates>
     <recordLookups>
         <name>Get_Active_WOs</name>
@@ -169,7 +154,6 @@
                 <stringValue>Production Install</stringValue>
             </value>
         </filters>
-        <getFirstRecordOnly>false</getFirstRecordOnly>
         <object>WorkOrder</object>
         <outputReference>varActiveWOs</outputReference>
         <queriedFields>Id</queriedFields>
@@ -177,6 +161,20 @@
         <queriedFields>Lot_Address__c</queriedFields>
         <queriedFields>Health_Check_Date__c</queriedFields>
     </recordLookups>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Active_WOs</targetReference>
+        </connector>
+        <schedule>
+            <frequency>Daily</frequency>
+            <startDate>2025-01-01</startDate>
+            <startTime>18:00:00.000Z</startTime>
+        </schedule>
+        <triggerType>Scheduled</triggerType>
+    </start>
+    <status>Draft</status>
     <variables>
         <name>varActiveWOs</name>
         <dataType>SObject</dataType>
@@ -194,17 +192,17 @@
         <objectType>WorkOrder</objectType>
     </variables>
     <variables>
-        <name>varTasksToCreate</name>
+        <name>varNewTask</name>
         <dataType>SObject</dataType>
-        <isCollection>true</isCollection>
+        <isCollection>false</isCollection>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
         <objectType>Task</objectType>
     </variables>
     <variables>
-        <name>varNewTask</name>
+        <name>varTasksToCreate</name>
         <dataType>SObject</dataType>
-        <isCollection>false</isCollection>
+        <isCollection>true</isCollection>
         <isInput>false</isInput>
         <isOutput>false</isOutput>
         <objectType>Task</objectType>

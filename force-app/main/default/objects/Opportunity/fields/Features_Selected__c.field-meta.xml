@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Features_Selected__c</fullName>
+    <inlineHelpText>Features / characteristics of this opportunity.</inlineHelpText>
+    <label>Features</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Model Home</fullName>
+                <default>false</default>
+                <label>Model Home</label>
+            </value>
+            <value>
+                <fullName>Corner Lot</fullName>
+                <default>false</default>
+                <label>Corner Lot</label>
+            </value>
+            <value>
+                <fullName>Walkout Basement</fullName>
+                <default>false</default>
+                <label>Walkout Basement</label>
+            </value>
+            <value>
+                <fullName>Water Feature</fullName>
+                <default>false</default>
+                <label>Water Feature</label>
+            </value>
+            <value>
+                <fullName>Slope / Grading</fullName>
+                <default>false</default>
+                <label>Slope / Grading</label>
+            </value>
+            <value>
+                <fullName>HOA Standard</fullName>
+                <default>false</default>
+                <label>HOA Standard</label>
+            </value>
+            <value>
+                <fullName>Front Only</fullName>
+                <default>false</default>
+                <label>Front Only</label>
+            </value>
+            <value>
+                <fullName>Back Only</fullName>
+                <default>false</default>
+                <label>Back Only</label>
+            </value>
+            <value>
+                <fullName>Full Yard</fullName>
+                <default>false</default>
+                <label>Full Yard</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>6</visibleLines>
+</CustomField>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Eight11_Status__c</fullName>
+    <description>811 utility locate status. Only applicable when Task_Type__c = 811 Call. Gate: Work Order cannot be created unless this value is Cleared or Not Needed.</description>
+    <label>811 Status</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Not Filed</fullName>
+                <default>true</default>
+                <label>Not Filed</label>
+            </value>
+            <value>
+                <fullName>Filed</fullName>
+                <default>false</default>
+                <label>Filed</label>
+            </value>
+            <value>
+                <fullName>Pending Locate</fullName>
+                <default>false</default>
+                <label>Pending Locate</label>
+            </value>
+            <value>
+                <fullName>Marked</fullName>
+                <default>false</default>
+                <label>Marked</label>
+            </value>
+            <value>
+                <fullName>Cleared</fullName>
+                <default>false</default>
+                <label>Cleared</label>
+            </value>
+            <value>
+                <fullName>On Hold</fullName>
+                <default>false</default>
+                <label>On Hold</label>
+            </value>
+            <value>
+                <fullName>Not Needed</fullName>
+                <default>false</default>
+                <label>Not Needed</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

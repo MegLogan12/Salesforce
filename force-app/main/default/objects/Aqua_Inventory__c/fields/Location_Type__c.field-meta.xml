@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Location_Type__c</fullName>
+    <description>Where this inventory lives: Shop (warehouse), Van (in a tech vehicle), or On-Site (installed at a lot).</description>
+    <label>Location Type</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Shop</fullName>
+                <default>true</default>
+                <label>Shop</label>
+            </value>
+            <value>
+                <fullName>Van</fullName>
+                <default>false</default>
+                <label>Van</label>
+            </value>
+            <value>
+                <fullName>On-Site</fullName>
+                <default>false</default>
+                <label>On-Site</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

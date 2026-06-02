@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Recommended_Upsells__c</fullName>
+    <label>Recommended Upsells</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Retreat</fullName>
+                <default>false</default>
+                <label>Retreat</label>
+            </value>
+            <value>
+                <fullName>Entertainer</fullName>
+                <default>false</default>
+                <label>Entertainer</label>
+            </value>
+            <value>
+                <fullName>Signature</fullName>
+                <default>false</default>
+                <label>Signature</label>
+            </value>
+            <value>
+                <fullName>Design Build</fullName>
+                <default>false</default>
+                <label>Design Build</label>
+            </value>
+            <value>
+                <fullName>Deluxe Grilling Island Upgrade</fullName>
+                <default>false</default>
+                <label>Deluxe Grilling Island Upgrade</label>
+            </value>
+            <value>
+                <fullName>Premium Countertop</fullName>
+                <default>false</default>
+                <label>Premium Countertop</label>
+            </value>
+            <value>
+                <fullName>Appliance Upgrade</fullName>
+                <default>false</default>
+                <label>Appliance Upgrade</label>
+            </value>
+            <value>
+                <fullName>Access Door / Storage Upgrade</fullName>
+                <default>false</default>
+                <label>Access Door / Storage Upgrade</label>
+            </value>
+            <value>
+                <fullName>Ventilation Package</fullName>
+                <default>false</default>
+                <label>Ventilation Package</label>
+            </value>
+            <value>
+                <fullName>Gas Line / Propane Setup</fullName>
+                <default>false</default>
+                <label>Gas Line / Propane Setup</label>
+            </value>
+            <value>
+                <fullName>Electrical Ignition / Outlet</fullName>
+                <default>false</default>
+                <label>Electrical Ignition / Outlet</label>
+            </value>
+            <value>
+                <fullName>Seating Wall</fullName>
+                <default>false</default>
+                <label>Seating Wall</label>
+            </value>
+            <value>
+                <fullName>Grill Surround Expansion</fullName>
+                <default>false</default>
+                <label>Grill Surround Expansion</label>
+            </value>
+            <value>
+                <fullName>Paver Patio Expansion</fullName>
+                <default>false</default>
+                <label>Paver Patio Expansion</label>
+            </value>
+            <value>
+                <fullName>Fire Pit</fullName>
+                <default>false</default>
+                <label>Fire Pit</label>
+            </value>
+            <value>
+                <fullName>Fireplace</fullName>
+                <default>false</default>
+                <label>Fireplace</label>
+            </value>
+            <value>
+                <fullName>Landscape Lighting</fullName>
+                <default>false</default>
+                <label>Landscape Lighting</label>
+            </value>
+            <value>
+                <fullName>Privacy Plantings</fullName>
+                <default>false</default>
+                <label>Privacy Plantings</label>
+            </value>
+            <value>
+                <fullName>Irrigation Repair / Adjustment</fullName>
+                <default>false</default>
+                <label>Irrigation Repair / Adjustment</label>
+            </value>
+            <value>
+                <fullName>Drainage Correction</fullName>
+                <default>false</default>
+                <label>Drainage Correction</label>
+            </value>
+            <value>
+                <fullName>Sod Refresh</fullName>
+                <default>false</default>
+                <label>Sod Refresh</label>
+            </value>
+            <value>
+                <fullName>Outdoor Seating Area</fullName>
+                <default>false</default>
+                <label>Outdoor Seating Area</label>
+            </value>
+            <value>
+                <fullName>Pergola / Shade Feature</fullName>
+                <default>false</default>
+                <label>Pergola / Shade Feature</label>
+            </value>
+            <value>
+                <fullName>Walkway Connection</fullName>
+                <default>false</default>
+                <label>Walkway Connection</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>8</visibleLines>
+</CustomField>

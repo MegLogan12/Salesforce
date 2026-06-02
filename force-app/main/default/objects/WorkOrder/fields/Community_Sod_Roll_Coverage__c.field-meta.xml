@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Community_Sod_Roll_Coverage__c</fullName>
+    <description>Formula: promotes Community_FML__r.Avg_Sod_Roll_Coverage__c to the WorkOrder level. Required because Salesforce formula compiler cannot traverse two hops from a custom object (DQC) through a standard object (WorkOrder) to a custom lookup target (Community__c). DQC.Sod_Rolls_Expected__c references this field instead. PKG-05c.</description>
+    <externalId>false</externalId>
+    <formula>Community_FML__r.Avg_Sod_Roll_Coverage__c</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Community Sod Roll Coverage</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackHistory>false</trackHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

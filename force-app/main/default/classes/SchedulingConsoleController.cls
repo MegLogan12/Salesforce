@@ -352,7 +352,7 @@ public with sharing class SchedulingConsoleController {
     public static List<WeatherAlertDto> getWeatherAlerts(Date scheduleDate, String division) {
         if (scheduleDate == null) scheduleDate = Date.today();
         try {
-            return SchedulingConsoleService.buildWeatherAlerts(scheduleDate, division);
+            return SchedulingConsoleService.buildWeatherAlerts(scheduleDate, null) /* territory-wide active alerts, not Division-filtered */;
         } catch (Exception e) {
             ErrorLogService.log('SchedulingConsoleController','getWeatherAlerts',null,e.getMessage());
             throw new AuraHandledException(e.getMessage());
@@ -760,7 +760,7 @@ public with sharing class SchedulingConsoleController {
     public static void markReadyForScheduling(Id woId) {
         if (woId == null) throw new AuraHandledException('Work Order ID required');
         try {
-            WorkOrderService.markReadyForScheduling(woId);
+            update new WorkOrder(Id = woId, Pipeline_Bucket__c = 'Clear for Schedule');
         } catch (Exception e) {
             ErrorLogService.log('SchedulingConsoleController','markReadyForScheduling',woId,e.getMessage());
             throw new AuraHandledException(e.getMessage());
@@ -771,7 +771,7 @@ public with sharing class SchedulingConsoleController {
     public static void sendToScheduling(Id woId) {
         if (woId == null) throw new AuraHandledException('Work Order ID required');
         try {
-            WorkOrderService.sendToScheduling(woId);
+            update new WorkOrder(Id = woId, Schedule_Proposal_Status__c = 'Pending Approval');
         } catch (Exception e) {
             ErrorLogService.log('SchedulingConsoleController','sendToScheduling',woId,e.getMessage());
             throw new AuraHandledException(e.getMessage());
@@ -794,7 +794,7 @@ public with sharing class SchedulingConsoleController {
     public static void markWorkOrderBlocked(Id woId, String reason) {
         if (woId == null) throw new AuraHandledException('Work Order ID required');
         try {
-            WorkOrderService.markBlocked(woId, reason);
+            update new WorkOrder(Id = woId, Pipeline_Bucket__c = 'On Hold');
         } catch (Exception e) {
             ErrorLogService.log('SchedulingConsoleController','markWorkOrderBlocked',woId,e.getMessage());
             throw new AuraHandledException(e.getMessage());
@@ -805,7 +805,7 @@ public with sharing class SchedulingConsoleController {
     public static void clearWorkOrderBlocker(Id woId) {
         if (woId == null) throw new AuraHandledException('Work Order ID required');
         try {
-            WorkOrderService.clearBlocker(woId);
+            update new WorkOrder(Id = woId, Pipeline_Bucket__c = 'Clear for Schedule');
         } catch (Exception e) {
             ErrorLogService.log('SchedulingConsoleController','clearWorkOrderBlocker',woId,e.getMessage());
             throw new AuraHandledException(e.getMessage());
@@ -840,7 +840,12 @@ public with sharing class SchedulingConsoleController {
 
     @AuraEnabled(cacheable=true)
     public static List<PipelineSummaryDto> getPipelineSummary(String division) {
-        return new List<PipelineSummaryDto>();
+        try {
+            return SchedulingConsoleService.buildPipelineSummary(division);
+        } catch (Exception e) {
+            ErrorLogService.log('SchedulingConsoleController','getPipelineSummary',null,e.getMessage());
+            throw new AuraHandledException(e.getMessage());
+        }
     }
 
     public class DivisionDto {

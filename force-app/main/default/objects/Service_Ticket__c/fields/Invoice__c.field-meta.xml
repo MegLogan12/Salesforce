@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Invoice__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>The Invoice this Service Ticket was billed on. Populated by invoice creation automation after Closeout Approved. Null if non-billable (Billing_Treatment__c = Warranty / No Charge or Internal Cost).</description>
+    <label>Invoice</label>
+    <referenceTo>Invoice__c</referenceTo>
+    <relationshipLabel>Service Tickets</relationshipLabel>
+    <relationshipName>Service_Ticket_Invoices</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

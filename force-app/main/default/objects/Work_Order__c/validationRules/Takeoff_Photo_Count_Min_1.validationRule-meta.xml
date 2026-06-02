@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Takeoff_Photo_Count_Min_1</fullName>
+    <active>true</active>
+    <description>At least 1 photo required when takeoff is submitted</description>
+    <errorConditionFormula>AND(
+    NOT($Profile.Name = &quot;System Administrator&quot;),
+    (AND(
+        ISPICKVAL(Takeoff_Status__c, &quot;Submitted for Approval&quot;),
+        OR(ISBLANK(Takeoff_Photo_Count__c), Takeoff_Photo_Count__c &lt; 1)
+    ))
+)</errorConditionFormula>
+    <errorDisplayField>Takeoff_Photo_Count__c</errorDisplayField>
+    <errorMessage>At least one site photo required</errorMessage>
+</ValidationRule>

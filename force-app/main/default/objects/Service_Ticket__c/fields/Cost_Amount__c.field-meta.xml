@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Cost_Amount__c</fullName>
+    <description>Internal cost for this Service Ticket. Used for GP% calculation at the service-ticket level. Populated from WOLI unit costs or manual entry for warranty/internal work.</description>
+    <label>Cost Amount</label>
+    <precision>12</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackTrending>false</trackTrending>
+    <type>Currency</type>
+</CustomField>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LOVING_Work_Order__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Lookup to LOVING custom Work_Order__c. The legacy Work_Order__c field on this object references the standard WorkOrder; this field correctly references the custom Work_Order__c object used throughout the LOVING platform.</description>
+    <label>Work Order</label>
+    <referenceTo>Work_Order__c</referenceTo>
+    <relationshipLabel>Material Allocations</relationshipLabel>
+    <relationshipName>Material_Allocations_LOVING</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

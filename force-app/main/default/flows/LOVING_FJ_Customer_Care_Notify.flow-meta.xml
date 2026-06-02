@@ -41,7 +41,23 @@
         <nameSegment>customNotificationAction</nameSegment>
     </actionCalls>
     <apiVersion>62.0</apiVersion>
-    <description>Record-triggered flow on WorkOrder. Fires when FJ_Recommended__c becomes true. Sends immediate notification to Customer Care. Creates follow-up Task. Mandatory — Customer Care must always be notified when a lot is flagged as Finished Job. INACTIVE until Customer Care queue/user confirmed in org.</description>
+    <assignments>
+        <name>Assign_Recipient_Id</name>
+        <label>Add Owner to Recipient Collection</label>
+        <locationX>176</locationX>
+        <locationY>288</locationY>
+        <assignmentItems>
+            <assignToReference>varRecipientIds</assignToReference>
+            <operator>Add</operator>
+            <value>
+                <elementReference>$Record.OwnerId</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Send_CC_Notification</targetReference>
+        </connector>
+    </assignments>
+    <description>Record-triggered flow on WorkOrder. Fires when FJ_Recommended__c becomes true. Sends immediate notification to Customer Care. Creates follow-up Task. Mandatory — Customer Care must always be notified when a lot is flagged as Finished Job. Reactivated 2026-05-30.</description>
     <environments>Default</environments>
     <interviewLabel>LOVING FJ Customer Care Notify {!$Flow.CurrentDateTime}</interviewLabel>
     <label>LOVING FJ Customer Care Notify</label>
@@ -93,22 +109,6 @@
         <object>Task</object>
         <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordCreates>
-    <assignments>
-        <name>Assign_Recipient_Id</name>
-        <label>Add Owner to Recipient Collection</label>
-        <locationX>176</locationX>
-        <locationY>288</locationY>
-        <assignmentItems>
-            <assignToReference>varRecipientIds</assignToReference>
-            <operator>Add</operator>
-            <value>
-                <elementReference>$Record.OwnerId</elementReference>
-            </value>
-        </assignmentItems>
-        <connector>
-            <targetReference>Send_CC_Notification</targetReference>
-        </connector>
-    </assignments>
     <runInMode>SystemModeWithSharing</runInMode>
     <start>
         <locationX>176</locationX>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Warranty_Coverage_Type__c</fullName>
+    <label>Warranty Coverage Type</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Sod 60 Day Standard</fullName>
+                <default>false</default>
+                <label>Sod 60 Day Standard</label>
+            </value>
+            <value>
+                <fullName>Sod Extended</fullName>
+                <default>false</default>
+                <label>Sod Extended</label>
+            </value>
+            <value>
+                <fullName>Plant 1 Year Standard</fullName>
+                <default>false</default>
+                <label>Plant 1 Year Standard</label>
+            </value>
+            <value>
+                <fullName>Plant Extended</fullName>
+                <default>false</default>
+                <label>Plant Extended</label>
+            </value>
+            <value>
+                <fullName>Hardscape 2 Year Standard</fullName>
+                <default>false</default>
+                <label>Hardscape 2 Year Standard</label>
+            </value>
+            <value>
+                <fullName>Irrigation</fullName>
+                <default>false</default>
+                <label>Irrigation</label>
+            </value>
+            <value>
+                <fullName>Aqua Equipment</fullName>
+                <default>false</default>
+                <label>Aqua Equipment</label>
+            </value>
+            <value>
+                <fullName>Out of Period</fullName>
+                <default>false</default>
+                <label>Out of Period</label>
+            </value>
+            <value>
+                <fullName>Voided</fullName>
+                <default>false</default>
+                <label>Voided</label>
+            </value>
+            <value>
+                <fullName>Goodwill</fullName>
+                <default>false</default>
+                <label>Goodwill</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

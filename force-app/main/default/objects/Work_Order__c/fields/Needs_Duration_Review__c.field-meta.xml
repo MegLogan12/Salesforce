@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Needs_Duration_Review__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Set to true by WLRDurationCalculationService when any line item has Missing Standard or Missing Quantity status, or when Calculated_Duration_Minutes__c is zero. Prevents this Work Order from entering FSL optimization without human review.</description>
+    <label>Needs Duration Review</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

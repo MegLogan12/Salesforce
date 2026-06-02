@@ -3,8 +3,8 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>odlLeadWorkspace</componentName>
-                <identifier>c_odlLeadWorkspace</identifier>
+                <componentName>odlLeadList</componentName>
+                <identifier>c_odlLeadList</identifier>
             </componentInstance>
         </itemInstances>
         <name>main</name>

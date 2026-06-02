@@ -3,7 +3,7 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>lovingSchedulingConsole</componentName>
+                <componentName>lovingSchedulingConsoleOverlay</componentName>
                 <identifier>scheduling_console</identifier>
             </componentInstance>
         </itemInstances>

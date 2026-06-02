@@ -1,7 +1,8 @@
 /**
  * Self-rescheduling batch that pulls Rippling time entries.
  *
- * Queues the sync, then schedules itself to run again in ~15 minutes.
+ * Queues the sync, then schedules itself to run again in ~7 minutes.
+ * Changed from 15 minutes to 7 minutes per operational requirements (2026-05-30).
  */
 global with sharing class RipplingTimeEntryBatcher implements Database.Batchable<SObject>, Database.AllowsCallouts, Database.Stateful {
 
@@ -22,6 +23,6 @@ global with sharing class RipplingTimeEntryBatcher implements Database.Batchable
         if (Test.isRunningTest()) {
             return;
         }
-        System.scheduleBatch(new RipplingTimeEntryBatcher(), 'Rippling Time Entry Batch', 15, 1);
+        System.scheduleBatch(new RipplingTimeEntryBatcher(), 'Rippling Time Entry Batch', 7, 1);
     }
 }

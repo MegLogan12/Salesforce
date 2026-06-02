@@ -48,7 +48,7 @@ public with sharing class TakeoffExecutionBridgeService {
         }
 
         Map<Id, Takeoff__c> takeoffsById = new Map<Id, Takeoff__c>([
-            SELECT Id, Name, Builder_PO__c, Community__c, Lot__c, FM_Assignment__c, Status__c
+            SELECT Id, Name, Builder_PO__c, Community__c, Lot__c, FM_Assignment__c, Status__c, Sod_Sqft__c
             FROM Takeoff__c
             WHERE Id IN :takeoffIds
               AND Status__c = 'Approved'
@@ -124,16 +124,6 @@ public with sharing class TakeoffExecutionBridgeService {
                 WHERE Id IN :communityPackageIds
             ]);
 
-        Map<Id, Work_Order__c> customParentByTakeoffId = new Map<Id, Work_Order__c>();
-        for (Work_Order__c row : [
-            SELECT Id, Name, Builder_PO__c, Takeoff__c, Community__c, Lot__c, Community_Package__c, FM_Assignment__c,
-                   Field_Manager__c, Status__c, Work_Order_Type__c
-            FROM Work_Order__c
-            WHERE Takeoff__c IN :takeoffsById.keySet()
-        ]) {
-            customParentByTakeoffId.put(row.Takeoff__c, row);
-        }
-
         List<Takeoff_Line__c> takeoffLines = [
             SELECT Id, Takeoff__c, Item_Name__c, Item_Description__c, Measured_Quantity__c,
                    PO_Quantity__c, Verified_Quantity__c, Unit_Price__c
@@ -156,33 +146,6 @@ public with sharing class TakeoffExecutionBridgeService {
             }
         }
 
-        List<Work_Order__c> customParentsToInsert = new List<Work_Order__c>();
-        for (Takeoff__c takeoff : takeoffsById.values()) {
-            if (customParentByTakeoffId.containsKey(takeoff.Id)) {
-                continue;
-            }
-            Builder_PO__c builderPo = builderPoById.get(takeoff.Builder_PO__c);
-            Purchase_Order__c purchaseOrder = builderPo == null ? null : purchaseOrderByPoNumber.get(builderPo.PO_Number__c);
-            Id fieldManagerId = resolveFieldManagerId(takeoff, purchaseOrder);
-            Work_Order__c customParent = new Work_Order__c();
-            customParent.Builder_PO__c = takeoff.Builder_PO__c;
-            customParent.Takeoff__c = takeoff.Id;
-            customParent.Community__c = takeoff.Community__c;
-            customParent.Lot__c = takeoff.Lot__c;
-            customParent.Community_Package__c = resolveCommunityPackageId(builderPo, purchaseOrder);
-            customParent.FM_Assignment__c = fieldManagerId;
-            customParent.Field_Manager__c = fieldManagerId;
-            customParent.Status__c = CUSTOM_PARENT_STATUS;
-            customParent.Work_Order_Type__c = CUSTOM_PARENT_TYPE;
-            customParentsToInsert.add(customParent);
-        }
-        if (!customParentsToInsert.isEmpty()) {
-            insert customParentsToInsert;
-            for (Work_Order__c customParent : customParentsToInsert) {
-                customParentByTakeoffId.put(customParent.Takeoff__c, customParent);
-            }
-        }
-
         Set<Id> purchaseOrderIds = new Set<Id>();
         for (Builder_PO__c builderPo : builderPoById.values()) {
             Purchase_Order__c purchaseOrder = purchaseOrderByPoNumber.get(builderPo.PO_Number__c);
@@ -198,8 +161,7 @@ public with sharing class TakeoffExecutionBridgeService {
         for (WorkOrder row : [
             SELECT Id, Purchase_Order__c, PO_Number__c, ParentWorkOrderId, AccountId, Lot__c, Field_Manager__c,
                    ServiceTerritoryId, Status, Subject, Work_Order_Type__c, Pricebook2Id,
-                   Sod_Square_Footage__c,
-                   LOVING_Work_Order__c, RecordTypeId
+                   Sod_Square_Footage__c, Builder_PO__c, Takeoff__c, RecordTypeId
             FROM WorkOrder
             WHERE Purchase_Order__c IN :purchaseOrderIds
               AND ParentWorkOrderId = null
@@ -217,7 +179,7 @@ public with sharing class TakeoffExecutionBridgeService {
         List<WorkOrder> bridgeParentsToUpdate = new List<WorkOrder>();
         List<Purchase_Order__c> purchaseOrdersToUpdate = new List<Purchase_Order__c>();
         List<Builder_PO__c> builderPosToUpdate = new List<Builder_PO__c>();
-        Map<Id, Id> bridgeParentToCustomParent = new Map<Id, Id>();
+        Set<Id> bridgeParentIds = new Set<Id>();
 
         for (Takeoff__c takeoff : takeoffsById.values()) {
             Builder_PO__c builderPo = builderPoById.get(takeoff.Builder_PO__c);
@@ -225,8 +187,7 @@ public with sharing class TakeoffExecutionBridgeService {
                 continue;
             }
             Purchase_Order__c purchaseOrder = purchaseOrderByPoNumber.get(builderPo.PO_Number__c);
-            Work_Order__c customParent = customParentByTakeoffId.get(takeoff.Id);
-            if (purchaseOrder == null || customParent == null) {
+            if (purchaseOrder == null) {
                 continue;
             }
             Id fieldManagerId = resolveFieldManagerId(takeoff, purchaseOrder);
@@ -249,7 +210,7 @@ public with sharing class TakeoffExecutionBridgeService {
                 bridgeParent = new WorkOrder();
                 bridgeParent.RecordTypeId = recordTypeIds.get('Production_Install');
                 bridgeParent.Subject = buildBridgeSubject(builderPo, purchaseOrder);
-                bridgeParent.Status = Test.isRunningTest() ? 'New' : INITIAL_BRIDGE_STATUS;
+                bridgeParent.Status = INITIAL_BRIDGE_STATUS;
                 bridgeParent.AccountId = purchaseOrder.Builder_Account__c;
                 bridgeParent.Lot__c = purchaseOrder.Lot__c;
                 bridgeParent.Field_Manager__c = fieldManagerId;
@@ -260,10 +221,11 @@ public with sharing class TakeoffExecutionBridgeService {
                 bridgeParent.Pricebook2Id = targetPricebookId;
                 bridgeParent.Sod_Square_Footage__c = sodSqFtByTakeoffId.containsKey(takeoff.Id)
                     ? sodSqFtByTakeoffId.get(takeoff.Id)
-                    : null;
+                    : takeoff.Sod_Sqft__c;
                 bridgeParent.Purchase_Order__c = purchaseOrder.Id;
+                bridgeParent.Builder_PO__c = builderPo.Id;
+                bridgeParent.Takeoff__c = takeoff.Id;
                 bridgeParent.PO_Number__c = purchaseOrder.PO_Number__c;
-                bridgeParent.LOVING_Work_Order__c = customParent.Id;
                 bridgeParentsToInsert.add(bridgeParent);
                 if (builderPo.Status__c != BUILDER_PO_STATUS || builderPo.Takeoff_Status__c != PO_TAKEOFF_STATUS) {
                     builderPosToUpdate.add(new Builder_PO__c(
@@ -277,12 +239,16 @@ public with sharing class TakeoffExecutionBridgeService {
 
             Boolean needsUpdate = false;
             WorkOrder updateRow = new WorkOrder(Id = bridgeParent.Id);
-            if ((Id) bridgeParent.get('LOVING_Work_Order__c') != customParent.Id) {
-                updateRow.put('LOVING_Work_Order__c', customParent.Id);
-                needsUpdate = true;
-            }
             if (String.isBlank(bridgeParent.Subject)) {
                 updateRow.Subject = buildBridgeSubject(builderPo, purchaseOrder);
+                needsUpdate = true;
+            }
+            if ((Id) bridgeParent.get('Builder_PO__c') != builderPo.Id) {
+                updateRow.put('Builder_PO__c', builderPo.Id);
+                needsUpdate = true;
+            }
+            if ((Id) bridgeParent.get('Takeoff__c') != takeoff.Id) {
+                updateRow.put('Takeoff__c', takeoff.Id);
                 needsUpdate = true;
             }
             if (targetPricebookId != null && bridgeParent.Pricebook2Id != targetPricebookId) {
@@ -303,7 +269,7 @@ public with sharing class TakeoffExecutionBridgeService {
             if (needsUpdate) {
                 bridgeParentsToUpdate.add(updateRow);
             }
-            bridgeParentToCustomParent.put(bridgeParent.Id, customParent.Id);
+            bridgeParentIds.add(bridgeParent.Id);
             if (purchaseOrder.Work_Order__c != bridgeParent.Id
                 || purchaseOrder.Takeoff_Status__c != PO_TAKEOFF_STATUS) {
                 Purchase_Order__c purchaseOrderUpdate = new Purchase_Order__c(
@@ -326,7 +292,7 @@ public with sharing class TakeoffExecutionBridgeService {
             insert bridgeParentsToInsert;
             for (WorkOrder bridgeParent : bridgeParentsToInsert) {
                 bridgeParentByPurchaseOrderId.put((Id) bridgeParent.get('Purchase_Order__c'), bridgeParent);
-                bridgeParentToCustomParent.put(bridgeParent.Id, (Id) bridgeParent.get('LOVING_Work_Order__c'));
+                bridgeParentIds.add(bridgeParent.Id);
                 purchaseOrdersToUpdate.add(new Purchase_Order__c(
                     Id = (Id) bridgeParent.get('Purchase_Order__c'),
                     Work_Order__c = bridgeParent.Id,
@@ -344,7 +310,6 @@ public with sharing class TakeoffExecutionBridgeService {
             update builderPosToUpdate;
         }
 
-        Set<Id> bridgeParentIds = bridgeParentToCustomParent.keySet();
         if (bridgeParentIds.isEmpty()) {
             return;
         }
@@ -457,7 +422,7 @@ public with sharing class TakeoffExecutionBridgeService {
         for (WorkOrder child : [
             SELECT Id, ParentWorkOrderId, Subject, Status, Work_Order_Type__c, RecordTypeId,
                    AccountId, Lot__c, Field_Manager__c, ServiceTerritoryId, Pricebook2Id,
-                   PO_Number__c, LOVING_Work_Order__c
+                   PO_Number__c
             FROM WorkOrder
             WHERE ParentWorkOrderId IN :bridgeParentIds
         ]) {
@@ -489,10 +454,6 @@ public with sharing class TakeoffExecutionBridgeService {
                     scopeMap.put(scopeForWorkOrderType(child.Work_Order_Type__c), child.Id);
                     WorkOrder updateRow = new WorkOrder(Id = child.Id);
                     Boolean needsChildUpdate = false;
-                    if ((Id) child.get('LOVING_Work_Order__c') != bridgeParentToCustomParent.get(bridgeId)) {
-                        updateRow.put('LOVING_Work_Order__c', bridgeParentToCustomParent.get(bridgeId));
-                        needsChildUpdate = true;
-                    }
                     if (String.isBlank((String) child.get('PO_Number__c'))
                         && String.isNotBlank((String) bridgeParent.get('PO_Number__c'))) {
                         updateRow.put('PO_Number__c', (String) bridgeParent.get('PO_Number__c'));
@@ -516,7 +477,6 @@ public with sharing class TakeoffExecutionBridgeService {
                 }
                 WorkOrder child = new WorkOrder();
                 child.ParentWorkOrderId = bridgeId;
-                child.put('LOVING_Work_Order__c', bridgeParentToCustomParent.get(bridgeId));
                 child.Subject = scopeName + ' · ' + bridgeParent.Subject;
                 child.Status = INITIAL_BRIDGE_STATUS;
                 child.RecordTypeId = recordTypeId;
@@ -638,16 +598,12 @@ public with sharing class TakeoffExecutionBridgeService {
         List<ServiceAppointment> appointmentsToInsert = new List<ServiceAppointment>();
         List<ServiceAppointment> appointmentsToUpdate = new List<ServiceAppointment>();
         for (WorkOrder child : childRows) {
-            Id customParentId = bridgeParentToCustomParent.get(child.ParentWorkOrderId);
             ServiceAppointment appointment = appointmentByChildId.get(child.Id);
             if (appointment == null) {
                 ServiceAppointment newAppointment = new ServiceAppointment();
                 newAppointment.ParentRecordId = child.Id;
                 newAppointment.Subject = child.Subject;
                 newAppointment.Status = APPOINTMENT_STATUS;
-                if (Schema.sObjectType.ServiceAppointment.fields.getMap().containsKey('LOVING_Work_Order__c')) {
-                    newAppointment.put('LOVING_Work_Order__c', customParentId);
-                }
                 appointmentsToInsert.add(newAppointment);
                 continue;
             }
@@ -655,10 +611,6 @@ public with sharing class TakeoffExecutionBridgeService {
             Boolean needsUpdate = false;
             if (appointment.Status == null) {
                 updateRow.Status = APPOINTMENT_STATUS;
-                needsUpdate = true;
-            }
-            if (Schema.sObjectType.ServiceAppointment.fields.getMap().containsKey('LOVING_Work_Order__c')) {
-                updateRow.put('LOVING_Work_Order__c', customParentId);
                 needsUpdate = true;
             }
             if (needsUpdate) {

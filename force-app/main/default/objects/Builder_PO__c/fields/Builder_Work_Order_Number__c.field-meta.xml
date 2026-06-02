@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Builder_Work_Order_Number__c</fullName>
+    <description>Builder&apos;s own internal work order or job number. Used for cross-reference, customer service lookups, and builder reconciliation. Different from PO_Number__c which is the purchase order number.</description>
+    <externalId>false</externalId>
+    <label>Builder Work Order Number</label>
+    <length>30</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

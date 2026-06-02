@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <decisions>
+        <name>Decision_Create_Issue</name>
+        <label>Existing Delivery Issue Found?</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Update_WO_Flag</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Existing found — skip create, still set WO flag</defaultConnectorLabel>
+        <rules>
+            <name>No_Existing_Issue</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Existing_Issue</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Create_Issue</targetReference>
+            </connector>
+            <label>No existing — create new Schedule Issue</label>
+        </rules>
+    </decisions>
+    <description>Option B — no Cases. When DQC.Issue_Flag__c becomes true: checks for an existing open Delivery Issue on the parent WorkOrder; if none found, creates Schedule_Issue__c (Issue_Type=Delivery Issue, Severity derived from Delivery_Issue_Type__c, Status=Open, Standard_WorkOrder__c=parent WorkOrder); also sets WorkOrder.Delivery_Issue_Flag__c=true.</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>fSeverity</name>
+        <dataType>String</dataType>
+        <expression>IF(TEXT({!$Record.Delivery_Issue_Type__c}) = &quot;Wrong Species&quot;, &quot;High&quot;,
+IF(TEXT({!$Record.Delivery_Issue_Type__c}) = &quot;Quality Failure&quot;, &quot;High&quot;,
+IF(TEXT({!$Record.Delivery_Issue_Type__c}) = &quot;Short Count&quot;, &quot;Medium&quot;,
+IF(TEXT({!$Record.Delivery_Issue_Type__c}) = &quot;Wrong Type (Mulch)&quot;, &quot;Medium&quot;,
+&quot;Low&quot;))))</expression>
+    </formulas>
+    <formulas>
+        <name>fSummary</name>
+        <dataType>String</dataType>
+        <expression>IF(ISBLANK(TEXT({!$Record.Delivery_Issue_Type__c})),
+  &quot;Delivery Issue — DQC: &quot; &amp; {!$Record.Name},
+  &quot;Delivery Issue: &quot; &amp; TEXT({!$Record.Delivery_Issue_Type__c}) &amp; &quot; — DQC &quot; &amp; {!$Record.Name})</expression>
+    </formulas>
+    <interviewLabel>LOVING Delivery QC Flag Issue {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING Delivery QC Flag Issue</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordCreates>
+        <name>Create_Issue</name>
+        <label>Create Schedule Issue — Delivery Issue</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Update_WO_Flag</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Issue_Type__c</field>
+            <value>
+                <stringValue>Delivery Issue</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Severity__c</field>
+            <value>
+                <elementReference>fSeverity</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Standard_WorkOrder__c</field>
+            <value>
+                <elementReference>$Record.Work_Order__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>Open</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Summary__c</field>
+            <value>
+                <elementReference>fSummary</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Schedule_Issue__c</object>
+    </recordCreates>
+    <recordLookups>
+        <name>Get_Existing_Issue</name>
+        <label>Get Existing Open Delivery Issue</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Decision_Create_Issue</targetReference>
+        </connector>
+        <filterLogic>1 AND 2</filterLogic>
+        <filters>
+            <field>Standard_WorkOrder__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Work_Order__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Issue_Type__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Delivery Issue</stringValue>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Schedule_Issue__c</object>
+        <queriedFields>Id</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_WO_Flag</name>
+        <label>Set WorkOrder Delivery Issue Flag</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Work_Order__c</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Delivery_Issue_Flag__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <object>WorkOrder</object>
+    </recordUpdates>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Existing_Issue</targetReference>
+        </connector>
+        <filterLogic>1 AND 2</filterLogic>
+        <filters>
+            <field>Issue_Flag__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Issue_Flag__c</field>
+            <operator>IsChanged</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <object>Delivery_Quality_Check__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

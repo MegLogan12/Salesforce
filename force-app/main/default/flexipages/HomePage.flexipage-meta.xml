@@ -3,18 +3,32 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>c:lovingOpsLinks</componentName>
-                <identifier>home_ops_links</identifier>
+                <componentInstanceProperties>
+                    <name>contextKey</name>
+                    <value>HOME</value>
+                </componentInstanceProperties>
+                <componentName>mcLovinLaunchPrompt</componentName>
+                <identifier>mclovin_launch_prompt_home</identifier>
             </componentInstance>
         </itemInstances>
-        <mode>Replace</mode>
-        <name>defaultPanel</name>
+        <name>top</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <name>left</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <name>middle</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <name>right</name>
         <type>Region</type>
     </flexiPageRegions>
     <masterLabel>Home Page</masterLabel>
-    <parentFlexiPage>runtime_sales_seller_home__SellerHome_L</parentFlexiPage>
     <template>
-        <name>runtime_sales_seller_home:sellerHomeDesktopTemplate</name>
+        <name>home:desktopTemplateHeaderThreeColumns</name>
     </template>
     <type>HomePage</type>
 </FlexiPage>

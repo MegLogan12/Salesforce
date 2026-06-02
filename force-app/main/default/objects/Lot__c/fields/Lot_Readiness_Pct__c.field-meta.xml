@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Lot_Readiness_Pct__c</fullName>
+    <formula>(IF(Lot_Layout_Attached__c, 1, 0) + IF(AND(NOT(ISBLANK(Lot_Latitude__c)), NOT(ISBLANK(Lot_Longitude__c)), NOT(AND(Lot_Latitude__c = 0, Lot_Longitude__c = 0))), 1, 0) + IF(NOT(ISBLANK(Takeoff_Approved_Date__c)), 1, 0) + IF(PO_Validated__c, 1, 0)) / 4</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Lot Readiness %</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Percent</type>
+</CustomField>

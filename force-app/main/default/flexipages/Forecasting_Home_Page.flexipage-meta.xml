@@ -3,6 +3,16 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentInstanceProperties>
+                    <name>contextKey</name>
+                    <value>FORECASTING</value>
+                </componentInstanceProperties>
+                <componentName>mcLovinLaunchPrompt</componentName>
+                <identifier>mclovin_launch_prompt</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
                 <componentName>lovingForecastingConsole</componentName>
                 <identifier>forecasting_console</identifier>
             </componentInstance>

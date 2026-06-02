@@ -5,6 +5,7 @@
     <fieldManageability>DeveloperControlled</fieldManageability>
     <label>Going Dark Min Attempts</label>
     <precision>5</precision>
+    <required>false</required>
     <scale>0</scale>
     <type>Number</type>
     <unique>false</unique>

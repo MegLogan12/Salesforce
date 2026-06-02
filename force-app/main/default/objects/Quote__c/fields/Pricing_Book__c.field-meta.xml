@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pricing_Book__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>BMG pricing book used to populate contracted rates on this quote. Set from Community Package when quote is generated.</description>
+    <label>Pricing Book</label>
+    <referenceTo>Builder_Pricing_Book__c</referenceTo>
+    <relationshipLabel>Quotes</relationshipLabel>
+    <relationshipName>Quotes_Pricing_Book</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

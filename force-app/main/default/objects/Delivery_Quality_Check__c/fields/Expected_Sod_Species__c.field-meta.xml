@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Expected_Sod_Species__c</fullName>
+    <description>Snapshot: TEXT(WorkOrder.Sod_Species__c) at DQC creation time. Stored as text to avoid picklist dependency on parent object. Used in Sod_Species_Match__c formula to compare against delivered species. PKG-DQC-PARENT-01a.</description>
+    <externalId>false</externalId>
+    <label>Expected Sod Species</label>
+    <length>255</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

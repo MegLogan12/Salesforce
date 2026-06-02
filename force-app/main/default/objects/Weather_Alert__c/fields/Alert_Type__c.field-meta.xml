@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Alert_Type__c</fullName>
+    <label>Alert Type</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Rain</fullName>
+                <default>false</default>
+                <label>Rain</label>
+            </value>
+            <value>
+                <fullName>Thunderstorm</fullName>
+                <default>false</default>
+                <label>Thunderstorm</label>
+            </value>
+            <value>
+                <fullName>Severe Thunderstorm</fullName>
+                <default>false</default>
+                <label>Severe Thunderstorm</label>
+            </value>
+            <value>
+                <fullName>Wind</fullName>
+                <default>false</default>
+                <label>Wind</label>
+            </value>
+            <value>
+                <fullName>Heat</fullName>
+                <default>false</default>
+                <label>Heat</label>
+            </value>
+            <value>
+                <fullName>Freeze</fullName>
+                <default>false</default>
+                <label>Freeze</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

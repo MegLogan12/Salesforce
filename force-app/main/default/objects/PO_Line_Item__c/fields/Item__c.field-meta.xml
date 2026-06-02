@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Item__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Mapped Product2 item for this source PO line.</description>
+    <label>Item</label>
+    <referenceTo>Product2</referenceTo>
+    <relationshipLabel>PO Line Items</relationshipLabel>
+    <relationshipName>POLineItems</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

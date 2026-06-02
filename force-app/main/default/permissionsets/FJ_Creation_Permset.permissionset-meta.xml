@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customPermissions>
+        <enabled>true</enabled>
+        <name>FJ_Creation</name>
+    </customPermissions>
+    <description>FJ creation permission. Field Managers only — foremen submit but cannot create FJs directly.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>FJ Creation</label>
+    <license>Salesforce</license>
+</PermissionSet>

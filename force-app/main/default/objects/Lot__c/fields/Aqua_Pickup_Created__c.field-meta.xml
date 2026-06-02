@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Aqua_Pickup_Created__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Checked after the Aqua pickup ticket has been created for a closed Aqua lot.</description>
+    <label>Aqua Pickup Created</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

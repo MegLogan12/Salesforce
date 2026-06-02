@@ -4,23 +4,7 @@
     <description>Outdoor Living Design Build sales process.</description>
     <isActive>true</isActive>
     <values>
-        <fullName>Discovery Consult</fullName>
-        <default>false</default>
-    </values>
-    <values>
-        <fullName>Design Agreement</fullName>
-        <default>false</default>
-    </values>
-    <values>
-        <fullName>Consult Scheduled</fullName>
-        <default>false</default>
-    </values>
-    <values>
-        <fullName>Design Development</fullName>
-        <default>false</default>
-    </values>
-    <values>
-        <fullName>Proposal Presented</fullName>
+        <fullName>Closed Lost</fullName>
         <default>false</default>
     </values>
     <values>
@@ -28,7 +12,27 @@
         <default>false</default>
     </values>
     <values>
-        <fullName>Closed Lost</fullName>
+        <fullName>Consult Scheduled</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Design Agreement</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Design Development</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Discovery Consult</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Proposal Presented</fullName>
+        <default>false</default>
+    </values>
+    <values>
+        <fullName>Propsal Presented</fullName>
         <default>false</default>
     </values>
 </BusinessProcess>

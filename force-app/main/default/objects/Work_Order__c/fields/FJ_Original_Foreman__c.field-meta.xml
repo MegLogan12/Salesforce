@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FJ_Original_Foreman__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Foreman whose work generated the FJ</description>
+    <label>FJ Original Foreman</label>
+    <referenceTo>User</referenceTo>
+    <relationshipName>Work_Orders_FJ_Original_Foreman</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

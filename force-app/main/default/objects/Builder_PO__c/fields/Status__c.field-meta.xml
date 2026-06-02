@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Status__c</fullName>
+    <label>Status</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Pending CS Review</fullName>
+                <default>true</default>
+                <label>Pending CS Review</label>
+            </value>
+            <value>
+                <fullName>NFI</fullName>
+                <default>false</default>
+                <label>NFI</label>
+            </value>
+            <value>
+                <fullName>Verified</fullName>
+                <default>false</default>
+                <label>Verified</label>
+            </value>
+            <value>
+                <fullName>Mismatch Review</fullName>
+                <default>false</default>
+                <label>Mismatch Review</label>
+            </value>
+            <value>
+                <fullName>CS Approved</fullName>
+                <default>false</default>
+                <label>CS Approved</label>
+            </value>
+            <value>
+                <fullName>Ready for Takeoff</fullName>
+                <default>false</default>
+                <label>Ready for Takeoff (Legacy)</label>
+            </value>
+            <value>
+                <fullName>Takeoff In Progress</fullName>
+                <default>false</default>
+                <label>Takeoff In Progress</label>
+            </value>
+            <value>
+                <fullName>Takeoff Complete</fullName>
+                <default>false</default>
+                <label>Takeoff Complete</label>
+            </value>
+            <value>
+                <fullName>Work Order Created</fullName>
+                <default>false</default>
+                <label>Work Order Created</label>
+            </value>
+            <value>
+                <fullName>Cancelled</fullName>
+                <default>false</default>
+                <label>Cancelled (Legacy)</label>
+            </value>
+            <value>
+                <fullName>Closed</fullName>
+                <default>false</default>
+                <label>Closed</label>
+            </value>
+            <value>
+                <fullName>Open</fullName>
+                <default>false</default>
+                <label>Open (Legacy)</label>
+            </value>
+            <value>
+                <fullName>Processing</fullName>
+                <default>false</default>
+                <label>Processing (Legacy)</label>
+            </value>
+            <value>
+                <fullName>Exception</fullName>
+                <default>false</default>
+                <label>Exception (Legacy)</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

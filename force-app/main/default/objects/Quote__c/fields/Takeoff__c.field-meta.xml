@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Takeoff__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>The approved takeoff that generated this quote. Takeoff line quantities flow into quote line items.</description>
+    <label>Takeoff</label>
+    <referenceTo>Takeoff__c</referenceTo>
+    <relationshipLabel>Quotes</relationshipLabel>
+    <relationshipName>Quotes_Takeoff</relationshipName>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FJ_Reason__c</fullName>
+    <label>FJ Reason</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>2PM Red</fullName>
+                <default>false</default>
+                <label>2PM Red</label>
+            </value>
+            <value>
+                <fullName>Manager Review</fullName>
+                <default>false</default>
+                <label>Manager Review</label>
+            </value>
+            <value>
+                <fullName>CM Report</fullName>
+                <default>false</default>
+                <label>CM Report</label>
+            </value>
+            <value>
+                <fullName>QI Review</fullName>
+                <default>false</default>
+                <label>QI Review</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Suppress_Automation_For_UAT__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>UAT-only automation suppression flag for controlled smoke records. Do not use on live customer or production pipeline records.</description>
+    <inlineHelpText>Use only for UAT records named with the UAT - DO NOT SEND marker to suppress record-level automation during smoke testing.</inlineHelpText>
+    <label>Suppress Automation For UAT</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Checkbox</type>
+</CustomField>

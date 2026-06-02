@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Voucher_Attach_Rate_Category__c</fullName>
+    <label>Voucher Attach Rate Category</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Voucher Only</fullName>
+                <default>true</default>
+                <label>Voucher Only</label>
+            </value>
+            <value>
+                <fullName>Voucher + Package Upgrade</fullName>
+                <default>false</default>
+                <label>Voucher + Package Upgrade</label>
+            </value>
+            <value>
+                <fullName>Voucher + Add-Ons</fullName>
+                <default>false</default>
+                <label>Voucher + Add-Ons</label>
+            </value>
+            <value>
+                <fullName>Voucher + Design Build</fullName>
+                <default>false</default>
+                <label>Voucher + Design Build</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

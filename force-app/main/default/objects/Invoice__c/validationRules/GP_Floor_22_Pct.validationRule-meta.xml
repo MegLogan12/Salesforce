@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>GP_Floor_22_Pct</fullName>
+    <active>true</active>
+    <description>Hard stop: invoice with GP under 22% must have COO override permission</description>
+    <errorConditionFormula>AND(
+    NOT($Profile.Name = &quot;System Administrator&quot;),
+    (AND(
+        NOT(ISBLANK(GP_Percent__c)),
+        GP_Percent__c &lt; 22,
+        NOT($Permission.GP_Floor_Override)
+    ))
+)</errorConditionFormula>
+    <errorDisplayField>GP_Percent__c</errorDisplayField>
+    <errorMessage>Invoice blocked: GP under 22% requires COO release</errorMessage>
+</ValidationRule>

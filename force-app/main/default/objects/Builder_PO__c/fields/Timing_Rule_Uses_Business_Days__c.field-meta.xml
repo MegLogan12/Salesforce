@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Timing_Rule_Uses_Business_Days__c</fullName>
+    <defaultValue>false</defaultValue>
+    <label>Timing Rule Uses Business Days</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

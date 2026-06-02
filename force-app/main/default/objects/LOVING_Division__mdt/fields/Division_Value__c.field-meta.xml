@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Division_Value__c</fullName>
-    <description>Value used in WHERE clauses against Work_Order__c.Division__c. Use "All" for the "All Divisions" virtual entry.</description>
+    <description>Value used in WHERE clauses against Work_Order__c.Division__c. Use &quot;All&quot; for the &quot;All Divisions&quot; virtual entry.</description>
     <externalId>false</externalId>
     <fieldManageability>DeveloperControlled</fieldManageability>
     <label>Division Value</label>

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Is_Finished_Job__c</fullName>
-    <label>Is Finished Job</label>
     <defaultValue>false</defaultValue>
-    <required>false</required>
+    <description>True if this work order was created because a prior job was not completed by LOVING</description>
+    <label>Is Finished Job</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
     <type>Checkbox</type>
 </CustomField>

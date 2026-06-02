@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Category__c</fullName>
+    <description>Material or work category for this catalog item. Used as a filter and grouping key when lookup fields reference Item_Catalog__c from WorkOrderLineItem, Invoice_Line_Item__c, and Takeoff_Line__c. This is a reference/master catalog field. Item_Catalog__c is not a transactional quote line object.</description>
+    <label>Category</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Sod</fullName>
+                <default>false</default>
+                <label>Sod</label>
+            </value>
+            <value>
+                <fullName>Plant</fullName>
+                <default>false</default>
+                <label>Plant</label>
+            </value>
+            <value>
+                <fullName>Tree</fullName>
+                <default>false</default>
+                <label>Tree</label>
+            </value>
+            <value>
+                <fullName>Shrub</fullName>
+                <default>false</default>
+                <label>Shrub</label>
+            </value>
+            <value>
+                <fullName>Mulch</fullName>
+                <default>false</default>
+                <label>Mulch</label>
+            </value>
+            <value>
+                <fullName>Pine Straw</fullName>
+                <default>false</default>
+                <label>Pine Straw</label>
+            </value>
+            <value>
+                <fullName>Aqua Equipment</fullName>
+                <default>false</default>
+                <label>Aqua Equipment</label>
+            </value>
+            <value>
+                <fullName>Irrigation Equipment</fullName>
+                <default>false</default>
+                <label>Irrigation Equipment</label>
+            </value>
+            <value>
+                <fullName>Labor</fullName>
+                <default>false</default>
+                <label>Labor</label>
+            </value>
+            <value>
+                <fullName>Fuel</fullName>
+                <default>false</default>
+                <label>Fuel</label>
+            </value>
+            <value>
+                <fullName>Hardscape</fullName>
+                <default>false</default>
+                <label>Hardscape</label>
+            </value>
+            <value>
+                <fullName>Hardscape Assembly</fullName>
+                <default>false</default>
+                <label>Hardscape Assembly</label>
+            </value>
+            <value>
+                <fullName>Shop</fullName>
+                <default>false</default>
+                <label>Shop</label>
+            </value>
+            <value>
+                <fullName>Temp Irrigation</fullName>
+                <default>false</default>
+                <label>Temp Irrigation</label>
+            </value>
+            <value>
+                <fullName>Lawncare</fullName>
+                <default>false</default>
+                <label>Lawncare</label>
+            </value>
+            <value>
+                <fullName>Straw</fullName>
+                <default>false</default>
+                <label>Straw</label>
+            </value>
+            <value>
+                <fullName>Fencing</fullName>
+                <default>false</default>
+                <label>Fencing</label>
+            </value>
+            <value>
+                <fullName>Empty Pallets</fullName>
+                <default>false</default>
+                <label>Empty Pallets</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

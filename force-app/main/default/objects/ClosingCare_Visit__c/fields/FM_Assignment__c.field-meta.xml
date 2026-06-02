@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FM_Assignment__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <label>FM Assignment</label>
+    <referenceTo>User</referenceTo>
+    <relationshipLabel>ClosingCare Visits (FM)</relationshipLabel>
+    <relationshipName>CC_Visit_FM_Users</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

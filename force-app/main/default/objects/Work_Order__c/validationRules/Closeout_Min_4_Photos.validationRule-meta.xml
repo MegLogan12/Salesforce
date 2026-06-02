@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Closeout_Min_4_Photos</fullName>
+    <active>false</active>
+    <description>Closeout requires minimum 4 photos and notes — inactive until Foreman_Submit_Status__c field is added</description>
+    <errorConditionFormula>AND(
+    NOT($Profile.Name = &quot;System Administrator&quot;),
+    (AND(
+        OR(
+            ISBLANK(Closeout_Photo_Count__c),
+            Closeout_Photo_Count__c &lt; 4,
+            ISBLANK(Closeout_Notes__c)
+        )
+    ))
+)</errorConditionFormula>
+    <errorDisplayField>Closeout_Photo_Count__c</errorDisplayField>
+    <errorMessage>Minimum 4 photos and notes required</errorMessage>
+</ValidationRule>

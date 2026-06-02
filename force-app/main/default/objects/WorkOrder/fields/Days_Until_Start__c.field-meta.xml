@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Days_Until_Start__c</fullName>
+    <description>Days from today to Target Start Date (or Calculated Start Date if no explicit date). Negative = past due. Drives pipeline bucket assignment. 999 = no date set (stays in 90+ bucket). Recalculates automatically every day.</description>
+    <externalId>false</externalId>
+    <formula>IF(
+  NOT(ISBLANK(Need_By_Date__c)),
+  Need_By_Date__c - TODAY(),
+  IF(
+    NOT(ISBLANK(Expected_Start_Date__c)),
+    Expected_Start_Date__c - TODAY(),
+    999
+  )
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Days Until Start</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>
