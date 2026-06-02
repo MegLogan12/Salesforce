@@ -1,0 +1,1876 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LOVING Sod Measurement Tool</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <style>
+    :root {
+      --bg: #f6f7f2;
+      --panel: #ffffff;
+      --ink: #1c241f;
+      --muted: #66706a;
+      --line: #d9dfd7;
+      --green: #497a3d;
+      --green2: #e5f0df;
+      --blue: #2f5d7c;
+      --blue2: #e4eef5;
+      --tan: #b58b55;
+      --tan2: #f4ecdf;
+      --red: #a13d33;
+      --red2: #f8e6e2;
+      --shadow: 0 12px 30px rgba(25, 40, 30, .08);
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    header {
+      padding: 18px 22px;
+      background: #132017;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    header h1 { margin: 0; font-size: 20px; letter-spacing: .2px; }
+    header p { margin: 4px 0 0; color: #cbd8ca; font-size: 13px; }
+    .header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    button, input, select, textarea { font: inherit; }
+    button {
+      border: 0;
+      background: var(--green);
+      color: white;
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    }
+    button.secondary { background: #eef2ee; color: #243029; border: 1px solid var(--line); box-shadow: none; }
+    button.warning { background: var(--tan); }
+    button.danger { background: var(--red); }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+    .hot-btn {
+      padding: 7px 9px;
+      border-radius: 10px;
+      font-size: 12px;
+      line-height: 1;
+      min-height: 30px;
+      box-shadow: none;
+    }
+    .hot-btn.active { background: var(--blue); color: white; }
+    .toolbar-note { font-size: 11px; color: var(--muted); font-weight: 700; }
+    .app {
+      display: grid;
+      grid-template-columns: minmax(520px, 1fr) 540px;
+      gap: 16px;
+      padding: 16px;
+      min-height: calc(100vh - 78px);
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    .panel-head {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .panel-head h2 { margin: 0; font-size: 16px; }
+    .tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .canvas-wrap {
+      position: relative;
+      height: calc(100vh - 190px);
+      min-height: 560px;
+      background: #1e251f;
+      overflow: hidden;
+    }
+    canvas#planCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+      background: #222;
+    }
+    .empty-state {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: #d9e2d8;
+      text-align: center;
+      padding: 30px;
+      pointer-events: none;
+    }
+    .empty-state div {
+      max-width: 560px;
+      padding: 24px;
+      border: 1px dashed rgba(255,255,255,.35);
+      border-radius: 20px;
+      background: rgba(255,255,255,.04);
+    }
+    .right {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+    .right-scroll {
+      padding: 16px;
+      overflow: auto;
+      height: calc(100vh - 138px);
+    }
+    .section {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 14px;
+      background: #fff;
+    }
+    .section h3 {
+      margin: 0 0 10px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: #36423b;
+    }
+    label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 5px; font-weight: 700; }
+    input[type="text"], input[type="number"], select, textarea {
+      width: 100%;
+      padding: 10px 11px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: #fbfcfa;
+      color: var(--ink);
+      outline: none;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--green); box-shadow: 0 0 0 3px rgba(73,122,61,.12); }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    .hint { color: var(--muted); font-size: 12px; line-height: 1.35; }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 12px;
+      font-weight: 800;
+      background: #eef2ee;
+      color: #26312a;
+    }
+    .status.good { background: var(--green2); color: #2e5f27; }
+    .status.warn { background: var(--tan2); color: #805d2d; }
+    .status.bad { background: var(--red2); color: #8b2f27; }
+    .feature-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .feature-btn {
+      border: 1px solid var(--line);
+      background: #f7f9f6;
+      color: var(--ink);
+      box-shadow: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+    }
+    .feature-btn.active { outline: 3px solid rgba(73,122,61,.18); border-color: var(--green); background: var(--green2); }
+    .dot { width: 12px; height: 12px; border-radius: 999px; display: inline-block; }
+    .summary-card {
+      background: linear-gradient(135deg, #e7f1e4, #ffffff);
+      border: 1px solid #c8dac2;
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .big { font-size: 28px; font-weight: 900; margin: 0; color: #244d20; }
+    .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+    .metric { padding: 10px; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+    .metric strong { display: block; font-size: 17px; }
+    .metric span { display: block; font-size: 11px; color: var(--muted); font-weight: 700; margin-top: 3px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .04em; }
+    .small-input { padding: 6px 7px !important; border-radius: 8px !important; font-size: 12px !important; }
+    details { border: 1px solid var(--line); border-radius: 12px; padding: 10px; background: #fbfcfa; margin-top: 10px; }
+    summary { cursor: pointer; font-weight: 800; color: #314036; }
+    .log { font-size: 12px; line-height: 1.4; color: #3d493f; max-height: 180px; overflow: auto; padding: 8px 0 0; }
+    .log-entry { border-bottom: 1px solid var(--line); padding: 7px 0; }
+    .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #eef2ee; border: 1px solid var(--line); border-radius: 6px; padding: 1px 5px; font-size: 11px; }
+    .file-row { display: flex; gap: 8px; align-items: center; }
+    .file-row input[type="file"] { width: 100%; }
+    .toolbar-select { min-width: 150px; }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .detected-box { display: none; margin-top: 10px; padding: 10px; background: #f7f9f6; border: 1px solid var(--line); border-radius: 12px; }
+    .calc-output { white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: #142018; color: #e9f2e7; border-radius: 14px; padding: 14px; font-size: 12px; line-height: 1.45; max-height: 320px; overflow: auto; }
+    /* Scan section styles */
+    .scan-alert {
+      display: none;
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+    .scan-alert.scale { background: var(--green2); border: 1px solid #b8d8ad; color: #244d20; }
+    .scan-alert.lotdim { background: var(--blue2); border: 1px solid #aacadb; color: #1c3e55; }
+    .scan-alert strong { display: block; font-weight: 800; margin-bottom: 4px; }
+    .dim-chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .dim-chip {
+      background: var(--blue2);
+      border: 1px solid #aacadb;
+      color: #1c3e55;
+      border-radius: 8px;
+      padding: 4px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: none;
+    }
+    .dim-chip:hover { background: #c4dfe9; }
+    .dim-chip.used { background: var(--green2); border-color: #b8d8ad; color: #244d20; }
+    .scan-empty { font-size: 12px; color: var(--muted); font-style: italic; }
+    @media (max-width: 1120px) {
+      .app { grid-template-columns: 1fr; }
+      .right-scroll { height: auto; }
+      .canvas-wrap { height: 620px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>LOVING Sod Measurement Tool</h1>
+      <p>Upload a plot plan, rotate if needed, calibrate one known linear distance, trace the lot/building/patio, and calculate sod pallets.</p>
+    </div>
+    <div class="header-actions">
+      <button class="secondary" id="copySummaryBtn">Copy Summary</button>
+      <button class="secondary" id="csvBtn">Download CSV</button>
+      <button class="secondary" id="jsonBtn">Download JSON</button>
+      <button class="secondary" id="headerSavePhotoBtn">Save Photo</button>
+      <button class="secondary" onclick="window.print()">Print / PDF</button>
+      <button class="danger" id="resetBtn">Reset</button>
+    </div>
+  </header>
+
+  <main class="app">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Plan Viewer and Tracing Canvas</h2>
+        <div class="tools">
+          <select id="modeSelect" class="toolbar-select">
+            <option value="pan">Pan / inspect</option>
+            <option value="calibrate">Calibrate scale</option>
+            <option value="draw">Draw selected area</option>
+            <option value="measure">Measure straight distance</option>
+            <option value="measureCurve">Measure curved path</option>
+          </select>
+          <button class="secondary hot-btn" id="fitBtn" title="Fit plan to screen">Fit</button>
+          <button class="secondary hot-btn" id="zoomInBtn" title="Zoom in">Zoom +</button>
+          <button class="secondary hot-btn" id="zoomOutBtn" title="Zoom out">Zoom -</button>
+          <button class="secondary hot-btn active" id="labelToggleBtn" title="Show or hide area labels">Labels</button>
+          <button class="secondary hot-btn" id="dimOverlayBtn" title="Show detected dimension labels on the plan">Dims Off</button>
+          <button class="secondary hot-btn" id="curveToggleBtn" title="Smooth traced area boundaries between points">Curve Off</button>
+          <button class="secondary hot-btn" id="savePhotoBtn" title="Save current canvas as PNG">Save Photo</button>
+          <button class="secondary hot-btn" id="rotateLeftBtn" title="Rotate plan left">↺</button>
+          <button class="secondary hot-btn" id="rotateRightBtn" title="Rotate plan right">↻</button>
+          <button class="warning hot-btn" id="closePolyBtn" title="Close traced area">Close</button>
+          <button class="warning hot-btn" id="finishPathBtn" title="Lock current pulled curve">Lock Curve</button>
+          <button class="secondary hot-btn" id="undoPointBtn" title="Undo last point">Undo</button>
+        </div>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="planCanvas"></canvas>
+        <div class="empty-state" id="emptyState">
+          <div>
+            <h2>Start by uploading a plot plan.</h2>
+            <p>Use a PDF, PNG, JPG, or WEBP. PDFs with a text layer will be scanned automatically for dimensions and scale. Then calibrate, trace, and calculate sod.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="panel right">
+      <div class="panel-head">
+        <h2>Takeoff</h2>
+        <span class="status warn" id="confidenceBadge">Needs scale</span>
+      </div>
+      <div class="right-scroll">
+        <div class="section">
+          <h3>1. Upload plot plan</h3>
+          <div class="file-row">
+            <input type="file" id="fileInput" accept="application/pdf,image/png,image/jpeg,image/webp" />
+          </div>
+          <div class="grid2" style="margin-top:10px;">
+            <div>
+              <label for="lotName">Lot / address label</label>
+              <input type="text" id="lotName" placeholder="Optional, detected when possible" />
+            </div>
+            <div>
+              <label for="pageSelect">PDF page</label>
+              <select id="pageSelect" disabled><option>Upload PDF</option></select>
+            </div>
+          </div>
+          <div class="detected-box" id="detectedBox">
+            <label for="detectedLotSelect">Detected lots from PDF text</label>
+            <select id="detectedLotSelect"></select>
+            <p class="hint" id="detectedHint"></p>
+          </div>
+          <p class="hint">PDFs with selectable text may auto-detect lot labels and dimensions. Scanned plans still work, but you will trace them visually.</p>
+        </div>
+
+        <!-- SCAN RESULTS SECTION -->
+        <div class="section" id="scanSection">
+          <h3>2. Scanned measurements</h3>
+
+          <div class="scan-alert scale" id="scaleDetectedBox">
+            <strong id="scaleDetectedText"></strong>
+            <div class="pill-row" style="margin-top:6px;">
+              <button id="applyScaleBtn" style="font-size:12px;padding:6px 10px;">Apply Scale Automatically</button>
+              <span class="hint" id="scaleAppliedNote" style="display:none;color:#2e5f27;font-weight:700;">✓ Applied</span>
+            </div>
+          </div>
+
+          <div class="scan-alert lotdim" id="lotDimBox">
+            <strong id="lotDimText"></strong>
+            <div class="pill-row" style="margin-top:6px;">
+              <button class="secondary" id="useLotDimBtn" style="font-size:12px;padding:6px 10px;">Use as Lot area</button>
+              <span class="hint" id="lotDimAppliedNote" style="display:none;color:#1c3e55;font-weight:700;">✓ Applied to Lot SF</span>
+            </div>
+          </div>
+
+          <label style="margin-top:4px;">Detected dimension labels — click any to pre-fill calibration</label>
+          <div class="dim-chip-row" id="dimensionList">
+            <span class="scan-empty">Upload a PDF with a text layer to scan for dimensions.</span>
+          </div>
+
+          <p class="hint" style="margin-top:8px;">After clicking a dimension chip, switch to <span class="kbd">Calibrate scale</span> and click the two endpoints of that labeled distance on the plan.</p>
+        </div>
+
+        <div class="section">
+          <h3>3. Calibrate scale</h3>
+          <div class="grid2">
+            <div>
+              <label for="knownFeet">Known Linear Distance (ft)</label>
+              <input type="number" id="knownFeet" min="0" step="0.01" placeholder="Example: lot width" />
+            </div>
+            <div>
+              <label>Scale status</label>
+              <div class="pill-row"><span class="status bad" id="scaleStatus">Not calibrated</span></div>
+            </div>
+          </div>
+          <p class="hint">Choose <span class="kbd">Calibrate scale</span>, click the two ends of a known linear dimension on the plan, enter the real feet, then click Set Scale. Do not enter square feet here.</p>
+          <div class="pill-row" style="margin-top:10px;">
+            <button id="setScaleBtn">Set Scale</button>
+            <button class="secondary" id="clearScaleBtn">Clear Scale</button>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>3B. Measure a distance</h3>
+          <p class="hint">After scale is calibrated, choose <span class="kbd">Measure straight distance</span> for a normal line, or <span class="kbd">Measure curved path</span> for sidewalks/curbs. For curved path: click start point, click end point, then drag the orange control handle to pull the line into a curve.</p>
+          <div class="pill-row" style="margin-top:10px;">
+            <button class="secondary" id="clearMeasureLinesBtn">Clear distance lines</button>
+          </div>
+          <table style="margin-top:10px;">
+            <thead><tr><th>#</th><th>Distance</th><th>Notes</th></tr></thead>
+            <tbody id="measureDistanceRows"><tr><td colspan="3" class="hint">No distance lines measured yet.</td></tr></tbody>
+          </table>
+        </div>
+
+        <div class="section">
+          <h3>4. Trace areas</h3>
+          <p class="hint">Pick a feature, choose <span class="kbd">Draw selected area</span>, click around its boundary, then click Close Area. Trace deductions separately so the sod total is clean.</p>
+          <div class="feature-buttons" id="featureButtons"></div>
+          <div class="pill-row" style="margin-top:10px;">
+            <button class="secondary" id="deleteFeatureBtn">Delete selected feature</button>
+            <button class="secondary" id="clearAllFeaturesBtn">Clear all tracing</button>
+          </div>
+        </div>
+
+        <div class="section summary-card">
+          <h3>Live sod total</h3>
+          <p class="big" id="sodSfBig">0 SF</p>
+          <div class="metric-grid">
+            <div class="metric"><strong id="sodSyMetric">0.00</strong><span>square yards</span></div>
+            <div class="metric"><strong id="palletMetric">0</strong><span>pallets @ 500 SF</span></div>
+            <div class="metric"><strong id="netStatusMetric">Needs plan</strong><span>status</span></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Measured and editable fields</h3>
+          <p class="hint">Auto SF comes from traced polygons after scale is set. Manual override wins when entered.</p>
+          <table>
+            <thead>
+              <tr><th>Item</th><th>Auto SF</th><th>Manual Override SF</th><th>Used SF</th></tr>
+            </thead>
+            <tbody id="measureRows"></tbody>
+          </table>
+          <div class="grid2" style="margin-top:12px;">
+            <div>
+              <label for="wastePct">Waste % optional</label>
+              <input type="number" id="wastePct" min="0" step="0.1" value="0" />
+            </div>
+            <div>
+              <label>Pallet coverage</label>
+              <input type="text" value="500 SF per pallet" disabled />
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3>Calculate</h3>
+          <button id="calculateBtn" style="width:100%;">Calculate Full Breakdown</button>
+          <div style="height:10px"></div>
+          <div class="calc-output" id="calcOutput">No calculation run yet.</div>
+        </div>
+
+        <div class="section">
+          <h3>Source and confidence log</h3>
+          <p class="hint">A traced quantity is only measured after scale calibration. Without scale, the tool can show shapes, but it cannot produce reliable SF.</p>
+          <details open>
+            <summary>Open log</summary>
+            <div class="log" id="log"></div>
+          </details>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+<script>
+(function(){
+  "use strict";
+
+  if (window.pdfjsLib) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+  }
+
+  const PDF_RENDER_SCALE = 2.2;
+
+  const features = {
+    lot: { label: "Lot", color: "rgba(73,122,61,.20)", stroke: "#497a3d", deduct: false },
+    building: { label: "Building", color: "rgba(47,93,124,.24)", stroke: "#2f5d7c", deduct: true },
+    patio: { label: "Patio", color: "rgba(181,139,85,.28)", stroke: "#b58b55", deduct: true },
+    driveway: { label: "Driveway", color: "rgba(120,120,120,.24)", stroke: "#777", deduct: true },
+    other: { label: "Other Deduction", color: "rgba(161,61,51,.22)", stroke: "#a13d33", deduct: true }
+  };
+
+  const state = {
+    pdfDoc: null,
+    pdfPage: 1,
+    fileName: "",
+    sourceImage: null,
+    imageW: 0,
+    imageH: 0,
+    rotationDeg: 0,
+    viewScale: 1,
+    offsetX: 0,
+    offsetY: 0,
+    isDragging: false,
+    draggingCurveControl: false,
+    activeMeasureLineIndex: null,
+    lastMouse: null,
+    activeFeature: "lot",
+    showLabels: true,
+    showDimOverlay: false,
+    curveMode: false,
+    currentPoints: [],
+    measurePoints: [],
+    measureLines: [],
+    polygons: { lot: [], building: [], patio: [], driveway: [], other: [] },
+    calibrationPoints: [],
+    feetPerPixel: null,
+    logs: [],
+    detectedLots: [],
+    detectedAddresses: [],
+    detectedDimensions: [],
+    lotDimensions: null,
+    detectedScale: null,
+    manual: { lot: "", building: "", patio: "", driveway: "", other: "" }
+  };
+
+  const canvas = document.getElementById("planCanvas");
+  const ctx = canvas.getContext("2d");
+  const emptyState = document.getElementById("emptyState");
+  const fileInput = document.getElementById("fileInput");
+  const pageSelect = document.getElementById("pageSelect");
+  const modeSelect = document.getElementById("modeSelect");
+  const knownFeet = document.getElementById("knownFeet");
+  const scaleStatus = document.getElementById("scaleStatus");
+  const confidenceBadge = document.getElementById("confidenceBadge");
+  const lotName = document.getElementById("lotName");
+  const detectedBox = document.getElementById("detectedBox");
+  const detectedLotSelect = document.getElementById("detectedLotSelect");
+  const detectedHint = document.getElementById("detectedHint");
+  const featureButtons = document.getElementById("featureButtons");
+  const measureRows = document.getElementById("measureRows");
+  const logBox = document.getElementById("log");
+  const sodSfBig = document.getElementById("sodSfBig");
+  const sodSyMetric = document.getElementById("sodSyMetric");
+  const palletMetric = document.getElementById("palletMetric");
+  const netStatusMetric = document.getElementById("netStatusMetric");
+  const wastePct = document.getElementById("wastePct");
+  const calcOutput = document.getElementById("calcOutput");
+
+  function addLog(type, message) {
+    const ts = new Date().toLocaleString();
+    state.logs.unshift({ ts, type, message });
+    renderLog();
+  }
+
+  function renderLog() {
+    if (!state.logs.length) {
+      logBox.innerHTML = "<div class='log-entry'>No source events yet.</div>";
+      return;
+    }
+    logBox.innerHTML = state.logs.map(l => `<div class="log-entry"><strong>${escapeHtml(l.type)}</strong><br>${escapeHtml(l.message)}<br><span class="hint">${escapeHtml(l.ts)}</span></div>`).join("");
+  }
+
+  function escapeHtml(str) {
+    return String(str || "").replace(/[&<>'"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#039;","\"":"&quot;"}[ch]));
+  }
+
+  function fmt(n, digits=0) {
+    if (!isFinite(n)) return "0";
+    return Number(n).toLocaleString(undefined, { maximumFractionDigits: digits, minimumFractionDigits: digits });
+  }
+
+  function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.max(1, Math.floor(rect.width * dpr));
+    canvas.height = Math.max(1, Math.floor(rect.height * dpr));
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    draw();
+  }
+
+  function fitImage() {
+    if (!state.sourceImage) return;
+    const rect = canvas.getBoundingClientRect();
+    const scale = Math.min(rect.width / state.imageW, rect.height / state.imageH) * 0.94;
+    state.viewScale = Math.max(0.02, scale);
+    state.offsetX = (rect.width - state.imageW * state.viewScale) / 2;
+    state.offsetY = (rect.height - state.imageH * state.viewScale) / 2;
+    draw();
+  }
+
+  function imgToScreen(p) {
+    return { x: p.x * state.viewScale + state.offsetX, y: p.y * state.viewScale + state.offsetY };
+  }
+
+  function screenToImg(x, y) {
+    return { x: (x - state.offsetX) / state.viewScale, y: (y - state.offsetY) / state.viewScale };
+  }
+
+  function draw() {
+    const rect = canvas.getBoundingClientRect();
+    ctx.clearRect(0,0,rect.width,rect.height);
+    ctx.save();
+    ctx.fillStyle = "#202820";
+    ctx.fillRect(0,0,rect.width,rect.height);
+    if (!state.sourceImage) {
+      ctx.restore();
+      return;
+    }
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(state.sourceImage, state.offsetX, state.offsetY, state.imageW * state.viewScale, state.imageH * state.viewScale);
+
+    for (const key of Object.keys(features)) {
+      const f = features[key];
+      state.polygons[key].forEach((poly, index) => drawPolygon(poly, f, `${f.label} ${index+1}`, true));
+    }
+
+    state.measureLines.forEach((line, index) => drawMeasureLine(line, index + 1));
+
+    if (state.measurePoints.length) {
+      drawPath(state.measurePoints, "#ff6b00", false, modeSelect.value === "measureCurve", false);
+      state.measurePoints.forEach(p => drawPoint(p, "#ff6b00"));
+    }
+
+    if (state.currentPoints.length) {
+      drawPath(state.currentPoints, features[state.activeFeature].stroke, true, state.curveMode, false);
+      state.currentPoints.forEach(p => drawPoint(p, features[state.activeFeature].stroke));
+    }
+
+    if (state.calibrationPoints.length) {
+      drawPolyline(state.calibrationPoints, "#ffcc33", false);
+      state.calibrationPoints.forEach(p => drawPoint(p, "#ffcc33"));
+      if (state.calibrationPoints.length === 2) {
+        const a = imgToScreen(state.calibrationPoints[0]);
+        const b = imgToScreen(state.calibrationPoints[1]);
+        const mid = { x: (a.x+b.x)/2, y: (a.y+b.y)/2 };
+        labelAt(mid.x, mid.y, "Calibration line", "#ffcc33", "#1b1b1b");
+      }
+    }
+
+    if (state.showDimOverlay) drawDimensionOverlays();
+
+    ctx.restore();
+  }
+
+  function drawDimensionOverlays() {
+    if (!state.detectedDimensions.length) return;
+    const pageDims = state.detectedDimensions.filter(d => d.page === state.pdfPage);
+    ctx.save();
+    ctx.font = "700 9px Inter, system-ui, sans-serif";
+    for (const dim of pageDims) {
+      const s = imgToScreen({ x: dim.x, y: dim.y });
+      const label = dim.text;
+      const w = ctx.measureText(label).width + 10;
+      const h = 16;
+      ctx.fillStyle = "rgba(47,93,124,0.82)";
+      roundRect(ctx, s.x - 2, s.y - h + 2, w, h, 4);
+      ctx.fill();
+      ctx.fillStyle = "#fff";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.fillText(label, s.x + 3, s.y - h / 2 + 2);
+    }
+    ctx.restore();
+  }
+
+  function getPolyPoints(poly) {
+    return Array.isArray(poly) ? poly : (poly && poly.points ? poly.points : []);
+  }
+
+  function isCurvedShape(shape) {
+    return !!(shape && !Array.isArray(shape) && shape.curved);
+  }
+
+  function catmullRomPoint(p0, p1, p2, p3, t) {
+    const t2 = t * t;
+    const t3 = t2 * t;
+    return {
+      x: 0.5 * ((2 * p1.x) + (-p0.x + p2.x) * t + (2*p0.x - 5*p1.x + 4*p2.x - p3.x) * t2 + (-p0.x + 3*p1.x - 3*p2.x + p3.x) * t3),
+      y: 0.5 * ((2 * p1.y) + (-p0.y + p2.y) * t + (2*p0.y - 5*p1.y + 4*p2.y - p3.y) * t2 + (-p0.y + 3*p1.y - 3*p2.y + p3.y) * t3)
+    };
+  }
+
+  function sampleSmooth(points, closed, samplesPerSegment) {
+    if (!points || points.length < 2) return points || [];
+    if (points.length < 3) return points.slice();
+    const samples = Math.max(4, samplesPerSegment || 12);
+    const result = [];
+    const n = points.length;
+    const segmentCount = closed ? n : n - 1;
+
+    for (let i = 0; i < segmentCount; i++) {
+      const p0 = closed ? points[(i - 1 + n) % n] : points[Math.max(0, i - 1)];
+      const p1 = points[i];
+      const p2 = points[(i + 1) % n];
+      const p3 = closed ? points[(i + 2) % n] : points[Math.min(n - 1, i + 2)];
+
+      for (let j = 0; j < samples; j++) {
+        const t = j / samples;
+        result.push(catmullRomPoint(p0, p1, p2, p3, t));
+      }
+    }
+    if (!closed) result.push(points[n - 1]);
+    return result;
+  }
+
+  function pathLengthPx(points, curved) {
+    const pts = curved ? sampleSmooth(points, false, 12) : points;
+    if (!pts || pts.length < 2) return 0;
+    let total = 0;
+    for (let i = 1; i < pts.length; i++) total += distPx(pts[i - 1], pts[i]);
+    return total;
+  }
+
+  function quadraticPoint(p0, c, p1, t) {
+    const mt = 1 - t;
+    return {
+      x: mt * mt * p0.x + 2 * mt * t * c.x + t * t * p1.x,
+      y: mt * mt * p0.y + 2 * mt * t * c.y + t * t * p1.y
+    };
+  }
+
+  function sampleQuadratic(p0, c, p1, samples) {
+    const out = [];
+    const count = Math.max(16, samples || 40);
+    for (let i = 0; i <= count; i++) out.push(quadraticPoint(p0, c, p1, i / count));
+    return out;
+  }
+
+  function measureLineLengthPx(line) {
+    if (!line || !line.points || line.points.length < 2) return 0;
+    if (line.control && line.points.length === 2) {
+      return pathLengthPx(sampleQuadratic(line.points[0], line.control, line.points[1], 48), false);
+    }
+    return pathLengthPx(line.points, !!line.curved);
+  }
+
+  function drawControlHandle(p, active) {
+    const s = imgToScreen(p);
+    ctx.save();
+    ctx.beginPath();
+    ctx.moveTo(s.x, s.y - 7);
+    ctx.lineTo(s.x + 7, s.y);
+    ctx.lineTo(s.x, s.y + 7);
+    ctx.lineTo(s.x - 7, s.y);
+    ctx.closePath();
+    ctx.fillStyle = active ? "#00a3ff" : "#ff6b00";
+    ctx.strokeStyle = "#fff";
+    ctx.lineWidth = 2;
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function nearestCurveControl(screenX, screenY) {
+    let best = null;
+    let bestDist = Infinity;
+    state.measureLines.forEach((line, idx) => {
+      if (!line.control) return;
+      const s = imgToScreen(line.control);
+      const d = Math.hypot(s.x - screenX, s.y - screenY);
+      if (d < bestDist && d <= 18) {
+        best = idx;
+        bestDist = d;
+      }
+    });
+    return best;
+  }
+
+  function drawPath(points, color, dashed, curved, closed) {
+    if (!points || points.length < 2) return;
+    const pts = curved ? sampleSmooth(points, !!closed, 12) : points;
+    ctx.beginPath();
+    const first = imgToScreen(pts[0]);
+    ctx.moveTo(first.x, first.y);
+    for (let i = 1; i < pts.length; i++) {
+      const s = imgToScreen(pts[i]);
+      ctx.lineTo(s.x, s.y);
+    }
+    if (closed) ctx.closePath();
+    ctx.lineWidth = 2.5;
+    ctx.strokeStyle = color;
+    if (dashed) ctx.setLineDash([6,4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  function drawMeasureLine(line, index) {
+    if (!line || !line.points || line.points.length < 2) return;
+    const points = line.points;
+    const curved = !!line.curved;
+
+    if (line.control && points.length === 2) {
+      const curvePts = sampleQuadratic(points[0], line.control, points[1], 48);
+      drawPath(curvePts, "#ff6b00", false, false, false);
+      points.forEach(p => drawPoint(p, "#ff6b00"));
+
+      ctx.save();
+      ctx.setLineDash([4, 4]);
+      drawPath([points[0], line.control, points[1]], "#ffb36b", false, false, false);
+      ctx.setLineDash([]);
+      ctx.restore();
+      drawControlHandle(line.control, state.activeMeasureLineIndex === index - 1);
+
+      const midPoint = quadraticPoint(points[0], line.control, points[1], 0.5);
+      const midScreen = imgToScreen(midPoint);
+      const distance = state.feetPerPixel ? measureLineLengthPx(line) * state.feetPerPixel : null;
+      const label = distance == null ? `D${index}` : `D${index}: ${fmt(distance, 2)} ft`;
+      labelAt(midScreen.x, midScreen.y, label, "#ff6b00", "#fff");
+      return;
+    }
+
+    drawPath(points, "#ff6b00", false, curved, false);
+    points.forEach(p => drawPoint(p, "#ff6b00"));
+
+    const displayPts = curved ? sampleSmooth(points, false, 12) : points;
+    const midIndex = Math.max(0, Math.floor(displayPts.length / 2));
+    const midScreen = imgToScreen(displayPts[midIndex]);
+    const distance = state.feetPerPixel ? measureLineLengthPx(line) * state.feetPerPixel : null;
+    const label = distance == null ? `D${index}` : `D${index}: ${fmt(distance, 2)} ft`;
+    labelAt(midScreen.x, midScreen.y, label, "#ff6b00", "#fff");
+  }
+
+  function renderMeasureDistanceRows() {
+    const box = document.getElementById("measureDistanceRows");
+    if (!box) return;
+    if (!state.measureLines.length) {
+      box.innerHTML = '<tr><td colspan="3" class="hint">No distance lines measured yet.</td></tr>';
+      return;
+    }
+    box.innerHTML = state.measureLines.map((line, idx) => {
+      const curved = !!line.curved;
+      const distance = state.feetPerPixel ? measureLineLengthPx(line) * state.feetPerPixel : 0;
+      const type = line.control ? "Pulled curve" : (curved ? "Curved path" : "Straight line");
+      return `<tr><td>D${idx + 1}</td><td><strong>${state.feetPerPixel ? fmt(distance, 2) + " ft" : "Set scale"}</strong></td><td>${type}</td></tr>`;
+    }).join("");
+  }
+
+  function drawPoint(p, color) {
+    const s = imgToScreen(p);
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, 4.5, 0, Math.PI*2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "#fff";
+    ctx.stroke();
+  }
+
+  function drawPolyline(points, color, dashed) {
+    drawPath(points, color, dashed, false, false);
+  }
+
+  function drawPolygon(shape, f, label, closed) {
+    const points = getPolyPoints(shape);
+    if (points.length < 3) return;
+    const curved = isCurvedShape(shape);
+    const drawPts = curved ? sampleSmooth(points, true, 12) : points;
+
+    ctx.beginPath();
+    const first = imgToScreen(drawPts[0]);
+    ctx.moveTo(first.x, first.y);
+    for (let i=1; i<drawPts.length; i++) {
+      const s = imgToScreen(drawPts[i]);
+      ctx.lineTo(s.x, s.y);
+    }
+    if (closed) ctx.closePath();
+    ctx.fillStyle = f.color;
+    ctx.strokeStyle = f.stroke;
+    ctx.lineWidth = 2.5;
+    ctx.fill();
+    ctx.stroke();
+
+    points.forEach(p => drawPoint(p, f.stroke));
+    const c = centroid(drawPts);
+    const cs = imgToScreen(c);
+    const area = state.feetPerPixel ? polygonAreaSqFt(shape) : null;
+    const curveTag = curved ? " curved" : "";
+    labelAt(cs.x, cs.y, area == null ? `${label}${curveTag}` : `${label}${curveTag}\n${fmt(area,0)} SF`, f.stroke, "#fff");
+  }
+
+  function labelAt(x, y, text, bg, color) {
+    if (!state.showLabels) return;
+    const lines = String(text).split("\n");
+    ctx.font = "700 9px Inter, system-ui, sans-serif";
+    const width = Math.max(...lines.map(line => ctx.measureText(line).width)) + 8;
+    const height = lines.length * 11 + 5;
+    ctx.fillStyle = bg;
+    roundRect(ctx, x - width/2, y - height/2, width, height, 5);
+    ctx.fill();
+    ctx.fillStyle = color;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    lines.forEach((line, i) => ctx.fillText(line, x, y - ((lines.length-1)*5.5) + i*11));
+  }
+
+  function roundRect(ctx, x, y, w, h, r) {
+    const rr = Math.min(r, w/2, h/2);
+    ctx.beginPath();
+    ctx.moveTo(x+rr,y);
+    ctx.arcTo(x+w,y,x+w,y+h,rr);
+    ctx.arcTo(x+w,y+h,x,y+h,rr);
+    ctx.arcTo(x,y+h,x,y,rr);
+    ctx.arcTo(x,y,x+w,y,rr);
+    ctx.closePath();
+  }
+
+  function polygonAreaPx(shape) {
+    const basePoints = getPolyPoints(shape);
+    if (!basePoints || basePoints.length < 3) return 0;
+    const points = isCurvedShape(shape) ? sampleSmooth(basePoints, true, 12) : basePoints;
+    let sum = 0;
+    for (let i=0; i<points.length; i++) {
+      const a = points[i];
+      const b = points[(i+1) % points.length];
+      sum += a.x*b.y - b.x*a.y;
+    }
+    return Math.abs(sum) / 2;
+  }
+
+  function polygonAreaSqFt(shape) {
+    if (!state.feetPerPixel) return 0;
+    return polygonAreaPx(shape) * state.feetPerPixel * state.feetPerPixel;
+  }
+
+  function centroid(points) {
+    if (!points || !points.length) return { x: 0, y: 0 };
+    let x = 0, y = 0;
+    points.forEach(p => { x += p.x; y += p.y; });
+    return { x: x / points.length, y: y / points.length };
+  }
+
+  function distPx(a,b) {
+    return Math.hypot(a.x-b.x, a.y-b.y);
+  }
+
+  function renderFeatureButtons() {
+    featureButtons.innerHTML = Object.keys(features).map(key => {
+      const f = features[key];
+      return `<button class="feature-btn ${state.activeFeature === key ? "active" : ""}" data-feature="${key}"><span><span class="dot" style="background:${f.stroke}"></span> ${f.label}</span><span>${state.polygons[key].length}</span></button>`;
+    }).join("");
+    featureButtons.querySelectorAll("button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        state.activeFeature = btn.dataset.feature;
+        state.currentPoints = [];
+        renderFeatureButtons();
+        draw();
+      });
+    });
+  }
+
+  function renderMeasureRows() {
+    const areas = getAreas();
+    measureRows.innerHTML = Object.keys(features).map(key => {
+      const auto = areas.auto[key] || 0;
+      const used = areas.used[key] || 0;
+      const label = features[key].label;
+      return `<tr>
+        <td><strong>${label}</strong><br><span class="hint">${features[key].deduct ? "deduct from sod" : "gross area"}</span></td>
+        <td>${state.feetPerPixel ? fmt(auto,0) : "Set scale"}</td>
+        <td><input class="small-input manual-input" type="number" min="0" step="1" data-key="${key}" value="${escapeHtml(state.manual[key])}" placeholder="optional" /></td>
+        <td><strong>${fmt(used,0)}</strong></td>
+      </tr>`;
+    }).join("");
+    measureRows.querySelectorAll(".manual-input").forEach(input => {
+      input.addEventListener("input", (e) => {
+        const key = e.target.dataset.key;
+        state.manual[key] = e.target.value;
+        updateTotals();
+      });
+    });
+  }
+
+  function getAreas() {
+    const auto = {};
+    const used = {};
+    for (const key of Object.keys(features)) {
+      auto[key] = state.feetPerPixel ? state.polygons[key].reduce((sum, poly) => sum + polygonAreaSqFt(poly), 0) : 0;
+      const manualVal = parseFloat(state.manual[key]);
+      used[key] = isFinite(manualVal) && manualVal >= 0 ? manualVal : auto[key];
+    }
+    return { auto, used };
+  }
+
+  function calculate() {
+    const areas = getAreas().used;
+    const lot = areas.lot || 0;
+    const building = areas.building || 0;
+    const patio = areas.patio || 0;
+    const driveway = areas.driveway || 0;
+    const other = areas.other || 0;
+    const base = Math.max(0, lot - building - patio - driveway - other);
+    const waste = Math.max(0, parseFloat(wastePct.value) || 0);
+    const adjusted = base * (1 + waste / 100);
+    const sy = adjusted / 9;
+    const pallets = adjusted > 0 ? Math.ceil(adjusted / 500) : 0;
+    const deductions = building + patio + driveway + other;
+    let status = "Ready";
+    let warnings = [];
+    if (!state.sourceImage) warnings.push("No plot plan uploaded.");
+    if (!state.feetPerPixel && !hasAnyManual()) warnings.push("Scale is not calibrated and no manual areas were entered.");
+    if (lot <= 0) warnings.push("Lot SF is missing.");
+    if (deductions > lot && lot > 0) warnings.push("Deductions exceed Lot SF.");
+    if (!areas.patio && state.polygons.patio.length === 0 && !state.manual.patio) warnings.push("Patio is zero. Confirm there is no patio or trace/enter it.");
+    if (warnings.length) status = "Needs review";
+    return { lot, building, patio, driveway, other, base, waste, adjusted, sy, pallets, status, warnings };
+  }
+
+  function hasAnyManual() {
+    return Object.keys(state.manual).some(k => state.manual[k] !== "" && isFinite(parseFloat(state.manual[k])));
+  }
+
+  function updateTotals() {
+    const c = calculate();
+    sodSfBig.textContent = `${fmt(c.adjusted,0)} SF`;
+    sodSyMetric.textContent = fmt(c.sy,2);
+    palletMetric.textContent = String(c.pallets);
+    netStatusMetric.textContent = c.status;
+    netStatusMetric.parentElement.style.borderColor = c.status === "Ready" ? "#c8dac2" : "#e5c99e";
+
+    if (state.feetPerPixel) {
+      scaleStatus.textContent = `${state.feetPerPixel.toFixed(5)} ft/px`;
+      scaleStatus.className = "status good";
+      confidenceBadge.textContent = c.warnings.length ? "Measured with review" : "Measured";
+      confidenceBadge.className = c.warnings.length ? "status warn" : "status good";
+    } else {
+      scaleStatus.textContent = "Not calibrated";
+      scaleStatus.className = "status bad";
+      confidenceBadge.textContent = hasAnyManual() ? "Manual values" : "Needs scale";
+      confidenceBadge.className = hasAnyManual() ? "status warn" : "status bad";
+    }
+    renderMeasureRows();
+    renderMeasureDistanceRows();
+    draw();
+  }
+
+  async function handleFile(file) {
+    if (!file) return;
+    resetForNewFile(false);
+    state.fileName = file.name;
+    addLog("Upload", `Loaded file: ${file.name}`);
+    emptyState.style.display = "none";
+    const type = file.type || "";
+    if (type.includes("pdf") || file.name.toLowerCase().endsWith(".pdf")) {
+      await loadPdf(file);
+    } else if (type.startsWith("image/") || /\.(png|jpe?g|webp)$/i.test(file.name)) {
+      await loadImageFile(file);
+    } else {
+      addLog("Failure", "Unsupported file type. Use PDF, PNG, JPG, or WEBP.");
+      alert("Unsupported file type. Use PDF, PNG, JPG, or WEBP.");
+    }
+  }
+
+  async function loadImageFile(file) {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      state.sourceImage = img;
+      state.imageW = img.naturalWidth;
+      state.imageH = img.naturalHeight;
+      pageSelect.disabled = true;
+      pageSelect.innerHTML = "<option>Image file</option>";
+      fitImage();
+      updateTotals();
+      addLog("Plan", `Image rendered at ${img.naturalWidth} x ${img.naturalHeight} pixels.`);
+      renderDetectedDimensions();
+    };
+    img.onerror = () => addLog("Failure", "Image could not be loaded.");
+    img.src = url;
+  }
+
+  async function loadPdf(file) {
+    if (!window.pdfjsLib) {
+      addLog("Failure", "PDF.js did not load from CDN. Check internet access or upload an image version of the plan.");
+      alert("PDF.js did not load. Check internet access or upload an image version of the plan.");
+      return;
+    }
+    const arrayBuffer = await file.arrayBuffer();
+    try {
+      state.pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      pageSelect.disabled = false;
+      pageSelect.innerHTML = "";
+      for (let i=1; i<=state.pdfDoc.numPages; i++) {
+        const opt = document.createElement("option");
+        opt.value = String(i);
+        opt.textContent = `Page ${i}`;
+        pageSelect.appendChild(opt);
+      }
+      state.pdfPage = 1;
+      await renderPdfPage(1, true);
+      await detectPdfText();
+      addLog("PDF", `PDF loaded with ${state.pdfDoc.numPages} page(s).`);
+    } catch (err) {
+      console.error(err);
+      addLog("Failure", `PDF could not be rendered: ${err.message || err}`);
+      alert("PDF could not be rendered. Try exporting the plot plan as an image.");
+    }
+  }
+
+  async function renderPdfPage(pageNum, fit) {
+    if (!state.pdfDoc) return;
+    const page = await state.pdfDoc.getPage(pageNum);
+    const viewport = page.getViewport({ scale: PDF_RENDER_SCALE });
+    const off = document.createElement("canvas");
+    off.width = viewport.width;
+    off.height = viewport.height;
+    const octx = off.getContext("2d");
+    await page.render({ canvasContext: octx, viewport }).promise;
+    const img = new Image();
+    img.onload = () => {
+      state.sourceImage = img;
+      state.imageW = img.naturalWidth;
+      state.imageH = img.naturalHeight;
+      if (fit) fitImage(); else draw();
+      updateTotals();
+      addLog("Plan", `Rendered PDF page ${pageNum} at ${img.naturalWidth} x ${img.naturalHeight} pixels.`);
+    };
+    img.src = off.toDataURL("image/png");
+  }
+
+  // ─── ENHANCED PDF TEXT SCAN ─────────────────────────────────────────────────
+
+  async function detectPdfText() {
+    state.detectedLots = [];
+    state.detectedAddresses = [];
+    state.detectedDimensions = [];
+    state.lotDimensions = null;
+    state.detectedScale = null;
+
+    if (!state.pdfDoc) return;
+    const lots = new Set();
+    const addresses = new Set();
+
+    for (let p = 1; p <= state.pdfDoc.numPages; p++) {
+      try {
+        const page = await state.pdfDoc.getPage(p);
+        const viewport = page.getViewport({ scale: PDF_RENDER_SCALE });
+        const txt = await page.getTextContent();
+        const fullText = txt.items.map(i => i.str).join(" ");
+
+        // Lot label extraction
+        const lotRegex = /\b(?:lot|lot\s*#|lot\s*number)\s*[:#-]?\s*([A-Za-z0-9-]{1,12})\b/gi;
+        let m;
+        while ((m = lotRegex.exec(fullText))) {
+          const val = m[1].replace(/[^A-Za-z0-9-]/g, "");
+          if (val) lots.add(`Lot ${val}`);
+        }
+        const addrRegex = /\b\d{1,6}\s+[A-Za-z0-9 .'-]+?\s+(?:Road|Rd|Street|St|Avenue|Ave|Drive|Dr|Lane|Ln|Court|Ct|Circle|Cir|Way|Trail|Trl|Boulevard|Blvd|Parkway|Pkwy)\b/gi;
+        while ((m = addrRegex.exec(fullText))) addresses.add(m[0].replace(/\s+/g," ").trim());
+
+        // Detect plan scale text: "1" = 20'" or "1 inch = 30 ft" or "Scale: 1:240"
+        if (!state.detectedScale) {
+          const scaleInchFt = fullText.match(/(?:scale\s*:?\s*)?1\s*(?:"|inch|in)\s*=\s*([0-9]+(?:\.[0-9]+)?)\s*(?:'|ft|feet)/i);
+          const scaleRatio  = fullText.match(/(?:scale\s*:?\s*)1\s*[:\/]\s*([0-9]+)\b/i);
+
+          if (scaleInchFt) {
+            const feetPerInch = parseFloat(scaleInchFt[1]);
+            // PDF points: 72 pt = 1 inch; rendered at PDF_RENDER_SCALE → pixels per inch
+            const pxPerInch = 72 * PDF_RENDER_SCALE;
+            state.detectedScale = {
+              type: "inch-to-feet",
+              feetPerInch,
+              feetPerPixel: feetPerInch / pxPerInch,
+              text: scaleInchFt[0].trim()
+            };
+            addLog("Scan", `Detected plan scale: "${state.detectedScale.text}" → ${state.detectedScale.feetPerPixel.toFixed(6)} ft/px`);
+          } else if (scaleRatio) {
+            const ratio = parseFloat(scaleRatio[1]);
+            const pxPerInch = 72 * PDF_RENDER_SCALE;
+            // 1:ratio means 1 PDF unit represents ratio PDF units in reality; in inches: ratio/72 in per pt, but ratio here is unit-less drawing scale
+            // Typical: 1:240 means 1 inch on plan = 240 inches = 20 feet
+            const feetPerInch = ratio / 12;
+            state.detectedScale = {
+              type: "ratio",
+              ratio,
+              feetPerPixel: feetPerInch / pxPerInch,
+              text: scaleRatio[0].trim()
+            };
+            addLog("Scan", `Detected ratio scale: "${state.detectedScale.text}" → ${state.detectedScale.feetPerPixel.toFixed(6)} ft/px`);
+          }
+        }
+
+        // Detect lot dimensions: "50 x 120", "50.0' x 120.0'", "50X120"
+        if (!state.lotDimensions) {
+          const ldRe = /\b([0-9]+(?:\.[0-9]+)?)\s*(?:'|ft|feet|FT|FEET)?\s*[xX×]\s*([0-9]+(?:\.[0-9]+)?)\s*(?:'|ft|feet|FT|FEET)?\b/g;
+          while ((m = ldRe.exec(fullText))) {
+            const w = parseFloat(m[1]);
+            const h = parseFloat(m[2]);
+            if (w >= 10 && h >= 10 && w <= 3000 && h <= 3000) {
+              state.lotDimensions = { width: w, height: h, area: Math.round(w * h) };
+              addLog("Scan", `Detected lot dimensions: ${w}' × ${h}' = ${fmt(state.lotDimensions.area)} SF`);
+              break;
+            }
+          }
+        }
+
+        // Extract each text item's dimension value + position
+        for (const item of txt.items) {
+          const raw = (item.str || "").trim();
+          if (!raw) continue;
+          // Match: standalone number optionally followed by ', ft, feet, LF (linear feet)
+          const dimMatch = raw.match(/^([0-9]+(?:\.[0-9]+)?)\s*(?:'|ft|feet|FT|FEET|LF)?$/);
+          if (!dimMatch) continue;
+          const val = parseFloat(dimMatch[1]);
+          // Keep reasonable linear dimensions; exclude area-like values > 2000
+          if (val < 2 || val > 2000) continue;
+          // Skip values that look like year numbers (4-digit > 1900)
+          if (Number.isInteger(val) && val > 1900 && val < 2100) continue;
+
+          const transform = item.transform;
+          const pdfX = transform[4];
+          const pdfY = transform[5];
+          const vp = viewport.convertToViewportPoint(pdfX, pdfY);
+          state.detectedDimensions.push({
+            value: val,
+            text: raw,
+            x: vp[0],
+            y: vp[1],
+            page: p
+          });
+        }
+
+      } catch (err) {
+        addLog("Warning", `Could not read PDF text on page ${p}. Visual tracing still works.`);
+      }
+    }
+
+    state.detectedLots = Array.from(lots);
+    state.detectedAddresses = Array.from(addresses);
+    renderDetectedLots();
+    renderDetectedDimensions();
+
+    if (state.detectedDimensions.length) {
+      addLog("Scan", `Found ${state.detectedDimensions.length} dimension label(s) in PDF text layer.`);
+    } else {
+      addLog("Scan", "No dimension labels found in PDF text layer. Plan may be a scanned image — calibrate visually.");
+    }
+  }
+
+  // ─── RENDER DETECTED LOTS (existing, unchanged logic) ──────────────────────
+
+  function renderDetectedLots() {
+    if (!state.detectedLots.length && !state.detectedAddresses.length) {
+      detectedBox.style.display = "none";
+      return;
+    }
+    detectedBox.style.display = "block";
+    detectedLotSelect.innerHTML = "";
+    const combined = [];
+    if (state.detectedLots.length) combined.push(...state.detectedLots);
+    if (!combined.length && state.detectedAddresses.length) combined.push(...state.detectedAddresses);
+    combined.forEach((label, idx) => {
+      const opt = document.createElement("option");
+      opt.value = label;
+      opt.textContent = label;
+      detectedLotSelect.appendChild(opt);
+      if (idx === 0 && !lotName.value) lotName.value = label;
+    });
+    detectedHint.textContent = `${state.detectedLots.length} lot label(s) and ${state.detectedAddresses.length} address-like label(s) detected from selectable PDF text.`;
+    addLog("Detection", detectedHint.textContent);
+  }
+
+  // ─── RENDER DETECTED DIMENSIONS PANEL ──────────────────────────────────────
+
+  function renderDetectedDimensions() {
+    const dimList       = document.getElementById("dimensionList");
+    const scaleBox      = document.getElementById("scaleDetectedBox");
+    const scaleText     = document.getElementById("scaleDetectedText");
+    const scaleNote     = document.getElementById("scaleAppliedNote");
+    const lotDimBox     = document.getElementById("lotDimBox");
+    const lotDimText    = document.getElementById("lotDimText");
+    const lotDimNote    = document.getElementById("lotDimAppliedNote");
+
+    // Scale auto-detection banner
+    if (state.detectedScale && scaleBox) {
+      scaleBox.style.display = "block";
+      if (scaleText) scaleText.textContent = `Detected scale: "${state.detectedScale.text}" — ${state.detectedScale.feetPerPixel.toFixed(6)} ft/px`;
+      if (scaleNote) scaleNote.style.display = "none";
+    } else if (scaleBox) {
+      scaleBox.style.display = "none";
+    }
+
+    // Lot dimensions banner
+    if (state.lotDimensions && lotDimBox) {
+      lotDimBox.style.display = "block";
+      if (lotDimText) lotDimText.textContent = `Detected lot dimensions: ${state.lotDimensions.width}' × ${state.lotDimensions.height}' = ${fmt(state.lotDimensions.area)} SF`;
+      if (lotDimNote) lotDimNote.style.display = "none";
+    } else if (lotDimBox) {
+      lotDimBox.style.display = "none";
+    }
+
+    // Dimension chips
+    if (!dimList) return;
+    if (!state.detectedDimensions.length) {
+      dimList.innerHTML = '<span class="scan-empty">No dimension text found. If this is a scanned/image PDF, calibrate manually using a labeled distance on the plan.</span>';
+      return;
+    }
+
+    // Deduplicate by text label, sort ascending
+    const unique = [];
+    const seen = new Set();
+    for (const d of state.detectedDimensions) {
+      if (!seen.has(d.text)) {
+        seen.add(d.text);
+        unique.push(d);
+      }
+    }
+    unique.sort((a, b) => a.value - b.value);
+
+    dimList.innerHTML = unique.map(d =>
+      `<button class="dim-chip" data-value="${d.value}" title="Click to pre-fill ${d.value} ft into calibration field">${d.text}</button>`
+    ).join("");
+
+    dimList.querySelectorAll(".dim-chip").forEach(btn => {
+      btn.addEventListener("click", () => {
+        knownFeet.value = btn.dataset.value;
+        // Switch to calibrate mode
+        modeSelect.value = "calibrate";
+        canvas.style.cursor = "crosshair";
+        dimList.querySelectorAll(".dim-chip").forEach(b => b.classList.remove("used"));
+        btn.classList.add("used");
+        addLog("Calibration", `Pre-filled calibration: ${btn.dataset.value} ft. Now click the two endpoints of that dimension on the plan, then click Set Scale.`);
+      });
+    });
+  }
+
+  // ─── CURVE PATH ─────────────────────────────────────────────────────────────
+
+  function finishCurvedPath() {
+    if (state.activeMeasureLineIndex !== null) {
+      const line = state.measureLines[state.activeMeasureLineIndex];
+      if (line && line.control && state.feetPerPixel) {
+        const d = measureLineLengthPx(line) * state.feetPerPixel;
+        addLog("Measurement", `Pulled curve D${state.activeMeasureLineIndex + 1} locked at ${d.toFixed(2)} ft.`);
+        state.activeMeasureLineIndex = null;
+        updateTotals();
+        return;
+      }
+    }
+
+    if (modeSelect.value !== "measureCurve") {
+      alert("Choose Measure curved path first, click start and end points, then drag the orange handle to pull the curve.");
+      return;
+    }
+    if (state.measurePoints.length < 2) {
+      alert("Click the start point and end point first. Then drag the orange handle to pull the curve.");
+      return;
+    }
+    state.measureLines.push({ points: state.measurePoints.slice(), curved: true, note: "Measured curved path" });
+    const d = measureLineLengthPx(state.measureLines[state.measureLines.length - 1]) * state.feetPerPixel;
+    addLog("Measurement", `Curved path D${state.measureLines.length} measured at ${d.toFixed(2)} ft.`);
+    state.measurePoints = [];
+    updateTotals();
+  }
+
+  function closeCurrentPolygon() {
+    if (state.currentPoints.length < 3) {
+      alert("Trace at least 3 points before closing an area.");
+      return;
+    }
+    state.polygons[state.activeFeature].push({ points: state.currentPoints.slice(), curved: state.curveMode });
+    addLog("Measurement", `Closed ${features[state.activeFeature].label} ${state.curveMode ? "curved " : ""}polygon with ${state.currentPoints.length} points.`);
+    state.currentPoints = [];
+    renderFeatureButtons();
+    updateTotals();
+  }
+
+  function setScale() {
+    const feet = parseFloat(knownFeet.value);
+    if (!isFinite(feet) || feet <= 0) {
+      alert("Enter the known distance in feet first.");
+      return;
+    }
+    if (state.calibrationPoints.length !== 2) {
+      alert("Click the two ends of the known dimension on the plan first.");
+      return;
+    }
+    const px = distPx(state.calibrationPoints[0], state.calibrationPoints[1]);
+    if (px <= 0) return;
+    state.feetPerPixel = feet / px;
+    addLog("Calibration", `Scale set from ${feet} ft over ${px.toFixed(2)} pixels. Feet per pixel: ${state.feetPerPixel.toFixed(6)}.`);
+    updateTotals();
+  }
+
+  function rotateImage(degrees) {
+    if (!state.sourceImage) return;
+    const normalized = ((degrees % 360) + 360) % 360;
+    const off = document.createElement("canvas");
+    const swap = normalized === 90 || normalized === 270;
+    off.width = swap ? state.imageH : state.imageW;
+    off.height = swap ? state.imageW : state.imageH;
+    const octx = off.getContext("2d");
+
+    octx.save();
+    if (normalized === 90) {
+      octx.translate(off.width, 0);
+      octx.rotate(Math.PI / 2);
+    } else if (normalized === 180) {
+      octx.translate(off.width, off.height);
+      octx.rotate(Math.PI);
+    } else if (normalized === 270) {
+      octx.translate(0, off.height);
+      octx.rotate(-Math.PI / 2);
+    }
+    octx.drawImage(state.sourceImage, 0, 0);
+    octx.restore();
+
+    const img = new Image();
+    img.onload = () => {
+      state.sourceImage = img;
+      state.imageW = img.naturalWidth;
+      state.imageH = img.naturalHeight;
+      state.rotationDeg = (state.rotationDeg + normalized) % 360;
+      state.currentPoints = [];
+      state.calibrationPoints = [];
+      state.feetPerPixel = null;
+      state.polygons = { lot: [], building: [], patio: [], driveway: [], other: [] };
+      // Rotation invalidates pixel-space dimension positions — clear overlays
+      state.detectedDimensions = [];
+      state.detectedScale = null;
+      fitImage();
+      renderFeatureButtons();
+      renderDetectedDimensions();
+      updateTotals();
+      addLog("Plan", `Plan rotated ${degrees > 0 ? "right" : "left"}. Scale, tracing, and dimension overlays cleared because image coordinates changed.`);
+    };
+    img.src = off.toDataURL("image/png");
+  }
+
+  function resetForNewFile(clearFileInput) {
+    state.pdfDoc = null;
+    state.pdfPage = 1;
+    state.sourceImage = null;
+    state.imageW = 0;
+    state.imageH = 0;
+    state.rotationDeg = 0;
+    state.viewScale = 1;
+    state.offsetX = 0;
+    state.offsetY = 0;
+    state.currentPoints = [];
+    state.measurePoints = [];
+    state.measureLines = [];
+    state.activeMeasureLineIndex = null;
+    state.draggingCurveControl = false;
+    state.calibrationPoints = [];
+    state.feetPerPixel = null;
+    state.polygons = { lot: [], building: [], patio: [], driveway: [], other: [] };
+    state.manual = { lot: "", building: "", patio: "", driveway: "", other: "" };
+    state.detectedLots = [];
+    state.detectedAddresses = [];
+    state.detectedDimensions = [];
+    state.lotDimensions = null;
+    state.detectedScale = null;
+    knownFeet.value = "";
+    wastePct.value = "0";
+    calcOutput.textContent = "No calculation run yet.";
+    detectedBox.style.display = "none";
+    pageSelect.disabled = true;
+    pageSelect.innerHTML = "<option>Upload PDF</option>";
+    if (clearFileInput) fileInput.value = "";
+    emptyState.style.display = "";
+    renderFeatureButtons();
+    renderMeasureRows();
+    renderDetectedDimensions();
+    updateTotals();
+    draw();
+  }
+
+  function hardReset() {
+    if (!confirm("Reset the tool and clear all measurements?")) return;
+    state.logs = [];
+    state.fileName = "";
+    lotName.value = "";
+    resetForNewFile(true);
+    addLog("Reset", "Tool reset. No example data is loaded.");
+  }
+
+  function fullBreakdownText() {
+    const c = calculate();
+    const label = lotName.value.trim() || "Unlabeled lot";
+    const source = state.fileName || "No file uploaded";
+    const scale = state.feetPerPixel ? `${state.feetPerPixel.toFixed(6)} ft/px` : "Not calibrated";
+    const lines = [];
+    lines.push("LOVING SOD TAKEOFF");
+    lines.push(`Lot / address: ${label}`);
+    lines.push(`Source file: ${source}`);
+    lines.push(`Scale: ${scale}`);
+    lines.push("");
+    lines.push("AREA BREAKDOWN");
+    lines.push(`Lot area:       ${fmt(c.lot,0)} SF`);
+    lines.push(`Less building:  ${fmt(c.building,0)} SF`);
+    lines.push(`Less patio:     ${fmt(c.patio,0)} SF`);
+    lines.push(`Less driveway:  ${fmt(c.driveway,0)} SF`);
+    lines.push(`Less other:     ${fmt(c.other,0)} SF`);
+    lines.push("--------------------------------");
+    lines.push(`Base sod:       ${fmt(c.base,0)} SF`);
+    lines.push(`Waste:          ${fmt(c.waste,1)}%`);
+    lines.push(`Adjusted sod:   ${fmt(c.adjusted,0)} SF`);
+    lines.push(`Square yards:   ${fmt(c.sy,2)} SY`);
+    lines.push(`Pallets:        ${c.pallets} pallet(s) @ 500 SF each`);
+    lines.push("");
+    lines.push(`Status: ${c.status}`);
+    if (c.warnings.length) {
+      lines.push("Warnings:");
+      c.warnings.forEach(w => lines.push(`- ${w}`));
+    }
+    lines.push("");
+    lines.push("Source confidence:");
+    lines.push(state.feetPerPixel ? "- Measured from calibrated plan tracing." : "- Needs scale calibration or manual source verification.");
+    lines.push("- Manual overrides, if used, are treated as user-entered values.");
+    if (state.detectedScale) lines.push(`- Plan scale detected from PDF: "${state.detectedScale.text}".`);
+    if (state.lotDimensions) lines.push(`- Lot dimensions detected from PDF: ${state.lotDimensions.width}' × ${state.lotDimensions.height}'.`);
+    return lines.join("\n");
+  }
+
+  function runCalculation() {
+    const text = fullBreakdownText();
+    calcOutput.textContent = text;
+    addLog("Calculation", "Full sod takeoff breakdown calculated.");
+    updateTotals();
+  }
+
+  function copySummary() {
+    const text = fullBreakdownText();
+    navigator.clipboard.writeText(text).then(() => {
+      addLog("Export", "Summary copied to clipboard.");
+    }).catch(() => {
+      alert(text);
+    });
+  }
+
+  function saveCanvasPhoto() {
+    if (!state.sourceImage) {
+      alert("Upload a plot plan before saving a photo.");
+      return;
+    }
+    draw();
+    const safeLabel = (lotName.value.trim() || "loving-sod-takeoff")
+      .replace(/[^a-z0-9-_]+/gi, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "")
+      .toLowerCase();
+    const a = document.createElement("a");
+    a.href = canvas.toDataURL("image/png");
+    a.download = `${safeLabel || "loving-sod-takeoff"}-photo.png`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    addLog("Export", "Current plan view saved as a PNG photo.");
+  }
+
+  function download(filename, content, type) {
+    const blob = new Blob([content], { type });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  function downloadCsv() {
+    const c = calculate();
+    const rows = [
+      ["Item","Quantity","Unit"],
+      ["Lot", Math.round(c.lot), "SF"],
+      ["Building", Math.round(c.building), "SF"],
+      ["Patio", Math.round(c.patio), "SF"],
+      ["Driveway", Math.round(c.driveway), "SF"],
+      ["Other", Math.round(c.other), "SF"],
+      ["Base Sod", Math.round(c.base), "SF"],
+      ["Waste", c.waste, "%"],
+      ["Adjusted Sod", Math.round(c.adjusted), "SF"],
+      ["Sod", c.sy.toFixed(2), "SY"],
+      ["Pallets", c.pallets, "EA"]
+    ];
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
+    download("loving-sod-takeoff.csv", csv, "text/csv");
+    addLog("Export", "CSV downloaded.");
+  }
+
+  function downloadJson() {
+    const data = {
+      lotLabel: lotName.value.trim(),
+      sourceFile: state.fileName,
+      feetPerPixel: state.feetPerPixel,
+      detectedScale: state.detectedScale,
+      detectedLotDimensions: state.lotDimensions,
+      calculation: calculate(),
+      polygons: state.polygons,
+      measureLines: state.measureLines,
+      manualOverrides: state.manual,
+      logs: state.logs
+    };
+    download("loving-sod-takeoff.json", JSON.stringify(data, null, 2), "application/json");
+    addLog("Export", "JSON downloaded.");
+  }
+
+  function clampZoom(newScale, anchorX, anchorY) {
+    if (!state.sourceImage) return;
+    const oldScale = state.viewScale;
+    const minScale = 0.02;
+    const maxScale = 8;
+    newScale = Math.min(maxScale, Math.max(minScale, newScale));
+    const imgPoint = screenToImg(anchorX, anchorY);
+    state.viewScale = newScale;
+    state.offsetX = anchorX - imgPoint.x * state.viewScale;
+    state.offsetY = anchorY - imgPoint.y * state.viewScale;
+    if (oldScale !== newScale) draw();
+  }
+
+  // ─── CANVAS EVENTS ──────────────────────────────────────────────────────────
+
+  canvas.addEventListener("mousedown", (e) => {
+    if (!state.sourceImage) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const hitControl = nearestCurveControl(x, y);
+    if (hitControl !== null && (modeSelect.value === "measureCurve" || modeSelect.value === "measure" || modeSelect.value === "pan")) {
+      state.draggingCurveControl = true;
+      state.activeMeasureLineIndex = hitControl;
+      canvas.style.cursor = "grabbing";
+      draw();
+      return;
+    }
+    if (modeSelect.value === "pan" || e.button === 1 || e.shiftKey) {
+      state.isDragging = true;
+      state.lastMouse = { x, y };
+      canvas.style.cursor = "grabbing";
+      return;
+    }
+    const p = screenToImg(x,y);
+    if (p.x < 0 || p.y < 0 || p.x > state.imageW || p.y > state.imageH) return;
+    if (modeSelect.value === "calibrate") {
+      if (state.calibrationPoints.length >= 2) state.calibrationPoints = [];
+      state.calibrationPoints.push(p);
+      draw();
+      if (state.calibrationPoints.length === 2) addLog("Calibration", "Calibration points selected. Enter known feet and click Set Scale.");
+      return;
+    }
+    if (modeSelect.value === "measure") {
+      if (!state.feetPerPixel) {
+        alert("Calibrate the scale first using a known linear distance in feet.");
+        return;
+      }
+      if (state.measurePoints.length >= 2) state.measurePoints = [];
+      state.measurePoints.push(p);
+      if (state.measurePoints.length === 2) {
+        state.measureLines.push({ points: state.measurePoints.slice(), curved: false, note: "Measured straight-line distance" });
+        const d = pathLengthPx(state.measurePoints, false) * state.feetPerPixel;
+        addLog("Measurement", `Distance line D${state.measureLines.length} measured at ${d.toFixed(2)} ft.`);
+        state.measurePoints = [];
+        updateTotals();
+      } else {
+        draw();
+      }
+      return;
+    }
+
+    if (modeSelect.value === "measureCurve") {
+      if (!state.feetPerPixel) {
+        alert("Calibrate the scale first using a known linear distance in feet.");
+        return;
+      }
+      state.measurePoints.push(p);
+      if (state.measurePoints.length === 2) {
+        const a = state.measurePoints[0];
+        const b = state.measurePoints[1];
+        const control = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+        state.measureLines.push({ points: [a, b], control, curved: true, note: "Pulled curve measurement" });
+        state.activeMeasureLineIndex = state.measureLines.length - 1;
+        state.measurePoints = [];
+        const d = measureLineLengthPx(state.measureLines[state.activeMeasureLineIndex]) * state.feetPerPixel;
+        addLog("Measurement", `Pulled curve D${state.measureLines.length} started at ${d.toFixed(2)} ft. Drag the orange handle to bend the line.`);
+        updateTotals();
+      } else {
+        draw();
+      }
+      return;
+    }
+
+    if (modeSelect.value === "draw") {
+      state.currentPoints.push(p);
+      draw();
+      return;
+    }
+  });
+
+  canvas.addEventListener("mousemove", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    if (state.draggingCurveControl && state.activeMeasureLineIndex !== null) {
+      const line = state.measureLines[state.activeMeasureLineIndex];
+      if (line && line.control) {
+        line.control = screenToImg(x, y);
+        renderMeasureDistanceRows();
+        draw();
+      }
+      return;
+    }
+
+    if (!state.isDragging) return;
+    const dx = x - state.lastMouse.x;
+    const dy = y - state.lastMouse.y;
+    state.offsetX += dx;
+    state.offsetY += dy;
+    state.lastMouse = { x, y };
+    draw();
+  });
+
+  window.addEventListener("mouseup", () => {
+    if (state.draggingCurveControl && state.activeMeasureLineIndex !== null) {
+      const line = state.measureLines[state.activeMeasureLineIndex];
+      if (line && line.control && state.feetPerPixel) {
+        const d = measureLineLengthPx(line) * state.feetPerPixel;
+        addLog("Measurement", `Pulled curve D${state.activeMeasureLineIndex + 1} adjusted to ${d.toFixed(2)} ft.`);
+      }
+    }
+    state.isDragging = false;
+    state.draggingCurveControl = false;
+    canvas.style.cursor = modeSelect.value === "pan" ? "grab" : "crosshair";
+  });
+
+  canvas.addEventListener("dblclick", () => {
+    if (modeSelect.value === "draw" && state.currentPoints.length >= 3) closeCurrentPolygon();
+  });
+
+  canvas.addEventListener("wheel", (e) => {
+    if (!state.sourceImage) return;
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const factor = e.deltaY < 0 ? 1.1 : 0.9;
+    clampZoom(state.viewScale * factor, x, y);
+  }, { passive: false });
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && modeSelect.value === "draw" && state.currentPoints.length >= 3) closeCurrentPolygon();
+    if (e.key === "Enter" && modeSelect.value === "measureCurve" && state.measurePoints.length >= 2) finishCurvedPath();
+    if ((e.key === "Backspace" || e.key === "Delete") && state.currentPoints.length) {
+      state.currentPoints.pop();
+      draw();
+    } else if ((e.key === "Backspace" || e.key === "Delete") && state.measurePoints.length) {
+      state.measurePoints.pop();
+      draw();
+    }
+  });
+
+  // ─── EVENT LISTENERS ────────────────────────────────────────────────────────
+
+  fileInput.addEventListener("change", e => handleFile(e.target.files[0]));
+
+  pageSelect.addEventListener("change", async e => {
+    state.pdfPage = parseInt(e.target.value, 10);
+    state.currentPoints = [];
+    state.measurePoints = [];
+    state.measureLines = [];
+    state.activeMeasureLineIndex = null;
+    state.draggingCurveControl = false;
+    state.calibrationPoints = [];
+    state.feetPerPixel = null;
+    state.polygons = { lot: [], building: [], patio: [], driveway: [], other: [] };
+    state.manual = { lot: "", building: "", patio: "", driveway: "", other: "" };
+    await renderPdfPage(state.pdfPage, true);
+    addLog("PDF", `Switched to page ${state.pdfPage}. Scale and tracing cleared for this page.`);
+  });
+
+  detectedLotSelect.addEventListener("change", e => {
+    lotName.value = e.target.value;
+    addLog("Lot", `Selected detected label: ${e.target.value}`);
+  });
+
+  document.getElementById("setScaleBtn").addEventListener("click", setScale);
+  document.getElementById("clearScaleBtn").addEventListener("click", () => {
+    state.calibrationPoints = [];
+    state.feetPerPixel = null;
+    addLog("Calibration", "Scale cleared.");
+    updateTotals();
+  });
+
+  // Apply auto-detected plan scale
+  document.getElementById("applyScaleBtn").addEventListener("click", () => {
+    if (!state.detectedScale) return;
+    state.feetPerPixel = state.detectedScale.feetPerPixel;
+    state.calibrationPoints = [];
+    const note = document.getElementById("scaleAppliedNote");
+    if (note) note.style.display = "inline";
+    addLog("Calibration", `Auto-calibrated from detected scale: "${state.detectedScale.text}" → ${state.detectedScale.feetPerPixel.toFixed(6)} ft/px`);
+    updateTotals();
+  });
+
+  // Apply detected lot dimensions as lot area
+  document.getElementById("useLotDimBtn").addEventListener("click", () => {
+    if (!state.lotDimensions) return;
+    state.manual.lot = String(state.lotDimensions.area);
+    const note = document.getElementById("lotDimAppliedNote");
+    if (note) note.style.display = "inline";
+    addLog("Scan", `Applied detected lot area: ${fmt(state.lotDimensions.area)} SF as manual Lot override.`);
+    updateTotals();
+  });
+
+  // Dimension overlay toggle
+  document.getElementById("dimOverlayBtn").addEventListener("click", () => {
+    state.showDimOverlay = !state.showDimOverlay;
+    const btn = document.getElementById("dimOverlayBtn");
+    btn.textContent = state.showDimOverlay ? "Dims On" : "Dims Off";
+    btn.classList.toggle("active", state.showDimOverlay);
+    draw();
+  });
+
+  document.getElementById("fitBtn").addEventListener("click", fitImage);
+  document.getElementById("zoomInBtn").addEventListener("click", () => {
+    const r = canvas.getBoundingClientRect();
+    clampZoom(state.viewScale * 1.2, r.width / 2, r.height / 2);
+  });
+  document.getElementById("zoomOutBtn").addEventListener("click", () => {
+    const r = canvas.getBoundingClientRect();
+    clampZoom(state.viewScale / 1.2, r.width / 2, r.height / 2);
+  });
+  document.getElementById("curveToggleBtn").addEventListener("click", () => {
+    state.curveMode = !state.curveMode;
+    const btn = document.getElementById("curveToggleBtn");
+    btn.textContent = state.curveMode ? "Curve On" : "Curve Off";
+    btn.classList.toggle("active", state.curveMode);
+    draw();
+  });
+  document.getElementById("finishPathBtn").addEventListener("click", finishCurvedPath);
+  document.getElementById("labelToggleBtn").addEventListener("click", () => {
+    state.showLabels = !state.showLabels;
+    const btn = document.getElementById("labelToggleBtn");
+    btn.textContent = state.showLabels ? "Labels" : "No Labels";
+    btn.classList.toggle("active", state.showLabels);
+    draw();
+  });
+  document.getElementById("savePhotoBtn").addEventListener("click", saveCanvasPhoto);
+  document.getElementById("rotateLeftBtn").addEventListener("click", () => rotateImage(-90));
+  document.getElementById("rotateRightBtn").addEventListener("click", () => rotateImage(90));
+  document.getElementById("closePolyBtn").addEventListener("click", closeCurrentPolygon);
+  document.getElementById("undoPointBtn").addEventListener("click", () => { state.currentPoints.pop(); draw(); });
+  document.getElementById("deleteFeatureBtn").addEventListener("click", () => {
+    state.polygons[state.activeFeature] = [];
+    state.currentPoints = [];
+    addLog("Measurement", `Deleted ${features[state.activeFeature].label} tracing.`);
+    renderFeatureButtons();
+    updateTotals();
+  });
+  document.getElementById("clearAllFeaturesBtn").addEventListener("click", () => {
+    if (confirm("Clear all traced areas?")) {
+      state.polygons = { lot: [], building: [], patio: [], driveway: [], other: [] };
+      state.currentPoints = [];
+      addLog("Measurement", "All tracing cleared.");
+      renderFeatureButtons();
+      updateTotals();
+    }
+  });
+  document.getElementById("clearMeasureLinesBtn").addEventListener("click", () => {
+    state.measurePoints = [];
+    state.measureLines = [];
+    state.activeMeasureLineIndex = null;
+    state.draggingCurveControl = false;
+    addLog("Measurement", "Distance lines cleared.");
+    updateTotals();
+  });
+  document.getElementById("calculateBtn").addEventListener("click", runCalculation);
+  document.getElementById("copySummaryBtn").addEventListener("click", copySummary);
+  document.getElementById("csvBtn").addEventListener("click", downloadCsv);
+  document.getElementById("jsonBtn").addEventListener("click", downloadJson);
+  document.getElementById("headerSavePhotoBtn").addEventListener("click", saveCanvasPhoto);
+  document.getElementById("resetBtn").addEventListener("click", hardReset);
+  wastePct.addEventListener("input", updateTotals);
+  modeSelect.addEventListener("change", () => {
+    canvas.style.cursor = modeSelect.value === "pan" ? "grab" : "crosshair";
+  });
+  window.addEventListener("resize", resizeCanvas);
+
+  // ─── INIT ───────────────────────────────────────────────────────────────────
+
+  renderLog();
+  renderFeatureButtons();
+  renderMeasureRows();
+  renderMeasureDistanceRows();
+  renderDetectedDimensions();
+  resizeCanvas();
+  updateTotals();
+  addLog("Ready", "Tool opened blank. Upload any plot plan to begin. No example lots or sample measurements are loaded.");
+})();
+</script>
+</body>
+</html>
