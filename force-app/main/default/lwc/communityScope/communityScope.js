@@ -1,12 +1,12 @@
 import { LightningElement, api, wire } from 'lwc';
-import getPageData from '@salesforce/apex/CommunityRecordController.getPageData';
+import getScope from '@salesforce/apex/CommunityRecordController.getScope';
 
 export default class CommunityScope extends LightningElement {
     @api recordId;
     _data;
     error;
 
-    @wire(getPageData, { communityId: '$recordId' })
+    @wire(getScope, { communityId: '$recordId' })
     wired({ data, error }) {
         if (data) {
             this._data = data;

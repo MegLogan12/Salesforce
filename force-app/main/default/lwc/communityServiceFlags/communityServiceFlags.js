@@ -1,5 +1,5 @@
 import { LightningElement, api, wire } from 'lwc';
-import getPageData from '@salesforce/apex/CommunityRecordController.getPageData';
+import getServiceFlags from '@salesforce/apex/CommunityRecordController.getServiceFlags';
 
 const TODAY = new Date();
 
@@ -8,7 +8,7 @@ export default class CommunityServiceFlags extends LightningElement {
     _data;
     error;
 
-    @wire(getPageData, { communityId: '$recordId' })
+    @wire(getServiceFlags, { communityId: '$recordId' })
     wired({ data, error }) {
         if (data) {
             this._data = data;

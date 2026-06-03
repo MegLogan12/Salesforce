@@ -1,12 +1,12 @@
 import { LightningElement, api, wire } from 'lwc';
-import getPageData from '@salesforce/apex/CommunityRecordController.getPageData';
+import getProgress from '@salesforce/apex/CommunityRecordController.getProgress';
 
 export default class CommunityProgress extends LightningElement {
     @api recordId;
     _data;
     error;
 
-    @wire(getPageData, { communityId: '$recordId' })
+    @wire(getProgress, { communityId: '$recordId' })
     wired({ data, error }) {
         if (data) {
             this._data = data;
