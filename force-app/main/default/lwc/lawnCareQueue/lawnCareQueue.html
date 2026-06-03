@@ -1,0 +1,91 @@
+<template>
+    <lightning-card title="Lawn Care" icon-name="standard:maintenance_plan">
+        <div class="slds-card__body slds-card__body_inner">
+
+            <!-- Loading -->
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </template>
+
+            <!-- Error -->
+            <template if:true={error}>
+                <p class="slds-text-color_error slds-m-around_medium">{error}</p>
+            </template>
+
+            <!-- Summary chips -->
+            <template if:false={isLoading}>
+                <div class="slds-grid slds-wrap slds-gutters_x-small slds-m-bottom_medium">
+                    <div class="slds-col slds-size_1-of-2">
+                        <span class="slds-badge slds-theme_success slds-m-right_x-small">
+                            {view.totalDueThisWeek} due this week
+                        </span>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <span class={unassignedChipClass}>
+                            {view.unassigned} unassigned
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Row list -->
+                <template if:true={hasRows}>
+                    <ul class="slds-has-dividers_top-space">
+                        <template for:each={view.rows} for:item="row">
+                            <li key={row.woId} class="slds-item slds-m-bottom_x-small">
+                                <div class="slds-media slds-media_center slds-has-flexi-truncate">
+                                    <div class="slds-media__body">
+                                        <div class="slds-grid slds-grid_align-spread slds-wrap">
+
+                                            <!-- Left column -->
+                                            <div class="slds-col slds-size_1-of-1 slds-medium-size_8-of-12">
+                                                <p class="slds-text-heading_small slds-truncate">
+                                                    <strong>{row.woNumber}</strong>
+                                                    <template if:true={row.communityName}>
+                                                        &nbsp;&mdash;&nbsp;{row.communityName}
+                                                    </template>
+                                                </p>
+                                                <div class="slds-grid slds-wrap slds-m-top_x-small">
+                                                    <template if:true={row.serviceType}>
+                                                        <span class="slds-badge slds-badge_lightest slds-m-right_small">
+                                                            {row.serviceType}
+                                                        </span>
+                                                    </template>
+                                                    <span class={row.crewClass}>
+                                                        {row.crewDisplay}
+                                                    </span>
+                                                    <template if:true={row.scheduledDate}>
+                                                        <span class="slds-text-body_small slds-m-left_small">
+                                                            Due: {row.scheduledDateFormatted}
+                                                        </span>
+                                                    </template>
+                                                </div>
+                                            </div>
+
+                                            <!-- Right column: status badge -->
+                                            <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-grid slds-grid_align-end slds-grid_vertical-align-center">
+                                                <span class={row.statusBadgeClass}>
+                                                    {row.status}
+                                                </span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+
+                <!-- Empty state -->
+                <template if:false={hasRows}>
+                    <template if:false={isLoading}>
+                        <p class="slds-text-body_regular slds-text-color_weak slds-m-around_medium">
+                            No lawn care jobs scheduled for this week.
+                        </p>
+                    </template>
+                </template>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>

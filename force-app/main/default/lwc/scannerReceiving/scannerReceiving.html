@@ -1,0 +1,162 @@
+<template>
+    <lightning-card title="Receiving &amp; Scanner" icon-name="standard:scan_card">
+
+        <div class="slds-card__body slds-card__body_inner">
+
+            <!-- Receive Form -->
+            <fieldset class="slds-form slds-form_stacked slds-m-bottom_medium">
+                <legend class="slds-text-heading_small slds-m-bottom_small">Receive New Item</legend>
+
+                <div class="slds-grid slds-wrap slds-gutters_small">
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                        <lightning-input
+                            type="text"
+                            label="Item Type"
+                            value={itemType}
+                            onchange={handleItemTypeChange}
+                            placeholder="e.g. Rotor Head">
+                        </lightning-input>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                        <lightning-input
+                            type="number"
+                            label="Quantity"
+                            value={quantity}
+                            onchange={handleQuantityChange}
+                            min="0"
+                            step="1">
+                        </lightning-input>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                        <lightning-input
+                            type="text"
+                            label="Location"
+                            value={location}
+                            onchange={handleLocationChange}
+                            placeholder="e.g. Warehouse A">
+                        </lightning-input>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                        <lightning-input
+                            type="text"
+                            label="Location Type"
+                            value={locationType}
+                            onchange={handleLocationTypeChange}
+                            placeholder="Warehouse or Truck"
+                            field-level-help="Options: Warehouse, Truck">
+                        </lightning-input>
+                    </div>
+
+                    <div class="slds-col slds-size_1-of-1">
+                        <lightning-input
+                            type="text"
+                            label="Work Order #"
+                            value={workOrderInput}
+                            onchange={handleWorkOrderChange}
+                            placeholder="Enter WO number for traceability"
+                            field-level-help="Enter WO number for traceability. Full barcode scan and vendor PO three-way match require handheld scanner integration (G4 gate).">
+                        </lightning-input>
+                        <p class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">
+                            Display only — enter WO number for traceability.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="slds-m-top_medium">
+                    <lightning-button
+                        label="Receive"
+                        variant="brand"
+                        onclick={handleReceive}
+                        disabled={isSaving}>
+                    </lightning-button>
+                    <template if:true={isSaving}>
+                        <lightning-spinner
+                            alternative-text="Saving…"
+                            size="small"
+                            class="slds-m-left_small">
+                        </lightning-spinner>
+                    </template>
+                </div>
+            </fieldset>
+
+            <hr class="slds-m-vertical_medium" />
+
+            <!-- Recent Receipts -->
+            <h2 class="slds-text-heading_small slds-m-bottom_small">Recent Receipts</h2>
+
+            <template if:true={isLoadingReceipts}>
+                <div class="slds-align_absolute-center slds-p-around_medium">
+                    <lightning-spinner alternative-text="Loading receipts…" size="small"></lightning-spinner>
+                </div>
+            </template>
+
+            <template if:true={receiptsError}>
+                <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                    <span class="slds-assistive-text">error</span>
+                    <p>{receiptsError}</p>
+                </div>
+            </template>
+
+            <template if:true={hasReceipts}>
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th scope="col">
+                                <div class="slds-truncate" title="Item Type">Item Type</div>
+                            </th>
+                            <th scope="col" class="slds-text-align_right">
+                                <div class="slds-truncate" title="Qty">Qty</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Location">Location</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="WO #">WO #</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Received">Received</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={receipts} for:item="row">
+                            <tr key={row.recordId}>
+                                <td>
+                                    <div class="slds-truncate">{row.itemType}</div>
+                                </td>
+                                <td class="slds-text-align_right">
+                                    <div class="slds-truncate">{row.quantity}</div>
+                                </td>
+                                <td>
+                                    <div class="slds-truncate">{row.location}</div>
+                                </td>
+                                <td>
+                                    <div class="slds-truncate">{row.workOrderNumber}</div>
+                                </td>
+                                <td>
+                                    <div class="slds-truncate">{row.formattedDate}</div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+
+            <template if:true={isEmpty}>
+                <div class="slds-align_absolute-center slds-p-around_medium slds-text-color_weak">
+                    No recent receipts.
+                </div>
+            </template>
+
+            <p class="slds-text-body_small slds-text-color_weak slds-m-top_medium">
+                Full barcode scan and vendor PO three-way match require handheld scanner integration (G4 gate).
+            </p>
+
+        </div>
+    </lightning-card>
+</template>

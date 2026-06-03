@@ -1,0 +1,132 @@
+<template>
+    <lightning-card title="Closeout Approval" icon-name="standard:approval">
+        <div class="slds-card__body slds-card__body_inner">
+
+            <!-- Loading -->
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </template>
+
+            <!-- Error -->
+            <template if:true={error}>
+                <p class="slds-text-color_error slds-m-around_medium">{error}</p>
+            </template>
+
+            <!-- Summary header -->
+            <template if:false={isLoading}>
+                <div class="slds-grid slds-wrap slds-gutters_x-small slds-m-bottom_medium">
+                    <div class="slds-col slds-size_1-of-2">
+                        <span class="slds-badge slds-badge_lightest slds-m-right_x-small">
+                            {view.total} jobs
+                        </span>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <span class={varianceChipClass}>
+                            {view.variance} with variance
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Note -->
+                <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_medium">
+                    Approved jobs will proceed to Ready to Invoice.
+                </p>
+
+                <!-- WO rows -->
+                <template if:true={hasRows}>
+                    <ul class="slds-has-dividers_top-space">
+                        <template for:each={view.rows} for:item="row">
+                            <li key={row.woId} class="slds-item slds-m-bottom_small">
+                                <div class="slds-media slds-media_center slds-has-flexi-truncate">
+                                    <div class="slds-media__body">
+                                        <div class="slds-grid slds-grid_align-spread slds-wrap">
+
+                                            <!-- Left: WO info -->
+                                            <div class="slds-col slds-size_1-of-1 slds-medium-size_8-of-12">
+                                                <p class="slds-text-heading_small slds-truncate">
+                                                    <strong>{row.woNumber}</strong>
+                                                    <template if:true={row.lotInfo}>
+                                                        &nbsp;&mdash;&nbsp;{row.lotInfo}
+                                                    </template>
+                                                </p>
+                                                <div class="slds-grid slds-wrap slds-m-top_x-small">
+                                                    <span class="slds-badge slds-badge_lightest slds-m-right_small">
+                                                        {row.jobType}
+                                                    </span>
+                                                    <span class="slds-text-body_small slds-m-right_small">
+                                                        Photos: {row.photoCount}
+                                                    </span>
+                                                    <span class="slds-text-body_small slds-m-right_small">
+                                                        Billed: {row.billedAmt}
+                                                    </span>
+                                                    <span class={row.invoiceAmtClass}>
+                                                        Invoice: {row.invoiceAmtDisplay}
+                                                    </span>
+                                                    <template if:true={row.variance}>
+                                                        <span class="slds-badge slds-theme_warning slds-m-left_x-small">
+                                                            Variance
+                                                        </span>
+                                                    </template>
+                                                </div>
+                                            </div>
+
+                                            <!-- Right: Approve button or inline form -->
+                                            <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-grid slds-grid_align-end slds-grid_vertical-align-start slds-m-top_x-small">
+                                                <template if:false={row.approving}>
+                                                    <lightning-button
+                                                        label="Approve"
+                                                        variant="brand"
+                                                        data-id={row.woId}
+                                                        onclick={handleApproveClick}>
+                                                    </lightning-button>
+                                                </template>
+                                                <template if:true={row.approving}>
+                                                    <div class="slds-grid slds-grid_vertical slds-size_1-of-1">
+                                                        <lightning-textarea
+                                                            label="Approval Notes"
+                                                            placeholder="Enter approval notes…"
+                                                            value={row.draftNotes}
+                                                            data-id={row.woId}
+                                                            onchange={handleNotesChange}
+                                                            max-length="1000">
+                                                        </lightning-textarea>
+                                                        <div class="slds-grid slds-m-top_x-small">
+                                                            <lightning-button
+                                                                label="Confirm"
+                                                                variant="brand"
+                                                                class="slds-m-right_x-small"
+                                                                data-id={row.woId}
+                                                                onclick={handleConfirmApproval}>
+                                                            </lightning-button>
+                                                            <lightning-button
+                                                                label="Cancel"
+                                                                variant="neutral"
+                                                                data-id={row.woId}
+                                                                onclick={handleCancelApproval}>
+                                                            </lightning-button>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+
+                <!-- Empty state -->
+                <template if:false={hasRows}>
+                    <template if:false={isLoading}>
+                        <p class="slds-text-body_regular slds-text-color_weak slds-m-around_medium">
+                            No completed jobs awaiting approval.
+                        </p>
+                    </template>
+                </template>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>

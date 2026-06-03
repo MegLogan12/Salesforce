@@ -1,0 +1,100 @@
+<template>
+    <lightning-card title="Inventory &amp; Materials" icon-name="standard:product">
+
+        <!-- Header summary badges -->
+        <div slot="actions">
+            <template if:true={view}>
+                <span class="slds-badge slds-m-right_x-small">
+                    {view.totalItems} items
+                </span>
+                <template if:true={hasLowStock}>
+                    <span class="slds-badge slds-badge_error">
+                        {view.lowStockCount} low stock
+                    </span>
+                </template>
+                <template if:false={hasLowStock}>
+                    <span class="slds-badge">
+                        0 low stock
+                    </span>
+                </template>
+            </template>
+        </div>
+
+        <div class="slds-card__body slds-card__body_inner">
+
+            <!-- Loading spinner -->
+            <template if:true={isLoading}>
+                <div class="slds-align_absolute-center slds-p-around_large">
+                    <lightning-spinner alternative-text="Loading inventory…" size="medium"></lightning-spinner>
+                </div>
+            </template>
+
+            <!-- Error state -->
+            <template if:true={error}>
+                <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                    <span class="slds-assistive-text">error</span>
+                    <p>{error}</p>
+                </div>
+            </template>
+
+            <!-- Data table -->
+            <template if:true={hasRows}>
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th scope="col">
+                                <div class="slds-truncate" title="Item Type">Item Type</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Location">Location</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Location Type">Location Type</div>
+                            </th>
+                            <th scope="col" class="slds-text-align_right">
+                                <div class="slds-truncate" title="Quantity">Quantity</div>
+                            </th>
+                            <th scope="col">
+                                <div class="slds-truncate" title="Status">Status</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={view.rows} for:item="row">
+                            <tr key={row.recordId}>
+                                <td>
+                                    <div class="slds-truncate">{row.itemType}</div>
+                                </td>
+                                <td>
+                                    <div class="slds-truncate">{row.location}</div>
+                                </td>
+                                <td>
+                                    <div class="slds-truncate">{row.locationType}</div>
+                                </td>
+                                <td class="slds-text-align_right">
+                                    <div class="slds-truncate">{row.quantity}</div>
+                                </td>
+                                <td>
+                                    <template if:false={row.isLowStock}>
+                                        <span class="slds-badge slds-badge_success">In Stock</span>
+                                    </template>
+                                    <template if:true={row.isLowStock}>
+                                        <span class="slds-badge slds-theme_warning">Low</span>
+                                    </template>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+
+            <!-- Empty state -->
+            <template if:true={isEmpty}>
+                <div class="slds-align_absolute-center slds-p-around_large slds-text-color_weak">
+                    No inventory records found.
+                </div>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>

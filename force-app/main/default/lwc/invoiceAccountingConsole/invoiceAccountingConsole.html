@@ -1,0 +1,125 @@
+<template>
+    <lightning-card title="Invoicing &amp; Accounting" icon-name="standard:currency">
+
+        <template if:true={isLoading}>
+            <div class="slds-align_absolute-center slds-p-around_medium">
+                <lightning-spinner alternative-text="Loading..." size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:true={hasError}>
+            <div class="slds-notify slds-notify_alert slds-alert_error slds-m-around_small" role="alert">
+                <span class="slds-assistive-text">Error</span>
+                <lightning-icon icon-name="utility:error" size="x-small"
+                    alternative-text="Error" variant="inverse"
+                    class="slds-m-right_x-small"></lightning-icon>
+                {errorMessage}
+            </div>
+        </template>
+
+        <template if:true={hasView}>
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+
+                <!-- ── Header KPI Strip ──────────────────────────────────── -->
+                <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                    <div class="slds-col slds-size_1-of-3">
+                        <div class="slds-box slds-box_x-small slds-text-align_center">
+                            <p class="slds-text-heading_medium">{view.readyToInvoice}</p>
+                            <p class="slds-text-title_caps slds-text-color_weak">Ready to Invoice</p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-3">
+                        <div class="slds-box slds-box_x-small slds-text-align_center">
+                            <p class={varianceCss}>{view.withVariance}</p>
+                            <p class="slds-text-title_caps slds-text-color_weak">With Variance</p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-3">
+                        <div class="slds-box slds-box_x-small slds-text-align_center">
+                            <p class="slds-text-heading_medium">{totalPipelineDisplay}</p>
+                            <p class="slds-text-title_caps slds-text-color_weak">Total Pipeline</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Invoice Table ─────────────────────────────────────── -->
+                <template if:true={hasRows}>
+                    <div class="slds-scrollable_x">
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <th scope="col"><div class="slds-truncate">WO #</div></th>
+                                    <th scope="col"><div class="slds-truncate">Builder</div></th>
+                                    <th scope="col"><div class="slds-truncate">Community</div></th>
+                                    <th scope="col" class="slds-text-align_right"><div class="slds-truncate">WO Amount</div></th>
+                                    <th scope="col" class="slds-text-align_right"><div class="slds-truncate">Invoice Amt</div></th>
+                                    <th scope="col"><div class="slds-truncate">Variance</div></th>
+                                    <th scope="col"><div class="slds-truncate">Field Complete</div></th>
+                                    <th scope="col"><div class="slds-truncate">Status</div></th>
+                                    <th scope="col"><div class="slds-truncate">Action</div></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={rows} for:item="row">
+                                    <tr key={row.woId}>
+                                        <td class="slds-text-color_action-label">
+                                            {row.woNumber}
+                                        </td>
+                                        <td>{row.builderName}</td>
+                                        <td>{row.communityName}</td>
+                                        <td class="slds-text-align_right">{row.amountDisplay}</td>
+                                        <td class="slds-text-align_right">{row.invoiceAmountDisplay}</td>
+                                        <td>
+                                            <template if:true={row.hasVariance}>
+                                                <span class="slds-badge slds-badge_warning">Variance</span>
+                                            </template>
+                                            <template if:false={row.hasVariance}>
+                                                <span class="slds-text-color_weak">—</span>
+                                            </template>
+                                        </td>
+                                        <td>{row.fieldCompleteDateDisplay}</td>
+                                        <td>{row.status}</td>
+                                        <td>
+                                            <lightning-button
+                                                label="Generate Invoice"
+                                                variant="neutral"
+                                                size="small"
+                                                data-woid={row.woId}
+                                                data-wonumber={row.woNumber}
+                                                onclick={handleGenerateInvoice}>
+                                            </lightning-button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </template>
+
+                <template if:false={hasRows}>
+                    <div class="slds-align_absolute-center slds-p-around_large slds-text-color_weak">
+                        No completed work orders pending invoicing.
+                    </div>
+                </template>
+
+                <!-- ── Gate Note ─────────────────────────────────────────── -->
+                <p class="slds-text-body_small slds-text-color_weak slds-m-top_medium">
+                    G5 accounting export is an open gate (G5 · Finance / Meg).
+                    Resolve to enable direct export.
+                </p>
+
+            </div>
+        </template>
+
+        <template if:false={hasView}>
+            <template if:false={isLoading}>
+                <template if:false={hasError}>
+                    <div class="slds-align_absolute-center slds-p-around_large slds-text-color_weak">
+                        No invoice data available.
+                    </div>
+                </template>
+            </template>
+        </template>
+
+    </lightning-card>
+</template>

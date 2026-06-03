@@ -1,0 +1,110 @@
+<template>
+    <lightning-card title="Mismatch &amp; NFI Review" icon-name="standard:approval">
+        <div class="slds-card__body slds-card__body_inner">
+
+            <!-- Loading -->
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </template>
+
+            <!-- Error -->
+            <template if:true={error}>
+                <p class="slds-text-color_error slds-m-around_medium">{error}</p>
+            </template>
+
+            <!-- Summary chips -->
+            <template if:false={isLoading}>
+                <div class="slds-grid slds-wrap slds-gutters_x-small slds-m-bottom_medium">
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-4">
+                        <span class="slds-badge slds-badge_lightest slds-m-right_x-small">
+                            {view.totalOpen} open
+                        </span>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-4">
+                        <span class={priceChipClass}>
+                            {view.priceCount} price
+                        </span>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-4">
+                        <span class={qtyChipClass}>
+                            {view.qtyCount} qty
+                        </span>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-4">
+                        <span class={bothChipClass}>
+                            {view.bothCount} both
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Note -->
+                <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_medium">
+                    Validation holds this PO from auto-creating a Work Order. Resolve mismatch to release.
+                </p>
+
+                <!-- PO rows -->
+                <template if:true={hasRows}>
+                    <ul class="slds-has-dividers_top-space">
+                        <template for:each={view.rows} for:item="row">
+                            <li key={row.poId} class="slds-item slds-m-bottom_small">
+                                <div class="slds-media slds-media_center slds-has-flexi-truncate">
+                                    <div class="slds-media__body">
+                                        <div class="slds-grid slds-grid_align-spread slds-wrap">
+                                            <!-- Left: PO name + builder/community -->
+                                            <div class="slds-col slds-size_1-of-1 slds-medium-size_7-of-12">
+                                                <p class="slds-text-heading_small slds-truncate">
+                                                    <strong>{row.poName}</strong>
+                                                </p>
+                                                <p class="slds-text-body_small slds-text-color_weak slds-truncate">
+                                                    {row.builderName}
+                                                    <template if:true={row.communityName}>
+                                                        &nbsp;&mdash;&nbsp;{row.communityName}
+                                                    </template>
+                                                </p>
+                                                <p class="slds-text-body_small slds-m-top_x-small">
+                                                    PO Amt: <strong>{row.poAmount}</strong>
+                                                    &nbsp;|&nbsp;
+                                                    PB Total: <strong>{row.priceBookTotal}</strong>
+                                                    <template if:true={row.nfiCount}>
+                                                        &nbsp;|&nbsp;
+                                                        NFI: <strong>{row.nfiCount}</strong>
+                                                        <template if:true={row.nfiReason}>
+                                                            &nbsp;({row.nfiReason})
+                                                        </template>
+                                                    </template>
+                                                </p>
+                                            </div>
+                                            <!-- Right: mismatch badge + button -->
+                                            <div class="slds-col slds-size_1-of-1 slds-medium-size_5-of-12 slds-grid slds-grid_align-end slds-grid_vertical-align-center slds-wrap">
+                                                <span class={row.badgeClass} data-id={row.poId}>
+                                                    {row.mismatchType}
+                                                </span>
+                                                <lightning-button
+                                                    label="Mark Reviewed"
+                                                    variant="neutral"
+                                                    class="slds-m-left_small"
+                                                    data-id={row.poId}
+                                                    onclick={handleMarkReviewed}>
+                                                </lightning-button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+
+                <!-- Empty state -->
+                <template if:false={hasRows}>
+                    <template if:false={isLoading}>
+                        <p class="slds-text-body_regular slds-text-color_weak slds-m-around_medium">
+                            No mismatched POs found.
+                        </p>
+                    </template>
+                </template>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>

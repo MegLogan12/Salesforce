@@ -1,0 +1,157 @@
+<template>
+    <lightning-card title="COO Command Center" icon-name="standard:data_model">
+
+        <template if:true={isLoading}>
+            <div class="slds-align_absolute-center slds-p-around_medium">
+                <lightning-spinner alternative-text="Loading..." size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:true={hasError}>
+            <div class="slds-notify slds-notify_alert slds-alert_error slds-m-around_small" role="alert">
+                <span class="slds-assistive-text">Error</span>
+                <lightning-icon icon-name="utility:error" size="x-small"
+                    alternative-text="Error" variant="inverse"
+                    class="slds-m-right_x-small"></lightning-icon>
+                {errorMessage}
+            </div>
+        </template>
+
+        <template if:true={hasView}>
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+
+                <!-- ── KPI Strip ──────────────────────────────────────────── -->
+                <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                    <div class="slds-col slds-size_1-of-4">
+                        <div class="slds-box slds-box_x-small slds-text-align_center">
+                            <p class="slds-text-heading_medium">{view.totalActiveWOs}</p>
+                            <p class="slds-text-title_caps slds-text-color_weak">Total Active WOs</p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-4">
+                        <div class="slds-box slds-box_x-small slds-text-align_center">
+                            <p class={heldPosCss}>{heldPOCount}</p>
+                            <p class="slds-text-title_caps slds-text-color_weak">Held POs</p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-4">
+                        <div class="slds-box slds-box_x-small slds-text-align_center">
+                            <p class={closeoutCss}>{closeoutCount}</p>
+                            <p class="slds-text-title_caps slds-text-color_weak">Closeout Pending</p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-4">
+                        <div class="slds-box slds-box_x-small slds-text-align_center">
+                            <p class={openGatesCss}>{view.totalOpenGates}</p>
+                            <p class="slds-text-title_caps slds-text-color_weak">Open Gates</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Divisions Section ─────────────────────────────────── -->
+                <template if:true={hasDivisions}>
+                    <h3 class="slds-text-heading_small slds-m-bottom_x-small">Division KPIs</h3>
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-m-bottom_medium">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th scope="col"><div class="slds-truncate">Division</div></th>
+                                <th scope="col" class="slds-text-align_right"><div class="slds-truncate">Active WOs</div></th>
+                                <th scope="col" class="slds-text-align_right"><div class="slds-truncate">Completed MTD</div></th>
+                                <th scope="col" class="slds-text-align_right"><div class="slds-truncate">On-Time %</div></th>
+                                <th scope="col" class="slds-text-align_right"><div class="slds-truncate">GP %</div></th>
+                                <th scope="col"><div class="slds-truncate">Health</div></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={view.divisions} for:item="div">
+                                <tr key={div.division}>
+                                    <td>{div.division}</td>
+                                    <td class="slds-text-align_right">{div.activeWOs}</td>
+                                    <td class="slds-text-align_right">{div.completedThisMonth}</td>
+                                    <td class="slds-text-align_right slds-text-color_weak">
+                                        <span class="slds-text-body_small">— KPI batch</span>
+                                    </td>
+                                    <td class="slds-text-align_right slds-text-color_weak">
+                                        <span class="slds-text-body_small">— KPI batch</span>
+                                    </td>
+                                    <td>
+                                        <template if:true={div.isGood}>
+                                            <span class="slds-badge slds-badge_success">Good</span>
+                                        </template>
+                                        <template if:true={div.isWatch}>
+                                            <span class="slds-badge slds-badge_warning">Watch</span>
+                                        </template>
+                                        <template if:true={div.isAlert}>
+                                            <span class="slds-badge slds-badge_error">Alert</span>
+                                        </template>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+
+                <!-- ── Exceptions Section ────────────────────────────────── -->
+                <template if:true={hasExceptions}>
+                    <h3 class="slds-text-heading_small slds-m-bottom_x-small">Exceptions</h3>
+                    <ul class="slds-has-dividers_around-space slds-m-bottom_medium">
+                        <template for:each={exceptionRows} for:item="ex">
+                            <li key={ex.description}
+                                class="slds-item slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-p-vertical_x-small">
+                                <div class="slds-col">
+                                    <span class={ex.severityCss}>{ex.severityLabel}</span>
+                                    <span class="slds-m-left_x-small slds-text-body_regular">{ex.description}</span>
+                                </div>
+                                <div class="slds-col slds-text-align_right">
+                                    <span class="slds-badge">{ex.count}</span>
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+
+                <!-- ── Open Gates Section ────────────────────────────────── -->
+                <template if:true={hasGates}>
+                    <h3 class="slds-text-heading_small slds-m-bottom_x-small">Open Gates</h3>
+                    <ul class="slds-has-dividers_around-space slds-m-bottom_medium">
+                        <template for:each={view.gates} for:item="gate">
+                            <li key={gate.gate}
+                                class="slds-item slds-grid slds-gutters slds-grid_vertical-align-center slds-p-vertical_x-small">
+                                <div class="slds-col slds-size_1-of-4">
+                                    <span class="slds-badge slds-badge_error">{gate.gate}</span>
+                                </div>
+                                <div class="slds-col slds-size_1-of-4">
+                                    <p class="slds-text-body_small slds-text-color_weak">{gate.owner}</p>
+                                </div>
+                                <div class="slds-col slds-size_1-of-3">
+                                    <p class="slds-text-body_small">{gate.action}</p>
+                                </div>
+                                <div class="slds-col slds-text-align_right">
+                                    <span class="slds-badge slds-badge_warning">{gate.impact}</span>
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+
+                <!-- ── KPI Batch Note ────────────────────────────────────── -->
+                <p class="slds-text-body_small slds-text-color_weak slds-m-top_small">
+                    On-time % and GP % require the COO KPI batch (COO build gate).
+                    Revenue_MTD__c, On_Time_Pct__c, GP_Pct__c not yet on Account.
+                </p>
+
+            </div>
+        </template>
+
+        <template if:false={hasView}>
+            <template if:false={isLoading}>
+                <template if:false={hasError}>
+                    <div class="slds-align_absolute-center slds-p-around_large slds-text-color_weak">
+                        No dashboard data available.
+                    </div>
+                </template>
+            </template>
+        </template>
+
+    </lightning-card>
+</template>

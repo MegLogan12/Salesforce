@@ -1,0 +1,122 @@
+<template>
+    <lightning-card title="Night Loading Queue" icon-name="standard:fleet_service">
+
+        <!-- Header summary badges -->
+        <div slot="actions">
+            <template if:true={view}>
+                <span class="slds-badge slds-m-right_x-small">
+                    {view.totalTrucks} trucks
+                </span>
+                <span class="slds-badge slds-badge_success slds-m-right_x-small">
+                    {view.loadedCount} loaded
+                </span>
+                <template if:true={hasPending}>
+                    <span class="slds-badge slds-theme_warning">
+                        {view.pendingCount} pending
+                    </span>
+                </template>
+                <template if:false={hasPending}>
+                    <span class="slds-badge">
+                        0 pending
+                    </span>
+                </template>
+            </template>
+        </div>
+
+        <div class="slds-card__body slds-card__body_inner">
+
+            <!-- Loading spinner -->
+            <template if:true={isLoading}>
+                <div class="slds-align_absolute-center slds-p-around_large">
+                    <lightning-spinner alternative-text="Loading queue…" size="medium"></lightning-spinner>
+                </div>
+            </template>
+
+            <!-- Error state -->
+            <template if:true={error}>
+                <div class="slds-notify slds-notify_alert slds-alert_error" role="alert">
+                    <span class="slds-assistive-text">error</span>
+                    <p>{error}</p>
+                </div>
+            </template>
+
+            <!-- Truck rows -->
+            <template if:true={hasTrucks}>
+                <template for:each={view.trucks} for:item="row">
+                    <div key={row.ticketId}
+                         class="slds-media slds-media_center slds-p-vertical_small slds-border_bottom">
+
+                        <div class="slds-media__body">
+                            <div class="slds-grid slds-wrap slds-gutters_small slds-grid_vertical-align-center">
+
+                                <!-- Left: truck identity -->
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_3-of-12">
+                                    <div class="slds-text-heading_small slds-text-title_bold">
+                                        {row.truckNumber}
+                                    </div>
+                                    <div class="slds-text-body_small slds-text-color_weak">
+                                        {row.ticketName}
+                                    </div>
+                                </div>
+
+                                <!-- Middle: crew / FM / date -->
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_5-of-12">
+                                    <div class="slds-text-body_regular">
+                                        <span class="slds-text-color_weak">Crew: </span>{row.crewName}
+                                    </div>
+                                    <div class="slds-text-body_small slds-text-color_weak">
+                                        FM: {row.fmAssignment}
+                                    </div>
+                                    <div class="slds-text-body_small slds-text-color_weak">
+                                        Date: {row.scheduledDate}
+                                    </div>
+                                    <div class="slds-m-top_xx-small">
+                                        <span class="slds-badge slds-m-right_x-small">
+                                            {row.plantsExpected} plants
+                                        </span>
+                                        <span class="slds-badge">
+                                            {row.sodExpected} sqft sod
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Right: status + action -->
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12 slds-text-align_right">
+                                    <template if:true={row.isLoaded}>
+                                        <span class="slds-badge slds-badge_success">Loaded</span>
+                                    </template>
+                                    <template if:false={row.isLoaded}>
+                                        <span class="slds-badge slds-theme_warning slds-m-right_small">
+                                            {row.status}
+                                        </span>
+                                        <lightning-button
+                                            label="Mark Loaded"
+                                            variant="brand"
+                                            data-ticket-id={row.ticketId}
+                                            onclick={handleMarkLoaded}
+                                            disabled={row.isSaving}>
+                                        </lightning-button>
+                                    </template>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </template>
+
+            <!-- Empty state -->
+            <template if:true={isEmpty}>
+                <div class="slds-align_absolute-center slds-p-around_large slds-text-color_weak">
+                    No loading tickets for today or tomorrow.
+                </div>
+            </template>
+
+            <!-- Footer note -->
+            <p class="slds-text-body_small slds-text-color_weak slds-m-top_medium">
+                Tickets auto-generated from tomorrow's schedule. Mark loaded as truck is confirmed.
+            </p>
+
+        </div>
+    </lightning-card>
+</template>

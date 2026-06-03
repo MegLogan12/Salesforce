@@ -1,0 +1,149 @@
+<template>
+    <lightning-card title="Forecasting &amp; Capacity" icon-name="standard:resource_capacity">
+
+        <template if:true={isLoading}>
+            <div class="slds-align_absolute-center slds-p-around_medium">
+                <lightning-spinner alternative-text="Loading..." size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:true={hasError}>
+            <div class="slds-notify slds-notify_alert slds-alert_error slds-m-around_small" role="alert">
+                <span class="slds-assistive-text">Error</span>
+                <lightning-icon icon-name="utility:error" size="x-small"
+                    alternative-text="Error" variant="inverse"
+                    class="slds-m-right_x-small"></lightning-icon>
+                {errorMessage}
+            </div>
+        </template>
+
+        <template if:true={hasView}>
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+
+                <!-- ── KPI Strip ──────────────────────────────────────────── -->
+                <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                    <div class="slds-col slds-size_1-of-2">
+                        <div class="slds-box slds-box_x-small slds-text-align_center">
+                            <p class={weeksOverCapacityCss}
+                               class="slds-text-heading_medium">{view.weeksOverCapacity}</p>
+                            <p class="slds-text-title_caps slds-text-color_weak">Weeks Over Capacity</p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <div class="slds-box slds-box_x-small slds-text-align_center">
+                            <p class={backlogCss}
+                               class="slds-text-heading_medium">{view.backlogCount}</p>
+                            <p class="slds-text-title_caps slds-text-color_weak">Backlog (Ready to Schedule)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ── Weeks Section ─────────────────────────────────────── -->
+                <h3 class="slds-text-heading_small slds-m-bottom_x-small">6-Week Forecast</h3>
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-m-bottom_medium">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th scope="col"><div class="slds-truncate">Week</div></th>
+                            <th scope="col" class="slds-text-align_right"><div class="slds-truncate">Capacity (hrs)</div></th>
+                            <th scope="col" class="slds-text-align_right"><div class="slds-truncate">Booked WOs</div></th>
+                            <th scope="col"><div class="slds-truncate">Status</div></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={weekRows} for:item="wr">
+                            <tr key={wr.weekLabel}>
+                                <td>{wr.weekLabel}</td>
+                                <td class="slds-text-align_right">{wr.capacity}</td>
+                                <td class="slds-text-align_right">{wr.booked}</td>
+                                <td>
+                                    <template if:true={wr.overCapacity}>
+                                        <span class="slds-badge slds-badge_error">Over</span>
+                                    </template>
+                                    <template if:false={wr.overCapacity}>
+                                        <span class="slds-badge slds-badge_success">OK</span>
+                                    </template>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+
+                <!-- ── Zones Section ─────────────────────────────────────── -->
+                <template if:true={hasZones}>
+                    <h3 class="slds-text-heading_small slds-m-bottom_x-small">Zones</h3>
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-m-bottom_medium">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th scope="col"><div class="slds-truncate">Zone</div></th>
+                                <th scope="col" class="slds-text-align_right"><div class="slds-truncate">Crews</div></th>
+                                <th scope="col" class="slds-text-align_right"><div class="slds-truncate">Cap. Hrs/Wk</div></th>
+                                <th scope="col" class="slds-text-align_right"><div class="slds-truncate">Booked WOs</div></th>
+                                <th scope="col"><div class="slds-truncate">Status</div></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={view.zones} for:item="zr">
+                                <tr key={zr.zoneName}>
+                                    <td>{zr.zoneName}</td>
+                                    <td class="slds-text-align_right">{zr.crewCount}</td>
+                                    <td class="slds-text-align_right">{zr.capacityHours}</td>
+                                    <td class="slds-text-align_right">{zr.bookedWOs}</td>
+                                    <td>
+                                        <template if:true={zr.overCapacity}>
+                                            <span class="slds-badge slds-badge_error">Over</span>
+                                        </template>
+                                        <template if:false={zr.overCapacity}>
+                                            <span class="slds-badge slds-badge_success">OK</span>
+                                        </template>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+
+                <!-- ── Backlog Section ───────────────────────────────────── -->
+                <template if:true={hasBacklog}>
+                    <h3 class="slds-text-heading_small slds-m-bottom_x-small">Backlog — Ready to Schedule</h3>
+                    <ul class="slds-has-dividers_around-space slds-m-bottom_medium">
+                        <template for:each={view.backlog} for:item="br">
+                            <li key={br.woId}
+                                class="slds-item slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-p-vertical_x-small">
+                                <div class="slds-col">
+                                    <p class="slds-text-body_regular slds-text-color_default">{br.woNumber}</p>
+                                    <p class="slds-text-body_small slds-text-color_weak">{br.communityName}</p>
+                                </div>
+                                <div class="slds-col slds-text-align_center">
+                                    <p class="slds-text-body_small">{br.workType}</p>
+                                </div>
+                                <div class="slds-col slds-text-align_right">
+                                    <template if:true={br.ageDays}>
+                                        <span class="slds-badge">{br.ageDays}d old</span>
+                                    </template>
+                                </div>
+                            </li>
+                        </template>
+                    </ul>
+                </template>
+
+                <!-- ── Capacity Note ─────────────────────────────────────── -->
+                <p class="slds-text-body_small slds-text-color_weak slds-m-top_small">
+                    Capacity estimate is based on active crew count.
+                    Per-crew capacity hours refine the model.
+                </p>
+
+            </div>
+        </template>
+
+        <template if:false={hasView}>
+            <template if:false={isLoading}>
+                <template if:false={hasError}>
+                    <div class="slds-align_absolute-center slds-p-around_large slds-text-color_weak">
+                        No forecast data available.
+                    </div>
+                </template>
+            </template>
+        </template>
+
+    </lightning-card>
+</template>

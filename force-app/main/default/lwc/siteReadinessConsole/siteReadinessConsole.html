@@ -1,0 +1,95 @@
+<template>
+    <lightning-card title="Site Readiness" icon-name="standard:location">
+
+        <template if:true={isLoading}>
+            <div class="slds-align_absolute-center slds-p-around_medium">
+                <lightning-spinner alternative-text="Loading..." size="small"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:true={hasError}>
+            <div class="slds-notify slds-notify_alert slds-alert_error slds-m-around_small" role="alert">
+                <span class="slds-assistive-text">Error</span>
+                <span class="slds-icon_container slds-icon-utility-error slds-m-right_x-small">
+                    <lightning-icon icon-name="utility:error" size="x-small"
+                        alternative-text="Error" variant="inverse"></lightning-icon>
+                </span>
+                {errorMessage}
+            </div>
+        </template>
+
+        <template if:true={hasView}>
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+
+                <!-- WO header strip -->
+                <div class="slds-grid slds-gutters slds-m-bottom_small">
+                    <div class="slds-col">
+                        <p class="slds-text-title_caps slds-text-color_weak">Work Order</p>
+                        <p class="slds-text-heading_small slds-text-color_default">{view.woNumber}</p>
+                    </div>
+                    <div class="slds-col">
+                        <p class="slds-text-title_caps slds-text-color_weak">Community</p>
+                        <p class="slds-text-body_regular">{communityDisplay}</p>
+                    </div>
+                    <div class="slds-col">
+                        <p class="slds-text-title_caps slds-text-color_weak">Scheduled Date</p>
+                        <p class="slds-text-body_regular">{scheduledDateDisplay}</p>
+                    </div>
+                    <div class="slds-col slds-col_bump-left slds-align-bottom">
+                        <span class={overallBadgeCss}>{overallBadgeLabel}</span>
+                    </div>
+                </div>
+
+                <hr class="slds-divider_medium slds-m-bottom_small"/>
+
+                <!-- Gate rows -->
+                <ul class="slds-has-dividers_around-space">
+                    <template for:each={view.gates} for:item="gate">
+                        <li key={gate.label}
+                            class="slds-item slds-grid slds-grid_align-spread slds-grid_vertical-align-center slds-p-vertical_x-small">
+
+                            <div class="slds-grid slds-grid_vertical-align-center slds-col">
+                                <template if:true={gate.passed}>
+                                    <span class="slds-icon_container slds-icon-utility-check slds-m-right_x-small"
+                                          title="Passed">
+                                        <lightning-icon icon-name="utility:check"
+                                            size="x-small"
+                                            alternative-text="Passed"
+                                            class="slds-icon-text-success"></lightning-icon>
+                                    </span>
+                                </template>
+                                <template if:false={gate.passed}>
+                                    <span class="slds-icon_container slds-icon-utility-close slds-m-right_x-small"
+                                          title="Not complete">
+                                        <lightning-icon icon-name="utility:close"
+                                            size="x-small"
+                                            alternative-text="Not complete"
+                                            class="slds-icon-text-error"></lightning-icon>
+                                    </span>
+                                </template>
+                                <span class="slds-text-body_regular">{gate.label}</span>
+                            </div>
+
+                            <div class="slds-col slds-text-align_right">
+                                <span class="slds-text-body_small slds-text-color_weak">{gate.detail}</span>
+                            </div>
+
+                        </li>
+                    </template>
+                </ul>
+
+            </div>
+        </template>
+
+        <template if:false={hasView}>
+            <template if:false={isLoading}>
+                <template if:false={hasError}>
+                    <div class="slds-align_absolute-center slds-p-around_large slds-text-color_weak">
+                        No site readiness data available for this appointment.
+                    </div>
+                </template>
+            </template>
+        </template>
+
+    </lightning-card>
+</template>
