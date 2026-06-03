@@ -65,14 +65,14 @@ public class DivisionKpiRecalcBatch implements Database.Batchable<SObject> {
         }
 
         // Open WO count (standard WorkOrder, not in terminal statuses).
-        // Division link: WorkOrder → Community__c → Community__r.Builder_Account__c.
+        // Division link: WorkOrder.Community_FML__c → Community_FML__r.Builder_Account__c.
         Map<Id, Integer> openWoByDiv = new Map<Id, Integer>();
         for (AggregateResult ar : [
-            SELECT Community__r.Builder_Account__c div, COUNT(Id) cnt
+            SELECT Community_FML__r.Builder_Account__c div, COUNT(Id) cnt
             FROM WorkOrder
-            WHERE Community__r.Builder_Account__c IN :divIds
+            WHERE Community_FML__r.Builder_Account__c IN :divIds
               AND Status NOT IN :WO_TERMINAL
-            GROUP BY Community__r.Builder_Account__c
+            GROUP BY Community_FML__r.Builder_Account__c
         ]) {
             openWoByDiv.put((Id) ar.get('div'), (Integer) ar.get('cnt'));
         }
@@ -80,11 +80,11 @@ public class DivisionKpiRecalcBatch implements Database.Batchable<SObject> {
         // NFI count
         Map<Id, Integer> nfiByDiv = new Map<Id, Integer>();
         for (AggregateResult ar : [
-            SELECT Community__r.Builder_Account__c div, COUNT(Id) cnt
+            SELECT Community_FML__r.Builder_Account__c div, COUNT(Id) cnt
             FROM WorkOrder
-            WHERE Community__r.Builder_Account__c IN :divIds
+            WHERE Community_FML__r.Builder_Account__c IN :divIds
               AND Status = 'Need Further Info (NFI)'
-            GROUP BY Community__r.Builder_Account__c
+            GROUP BY Community_FML__r.Builder_Account__c
         ]) {
             nfiByDiv.put((Id) ar.get('div'), (Integer) ar.get('cnt'));
         }
@@ -92,12 +92,12 @@ public class DivisionKpiRecalcBatch implements Database.Batchable<SObject> {
         // Open Warranty count: WorkOrders linked to a warranty (AssetWarrantyId != null), not terminal.
         Map<Id, Integer> warrantyByDiv = new Map<Id, Integer>();
         for (AggregateResult ar : [
-            SELECT Community__r.Builder_Account__c div, COUNT(Id) cnt
+            SELECT Community_FML__r.Builder_Account__c div, COUNT(Id) cnt
             FROM WorkOrder
-            WHERE Community__r.Builder_Account__c IN :divIds
+            WHERE Community_FML__r.Builder_Account__c IN :divIds
               AND AssetWarrantyId != null
               AND Status NOT IN :WO_TERMINAL
-            GROUP BY Community__r.Builder_Account__c
+            GROUP BY Community_FML__r.Builder_Account__c
         ]) {
             warrantyByDiv.put((Id) ar.get('div'), (Integer) ar.get('cnt'));
         }
@@ -147,13 +147,13 @@ public class DivisionKpiRecalcBatch implements Database.Batchable<SObject> {
         Map<Id, Integer> completedByDiv = new Map<Id, Integer>();
         Map<Id, Integer> onTimeByDiv = new Map<Id, Integer>();
         for (WorkOrder wo : [
-            SELECT Community__r.Builder_Account__c, Field_Complete_Date__c, EndDate
+            SELECT Community_FML__r.Builder_Account__c, Field_Complete_Date__c, EndDate
             FROM WorkOrder
-            WHERE Community__r.Builder_Account__c IN :divIds
+            WHERE Community_FML__r.Builder_Account__c IN :divIds
               AND Field_Complete_Date__c >= :T30
               AND EndDate != null
         ]) {
-            Id d = wo.Community__r != null ? wo.Community__r.Builder_Account__c : null;
+            Id d = wo.Community_FML__r != null ? wo.Community_FML__r.Builder_Account__c : null;
             if (d == null) continue;
             completedByDiv.put(d, (completedByDiv.containsKey(d) ? completedByDiv.get(d) : 0) + 1);
             if (wo.Field_Complete_Date__c <= wo.EndDate) {
