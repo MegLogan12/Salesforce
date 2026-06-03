@@ -1,0 +1,73 @@
+<template>
+    <lightning-card title="PO Validation" icon-name="standard:approval">
+        <div class="slds-card__body slds-card__body_inner">
+
+            <!-- Spinner -->
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </template>
+
+            <!-- Error -->
+            <template if:true={error}>
+                <p class="slds-text-color_error slds-m-around_medium">{error}</p>
+            </template>
+
+            <!-- Content -->
+            <template if:true={poView}>
+
+                <!-- Overall status badge -->
+                <div class="slds-m-bottom_medium">
+                    <span class="slds-text-label slds-m-right_x-small">Overall Status:</span>
+                    <span class={overallBadgeClass}>{overallLabel}</span>
+                </div>
+
+                <!-- Check rows -->
+                <ul class="slds-list_vertical slds-has-dividers_top-space">
+                    <template for:each={checks} for:item="chk">
+                        <li key={chk.label} class="slds-item">
+                            <div class="slds-media slds-media_center slds-p-vertical_x-small">
+                                <div class="slds-media__figure">
+                                    <span class={chk.badgeClass}>{chk.result}</span>
+                                </div>
+                                <div class="slds-media__body">
+                                    <div class="slds-grid slds-wrap slds-gutters_x-small">
+                                        <div class="slds-col slds-size_1-of-4">
+                                            <span class="slds-text-title_bold">{chk.label}</span>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-4">
+                                            <span class="slds-text-label">Actual</span>
+                                            <div>{chk.actual}</div>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-4">
+                                            <span class="slds-text-label">Expected</span>
+                                            <div>{chk.expected}</div>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-4">
+                                            <span class="slds-text-label">Variance</span>
+                                            <div>{chk.variance}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+
+                <!-- NFI Reason -->
+                <template if:true={poView.nfiReason}>
+                    <div class="slds-m-top_small slds-box slds-box_x-small slds-theme_shade">
+                        <span class="slds-text-label">NFI Reason: </span>
+                        <span>{poView.nfiReason}</span>
+                    </div>
+                </template>
+
+            </template>
+
+            <!-- Note -->
+            <p class="slds-text-body_small slds-text-color_weak slds-m-top_small">
+                Validation reflects the last Mismatch flow run. Manual recheck: re-save the PO.
+            </p>
+
+        </div>
+    </lightning-card>
+</template>

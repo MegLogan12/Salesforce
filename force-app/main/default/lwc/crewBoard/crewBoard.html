@@ -1,0 +1,115 @@
+<template>
+    <lightning-card title="Crew Board — Night Before" icon-name="standard:resource_territory">
+        <div class="slds-card__body slds-card__body_inner">
+
+            <!-- Spinner -->
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </template>
+
+            <!-- Error -->
+            <template if:true={error}>
+                <p class="slds-text-color_error slds-m-around_medium">{error}</p>
+            </template>
+
+            <!-- Header chips -->
+            <template if:false={isLoading}>
+                <div class="slds-m-bottom_medium">
+                    <span class="slds-badge slds-m-right_x-small">{crewCount} crews</span>
+                    <span class="slds-badge slds-badge_success slds-m-right_x-small">{assignedCount} assigned</span>
+                    <span class={unassignedBadgeClass}>{unassignedCount} unassigned</span>
+                </div>
+            </template>
+
+            <!-- Crew rows -->
+            <template for:each={crews} for:item="crew">
+                <div key={crew.id} class="slds-media slds-media_center slds-p-vertical_small slds-border_bottom">
+
+                    <!-- Crew identity -->
+                    <div class="slds-media__figure slds-media__figure_reverse">
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-grid slds-wrap slds-gutters_small slds-grid_vertical-align-center">
+
+                            <!-- Crew info -->
+                            <div class="slds-col slds-size_1-of-1 slds-medium-size_4-of-12">
+                                <div class="slds-text-title_bold">{crew.name}</div>
+                                <div class="slds-text-body_small slds-text-color_weak">
+                                    {crew.type} &bull; {crew.foreman}
+                                </div>
+                            </div>
+
+                            <!-- Assigned state -->
+                            <template if:true={crew.isAssigned}>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_8-of-12">
+                                    <div class="slds-grid slds-wrap slds-gutters_x-small slds-grid_vertical-align-center">
+                                        <div class="slds-col">
+                                            <span class="slds-badge slds-badge_success slds-m-right_x-small">Truck: {crew.truckNumber}</span>
+                                            <span class="slds-badge slds-m-right_x-small">{crew.vehicle}</span>
+                                            <span class="slds-badge slds-badge_success">Ready</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- Unassigned state -->
+                            <template if:false={crew.isAssigned}>
+                                <div class="slds-col slds-size_1-of-1 slds-medium-size_8-of-12">
+                                    <div class="slds-grid slds-wrap slds-gutters_x-small slds-grid_vertical-align-center">
+                                        <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-3">
+                                            <lightning-input
+                                                type="text"
+                                                placeholder="Truck #"
+                                                data-crew-id={crew.id}
+                                                data-field="truck"
+                                                value={crew.inputTruck}
+                                                onchange={handleTruckChange}
+                                                label="Truck #"
+                                                variant="label-hidden">
+                                            </lightning-input>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-3">
+                                            <lightning-input
+                                                type="text"
+                                                placeholder="Rig / Vehicle"
+                                                data-crew-id={crew.id}
+                                                data-field="vehicle"
+                                                value={crew.inputVehicle}
+                                                onchange={handleVehicleChange}
+                                                label="Rig / Vehicle"
+                                                variant="label-hidden">
+                                            </lightning-input>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-1 slds-small-size_1-of-3">
+                                            <lightning-button
+                                                label="Assign"
+                                                variant="brand"
+                                                data-crew-id={crew.id}
+                                                onclick={handleAssign}
+                                                disabled={crew.isSaving}>
+                                            </lightning-button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Empty state -->
+            <template if:false={hasCrews}>
+                <template if:false={isLoading}>
+                    <p class="slds-text-color_weak slds-m-around_medium">No crews scheduled for tomorrow.</p>
+                </template>
+            </template>
+
+            <!-- Note -->
+            <p class="slds-text-body_small slds-text-color_weak slds-m-top_small">
+                Assignments write to Crew__c.Truck_Number__c and Crew__c.Vehicle__c.
+            </p>
+
+        </div>
+    </lightning-card>
+</template>

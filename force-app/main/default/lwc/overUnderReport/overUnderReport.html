@@ -1,0 +1,89 @@
+<template>
+    <lightning-card title="Over / Under" icon-name="standard:metrics">
+        <div class="slds-card__body slds-card__body_inner">
+
+            <!-- Spinner -->
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </template>
+
+            <!-- Error -->
+            <template if:true={error}>
+                <p class="slds-text-color_error slds-m-around_medium">{error}</p>
+            </template>
+
+            <!-- Table -->
+            <template if:true={hasLines}>
+                <div class="slds-scrollable_x">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th scope="col"><div class="slds-truncate">Item</div></th>
+                                <th scope="col"><div class="slds-truncate">Billed Qty</div></th>
+                                <th scope="col"><div class="slds-truncate">Billed Amt</div></th>
+                                <th scope="col"><div class="slds-truncate">Field Note</div></th>
+                                <th scope="col"><div class="slds-truncate">Variance</div></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={lines} for:item="line">
+                                <tr key={line.id}>
+                                    <td><div class="slds-truncate">{line.itemName}</div></td>
+                                    <td><div class="slds-truncate">{line.billedQty}</div></td>
+                                    <td><div class="slds-truncate">{line.billedAmt}</div></td>
+                                    <td><div class="slds-truncate">{line.fieldNote}</div></td>
+                                    <td>
+                                        <div class="slds-truncate">
+                                            <span class={line.varianceBadgeClass}>{line.variance}</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </template>
+
+            <!-- Empty state -->
+            <template if:false={hasLines}>
+                <template if:false={isLoading}>
+                    <p class="slds-text-color_weak slds-m-around_medium">No line items found.</p>
+                </template>
+            </template>
+
+            <!-- Summary footer -->
+            <template if:true={summary}>
+                <div class="slds-m-top_medium slds-box slds-box_x-small slds-theme_shade">
+                    <div class="slds-grid slds-wrap slds-gutters_x-small">
+                        <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-3 slds-m-bottom_x-small">
+                            <span class="slds-text-label">Total Billed</span>
+                            <div class="slds-text-body_regular slds-text-color_default">{summary.totalBilled}</div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-3 slds-m-bottom_x-small">
+                            <span class="slds-text-label">Plants (field)</span>
+                            <div class="slds-text-body_regular slds-text-color_default">{summary.plantsField}</div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-3 slds-m-bottom_x-small">
+                            <span class="slds-text-label">Trees (field)</span>
+                            <div class="slds-text-body_regular slds-text-color_default">{summary.treesField}</div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-3 slds-m-bottom_x-small">
+                            <span class="slds-text-label">Sod sq ft (field)</span>
+                            <div class="slds-text-body_regular slds-text-color_default">{summary.sodSqFtField}</div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-medium-size_1-of-3 slds-m-bottom_x-small">
+                            <span class="slds-text-label">Mulch CY (field)</span>
+                            <div class="slds-text-body_regular slds-text-color_default">{summary.mulchCyField}</div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Note -->
+            <p class="slds-text-body_small slds-text-color_weak slds-m-top_small">
+                Field-installed count from WorkOrder quantity roll-up fields. Per-line field qty requires closeout batch.
+            </p>
+
+        </div>
+    </lightning-card>
+</template>
