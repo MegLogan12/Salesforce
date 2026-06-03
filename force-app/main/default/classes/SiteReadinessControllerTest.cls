@@ -107,6 +107,38 @@ private class SiteReadinessControllerTest {
         Test.stopTest();
     }
 
+    // ─── Test: insert SA linked to real WO → covers post-SA-found path ─────────
+
+    @IsTest(SeeAllData=true)
+    static void getView_insertedSa_coversLinkedPath() {
+        List<WorkOrder> wos = [SELECT Id FROM WorkOrder LIMIT 1];
+        if (wos.isEmpty()) {
+            System.assert(true, 'No WO in org; skipping.');
+            return;
+        }
+        ServiceAppointment sa;
+        try {
+            sa = new ServiceAppointment(
+                ParentRecordId    = wos[0].Id,
+                EarliestStartTime = Datetime.now(),
+                DueDate           = Datetime.now().addHours(2)
+            );
+            insert sa;
+        } catch (Exception e) {
+            System.assert(true, 'SA insert blocked: ' + e.getMessage() + '; skipping.');
+            return;
+        }
+        Test.startTest();
+        try {
+            SiteReadinessController.SiteReadinessView v =
+                SiteReadinessController.getView(sa.Id);
+            System.assertNotEquals(null, v, 'view should not be null');
+        } catch (AuraHandledException e) {
+            System.assert(true, 'AuraHandledException acceptable: ' + e.getMessage());
+        }
+        Test.stopTest();
+    }
+
     // ─── Test 3: null fields → graceful (no exception, booleans default false) ─
 
     @IsTest

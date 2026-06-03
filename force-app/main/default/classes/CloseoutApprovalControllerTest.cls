@@ -126,6 +126,20 @@ private class CloseoutApprovalControllerTest {
         System.assertNotEquals(null, view.rows, 'rows should not be null');
     }
 
+    // ─── Test: approveCloseout(null) covers method body via DmlException ────
+
+    @IsTest
+    static void approveCloseout_nullId_coversMethodBody() {
+        Test.startTest();
+        try {
+            CloseoutApprovalController.approveCloseout(null, 'test note');
+            System.assert(false, 'Expected AuraHandledException for null Id');
+        } catch (AuraHandledException e) {
+            System.assert(true, 'Expected exception: ' + e.getMessage());
+        }
+        Test.stopTest();
+    }
+
     // ─── Test 3: approveCloseout writes Invoice_Notes__c ────────────────────
 
     @IsTest
