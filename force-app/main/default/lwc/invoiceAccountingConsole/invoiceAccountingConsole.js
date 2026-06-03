@@ -104,7 +104,25 @@ export default class InvoiceAccountingConsole extends LightningElement {
     get paidCount()          { return this.paidRows     ? this.paidRows.length     : 0; }
     get pendingExportCount() { return this.paidRows     ? this.paidRows.length     : 0; }
 
+    get hasReadyRows()    { return this.readyRows    && this.readyRows.length    > 0; }
+    get hasInvoicedRows() { return this.invoicedRows && this.invoicedRows.length > 0; }
+    get hasPaidRows()     { return this.paidRows     && this.paidRows.length     > 0; }
+
+    // ── Tab state ──────────────────────────────────────────────────────────────
+
+    get isReadyTab()    { return this.activeTab === 'ready'; }
+    get isInvoicedTab() { return this.activeTab === 'invoiced'; }
+    get isPaidTab()     { return this.activeTab === 'paid'; }
+
+    get readyTabClass()    { return 'subtab' + (this.activeTab === 'ready'    ? ' active' : ''); }
+    get invoicedTabClass() { return 'subtab' + (this.activeTab === 'invoiced' ? ' active' : ''); }
+    get paidTabClass()     { return 'subtab' + (this.activeTab === 'paid'     ? ' active' : ''); }
+
     // ── Tab handler ────────────────────────────────────────────────────────────
+
+    handleTabClick(event) {
+        this.activeTab = event.currentTarget.dataset.tab;
+    }
 
     handleTabChange(event) {
         this.activeTab = event.target.value;

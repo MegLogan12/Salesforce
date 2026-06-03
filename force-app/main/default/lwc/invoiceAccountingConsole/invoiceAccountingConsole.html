@@ -1,43 +1,47 @@
 <template>
-    <div class="slds-p-around_medium">
-        <!-- G5 Banner -->
-        <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-bottom_medium" role="alert">
-            <span class="slds-assistive-text">warning</span>
-            <lightning-icon icon-name="utility:warning" alternative-text="warning" size="x-small" class="slds-m-right_x-small"></lightning-icon>
-            <strong>Gate G5 Open:</strong>&nbsp;Accounting system export is pending until the accounting target is chosen. Invoicing and Paid tracking are fully operational today.
+    <div class="inv-wrap">
+
+        <!-- G5 Amber Warning Banner -->
+        <div class="flagnote">
+            <strong>Gate G5 open:</strong> the accounting system is not selected yet.
+            Invoices generate and track here; the export target (QuickBooks or other) is pending Finance.
+            Owner: Finance &middot; Action: pick the system, then wire the Paid &rarr; accounting export.
         </div>
 
-        <!-- KPI Row -->
-        <div class="slds-grid slds-gutters slds-m-bottom_medium">
-            <div class="slds-col">
-                <div class="slds-box slds-text-align_center">
-                    <p class="slds-text-heading_small">Ready to Invoice</p>
-                    <p class="slds-text-heading_large">{readyCount}</p>
-                </div>
+        <!-- KPI Strip -->
+        <div class="hi">
+            <div class="hi-cell">
+                <div class="hi-lab">Ready to Invoice</div>
+                <div class="hi-val">{readyCount}</div>
             </div>
-            <div class="slds-col">
-                <div class="slds-box slds-text-align_center">
-                    <p class="slds-text-heading_small">Invoiced</p>
-                    <p class="slds-text-heading_large">{invoicedCount}</p>
-                </div>
+            <div class="hi-cell">
+                <div class="hi-lab">Invoiced</div>
+                <div class="hi-val">{invoicedCount}</div>
             </div>
-            <div class="slds-col">
-                <div class="slds-box slds-text-align_center">
-                    <p class="slds-text-heading_small">Paid</p>
-                    <p class="slds-text-heading_large">{paidCount}</p>
-                </div>
+            <div class="hi-cell">
+                <div class="hi-lab">Paid</div>
+                <div class="hi-val">{paidCount}</div>
             </div>
-            <div class="slds-col">
-                <div class="slds-box slds-text-align_center">
-                    <p class="slds-text-heading_small">Pending Export (G5)</p>
-                    <p class="slds-text-heading_large">{pendingExportCount}</p>
-                </div>
+            <div class="hi-cell">
+                <div class="hi-lab">Export (G5)</div>
+                <div class="hi-val sm"><span class="chip c-amber">pending G5</span></div>
             </div>
         </div>
 
-        <!-- Tabs -->
-        <lightning-tabset active-tab-value={activeTab} onactive={handleTabChange}>
-            <lightning-tab label="Ready to Invoice" value="ready">
+        <!-- Subtabs -->
+        <div class="subtabs">
+            <div class={readyTabClass}    data-tab="ready"    onclick={handleTabClick}>Ready to Invoice</div>
+            <div class={invoicedTabClass} data-tab="invoiced" onclick={handleTabClick}>Invoiced</div>
+            <div class={paidTabClass}     data-tab="paid"     onclick={handleTabClick}>Paid</div>
+        </div>
+
+        <!-- Ready to Invoice -->
+        <template if:true={isReadyTab}>
+            <div class="cardbox">
+                <div class="cardbox-header">
+                    Ready to invoice
+                    <span class="count">{readyCount} jobs</span>
+                </div>
                 <lightning-datatable
                     key-field="workOrderId"
                     data={readyRows}
@@ -46,8 +50,19 @@
                     onrowaction={handleReadyAction}
                     hide-checkbox-column>
                 </lightning-datatable>
-            </lightning-tab>
-            <lightning-tab label="Invoiced" value="invoiced">
+                <template if:false={hasReadyRows}>
+                    <div class="empty-note">Nothing waiting to invoice.</div>
+                </template>
+            </div>
+        </template>
+
+        <!-- Invoiced -->
+        <template if:true={isInvoicedTab}>
+            <div class="cardbox">
+                <div class="cardbox-header">
+                    Invoiced
+                    <span class="count">{invoicedCount} open</span>
+                </div>
                 <lightning-datatable
                     key-field="invoiceId"
                     data={invoicedRows}
@@ -56,15 +71,33 @@
                     onrowaction={handleInvoicedAction}
                     hide-checkbox-column>
                 </lightning-datatable>
-            </lightning-tab>
-            <lightning-tab label="Paid" value="paid">
+                <template if:false={hasInvoicedRows}>
+                    <div class="empty-note">Invoices you generate appear here. Mark paid when payment clears.</div>
+                </template>
+            </div>
+        </template>
+
+        <!-- Paid -->
+        <template if:true={isPaidTab}>
+            <div class="cardbox">
+                <div class="cardbox-header">
+                    Paid
+                    <span class="count">{paidCount}</span>
+                </div>
                 <lightning-datatable
                     key-field="invoiceId"
                     data={paidRows}
                     columns={paidCols}
                     hide-checkbox-column>
                 </lightning-datatable>
-            </lightning-tab>
-        </lightning-tabset>
+                <template if:false={hasPaidRows}>
+                    <div class="empty-note">Paid invoices export to accounting once G5 is decided.</div>
+                </template>
+                <div class="inner-note">
+                    <div class="flagnote">Paid invoices queue here and export to the accounting system once G5 is resolved.</div>
+                </div>
+            </div>
+        </template>
+
     </div>
 </template>

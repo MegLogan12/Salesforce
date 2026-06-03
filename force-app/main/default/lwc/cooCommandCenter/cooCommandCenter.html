@@ -1,258 +1,227 @@
 <template>
-    <div class="slds-p-around_medium">
+    <div class="coo-wrap">
 
-        <!-- KPI Header Row -->
+        <!-- KPI Strip (8 cells, 2 rows × 4 cols) -->
         <template if:true={kpis}>
-            <div class="slds-grid slds-gutters slds-wrap slds-m-bottom_medium">
-                <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
-                    <div class="slds-box slds-text-align_center">
-                        <p class="slds-text-heading_small">Active WOs</p>
-                        <p class="slds-text-heading_large">{kpis.activeWOs}</p>
-                    </div>
+            <div class="hi">
+                <div class="hi-cell">
+                    <div class="hi-lab">Active WOs</div>
+                    <div class="hi-val">{kpis.activeWOs}</div>
                 </div>
-                <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
-                    <div class="slds-box slds-text-align_center">
-                        <p class="slds-text-heading_small">Scheduled Today</p>
-                        <p class="slds-text-heading_large">{kpis.scheduledToday}</p>
-                    </div>
+                <div class="hi-cell">
+                    <div class="hi-lab">Scheduled Today</div>
+                    <div class="hi-val">{kpis.scheduledToday}</div>
                 </div>
-                <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
-                    <div class="slds-box slds-text-align_center">
-                        <p class="slds-text-heading_small">Pending Proposals</p>
-                        <p class="slds-text-heading_large">{kpis.pendingProposals}</p>
-                    </div>
+                <div class="hi-cell">
+                    <div class="hi-lab">Pending Proposals</div>
+                    <div class="hi-val">{kpis.pendingProposals}</div>
                 </div>
-                <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
-                    <div class="slds-box slds-text-align_center">
-                        <p class="slds-text-heading_small">Pending Closeout</p>
-                        <p class="slds-text-heading_large">{kpis.pendingCloseout}</p>
-                    </div>
+                <div class="hi-cell">
+                    <div class="hi-lab">Pending Closeout</div>
+                    <div class="hi-val">{kpis.pendingCloseout}</div>
                 </div>
-                <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
-                    <div class="slds-box slds-text-align_center">
-                        <p class="slds-text-heading_small">Paid This Month</p>
-                        <p class="slds-text-heading_large">{kpis.paidThisMonth}</p>
-                    </div>
+                <div class="hi-cell">
+                    <div class="hi-lab">Paid This Month</div>
+                    <div class="hi-val">{kpis.paidThisMonth}</div>
                 </div>
-                <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
-                    <div class="slds-box slds-text-align_center">
-                        <p class="slds-text-heading_small">Open Escalations</p>
-                        <p class="slds-text-heading_large">{kpis.openEscalations}</p>
-                    </div>
+                <div class="hi-cell">
+                    <div class="hi-lab">Open Escalations</div>
+                    <div class="hi-val">{kpis.openEscalations}</div>
                 </div>
-                <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
-                    <div class="slds-box slds-text-align_center">
-                        <p class="slds-text-heading_small">Open Hire Requests</p>
-                        <p class="slds-text-heading_large">{kpis.openHireRequests}</p>
-                    </div>
+                <div class="hi-cell">
+                    <div class="hi-lab">Open Hire Requests</div>
+                    <div class="hi-val">{kpis.openHireRequests}</div>
                 </div>
-                <div class="slds-col slds-size_1-of-4 slds-m-bottom_small">
-                    <div class="slds-box slds-text-align_center">
-                        <p class="slds-text-heading_small">Site Readiness Overdue</p>
-                        <p class="slds-text-heading_large">{kpis.siteReadinessOverdue}</p>
-                    </div>
+                <div class="hi-cell">
+                    <div class="hi-lab">Site Readiness Overdue</div>
+                    <div class="hi-val">{kpis.siteReadinessOverdue}</div>
                 </div>
             </div>
         </template>
 
-        <lightning-tabset>
+        <!-- Subtabs -->
+        <div class="subtabs">
+            <div class={overviewTabClass}    data-tab="overview"    onclick={handleTabClick}>Overview</div>
+            <div class={byDivisionTabClass}  data-tab="division"    onclick={handleTabClick}>By Division</div>
+            <div class={exceptionsTabClass}  data-tab="exceptions"  onclick={handleTabClick}>Exceptions</div>
+            <div class={gatesTabClass}       data-tab="gates"       onclick={handleTabClick}>Gates</div>
+        </div>
 
-            <!-- ── OVERVIEW TAB ── -->
-            <lightning-tab label="Overview" value="overview">
-                <div class="slds-grid slds-gutters slds-m-top_medium">
+        <!-- ── OVERVIEW ── -->
+        <template if:true={isOverviewTab}>
+            <div class="overview-grid">
 
-                    <!-- WO Pipeline -->
-                    <div class="slds-col slds-size_1-of-2">
-                        <div class="slds-card">
-                            <div class="slds-card__header slds-grid">
-                                <h2 class="slds-card__header-title">WO Pipeline by Status</h2>
-                            </div>
-                            <div class="slds-card__body">
-                                <template if:true={pipeline}>
-                                    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
-                                        <thead>
-                                            <tr>
-                                                <th>Status</th>
-                                                <th class="slds-text-align_right">Count</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <template for:each={pipeline} for:item="row">
-                                                <tr key={row.status}>
-                                                    <td>{row.status}</td>
-                                                    <td class="slds-text-align_right">{row.count}</td>
-                                                </tr>
-                                            </template>
-                                        </tbody>
-                                    </table>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- GP Summary -->
-                    <div class="slds-col slds-size_1-of-2">
-                        <template if:true={gpSummary}>
-                            <div class="slds-card">
-                                <div class="slds-card__header slds-grid">
-                                    <h2 class="slds-card__header-title">GP Summary</h2>
-                                </div>
-                                <div class="slds-card__body slds-p-around_medium">
-                                    <div class="slds-grid slds-gutters">
-                                        <div class="slds-col slds-text-align_center">
-                                            <p class="slds-text-color_success slds-text-heading_small">Green</p>
-                                            <p class="slds-text-heading_large">{gpSummary.greenCount}</p>
-                                        </div>
-                                        <div class="slds-col slds-text-align_center">
-                                            <p class="slds-text-heading_small" style="color:#f4bc25">Yellow</p>
-                                            <p class="slds-text-heading_large">{gpSummary.yellowCount}</p>
-                                        </div>
-                                        <div class="slds-col slds-text-align_center">
-                                            <p class="slds-text-color_error slds-text-heading_small">Red</p>
-                                            <p class="slds-text-heading_large">{gpSummary.redCount}</p>
-                                        </div>
-                                        <div class="slds-col slds-text-align_center">
-                                            <p class="slds-text-heading_small" style="color:#706e6b">Blocked</p>
-                                            <p class="slds-text-heading_large">{gpSummary.blockedCount}</p>
-                                        </div>
-                                    </div>
-                                    <p class="slds-m-top_small slds-text-align_center">
-                                        Pending Revenue: {gpSummary.totalRevenuePendingFormatted}
-                                    </p>
-                                </div>
-                            </div>
-                        </template>
-                    </div>
-
-                </div>
-            </lightning-tab>
-
-            <!-- ── BY DIVISION TAB ── -->
-            <lightning-tab label="By Division" value="division">
-                <div class="slds-m-top_medium">
-                    <template if:true={showDivisionBanner}>
-                        <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-bottom_medium" role="alert">
-                            <span class="slds-assistive-text">warning</span>
-                            <lightning-icon icon-name="utility:warning" alternative-text="warning" size="x-small" class="slds-m-right_x-small"></lightning-icon>
-                            Values populate after DivisionKpiRecalcBatch runs nightly.
-                        </div>
-                    </template>
-                    <template if:true={divisions}>
-                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                <!-- WO Pipeline -->
+                <div class="cardbox">
+                    <div class="cardbox-header">WO Pipeline by Status</div>
+                    <template if:true={pipeline}>
+                        <table class="qtbl">
                             <thead>
                                 <tr>
-                                    <th>Division</th>
-                                    <th class="slds-text-align_right">Rev T12M</th>
-                                    <th class="slds-text-align_right">GP%</th>
-                                    <th class="slds-text-align_right">Open WOs</th>
-                                    <th class="slds-text-align_right">On-Time%</th>
-                                    <th class="slds-text-align_right">Communities</th>
-                                    <th class="slds-text-align_right">Lots</th>
-                                    <th class="slds-text-align_right">Open POs</th>
-                                    <th class="slds-text-align_right">Warranties</th>
-                                    <th class="slds-text-align_right">NFIs</th>
+                                    <th>Status</th>
+                                    <th class="r">Count</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <template for:each={divisions} for:item="div">
-                                    <tr key={div.accountId}>
-                                        <td>{div.divisionName}</td>
-                                        <td class="slds-text-align_right">{div.revenueT12MFormatted}</td>
-                                        <td class="slds-text-align_right">{div.gpPctFormatted}</td>
-                                        <td class="slds-text-align_right">{div.openWoCount}</td>
-                                        <td class="slds-text-align_right">{div.onTimePctFormatted}</td>
-                                        <td class="slds-text-align_right">{div.activeCommunities}</td>
-                                        <td class="slds-text-align_right">{div.activeLots}</td>
-                                        <td class="slds-text-align_right">{div.openPoCount}</td>
-                                        <td class="slds-text-align_right">{div.openWarrantyCount}</td>
-                                        <td class="slds-text-align_right">{div.openNfiCount}</td>
+                                <template for:each={pipeline} for:item="row">
+                                    <tr key={row.status}>
+                                        <td>{row.status}</td>
+                                        <td class="r">{row.count}</td>
                                     </tr>
                                 </template>
                             </tbody>
                         </table>
                     </template>
-                </div>
-            </lightning-tab>
-
-            <!-- ── EXCEPTIONS TAB ── -->
-            <lightning-tab label="Exceptions" value="exceptions">
-                <div class="slds-m-top_medium">
-                    <template if:true={kpis}>
-                        <div class="slds-grid slds-gutters slds-wrap">
-                            <div class="slds-col slds-size_1-of-3 slds-m-bottom_medium">
-                                <div class="slds-card">
-                                    <div class="slds-card__header">
-                                        <h2 class="slds-card__header-title">Pending Closeout WOs</h2>
-                                    </div>
-                                    <div class="slds-card__body slds-p-around_medium slds-text-align_center">
-                                        <p class="slds-text-heading_large">{kpis.pendingCloseout}</p>
-                                        <a href="/lightning/o/WorkOrder/list?filterName=Pending_Closeout" target="_blank" class="slds-m-top_small">View in Console</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="slds-col slds-size_1-of-3 slds-m-bottom_medium">
-                                <div class="slds-card">
-                                    <div class="slds-card__header">
-                                        <h2 class="slds-card__header-title">Open Escalations</h2>
-                                    </div>
-                                    <div class="slds-card__body slds-p-around_medium slds-text-align_center">
-                                        <p class="slds-text-heading_large">{kpis.openEscalations}</p>
-                                        <a href="/lightning/o/Task/list?filterName=Open_Escalations" target="_blank" class="slds-m-top_small">View in Console</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="slds-col slds-size_1-of-3 slds-m-bottom_medium">
-                                <div class="slds-card">
-                                    <div class="slds-card__header">
-                                        <h2 class="slds-card__header-title">Site Readiness Overdue</h2>
-                                    </div>
-                                    <div class="slds-card__body slds-p-around_medium slds-text-align_center">
-                                        <p class="slds-text-heading_large">{kpis.siteReadinessOverdue}</p>
-                                        <a href="/lightning/o/Task/list?filterName=Site_Readiness_Overdue" target="_blank" class="slds-m-top_small">View in Console</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <template if:false={pipeline}>
+                        <div class="empty-note">Loading pipeline&hellip;</div>
                     </template>
                 </div>
-            </lightning-tab>
 
-            <!-- ── GATES TAB ── -->
-            <lightning-tab label="Gates" value="gates">
-                <div class="slds-m-top_medium">
-                    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                <!-- GP Summary -->
+                <template if:true={gpSummary}>
+                    <div class="gp-card">
+                        <div class="gp-card-header">GP Summary</div>
+                        <div class="gp-grid">
+                            <div class="gp-cell">
+                                <div class="gp-label green">Green</div>
+                                <div class="gp-num">{gpSummary.greenCount}</div>
+                            </div>
+                            <div class="gp-cell">
+                                <div class="gp-label yellow">Yellow</div>
+                                <div class="gp-num">{gpSummary.yellowCount}</div>
+                            </div>
+                            <div class="gp-cell">
+                                <div class="gp-label red">Red</div>
+                                <div class="gp-num">{gpSummary.redCount}</div>
+                            </div>
+                            <div class="gp-cell">
+                                <div class="gp-label blocked">Blocked</div>
+                                <div class="gp-num">{gpSummary.blockedCount}</div>
+                            </div>
+                        </div>
+                        <div class="gp-footer">Pending Revenue: {gpSummary.totalRevenuePendingFormatted}</div>
+                    </div>
+                </template>
+
+            </div>
+        </template>
+
+        <!-- ── BY DIVISION ── -->
+        <template if:true={isByDivisionTab}>
+            <div class="cardbox">
+                <div class="cardbox-header">
+                    By Operating Division
+                    <span class="count">nightly KPI batch</span>
+                </div>
+                <template if:true={showDivisionBanner}>
+                    <div class="flagnote">
+                        Values populate after DivisionKpiRecalcBatch runs nightly.
+                    </div>
+                </template>
+                <template if:true={divisions}>
+                    <table class="div-tbl">
                         <thead>
                             <tr>
-                                <th>Gate</th>
-                                <th>Owner</th>
-                                <th>Action Required</th>
-                                <th></th>
+                                <th>Division</th>
+                                <th class="r">Rev T12M</th>
+                                <th class="r">GP%</th>
+                                <th class="r">Open WOs</th>
+                                <th class="r">On-Time%</th>
+                                <th class="r">Communities</th>
+                                <th class="r">Lots</th>
+                                <th class="r">Open POs</th>
+                                <th class="r">Warranties</th>
+                                <th class="r">NFIs</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <template for:each={gates} for:item="gate">
-                                <tr key={gate.id}>
-                                    <td>
-                                        <strong>{gate.id}</strong>
-                                        <p class="slds-text-body_small">{gate.label}</p>
-                                    </td>
-                                    <td>{gate.owner}</td>
-                                    <td>{gate.action}</td>
-                                    <td>
-                                        <lightning-button
-                                            label="Escalate"
-                                            variant="destructive-text"
-                                            data-gate-id={gate.id}
-                                            onclick={handleEscalate}>
-                                        </lightning-button>
-                                    </td>
+                            <template for:each={divisions} for:item="div">
+                                <tr key={div.accountId}>
+                                    <td>{div.divisionName}</td>
+                                    <td class="r">{div.revenueT12MFormatted}</td>
+                                    <td class="r">{div.gpPctFormatted}</td>
+                                    <td class="r">{div.openWoCount}</td>
+                                    <td class="r">{div.onTimePctFormatted}</td>
+                                    <td class="r">{div.activeCommunities}</td>
+                                    <td class="r">{div.activeLots}</td>
+                                    <td class="r">{div.openPoCount}</td>
+                                    <td class="r">{div.openWarrantyCount}</td>
+                                    <td class="r">{div.openNfiCount}</td>
                                 </tr>
                             </template>
                         </tbody>
                     </table>
-                </div>
-            </lightning-tab>
+                </template>
+            </div>
+        </template>
 
-        </lightning-tabset>
+        <!-- ── EXCEPTIONS ── -->
+        <template if:true={isExceptionsTab}>
+            <div class="cardbox">
+                <div class="cardbox-header">
+                    Exceptions
+                    <span class="count">items needing attention</span>
+                </div>
+                <template if:true={kpis}>
+                    <div class="scline">
+                        <div class="exc-dot"></div>
+                        <div class="exc-text">
+                            <strong>{kpis.pendingCloseout}</strong> work orders pending closeout approval
+                        </div>
+                        <span class="chip c-amber">action</span>
+                    </div>
+                    <div class="scline">
+                        <div class="exc-dot"></div>
+                        <div class="exc-text">
+                            <strong>{kpis.openEscalations}</strong> open escalations
+                        </div>
+                        <span class="chip c-amber">open</span>
+                    </div>
+                    <div class="scline">
+                        <div class="exc-dot"></div>
+                        <div class="exc-text">
+                            <strong>{kpis.siteReadinessOverdue}</strong> site readiness tasks overdue
+                        </div>
+                        <span class="chip c-amber">overdue</span>
+                    </div>
+                    <div class="scline">
+                        <div class="exc-dot"></div>
+                        <div class="exc-text">
+                            Paid invoices cannot export until G5 (accounting system) is resolved
+                        </div>
+                        <span class="chip c-amber">blocked</span>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <!-- ── GATES ── -->
+        <template if:true={isGatesTab}>
+            <div class="cardbox">
+                <div class="cardbox-header">
+                    Open Decision Gates
+                    <span class="count">owner &amp; action for each</span>
+                </div>
+                <template for:each={gates} for:item="gate">
+                    <div class="scline" key={gate.id}>
+                        <div class="scline-body">
+                            <div class="scline-title">
+                                {gate.id}
+                                &nbsp;&middot;&nbsp;
+                                {gate.label}
+                            </div>
+                            <div class="scline-sub">Owner: {gate.owner} &middot; Action: {gate.action}</div>
+                        </div>
+                        <button
+                            class="btn-escalate"
+                            data-gate-id={gate.id}
+                            onclick={handleEscalate}>
+                            Escalate
+                        </button>
+                    </div>
+                </template>
+            </div>
+        </template>
+
     </div>
 </template>

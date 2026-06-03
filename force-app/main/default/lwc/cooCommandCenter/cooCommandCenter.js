@@ -55,9 +55,26 @@ export default class CooCommandCenter extends LightningElement {
     @track pipeline;
     @track gpSummary;
     @track divisions;
+    @track activeTab = 'overview';
 
     get gates() {
         return GATES;
+    }
+
+    // ── Tab state ──────────────────────────────────────────────────────────────
+
+    get isOverviewTab()   { return this.activeTab === 'overview'; }
+    get isByDivisionTab() { return this.activeTab === 'division'; }
+    get isExceptionsTab() { return this.activeTab === 'exceptions'; }
+    get isGatesTab()      { return this.activeTab === 'gates'; }
+
+    get overviewTabClass()   { return 'subtab' + (this.activeTab === 'overview'    ? ' active' : ''); }
+    get byDivisionTabClass() { return 'subtab' + (this.activeTab === 'division'    ? ' active' : ''); }
+    get exceptionsTabClass() { return 'subtab' + (this.activeTab === 'exceptions'  ? ' active' : ''); }
+    get gatesTabClass()      { return 'subtab' + (this.activeTab === 'gates'       ? ' active' : ''); }
+
+    handleTabClick(event) {
+        this.activeTab = event.currentTarget.dataset.tab;
     }
 
     get showDivisionBanner() {
