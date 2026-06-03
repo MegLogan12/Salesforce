@@ -11,6 +11,9 @@
                 </div>
             </div>
             <div class="header-actions">
+                <button class="btn-new" onclick={handleNewActivity}>+ New Activity</button>
+                <button class="btn-new" onclick={handleLogCall}>Log Call</button>
+                <button class="btn-new" onclick={handleSendEmail}>Send Email</button>
                 <button class="btn-new" onclick={handleNewUmb}>+ New UMB</button>
                 <button class="btn-new btn-design" onclick={handleNewDesignBuild}>+ New Design Build</button>
             </div>
@@ -81,6 +84,7 @@
                             <th class="sortable" onclick={handleSortFollowUp}>Follow-Up {sortIconFollowUp}</th>
                             <th>Owner</th>
                             <th class="col-next-action">Next Action</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -154,11 +158,15 @@
                                     <span class="next-action-text">{row.nextActionText}</span>
                                     <button class={row.actionBtnClass} data-id={row.id} data-action={row.nextActionButton} onclick={handleActionClick}>{row.nextActionButton}</button>
                                 </td>
+                                <td>
+                                    <button class="btn-inline" data-id={row.id} onclick={handleLogCall}>Log Call</button>
+                                    <button class="btn-inline" data-id={row.id} onclick={handleSendEmail}>Email</button>
+                                </td>
                             </tr>
                         </template>
                         <template lwc:if={isEmpty}>
                             <tr>
-                                <td colspan="15" class="empty-cell">No opportunities match the current filters.</td>
+                                <td colspan="16" class="empty-cell">No opportunities match the current filters.</td>
                             </tr>
                         </template>
                     </tbody>

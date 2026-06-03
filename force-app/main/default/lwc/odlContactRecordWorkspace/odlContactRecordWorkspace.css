@@ -1,4 +1,24 @@
 :host {
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
+
     display: block;
     font-family: 'IBM Plex Sans', 'Salesforce Sans', Arial, sans-serif;
     font-size: 13px;
@@ -8,11 +28,11 @@
 .state-msg {
     padding: 24px;
     text-align: center;
-    color: #8b8f86;
+    color: #706e6b;
     font-size: 13px;
 }
 
-.state-error { color: #c0392b; }
+.state-error { color: #9c2c20; }
 
 /* ── Record header ───────────────────────────────────────────────── */
 .rec-head {
@@ -34,7 +54,7 @@
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #2d5f8a, #234c6f);
+    background: linear-gradient(135deg, #c890c0 0%, #a06080 100%);
     color: #fff;
     display: grid;
     place-items: center;
@@ -49,7 +69,7 @@
     font-size: 11px;
     letter-spacing: .4px;
     text-transform: uppercase;
-    color: #8b8f86;
+    color: #706e6b;
     font-weight: 600;
     margin-bottom: 2px;
 }
@@ -83,8 +103,8 @@
     white-space: nowrap;
 }
 
-.chip-green  { background: #e6f3ec; color: #2e7d5b; }
-.chip-blue   { background: #e8f0f7; color: #2d5f8a; }
+.chip-green  { background: #e6f3ea; color: #1f5c38; }
+.chip-blue   { background: #ede8f6; color: #6840a0; }
 .chip-slate  { background: #eef0f2; color: #5b6470; }
 
 /* ── Buttons ─────────────────────────────────────────────────────── */
@@ -93,7 +113,7 @@
     font-weight: 600;
     padding: 7px 12px;
     border-radius: 8px;
-    border: 1px solid #d8d3c7;
+    border: 1px solid #e6e2d9;
     background: #fff;
     color: #1f2421;
     cursor: pointer;
@@ -101,28 +121,33 @@
     transition: .12s;
 }
 
-.btn:hover { background: #fbfaf7; border-color: #c2bcae; }
+.btn:hover { background: #fbfaf6; border-color: #c2bcae; }
 
 .btn-primary {
-    background: linear-gradient(135deg, #2d5f8a, #234c6f);
+    background: linear-gradient(135deg, #c890c0 0%, #a06080 100%);
     border-color: transparent;
     color: #fff;
 }
 .btn-primary:hover { filter: brightness(1.08); }
 
-.btn-ghost { background: transparent; border-color: transparent; color: #5b6058; }
-.btn-ghost:hover { background: #eef0f2; color: #1f2421; }
+.btn-ghost { background: transparent; border-color: transparent; color: #706e6b; }
+.btn-ghost:hover { background: #f5f2ec; color: #1f2421; }
 
-.btn-green { background: #2e7d5b; border-color: transparent; color: #fff; }
-.btn-green:hover { filter: brightness(1.06); }
+.btn-green { background: #2c7a4b; border-color: transparent; color: #fff; }
+.btn-green:hover { background: #1f5c38; }
+
+.btn-rose { background: #c4607a; border-color: transparent; color: #fff; }
+.btn-rose:hover { background: #9c3052; }
 
 .btn-sm { padding: 5px 10px; font-size: 11.5px; }
+
+.btn-inline { font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; border:1.5px solid #2c7a4b; background:transparent; color:#2c7a4b; cursor:pointer; }
 
 /* ── Highlights ──────────────────────────────────────────────────── */
 .highlights {
     display: flex;
     border-top: 1px solid #e6e2d9;
-    background: #fbfaf7;
+    background: #fbfaf6;
     flex-wrap: wrap;
 }
 
@@ -138,7 +163,7 @@
     font-size: 10.5px;
     text-transform: uppercase;
     letter-spacing: .4px;
-    color: #8b8f86;
+    color: #706e6b;
     font-weight: 600;
 }
 
@@ -149,8 +174,8 @@
     color: #1f2421;
 }
 
-.hl-green { color: #2e7d5b; }
-.hl-red   { color: #c0392b; }
+.hl-green { color: #2c7a4b; }
+.hl-red   { color: #9c2c20; }
 
 /* ── Next action banner ──────────────────────────────────────────── */
 .na-banner {
@@ -158,7 +183,7 @@
     align-items: center;
     gap: 10px;
     padding: 11px 18px;
-    background: linear-gradient(90deg, #fbf1d8, #fff);
+    background: linear-gradient(90deg, #fdeee6, #fff);
     border-top: 1px solid #e6e2d9;
 }
 
@@ -166,7 +191,7 @@
     width: 9px;
     height: 9px;
     border-radius: 50%;
-    background: #b07d12;
+    background: #e8936a;
     flex: none;
 }
 
@@ -174,7 +199,7 @@
     font-size: 10.5px;
     text-transform: uppercase;
     letter-spacing: .4px;
-    color: #8b8f86;
+    color: #706e6b;
     font-weight: 700;
     white-space: nowrap;
 }
@@ -188,7 +213,7 @@
 }
 
 .na-why {
-    color: #5b6058;
+    color: #706e6b;
     font-size: 12px;
     margin-top: 2px;
     line-height: 1.4;
@@ -222,26 +247,32 @@
     flex: none;
 }
 
-.ci-orange { background: #fdeee5; color: #e2622b; }
+.ci-orange { background: #fdeee6; color: #c06040; }
 .ci-slate  { background: #eef0f2; color: #5b6470; }
 
 .card-title {
     font-weight: 700;
     font-size: 13.5px;
     color: #1f2421;
+    flex: 1;
+}
+
+.card-actions {
+    display: flex;
+    gap: 6px;
 }
 
 .card-note {
     padding: 10px 15px;
     font-size: 12px;
-    color: #5b6058;
+    color: #706e6b;
     border-top: 1px solid #e6e2d9;
 }
 
 .empty-msg {
     padding: 16px 15px;
     font-size: 12.5px;
-    color: #8b8f86;
+    color: #706e6b;
     font-style: italic;
 }
 
@@ -257,11 +288,11 @@
     font-size: 10.5px;
     text-transform: uppercase;
     letter-spacing: .4px;
-    color: #8b8f86;
+    color: #706e6b;
     font-weight: 600;
     padding: 8px 12px;
-    border-bottom: 1px solid #d8d3c7;
-    background: #fbfaf7;
+    border-bottom: 1px solid #e6e2d9;
+    background: #fbfaf6;
 }
 
 .tbl td {
@@ -271,14 +302,15 @@
 }
 
 .tbl tr:last-child td { border-bottom: none; }
+.tbl tr:hover td { background: #fbfaf6; }
 .tbl-r { text-align: right; }
-.tbl-link { color: #2d5f8a; text-decoration: none; }
+.tbl-link { color: #2c7a4b; text-decoration: none; }
 .tbl-link:hover { text-decoration: underline; }
 
 /* Deal row chips */
-.chip-green  { background: #e6f3ec; color: #2e7d5b; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
-.chip-amber  { background: #fbf1d8; color: #b07d12; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
-.chip-red    { background: #fbe9e6; color: #c0392b; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+.chip-green  { background: #e6f3ea; color: #1f5c38; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+.chip-amber  { background: #fdeee6; color: #c06040; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+.chip-red    { background: #fde8ee; color: #9c2c20; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
 .chip-slate  { background: #eef0f2; color: #5b6470; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 600; }
 
 /* ── Key-value grid ──────────────────────────────────────────────── */
@@ -297,7 +329,7 @@
     font-size: 10.5px;
     text-transform: uppercase;
     letter-spacing: .4px;
-    color: #8b8f86;
+    color: #706e6b;
     font-weight: 600;
 }
 

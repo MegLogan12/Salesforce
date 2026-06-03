@@ -21,6 +21,20 @@
         <template if:false={isLoading}>
             <template if:false={hasError}>
 
+                <!-- ── Page Header ─────────────────────────────────────── -->
+                <div class="page-header">
+                    <div class="page-header-icon">
+                        <lightning-icon icon-name="utility:opportunity" size="small" variant="inverse"></lightning-icon>
+                    </div>
+                    <div>
+                        <h1 class="page-title">ODL Console</h1>
+                        <p class="page-sub">Open opportunities, tasks, and leads at a glance</p>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="header-btn-primary" onclick={handleNewOpportunity}>+ New Opportunity</button>
+                    </div>
+                </div>
+
                 <!-- ── KPI Row ─────────────────────────────────────────── -->
                 <div class="kpi-row">
                     <div class="kpi-chip kc-orange" onclick={handleOpenOpportunities} title="View all open ODL opportunities">
@@ -78,6 +92,7 @@
                                         <th class="num-col">Pipeline</th>
                                         <th class="num-col">Quote Requested</th>
                                         <th class="num-col">Consultation Scheduled</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -103,6 +118,9 @@
                                                 <template if:false={row.isEmpty}>{row.consultations}</template>
                                                 <template if:true={row.isEmpty}><span class="muted">0</span></template>
                                             </td>
+                                            <td>
+                                                <button class="btn-inline" onclick={handleOpenOpportunities}>View</button>
+                                            </td>
                                         </tr>
                                     </template>
                                 </tbody>
@@ -123,6 +141,7 @@
                                     <lightning-icon icon-name="utility:task" size="x-small" variant="inverse"></lightning-icon>
                                 </div>
                                 <h2 class="card-title">Overdue Follow-Ups on Open Opportunities</h2>
+                                <button class="btn-inline" onclick={handleNewTask}>+ New Task</button>
                             </div>
 
                             <template if:true={hasActivity}>
@@ -134,6 +153,7 @@
                                             <th>Due</th>
                                             <th>Overdue By</th>
                                             <th>Owner</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -156,6 +176,9 @@
                                                     <span class="status-chip chip-alert">{row.daysOverdue}</span>
                                                 </td>
                                                 <td class="muted">{row.ownerName}</td>
+                                                <td>
+                                                    <button class="btn-inline" data-id={row.id} onclick={handleCompleteTask}>Complete</button>
+                                                </td>
                                             </tr>
                                         </template>
                                     </tbody>
@@ -166,6 +189,7 @@
                                 <div class="empty-state">
                                     <lightning-icon icon-name="utility:check" size="small" variant="success"></lightning-icon>
                                     <p>No overdue follow-up tasks on open ODL opportunities.</p>
+                                    <button class="btn btn-primary" onclick={handleNewTask}>Create Task</button>
                                 </div>
                             </template>
 

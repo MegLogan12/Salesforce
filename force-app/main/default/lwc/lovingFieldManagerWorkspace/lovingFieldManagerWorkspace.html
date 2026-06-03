@@ -23,12 +23,17 @@
 
                 <!-- Page header -->
                 <div class="page-header">
-                    <div class="page-header-icon" style="background:var(--odl-blue)">
+                    <div class="page-header-icon" style="background:#2c7a4b">
                         <lightning-icon icon-name="utility:map" size="small" variant="inverse"></lightning-icon>
                     </div>
                     <div>
                         <h1 class="page-title">Field Manager Workspace</h1>
                         <p class="page-sub">Today's service appointments and open work</p>
+                    </div>
+                    <div class="page-cta-row">
+                        <button type="button" class="btn btn-primary" onclick={handleViewCrew}>View Crew</button>
+                        <button type="button" class="btn btn-lav" onclick={handleDispatch}>Dispatch</button>
+                        <button type="button" class="btn btn-rose" onclick={handleFlagIssue}>Flag Issue</button>
                     </div>
                     <lightning-button-icon
                         icon-name="utility:refresh"
@@ -66,7 +71,7 @@
                     <div class="body-main">
                         <div class="card">
                             <div class="card-header">
-                                <div class="card-icon" style="background:var(--odl-blue)">
+                                <div class="card-icon" style="background:#2c7a4b">
                                     <lightning-icon icon-name="utility:date_input" size="x-small" variant="inverse"></lightning-icon>
                                 </div>
                                 <h2 class="card-title">Today's Service Appointments</h2>
@@ -89,6 +94,7 @@
                                             <th>End</th>
                                             <th>Resource</th>
                                             <th>Work Order</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -114,6 +120,9 @@
                                                     </template>
                                                 </td>
                                                 <td class="muted">{row.workOrderSubject}</td>
+                                                <td>
+                                                    <button type="button" class="btn-inline" data-id={row.id} onclick={handleOpenRecord}>Open</button>
+                                                </td>
                                             </tr>
                                         </template>
                                     </tbody>
@@ -141,12 +150,24 @@
                     <div class="body-rail">
                         <div class="card">
                             <div class="card-header">
-                                <div class="card-icon" style="background:var(--odl-orange)">
+                                <div class="card-icon" style="background:#e8936a">
                                     <lightning-icon icon-name="utility:lightning_strike" size="x-small" variant="inverse"></lightning-icon>
                                 </div>
                                 <h2 class="card-title">Quick Actions</h2>
                             </div>
                             <div class="qa-list">
+                                <div class="qa-item" onclick={handleViewCrew}>
+                                    <lightning-icon icon-name="utility:groups" size="x-small"></lightning-icon>
+                                    <span>View Crew</span>
+                                </div>
+                                <div class="qa-item" onclick={handleDispatch}>
+                                    <lightning-icon icon-name="utility:routing_offline" size="x-small"></lightning-icon>
+                                    <span>Dispatch</span>
+                                </div>
+                                <div class="qa-item" onclick={handleFlagIssue}>
+                                    <lightning-icon icon-name="utility:warning" size="x-small"></lightning-icon>
+                                    <span>Flag Issue</span>
+                                </div>
                                 <div class="qa-item" onclick={handleOpenAppointments}>
                                     <lightning-icon icon-name="utility:date_input" size="x-small"></lightning-icon>
                                     <span>View all appointments</span>

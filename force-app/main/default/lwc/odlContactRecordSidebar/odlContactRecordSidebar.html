@@ -11,7 +11,7 @@
             </div>
             <div class="card-body">
                 <div class="mini">
-                    <span class="mini-icon" style="background:#2d5f8a">{accountInitials}</span>
+                    <span class="mini-icon" style="background:#c890c0">{accountInitials}</span>
                     <div>
                         <div class="mini-name">
                             <a href={pageData.accountUrl} class="link-blue">{pageData.accountName}</a>
@@ -21,7 +21,7 @@
                 </div>
                 <template for:each={pageData.householdMembers} for:item="m">
                     <div key={m.contactId} class="mini">
-                        <span class="mini-icon" style="background:#5b6470">{m.initials}</span>
+                        <span class="mini-icon" style="background:#9b7ec8">{m.initials}</span>
                         <div>
                             <div class="mini-name">
                                 <a href={m.recordUrl} class="link-blue">{m.name}</a>
@@ -73,7 +73,7 @@
                 </div>
                 <div class="card-body">
                     <div class="mini">
-                        <span class="mini-icon" style="background:#2e7d5b">{ownerInitials}</span>
+                        <span class="mini-icon" style="background:#2c7a4b">{ownerInitials}</span>
                         <div>
                             <div class="mini-name">{pageData.ownerName}</div>
                         </div>
@@ -105,6 +105,11 @@
                 <template lwc:else>
                     <div class="empty-msg">No recent activity recorded.</div>
                 </template>
+            </div>
+            <div class="card-actions">
+                <button class="btn-inline" onclick={handleNewActivity}>+ New Activity</button>
+                <button class="btn-inline" onclick={handleSendEmail}>Send Email</button>
+                <button class="btn-inline" onclick={handleAddNote}>Add Note</button>
             </div>
         </div>
 

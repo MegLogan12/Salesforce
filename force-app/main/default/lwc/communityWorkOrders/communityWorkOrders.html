@@ -15,7 +15,7 @@
                     <thead>
                         <tr>
                             <th>Work Order</th><th>Lot</th><th>Type</th><th>Foreman</th><th>Crew</th>
-                            <th>Scheduled</th><th>Status</th><th>Foreman Submit</th><th>FM QI</th>
+                            <th>Scheduled</th><th>Status</th><th>Foreman Submit</th><th>FM QI</th><th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -30,6 +30,7 @@
                                 <td><span class={r.statusClass}>{r.status}</span></td>
                                 <td><span class={r.foremanSubmitClass}>{r.foremanSubmit}</span></td>
                                 <td><span class={r.qiClass}>{r.qi}</span></td>
+                                <td><button class="btn-inline" data-id={r.id} onclick={handleViewWorkOrder}>View</button></td>
                             </tr>
                         </template>
                     </tbody>

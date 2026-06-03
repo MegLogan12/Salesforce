@@ -81,7 +81,7 @@
                             <button type="button" class="ch-link" data-target="installs" onclick={handleNavToTab}>View all {homeData.kpiInstallsToday} →</button>
                         </div>
                         <table class="tbl">
-                            <thead><tr><th>WO</th><th>Lot</th><th>Community</th><th>Install Crew</th><th>Field manager</th><th>Status</th></tr></thead>
+                            <thead><tr><th>WO</th><th>Lot</th><th>Community</th><th>Install Crew</th><th>Field manager</th><th>Status</th><th>Action</th></tr></thead>
                             <tbody>
                                 <template for:each={installsToday} for:item="row">
                                     <tr key={row.id}>
@@ -91,6 +91,7 @@
                                         <td>{row.crewName}</td>
                                         <td>{row.techName}</td>
                                         <td><span class={row.statusChip}>{row.statusLabel}</span></td>
+                                        <td><button type="button" class="btn-inline" data-id={row.id} onclick={handleNavToRecord}>Open</button></td>
                                     </tr>
                                 </template>
                             </tbody>

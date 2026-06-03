@@ -7,6 +7,9 @@
                     <li key={item}>{item}</li>
                 </template>
             </ul>
+            <div class="card-footer">
+                <button class="btn btn-primary" onclick={handleCreateTask}>Create Task</button>
+            </div>
         </section>
 
         <section class="card">
@@ -21,6 +24,9 @@
             <template lwc:else>
                 <div class="empty">No activity is logged on this opportunity.</div>
             </template>
+            <div class="card-footer">
+                <button class="btn btn-ghost" onclick={handleLogActivity}>Log Activity</button>
+            </div>
         </section>
 
         <section class="card">

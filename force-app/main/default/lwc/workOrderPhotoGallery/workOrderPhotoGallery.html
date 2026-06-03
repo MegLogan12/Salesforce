@@ -33,6 +33,9 @@
                                 <template if:true={p.notes}>
                                     <p class="notes">{p.notes}</p>
                                 </template>
+                                <div class="photo-card-actions">
+                                    <button class="btn-inline" data-id={p.id} onclick={handleViewFullSize}>View Full Size</button>
+                                </div>
                             </article>
                         </template>
                     </div>

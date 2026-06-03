@@ -23,6 +23,11 @@
                     <div class="ticket-subject">{header.subject}</div>
                     <div class="ticket-subtitle">{identitySubtitle}</div>
                 </div>
+                <div class="ticket-cta-row">
+                    <button type="button" class="btn btn-primary" onclick={handleSubmit}>Submit</button>
+                    <button type="button" class="btn btn-ghost" onclick={handlePrint}>Print</button>
+                    <button type="button" class="btn btn-rose" onclick={handleComplete}>Complete</button>
+                </div>
                 <div class="ticket-pill-strip">
                     <div class="ticket-pill">
                         <span class="pill-label">Status</span>
@@ -88,7 +93,7 @@
                                     <th>Scheduled Window</th>
                                     <th>Territory</th>
                                     <th>Assigned Resource</th>
-                                    <th></th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -100,7 +105,7 @@
                                         <td>{row.serviceTerritory}</td>
                                         <td>{row.assignedResource}</td>
                                         <td>
-                                            <button class="sf-btn"
+                                            <button type="button" class="btn-inline"
                                                 data-id={row.serviceAppointmentId}
                                                 onclick={handleOpenAppointment}>
                                                 Open
@@ -174,7 +179,7 @@
                         </template>
                     </div>
                     <div class="photo-gallery-cta">
-                        <button class="sf-btn" onclick={handleOpenFiles}>View Files &amp; Photos</button>
+                        <button type="button" class="sf-btn" onclick={handleOpenFiles}>View Files &amp; Photos</button>
                     </div>
                 </div>
             </div>

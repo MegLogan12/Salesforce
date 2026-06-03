@@ -3,15 +3,15 @@
     overflow-x: auto;
     padding: 12px;
     gap: 12px;
-    background: #F3F3F3;
+    background: #f5f2ec;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 .kanban-column {
     min-width: 280px;
     width: 280px;
-    background: #FAFAF9;
+    background: #fbfaf6;
     border-radius: 6px;
-    border: 1px solid #D8DDE6;
+    border: 1px solid #e6e2d9;
     display: flex;
     flex-direction: column;
 }
@@ -19,7 +19,7 @@
     display: flex;
     justify-content: space-between;
     padding: 10px 12px;
-    background: #16325C;
+    background: linear-gradient(135deg, #9b7ec8 0%, #6840a0 100%);
     color: #fff;
     border-radius: 6px 6px 0 0;
     font-size: 11px;
@@ -40,7 +40,7 @@
 }
 .kanban-empty {
     text-align: center;
-    color: #54698D;
+    color: #706e6b;
     font-size: 11px;
     padding: 20px;
     font-style: italic;
@@ -48,7 +48,7 @@
 .wo-card-green, .wo-card-amber, .wo-card-red {
     display: block;
     text-decoration: none;
-    color: #181818;
+    color: #1f2421;
     padding: 8px 10px;
     margin-bottom: 6px;
     border-radius: 4px;
@@ -61,20 +61,21 @@
     transform: translateX(2px);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     text-decoration: none;
-    color: #181818;
+    color: #1f2421;
+    background: #fbfaf6;
 }
-.wo-card-green { border-left-color: #04844B; }
-.wo-card-amber { border-left-color: #FE9339; }
-.wo-card-red { border-left-color: #C23934; background: #FCE8E8; }
+.wo-card-green { border-left-color: #2c7a4b; }
+.wo-card-amber { border-left-color: #e8936a; }
+.wo-card-red { border-left-color: #c4607a; background: #fde8ee; }
 .card-number {
     font-size: 12px;
     font-weight: 600;
-    color: #0070D2;
+    color: #2c7a4b;
     margin-bottom: 2px;
 }
 .card-meta {
     font-size: 10px;
-    color: #54698D;
+    color: #706e6b;
     display: flex;
     justify-content: space-between;
     margin-bottom: 4px;
@@ -82,18 +83,25 @@
 .card-lot {
     font-size: 11px;
     font-weight: 500;
-    color: #181818;
+    color: #1f2421;
     margin-bottom: 2px;
 }
 .card-date {
     font-size: 10px;
-    color: #54698D;
+    color: #706e6b;
     font-variant-numeric: tabular-nums;
 }
 .card-takeoff {
     font-size: 9px;
-    color: #54698D;
+    color: #706e6b;
     margin-top: 2px;
     text-transform: uppercase;
     letter-spacing: 0.3px;
 }
+.card-actions {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+}
+.btn-inline { font-size:11px; font-weight:600; padding:3px 8px; border-radius:5px; border:1.5px solid #2c7a4b; background:transparent; color:#2c7a4b; cursor:pointer; }
+.btn-inline-rose { font-size:11px; font-weight:600; padding:3px 8px; border-radius:5px; border:1.5px solid #c4607a; background:transparent; color:#c4607a; cursor:pointer; }

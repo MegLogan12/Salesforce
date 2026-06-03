@@ -2,7 +2,7 @@
     <template if:true={loaded}>
         <div class="card">
             <div class="card-header">
-                <div class="card-icon ci-amber">!</div>
+                <div class="card-icon">!</div>
                 <h2 class="card-title">Service Flags</h2>
             </div>
             <div class="card-body">
@@ -12,6 +12,7 @@
                             <li key={flag.id} class={flag.cls}>
                                 <span class="flag-icon">{flag.icon}</span>
                                 <span class="flag-message">{flag.message}</span>
+                                <button class="btn-inline" data-id={flag.id} onclick={handleViewFlag}>View</button>
                             </li>
                         </template>
                     </ul>
@@ -33,6 +34,9 @@
                         </template>
                     </ul>
                 </template>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-rose" onclick={handleFlagIssue}>Flag Issue</button>
             </div>
         </div>
     </template>

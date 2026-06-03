@@ -22,6 +22,9 @@
             </div>
 
             <template if:true={hasEntries}>
+                <div class="table-toolbar">
+                    <button class="btn btn-primary" onclick={handleAddEntry}>Add Time Entry</button>
+                </div>
                 <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-m-top_small">
                     <thead>
                         <tr>
@@ -29,6 +32,7 @@
                             <th>Hours</th>
                             <th>Date</th>
                             <th>Source</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -38,12 +42,16 @@
                                 <td>{e.hours}</td>
                                 <td>{e.entryDate}</td>
                                 <td>{e.source}</td>
+                                <td><button class="btn-inline" data-id={e.id} onclick={handleEditEntry}>Edit</button></td>
                             </tr>
                         </template>
                     </tbody>
                 </table>
             </template>
             <template if:false={hasEntries}>
+                <div class="table-toolbar">
+                    <button class="btn btn-primary" onclick={handleAddEntry}>Add Time Entry</button>
+                </div>
                 <p class="slds-text-color_weak slds-m-top_small">No time entries captured.</p>
             </template>
         </div>

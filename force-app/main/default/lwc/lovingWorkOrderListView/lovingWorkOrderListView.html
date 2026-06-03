@@ -2,7 +2,7 @@
     <!-- ── Record header ──────────────────────────────────────────────────── -->
     <div class="rec-header">
         <div class="rec-top-row">
-            <div class="rec-icon" style="background:#1d9e75;">📋</div>
+            <div class="rec-icon">📋</div>
             <div class="rec-title-block">
                 <div class="rec-breadcrumb">Work Orders</div>
                 <div class="rec-title-row">
@@ -108,6 +108,7 @@
                             <th class="num">Goal hrs</th>
                             <th class="num">Actual</th>
                             <th>Scheduled</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -128,6 +129,10 @@
                                 <td class="num">{row.goalHrs}</td>
                                 <td class="num">{row.actualHrs}</td>
                                 <td>{row.scheduledDate}</td>
+                                <td onclick={stopProp} style="white-space:nowrap;">
+                                    <button class="btn-inline" data-id={row.id} onclick={handleRowClick}>View</button>
+                                    <button class="btn-inline" style="margin-left:4px;" data-id={row.id} onclick={handleRowClick}>Assign</button>
+                                </td>
                             </tr>
                         </template>
                     </tbody>

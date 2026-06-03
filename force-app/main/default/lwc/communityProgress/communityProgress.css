@@ -1,11 +1,29 @@
 :host {
-    --border: #E0E5EE;
+    --border: #e6e2d9;
     --bg-card: #FFFFFF;
     --radius-card: 8px;
     --shadow-card: 0 1px 4px rgba(0,0,0,0.10);
-    --text-dark: #181818;
-    --text-light: #6B7280;
-    --odl-blue: #0176D3;
+    --text-dark: #1f2421;
+    --text-light: #9c8e80;
+    --odl-blue: #2c7a4b;
+
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
 }
 
 .card {
@@ -22,6 +40,7 @@
     gap: 10px;
     padding: 14px 16px 12px;
     border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #e8936a 0%, #c06040 100%);
 }
 
 .card-icon {
@@ -35,6 +54,7 @@
     font-weight: 700;
     color: #fff;
     flex-shrink: 0;
+    background: rgba(255,255,255,0.2);
 }
 
 .ci-blue { background: var(--odl-blue); }
@@ -42,8 +62,9 @@
 .card-title {
     font-size: 14px;
     font-weight: 700;
-    color: var(--text-dark);
+    color: #ffffff;
     margin: 0;
+    flex: 1;
 }
 
 .card-body {
@@ -58,7 +79,7 @@
 
 .stat-chip {
     flex: 1;
-    background: #F3F5F8;
+    background: #f5f2ec;
     border-radius: 6px;
     padding: 12px 14px;
     text-align: center;
@@ -99,9 +120,24 @@
     margin-top: 4px;
 }
 
+.card-footer {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+}
+
 .loading-state {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 80px;
 }
+
+.btn { font-size:13px; font-weight:600; padding:7px 14px; border-radius:7px; border:none; cursor:pointer; }
+.btn-primary { background:#2c7a4b; color:#fff; }
+.btn-primary:hover { background:#1f5c38; }
+.btn-ghost { background:transparent; color:#2c7a4b; border:1.5px solid #2c7a4b; }
+.btn-rose { background:#c4607a; color:#fff; }
+.btn-peach { background:#e8936a; color:#fff; }
+.btn-inline { font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; border:1.5px solid #2c7a4b; background:transparent; color:#2c7a4b; cursor:pointer; }

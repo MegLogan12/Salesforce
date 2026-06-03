@@ -78,6 +78,8 @@
                                     <td>{row.numberOfLeads}</td>
                                     <td>{row.numberOfContacts}</td>
                                     <td>
+                                        <button class="btn-inline-green" data-id={row.id} onclick={handleAddMember}>Add Member</button>
+                                        <button class="btn-inline" data-id={row.id} onclick={handleExportList}>Export List</button>
                                         <button class="primary-btn" data-id={row.id} onclick={handleOpenRecord}>Open</button>
                                     </td>
                                 </tr>

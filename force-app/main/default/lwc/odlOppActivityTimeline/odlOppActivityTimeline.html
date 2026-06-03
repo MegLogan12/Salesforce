@@ -5,6 +5,10 @@
             <template lwc:if={lastAction}>
                 <span class="last-action-summary">{lastAction} · {lastActionDate}</span>
             </template>
+            <div class="timeline-header-actions">
+                <button class="btn-inline" onclick={handleNewActivity}>+ New Activity</button>
+                <button class="btn-inline" onclick={handleLogCall}>Log Call</button>
+            </div>
         </div>
 
         <template lwc:if={hasInteractions}>

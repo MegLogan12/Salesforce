@@ -1,3 +1,25 @@
+:host {
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
+}
+
 .engagement-card {
     border-radius: 8px;
     padding: 1rem;
@@ -6,11 +28,11 @@
     background: #fff;
 }
 
-.engagement-card.engagement-active { border-color: #2e7d32; background: #f1f8e9; }
-.engagement-card.engagement-slowing { border-color: #f57c00; background: #fff8e1; }
-.engagement-card.engagement-dark { border-color: #c62828; background: #ffeaea; }
-.engagement-card.engagement-reengaged { border-color: #1565c0; background: #e3f2fd; }
-.engagement-card.engagement-na { border-color: #757575; background: #f5f5f5; }
+.engagement-card.engagement-active { border-color: #2c7a4b; background: #e6f3ea; }
+.engagement-card.engagement-slowing { border-color: #e8936a; background: #fdeee6; }
+.engagement-card.engagement-dark { border-color: #9c2c20; background: #fde8ee; }
+.engagement-card.engagement-reengaged { border-color: #9b7ec8; background: #ede8f6; }
+.engagement-card.engagement-na { border-color: #706e6b; background: #f5f2ec; }
 
 .engagement-header {
     display: flex;
@@ -24,7 +46,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #333;
+    color: #1f2421;
 }
 
 .engagement-badge {
@@ -35,10 +57,10 @@
     text-transform: uppercase;
 }
 
-.engagement-badge.engagement-active { background: #2e7d32; color: #fff; }
-.engagement-badge.engagement-slowing { background: #f57c00; color: #fff; }
-.engagement-badge.engagement-dark { background: #c62828; color: #fff; }
-.engagement-badge.engagement-reengaged { background: #1565c0; color: #fff; }
+.engagement-badge.engagement-active { background: #2c7a4b; color: #fff; }
+.engagement-badge.engagement-slowing { background: #e8936a; color: #fff; }
+.engagement-badge.engagement-dark { background: #9c2c20; color: #fff; }
+.engagement-badge.engagement-reengaged { background: #9b7ec8; color: #fff; }
 
 .engagement-metrics {
     display: flex;
@@ -56,7 +78,7 @@
     font-size: 1.4rem;
     font-weight: 700;
     line-height: 1.2;
-    color: #111;
+    color: #1f2421;
 }
 
 .metric-date {
@@ -65,7 +87,7 @@
 
 .metric-label {
     font-size: 0.7rem;
-    color: #666;
+    color: #706e6b;
     text-transform: uppercase;
     letter-spacing: 0.03em;
 }
@@ -81,7 +103,7 @@
     margin: 0 0 0.5rem;
     font-size: 0.82rem;
     font-weight: 600;
-    color: #333;
+    color: #1f2421;
 }
 
 .engagement-exits {
@@ -101,20 +123,20 @@
     cursor: pointer;
 }
 
-.btn-exit-nurture { background: #e3f2fd; color: #1565c0; }
-.btn-exit-nurture:hover { background: #bbdefb; }
-.btn-exit-lost { background: #ffeaea; color: #c62828; }
-.btn-exit-lost:hover { background: #ffcdd2; }
+.btn-exit-nurture { background: #ede8f6; color: #6840a0; }
+.btn-exit-nurture:hover { background: #d8d0f0; }
+.btn-exit-lost { background: #fde8ee; color: #9c2c20; }
+.btn-exit-lost:hover { background: #fbd0dc; }
 
 .engagement-no-auto-close {
     margin: 0;
     font-size: 0.68rem;
-    color: #888;
+    color: #706e6b;
     font-style: italic;
 }
 
 .engagement-closed-msg {
     margin: 0;
     font-size: 0.82rem;
-    color: #757575;
+    color: #706e6b;
 }

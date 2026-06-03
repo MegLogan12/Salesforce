@@ -1,6 +1,29 @@
+/* ── Design tokens ──────────────────────────────────────────────────────────── */
+:host {
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
+}
+
 /* ── Shell ──────────────────────────────────────────────────────────────── */
 .ticket-shell {
-    background: #F3F5F8;
+    background: #f5f2ec;
     font-family: 'Salesforce Sans', Arial, sans-serif;
     padding: 0 0 24px;
 }
@@ -11,7 +34,7 @@
     align-items: flex-start;
     gap: 14px;
     padding: 16px 20px 14px;
-    background: #16325C;
+    background: linear-gradient(135deg, #2c7a4b 0%, #1f5c38 100%);
     color: #fff;
 }
 
@@ -19,7 +42,7 @@
     width: 40px;
     height: 40px;
     border-radius: 8px;
-    background: #E86826;
+    background: rgba(255,255,255,0.2);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -81,6 +104,59 @@
     color: #fff;
 }
 
+/* ── Header CTAs ────────────────────────────────────────────────────────── */
+.ticket-cta-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-left: auto;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
+.btn {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #2c7a4b;
+    color: #fff;
+    border: 1.5px solid rgba(255,255,255,0.4);
+}
+
+.btn-primary:hover { background: #1f5c38; }
+
+.btn-ghost {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border: 1.5px solid rgba(255,255,255,0.4);
+}
+
+.btn-ghost:hover { background: rgba(255,255,255,0.25); }
+
+.btn-rose {
+    background: rgba(196,96,122,0.85);
+    color: #fff;
+    border: 1.5px solid rgba(255,255,255,0.3);
+}
+
+.btn-rose:hover { background: #9c3052; }
+
+.btn-inline {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1.5px solid #2c7a4b;
+    background: transparent;
+    color: #2c7a4b;
+    cursor: pointer;
+}
+
 /* ── Layout ─────────────────────────────────────────────────────────────── */
 .two-up {
     display: grid;
@@ -99,7 +175,7 @@
 .card {
     background: #ffffff;
     border-radius: 8px;
-    border: 1px solid #E0E5EE;
+    border: 1px solid #e6e2d9;
     box-shadow: 0 1px 4px rgba(0,0,0,0.10);
     overflow: hidden;
 }
@@ -109,19 +185,20 @@
     align-items: center;
     gap: 8px;
     padding: 12px 16px 10px;
-    border-bottom: 1px solid #E0E5EE;
+    border-bottom: 1px solid #e6e2d9;
+    background: #fbfaf6;
 }
 
 .ch {
     font-size: 13px;
-    color: #54698D;
+    color: #706e6b;
     flex-shrink: 0;
 }
 
 .card-title {
     font-size: 13px;
     font-weight: 700;
-    color: #181818;
+    color: #1f2421;
     margin: 0;
 }
 
@@ -139,7 +216,7 @@
 .meta-label {
     font-size: 10px;
     font-weight: 600;
-    color: #6B7280;
+    color: #706e6b;
     text-transform: uppercase;
     letter-spacing: 0.04em;
     margin-bottom: 2px;
@@ -147,7 +224,7 @@
 
 .meta-value {
     font-size: 13px;
-    color: #181818;
+    color: #1f2421;
     font-weight: 500;
 }
 
@@ -159,7 +236,7 @@
 }
 
 .tbl thead tr {
-    background: #F8F9FB;
+    background: #fbfaf6;
 }
 
 .tbl th {
@@ -167,16 +244,16 @@
     text-align: left;
     font-size: 10px;
     font-weight: 700;
-    color: #6B7280;
+    color: #706e6b;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    border-bottom: 1px solid #E0E5EE;
+    border-bottom: 1px solid #e6e2d9;
 }
 
 .tbl td {
     padding: 9px 12px;
-    color: #181818;
-    border-bottom: 1px solid #E0E5EE;
+    color: #1f2421;
+    border-bottom: 1px solid #e6e2d9;
     vertical-align: middle;
 }
 
@@ -185,18 +262,18 @@
 }
 
 .tbl tbody tr:hover {
-    background: #F8F9FB;
+    background: #fbfaf6;
 }
 
 .num {
     text-align: right;
 }
 
-/* ── Buttons ─────────────────────────────────────────────────────────────── */
+/* ── Legacy button (sf-btn) ──────────────────────────────────────────────── */
 .sf-btn {
     background: #fff;
-    border: 1px solid #D8DDE6;
-    color: #0176D3;
+    border: 1px solid #e6e2d9;
+    color: #2c7a4b;
     font-size: 12px;
     font-weight: 600;
     padding: 4px 12px;
@@ -206,20 +283,20 @@
 }
 
 .sf-btn:hover {
-    background: #F3F5F8;
+    background: #f5f2ec;
 }
 
 /* ── Photo CTA ──────────────────────────────────────────────────────────── */
 .photo-gallery-cta {
     margin-top: 14px;
     padding-top: 12px;
-    border-top: 1px solid #E0E5EE;
+    border-top: 1px solid #e6e2d9;
 }
 
 /* ── States ─────────────────────────────────────────────────────────────── */
 .empty-note {
     font-size: 12px;
-    color: #6B7280;
+    color: #706e6b;
     font-style: italic;
     padding: 4px 0;
 }
@@ -236,7 +313,7 @@
     align-items: center;
     gap: 10px;
     padding: 24px 20px;
-    color: #BA0517;
+    color: #9c2c20;
     font-size: 13px;
 }
 

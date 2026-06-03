@@ -7,6 +7,11 @@
         <div class="sc-banner-title">LOVING Schedule Console</div>
         <div class="sc-banner-sub">{todayDisplay} · {territory}</div>
     </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-right:16px">
+        <button type="button" class="btn btn-lav" onclick={handleSchedule}>Schedule</button>
+        <button type="button" class="btn btn-primary" onclick={handleAssignCrew}>Assign Crew</button>
+        <button type="button" class="btn btn-peach" onclick={handleBlockDate}>Block Date</button>
+    </div>
     <div class="sc-banner-kpis">
         <div class="sc-bk">
             <span class="sc-bk-n">{todayKpi.crewsOut}</span>
@@ -96,7 +101,7 @@
                 <table class="tbl">
                     <thead><tr>
                         <th>Work Order</th><th>Community</th><th>Lot</th><th>Crew</th>
-                        <th>FM</th><th>Time</th><th class="num">Goal Hrs</th><th>Status</th>
+                        <th>FM</th><th>Time</th><th class="num">Goal Hrs</th><th>Status</th><th>Action</th>
                     </tr></thead>
                     <tbody>
                         <template for:each={todayStops} for:item="s">
@@ -106,6 +111,7 @@
                                 <td>{s.fm}</td><td>{s.scheduledTime}</td>
                                 <td class="num">{s.goalHours}</td>
                                 <td><span class={s.statusCls}>{s.statusLabel}</span></td>
+                                <td><button type="button" class="btn-inline" data-id={s.id} onclick={handleNavigateWO}>Open</button></td>
                             </tr>
                         </template>
                     </tbody>

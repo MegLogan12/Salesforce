@@ -39,9 +39,15 @@
                     </div>
                 </template>
             </div>
+            <div class="inspection-actions">
+                <button class="btn btn-ghost" onclick={handleViewInspection}>View Full Inspection</button>
+            </div>
         </template>
         <template lwc:else>
             <div class="empty">QI Inspection not yet submitted.</div>
+            <div class="inspection-actions">
+                <button class="btn btn-primary" onclick={handleStartInspection}>Start Inspection</button>
+            </div>
         </template>
     </div>
 </template>

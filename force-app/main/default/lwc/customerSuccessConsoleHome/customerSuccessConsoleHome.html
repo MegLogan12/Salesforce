@@ -10,6 +10,7 @@
             <div class="odl-error-state">
                 <lightning-icon icon-name="utility:error" size="large"></lightning-icon>
                 <p>{error}</p>
+                <button class="btn btn-primary" onclick={handleRefresh}>Retry</button>
             </div>
         </div>
     </template>
@@ -27,9 +28,12 @@
                             <div class="page-subtitle">Escalations · Warranty &amp; Service Cases · Follow-ups</div>
                         </div>
                     </div>
-                    <button class="refresh-btn" onclick={handleRefresh} title="Refresh">
-                        <lightning-icon icon-name="utility:refresh" size="x-small"></lightning-icon>
-                    </button>
+                    <div class="page-header-actions">
+                        <button class="header-btn-primary" onclick={handleNewCase}>+ New Case</button>
+                        <button class="refresh-btn" onclick={handleRefresh} title="Refresh">
+                            <lightning-icon icon-name="utility:refresh" size="x-small"></lightning-icon>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -62,10 +66,11 @@
                     <!-- Recent Cases (escalated first) -->
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-icon" style="background:#EEF3FA;">
+                            <div class="card-icon" style="background:#e6f3ea;">
                                 <lightning-icon icon-name="standard:case" size="x-small"></lightning-icon>
                             </div>
                             <h2 class="card-title">Open Cases — Escalated &amp; Priority</h2>
+                            <button class="btn-inline" onclick={handleNewCase}>+ New Case</button>
                         </div>
                         <template lwc:if={hasRecentCases}>
                             <table class="odl-table">
@@ -78,6 +83,7 @@
                                         <th>Status</th>
                                         <th>Priority</th>
                                         <th>Created</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -105,6 +111,10 @@
                                                 <span class={row.priorityClass}>{row.priority}</span>
                                             </td>
                                             <td class="muted">{row.createdDate}</td>
+                                            <td>
+                                                <button class="btn-inline" data-id={row.id} onclick={handleViewCase}>View</button>
+                                                <button class="btn-inline-rose" data-id={row.id} onclick={handleEscalateCase} style="margin-left:4px">Escalate</button>
+                                            </td>
                                         </tr>
                                     </template>
                                 </tbody>
@@ -114,6 +124,7 @@
                             <div class="empty-state">
                                 <lightning-icon icon-name="utility:check" size="medium"></lightning-icon>
                                 <p>No open cases — excellent!</p>
+                                <button class="btn btn-primary" onclick={handleNewCase}>Create New Case</button>
                             </div>
                         </template>
                         <div class="card-footer">
@@ -124,10 +135,11 @@
                     <!-- Overdue Follow-ups -->
                     <div class="card">
                         <div class="card-header">
-                            <div class="card-icon" style="background:#FFF4EC;">
+                            <div class="card-icon" style="background:#fdeee6;">
                                 <lightning-icon icon-name="utility:task" size="x-small"></lightning-icon>
                             </div>
                             <h2 class="card-title">Overdue Follow-Ups</h2>
+                            <button class="btn-inline" onclick={handleNewTask}>+ New Follow-Up</button>
                         </div>
                         <template lwc:if={hasOverdueFollowUps}>
                             <table class="odl-table">
@@ -138,6 +150,7 @@
                                         <th>Owner</th>
                                         <th>Due Date</th>
                                         <th>Status</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -152,6 +165,9 @@
                                                 <span class="status-chip chip-alert">{row.activityDate}</span>
                                             </td>
                                             <td class="muted">{row.status}</td>
+                                            <td>
+                                                <button class="btn-inline" data-id={row.id} onclick={handleCompleteTask}>Complete</button>
+                                            </td>
                                         </tr>
                                     </template>
                                 </tbody>
@@ -161,6 +177,7 @@
                             <div class="empty-state">
                                 <lightning-icon icon-name="utility:check" size="medium"></lightning-icon>
                                 <p>No overdue follow-ups.</p>
+                                <button class="btn btn-primary" onclick={handleNewTask}>Create Follow-Up</button>
                             </div>
                         </template>
                     </div>

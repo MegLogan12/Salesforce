@@ -11,6 +11,7 @@
                 <div class="hero-actions">
                     <button class="cta cta-secondary" onclick={handleOpenMobileView}>Open Mobile View</button>
                     <button class="cta" onclick={handleEditWorkOrder}>Update Status</button>
+                    <button class="cta" onclick={handleNewTask}>+ Field Task</button>
                 </div>
             </section>
 
@@ -66,6 +67,7 @@
                                     <th>Owner</th>
                                     <th>Status</th>
                                     <th>Due</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -75,6 +77,7 @@
                                         <td>{row.ownerText}</td>
                                         <td><span class="chip">{row.status}</span></td>
                                         <td>{row.dueText}</td>
+                                        <td><button class="cta" style="padding:4px 10px;font-size:11px" data-key={row.key} onclick={handleUpdatePunchItem}>Update</button></td>
                                     </tr>
                                 </template>
                             </tbody>

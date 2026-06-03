@@ -2,15 +2,32 @@
     display: block;
     max-width: none;
     width: 100%;
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
 }
 
 .lot-page {
-    --text: #16325c;
-    --muted: #66758f;
-    --line: #d8dde6;
-    --green: #3f8a4c;
-    --red: #b33635;
-    background: #f3f5f8;
+    --text: #1f2421;
+    --line: #e6e2d9;
+    --red: #9c2c20;
+    background: #f5f2ec;
     box-sizing: border-box;
     color: var(--text);
     min-height: 100vh;
@@ -26,13 +43,13 @@
 }
 
 .banner.success {
-    background: #edf8ef;
-    border-color: var(--green);
-    color: #3f7747;
+    background: #e6f3ea;
+    border-color: #2c7a4b;
+    color: #1f5c38;
 }
 
 .banner.error {
-    background: #fff0f0;
+    background: #fde8ee;
     border-color: var(--red);
     color: var(--red);
 }
@@ -56,14 +73,14 @@
 }
 
 .tree-row {
-    color: #2d6ed2;
+    color: #2c7a4b;
     font-size: 13px;
     font-weight: 700;
     padding-left: 12px;
 }
 
 .empty-state {
-    color: var(--muted);
+    color: #706e6b;
     font-size: 13px;
     padding: 12px 0 4px;
 }
@@ -118,6 +135,41 @@
     justify-content: flex-end;
 }
 
+/* ── Buttons ──────────────────────────────────────────────────────────────── */
+.btn {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #2c7a4b;
+    color: #fff;
+}
+
+.btn-primary:hover { background: #1f5c38; }
+
+.btn-ghost {
+    background: transparent;
+    color: #2c7a4b;
+    border: 1.5px solid #2c7a4b;
+    cursor: pointer;
+}
+
+.btn-inline {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1.5px solid #2c7a4b;
+    background: transparent;
+    color: #2c7a4b;
+    cursor: pointer;
+}
+
 .sf-btn {
     background: #fff;
     border: 1px solid var(--line);
@@ -130,10 +182,12 @@
 }
 
 .sf-btn.primary {
-    background: #256dd9;
-    border-color: #256dd9;
+    background: #2c7a4b;
+    border-color: #2c7a4b;
     color: #fff;
 }
+
+.sf-btn.primary:hover { background: #1f5c38; }
 
 @media (max-width: 1040px) {
     .content-grid {

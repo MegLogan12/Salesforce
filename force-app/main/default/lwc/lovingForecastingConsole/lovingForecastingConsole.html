@@ -23,12 +23,16 @@
 
                 <!-- Page header -->
                 <div class="page-header">
-                    <div class="page-header-icon" style="background:var(--odl-orange)">
+                    <div class="page-header-icon" style="background:#e8936a">
                         <lightning-icon icon-name="utility:resource_absence" size="small" variant="inverse"></lightning-icon>
                     </div>
                     <div>
                         <h1 class="page-title">Forecasting &amp; Workforce</h1>
                         <p class="page-sub">Hire requests and crew overview</p>
+                    </div>
+                    <div class="page-cta-row">
+                        <button type="button" class="btn btn-primary" onclick={handleExportForecast}>Export Forecast</button>
+                        <button type="button" class="btn btn-ghost" onclick={handleRefresh}>Refresh</button>
                     </div>
                     <lightning-button-icon
                         icon-name="utility:refresh"
@@ -58,7 +62,7 @@
                     <div class="body-main">
                         <div class="card">
                             <div class="card-header">
-                                <div class="card-icon" style="background:var(--odl-orange)">
+                                <div class="card-icon" style="background:#e8936a">
                                     <lightning-icon icon-name="utility:people" size="x-small" variant="inverse"></lightning-icon>
                                 </div>
                                 <h2 class="card-title">Recent Hire Requests</h2>
@@ -80,6 +84,7 @@
                                             <th>Priority</th>
                                             <th>Status</th>
                                             <th>Created</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -96,6 +101,7 @@
                                                 </td>
                                                 <td>{row.status}</td>
                                                 <td class="muted">{row.createdDateLabel}</td>
+                                                <td><button type="button" class="btn-inline" data-id={row.id} onclick={handleOpenRecord}>Open</button></td>
                                             </tr>
                                         </template>
                                     </tbody>
@@ -115,13 +121,14 @@
                                     variant="neutral"
                                     onclick={handleOpenHireRequests}
                                 ></lightning-button>
+                                <button type="button" class="btn btn-primary" onclick={handleExportForecast}>Export Forecast</button>
                             </div>
                         </div>
 
                         <!-- Crews -->
                         <div class="card">
                             <div class="card-header">
-                                <div class="card-icon" style="background:var(--odl-blue)">
+                                <div class="card-icon" style="background:#2c7a4b">
                                     <lightning-icon icon-name="utility:groups" size="x-small" variant="inverse"></lightning-icon>
                                 </div>
                                 <h2 class="card-title">Active Crews</h2>
@@ -135,6 +142,7 @@
                                             <th>Lead Foreman</th>
                                             <th class="num-col">Members</th>
                                             <th>Status</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -148,6 +156,7 @@
                                                 <td>
                                                     <span class="status-chip chip-ok">{row.status}</span>
                                                 </td>
+                                                <td><button type="button" class="btn-inline" data-id={row.id} onclick={handleOpenRecord}>Open</button></td>
                                             </tr>
                                         </template>
                                     </tbody>
@@ -175,12 +184,20 @@
                     <div class="body-rail">
                         <div class="card">
                             <div class="card-header">
-                                <div class="card-icon" style="background:var(--odl-orange)">
+                                <div class="card-icon" style="background:#e8936a">
                                     <lightning-icon icon-name="utility:lightning_strike" size="x-small" variant="inverse"></lightning-icon>
                                 </div>
                                 <h2 class="card-title">Quick Actions</h2>
                             </div>
                             <div class="qa-list">
+                                <div class="qa-item" onclick={handleExportForecast}>
+                                    <lightning-icon icon-name="utility:download" size="x-small"></lightning-icon>
+                                    <span>Export Forecast</span>
+                                </div>
+                                <div class="qa-item" onclick={handleRefresh}>
+                                    <lightning-icon icon-name="utility:refresh" size="x-small"></lightning-icon>
+                                    <span>Refresh Data</span>
+                                </div>
                                 <div class="qa-item" onclick={handleOpenHireRequests}>
                                     <lightning-icon icon-name="utility:people" size="x-small"></lightning-icon>
                                     <span>View hire requests</span>

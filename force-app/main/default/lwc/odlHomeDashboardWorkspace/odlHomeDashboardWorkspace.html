@@ -1,6 +1,17 @@
 <template>
     <div class="odl-home">
 
+        <!-- ── Page Header ───────────────────────────────────────────── -->
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">ODL Dashboard</h1>
+                <p class="page-sub">Pipeline, activity risk, and gross profit at a glance</p>
+            </div>
+            <div class="page-header-actions">
+                <button class="header-btn-primary" onclick={handleNewOpportunity}>+ New Opportunity</button>
+            </div>
+        </div>
+
         <!-- Error banner -->
         <template if:true={hasError}>
             <div class="error-banner">
@@ -55,6 +66,7 @@
                     <div class="card-header">
                         <div class="card-icon ci-orange">PIPE</div>
                         <h2 class="card-title">Pipeline by Line of Business</h2>
+                        <button class="btn-inline" onclick={handleNewOpportunity}>+ New Opportunity</button>
                     </div>
                     <template if:true={hasPipelineRows}>
                         <table class="odl-table">
@@ -66,6 +78,7 @@
                                     <th class="num">Weighted</th>
                                     <th class="num">Follow-Ups Due</th>
                                     <th class="num">At Risk</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -77,13 +90,19 @@
                                         <td class="num">{row.weightedDisplay}</td>
                                         <td class="num">{row.followUpsDue}</td>
                                         <td class="num">{row.atRisk}</td>
+                                        <td>
+                                            <button class="btn-inline" onclick={handleOpenOpportunities}>View</button>
+                                        </td>
                                     </tr>
                                 </template>
                             </tbody>
                         </table>
                     </template>
                     <template if:false={hasPipelineRows}>
-                        <div class="empty-state">No pipeline data available.</div>
+                        <div class="empty-state">
+                            No pipeline data available.
+                            <button class="btn btn-primary" onclick={handleNewOpportunity} style="margin-top:8px">Create Opportunity</button>
+                        </div>
                     </template>
                     <div class="card-footer">
                         <lightning-button
@@ -99,6 +118,7 @@
                     <div class="card-header">
                         <div class="card-icon ci-purple">ACT</div>
                         <h2 class="card-title">Activity Risk</h2>
+                        <button class="btn-inline" onclick={handleOpenTasks}>Review Tasks</button>
                     </div>
                     <template if:true={hasActivityRisk}>
                         <table class="odl-table">
@@ -109,6 +129,7 @@
                                     <th>Last Activity</th>
                                     <th>Follow-Up Due</th>
                                     <th>Risk</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -123,6 +144,9 @@
                                         <td class="muted">{row.lastActivity}</td>
                                         <td class="muted">{row.followUpDue}</td>
                                         <td><span class={row.riskChip}>{row.risk}</span></td>
+                                        <td>
+                                            <button class="btn-inline" data-id={row.opportunityId} onclick={handleOpenRecord}>View</button>
+                                        </td>
                                     </tr>
                                 </template>
                             </tbody>

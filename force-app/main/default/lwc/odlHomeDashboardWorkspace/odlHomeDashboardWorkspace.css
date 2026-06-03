@@ -1,28 +1,59 @@
 /* ── Design tokens ──────────────────────────────────────────────────────── */
 :host {
-    --odl-orange:      #E86826;
-    --odl-orange-dark: #C05318;
-    --odl-blue:        #0176D3;
-    --odl-blue-dark:   #014486;
-    --odl-purple:      #7B2D8B;
-    --odl-purple-dark: #5C1E6B;
-    --odl-teal:        #0D7A5E;
-    --odl-teal-dark:   #0A5C47;
-    --odl-amber:       #B85C00;
-    --odl-amber-dark:  #8A4500;
-    --odl-red:         #BA0517;
-    --odl-red-dark:    #8E0311;
-    --odl-slate:       #54698D;
-    --odl-slate-dark:  #3A4F6B;
-    --text-dark:       #181818;
-    --text-mid:        #444444;
-    --text-light:      #6B7280;
-    --border:          #E0E5EE;
-    --bg-page:         #F3F5F8;
+    --odl-orange:      #e8936a;
+    --odl-orange-dark: #c06040;
+    --odl-blue:        #2c7a4b;
+    --odl-blue-dark:   #1f5c38;
+    --odl-purple:      #9b7ec8;
+    --odl-purple-dark: #6840a0;
+    --odl-teal:        #2c7a4b;
+    --odl-teal-dark:   #1f5c38;
+    --odl-amber:       #7a5a10;
+    --odl-amber-dark:  #5a4008;
+    --odl-red:         #9c2c20;
+    --odl-red-dark:    #7a1c12;
+    --odl-slate:       #706e6b;
+    --odl-slate-dark:  #504e4c;
+    --text-dark:       #1f2421;
+    --text-mid:        #706e6b;
+    --text-light:      #9c8e80;
+    --border:          #e6e2d9;
+    --bg-page:         #f5f2ec;
     --bg-card:         #FFFFFF;
     --radius-card:     8px;
-    --shadow-card:     0 1px 4px rgba(0, 0, 0, 0.09);
+    --shadow-card:     0 1px 5px rgba(0,0,0,.09);
+
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
 }
+
+/* ── Button styles ──────────────────────────────────────────────────────── */
+.btn { font-size:13px; font-weight:600; padding:7px 14px; border-radius:7px; border:none; cursor:pointer; }
+.btn-primary { background:#2c7a4b; color:#fff; }
+.btn-primary:hover { background:#1f5c38; }
+.btn-ghost { background:transparent; color:#2c7a4b; border:1.5px solid #2c7a4b; }
+.btn-rose { background:#c4607a; color:#fff; }
+.btn-peach { background:#e8936a; color:#fff; }
+.btn-lav { background:#9b7ec8; color:#fff; }
+.btn-inline { font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; border:1.5px solid #2c7a4b; background:transparent; color:#2c7a4b; cursor:pointer; }
+.btn-inline-rose { font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; border:1.5px solid #c4607a; background:transparent; color:#c4607a; cursor:pointer; }
 
 /* ── Page wrapper ───────────────────────────────────────────────────────── */
 .odl-home {
@@ -34,18 +65,64 @@
     color: var(--text-dark);
 }
 
+/* ── Page header ────────────────────────────────────────────────────────── */
+.page-header {
+    background: linear-gradient(135deg, #9b7ec8 0%, #6840a0 100%);
+    padding: 16px 20px;
+    border-radius: var(--radius-card);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 2px;
+}
+
+.page-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.80);
+    margin: 0;
+}
+
+.page-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.header-btn-primary {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+    background: rgba(255,255,255,0.95);
+    color: #6840a0;
+}
+
+.header-btn-primary:hover {
+    background: #fff;
+}
+
 /* ── Error banner ───────────────────────────────────────────────────────── */
 .error-banner {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: #FEF0CC;
-    border: 1px solid #F5C244;
+    background: #fef3c7;
+    border: 1px solid #f5c244;
     border-radius: var(--radius-card);
     padding: 10px 16px;
     margin-bottom: 14px;
     font-size: 13px;
-    color: #7A4500;
+    color: #7a5a10;
 }
 
 /* ── Sub-navigation tabs ────────────────────────────────────────────────── */
@@ -174,7 +251,7 @@
 .card-footer {
     padding: 10px 16px;
     border-top: 1px solid var(--border);
-    background: #FAFBFD;
+    background: #fbfaf6;
 }
 
 /* ── Tables ─────────────────────────────────────────────────────────────── */
@@ -185,7 +262,7 @@
 }
 
 .odl-table thead tr {
-    background: #F8F9FB;
+    background: #f5f2ec;
 }
 
 .odl-table th {
@@ -218,7 +295,7 @@
 }
 
 .odl-table tbody tr:hover {
-    background: #F8F9FB;
+    background: #fbfaf6;
 }
 
 /* ── Links ──────────────────────────────────────────────────────────────── */
@@ -252,16 +329,22 @@
 }
 
 .chip-needs-touch {
-    background: #FEF0CC;
-    color: #7A4500;
-    border: 1px solid #F5C244;
+    background: #fef3c7;
+    color: #7a5a10;
+    border: 1px solid #f5c244;
 }
 
 .chip-monitor {
-    background: #E5F1FA;
-    color: #014486;
-    border: 1px solid #9DCFEE;
+    background: #ede8f6;
+    color: #5c3d8a;
+    border: 1px solid #c3b0e8;
 }
+
+.badge-success { background:#e6f3ea; color:#1f5c38; }
+.badge-warning { background:#fef3c7; color:#7a5a10; }
+.badge-danger  { background:#fde8ee; color:#9c3052; }
+.badge-info    { background:#ede8f6; color:#5c3d8a; }
+.chip-peach    { background:#fdeee6; color:#8b4020; }
 
 /* ── Muted ──────────────────────────────────────────────────────────────── */
 .muted { color: var(--text-light); }
@@ -294,7 +377,7 @@
 .qa-item:last-child { border-bottom: none; }
 
 .qa-item:hover {
-    background: #F3F5F8;
+    background: #fbfaf6;
     color: var(--odl-orange);
 }
 
@@ -314,9 +397,9 @@
     color: var(--text-dark);
 }
 
-.gp-green   { color: #1B6B2A; }
-.gp-yellow  { color: #7A4500; }
-.gp-red     { color: #BA0517; }
+.gp-green   { color: #1f5c38; }
+.gp-yellow  { color: #7a5a10; }
+.gp-red     { color: #9c2c20; }
 .gp-blocked { color: var(--odl-slate); }
 
 .summary-divider {

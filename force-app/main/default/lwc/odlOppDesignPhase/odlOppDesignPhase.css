@@ -1,7 +1,29 @@
+:host {
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
+}
+
 .design-phase-card {
     background: #fff;
     border-radius: 8px;
-    border: 1px solid #dde3ec;
+    border: 1px solid #e6e2d9;
     padding: 1rem;
     margin-bottom: 0.75rem;
 }
@@ -12,7 +34,7 @@
     gap: 0.5rem;
     margin-bottom: 0.75rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #e6e2d9;
 }
 
 .design-phase-title {
@@ -20,13 +42,13 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.04em;
-    color: #333;
+    color: #1f2421;
 }
 
 .design-phase-section {
     margin-bottom: 0.75rem;
     padding-bottom: 0.5rem;
-    border-bottom: 1px dashed #f0f0f0;
+    border-bottom: 1px dashed #e6e2d9;
 }
 
 .design-phase-section:last-child {
@@ -44,20 +66,20 @@
 
 .dps-label {
     font-size: 0.75rem;
-    color: #666;
+    color: #706e6b;
     font-weight: 500;
 }
 
 .dps-value {
     font-size: 0.82rem;
     font-weight: 600;
-    color: #222;
+    color: #1f2421;
 }
 
-.dps-value-green { color: #2e7d32; }
-.dps-value-amber { color: #e65100; }
-.dps-value-blue { color: #1565c0; }
-.dps-value-gray { color: #757575; }
+.dps-value-green { color: #2c7a4b; }
+.dps-value-amber { color: #c06040; }
+.dps-value-blue { color: #6840a0; }
+.dps-value-gray { color: #706e6b; }
 
 .design-badge {
     font-size: 0.7rem;
@@ -67,27 +89,27 @@
     text-transform: uppercase;
 }
 
-.design-badge-green { background: #e8f5e9; color: #2e7d32; }
-.design-badge-amber { background: #fff8e1; color: #e65100; }
-.design-badge-red { background: #ffeaea; color: #c62828; }
-.design-badge-gray { background: #f5f5f5; color: #757575; }
+.design-badge-green { background: #e6f3ea; color: #2c7a4b; }
+.design-badge-amber { background: #fdeee6; color: #c06040; }
+.design-badge-red { background: #fde8ee; color: #9c2c20; }
+.design-badge-gray { background: #f5f2ec; color: #706e6b; }
 
 .dps-note {
     margin: 0.2rem 0 0;
     font-size: 0.7rem;
-    color: #888;
+    color: #706e6b;
     font-style: italic;
 }
 
 .dps-empty {
     margin: 0.25rem 0 0;
     font-size: 0.78rem;
-    color: #999;
+    color: #9c8e80;
 }
 
 .dps-link {
     font-size: 0.78rem;
-    color: #1565c0;
+    color: #2c7a4b;
     text-decoration: none;
 }
 

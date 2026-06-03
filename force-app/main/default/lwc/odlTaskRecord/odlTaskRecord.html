@@ -18,6 +18,12 @@
                     <span class="status-badge completed">&#10003; Completed</span>
                 </template>
                 <template lwc:else>
+                    <button class="btn-snooze" onclick={handleSnooze} disabled={isSaving}>
+                        Snooze
+                    </button>
+                    <button class="btn-reassign" onclick={handleReassign} disabled={isSaving}>
+                        Reassign
+                    </button>
                     <button class="btn-complete" onclick={handleMarkComplete} disabled={isSaving}>
                         {completeLabel}
                     </button>

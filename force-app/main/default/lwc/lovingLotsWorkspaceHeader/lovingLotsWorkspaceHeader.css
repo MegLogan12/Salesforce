@@ -3,9 +3,9 @@
 }
 
 .page-header span {
-    background: #edf4ff;
+    background: #e6f3ea;
     border-radius: 10px;
-    color: #6f7e95;
+    color: #1f5c38;
     font-size: 11px;
     margin-left: 5px;
     padding: 2px 7px;
@@ -13,8 +13,8 @@
 
 .page-header {
     align-items: center;
-    background: #fff;
-    border-bottom: 1px solid #d8dde6;
+    background: linear-gradient(135deg, #2c7a4b 0%, #1f5c38 100%);
+    border-bottom: 1px solid #e6e2d9;
     display: grid;
     gap: 12px;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -22,15 +22,24 @@
 }
 
 .eyebrow {
-    color: #66758f;
+    color: rgba(255,255,255,0.75);
     font-size: 12px;
     margin-bottom: 3px;
 }
 
 h2 {
-    color: #16325c;
+    color: #ffffff;
     font-size: 20px;
     margin: 0;
+}
+
+.page-header span {
+    background: rgba(255,255,255,0.20);
+    color: #ffffff;
+    border-radius: 10px;
+    font-size: 11px;
+    margin-left: 5px;
+    padding: 2px 7px;
 }
 
 .header-actions {
@@ -40,20 +49,28 @@ h2 {
 }
 
 .sf-btn {
-    background: #fff;
-    border: 1px solid #d8dde6;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.4);
     border-radius: 4px;
-    color: #16325c;
+    color: #ffffff;
     cursor: pointer;
     font-size: 12px;
     font-weight: 600;
     padding: 7px 12px;
 }
 
+.sf-btn:hover {
+    background: rgba(255,255,255,0.25);
+}
+
 .sf-btn.primary {
-    background: #256dd9;
-    border-color: #256dd9;
-    color: #fff;
+    background: rgba(255,255,255,0.95);
+    border-color: rgba(255,255,255,0.95);
+    color: #1f5c38;
+}
+
+.sf-btn.primary:hover {
+    background: #fff;
 }
 
 @media (max-width: 760px) {

@@ -1,18 +1,38 @@
 /* ── Design tokens ──────────────────────────────────────────────────────────── */
 :host {
-    --odl-orange:      #E86826;
-    --odl-orange-dark: #C05318;
-    --odl-blue:        #0176D3;
-    --odl-blue-dark:   #014486;
-    --odl-slate:       #54698D;
-    --text-dark:       #181818;
-    --text-mid:        #444444;
-    --text-light:      #6B7280;
-    --border:          #E0E5EE;
-    --bg-page:         #F3F5F8;
+    --odl-orange:      #e8936a;
+    --odl-orange-dark: #c06040;
+    --odl-blue:        #2c7a4b;
+    --odl-blue-dark:   #1f5c38;
+    --odl-slate:       #706e6b;
+    --text-dark:       #1f2421;
+    --text-mid:        #706e6b;
+    --text-light:      #9c8e80;
+    --border:          #e6e2d9;
+    --bg-page:         #f5f2ec;
     --bg-card:         #FFFFFF;
     --radius-card:     8px;
     --shadow-card:     0 1px 4px rgba(0,0,0,0.10);
+
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
 }
 
 .prep-card {
@@ -49,7 +69,7 @@
     gap: 10px;
     padding: 14px 16px 12px;
     border-bottom: 1px solid var(--border);
-    background: #FAFBFD;
+    background: linear-gradient(135deg, #c4607a 0%, #9c3052 100%);
 }
 
 .card-icon {
@@ -60,12 +80,13 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    background: rgba(255,255,255,0.2);
 }
 
 .card-title {
     font-size: 14px;
     font-weight: 700;
-    color: var(--text-dark);
+    color: #fff;
     margin: 0;
     flex: 1;
 }
@@ -121,7 +142,7 @@
     gap: 10px;
     padding: 12px 16px 10px;
     border-bottom: 1px solid var(--border);
-    background: #FAFBFD;
+    background: #f5f2ec;
 }
 
 .section-title {
@@ -133,7 +154,7 @@
 }
 
 .section-count {
-    background: var(--odl-orange);
+    background: var(--rose);
     color: #fff;
     border-radius: 10px;
     font-size: 11px;
@@ -150,7 +171,7 @@
     font-size: 13px;
 }
 
-.odl-table thead tr { background: #F8F9FB; }
+.odl-table thead tr { background: #f5f2ec; }
 
 .odl-table th {
     padding: 7px 16px;
@@ -171,11 +192,11 @@
 }
 
 .odl-table tbody tr:last-child td { border-bottom: none; }
-.odl-table tbody tr:hover { background: #F8F9FB; }
+.odl-table tbody tr:hover { background: #fbfaf6; }
 
 /* ── Links ────────────────────────────────────────────────────────────────── */
 .rec-link {
-    color: var(--odl-blue);
+    color: var(--rose);
     text-decoration: none;
     cursor: pointer;
     font-weight: 500;
@@ -194,33 +215,33 @@
 }
 
 .chip-blue {
-    background: #E8F3FC;
-    color: #014486;
-    border: 1px solid #9DC7F0;
+    background: #ede8f6;
+    color: #6840a0;
+    border: 1px solid #c8b8e8;
 }
 
 .chip-orange {
-    background: #FEF0CC;
-    color: #7A4500;
-    border: 1px solid #F5C244;
+    background: #fdeee6;
+    color: #7a5a10;
+    border: 1px solid #f5c6a0;
 }
 
 .chip-green {
-    background: #E4F5E9;
-    color: #1B6B2A;
-    border: 1px solid #8DCA99;
+    background: #e6f3ea;
+    color: #1f5c38;
+    border: 1px solid #a8d8b5;
 }
 
 .chip-neutral {
-    background: #F3F5F8;
+    background: #f5f2ec;
     color: var(--text-mid);
     border: 1px solid var(--border);
 }
 
 .chip-overdue {
-    background: #FDDCDE;
-    color: #8A0000;
-    border: 1px solid #F4ABAF;
+    background: #fde8ee;
+    color: #9c2c20;
+    border: 1px solid #f5a0b0;
 }
 
 /* ── Muted / Empty ────────────────────────────────────────────────────────── */
@@ -241,5 +262,5 @@
 .card-footer {
     padding: 12px 16px;
     border-top: 1px solid var(--border);
-    background: #FAFBFD;
+    background: #f5f2ec;
 }

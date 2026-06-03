@@ -23,6 +23,7 @@
                             <th>Scheduled</th>
                             <th>FM</th>
                             <th>Photos</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -34,6 +35,9 @@
                                 <td>{j.scheduledDate}</td>
                                 <td>{j.fm}</td>
                                 <td>{j.completionPhotoCount}</td>
+                                <td>
+                                    <button class="btn-inline" data-id={j.id} onclick={handleViewJob}>View</button>
+                                </td>
                             </tr>
                         </template>
                     </tbody>

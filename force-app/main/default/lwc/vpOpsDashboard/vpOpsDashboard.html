@@ -13,7 +13,7 @@
             <div class="odl-error-state">
                 <lightning-icon icon-name="utility:error" size="small" variant="error"></lightning-icon>
                 <p>{error}</p>
-                <lightning-button label="Retry" onclick={handleRefresh}></lightning-button>
+                <button class="btn btn-primary" onclick={handleRefresh}>Retry</button>
             </div>
         </template>
 
@@ -23,20 +23,22 @@
 
                 <!-- Page header -->
                 <div class="page-header">
-                    <div class="page-header-icon" style="background:var(--odl-purple)">
+                    <div class="page-header-icon">
                         <lightning-icon icon-name="utility:chart" size="small" variant="inverse"></lightning-icon>
                     </div>
                     <div>
                         <h1 class="page-title">VP Operations Dashboard</h1>
                         <p class="page-sub">Workforce, work orders, and action items at a glance</p>
                     </div>
-                    <lightning-button-icon
-                        icon-name="utility:refresh"
-                        alternative-text="Refresh"
-                        variant="bare"
-                        onclick={handleRefresh}
-                        class="page-refresh"
-                    ></lightning-button-icon>
+                    <div class="page-header-actions">
+                        <button class="header-btn-primary" onclick={handleOpenActionItems}>+ New Action Item</button>
+                        <lightning-button-icon
+                            icon-name="utility:refresh"
+                            alternative-text="Refresh"
+                            variant="bare"
+                            onclick={handleRefresh}
+                        ></lightning-button-icon>
+                    </div>
                 </div>
 
                 <!-- KPI row (5 chips) -->
@@ -76,6 +78,7 @@
                                     <lightning-icon icon-name="utility:people" size="x-small" variant="inverse"></lightning-icon>
                                 </div>
                                 <h2 class="card-title">Open Hire Requests</h2>
+                                <button class="btn-inline" onclick={handleOpenHireRequests}>+ New Hire Request</button>
                             </div>
 
                             <template if:true={hasHireRequests}>
@@ -86,6 +89,7 @@
                                             <th>Priority</th>
                                             <th>Status</th>
                                             <th>Created</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -101,6 +105,9 @@
                                                 </td>
                                                 <td>{row.status}</td>
                                                 <td class="muted">{row.createdDateLabel}</td>
+                                                <td>
+                                                    <button class="btn-inline" data-id={row.id} onclick={handleOpenRecord}>View</button>
+                                                </td>
                                             </tr>
                                         </template>
                                     </tbody>
@@ -111,6 +118,7 @@
                                 <div class="empty-state">
                                     <lightning-icon icon-name="utility:check" size="small" variant="success"></lightning-icon>
                                     <p>No open hire requests.</p>
+                                    <button class="btn btn-primary" onclick={handleOpenHireRequests}>Create Hire Request</button>
                                 </div>
                             </template>
 
@@ -130,6 +138,7 @@
                                     <lightning-icon icon-name="utility:task" size="x-small" variant="inverse"></lightning-icon>
                                 </div>
                                 <h2 class="card-title">Open Action Items</h2>
+                                <button class="btn-inline" onclick={handleOpenActionItems}>+ New Action Item</button>
                             </div>
 
                             <template if:true={hasActionItems}>
@@ -140,6 +149,7 @@
                                             <th>Status</th>
                                             <th>Due</th>
                                             <th>Owner</th>
+                                            <th>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -160,6 +170,9 @@
                                                     </template>
                                                 </td>
                                                 <td class="muted">{row.ownerName}</td>
+                                                <td>
+                                                    <button class="btn-inline" data-id={row.id} onclick={handleOpenRecord}>View</button>
+                                                </td>
                                             </tr>
                                         </template>
                                     </tbody>
@@ -170,6 +183,7 @@
                                 <div class="empty-state">
                                     <lightning-icon icon-name="utility:check" size="small" variant="success"></lightning-icon>
                                     <p>No open action items.</p>
+                                    <button class="btn btn-primary" onclick={handleOpenActionItems}>Create Action Item</button>
                                 </div>
                             </template>
 

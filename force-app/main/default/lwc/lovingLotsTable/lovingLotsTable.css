@@ -4,7 +4,7 @@
 
 .table-card {
     background: #fff;
-    border: 1px solid #d8dde6;
+    border: 1px solid #e6e2d9;
     border-radius: 6px;
     box-shadow: 0 1px 0 rgba(0, 0, 0, .04);
     margin: 22px;
@@ -19,8 +19,8 @@ table {
 
 th,
 td {
-    border-bottom: 1px solid #eef1f5;
-    color: #243a5e;
+    border-bottom: 1px solid #e6e2d9;
+    color: #1f2421;
     font-size: 12px;
     padding: 10px 12px;
     text-align: left;
@@ -28,11 +28,12 @@ td {
 }
 
 th {
-    color: #66758f;
+    color: #706e6b;
     font-size: 10px;
     font-weight: 800;
     letter-spacing: .08em;
     text-transform: uppercase;
+    background: #f5f2ec;
 }
 
 tbody tr {
@@ -40,11 +41,11 @@ tbody tr {
 }
 
 tbody tr:hover {
-    background: #f7fbff;
+    background: #fbfaf6;
 }
 
 a {
-    color: #256dd9;
+    color: #2c7a4b;
     font-weight: 800;
     text-decoration: none;
 }
@@ -67,48 +68,50 @@ a {
 .pb-sched,
 .pb-active,
 .pb-invoiced {
-    background: #e8f4ea;
-    color: #3f8a4c;
+    background: #e6f3ea;
+    color: #1f5c38;
 }
 
 .ca,
 .pb-pending,
 .pb-qi {
-    background: #fff2cf;
-    color: #b66d13;
+    background: #fdeee6;
+    color: #7a5a10;
 }
 
 .cr {
-    background: #ffe8e8;
-    color: #b33635;
+    background: #fde8ee;
+    color: #9c3052;
 }
 
 .cb2 {
-    background: #e7f1ff;
-    color: #1f5f9f;
+    background: #ede8f6;
+    color: #6840a0;
 }
 
 .cp,
 .pb-takeoff {
-    background: #efeafe;
-    color: #6542c0;
+    background: #ede8f6;
+    color: #6840a0;
 }
 
 .cgr,
 .pb-new,
 .pb-closed {
-    background: #f0f2f6;
-    color: #65738a;
+    background: #f5f2ec;
+    color: #706e6b;
 }
 
 .pb-invoice {
-    background: #e1f5ee;
-    color: #0f6e56;
+    background: #e6f3ea;
+    color: #1f5c38;
 }
 
 footer {
-    color: #66758f;
+    color: #706e6b;
     font-size: 12px;
     font-weight: 700;
     padding: 12px 14px;
 }
+
+.btn-inline { font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; border:1.5px solid #2c7a4b; background:transparent; color:#2c7a4b; cursor:pointer; }

@@ -1,15 +1,20 @@
-.wrap { background: #fff; border: 1px solid #dddbda; border-radius: 8px; padding: 14px 16px; color: #080707; }
+.wrap { background: #fff; border: 1px solid #e6e2d9; border-radius: 8px; padding: 14px 16px; color: #1f2421; }
 .ttl { font-size: 15px; font-weight: 700; margin: 0 0 12px 0; }
 .thresh table { width: 100%; border-collapse: collapse; margin-bottom: 14px; }
-.thresh th, .thresh td { text-align: left; padding: 6px 8px; font-size: 12px; border-bottom: 1px solid #dddbda; }
-.thresh th { color: #706e6b; text-transform: uppercase; letter-spacing: 0.04em; font-size: 11px; }
-.ins { display: flex; gap: 14px; flex-wrap: wrap; background: #f3f3f2; padding: 10px 12px; border-radius: 6px; margin-bottom: 12px; }
+.thresh th, .thresh td { text-align: left; padding: 6px 8px; font-size: 12px; border-bottom: 1px solid #e6e2d9; }
+.thresh th { color: #706e6b; text-transform: uppercase; letter-spacing: 0.04em; font-size: 11px; background: #f5f2ec; }
+.ins { display: flex; gap: 14px; flex-wrap: wrap; background: #f5f2ec; padding: 10px 12px; border-radius: 6px; margin-bottom: 12px; }
 .qi-grid { display: flex; flex-direction: column; gap: 8px; }
-.qi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border: 1px solid #dddbda; border-radius: 6px; padding: 10px 12px; }
-.qi-row.flagged { border-color: #c23934; background: #fbeceb; }
-.left a { color: #0070d2; text-decoration: none; }
+.qi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; border: 1px solid #e6e2d9; border-radius: 6px; padding: 10px 12px; }
+.qi-row.flagged { border-color: #c4607a; background: #fde8ee; }
+.left a { color: #2c7a4b; text-decoration: none; }
 .row { display: flex; justify-content: space-between; font-size: 12px; }
 .lbl { color: #706e6b; }
-.v { color: #080707; font-weight: 600; }
+.v { color: #1f2421; font-weight: 600; }
 .muted { color: #706e6b; font-size: 12px; }
 .empty { color: #706e6b; font-size: 13px; padding: 12px; text-align: center; }
+.inspection-actions { margin-top: 12px; display: flex; gap: 8px; }
+.btn { font-size:13px; font-weight:600; padding:7px 14px; border-radius:7px; border:none; cursor:pointer; }
+.btn-primary { background:#2c7a4b; color:#fff; }
+.btn-primary:hover { background:#1f5c38; }
+.btn-ghost { background:transparent; color:#2c7a4b; border:1.5px solid #2c7a4b; cursor:pointer; }

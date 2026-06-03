@@ -1,8 +1,30 @@
-:host { display: block; }
+:host {
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
+
+    display: block;
+}
 
 .gate-card {
     background: #fff;
-    border: 1.5px solid #e8e0d4;
+    border: 1.5px solid #e6e2d9;
     border-radius: 10px;
     overflow: hidden;
     margin-bottom: 0.75rem;
@@ -13,7 +35,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0.65rem 0.9rem;
-    background: #faf7f2;
+    background: #f5f2ec;
     border-bottom: 1px solid #f0ebe3;
 }
 
@@ -33,10 +55,10 @@
     font-weight: 700;
 }
 
-.badge-green { background: #e5f5e8; color: #1a6b2a; }
-.badge-red { background: #fdecea; color: #b71c1c; }
-.badge-amber { background: #fff3e0; color: #b34700; }
-.badge-blue { background: #e3f0fd; color: #1255a0; }
+.badge-green { background: #e6f3ea; color: #1f5c38; }
+.badge-red { background: #fde8ee; color: #9c2c20; }
+.badge-amber { background: #fdeee6; color: #7a5a10; }
+.badge-blue { background: #ede8f6; color: #6840a0; }
 
 .gates-grid {
     padding: 0.6rem 0.9rem;
@@ -55,18 +77,18 @@
 }
 
 .gate-pass {
-    background: #f0faf2;
-    border-color: #c3e6cc;
+    background: #e6f3ea;
+    border-color: #a8d8b5;
 }
 
 .gate-fail {
-    background: #fef8f8;
-    border-color: #f5d0d0;
+    background: #fde8ee;
+    border-color: #f5a0b0;
 }
 
 .gate-neutral {
-    background: #faf7f2;
-    border-color: #e8e0d4;
+    background: #f5f2ec;
+    border-color: #e6e2d9;
 }
 
 .gate-check {
@@ -77,8 +99,8 @@
     flex-shrink: 0;
 }
 
-.gate-pass .gate-check { color: #1a6b2a; }
-.gate-fail .gate-check { color: #b71c1c; }
+.gate-pass .gate-check { color: #1f5c38; }
+.gate-fail .gate-check { color: #9c2c20; }
 .gate-neutral .gate-check { color: #9c8e80; }
 
 .gate-info {
@@ -89,7 +111,7 @@
 .gate-name {
     font-size: 0.72rem;
     font-weight: 600;
-    color: #2d2523;
+    color: #1f2421;
     margin-bottom: 0.1rem;
 }
 
@@ -113,9 +135,9 @@
     font-weight: 600;
 }
 
-.chip-green { background: #e5f5e8; color: #1a6b2a; }
-.chip-amber { background: #fff3e0; color: #b34700; }
-.chip-red { background: #fdecea; color: #b71c1c; }
+.chip-green { background: #e6f3ea; color: #1f5c38; }
+.chip-amber { background: #fdeee6; color: #7a5a10; }
+.chip-red { background: #fde8ee; color: #9c2c20; }
 .chip-gray { background: #f2ede5; color: #7a6f65; }
 
 .blocker-line {
@@ -124,11 +146,11 @@
     gap: 0.4rem;
     margin: 0 0.9rem 0.55rem;
     padding: 0.4rem 0.6rem;
-    background: #fff5f5;
-    border: 1px solid #f5c6c6;
+    background: #fde8ee;
+    border: 1px solid #f5a0b0;
     border-radius: 6px;
     font-size: 0.75rem;
-    color: #b71c1c;
+    color: #9c2c20;
     font-weight: 500;
 }
 
@@ -140,7 +162,7 @@
 .gate-footer {
     padding: 0.6rem 0.9rem;
     border-top: 1px solid #f0ebe3;
-    background: #faf7f2;
+    background: #f5f2ec;
     text-align: right;
 }
 
@@ -148,7 +170,7 @@
     padding: 0.38rem 1rem;
     font-size: 0.8rem;
     font-weight: 600;
-    background: #d4cbc0;
+    background: #e6e2d9;
     color: #9c8e80;
     border: none;
     border-radius: 6px;
@@ -156,17 +178,17 @@
 }
 
 .btn-release-active {
-    background: #1a6b2a;
+    background: #2c7a4b;
     color: #fff;
     cursor: pointer;
 }
 
-.btn-release-active:hover { background: #145522; }
+.btn-release-active:hover { background: #1f5c38; }
 
 .blocked-reason {
     margin: 0.3rem 0 0;
     font-size: 0.72rem;
-    color: #b34700;
+    color: #7a5a10;
     font-weight: 500;
 }
 

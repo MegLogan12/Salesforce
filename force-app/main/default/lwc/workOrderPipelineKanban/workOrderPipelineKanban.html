@@ -28,6 +28,10 @@
                                 <template if:true={card.takeoffStatus}>
                                     <div class="card-takeoff">Takeoff: {card.takeoffStatus}</div>
                                 </template>
+                                <div class="card-actions">
+                                    <button class="btn-inline" data-id={card.id} onclick={handleViewCard}>View</button>
+                                    <button class="btn-inline" data-id={card.id} onclick={handleAssignCard}>Assign</button>
+                                </div>
                             </a>
                         </template>
                         <template if:false={col.cards.length}>

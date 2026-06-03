@@ -1,7 +1,7 @@
 .fj-callout {
-    background: #fff8e1;
-    border: 1px solid #f0d58c;
-    color: #6a5600;
+    background: #fdeee6;
+    border: 1px solid #e8936a;
+    color: #7a5a10;
     padding: 0.4rem 0.6rem;
     border-radius: 4px;
     font-size: 0.8rem;
@@ -13,18 +13,23 @@
     font-weight: 600;
 }
 .pill-done {
-    background: #e3f6ea;
-    color: #1c7c41;
+    background: #e6f3ea;
+    color: #1f5c38;
 }
 .pill-active {
-    background: #e8f0fb;
-    color: #2b5d8a;
+    background: #ede8f6;
+    color: #6840a0;
 }
 .pill-warn {
-    background: #fff2d9;
-    color: #7a5200;
+    background: #fdeee6;
+    color: #7a5a10;
 }
 .pill-neutral {
-    background: #eee;
-    color: #555;
+    background: #f5f2ec;
+    color: #706e6b;
 }
+.btn { font-size:13px; font-weight:600; padding:7px 14px; border-radius:7px; border:none; cursor:pointer; }
+.btn-primary { background:#2c7a4b; color:#fff; }
+.btn-primary:hover { background:#1f5c38; }
+.btn-ghost { background:transparent; color:#2c7a4b; border:1.5px solid #2c7a4b; }
+.btn-inline { font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; border:1.5px solid #2c7a4b; background:transparent; color:#2c7a4b; cursor:pointer; }

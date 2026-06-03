@@ -29,6 +29,7 @@
                             <th>Scheduled</th>
                             <th>Status</th>
                             <th>QI</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -45,6 +46,9 @@
                                     <template lwc:if={w.qiLabel}>
                                         <span class={w.qiPill}>{w.qiLabel}</span>
                                     </template>
+                                </td>
+                                <td>
+                                    <button class="btn-inline" data-id={w.id} onclick={handleViewWorkOrder}>View</button>
                                 </td>
                             </tr>
                         </template>

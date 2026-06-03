@@ -1,4 +1,24 @@
 :host {
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
+
     display: block;
     font-family: 'Salesforce Sans', 'Segoe UI', Arial, sans-serif;
 }
@@ -13,14 +33,14 @@
 /* ---- Panels ---- */
 .panel {
     background: #fff;
-    border: 1.5px solid #e8e0d4;
+    border: 1.5px solid #e6e2d9;
     border-radius: 10px;
     overflow: hidden;
 }
 
 .panel-header {
     padding: 0.55rem 0.85rem;
-    background: #faf7f2;
+    background: #f5f2ec;
     border-bottom: 1px solid #f0ebe3;
     font-size: 0.7rem;
     font-weight: 700;
@@ -52,7 +72,7 @@
 .hero-title {
     font-size: 1.45rem;
     font-weight: 700;
-    color: #2d2523;
+    color: #1f2421;
     margin: 0 0 0.4rem;
     line-height: 1.2;
 }
@@ -72,13 +92,23 @@
     align-items: flex-end;
 }
 
+.btn { font-size:13px; font-weight:600; padding:7px 14px; border-radius:7px; border:none; cursor:pointer; }
+.btn-primary { background:#2c7a4b; color:#fff; }
+.btn-primary:hover { background:#1f5c38; }
+.btn-ghost { background:transparent; color:#2c7a4b; border:1.5px solid #2c7a4b; }
+.btn-rose { background:#c4607a; color:#fff; }
+.btn-peach { background:#e8936a; color:#fff; }
+.btn-lav { background:#9b7ec8; color:#fff; }
+.btn-inline { font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; border:1.5px solid #2c7a4b; background:transparent; color:#2c7a4b; cursor:pointer; }
+.btn-inline-rose { font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; border:1.5px solid #c4607a; background:transparent; color:#c4607a; cursor:pointer; }
+
 .btn-hero-sec {
     padding: 0.35rem 0.8rem;
     font-size: 0.78rem;
     font-weight: 600;
     background: #fff;
-    color: #2d2523;
-    border: 1.5px solid #e8e0d4;
+    color: #1f2421;
+    border: 1.5px solid #e6e2d9;
     border-radius: 6px;
     cursor: pointer;
     text-decoration: none;
@@ -87,9 +117,9 @@
 }
 
 .btn-hero-sec:hover {
-    border-color: #c8844a;
-    background: #fdf9f4;
-    color: #2d2523;
+    border-color: #2c7a4b;
+    background: #e6f3ea;
+    color: #1f2421;
 }
 
 /* ---- Sales Path ---- */
@@ -118,7 +148,7 @@
     top: 0.45rem;
     width: 1rem;
     height: 1.5px;
-    background: #e8e0d4;
+    background: #e6e2d9;
     z-index: 0;
 }
 
@@ -128,7 +158,7 @@
     width: 0.9rem;
     height: 0.9rem;
     border-radius: 50%;
-    border: 2px solid #e8e0d4;
+    border: 2px solid #e6e2d9;
     background: #fff;
     margin-bottom: 0.25rem;
     position: relative;
@@ -144,18 +174,18 @@
     white-space: nowrap;
 }
 
-.path-step-done .path-dot { background: #c8844a; border-color: #c8844a; }
+.path-step-done .path-dot { background: #2c7a4b; border-color: #2c7a4b; }
 .path-step-done .path-label { color: #6b5f54; }
-.path-step-done::after { background: #c8844a; }
+.path-step-done::after { background: #2c7a4b; }
 
 .path-step-current .path-dot {
     background: #fff;
-    border-color: #c8844a;
-    box-shadow: 0 0 0 3px rgba(200,132,74,0.2);
+    border-color: #2c7a4b;
+    box-shadow: 0 0 0 3px rgba(44,122,75,0.2);
 }
-.path-step-current .path-label { color: #c8844a; font-weight: 700; }
+.path-step-current .path-label { color: #2c7a4b; font-weight: 700; }
 
-.path-step-upcoming .path-dot { background: #faf7f2; border-color: #e8e0d4; }
+.path-step-upcoming .path-dot { background: #f5f2ec; border-color: #e6e2d9; }
 
 /* ---- Chips ---- */
 .chip {
@@ -167,16 +197,16 @@
     white-space: nowrap;
 }
 
-.chip-umb     { background: #fde8d8; color: #9a4b16; }
-.chip-design  { background: #ede8f7; color: #5c3e96; }
-.chip-green   { background: #e5f5e8; color: #1a6b2a; }
-.chip-amber   { background: #fff3e0; color: #b34700; }
-.chip-red     { background: #fdecea; color: #b71c1c; }
+.chip-umb     { background: #fdeee6; color: #9a4b16; }
+.chip-design  { background: #ede8f6; color: #6840a0; }
+.chip-green   { background: #e6f3ea; color: #1f5c38; }
+.chip-amber   { background: #fff3e0; color: #7a5a10; }
+.chip-red     { background: #fde8ee; color: #9c2c20; }
 .chip-blue    { background: #e3f0fd; color: #1255a0; }
 .chip-blue-lt { background: #ebf5ff; color: #2674c4; }
 .chip-gray    { background: #f2ede5; color: #7a6f65; }
 .chip-stone   { background: #ede9e3; color: #5c5249; }
-.chip-orange  { background: #fff0e0; color: #8b3900; }
+.chip-orange  { background: #fdeee6; color: #c06040; }
 
 /* ---- Two-column grid ---- */
 .two-up {
@@ -209,12 +239,12 @@
 }
 
 .fv {
-    color: #2d2523;
+    color: #1f2421;
     flex: 1;
     min-width: 0;
 }
 
-.fv a { color: #7c6eb0; text-decoration: none; }
+.fv a { color: #9b7ec8; text-decoration: none; }
 .fv a:hover { text-decoration: underline; }
 
 /* ---- Data table ---- */
@@ -231,22 +261,25 @@
     text-transform: uppercase;
     letter-spacing: 0.07em;
     color: #9c8e80;
-    background: #faf7f2;
-    border-bottom: 1.5px solid #e8e0d4;
+    background: #f5f2ec;
+    border-bottom: 1.5px solid #e6e2d9;
 }
 
 .data-table td {
     padding: 0.45rem 0.7rem;
     font-size: 0.78rem;
-    color: #2d2523;
+    color: #1f2421;
     border-bottom: 1px solid #f5f0e8;
     vertical-align: middle;
 }
 
 .data-table tr:last-child td { border-bottom: none; }
 
-.data-table a { color: #7c6eb0; text-decoration: none; }
+.data-table a { color: #9b7ec8; text-decoration: none; }
 .data-table a:hover { text-decoration: underline; }
+
+/* Inline table row actions */
+.data-table td .btn-inline { margin-left: 4px; }
 
 /* ---- Empty / error ---- */
 .empty-msg {
@@ -279,9 +312,9 @@
     font-size: 0.75rem;
     color: #6b5f54;
     padding: 0.4rem 0.6rem;
-    background: #fdf8f2;
-    border: 1px solid #e8e0d4;
-    border-left: 3px solid #c8844a;
+    background: #f5f2ec;
+    border: 1px solid #e6e2d9;
+    border-left: 3px solid #e8936a;
     border-radius: 5px;
     line-height: 1.4;
 }
@@ -290,7 +323,7 @@
 .tab-bar {
     display: flex;
     background: #fff;
-    border: 1.5px solid #e8e0d4;
+    border: 1.5px solid #e6e2d9;
     border-radius: 10px;
     overflow: hidden;
     padding: 0 0.25rem;
@@ -313,8 +346,8 @@
 }
 
 .tab-btn-active {
-    color: #c8844a;
-    border-bottom-color: #c8844a;
+    color: #2c7a4b;
+    border-bottom-color: #2c7a4b;
 }
 
 @media (max-width: 900px) {

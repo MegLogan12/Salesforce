@@ -23,7 +23,7 @@
 
                 <!-- Page header -->
                 <div class="page-header">
-                    <div class="page-header-icon" style="background:var(--odl-teal)">
+                    <div class="page-header-icon">
                         <lightning-icon icon-name="utility:location" size="small" variant="inverse"></lightning-icon>
                     </div>
                     <div>
@@ -54,7 +54,7 @@
                 <!-- Communities table -->
                 <div class="card">
                     <div class="card-header">
-                        <div class="card-icon" style="background:var(--odl-teal)">
+                        <div class="card-icon" style="background:#2c7a4b">
                             <lightning-icon icon-name="utility:location" size="x-small" variant="inverse"></lightning-icon>
                         </div>
                         <h2 class="card-title">All Communities</h2>
@@ -74,6 +74,7 @@
                                     <th>Community Name</th>
                                     <th>Builder</th>
                                     <th>Created</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -84,6 +85,9 @@
                                         </td>
                                         <td class="muted">{row.builderAccountName}</td>
                                         <td class="muted">{row.createdDateLabel}</td>
+                                        <td>
+                                            <button class="btn-inline" data-id={row.id} onclick={handleOpenRecord}>View Details</button>
+                                        </td>
                                     </tr>
                                 </template>
                             </tbody>

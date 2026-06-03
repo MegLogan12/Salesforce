@@ -7,6 +7,10 @@
                 <span class="dh-title">LOVING DISPATCH</span>
                 <span class="dh-territory">{territoryLabel}</span>
             </div>
+            <div class="dh-cta-row">
+                <button type="button" class="btn btn-primary" onclick={handleDispatchCrew}>Dispatch Crew</button>
+                <button type="button" class="btn btn-lav" onclick={handleViewRoute}>View Route</button>
+            </div>
             <div class="dh-meta">
                 <span class="dh-stat">{activeCount} units deployed today</span>
                 <span class="dh-date">{todayLabel}</span>
@@ -58,6 +62,10 @@
                                     {truck.street}, {truck.city}
                                 </div>
                                 <div class="tc-time">GPS {truck.status} · {truck.schedTime}</div>
+                                <div class="tc-actions">
+                                    <button type="button" class="btn-inline" data-id={truck.appointmentNumber} onclick={handleDispatchCrew}>Dispatch</button>
+                                    <button type="button" class="btn-inline" data-id={truck.appointmentNumber} onclick={handleViewRoute}>Route</button>
+                                </div>
                             </div>
                         </template>
                     </div>

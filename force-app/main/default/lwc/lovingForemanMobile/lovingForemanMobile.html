@@ -20,6 +20,13 @@
         <template if:false={loading}>
             <template if:true={hasJob}>
                 <div class="content">
+                    <!-- Primary CTA actions bar — Start Shift, Flag Issue, End of Day -->
+                    <div class="button-stack" style="margin-top:14px;margin-bottom:4px">
+                        <button type="button" class="btn-start-shift" disabled={beginDriveDisabled} onclick={handleBeginDrive}>{t.startShift}</button>
+                        <button type="button" class="btn-flag-issue" onclick={handleFlagIssueAction}>{t.flagIssue}</button>
+                        <button type="button" class="btn-end-day" onclick={handleEndOfDay}>{t.endOfDay}</button>
+                    </div>
+
                     <div class="clock-card">
                         <div class={clockTone}>
                             <div class="clock-label">{clockLabel}</div>

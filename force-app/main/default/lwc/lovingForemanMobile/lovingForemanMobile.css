@@ -1,9 +1,28 @@
 :host {
     display: block;
     min-height: 100vh;
-    background: linear-gradient(180deg, #18263d 0%, #132237 100%);
-    color: #16325c;
+    background: #f5f2ec;
+    color: #1f2421;
     font-family: "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
 }
 
 .shell {
@@ -19,7 +38,7 @@
     gap: 12px;
     padding: 16px;
     border-radius: 18px;
-    background: linear-gradient(135deg, #16325c 0%, #0070d2 100%);
+    background: linear-gradient(135deg, #2c7a4b 0%, #1f5c38 100%);
     color: #fff;
     box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
 }
@@ -62,11 +81,11 @@
 }
 
 .clock.in {
-    background: linear-gradient(135deg, #0f8f4f 0%, #047857 100%);
+    background: linear-gradient(135deg, #2c7a4b 0%, #1f5c38 100%);
 }
 
 .clock.out {
-    background: linear-gradient(135deg, #60728a 0%, #29415f 100%);
+    background: linear-gradient(135deg, #706e6b 0%, #4a4845 100%);
 }
 
 .clock-label {
@@ -87,12 +106,12 @@
     margin-bottom: 12px;
     padding: 14px;
     border-radius: 16px;
-    background: #f7fbff;
+    background: #fbfaf6;
     box-shadow: 0 8px 22px rgba(9, 29, 62, 0.12);
 }
 
 .job-card.active {
-    border: 2px solid #0070d2;
+    border: 2px solid #2c7a4b;
 }
 
 .empty {
@@ -103,7 +122,7 @@
     margin-bottom: 10px;
     font-size: 14px;
     font-weight: 700;
-    color: #16325c;
+    color: #1f2421;
 }
 
 .job-top,
@@ -120,7 +139,7 @@
 .scope-title {
     font-size: 14px;
     font-weight: 700;
-    color: #16325c;
+    color: #1f2421;
 }
 
 .job-meta,
@@ -128,7 +147,7 @@
 .scope-meta {
     margin-top: 4px;
     font-size: 12px;
-    color: #54698d;
+    color: #706e6b;
     line-height: 1.45;
 }
 
@@ -138,9 +157,9 @@
     gap: 12px;
     margin-top: 10px;
     padding-top: 10px;
-    border-top: 1px solid #dde7f1;
+    border-top: 1px solid #e6e2d9;
     font-size: 11px;
-    color: #54698d;
+    color: #706e6b;
 }
 
 .pill-row {
@@ -162,13 +181,13 @@
 }
 
 .pill.blue {
-    background: #dcedff;
-    color: #0f4c81;
+    background: #e6f3ea;
+    color: #1f5c38;
 }
 
 .pill.gray {
-    background: #eef3f8;
-    color: #52667f;
+    background: #f5f2ec;
+    color: #706e6b;
 }
 
 .stat-grid {
@@ -181,19 +200,19 @@
     padding: 12px;
     border-radius: 14px;
     background: #fff;
-    border: 1px solid #e2ebf3;
+    border: 1px solid #e6e2d9;
 }
 
 .stat-label {
     font-size: 11px;
-    color: #54698d;
+    color: #706e6b;
 }
 
 .stat-value {
     margin-top: 6px;
     font-size: 18px;
     font-weight: 700;
-    color: #16325c;
+    color: #1f2421;
 }
 
 .check-row,
@@ -203,11 +222,11 @@
     align-items: center;
     gap: 12px;
     padding: 10px 0;
-    border-top: 1px solid #e2ebf3;
+    border-top: 1px solid #e6e2d9;
 }
 
 .check-row.done {
-    color: #0f7b42;
+    color: #2c7a4b;
 }
 
 .group-block + .group-block {
@@ -217,7 +236,7 @@
 .mini-schedule-row + .mini-schedule-row {
     margin-top: 10px;
     padding-top: 10px;
-    border-top: 1px solid #e2ebf3;
+    border-top: 1px solid #e6e2d9;
 }
 
 .button-stack {
@@ -226,6 +245,7 @@
     margin-top: 12px;
 }
 
+/* Mobile-first CTA buttons — large padding as required */
 .primary-btn,
 .ghost-btn,
 .tab-btn {
@@ -245,8 +265,8 @@
 
 .primary-btn {
     width: 100%;
-    padding: 12px 14px;
-    background: linear-gradient(135deg, #0070d2 0%, #1359b8 100%);
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #2c7a4b 0%, #1f5c38 100%);
     color: #fff;
 }
 
@@ -257,8 +277,47 @@
     transform: none;
 }
 
+/* Start Shift — large green */
+.btn-start-shift {
+    width: 100%;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #2c7a4b 0%, #1f5c38 100%);
+    color: #fff;
+    border: 0;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* Flag Issue — large rose */
+.btn-flag-issue {
+    width: 100%;
+    padding: 10px 20px;
+    background: #c4607a;
+    color: #fff;
+    border: 0;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* End of Day — large peach */
+.btn-end-day {
+    width: 100%;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #e8936a 0%, #c06040 100%);
+    color: #fff;
+    border: 0;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
 .ghost-btn {
-    padding: 10px 12px;
+    padding: 10px 20px;
     background: rgba(255, 255, 255, 0.14);
     color: #fff;
 }
@@ -266,14 +325,14 @@
 .ghost-btn.block {
     width: 100%;
     background: #fff;
-    color: #0f4c81;
-    border: 1px solid #bed6f4;
+    color: #1f5c38;
+    border: 1px solid #a5d6a7;
 }
 
 .ghost-btn.small {
     padding: 7px 10px;
-    background: #eef5fb;
-    color: #0f4c81;
+    background: #e6f3ea;
+    color: #1f5c38;
 }
 
 .photo-grid {
@@ -295,11 +354,11 @@
     min-height: 108px;
     padding: 14px;
     border-radius: 14px;
-    background: linear-gradient(180deg, #e8f1fb 0%, #f8fbff 100%);
-    border: 1px dashed #7aa5d6;
+    background: linear-gradient(180deg, #e6f3ea 0%, #fbfaf6 100%);
+    border: 1px dashed #2c7a4b;
     font-size: 12px;
     font-weight: 700;
-    color: #16325c;
+    color: #1f2421;
 }
 
 .hidden-input {
@@ -312,10 +371,10 @@
     margin-top: 8px;
     padding: 10px 12px;
     border-radius: 12px;
-    border: 1px solid #cfdbe7;
+    border: 1px solid #e6e2d9;
     background: #fff;
     font-size: 13px;
-    color: #16325c;
+    color: #1f2421;
 }
 
 .notes {
@@ -326,7 +385,7 @@
 .scope-row + .scope-row {
     margin-top: 10px;
     padding-top: 10px;
-    border-top: 1px solid #e2ebf3;
+    border-top: 1px solid #e6e2d9;
 }
 
 .tabbar {
@@ -353,7 +412,7 @@
 
 .tab-btn.active {
     background: #fff;
-    color: #0f4c81;
+    color: #1f5c38;
 }
 
 @media (max-width: 420px) {

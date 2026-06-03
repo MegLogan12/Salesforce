@@ -7,6 +7,9 @@
                 <p class="subtitle">{subtitle}</p>
             </div>
             <div class="header-actions">
+                <button class="primary-btn" onclick={handleNewActivity}>+ New Activity</button>
+                <button class="primary-btn" onclick={handleLogCall}>Log Call</button>
+                <button class="primary-btn" onclick={handleSendEmail}>Send Email</button>
                 <button class="secondary-btn" onclick={handleRefresh}>Refresh</button>
             </div>
         </div>
@@ -97,6 +100,8 @@
                                     <td>{row.ownerName}</td>
                                     <td>{row.openItem}</td>
                                     <td>
+                                        <button class="btn-inline" data-id={row.id} onclick={handleLogCall}>Log Call</button>
+                                        <button class="btn-inline" data-id={row.id} onclick={handleSendEmail}>Email</button>
                                         <button class="primary-btn" data-id={row.id} onclick={handleOpenRecord}>Open</button>
                                     </td>
                                 </tr>

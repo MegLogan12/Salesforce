@@ -1,6 +1,28 @@
+:host {
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
+}
+
 .payment-card {
     background: #fff;
-    border: 1px solid #e5e7eb;
+    border: 1px solid #e6e2d9;
     border-radius: 8px;
     padding: 16px;
     margin-bottom: 12px;
@@ -9,6 +31,7 @@
 .payment-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     margin-bottom: 14px;
 }
 
@@ -17,7 +40,12 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: #374151;
+    color: #1f2421;
+}
+
+.payment-header-actions {
+    display: flex;
+    gap: 6px;
 }
 
 .payment-table {
@@ -35,7 +63,7 @@
 
 .payment-label {
     font-size: 13px;
-    color: #374151;
+    color: #1f2421;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -43,12 +71,12 @@
 
 .payment-label-strong {
     font-weight: 600;
-    color: #111827;
+    color: #1f2421;
 }
 
 .payment-value {
     font-size: 14px;
-    color: #111827;
+    color: #1f2421;
     font-feature-settings: "tnum";
 }
 
@@ -57,29 +85,29 @@
 }
 
 .payment-credit {
-    color: #059669;
+    color: #2c7a4b;
 }
 
 .payment-remaining-paid {
-    color: #059669;
+    color: #2c7a4b;
 }
 
 .payment-remaining-due {
-    color: #111827;
+    color: #1f2421;
 }
 
 .payment-divider {
     height: 1px;
-    background: #e5e7eb;
+    background: #e6e2d9;
     margin: 4px 0;
 }
 
 .voucher-code-chip {
     font-size: 11px;
     font-family: monospace;
-    background: #f0fdf4;
-    color: #166534;
-    border: 1px solid #bbf7d0;
+    background: #e6f3ea;
+    color: #1f5c38;
+    border: 1px solid #a8d8b5;
     border-radius: 4px;
     padding: 1px 6px;
 }
@@ -92,29 +120,31 @@
 }
 
 .chip-green {
-    background: #dcfce7;
-    color: #166534;
+    background: #e6f3ea;
+    color: #1f5c38;
 }
 
 .chip-amber {
-    background: #fef9c3;
-    color: #854d0e;
+    background: #fdeee6;
+    color: #7a5a10;
 }
 
 .deposit-paid-date {
     font-size: 11px;
-    color: #6b7280;
+    color: #706e6b;
 }
 
 .payment-paid-note,
 .payment-pending-note {
     font-size: 11px;
-    color: #6b7280;
+    color: #706e6b;
     margin-top: 10px;
     padding-top: 8px;
-    border-top: 1px solid #f3f4f6;
+    border-top: 1px solid #f5f2ec;
 }
 
 .payment-pending-note {
-    color: #b45309;
+    color: #7a5a10;
 }
+
+.btn-inline { font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; border:1.5px solid #2c7a4b; background:transparent; color:#2c7a4b; cursor:pointer; }

@@ -44,6 +44,11 @@
                         </span>
                     </template>
                 </div>
+                <div class="acct-banner-actions">
+                    <button class="acct-action-btn" onclick={handleNewOpportunity}>+ New Opportunity</button>
+                    <button class="acct-action-btn" onclick={handleNewCase}>+ New Case</button>
+                    <button class="acct-action-btn" onclick={handleNewTask}>+ New Task</button>
+                </div>
             </div>
 
             <!-- ── Tab bar ────────────────────────────────────────────────── -->
@@ -78,6 +83,7 @@
                                     <th>Stage</th>
                                     <th class="num-col">Amount</th>
                                     <th>Close Date</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -92,6 +98,9 @@
                                         </td>
                                         <td class="num-col">{row.amountFormatted}</td>
                                         <td class="muted">{row.closeDate}</td>
+                                        <td>
+                                            <button class="btn-inline" data-id={row.id} onclick={handleViewOpp}>View</button>
+                                        </td>
                                     </tr>
                                 </template>
                             </tbody>
@@ -101,6 +110,7 @@
                         <div class="empty-state">
                             <lightning-icon icon-name="utility:opportunity" size="medium"></lightning-icon>
                             <p>No open opportunities for this homeowner.</p>
+                            <button class="btn btn-primary" onclick={handleNewOpportunity}>Create Opportunity</button>
                         </div>
                     </template>
                 </div>
@@ -117,6 +127,7 @@
                                     <th>Status</th>
                                     <th>Contact</th>
                                     <th>Due Date</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -130,6 +141,9 @@
                                         </td>
                                         <td class="muted">{row.whoName}</td>
                                         <td class="muted">{row.activityDate}</td>
+                                        <td>
+                                            <button class="btn-inline" data-id={row.id} onclick={handleCompleteTask}>Complete</button>
+                                        </td>
                                     </tr>
                                 </template>
                             </tbody>
@@ -139,6 +153,7 @@
                         <div class="empty-state">
                             <lightning-icon icon-name="utility:task" size="medium"></lightning-icon>
                             <p>No open tasks or activities found.</p>
+                            <button class="btn btn-primary" onclick={handleNewTask}>Create Task</button>
                         </div>
                     </template>
                 </div>
@@ -154,6 +169,7 @@
                                     <th>Lead Name</th>
                                     <th>Status</th>
                                     <th>Lead Source</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -166,6 +182,9 @@
                                             <span class="status-chip chip-ok">{row.status}</span>
                                         </td>
                                         <td class="muted">{row.leadSource}</td>
+                                        <td>
+                                            <button class="btn-inline" data-id={row.id} onclick={handleConvertLead}>Convert</button>
+                                        </td>
                                     </tr>
                                 </template>
                             </tbody>
@@ -175,6 +194,7 @@
                         <div class="empty-state">
                             <lightning-icon icon-name="utility:lead" size="medium"></lightning-icon>
                             <p>No open leads associated with this homeowner.</p>
+                            <button class="btn btn-primary" onclick={handleNewLead}>Create Lead</button>
                         </div>
                     </template>
                 </div>
@@ -191,6 +211,7 @@
                                     <th>Subject</th>
                                     <th>Status</th>
                                     <th>Priority</th>
+                                    <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -206,6 +227,9 @@
                                         <td>
                                             <span class={row.priorityClass}>{row.priority}</span>
                                         </td>
+                                        <td>
+                                            <button class="btn-inline" data-id={row.id} onclick={handleViewCase}>View</button>
+                                        </td>
                                     </tr>
                                 </template>
                             </tbody>
@@ -215,6 +239,7 @@
                         <div class="empty-state">
                             <lightning-icon icon-name="utility:case" size="medium"></lightning-icon>
                             <p>No open cases for this homeowner.</p>
+                            <button class="btn btn-primary" onclick={handleNewCase}>Create Case</button>
                         </div>
                     </template>
                 </div>

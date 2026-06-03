@@ -2,7 +2,7 @@
     <template if:true={loaded}>
         <div class="card">
             <div class="card-header">
-                <div class="card-icon ci-teal">O</div>
+                <div class="card-icon">O</div>
                 <h2 class="card-title">Operational Details</h2>
             </div>
             <div class="card-body">
@@ -36,6 +36,9 @@
                         <div class="meta-value">{latestTaskSubject}</div>
                     </div>
                 </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-primary" onclick={handleViewDetails}>View Details</button>
             </div>
         </div>
     </template>

@@ -1,19 +1,38 @@
 /* ── Design tokens ──────────────────────────────────────────────────────────── */
 :host {
-    --odl-orange:      #E86826;
-    --odl-orange-dark: #C05318;
-    --odl-blue:        #0176D3;
-    --odl-blue-dark:   #014486;
-    --odl-teal:        #0D7A5E;
-    --odl-slate:       #54698D;
-    --text-dark:       #181818;
-    --text-mid:        #444444;
-    --text-light:      #6B7280;
-    --border:          #E0E5EE;
-    --bg-page:         #F3F5F8;
+    --odl-orange:      #e8936a;
+    --odl-orange-dark: #c06040;
+    --odl-blue:        #2c7a4b;
+    --odl-blue-dark:   #1f5c38;
+    --odl-teal:        #2c7a4b;
+    --odl-slate:       #706e6b;
+    --text-dark:       #1f2421;
+    --text-mid:        #706e6b;
+    --text-light:      #9c8e80;
+    --border:          #e6e2d9;
+    --bg-page:         #f5f2ec;
     --bg-card:         #FFFFFF;
     --radius-card:     8px;
     --shadow-card:     0 1px 4px rgba(0,0,0,0.10);
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
 }
 
 .console-home {
@@ -30,6 +49,9 @@
     align-items: center;
     gap: 12px;
     margin-bottom: 16px;
+    background: linear-gradient(135deg, #c890c0 0%, #a06080 100%);
+    padding: 16px 20px;
+    border-radius: var(--radius-card);
 }
 
 .page-header-icon {
@@ -40,22 +62,31 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    background: rgba(255,255,255,0.2);
 }
 
 .page-title {
     font-size: 20px;
     font-weight: 700;
-    color: var(--text-dark);
+    color: #ffffff;
     margin: 0 0 2px;
 }
 
 .page-sub {
     font-size: 13px;
-    color: var(--text-light);
+    color: rgba(255,255,255,0.80);
     margin: 0;
 }
 
 .page-refresh { margin-left: auto; }
+
+/* CTA */
+.page-cta-row { display: flex; gap: 8px; align-items: center; }
+.btn { font-size:13px; font-weight:600; padding:7px 14px; border-radius:7px; border:none; cursor:pointer; }
+.btn-primary { background:#2c7a4b; color:#fff; }
+.btn-primary:hover { background:#1f5c38; }
+.btn-ghost { background:transparent; color:#2c7a4b; border:1.5px solid #2c7a4b; cursor:pointer; }
+.btn-inline { font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; border:1.5px solid #c890c0; background:transparent; color:#c890c0; cursor:pointer; }
 
 /* ── Loading / Error ──────────────────────────────────────────────────────── */
 .odl-loading {
@@ -109,7 +140,7 @@
     gap: 10px;
     padding: 14px 16px 12px;
     border-bottom: 1px solid var(--border);
-    background: #FAFBFD;
+    background: #fbfaf6;
 }
 
 .card-icon {
@@ -139,7 +170,7 @@
     font-size: 13px;
 }
 
-.odl-table thead tr { background: #F8F9FB; }
+.odl-table thead tr { background: #fbfaf6; }
 
 .odl-table th {
     padding: 8px 16px;
@@ -160,11 +191,11 @@
 }
 
 .odl-table tbody tr:last-child td { border-bottom: none; }
-.odl-table tbody tr:hover { background: #F8F9FB; }
+.odl-table tbody tr:hover { background: #fbfaf6; }
 
 /* ── Links ────────────────────────────────────────────────────────────────── */
 .rec-link {
-    color: var(--odl-blue);
+    color: #c890c0;
     text-decoration: none;
     cursor: pointer;
     font-weight: 500;

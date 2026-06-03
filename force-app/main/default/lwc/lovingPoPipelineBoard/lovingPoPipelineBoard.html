@@ -10,6 +10,7 @@
             </div>
             <div class="pipeline-actions">
                 <span class="total-badge">{totalCount} records</span>
+                <button type="button" class="btn btn-primary" onclick={handleNewPO}>+ New PO</button>
                 <button class="pipe-btn" onclick={handleRefresh}>Refresh</button>
             </div>
         </div>
@@ -50,6 +51,9 @@
                                     <template if:true={card.nextAction}>
                                         <div class="card-next-action">{card.nextAction}</div>
                                     </template>
+                                    <div style="margin-top:6px">
+                                        <button type="button" class="btn-inline" data-id={card.id} onclick={handleCardClick}>Open</button>
+                                    </div>
                                 </div>
                             </template>
                             <template if:false={col.hasCards}>

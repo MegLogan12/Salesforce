@@ -1,7 +1,7 @@
 :host {
-    --ol-line: #d8dde6;
-    --ol-navy: #16325c;
-    --ol-blue: #0176d3;
+    --ol-line: #e6e2d9;
+    --ol-navy: #1f2421;
+    --ol-blue: #2c7a4b;
     display: block;
 }
 
@@ -18,7 +18,7 @@
 }
 
 .header {
-    background: #fafaf9;
+    background: #f5f2ec;
     border-bottom: 1px solid var(--ol-line);
     color: var(--ol-navy);
     font-size: 12px;
@@ -32,6 +32,9 @@
 
 .body {
     padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .open-link {
@@ -40,3 +43,8 @@
     font-weight: 600;
     text-decoration: none;
 }
+
+.btn { font-size:12px; font-weight:600; padding:6px 12px; border-radius:7px; border:none; cursor:pointer; }
+.btn-primary { background:#2c7a4b; color:#fff; }
+.btn-primary:hover { background:#1f5c38; }
+.btn-ghost { background:transparent; color:#2c7a4b; border:1.5px solid #2c7a4b; cursor:pointer; }

@@ -2,6 +2,10 @@
     <div class="payment-card">
         <div class="payment-header">
             <span class="payment-title">Payment Summary</span>
+            <div class="payment-header-actions">
+                <button class="btn-inline" onclick={handleRecordPayment}>Record Payment</button>
+                <button class="btn-inline" onclick={handleDownloadPdf}>Download PDF</button>
+            </div>
         </div>
 
         <div class="payment-table">

@@ -1,3 +1,25 @@
+:host {
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
+}
+
 .comms-card {
     background: #fff;
     border: 1px solid #e6e2d9;
@@ -11,7 +33,7 @@
     align-items: center;
     gap: 10px;
     padding: 13px 15px;
-    background: linear-gradient(90deg, #e8f0f7, #fff);
+    background: linear-gradient(135deg, #c890c0 0%, #a06080 100%);
     border-bottom: 1px solid #e6e2d9;
 }
 
@@ -19,8 +41,8 @@
     width: 24px;
     height: 24px;
     border-radius: 6px;
-    background: #e8f0f7;
-    color: #2d5f8a;
+    background: rgba(255,255,255,0.25);
+    color: #fff;
     display: grid;
     place-items: center;
     font-size: 9px;
@@ -31,7 +53,7 @@
 .comms-title {
     font-size: 13.5px;
     font-weight: 700;
-    color: #1f2421;
+    color: #fff;
     margin: 0;
     flex: 1;
 }
@@ -44,9 +66,9 @@
     white-space: nowrap;
 }
 
-.chip-green  { background: #e6f3ec; color: #2e7d5b; }
-.chip-amber  { background: #fbf1d8; color: #b07d12; }
-.chip-red    { background: #fbe9e6; color: #c0392b; }
+.chip-green  { background: #e6f3ea; color: #1f5c38; }
+.chip-amber  { background: #fdeee6; color: #7a5a10; }
+.chip-red    { background: #fde8ee; color: #9c2c20; }
 .chip-slate  { background: #eef0f2; color: #5b6470; }
 
 /* Channel strips */
@@ -69,7 +91,7 @@
     font-size: 10.5px;
     text-transform: uppercase;
     letter-spacing: .35px;
-    color: #8b8f86;
+    color: #706e6b;
     font-weight: 600;
 }
 
@@ -81,16 +103,16 @@
 }
 
 .chan-sub {
-    color: #5b6058;
+    color: #706e6b;
     font-size: 11.5px;
     margin-top: 2px;
 }
 
-.chan-warn { color: #c0392b; }
+.chan-warn { color: #9c2c20; }
 
-.consent-on   { color: #2e7d5b; }
-.consent-off  { color: #c0392b; }
-.consent-warn { color: #b07d12; }
+.consent-on   { color: #2c7a4b; }
+.consent-off  { color: #9c2c20; }
+.consent-warn { color: #7a5a10; }
 
 .sms-btn {
     margin-top: 7px;
@@ -99,28 +121,28 @@
     padding: 5px 10px;
     border-radius: 7px;
     cursor: pointer;
-    border: 1px solid #d8d3c7;
+    border: 1px solid #e6e2d9;
     width: 100%;
     text-align: center;
 }
 
 .sms-btn-active {
-    background: #2d5f8a;
+    background: #c890c0;
     color: #fff;
-    border-color: #2d5f8a;
+    border-color: #c890c0;
 }
 
-.sms-btn-active:hover { background: #234c6f; }
+.sms-btn-active:hover { background: #a06080; }
 
 .sms-btn-disabled {
-    background: #f4f2ed;
-    color: #8b8f86;
+    background: #f5f2ec;
+    color: #706e6b;
     cursor: not-allowed;
 }
 
 .chan-blocked {
     font-size: 11px;
-    color: #c0392b;
+    color: #9c2c20;
     margin-top: 4px;
     line-height: 1.4;
 }
@@ -130,7 +152,7 @@
     font-size: 10.5px;
     text-transform: uppercase;
     letter-spacing: .4px;
-    color: #8b8f86;
+    color: #706e6b;
     font-weight: 600;
     padding: 9px 15px 4px;
 }
@@ -141,7 +163,7 @@
     gap: 8px;
     padding: 8px 15px 12px;
     font-size: 12px;
-    color: #5b6058;
+    color: #706e6b;
     line-height: 1.5;
     border-bottom: 1px solid #e6e2d9;
 }
@@ -149,9 +171,9 @@
 /* Governance bar */
 .gov-bar {
     padding: 11px 15px;
-    background: #fbfaf7;
+    background: #fbfaf6;
     font-size: 12px;
-    color: #5b6058;
+    color: #706e6b;
     line-height: 1.5;
 }
 

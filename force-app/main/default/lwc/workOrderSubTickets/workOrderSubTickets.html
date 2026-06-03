@@ -1,5 +1,8 @@
 <template>
     <lightning-card title="Sub-Tickets" icon-name="standard:work_order">
+        <div slot="actions">
+            <lightning-button label="New Sub-Ticket" icon-name="utility:add" onclick={handleNewSubTicket}></lightning-button>
+        </div>
         <div class="slds-p-around_small">
             <template if:true={loading}>
                 <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
@@ -20,6 +23,7 @@
                                     <th>Name</th>
                                     <th>Status</th>
                                     <th>Materials</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -28,6 +32,9 @@
                                         <td>{r.name}</td>
                                         <td>{r.status}</td>
                                         <td>{r.materialsList}</td>
+                                        <td>
+                                            <button class="btn-inline" data-id={r.id} onclick={handleViewRow}>View</button>
+                                        </td>
                                     </tr>
                                 </template>
                             </tbody>

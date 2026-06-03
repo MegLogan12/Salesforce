@@ -26,6 +26,9 @@
                             </div>
                         </div>
                         <div class="hero-actions">
+                            <button class="btn btn-primary" onclick={handleNewActivity}>+ New Activity</button>
+                            <button class="btn btn-primary" onclick={handleLogCall}>Log Call</button>
+                            <button class="btn btn-primary" onclick={handleSendEmail}>Send Email</button>
                             <template lwc:if={accountUrl}>
                                 <a class="btn-hero-sec" href={accountUrl}>Open Account</a>
                             </template>
@@ -138,13 +141,14 @@
                             <div class="panel-header">Design Review</div>
                             <template lwc:if={hasDesignReviews}>
                                 <table class="data-table">
-                                    <thead><tr><th>Review</th><th>Status</th><th>Updated</th></tr></thead>
+                                    <thead><tr><th>Review</th><th>Status</th><th>Updated</th><th>Action</th></tr></thead>
                                     <tbody>
                                         <template for:each={pageData.designReviews} for:item="row">
                                             <tr key={row.id}>
                                                 <td><a href={row.url}>{row.label}</a></td>
                                                 <td>{row.status}</td>
                                                 <td>{row.dateText}</td>
+                                                <td><button class="btn-inline" data-id={row.id} onclick={handleOpenRecord}>Open</button></td>
                                             </tr>
                                         </template>
                                     </tbody>
@@ -159,13 +163,14 @@
                             <div class="panel-header">Quote, Contract &amp; Payment</div>
                             <template lwc:if={hasQuotes}>
                                 <table class="data-table">
-                                    <thead><tr><th>Quote</th><th>Status</th><th>Amount</th></tr></thead>
+                                    <thead><tr><th>Quote</th><th>Status</th><th>Amount</th><th>Action</th></tr></thead>
                                     <tbody>
                                         <template for:each={pageData.quotes} for:item="row">
                                             <tr key={row.id}>
                                                 <td>{row.label}</td>
                                                 <td><span class={row.chipClass}>{row.status}</span></td>
                                                 <td>{row.subtext}</td>
+                                                <td><button class="btn-inline" data-id={row.id} onclick={handleSendQuote}>Send Quote</button></td>
                                             </tr>
                                         </template>
                                     </tbody>
@@ -173,7 +178,7 @@
                             </template>
                             <template lwc:if={hasPaymentMilestones}>
                                 <table class="data-table">
-                                    <thead><tr><th>Payment</th><th>Status</th><th>Amount</th><th>Due</th></tr></thead>
+                                    <thead><tr><th>Payment</th><th>Status</th><th>Amount</th><th>Due</th><th>Action</th></tr></thead>
                                     <tbody>
                                         <template for:each={pageData.paymentMilestones} for:item="row">
                                             <tr key={row.id}>
@@ -181,6 +186,7 @@
                                                 <td>{row.status}</td>
                                                 <td>{row.subtext}</td>
                                                 <td>{row.dateText}</td>
+                                                <td><button class="btn-inline" data-id={row.id} onclick={handleRecordPayment}>Record Payment</button></td>
                                             </tr>
                                         </template>
                                     </tbody>
@@ -222,6 +228,17 @@
                             </div>
                         </section>
                     </template>
+
+                    <!-- Close actions -->
+                    <section class="panel">
+                        <div class="panel-header">Close Actions</div>
+                        <div class="field-grid">
+                            <div class="field-row">
+                                <button class="btn btn-primary" onclick={handleCloseWon}>Close Won</button>
+                                <button class="btn btn-rose" style="margin-left:8px" onclick={handleCloseLost}>Close Lost</button>
+                            </div>
+                        </div>
+                    </section>
 
                 </section>
             </template>

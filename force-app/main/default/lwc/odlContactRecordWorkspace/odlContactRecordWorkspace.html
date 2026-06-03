@@ -35,7 +35,10 @@
                 <div class="rh-acts">
                     <button class="btn btn-ghost" onclick={handleRefresh}>Refresh</button>
                     <button class="btn" onclick={handleCall}>Call</button>
+                    <button class="btn btn-green" onclick={handleSendEmail}>Send Email</button>
                     <button class="btn btn-primary" onclick={handleLogOutreach}>Log Outreach</button>
+                    <button class="btn" onclick={handleAddNote}>Add Note</button>
+                    <button class="btn btn-rose" onclick={handleEditContact}>Edit Contact</button>
                 </div>
             </div>
 
@@ -83,6 +86,9 @@
             <div class="card-head">
                 <span class="card-icon ci-orange">RL</span>
                 <span class="card-title">Deals and Service on this Contact</span>
+                <div class="card-actions">
+                    <button class="btn-inline" onclick={handleNewActivity}>+ New Activity</button>
+                </div>
             </div>
             <template lwc:if={hasDeals}>
                 <table class="tbl">
@@ -92,6 +98,7 @@
                             <th>Type</th>
                             <th>Status</th>
                             <th class="tbl-r">Value</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -101,6 +108,7 @@
                                 <td>{row.type}</td>
                                 <td><span class={row.chipClass}>{row.status}</span></td>
                                 <td class="tbl-r">{row.value}</td>
+                                <td><button class="btn-inline" data-id={row.recordId} onclick={handleOpenRecord}>Open</button></td>
                             </tr>
                         </template>
                     </tbody>
@@ -121,6 +129,9 @@
             <div class="card-head">
                 <span class="card-icon ci-slate">DT</span>
                 <span class="card-title">Details</span>
+                <div class="card-actions">
+                    <button class="btn-inline" onclick={handleEditContact}>Edit Contact</button>
+                </div>
             </div>
             <div class="kv-row">
                 <div class="kv-item">

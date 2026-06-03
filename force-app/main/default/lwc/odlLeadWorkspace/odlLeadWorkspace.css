@@ -1,8 +1,30 @@
+:host {
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
+}
+
 .workspace-shell {
-    background: #f4f6f9;
+    background: #f5f2ec;
     min-height: 100vh;
     padding: 1.5rem;
-    color: #16325c;
+    color: #1f2421;
 }
 
 .workspace-header,
@@ -10,7 +32,7 @@
 .list-card,
 .state-card {
     background: #fff;
-    border: 1px solid #d8dde6;
+    border: 1px solid #e6e2d9;
     border-radius: 8px;
 }
 
@@ -25,7 +47,7 @@
 
 .eyebrow {
     margin: 0 0 0.25rem;
-    color: #54698d;
+    color: #706e6b;
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.04em;
@@ -40,7 +62,7 @@ h1 {
 
 .subtitle {
     margin: 0.35rem 0 0;
-    color: #54698d;
+    color: #706e6b;
 }
 
 .toolbar {
@@ -62,7 +84,7 @@ h1 {
 .secondary-btn,
 .primary-btn {
     border-radius: 999px;
-    border: 1px solid #d8dde6;
+    border: 1px solid #e6e2d9;
     cursor: pointer;
     font-weight: 600;
     transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
@@ -70,13 +92,13 @@ h1 {
 
 .filter-chip {
     background: #fff;
-    color: #16325c;
+    color: #1f2421;
     padding: 0.45rem 0.85rem;
 }
 
 .filter-chip.active {
-    background: #16325c;
-    border-color: #16325c;
+    background: #1f2421;
+    border-color: #1f2421;
     color: #fff;
 }
 
@@ -91,14 +113,16 @@ h1 {
 
 .secondary-btn {
     background: #fff;
-    color: #16325c;
+    color: #1f2421;
 }
 
 .primary-btn {
-    background: #f28c28;
-    border-color: #f28c28;
+    background: #e8936a;
+    border-color: #e8936a;
     color: #fff;
 }
+
+.primary-btn:hover { background: #c06040; }
 
 .list-card,
 .state-card {
@@ -106,8 +130,8 @@ h1 {
 }
 
 .state-card.error {
-    border-color: #c23934;
-    color: #c23934;
+    border-color: #9c2c20;
+    color: #9c2c20;
 }
 
 .card-heading {
@@ -125,7 +149,13 @@ h1 {
 
 .card-heading p {
     margin: 0.3rem 0 0;
-    color: #54698d;
+    color: #706e6b;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
 }
 
 .table-wrap {
@@ -139,7 +169,7 @@ h1 {
 
 .workspace-table th,
 .workspace-table td {
-    border-top: 1px solid #e5e8ec;
+    border-top: 1px solid #e6e2d9;
     padding: 0.9rem 0.75rem;
     text-align: left;
     vertical-align: top;
@@ -148,25 +178,24 @@ h1 {
 
 .workspace-table th {
     border-top: 0;
-    color: #54698d;
+    color: #706e6b;
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.04em;
     text-transform: uppercase;
 }
 
+.workspace-table tbody tr:hover td { background: #fbfaf6; }
+
 .link-button {
     background: none;
     border: 0;
-    color: #0176d3;
+    color: #2c7a4b;
     cursor: pointer;
     font-weight: 600;
     padding: 0;
     text-align: left;
 }
 
-.header-actions {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-}
+.btn-inline { font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; border:1.5px solid #2c7a4b; background:transparent; color:#2c7a4b; cursor:pointer; }
+.btn-inline-rose { font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; border:1.5px solid #c4607a; background:transparent; color:#c4607a; cursor:pointer; }

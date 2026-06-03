@@ -7,6 +7,8 @@
                 <p class="subtitle">Standard Salesforce Quotes linked to ODL opportunities.</p>
             </div>
             <div class="header-actions">
+                <button class="primary-btn" onclick={handleSendQuote}>Send Quote</button>
+                <button class="primary-btn" onclick={handleDownloadPdf}>Download PDF</button>
                 <button class="secondary-btn" onclick={handleRefresh}>Refresh</button>
             </div>
         </div>
@@ -86,6 +88,9 @@
                                     </td>
                                     <td>{row.expirationDate}</td>
                                     <td>
+                                        <button class="btn-inline" data-id={row.id} onclick={handleSendQuote}>Send Quote</button>
+                                        <button class="btn-inline" data-id={row.id} onclick={handleRecordPayment}>Record Payment</button>
+                                        <button class="btn-inline" data-id={row.id} onclick={handleDownloadPdf}>Download PDF</button>
                                         <button class="primary-btn" data-id={row.id} onclick={handleOpenRecord}>Open</button>
                                     </td>
                                 </tr>

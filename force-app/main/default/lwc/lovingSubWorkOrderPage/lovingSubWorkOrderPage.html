@@ -127,7 +127,7 @@
                             <template if:true={isFinishedJob}>
                                 <div class="card warn">
                                     <div class="ch">
-                                        <div class="ci" style="background:#0176d3;">FJ</div>
+                                        <div class="ci" style="background:#2c7a4b;">FJ</div>
                                         <h3>Finished Job Control Panel</h3>
                                     </div>
                                     <div class="cb">
@@ -148,7 +148,7 @@
                             <template if:true={isWarranty}>
                                 <div class="card info">
                                     <div class="ch">
-                                        <div class="ci" style="background:#0176d3;">WT</div>
+                                        <div class="ci" style="background:#2c7a4b;">WT</div>
                                         <h3>Warranty Decision</h3>
                                     </div>
                                     <div class="cb">
@@ -169,7 +169,7 @@
                             <template if:true={isCustomerCare}>
                                 <div class="card alert">
                                     <div class="ch">
-                                        <div class="ci" style="background:#0176d3;">CC</div>
+                                        <div class="ci" style="background:#2c7a4b;">CC</div>
                                         <h3>Customer Care Intake</h3>
                                     </div>
                                     <div class="cb">
@@ -193,7 +193,7 @@
                             <!-- Quick Actions -->
                             <div class="card">
                                 <div class="ch">
-                                    <div class="ci" style="background:#0176d3;">⚡</div>
+                                    <div class="ci" style="background:#2c7a4b;">⚡</div>
                                     <h3>Quick Actions</h3>
                                 </div>
                                 <ul class="qa-list">
@@ -209,7 +209,7 @@
                             <!-- Gate Warnings -->
                             <div class="card last">
                                 <div class="ch">
-                                    <div class="ci" style="background:#fe9339;">⚠</div>
+                                    <div class="ci" style="background:#e8936a;">⚠</div>
                                     <h3>Gate Warnings</h3>
                                 </div>
                                 <div class="cb">
@@ -233,8 +233,9 @@
                 <template if:true={showScope}>
                     <div class="card last">
                         <div class="ch">
-                            <div class="ci" style="background:#0070d2;">📄</div>
+                            <div class="ci" style="background:#2c7a4b;">📄</div>
                             <h3>Scope / Items</h3>
+                            <button class="btn-inline" style="margin-left:auto;" onclick={handleEditWorkOrder}>Add Item</button>
                         </div>
                         <template if:true={hasScopeItems}>
                             <table class="tbl">
@@ -246,6 +247,7 @@
                                         <th class="num">Remaining</th>
                                         <th>Reason</th>
                                         <th>Charge</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -259,6 +261,7 @@
                                             <td>
                                                 <span class={item.chargeClass}>{item.charge}</span>
                                             </td>
+                                            <td><button class="btn-inline" data-id={item.id} onclick={handleEditWorkOrder}>Edit</button></td>
                                         </tr>
                                     </template>
                                 </tbody>
@@ -274,8 +277,9 @@
                 <template if:true={showSchedule}>
                     <div class="card last">
                         <div class="ch">
-                            <div class="ci" style="background:#04844b;">📅</div>
+                            <div class="ci" style="background:#2c7a4b;">📅</div>
                             <h3>Schedule</h3>
+                            <button class="btn-inline" style="margin-left:auto;" onclick={handleEditWorkOrder}>Update Schedule</button>
                         </div>
                         <div class="fields-grid">
                             <div><div class="field-label">Scheduled Date</div><div class="field-value">{schedule.scheduledDate}</div></div>
@@ -292,7 +296,7 @@
                 <template if:true={showCloseout}>
                     <div class="card last">
                         <div class="ch">
-                            <div class="ci" style="background:#04844b;">✓</div>
+                            <div class="ci" style="background:#2c7a4b;">✓</div>
                             <h3>Closeout</h3>
                         </div>
                         <div class="cb">
@@ -314,7 +318,7 @@
                 <template if:true={showPhotos}>
                     <div class="card last">
                         <div class="ch">
-                            <div class="ci" style="background:#534ab7;">📷</div>
+                            <div class="ci" style="background:#9b7ec8;">📷</div>
                             <h3>Photos &amp; Docs ({documents.length})</h3>
                             <button class="sf-btn" style="margin-left:auto;" onclick={handleEditWorkOrder}>Edit Work Order</button>
                         </div>
@@ -352,13 +356,14 @@
                 <template if:true={showActivity}>
                     <div class="card last">
                         <div class="ch">
-                            <div class="ci" style="background:#0070d2;">💬</div>
+                            <div class="ci" style="background:#2c7a4b;">💬</div>
                             <h3>Activity</h3>
+                            <button class="btn-inline" style="margin-left:auto;" onclick={handleNewNote}>Add Note</button>
                         </div>
                         <div class="cb">
                             <template for:each={activity} for:item="item">
                                 <div key={item.id} class="feed-item">
-                                    <div class="feed-avatar" style="background:#54698d;">{item.actorInitials}</div>
+                                    <div class="feed-avatar" style="background:#706e6b;">{item.actorInitials}</div>
                                     <div class="feed-body">
                                         <div class="feed-meta">{item.actorName} · {item.timeAgo}</div>
                                         <div class="feed-content">{item.body}</div>

@@ -2,7 +2,7 @@
     <template if:true={loaded}>
         <div class="card">
             <div class="card-header">
-                <div class="card-icon ci-orange">C</div>
+                <div class="card-icon">C</div>
                 <h2 class="card-title">Community Identity</h2>
             </div>
             <div class="card-body">
@@ -32,6 +32,10 @@
                         <div class="meta-value muted">{recordId}</div>
                     </div>
                 </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-primary" onclick={handleViewDetails}>View Details</button>
+                <button class="btn btn-ghost" onclick={handleContactUs}>Contact Us</button>
             </div>
         </div>
     </template>

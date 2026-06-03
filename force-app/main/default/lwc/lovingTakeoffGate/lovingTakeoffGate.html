@@ -166,6 +166,7 @@
                                         <th>Measured Qty</th>
                                         <th>Unit</th>
                                         <th>Decision</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -176,6 +177,7 @@
                                             <td class="ltg-num">{li.measuredQty}</td>
                                             <td>{li.unit}</td>
                                             <td><span class={li.decisionClass}>{li.decision}</span></td>
+                                            <td><button class="btn-inline" onclick={handleOpenPO}>View</button></td>
                                         </tr>
                                     </template>
                                 </tbody>
@@ -225,6 +227,7 @@
                                     <th>Action</th>
                                     <th>Outcome</th>
                                     <th>Owner</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -232,26 +235,31 @@
                                     <td>Approve as package</td>
                                     <td>Moves to Approved — WO gate unlocked</td>
                                     <td>CS</td>
+                                    <td><button class="btn-inline" disabled={approveDisabled} onclick={handleApproveTakeoff}>Approve</button></td>
                                 </tr>
                                 <tr>
                                     <td>Return for corrections</td>
                                     <td>Status set to Returned — NFI reason recorded</td>
                                     <td>CS</td>
+                                    <td><button class="btn-inline-rose" onclick={handleReturnTakeoff}>Return</button></td>
                                 </tr>
                                 <tr>
                                     <td>Resolve PO exception</td>
                                     <td>Exception Reason cleared on Purchase Order</td>
                                     <td>CS / FM</td>
+                                    <td><button class="btn-inline" onclick={handleOpenPO}>Open PO</button></td>
                                 </tr>
                                 <tr>
                                     <td>Hold PO</td>
                                     <td>Blocks Work Order on the Purchase Order record</td>
                                     <td>CS</td>
+                                    <td><button class="btn-inline" onclick={handleOpenPO}>Open PO</button></td>
                                 </tr>
                                 <tr>
                                     <td>Update package</td>
                                     <td>Requires Meg / admin approval</td>
                                     <td>Admin</td>
+                                    <td><button class="btn-inline" onclick={handleOpenPO}>Request</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -262,6 +270,7 @@
                         <div class="ltg-card-head">
                             <div class="ltg-ico ltg-ico-dark">📋</div>
                             <h3>Record Details</h3>
+                            <button class="btn-inline" style="margin-left:auto;" onclick={handleOpenPO}>Edit Record</button>
                         </div>
                         <div class="ltg-fields-grid">
                             <div>

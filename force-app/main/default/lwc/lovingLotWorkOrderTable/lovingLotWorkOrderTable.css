@@ -10,18 +10,23 @@
 
 .tbl th,
 .tbl td {
-    border-bottom: 1px solid #eef1f5;
-    color: #16325c;
+    border-bottom: 1px solid #e6e2d9;
+    color: #1f2421;
     font-size: 12px;
     padding: 9px 10px;
     text-align: left;
 }
 
 .tbl th {
-    color: #66758f;
+    color: #706e6b;
     font-size: 10px;
     letter-spacing: .08em;
     text-transform: uppercase;
+    background: #f5f2ec;
+}
+
+.tbl tbody tr:hover td {
+    background: #fbfaf6;
 }
 
 .chip {
@@ -34,31 +39,33 @@
 }
 
 .cg {
-    background: #e8f4ea;
-    color: #3f8a4c;
+    background: #e6f3ea;
+    color: #1f5c38;
 }
 
 .ca {
-    background: #fff2cf;
-    color: #b66d13;
+    background: #fdeee6;
+    color: #7a5a10;
 }
 
 .cr {
-    background: #ffe8e8;
-    color: #b33635;
+    background: #fde8ee;
+    color: #9c3052;
 }
 
 .cb2 {
-    background: #e7f1ff;
-    color: #1f5f9f;
+    background: #ede8f6;
+    color: #6840a0;
 }
 
 .cp {
-    background: #efeafe;
-    color: #6542c0;
+    background: #ede8f6;
+    color: #6840a0;
 }
 
 .cgr {
-    background: #f0f2f6;
-    color: #65738a;
+    background: #f5f2ec;
+    color: #706e6b;
 }
+
+.btn-inline { font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; border:1.5px solid #2c7a4b; background:transparent; color:#2c7a4b; cursor:pointer; }

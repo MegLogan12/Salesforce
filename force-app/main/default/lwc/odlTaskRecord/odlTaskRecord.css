@@ -1,8 +1,30 @@
+:host {
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
+}
+
 .task-record-page {
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: #f3f5f8;
+    background: #f5f2ec;
 }
 
 .action-bar {
@@ -11,7 +33,7 @@
     justify-content: space-between;
     padding: 0.6rem 1.25rem;
     background: #ffffff;
-    border-bottom: 1px solid #dddbda;
+    border-bottom: 1px solid #e6e2d9;
     gap: 0.5rem;
 }
 
@@ -29,31 +51,31 @@
 
 .btn-return {
     background: none;
-    border: 1px solid #dddbda;
+    border: 1px solid #e6e2d9;
     border-radius: 4px;
     padding: 0.35rem 0.85rem;
     font-size: 0.8rem;
     font-weight: 600;
-    color: #0176d3;
+    color: #2c7a4b;
     cursor: pointer;
     transition: background 0.15s;
 }
-.btn-return:hover { background: #f3f5f8; }
+.btn-return:hover { background: #f5f2ec; }
 
 .btn-nav {
     background: none;
-    border: 1px solid #dddbda;
+    border: 1px solid #e6e2d9;
     border-radius: 4px;
     padding: 0.35rem 0.75rem;
     font-size: 0.8rem;
-    color: #444;
+    color: #706e6b;
     cursor: pointer;
     transition: background 0.15s;
 }
-.btn-nav:hover { background: #f3f5f8; }
+.btn-nav:hover { background: #f5f2ec; }
 
 .btn-complete {
-    background: #0176d3;
+    background: #9b7ec8;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -63,11 +85,37 @@
     cursor: pointer;
     transition: background 0.15s;
 }
-.btn-complete:hover { background: #014486; }
+.btn-complete:hover { background: #6840a0; }
 .btn-complete:disabled { background: #c9c9c9; cursor: default; }
 
+.btn-reassign {
+    background: #e8936a;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 0.4rem 1.1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.btn-reassign:hover { background: #c06040; }
+
+.btn-snooze {
+    background: transparent;
+    color: #706e6b;
+    border: 1px solid #e6e2d9;
+    border-radius: 4px;
+    padding: 0.4rem 1.1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.btn-snooze:hover { background: #f5f2ec; }
+
 .status-badge.completed {
-    background: #2e844a;
+    background: #2c7a4b;
     color: #fff;
     border-radius: 4px;
     padding: 0.35rem 0.85rem;

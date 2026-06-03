@@ -77,6 +77,8 @@
                                     <td>{row.opportunityName}</td>
                                     <td>{row.accountName}</td>
                                     <td>
+                                        <button class="btn-inline" data-id={row.id} onclick={handleApplyVoucher}>Apply Voucher</button>
+                                        <button class="btn-inline-rose" data-id={row.id} onclick={handleVoid}>Void</button>
                                         <button class="primary-btn" data-id={row.id} onclick={handleOpenRecord}>Open</button>
                                     </td>
                                 </tr>

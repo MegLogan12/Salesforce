@@ -46,7 +46,7 @@
                         <button class="sf-btn" onclick={handleNewNote}>Add Note</button>
                         <button class="sf-btn" onclick={handleOpenFiles}>Files</button>
                         <button class="sf-btn" onclick={handleOpenTakeoffRecord} disabled={disableOpenTakeoffRecord}>Open Takeoff</button>
-                        <button class="sf-btn primary" onclick={openServiceAppointment} disabled={disableOpenServiceAppointment}>Open Appointment</button>
+                        <button class="sf-btn primary btn-primary" onclick={openServiceAppointment} disabled={disableOpenServiceAppointment}>Open Appointment</button>
                         <template if:true={isParentMode}>
                             <button class="sf-btn" onclick={handleCreateChildren} disabled={disableCreateChildren}>Create / Sync Sub WorkOrders</button>
                         </template>
@@ -449,7 +449,7 @@
                         <div class="cb">
                             <template if:true={lineItems.length}>
                                 <table class="tbl">
-                                    <thead><tr><th>Description</th><th>Scope</th><th class="num">Qty</th><th>Unit</th><th class="num">Unit Price</th><th class="num">Extended Price</th><th>Review</th><th>Substitution</th><th>Variance</th><th>Status</th></tr></thead>
+                                    <thead><tr><th>Description</th><th>Scope</th><th class="num">Qty</th><th>Unit</th><th class="num">Unit Price</th><th class="num">Extended Price</th><th>Review</th><th>Substitution</th><th>Variance</th><th>Status</th><th></th></tr></thead>
                                     <tbody>
                                         <template for:each={lineItems} for:item="line">
                                             <tr key={line.description}>
@@ -463,6 +463,7 @@
                                                 <td>{line.substitutionState}</td>
                                                 <td>{line.variance}</td>
                                                 <td>{line.status}</td>
+                                                <td><button class="btn-inline" data-id={line.description} onclick={handleEditWorkOrder}>Edit</button></td>
                                             </tr>
                                         </template>
                                     </tbody>
@@ -492,7 +493,7 @@
                 <template if:true={showBlockers}>
                     <div class="grid-stack two-up">
                         <div class="card">
-                            <div class="ch"><div class="ci">!</div><h3>Execution Controls</h3></div>
+                            <div class="ch"><div class="ci">!</div><h3>Execution Controls</h3><button class="btn-inline" style="margin-left:auto;" onclick={handleEditWorkOrder}>Edit Controls</button></div>
                             <div class="cb meta-grid">
                                 <template for:each={blockerRows} for:item="row">
                                     <div key={row.label} class="meta-item">
@@ -523,7 +524,7 @@
                 <template if:true={showProof}>
                     <div class="grid-stack two-up">
                         <div class="card">
-                            <div class="ch"><div class="ci">◎</div><h3>Billing + QI</h3></div>
+                            <div class="ch"><div class="ci">◎</div><h3>Billing + QI</h3><button class="btn-inline" style="margin-left:auto;" onclick={handleEditWorkOrder}>Update Billing</button></div>
                             <div class="cb meta-grid">
                                 <template for:each={proofFinancialRows} for:item="row">
                                     <div key={row.label} class="meta-item">
@@ -535,7 +536,7 @@
                         </div>
 
                         <div class="card">
-                            <div class="ch"><div class="ci">⇄</div><h3>Appointment Handoff</h3></div>
+                            <div class="ch"><div class="ci">⇄</div><h3>Appointment Handoff</h3><button class="btn-inline" style="margin-left:auto;" onclick={openServiceAppointment}>Open Appointment</button></div>
                             <div class="cb meta-grid">
                                 <template for:each={handoffRows} for:item="row">
                                     <div key={row.label} class="meta-item">

@@ -15,43 +15,43 @@
     <template lwc:else>
         <div class="kpi-strip">
             <!-- Open Opps -->
-            <div class="kpi-tile kc-blue" title="Open Opportunities">
+            <div class="kpi-tile kc-blue" title="Open Opportunities" onclick={handleOpenOpportunities}>
                 <span class="kpi-num">{openOpps}</span>
                 <span class="kpi-lbl">Open Opps</span>
             </div>
 
             <!-- Total Pipeline -->
-            <div class="kpi-tile kc-orange" title="Total Open Pipeline">
+            <div class="kpi-tile kc-orange" title="Total Open Pipeline" onclick={handleOpenOpportunities}>
                 <span class="kpi-num">{totalPipelineFormatted}</span>
                 <span class="kpi-lbl">Pipeline</span>
             </div>
 
             <!-- Won Opps -->
-            <div class="kpi-tile kc-teal" title="Won Opportunities">
+            <div class="kpi-tile kc-teal" title="Won Opportunities" onclick={handleOpenOpportunities}>
                 <span class="kpi-num">{wonOpps}</span>
                 <span class="kpi-lbl">Won Opps</span>
             </div>
 
             <!-- Total Closed -->
-            <div class="kpi-tile kc-purple" title="Total Closed / Won Revenue">
+            <div class="kpi-tile kc-purple" title="Total Closed / Won Revenue" onclick={handleOpenOpportunities}>
                 <span class="kpi-num">{totalClosedFormatted}</span>
                 <span class="kpi-lbl">Closed Revenue</span>
             </div>
 
             <!-- Open Leads -->
-            <div class="kpi-tile kc-amber" title="Open Leads associated with this Account">
+            <div class="kpi-tile kc-amber" title="Open Leads associated with this Account" onclick={handleOpenLeads}>
                 <span class="kpi-num">{openLeads}</span>
                 <span class="kpi-lbl">Open Leads</span>
             </div>
 
             <!-- Open Tasks -->
-            <div class="kpi-tile kc-slate" title="Open Tasks on Opportunities and Account">
+            <div class="kpi-tile kc-slate" title="Open Tasks on Opportunities and Account" onclick={handleOpenTasks}>
                 <span class="kpi-num">{openTasks}</span>
                 <span class="kpi-lbl">Open Tasks</span>
             </div>
 
             <!-- Open Cases -->
-            <div class="kpi-tile kc-red" title="Open Cases for this Account">
+            <div class="kpi-tile kc-red" title="Open Cases for this Account" onclick={handleOpenCases}>
                 <span class="kpi-num">{openCases}</span>
                 <span class="kpi-lbl">Open Cases</span>
             </div>

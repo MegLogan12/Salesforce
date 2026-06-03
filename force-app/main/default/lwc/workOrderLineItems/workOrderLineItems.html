@@ -18,6 +18,9 @@
                         <template lwc:if={li.scoreFlag}>
                             <div class="warn">Score flag: requires FM review</div>
                         </template>
+                        <div class="li-actions">
+                            <button class="btn-inline" data-id={li.id} onclick={handleViewItem}>View</button>
+                        </div>
                     </div>
                 </template>
             </div>

@@ -1,15 +1,29 @@
 :host {
-    --ol-navy: #16325c;
-    --ol-orange: #fe9339;
-    --ol-orange-dark: #ba7517;
-    --ol-blue: #0070d2;
-    --ol-green: #04844b;
-    --ol-red: #c23934;
-    --ol-purple: #534ab7;
-    --ol-aqua: #1d9e75;
-    --ol-gray: #54698d;
-    --ol-line: #d8dde6;
-    --ol-bg: #f3f3f3;
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
+
+    --ol-navy: #1f2421;
+    --ol-blue: #2c7a4b;
+    --ol-gray: #706e6b;
+    --ol-line: #e6e2d9;
+    --ol-bg: #f5f2ec;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     display: block;
 }
@@ -29,7 +43,7 @@
     gap: 12px;
     justify-content: space-between;
     align-items: flex-start;
-    background: #fafaf9;
+    background: #fbfaf6;
 }
 
 .card-title {
@@ -91,13 +105,13 @@
 }
 
 .state-message.warn {
-    background: #fff7ed;
-    color: #92400e;
+    background: #fdeee6;
+    color: #7a5a10;
 }
 
 .state-message.error {
-    background: #fce8e8;
-    color: #991b1b;
+    background: #fde8ee;
+    color: #9c2c20;
 }
 
 .table-wrap {
@@ -111,7 +125,7 @@
 }
 
 .record-table th {
-    background: #fafaf9;
+    background: #fbfaf6;
     color: var(--ol-gray);
     text-align: left;
     padding: 8px 12px;
@@ -123,12 +137,14 @@
 
 .record-table td {
     padding: 8px 12px;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #f0ebe3;
     vertical-align: top;
 }
 
+.record-table tbody tr:hover td { background: #fbfaf6; }
+
 .selected-row td {
-    background: #fff7ed;
+    background: #fdeee6;
 }
 
 .link-button {
@@ -150,28 +166,28 @@
 }
 
 .status-chip.inbound {
-    background: #e8f5e9;
-    color: #2e7d32;
+    background: #e6f3ea;
+    color: #1f5c38;
 }
 
 .status-chip.outbound {
-    background: #e3f0fb;
-    color: #0c447c;
+    background: #ede8f6;
+    color: #6840a0;
 }
 
 .status-chip.logged {
-    background: #ede9fe;
-    color: #5b21b6;
+    background: #ede8f6;
+    color: #6840a0;
 }
 
 .status-chip.system,
 .status-chip.attachment {
-    background: #fef3c7;
-    color: #92400e;
+    background: #fdeee6;
+    color: #7a5a10;
 }
 
 .status-chip.neutral {
-    background: #f4f6f9;
+    background: #f5f2ec;
     color: var(--ol-gray);
 }
 
@@ -211,15 +227,17 @@
 }
 
 .ol-btn.primary {
-    background: var(--ol-orange);
-    border-color: var(--ol-orange);
+    background: #9b7ec8;
+    border-color: #9b7ec8;
     color: #fff;
 }
 
+.ol-btn.primary:hover { background: #6840a0; }
+
 .ol-btn[disabled] {
-    background: #f4f6f9;
-    color: #99a3b3;
-    border-color: #e5e5e5;
+    background: #f5f2ec;
+    color: #9c8e80;
+    border-color: #e6e2d9;
     cursor: not-allowed;
 }
 

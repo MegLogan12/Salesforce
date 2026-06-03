@@ -1,12 +1,30 @@
 :host {
-    --ol-navy: #16325c;
-    --ol-blue: #0176d3;
-    --ol-orange: #fe9339;
-    --ol-green: #2e844a;
-    --ol-purple: #6f45e2;
-    --ol-line: #d8dde6;
-    --ol-soft: #fafaf9;
-    --ol-gray: #54698d;
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
+
+    --ol-navy: #1f2421;
+    --ol-blue: #2c7a4b;
+    --ol-green: #2c7a4b;
+    --ol-line: #e6e2d9;
+    --ol-soft: #f5f2ec;
+    --ol-gray: #706e6b;
     display: block;
 }
 
@@ -74,13 +92,18 @@ h1 {
 }
 
 .cta {
-    background: var(--ol-orange);
-    border-color: var(--ol-orange);
+    background: #2c7a4b;
+    border-color: #2c7a4b;
+    color: #fff;
     cursor: pointer;
 }
 
+.cta:hover { background: #1f5c38; }
+
 .cta-secondary {
     background: #fff;
+    color: var(--ol-navy);
+    cursor: pointer;
 }
 
 .layout {
@@ -112,12 +135,12 @@ h1 {
 }
 
 .path-step.done {
-    background: #f3f2f2;
+    background: #f5f2ec;
 }
 
 .path-step.current {
-    background: var(--ol-orange);
-    border-color: var(--ol-orange);
+    background: #2c7a4b;
+    border-color: #2c7a4b;
     color: #fff;
 }
 
@@ -151,7 +174,7 @@ h1 {
 
 .photo-tile {
     align-items: center;
-    background: #fafaf9;
+    background: #f5f2ec;
     border: 1px dashed var(--ol-line);
     border-radius: 6px;
     display: flex;
@@ -177,12 +200,14 @@ h1 {
 }
 
 .table td {
-    border-bottom: 1px solid #edf0f5;
+    border-bottom: 1px solid #e6e2d9;
     color: var(--ol-navy);
     font-size: 12px;
     padding: 10px 12px;
     vertical-align: top;
 }
+
+.table tbody tr:hover td { background: #fbfaf6; }
 
 .rail-action {
     background: #fff;
@@ -195,6 +220,8 @@ h1 {
     padding: 10px 12px;
     text-align: left;
 }
+
+.rail-action:hover { background: #fbfaf6; }
 
 .rail-body,
 .empty-state,
@@ -211,7 +238,7 @@ h1 {
 }
 
 .empty-state { color: var(--ol-gray); }
-.error { color: #c23934; }
+.error { color: #9c2c20; }
 
 @media (max-width: 1100px) {
     .hero {

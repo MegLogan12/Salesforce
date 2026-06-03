@@ -7,6 +7,8 @@
                 <p class="subtitle">Homeowner ODL leads. Follow-Up data pulls from live Salesforce activity.</p>
             </div>
             <div class="header-actions">
+                <button class="primary-btn" onclick={handleConvertLead}>Convert Lead</button>
+                <button class="primary-btn" onclick={handleLogActivity}>Log Activity</button>
                 <button class="secondary-btn" onclick={handleRefresh}>Refresh</button>
             </div>
         </div>
@@ -77,6 +79,9 @@
                                     <td>{row.followUpDue}</td>
                                     <td>{row.ownerName}</td>
                                     <td>
+                                        <button class="btn-inline" data-id={row.id} onclick={handleLogActivity}>Log Activity</button>
+                                        <button class="btn-inline" data-id={row.id} onclick={handleSendEmail}>Send Email</button>
+                                        <button class="btn-inline-rose" data-id={row.id} onclick={handleDisqualify}>Disqualify</button>
                                         <button class="primary-btn" data-id={row.id} onclick={handleOpenRecord}>Open</button>
                                     </td>
                                 </tr>

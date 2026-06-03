@@ -1,6 +1,6 @@
 .photo-section {
     margin-bottom: 1rem;
-    border-top: 1px solid #e5e5e5;
+    border-top: 1px solid #e6e2d9;
     padding-top: 0.5rem;
 }
 .section-head {
@@ -12,10 +12,11 @@
 .section-label {
     font-weight: 600;
     font-size: 0.95rem;
+    color: #1f2421;
 }
 .section-count {
-    background: #eef3f9;
-    color: #2b5d8a;
+    background: #ede8f6;
+    color: #6840a0;
     padding: 0.1rem 0.5rem;
     border-radius: 999px;
     font-size: 0.75rem;
@@ -26,17 +27,22 @@
     gap: 0.5rem;
 }
 .photo-card {
-    border: 1px solid #e5e5e5;
+    border: 1px solid #e6e2d9;
     border-radius: 4px;
     padding: 0.25rem;
     background: #fff;
+}
+.photo-card-actions {
+    display: flex;
+    gap: 4px;
+    margin-top: 0.35rem;
 }
 .thumb {
     width: 100%;
     aspect-ratio: 1 / 1;
     overflow: hidden;
     border-radius: 3px;
-    background: #f4f4f4;
+    background: #f5f2ec;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -47,7 +53,7 @@
     object-fit: cover;
 }
 .thumb-placeholder {
-    color: #999;
+    color: #9c8e80;
     font-size: 0.75rem;
 }
 .meta {
@@ -56,7 +62,7 @@
     gap: 0.25rem;
     margin-top: 0.25rem;
     font-size: 0.7rem;
-    color: #555;
+    color: #706e6b;
 }
 .geo-badge {
     padding: 0.05rem 0.3rem;
@@ -64,15 +70,19 @@
     font-weight: 600;
 }
 .geo-ok {
-    background: #e3f6ea;
-    color: #1c7c41;
+    background: #e6f3ea;
+    color: #1f5c38;
 }
 .geo-warn {
-    background: #fde2e2;
-    color: #a23434;
+    background: #fde8ee;
+    color: #9c3052;
 }
 .notes {
     margin-top: 0.25rem;
     font-size: 0.72rem;
-    color: #444;
+    color: #1f2421;
 }
+.btn { font-size:13px; font-weight:600; padding:7px 14px; border-radius:7px; border:none; cursor:pointer; }
+.btn-primary { background:#2c7a4b; color:#fff; }
+.btn-primary:hover { background:#1f5c38; }
+.btn-inline { font-size:11px; font-weight:600; padding:3px 8px; border-radius:5px; border:1.5px solid #2c7a4b; background:transparent; color:#2c7a4b; cursor:pointer; }

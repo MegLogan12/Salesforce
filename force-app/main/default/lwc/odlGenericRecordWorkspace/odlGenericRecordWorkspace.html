@@ -8,7 +8,10 @@
         </section>
 
         <section class="panel">
-            <div class="panel-header">Record Fields</div>
+            <div class="panel-header">
+                <span>Record Fields</span>
+                <button class="btn btn-primary" onclick={handleEditRecord}>Edit Record</button>
+            </div>
             <div class="form-wrap">
                 <lightning-record-form
                     record-id={recordId}

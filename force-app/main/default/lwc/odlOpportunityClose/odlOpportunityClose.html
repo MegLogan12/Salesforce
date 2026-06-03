@@ -51,6 +51,11 @@
                             onclick={handleConfirmClose}>
                             Mark as Closed Won
                         </button>
+                        <button
+                            class="btn-close-lost"
+                            onclick={handleCloseLost}>
+                            Mark as Closed Lost
+                        </button>
                         <template lwc:if={isNotWoReady}>
                             <p class="close-blocked-note">
                                 All readiness gates must be complete before closing.
