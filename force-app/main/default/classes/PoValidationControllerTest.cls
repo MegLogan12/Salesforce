@@ -2,11 +2,24 @@
 private class PoValidationControllerTest {
 
     // PO_Validated__c and Price_Variance_Pct__c are formula fields — cannot set via DML.
+    // Division_Account__c is a required lookup on Builder_PO__c — create a test Account first.
     // After insert, re-query to get formula-computed values before passing to buildView.
+
+    private static Id divisionAccountId;
+
+    private static Id getDivisionAccount() {
+        if (divisionAccountId == null) {
+            Account a = new Account(Name = 'Test Division Account');
+            insert a;
+            divisionAccountId = a.Id;
+        }
+        return divisionAccountId;
+    }
 
     private static Builder_PO__c makepo(Decimal poAmt, Decimal pbTotal,
                                         String priceResult, Decimal nfiCount) {
         Builder_PO__c po = new Builder_PO__c(
+            Division_Account__c   = getDivisionAccount(),
             PO_Amount__c          = poAmt,
             Price_Book_Total__c   = pbTotal,
             Price_Check_Result__c = priceResult,
@@ -32,10 +45,10 @@ private class PoValidationControllerTest {
         PoValidationController.PoView view = PoValidationController.buildView(po);
         Test.stopTest();
 
-        System.assertEquals(2,     view.checks.size(),   'Expected 2 check results');
-        System.assertEquals(true,  view.checks[0].passed, 'Price check should pass (Price_Check_Result__c = Pass)');
-        System.assertEquals(true,  view.checks[1].passed, 'Qty check should pass (NFI_Count__c = 0)');
-        System.assertEquals('0',   view.checks[1].actual, 'NFI actual should be 0');
+        System.assertEquals(2,    view.checks.size(),    'Expected 2 check results');
+        System.assertEquals(true, view.checks[0].passed, 'Price check: Pass when Price_Check_Result__c = Pass');
+        System.assertEquals(true, view.checks[1].passed, 'Qty check: Pass when NFI_Count__c = 0');
+        System.assertEquals('0',  view.checks[1].actual, 'NFI actual should be 0');
     }
 
     @IsTest

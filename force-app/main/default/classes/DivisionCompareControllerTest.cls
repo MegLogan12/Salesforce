@@ -45,11 +45,33 @@ private class DivisionCompareControllerTest {
 
     @IsTest
     static void kpiFieldsExist_returnsFalseWhenAbsent() {
-        // Directly exercise the @TestVisible helper; confirms KPI fields are not on Account.
         Test.startTest();
         Boolean exists = DivisionCompareController.kpiFieldsExist();
         Test.stopTest();
 
         System.assertEquals(false, exists, 'KPI fields should not yet exist on Account');
+    }
+
+    @IsTest
+    static void buildRows_assignsRankAndCoversComparator() {
+        // Exercises buildRows and DivisionRowComparator directly via @TestVisible.
+        // metricValue will be null (no KPI fields) — comparator nulls-last logic still runs.
+        Account a1 = new Account(Name = 'Div Alpha');
+        Account a2 = new Account(Name = 'Div Beta');
+        insert new List<Account>{ a1, a2 };
+
+        List<Account> accts = [SELECT Id, Name, Division_Region__c FROM Account WHERE Id IN (:a1.Id, :a2.Id) ORDER BY Name];
+
+        Test.startTest();
+        List<DivisionCompareController.DivisionRow> rows =
+            DivisionCompareController.buildRows(accts, 'Division_Region__c');
+        Test.stopTest();
+
+        System.assertEquals(2, rows.size(), 'Expected 2 rows');
+        // Ranks are 1-based and assigned after sort; both metricValues null → original order
+        for (DivisionCompareController.DivisionRow r : rows) {
+            System.assert(r.rank >= 1 && r.rank <= 2, 'Rank should be 1 or 2');
+            System.assertEquals('Division_Region__c', r.metricLabel, 'Metric label set');
+        }
     }
 }
