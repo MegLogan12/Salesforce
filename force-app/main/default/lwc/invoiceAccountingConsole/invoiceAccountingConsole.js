@@ -8,45 +8,21 @@ import generateInvoice from '@salesforce/apex/InvoiceAccountingController.genera
 import markPaid from '@salesforce/apex/InvoiceAccountingController.markPaid';
 import sendReminder from '@salesforce/apex/InvoiceAccountingController.sendReminder';
 
-const READY_COLS = [
-    { label: 'Work Order',     fieldName: 'name',         type: 'text' },
-    { label: 'Builder',        fieldName: 'builder',      type: 'text' },
-    { label: 'Community',      fieldName: 'community',    type: 'text' },
-    { label: 'Total Revenue',  fieldName: 'totalRevenue', type: 'currency', typeAttributes: { currencyCode: 'USD' } },
-    { label: 'Total Cost',     fieldName: 'totalCost',    type: 'currency', typeAttributes: { currencyCode: 'USD' } },
-    { label: 'Status',         fieldName: 'status',       type: 'text' },
-];
+const USD_FORMAT = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+});
 
-const INVOICE_COLS = [
-    { label: 'Invoice',        fieldName: 'invoiceName',   type: 'text' },
-    { label: 'Work Order',     fieldName: 'workOrderName', type: 'text' },
-    { label: 'Builder',        fieldName: 'builder',       type: 'text' },
-    { label: 'Total Revenue',  fieldName: 'totalRevenue',  type: 'currency', typeAttributes: { currencyCode: 'USD' } },
-    { label: 'Balance Due',    fieldName: 'balance',       type: 'currency', typeAttributes: { currencyCode: 'USD' } },
-    { label: 'Status',         fieldName: 'status',        type: 'text' },
-    { label: 'Invoice Date',   fieldName: 'invoiceDate',   type: 'date' },
-    { label: 'Due Date',       fieldName: 'dueDate',       type: 'date' },
-    { label: 'GP Status',      fieldName: 'gpStatus',      type: 'text' },
-];
-
-const PAID_COLS = [
-    { label: 'Invoice',        fieldName: 'invoiceName',  type: 'text' },
-    { label: 'Builder',        fieldName: 'builder',      type: 'text' },
-    { label: 'Total Revenue',  fieldName: 'totalRevenue', type: 'currency', typeAttributes: { currencyCode: 'USD' } },
-    { label: 'Date Paid',      fieldName: 'datePaid',     type: 'date' },
-    { label: 'Status',         fieldName: 'status',       type: 'text' },
-];
-
-const READY_ACTIONS  = [{ label: 'Generate Invoice', name: 'generate' }];
-const INVOICED_ACTIONS = [
-    { label: 'Mark Paid',      name: 'markpaid' },
-    { label: 'Send Reminder',  name: 'reminder' },
-];
+function fmtCurrency(val) {
+    if (val == null) return '—';
+    return USD_FORMAT.format(val);
+}
 
 export default class InvoiceAccountingConsole extends LightningElement {
     @track activeTab = 'ready';
 
-    // Wire results stored so refreshApex can target them
     _wiredReady;
     _wiredInvoiced;
     _wiredPaid;
@@ -54,16 +30,6 @@ export default class InvoiceAccountingConsole extends LightningElement {
     readyRows    = [];
     invoicedRows = [];
     paidRows     = [];
-
-    // Column / action configs
-    readyCols      = READY_COLS;
-    invoiceCols    = INVOICE_COLS;
-    paidCols       = PAID_COLS;
-    readyActions   = READY_ACTIONS;
-    invoicedActions = INVOICED_ACTIONS;
-
-    // G5 gate — export blocked until resolved
-    g5Resolved = false;
 
     // ── Wire adapters ──────────────────────────────────────────────────────────
 
@@ -97,12 +63,42 @@ export default class InvoiceAccountingConsole extends LightningElement {
         }
     }
 
+    // ── Computed row formatters ────────────────────────────────────────────────
+
+    get readyRowsFormatted() {
+        if (!this.readyRows) return [];
+        return this.readyRows.map(row => Object.assign({}, row, {
+            totalRevenueFormatted: fmtCurrency(row.totalRevenue),
+            totalCostFormatted:    fmtCurrency(row.totalCost)
+        }));
+    }
+
+    get invoicedRowsFormatted() {
+        if (!this.invoicedRows) return [];
+        return this.invoicedRows.map(row => Object.assign({}, row, {
+            totalRevenueFormatted: fmtCurrency(row.totalRevenue),
+            balanceFormatted:      fmtCurrency(row.balance)
+        }));
+    }
+
+    get paidRowsFormatted() {
+        if (!this.paidRows) return [];
+        return this.paidRows.map(row => Object.assign({}, row, {
+            totalRevenueFormatted: fmtCurrency(row.totalRevenue)
+        }));
+    }
+
     // ── Computed KPI properties ────────────────────────────────────────────────
 
-    get readyCount()         { return this.readyRows    ? this.readyRows.length    : 0; }
-    get invoicedCount()      { return this.invoicedRows ? this.invoicedRows.length : 0; }
-    get paidCount()          { return this.paidRows     ? this.paidRows.length     : 0; }
-    get pendingExportCount() { return this.paidRows     ? this.paidRows.length     : 0; }
+    get readyCount()    { return this.readyRows    ? this.readyRows.length    : 0; }
+    get invoicedCount() { return this.invoicedRows ? this.invoicedRows.length : 0; }
+    get paidCount()     { return this.paidRows     ? this.paidRows.length     : 0; }
+
+    get arOpenFormatted() {
+        if (!this.invoicedRows || this.invoicedRows.length === 0) return '$0';
+        const total = this.invoicedRows.reduce((sum, row) => sum + (row.totalRevenue || 0), 0);
+        return fmtCurrency(total);
+    }
 
     get hasReadyRows()    { return this.readyRows    && this.readyRows.length    > 0; }
     get hasInvoicedRows() { return this.invoicedRows && this.invoicedRows.length > 0; }
@@ -118,34 +114,35 @@ export default class InvoiceAccountingConsole extends LightningElement {
     get invoicedTabClass() { return 'subtab' + (this.activeTab === 'invoiced' ? ' active' : ''); }
     get paidTabClass()     { return 'subtab' + (this.activeTab === 'paid'     ? ' active' : ''); }
 
-    // ── Tab handler ────────────────────────────────────────────────────────────
+    // ── Tab handlers ───────────────────────────────────────────────────────────
 
     handleTabClick(event) {
         this.activeTab = event.currentTarget.dataset.tab;
     }
 
-    handleTabChange(event) {
-        this.activeTab = event.target.value;
+    handleWorkQueue() {
+        this.activeTab = 'ready';
     }
 
-    // ── Row action handlers ────────────────────────────────────────────────────
-
-    handleReadyAction(event) {
-        const action = event.detail.action;
-        const row    = event.detail.row;
-        if (action.name === 'generate') {
-            this._generateInvoice(row.workOrderId);
-        }
+    handleExportBatch() {
+        this._showToast('Export batch', 'Accounting export is pending Gate G5 resolution.', 'info');
     }
 
-    handleInvoicedAction(event) {
-        const action = event.detail.action;
-        const row    = event.detail.row;
-        if (action.name === 'markpaid') {
-            this._markPaid(row.invoiceId);
-        } else if (action.name === 'reminder') {
-            this._sendReminder(row.invoiceId);
-        }
+    // ── Inline row action handlers ─────────────────────────────────────────────
+
+    handleGenerateInvoice(event) {
+        const workOrderId = event.currentTarget.dataset.id;
+        this._generateInvoice(workOrderId);
+    }
+
+    handleMarkPaid(event) {
+        const invoiceId = event.currentTarget.dataset.id;
+        this._markPaid(invoiceId);
+    }
+
+    handleSendReminder(event) {
+        const invoiceId = event.currentTarget.dataset.id;
+        this._sendReminder(invoiceId);
     }
 
     // ── Imperative action methods ──────────────────────────────────────────────

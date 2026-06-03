@@ -61,6 +61,40 @@ export default class CooCommandCenter extends LightningElement {
         return GATES;
     }
 
+    get gateCount() {
+        return GATES.length;
+    }
+
+    get divisionCount() {
+        return this.divisions ? this.divisions.length : 0;
+    }
+
+    // ── Stat card computed values ──────────────────────────────────────────────
+
+    get activeWosStat() {
+        return this.kpis ? this.kpis.activeWOs : '—';
+    }
+
+    get pendingRevenueStat() {
+        return this.gpSummary ? this.gpSummary.totalRevenuePendingFormatted : '—';
+    }
+
+    get avgOnTimePct() {
+        if (!this.divisions || this.divisions.length === 0) return '—';
+        const filled = this.divisions.filter(d => d.onTimePct != null);
+        if (filled.length === 0) return '—';
+        const avg = filled.reduce((sum, d) => sum + d.onTimePct, 0) / filled.length;
+        return fmtPct(avg);
+    }
+
+    get avgGpPct() {
+        if (!this.divisions || this.divisions.length === 0) return '—';
+        const filled = this.divisions.filter(d => d.gpPct != null);
+        if (filled.length === 0) return '—';
+        const avg = filled.reduce((sum, d) => sum + d.gpPct, 0) / filled.length;
+        return fmtPct(avg);
+    }
+
     // ── Tab state ──────────────────────────────────────────────────────────────
 
     get isOverviewTab()   { return this.activeTab === 'overview'; }
@@ -77,10 +111,20 @@ export default class CooCommandCenter extends LightningElement {
         this.activeTab = event.currentTarget.dataset.tab;
     }
 
+    handleOpenGates() {
+        this.activeTab = 'gates';
+    }
+
+    handleOpenExceptions() {
+        this.activeTab = 'exceptions';
+    }
+
     get showDivisionBanner() {
         if (!this.divisions || this.divisions.length === 0) return false;
         return this.divisions.every(d => d.revenueT12M == null);
     }
+
+    // ── Wire adapters ──────────────────────────────────────────────────────────
 
     @wire(getCooKpis)
     wiredKpis({ data, error }) {
@@ -116,13 +160,25 @@ export default class CooCommandCenter extends LightningElement {
         if (data) {
             this.divisions = data.map(row => Object.assign({}, row, {
                 revenueT12MFormatted: fmtCurrency(row.revenueT12M),
-                gpPctFormatted: fmtPct(row.gpPct),
-                onTimePctFormatted: fmtPct(row.onTimePct)
+                gpPctFormatted:       fmtPct(row.gpPct),
+                onTimePctFormatted:   fmtPct(row.onTimePct),
+                healthClass: 'chip ' + (
+                    row.onTimePct == null ? 'c-slate' :
+                    row.onTimePct >= 90   ? 'c-green' :
+                    row.onTimePct >= 80   ? 'c-amber' : 'c-red'
+                ),
+                healthLabel: (
+                    row.onTimePct == null ? 'n/a' :
+                    row.onTimePct >= 90   ? 'good' :
+                    row.onTimePct >= 80   ? 'watch' : 'low'
+                )
             }));
         } else if (error) {
             console.error('getDivisionSummary error', error);
         }
     }
+
+    // ── Gate escalation ────────────────────────────────────────────────────────
 
     handleEscalate(event) {
         const gateId = event.currentTarget.dataset.gateId;

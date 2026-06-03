@@ -1,7 +1,42 @@
 <template>
     <div class="coo-wrap">
 
-        <!-- KPI Strip (8 cells, 2 rows × 4 cols) -->
+        <!-- Record Header -->
+        <div class="rechead">
+            <div class="recicon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"/>
+                    <rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+            </div>
+            <div class="rectitle">
+                <h1>COO Command Center</h1>
+                <div class="rec-sub">Pipeline, KPIs, exceptions, and the open decisions across every division and system</div>
+                <template if:true={kpis}>
+                    <div class="rec-chips">
+                        <span class="chip c-blue">{kpis.activeWOs} active WOs</span>
+                        <span class="chip c-amber">{gateCount} gates open</span>
+                        <span class="chip c-green">{divisionCount} divisions</span>
+                    </div>
+                </template>
+            </div>
+            <div class="rec-sp"></div>
+            <div class="rec-acts">
+                <button class="btn" onclick={handleOpenGates}>Open decisions</button>
+                <button class="btn btn-primary" onclick={handleOpenExceptions}>Exceptions</button>
+            </div>
+        </div>
+
+        <!-- Action Bar -->
+        <div class="actionbar">
+            <button class="btn">Work Orders</button>
+            <button class="btn">Capacity</button>
+            <button class="btn">Billing</button>
+        </div>
+
+        <!-- KPI Strip (8 cells) -->
         <template if:true={kpis}>
             <div class="hi">
                 <div class="hi-cell">
@@ -39,6 +74,21 @@
             </div>
         </template>
 
+        <!-- Next Action Bar -->
+        <div class="nextbar">
+            <div class="nextbar-ico">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                </svg>
+            </div>
+            <div class="nextbar-body">
+                <div class="nextbar-t1">Four decisions are holding work back</div>
+                <div class="nextbar-t2">The gates below each have an owner and an action. Clearing G5, G6, and G9 unblocks billing, scheduling, and the appointment model.</div>
+            </div>
+            <div class="nextbar-sp"></div>
+            <button class="btn btn-sm" onclick={handleOpenGates}>See gates</button>
+        </div>
+
         <!-- Subtabs -->
         <div class="subtabs">
             <div class={overviewTabClass}    data-tab="overview"    onclick={handleTabClick}>Overview</div>
@@ -49,6 +99,31 @@
 
         <!-- ── OVERVIEW ── -->
         <template if:true={isOverviewTab}>
+
+            <!-- 4 Stat Cards -->
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-lab">Active Work Orders</div>
+                    <div class="stat-val">{activeWosStat}</div>
+                    <div class="stat-note">across all divisions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-lab">Pending Revenue</div>
+                    <div class="stat-val">{pendingRevenueStat}</div>
+                    <div class="stat-note">awaiting closeout &amp; invoicing</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-lab">Avg On-time Install</div>
+                    <div class="stat-val">{avgOnTimePct}</div>
+                    <div class="stat-note">division average</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-lab">Avg GP %</div>
+                    <div class="stat-val">{avgGpPct}</div>
+                    <div class="stat-note">price book vs landed cost</div>
+                </div>
+            </div>
+
             <div class="overview-grid">
 
                 <!-- WO Pipeline -->
@@ -114,7 +189,7 @@
                     <span class="count">nightly KPI batch</span>
                 </div>
                 <template if:true={showDivisionBanner}>
-                    <div class="flagnote">
+                    <div class="flagnote inner-note">
                         Values populate after DivisionKpiRecalcBatch runs nightly.
                     </div>
                 </template>
@@ -132,6 +207,7 @@
                                 <th class="r">Open POs</th>
                                 <th class="r">Warranties</th>
                                 <th class="r">NFIs</th>
+                                <th>Health</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -147,6 +223,9 @@
                                     <td class="r">{div.openPoCount}</td>
                                     <td class="r">{div.openWarrantyCount}</td>
                                     <td class="r">{div.openNfiCount}</td>
+                                    <td>
+                                        <span class={div.healthClass}>{div.healthLabel}</span>
+                                    </td>
                                 </tr>
                             </template>
                         </tbody>
@@ -190,6 +269,13 @@
                             Paid invoices cannot export until G5 (accounting system) is resolved
                         </div>
                         <span class="chip c-amber">blocked</span>
+                    </div>
+                    <div class="scline">
+                        <div class="exc-dot"></div>
+                        <div class="exc-text">
+                            <strong>{kpis.openHireRequests}</strong> open hire requests pending review
+                        </div>
+                        <span class="chip c-slate">review</span>
                     </div>
                 </template>
             </div>
