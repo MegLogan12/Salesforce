@@ -43,7 +43,6 @@ private class CapacityForecastControllerTest {
         List<WorkOrder> wos = new List<WorkOrder>();
         for (Integer i = 0; i < 5; i++) {
             WorkOrder wo = new WorkOrder();
-            wo.WorkOrderNumber   = 'WO-OC-000' + i;
             wo.Status            = 'Scheduled';
             wo.Scheduled_Date__c = monday;
             wos.add(wo);
@@ -83,7 +82,6 @@ private class CapacityForecastControllerTest {
         Date monday = Date.today().toStartOfWeek().addDays(1);
         List<WorkOrder> wos = new List<WorkOrder>();
         WorkOrder wo = new WorkOrder();
-        wo.WorkOrderNumber   = 'WO-EC-0001';
         wo.Status            = 'Scheduled';
         wo.Scheduled_Date__c = monday;
         wos.add(wo);

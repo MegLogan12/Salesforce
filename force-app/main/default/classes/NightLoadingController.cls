@@ -39,9 +39,8 @@ public with sharing class NightLoadingController {
         }
         List<Loading_Ticket__c> tickets = [
             SELECT Id, Name, Truck_Number__c,
-                   Crew__c, Crew__r.Name,
-                   Field_Manager__c, Field_Manager__r.Name,
-                   FM_Assignment__c,
+                   Crew__c,
+                   FM_Assignment__c, FM_Assignment__r.Name,
                    Scheduled_Date__c, Status__c,
                    Plants_Expected__c, Sod_Sqft_Expected__c
             FROM   Loading_Ticket__c
@@ -80,9 +79,9 @@ public with sharing class NightLoadingController {
             TruckRow row        = new TruckRow();
             row.ticketId        = t.Id;
             row.ticketName      = t.Name;
-            row.truckNumber     = t.Truck_Number__c;
-            row.crewName        = t.Crew__c != null ? t.Crew__r.Name : null;
-            row.fmAssignment    = t.FM_Assignment__c;
+            row.truckNumber     = t.Truck_Number__c != null ? String.valueOf(t.Truck_Number__c.intValue()) : null;
+            row.crewName        = String.isNotBlank(t.Crew__c) ? t.Crew__c : null;
+            row.fmAssignment    = t.FM_Assignment__r != null ? t.FM_Assignment__r.Name : null;
             row.scheduledDate   = t.Scheduled_Date__c;
             row.status          = t.Status__c;
             row.isLoaded        = (t.Status__c == 'Loaded' || t.Status__c == 'Submitted');

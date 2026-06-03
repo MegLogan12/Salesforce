@@ -95,10 +95,7 @@ public with sharing class CloseoutApprovalController {
             Boolean hasVariance = (wo.Invoice_Amount__c != null && wo.Invoice_Amount__c != wo.GrandTotal);
             row.variance = hasVariance;
 
-            // Field complete date stored as Date on the WO; convert to DateTime for the view
-            row.fieldCompleteDate = wo.Field_Complete_Date__c != null
-                ? (DateTime) Datetime.newInstance(wo.Field_Complete_Date__c, Time.newInstance(0, 0, 0, 0))
-                : null;
+            row.fieldCompleteDate = wo.Field_Complete_Date__c;
 
             if (hasVariance) {
                 view.variance++;

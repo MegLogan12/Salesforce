@@ -46,7 +46,6 @@ private class InvoiceAccountingControllerTest {
     static void buildView_varianceDetected() {
         // In-memory stub — do NOT insert (before-save Flow blocks it)
         WorkOrder wo = new WorkOrder();
-        wo.WorkOrderNumber   = 'WO-VAR-0001';
         wo.Status            = 'Completed';
         // GrandTotal is formula → null in-memory
         // Invoice_Amount__c set to a value → null != someValue means variance

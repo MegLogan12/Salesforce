@@ -221,7 +221,7 @@ public with sharing class CapacityForecastController {
                               ? wo.Work_Order_Type__c
                               : wo.Job_Type__c;
             br.readyDate   = (wo.StartDate != null)
-                              ? wo.StartDate
+                              ? wo.StartDate.date()
                               : wo.Scheduled_Date__c;
             br.ageDays     = (br.readyDate != null)
                               ? br.readyDate.daysBetween(today)

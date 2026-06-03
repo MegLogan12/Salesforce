@@ -6,18 +6,14 @@ private class NightLoadingControllerTest {
     private static List<Loading_Ticket__c> makeTickets() {
         return new List<Loading_Ticket__c>{
             new Loading_Ticket__c(
-                Truck_Number__c      = 'TRUCK-01',
+                Truck_Number__c      = 1,
                 Status__c            = 'Not Submitted',
-                Scheduled_Date__c    = Date.today().addDays(1),
-                Plants_Expected__c   = 50,
-                Sod_Sqft_Expected__c = 1200
+                Scheduled_Date__c    = Date.today().addDays(1)
             ),
             new Loading_Ticket__c(
-                Truck_Number__c      = 'TRUCK-02',
+                Truck_Number__c      = 2,
                 Status__c            = 'Loaded',
-                Scheduled_Date__c    = Date.today().addDays(1),
-                Plants_Expected__c   = 30,
-                Sod_Sqft_Expected__c = 800
+                Scheduled_Date__c    = Date.today().addDays(1)
             )
         };
     }
@@ -45,8 +41,8 @@ private class NightLoadingControllerTest {
         Boolean foundLoaded  = false;
         Boolean foundPending = false;
         for (NightLoadingController.TruckRow row : view.trucks) {
-            if (row.truckNumber == 'TRUCK-02') { foundLoaded  = row.isLoaded; }
-            if (row.truckNumber == 'TRUCK-01') { foundPending = !row.isLoaded; }
+            if (row.truckNumber == '2') { foundLoaded  = row.isLoaded; }
+            if (row.truckNumber == '1') { foundPending = !row.isLoaded; }
         }
         System.assert(foundLoaded,  'TRUCK-02 (Status=Loaded) should have isLoaded=true.');
         System.assert(foundPending, 'TRUCK-01 (Status=Not Submitted) should have isLoaded=false.');
@@ -76,7 +72,7 @@ private class NightLoadingControllerTest {
     @IsTest
     static void markLoaded_updatesStatus() {
         Loading_Ticket__c ticket = new Loading_Ticket__c(
-            Truck_Number__c   = 'TRUCK-03',
+            Truck_Number__c   = 3,
             Status__c         = 'Not Submitted',
             Scheduled_Date__c = Date.today().addDays(1)
         );

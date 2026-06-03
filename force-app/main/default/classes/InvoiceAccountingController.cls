@@ -15,7 +15,7 @@ public with sharing class InvoiceAccountingController {
         @AuraEnabled public Decimal amount;             // GrandTotal (formula)
         @AuraEnabled public Decimal invoiceAmount;      // Invoice_Amount__c
         @AuraEnabled public Boolean hasVariance;        // Invoice_Amount__c != null && differs from GrandTotal
-        @AuraEnabled public Date    fieldCompleteDate;  // Field_Complete_Date__c
+        @AuraEnabled public Datetime fieldCompleteDate;  // Field_Complete_Date__c
         @AuraEnabled public String  status;
         @AuraEnabled public String  invoiceNotes;       // Invoice_Notes__c
     }

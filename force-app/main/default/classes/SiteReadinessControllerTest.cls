@@ -12,7 +12,6 @@ private class SiteReadinessControllerTest {
             Boolean morning, Boolean delivery, Boolean loading,
             Date siteDate) {
         WorkOrder wo = new WorkOrder();
-        wo.WorkOrderNumber          = 'WO-TEST-0001';
         wo.Subject                  = 'Test Site Readiness WO';
         wo.Scheduled_Date__c        = Date.today().addDays(3);
         wo.Morning_Check_Complete__c   = morning;
