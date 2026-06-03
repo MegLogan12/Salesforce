@@ -63,14 +63,16 @@ private class InvoiceReadMethodsTest {
 
     @isTest
     static void sendReminder_createsFollowUpTask() {
-        Invoice__c inv = [SELECT Id FROM Invoice__c WHERE Status__c = 'Pending Send' LIMIT 1];
+        Invoice__c inv = [SELECT Id, Name FROM Invoice__c WHERE Status__c = 'Pending Send' LIMIT 1];
         Test.startTest();
         InvoiceAccountingController.sendReminder(inv.Id);
         Test.stopTest();
-        List<Task> tasks = [SELECT Id, Subject, Status, ActivityDate FROM Task WHERE WhatId = :inv.Id];
+        List<Task> tasks = [SELECT Id, Subject, Status, ActivityDate, Description
+                            FROM Task WHERE Subject LIKE 'Invoice Reminder:%' LIMIT 1];
         System.assertEquals(1, tasks.size(), 'One reminder task should be created');
-        System.assert(tasks[0].Subject.contains('Invoice Reminder'), 'Subject should contain Invoice Reminder');
+        System.assert(tasks[0].Subject.contains(inv.Name), 'Subject should contain invoice name');
         System.assertEquals('Open', tasks[0].Status);
         System.assertEquals(Date.today().addDays(3), tasks[0].ActivityDate);
+        System.assert(tasks[0].Description.contains(inv.Id), 'Description should reference invoice Id');
     }
 }

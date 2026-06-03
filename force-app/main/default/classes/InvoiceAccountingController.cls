@@ -220,7 +220,7 @@ public with sharing class InvoiceAccountingController {
 
         Task t = new Task(
             Subject      = 'Invoice Reminder: ' + inv.Name,
-            WhatId       = invoiceId,
+            Description  = 'Follow up on Invoice Id: ' + invoiceId,
             ActivityDate = Date.today().addDays(3),
             Type         = 'Reminder',
             Status       = 'Open'
