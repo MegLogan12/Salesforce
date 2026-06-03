@@ -2,5 +2,5 @@
 <CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
     <flexiPage>COO_Command_Center</flexiPage>
     <label>COO Command Center</label>
-    <motif>standard:dashboard</motif>
+    <motif>Custom33: Desk</motif>
 </CustomTab>

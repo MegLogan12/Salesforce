@@ -2,5 +2,5 @@
 <CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
     <flexiPage>Invoice_Accounting_Console</flexiPage>
     <label>Invoice Accounting</label>
-    <motif>standard:money</motif>
+    <motif>Custom75: Money Bag</motif>
 </CustomTab>
