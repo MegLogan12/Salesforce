@@ -1,12 +1,12 @@
 import { LightningElement, api, wire } from 'lwc';
-import getPageData from '@salesforce/apex/CommunityRecordController.getPageData';
+import getIdentity from '@salesforce/apex/CommunityRecordController.getIdentity';
 
 export default class CommunityIdentity extends LightningElement {
     @api recordId;
     _data;
     error;
 
-    @wire(getPageData, { communityId: '$recordId' })
+    @wire(getIdentity, { communityId: '$recordId' })
     wired({ data, error }) {
         if (data) {
             this._data = data;
