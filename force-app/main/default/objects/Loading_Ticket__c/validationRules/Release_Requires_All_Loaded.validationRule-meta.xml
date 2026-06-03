@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Release_Requires_All_Loaded</fullName>
+    <active>true</active>
+    <description>A truck cannot be marked Submitted (released) until every line on its loading ticket has been physically loaded (Loaded__c = true on all lines).</description>
+    <errorConditionFormula>AND(
+    ISCHANGED(Status__c),
+    ISPICKVAL(Status__c, 'Submitted'),
+    NOT(All_Loaded__c)
+)</errorConditionFormula>
+    <errorDisplayField>Status__c</errorDisplayField>
+    <errorMessage>Cannot release truck — not all items have been loaded. Mark every line as Loaded before submitting.</errorMessage>
+</ValidationRule>

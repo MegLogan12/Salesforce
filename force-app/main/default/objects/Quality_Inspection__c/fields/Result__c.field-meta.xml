@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Result__c</fullName>
+    <externalId>false</externalId>
+    <formula>IF(Total_Lines__c = 0, &quot;Pending&quot;, IF(Failed_Lines__c &gt; 0, &quot;Red — Rework Required&quot;, IF(Score_Pct__c = 100, &quot;Excellent&quot;, &quot;Acceptable&quot;)))</formula>
+    <label>Result</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

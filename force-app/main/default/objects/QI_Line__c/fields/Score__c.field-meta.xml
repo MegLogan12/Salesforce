@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Score__c</fullName>
+    <defaultValue>10</defaultValue>
+    <description>Quality inspection score for this item, 1 to 10. 9 or higher passes; below 9 fails the item and routes the job to Customer Care.</description>
+    <externalId>false</externalId>
+    <label>Score (1-10)</label>
+    <precision>2</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

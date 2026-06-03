@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Item_Code__c</fullName>
+    <label>Item Code</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>Grading</fullName><default>false</default><label>Grading OK</label></value>
+            <value><fullName>Access</fullName><default>false</default><label>Access OK</label></value>
+            <value><fullName>Irrigation</fullName><default>false</default><label>Irrigation OK</label></value>
+            <value><fullName>Debris Clear</fullName><default>false</default><label>Debris Clear</label></value>
+            <value><fullName>Builder Punch Clear</fullName><default>false</default><label>Builder Punch Clear</label></value>
+            <value><fullName>Utilities Cleared</fullName><default>false</default><label>Utilities Cleared</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

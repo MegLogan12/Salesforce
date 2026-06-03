@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>All_Loaded__c</fullName>
+    <formula>AND(Total_Lines__c &gt; 0, Loaded_Lines__c = Total_Lines__c)</formula>
+    <label>All Loaded</label>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

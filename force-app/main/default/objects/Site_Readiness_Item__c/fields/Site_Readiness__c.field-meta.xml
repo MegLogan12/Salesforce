@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Site_Readiness__c</fullName>
+    <label>Site Readiness</label>
+    <referenceTo>Site_Readiness__c</referenceTo>
+    <relationshipLabel>Site Readiness Items</relationshipLabel>
+    <relationshipName>Site_Readiness_Items</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

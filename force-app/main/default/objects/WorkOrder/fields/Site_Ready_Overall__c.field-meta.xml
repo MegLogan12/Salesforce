@@ -3,5 +3,6 @@
     <fullName>Site_Ready_Overall__c</fullName>
     <formula>AND(Grading_OK__c, Access_OK__c, Irrigation_OK__c, Debris_Clear__c, Builder_Punch_Clear__c, Utilities_Cleared__c)</formula>
     <label>Site Ready Overall</label>
+    <trackHistory>false</trackHistory>
     <type>Checkbox</type>
 </CustomField>
