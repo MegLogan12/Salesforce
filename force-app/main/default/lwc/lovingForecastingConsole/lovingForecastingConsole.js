@@ -1,9 +1,10 @@
-import { LightningElement, wire, track } from 'lwc';
+import { LightningElement, api, wire, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { refreshApex } from '@salesforce/apex';
 import getHomeData from '@salesforce/apex/ForecastingConsoleController.getHomeData';
 
 export default class LovingForecastingConsole extends NavigationMixin(LightningElement) {
+    @api pageTitle = 'Forecasting & Hiring';
     @track pageData  = null;
     @track error     = null;
     @track isLoading = true;
