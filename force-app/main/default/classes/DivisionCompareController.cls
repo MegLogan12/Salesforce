@@ -15,10 +15,18 @@ public with sharing class DivisionCompareController {
         @AuraEnabled public Integer rank;
     }
 
-    // KPI fields that must exist on Account before division comparison can function.
-    // These are a COO batch prerequisite and are not yet deployed to the org.
+    // KPI fields written by DivisionKpiRecalcBatch onto Builder_Market Account records.
     private static final Set<String> KPI_FIELDS = new Set<String>{
-        'Revenue_MTD__c', 'On_Time_Pct__c', 'GP_Pct__c'
+        'Division_Revenue_T12M__c', 'Division_GP_Pct__c', 'On_Time_Completion_Pct__c',
+        'Open_WO_Count__c', 'Open_PO_Count__c', 'Open_Warranty_Count__c',
+        'Open_NFI_Count__c', 'Active_Communities_Count__c', 'Active_Lot_Count__c'
+    };
+
+    // Short aliases the LWC metric selector passes; resolved before field validation.
+    private static final Map<String, String> METRIC_ALIAS = new Map<String, String>{
+        'revenue' => 'Division_Revenue_T12M__c',
+        'ontime'  => 'On_Time_Completion_Pct__c',
+        'gp'      => 'Division_GP_Pct__c'
     };
 
     @AuraEnabled(cacheable=true)
@@ -29,27 +37,32 @@ public with sharing class DivisionCompareController {
 
         if (!kpiFieldsExist()) {
             CompareView blocked = new CompareView();
-            blocked.blocked      = true;
-            blocked.blockerReason = 'KPI batch not yet scheduled — COO build prerequisite';
-            blocked.rows         = new List<DivisionRow>();
+            blocked.blocked       = true;
+            blocked.blockerReason = 'KPI fields not yet available on Account';
+            blocked.rows          = new List<DivisionRow>();
             return blocked;
         }
 
-        // Reached only when KPI fields are present on Account.
-        // Queries child accounts and returns ranked division rows.
-        List<Account> divisions = [
-            SELECT Id, Name, Division_Region__c
-            FROM Account
-            WHERE ParentId = :parentAccountId
-            ORDER BY Name
-        ];
+        // Resolve short alias to full field API name.
+        if (METRIC_ALIAS.containsKey(metric)) {
+            metric = METRIC_ALIAS.get(metric);
+        }
+        if (!KPI_FIELDS.contains(metric)) {
+            throw new AuraHandledException('Invalid metric: ' + metric);
+        }
+
+        // Dynamic SOQL includes all KPI fields so a.get(metric) works for any valid metric.
+        String soql = 'SELECT Id, Name, Division_Region__c, ' +
+            String.join(new List<String>(KPI_FIELDS), ', ') +
+            ' FROM Account WHERE ParentId = :parentAccountId ORDER BY Name';
+        List<Account> divisions = Database.query(soql);
 
         List<DivisionRow> rows = buildRows(divisions, metric);
 
         CompareView view = new CompareView();
-        view.blocked      = false;
+        view.blocked       = false;
         view.blockerReason = null;
-        view.rows         = rows;
+        view.rows          = rows;
         return view;
     }
 
@@ -67,20 +80,17 @@ public with sharing class DivisionCompareController {
     @TestVisible
     private static List<DivisionRow> buildRows(List<Account> divisions, String metric) {
         List<DivisionRow> rows = new List<DivisionRow>();
-        Integer rankCounter = 1;
         for (Account a : divisions) {
             DivisionRow r = new DivisionRow();
             r.divisionId  = a.Id;
             r.name        = a.Name;
             r.region      = a.Division_Region__c;
             r.metricLabel = metric;
-            // Metric value read dynamically once KPI fields exist
             Object rawVal = a.get(metric);
             r.metricValue = (rawVal instanceof Decimal) ? (Decimal) rawVal : null;
-            r.rank        = rankCounter++;
+            r.rank        = 0;
             rows.add(r);
         }
-        // Sort descending by metricValue for rank
         rows.sort(new DivisionRowComparator());
         Integer i = 1;
         for (DivisionRow r : rows) {

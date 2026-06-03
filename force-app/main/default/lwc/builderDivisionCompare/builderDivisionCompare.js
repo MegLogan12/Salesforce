@@ -30,10 +30,11 @@ export default class BuilderDivisionCompare extends LightningElement {
 
     get rows() {
         const raw = this.compareView?.rows ?? [];
-        const max = Math.max(...raw.map(r => r.metricValue), 1);
+        const max = Math.max(...raw.map(r => r.metricValue ?? 0), 1);
         return raw.map(r => ({
             ...r,
-            barStyle: `width: ${Math.round((r.metricValue / max) * 100)}%`,
+            divisionName: r.name,
+            barStyle: `width: ${Math.round(((r.metricValue ?? 0) / max) * 100)}%`,
             metricFormatted: this._formatValue(r.metricValue)
         }));
     }

@@ -5,12 +5,16 @@ public with sharing class PoValidationController {
         @AuraEnabled public String  name;
         @AuraEnabled public String  poNumber;
         @AuraEnabled public String  status;
+        @AuraEnabled public String  validationStatus;
         @AuraEnabled public Boolean poValidated;
         @AuraEnabled public Decimal poAmount;
         @AuraEnabled public Decimal priceBookTotal;
+        @AuraEnabled public Decimal priceBookAmount;  // alias used by LWC
         @AuraEnabled public Decimal priceVariancePct;
         @AuraEnabled public Decimal nfiCount;
         @AuraEnabled public String  nfiReason;
+        @AuraEnabled public Boolean priceCheckPass;
+        @AuraEnabled public Boolean qtyCheckPass;
         @AuraEnabled public String  builderDivisionName;
         @AuraEnabled public String  communityName;
         @AuraEnabled public List<CheckResult> checks;
@@ -61,23 +65,30 @@ public with sharing class PoValidationController {
         v.builderDivisionName = (po.Builder_Division__r != null) ? po.Builder_Division__r.Name : null;
         v.communityName       = (po.Community__r       != null) ? po.Community__r.Name       : null;
 
+        v.priceBookAmount = v.priceBookTotal;
+        v.priceCheckPass  = po.Price_Check_Result__c == 'Pass';
+        v.qtyCheckPass    = (v.nfiCount == 0);
+        v.validationStatus = (v.priceCheckPass && v.qtyCheckPass) ? 'Validated'
+                           : (!v.priceCheckPass)                  ? 'Held — Price'
+                           :                                        'Held — NFI';
+
         v.checks = new List<CheckResult>();
 
         // Price check: PO_Amount__c vs Price_Book_Total__c
         CheckResult price = new CheckResult();
-        price.label      = 'Price Check';
-        price.expected   = String.valueOf(v.priceBookTotal);
-        price.actual     = String.valueOf(v.poAmount);
-        price.passed     = po.Price_Check_Result__c == 'Pass';
+        price.label       = 'Price Check';
+        price.expected    = String.valueOf(v.priceBookTotal);
+        price.actual      = String.valueOf(v.poAmount);
+        price.passed      = v.priceCheckPass;
         price.variancePct = v.priceVariancePct;
         v.checks.add(price);
 
         // Qty check: NFI_Count__c == 0 means no not-found items
         CheckResult qty = new CheckResult();
-        qty.label    = 'Qty Check';
-        qty.expected = '0';
-        qty.actual   = String.valueOf(v.nfiCount);
-        qty.passed   = (v.nfiCount == 0);
+        qty.label       = 'Qty Check';
+        qty.expected    = '0';
+        qty.actual      = String.valueOf(v.nfiCount);
+        qty.passed      = v.qtyCheckPass;
         qty.variancePct = null;
         v.checks.add(qty);
 
