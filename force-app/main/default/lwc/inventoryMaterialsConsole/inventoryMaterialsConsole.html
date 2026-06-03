@@ -1,0 +1,103 @@
+<template>
+    <lightning-card title="Inventory &amp; Materials Console" icon-name="standard:product">
+        <div class="slds-p-around_medium">
+
+            <!-- Category Filter -->
+            <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                <div class="slds-col slds-size_1-of-4">
+                    <lightning-combobox
+                        label="Category"
+                        value={selectedCategory}
+                        options={categoryOptions}
+                        onchange={handleCategoryChange}>
+                    </lightning-combobox>
+                </div>
+                <div class="slds-col slds-size_1-of-4 slds-align_absolute-center">
+                    <lightning-button
+                        label="Refresh"
+                        icon-name="utility:refresh"
+                        onclick={handleRefresh}>
+                    </lightning-button>
+                </div>
+            </div>
+
+            <!-- Tabs: Catalog / Cost Catalog / Truck Stock -->
+            <lightning-tabset active-tab-value={activeTab} onactive={handleTabChange}>
+
+                <lightning-tab label="Product Catalog" value="catalog">
+                    <template if:true={isLoading}>
+                        <lightning-spinner alternative-text="Loading..."></lightning-spinner>
+                    </template>
+                    <template if:false={isLoading}>
+                        <lightning-datatable
+                            key-field="productId"
+                            data={catalog}
+                            columns={catalogColumns}
+                            onrowaction={handleCatalogRowAction}>
+                        </lightning-datatable>
+                    </template>
+                </lightning-tab>
+
+                <lightning-tab label="Cost Catalog" value="cost">
+                    <template if:true={selectedProduct}>
+                        <template if:true={costDetail}>
+                            <div class="slds-box slds-m-around_small">
+                                <div class="slds-grid slds-gutters slds-wrap">
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <p><strong>Product:</strong> {costDetail.productName}</p>
+                                        <p><strong>Vendor:</strong> {costDetail.vendor}</p>
+                                        <p><strong>Effective Date:</strong> {costDetail.effectiveDate}</p>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <p><strong>Unit Cost:</strong> {costDetail.unitCost}</p>
+                                        <p><strong>Freight:</strong> {costDetail.freight}</p>
+                                        <p><strong>Landed Cost:</strong> {costDetail.landedCost}</p>
+                                        <p><strong>Standard Price:</strong> {costDetail.standardPrice}</p>
+                                        <p class="slds-text-color_success"><strong>GP %:</strong> {gpPctDisplay}</p>
+                                    </div>
+                                </div>
+                                <div class="slds-m-top_small">
+                                    <lightning-input
+                                        type="number"
+                                        label="Update Standard Price"
+                                        value={newStdPrice}
+                                        onchange={handlePriceChange}>
+                                    </lightning-input>
+                                    <lightning-button
+                                        class="slds-m-top_small"
+                                        label="Save Price"
+                                        variant="brand"
+                                        onclick={handleSavePrice}>
+                                    </lightning-button>
+                                </div>
+                            </div>
+                        </template>
+                        <template if:false={costDetail}>
+                            <p class="slds-p-around_medium slds-text-color_weak">No cost catalog entry for this product. Contact purchasing to add one.</p>
+                        </template>
+                    </template>
+                    <template if:false={selectedProduct}>
+                        <p class="slds-p-around_medium slds-text-color_weak">Select a product from the Catalog tab to view cost details.</p>
+                    </template>
+                </lightning-tab>
+
+                <lightning-tab label="Truck Stock" value="truck">
+                    <template if:true={lowStockItems.length}>
+                        <div class="slds-notify slds-notify_alert slds-theme_warning slds-m-bottom_small" role="alert">
+                            <span class="slds-assistive-text">warning</span>
+                            <lightning-icon icon-name="utility:warning" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+                            {lowStockItems.length} item(s) at or below reorder point
+                        </div>
+                    </template>
+                    <lightning-datatable
+                        key-field="productId"
+                        data={catalog}
+                        columns={truckStockColumns}
+                        onrowaction={handleReorder}>
+                    </lightning-datatable>
+                </lightning-tab>
+
+            </lightning-tabset>
+        </div>
+    </lightning-card>
+</template>

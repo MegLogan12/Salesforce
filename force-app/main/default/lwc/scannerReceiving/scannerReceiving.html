@@ -1,0 +1,79 @@
+<template>
+    <lightning-card title="Scanner / Receiving" icon-name="standard:scan_card">
+        <div class="slds-p-around_medium">
+
+            <!-- PO Selection -->
+            <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                <div class="slds-col slds-size_1-of-3">
+                    <lightning-input
+                        type="search"
+                        label="Vendor PO Id"
+                        placeholder="Paste PO Id or scan PO barcode"
+                        value={vendorPoId}
+                        onchange={handlePoChange}>
+                    </lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-3">
+                    <lightning-input
+                        type="text"
+                        label="Scan SKU"
+                        placeholder="Scan or type SKU"
+                        value={scannedSku}
+                        onchange={handleSkuChange}
+                        onkeydown={handleSkuKeydown}>
+                    </lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-6 slds-align_absolute-center">
+                    <lightning-button
+                        label="Add Line"
+                        variant="brand"
+                        icon-name="utility:add"
+                        onclick={handleScan}>
+                    </lightning-button>
+                </div>
+            </div>
+
+            <!-- Match result banner -->
+            <template if:true={lastScanResult}>
+                <div class={scanBannerClass}>
+                    <lightning-icon icon-name={scanBannerIcon} size="small" class="slds-m-right_x-small"></lightning-icon>
+                    {lastScanResult.message}
+                </div>
+            </template>
+
+            <!-- Scanned Lines -->
+            <template if:true={receiptLines.length}>
+                <lightning-datatable
+                    key-field="lineId"
+                    data={receiptLines}
+                    columns={lineColumns}
+                    onrowaction={handleLineAction}>
+                </lightning-datatable>
+
+                <div class="slds-m-top_medium slds-grid slds-gutters">
+                    <div class="slds-col">
+                        <lightning-button
+                            label="Post Receipt"
+                            variant="brand"
+                            onclick={handlePost}
+                            disabled={isPosting}>
+                        </lightning-button>
+                        <template if:true={isPosting}>
+                            <lightning-spinner size="small" alternative-text="Posting..."></lightning-spinner>
+                        </template>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Post Result -->
+            <template if:true={postResult}>
+                <div class={postBannerClass}>
+                    <p><strong>Status:</strong> {postResult.receiptStatus}</p>
+                    <p>Matched: {postResult.matchedLines} | Variances: {postResult.varianceLines}</p>
+                    <p>{postResult.message}</p>
+                </div>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,5 @@
+# Standard value sets cannot be deployed — Salesforce restricts inserts to these
+**/standardValueSets/OpportunityStageName.standardValueSet-meta.xml
+
+# Marketing Cloud internal flows with embedded org IDs — not deployable
+**/flows/LOVING_MC_*.flow-meta.xml
