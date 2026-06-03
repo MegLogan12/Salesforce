@@ -1,0 +1,70 @@
+<template>
+    <div class="slds-p-around_medium">
+        <!-- G5 Banner -->
+        <div class="slds-notify slds-notify_alert slds-alert_warning slds-m-bottom_medium" role="alert">
+            <span class="slds-assistive-text">warning</span>
+            <lightning-icon icon-name="utility:warning" alternative-text="warning" size="x-small" class="slds-m-right_x-small"></lightning-icon>
+            <strong>Gate G5 Open:</strong>&nbsp;Accounting system export is pending until the accounting target is chosen. Invoicing and Paid tracking are fully operational today.
+        </div>
+
+        <!-- KPI Row -->
+        <div class="slds-grid slds-gutters slds-m-bottom_medium">
+            <div class="slds-col">
+                <div class="slds-box slds-text-align_center">
+                    <p class="slds-text-heading_small">Ready to Invoice</p>
+                    <p class="slds-text-heading_large">{readyCount}</p>
+                </div>
+            </div>
+            <div class="slds-col">
+                <div class="slds-box slds-text-align_center">
+                    <p class="slds-text-heading_small">Invoiced</p>
+                    <p class="slds-text-heading_large">{invoicedCount}</p>
+                </div>
+            </div>
+            <div class="slds-col">
+                <div class="slds-box slds-text-align_center">
+                    <p class="slds-text-heading_small">Paid</p>
+                    <p class="slds-text-heading_large">{paidCount}</p>
+                </div>
+            </div>
+            <div class="slds-col">
+                <div class="slds-box slds-text-align_center">
+                    <p class="slds-text-heading_small">Pending Export (G5)</p>
+                    <p class="slds-text-heading_large">{pendingExportCount}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <lightning-tabset active-tab-value={activeTab} onactive={handleTabChange}>
+            <lightning-tab label="Ready to Invoice" value="ready">
+                <lightning-datatable
+                    key-field="workOrderId"
+                    data={readyRows}
+                    columns={readyCols}
+                    row-actions={readyActions}
+                    onrowaction={handleReadyAction}
+                    hide-checkbox-column>
+                </lightning-datatable>
+            </lightning-tab>
+            <lightning-tab label="Invoiced" value="invoiced">
+                <lightning-datatable
+                    key-field="invoiceId"
+                    data={invoicedRows}
+                    columns={invoiceCols}
+                    row-actions={invoicedActions}
+                    onrowaction={handleInvoicedAction}
+                    hide-checkbox-column>
+                </lightning-datatable>
+            </lightning-tab>
+            <lightning-tab label="Paid" value="paid">
+                <lightning-datatable
+                    key-field="invoiceId"
+                    data={paidRows}
+                    columns={paidCols}
+                    hide-checkbox-column>
+                </lightning-datatable>
+            </lightning-tab>
+        </lightning-tabset>
+    </div>
+</template>

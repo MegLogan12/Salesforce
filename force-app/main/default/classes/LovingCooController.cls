@@ -69,6 +69,20 @@ public with sharing class LovingCooController {
         @AuraEnabled public String risk;
     }
 
+    public class DivisionRow {
+        @AuraEnabled public Id accountId;
+        @AuraEnabled public String divisionName;
+        @AuraEnabled public Decimal revenueT12M;
+        @AuraEnabled public Decimal gpPct;
+        @AuraEnabled public Integer openWoCount;
+        @AuraEnabled public Decimal onTimePct;
+        @AuraEnabled public Integer activeCommunities;
+        @AuraEnabled public Integer activeLots;
+        @AuraEnabled public Integer openPoCount;
+        @AuraEnabled public Integer openWarrantyCount;
+        @AuraEnabled public Integer openNfiCount;
+    }
+
     // ─────────────────────────────────────────────
     // COO OVERVIEW KPIs — all LOBs rolled up
     // ─────────────────────────────────────────────
@@ -345,6 +359,54 @@ public with sharing class LovingCooController {
             }
         }
         return rows;
+    }
+
+    // ─────────────────────────────────────────────
+    // DIVISION SUMMARY — Builder_Market accounts
+    // ─────────────────────────────────────────────
+    @AuraEnabled(cacheable=true)
+    public static List<DivisionRow> getDivisionSummary() {
+        List<DivisionRow> rows = new List<DivisionRow>();
+        try {
+            for (Account a : [
+                SELECT Id, Name, Division_Revenue_T12M__c, Division_GP_Pct__c,
+                       Open_WO_Count__c, On_Time_Completion_Pct__c,
+                       Active_Communities_Count__c, Active_Lot_Count__c,
+                       Open_PO_Count__c, Open_Warranty_Count__c, Open_NFI_Count__c
+                FROM Account
+                WHERE RecordType.DeveloperName = 'Builder_Market'
+                  AND Account_Status__c != 'Terminated'
+                ORDER BY Name
+            ]) {
+                DivisionRow r = new DivisionRow();
+                r.accountId         = a.Id;
+                r.divisionName      = a.Name;
+                r.revenueT12M       = a.Division_Revenue_T12M__c;
+                r.gpPct             = a.Division_GP_Pct__c;
+                r.openWoCount       = a.Open_WO_Count__c != null ? a.Open_WO_Count__c.intValue() : 0;
+                r.onTimePct         = a.On_Time_Completion_Pct__c;
+                r.activeCommunities = a.Active_Communities_Count__c != null ? a.Active_Communities_Count__c.intValue() : 0;
+                r.activeLots        = a.Active_Lot_Count__c != null ? a.Active_Lot_Count__c.intValue() : 0;
+                r.openPoCount       = a.Open_PO_Count__c != null ? a.Open_PO_Count__c.intValue() : 0;
+                r.openWarrantyCount = a.Open_Warranty_Count__c != null ? a.Open_Warranty_Count__c.intValue() : 0;
+                r.openNfiCount      = a.Open_NFI_Count__c != null ? a.Open_NFI_Count__c.intValue() : 0;
+                rows.add(r);
+            }
+        } catch (Exception e) {
+            ErrorLogService.log('LovingCooController', 'getDivisionSummary', null, e.getMessage());
+        }
+        return rows;
+    }
+
+    // ─────────────────────────────────────────────
+    // ESCALATE GATE — post Chatter note to running user
+    // ─────────────────────────────────────────────
+    @AuraEnabled
+    public static void escalateGate(String gateId, String message) {
+        FeedItem fi = new FeedItem();
+        fi.ParentId = UserInfo.getUserId();
+        fi.Body = 'Gate ' + gateId + ' escalated: ' + message;
+        insert fi;
     }
 
     // ─────────────────────────────────────────────
