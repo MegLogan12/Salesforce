@@ -1,9 +1,10 @@
-import { LightningElement, wire, track } from 'lwc';
+import { LightningElement, api, wire, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { refreshApex } from '@salesforce/apex';
 import getHomeData from '@salesforce/apex/MeasuringCupConsoleController.getHomeData';
 
 export default class LovingMeasuringCupConsole extends NavigationMixin(LightningElement) {
+    @api pageTitle = 'Measuring Cup';
     @track pageData  = null;
     @track error     = null;
     @track isLoading = true;
