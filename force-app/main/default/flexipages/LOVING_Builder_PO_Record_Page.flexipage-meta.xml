@@ -7,6 +7,12 @@
                 <identifier>po_workspace_board</identifier>
             </componentInstance>
         </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>c:twoWayPoValidation</componentName>
+                <identifier>po_two_way_validation</identifier>
+            </componentInstance>
+        </itemInstances>
         <name>main</name>
         <type>Region</type>
     </flexiPageRegions>

@@ -101,6 +101,16 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentName>c:overUnderReport</componentName>
+                <identifier>wo_over_under_report</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-tab-wo-overunder</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
                     <value>Facet-tab-wo-details</value>
@@ -223,6 +233,20 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>wo_tab_activity</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-tab-wo-overunder</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Over / Under</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>wo_tab_overunder</identifier>
             </componentInstance>
         </itemInstances>
         <name>Facet-tabset-wo-main</name>

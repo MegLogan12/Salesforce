@@ -3,20 +3,14 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>lovingForecastingConsole</componentName>
-                <identifier>forecasting_console</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentName>c:crewBoard</componentName>
-                <identifier>forecasting_crew_board</identifier>
+                <componentName>c:agentforceConsole</componentName>
+                <identifier>agentforce_console_main</identifier>
             </componentInstance>
         </itemInstances>
         <name>main</name>
         <type>Region</type>
     </flexiPageRegions>
-    <masterLabel>Forecasting Home Page</masterLabel>
+    <masterLabel>Agentforce Console</masterLabel>
     <template>
         <name>flexipage:defaultAppHomeTemplate</name>
     </template>

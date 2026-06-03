@@ -5,6 +5,16 @@
         <type>Region</type>
     </flexiPageRegions>
     <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>c:builderDivisionCompare</componentName>
+                <identifier>builder_parent_division_compare</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>main</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
