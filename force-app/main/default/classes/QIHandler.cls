@@ -35,7 +35,7 @@ public class QIHandler {
             WorkOrder wo = new WorkOrder(Id = qi.Work_Order__c);
 
             if (qi.Result__c != null && qi.Result__c.contains('Rework Required')) {
-                wo.QI_Result__c  = 'Fail';
+                wo.QI_Result__c  = 'Red — Rework Required';
                 wo.QI_Status__c  = 'FM QI Review (Red Hold)';
                 wo.QI_Complete__c = false;
                 taskInserts.add(new Task(
@@ -49,8 +49,8 @@ public class QIHandler {
                                   ' and schedule re-inspection before close.'
                 ));
             } else if (qi.Result__c == 'Acceptable' || qi.Result__c == 'Excellent') {
-                wo.QI_Result__c  = 'Pass';
-                wo.QI_Status__c  = 'QI Complete';
+                wo.QI_Result__c  = qi.Result__c;
+                wo.QI_Status__c  = 'Approved';
                 wo.QI_Complete__c = true;
             } else if (qi.Result__c == 'Pending') {
                 wo.QI_Complete__c = false;

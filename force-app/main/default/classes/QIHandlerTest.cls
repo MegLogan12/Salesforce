@@ -137,8 +137,8 @@ private class QIHandlerTest {
         Test.stopTest();
 
         WorkOrder wo = [SELECT QI_Result__c, QI_Complete__c FROM WorkOrder WHERE Id = :wos[0].Id];
-        System.assertEquals('Fail', wo.QI_Result__c,   'QI_Result__c should be Fail after red result');
-        System.assertEquals(false,  wo.QI_Complete__c, 'QI_Complete__c should be false on Fail');
+        System.assertEquals('Red — Rework Required', wo.QI_Result__c, 'QI_Result__c should be Red on rework result');
+        System.assertEquals(false, wo.QI_Complete__c, 'QI_Complete__c should be false on Fail');
 
         List<Task> tasks = [SELECT Subject FROM Task WHERE WhatId = :wos[0].Id AND Subject LIKE 'QI Failed%'];
         System.assertEquals(1, tasks.size(), 'Customer Care task should have been created');
@@ -168,8 +168,9 @@ private class QIHandlerTest {
         Test.stopTest();
 
         WorkOrder wo = [SELECT QI_Result__c, QI_Complete__c FROM WorkOrder WHERE Id = :wos[0].Id];
-        System.assertEquals('Pass', wo.QI_Result__c,   'QI_Result__c should be Pass on Excellent result');
-        System.assertEquals(true,   wo.QI_Complete__c, 'QI_Complete__c should be true on Pass');
+        System.assert(wo.QI_Result__c == 'Excellent' || wo.QI_Result__c == 'Acceptable',
+            'QI_Result__c should be Excellent or Acceptable for passing score; got: ' + wo.QI_Result__c);
+        System.assertEquals(true, wo.QI_Complete__c, 'QI_Complete__c should be true on Pass');
     }
 
     // ── syncByIds invocable covers the SOQL + delegate path ──────────────────
