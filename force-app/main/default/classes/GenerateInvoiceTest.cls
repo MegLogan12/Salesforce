@@ -21,6 +21,7 @@ private class GenerateInvoiceTest {
             Invoice_Generated__c = false
         );
         insert wo;
+        wo = [SELECT Id, Name FROM Work_Order__c WHERE Id = :wo.Id]; // refresh to get auto-generated Name
 
         // Act
         Test.startTest();

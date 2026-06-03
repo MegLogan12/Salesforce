@@ -53,4 +53,57 @@ private class CooSummaryTest {
         System.assertEquals('chip chip-red',   LovingCooController.chipForStatus('FM QI Review'));
         System.assertEquals('chip chip-gray',  LovingCooController.chipForStatus(null));
     }
+
+    @isTest
+    static void getAquaSummaryReturnsNonNull() {
+        Test.startTest();
+        LovingCooController.AquaSummary a = LovingCooController.getAquaSummary();
+        Test.stopTest();
+        System.assertNotEquals(null, a, 'getAquaSummary should return non-null');
+        System.assertEquals(0, a.upcomingInstalls, 'upcomingInstalls initialized to 0');
+    }
+
+    @isTest
+    static void getPipelineByLobReturnsList() {
+        List<Opportunity> opps = new List<Opportunity>{
+            new Opportunity(Name='UMB Test Opp',        Type='UMB',
+                            StageName='Prospecting', CloseDate=Date.today().addDays(30),
+                            Amount=10000, Probability=50),
+            new Opportunity(Name='CB Test Opp',         Type='Custom Build',
+                            StageName='Prospecting', CloseDate=Date.today().addDays(30),
+                            Amount=20000, Probability=25),
+            new Opportunity(Name='LC Test Opp',         Type='Lawn Care',
+                            StageName='Prospecting', CloseDate=Date.today().addDays(30),
+                            Amount=5000, Probability=75),
+            new Opportunity(Name='Other Type Opp',      Type='Existing Customer - Upgrade',
+                            StageName='Prospecting', CloseDate=Date.today().addDays(30),
+                            Amount=1000, Probability=10)
+        };
+        insert opps;
+        insert new Task(Subject='Follow up', WhatId=opps[0].Id,
+                        ActivityDate=Date.today().addDays(-3), Status='Open');
+        Test.startTest();
+        List<LovingCooController.LobPipelineRow> rows = LovingCooController.getPipelineByLob();
+        Test.stopTest();
+        System.assertNotEquals(null, rows, 'getPipelineByLob returns a list');
+    }
+
+    @isTest
+    static void getActivityRisksReturnsList() {
+        List<Opportunity> opps = new List<Opportunity>{
+            new Opportunity(Name='UMB Stale',     Type='UMB',
+                            StageName='Prospecting', CloseDate=Date.today().addDays(30),
+                            Amount=10000, Probability=50),
+            new Opportunity(Name='CB Overdue',    Type='Custom Build',
+                            StageName='Prospecting', CloseDate=Date.today().addDays(30),
+                            Amount=20000, Probability=25)
+        };
+        insert opps;
+        insert new Task(Subject='Overdue follow-up', WhatId=opps[1].Id,
+                        ActivityDate=Date.today().addDays(-5), Status='Open');
+        Test.startTest();
+        List<LovingCooController.ActivityRiskRow> rows = LovingCooController.getActivityRisks();
+        Test.stopTest();
+        System.assertNotEquals(null, rows, 'getActivityRisks returns a list');
+    }
 }
