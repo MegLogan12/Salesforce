@@ -1,8 +1,10 @@
-@IsTest(SeeAllData=false)
+@IsTest(SeeAllData=true)
 private class OverUnderControllerTest {
 
     // WorkOrder.GrandTotal and WorkOrderLineItem.TotalPrice are formula fields — not settable.
     // Tests call @TestVisible buildView() directly with in-memory stubs using writable fields.
+    // SeeAllData=true so the getReport integration test can query a real production WorkOrder.
+    // No @TestSetup — incompatible with SeeAllData=true.
 
     private static WorkOrder makeWo(Decimal plants, Decimal trees, Decimal sod, Decimal mulch) {
         WorkOrder wo = new WorkOrder();
@@ -51,6 +53,19 @@ private class OverUnderControllerTest {
         System.assertEquals(0, view.lines.size(),              'No lines expected');
         System.assertEquals(0, view.summary.totalBilled,       'Total billed should be 0');
         System.assertEquals(0, view.summary.grossVariancePct,  'Variance should be 0');
+    }
+
+    @IsTest
+    static void getReport_realWorkOrder_returnsView() {
+        List<WorkOrder> wos = [SELECT Id FROM WorkOrder LIMIT 1];
+        if (wos.isEmpty()) return;
+
+        Test.startTest();
+        OverUnderController.OverUnderView view = OverUnderController.getReport(wos[0].Id);
+        Test.stopTest();
+
+        System.assertNotEquals(null, view, 'View should not be null');
+        System.assertNotEquals(null, view.summary, 'Summary should be populated');
     }
 
     @IsTest

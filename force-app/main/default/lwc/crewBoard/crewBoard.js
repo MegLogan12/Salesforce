@@ -11,7 +11,7 @@ export default class CrewBoard extends LightningElement {
 
     // Store wired result for refreshApex
     _wiredCrews;
-    // Map of crewId -> { truck, vehicle } for pending input values
+    // Map of crewId -> { truck } for pending input values
     _inputs = {};
 
     @wire(getTomorrowsCrews, { division: '$division' })
@@ -22,9 +22,8 @@ export default class CrewBoard extends LightningElement {
         if (data) {
             this.crews = data.map(c => ({
                 ...c,
-                isAssigned: !!(c.truckNumber && c.vehicle),
+                isAssigned: !!c.truckNumber,
                 inputTruck: '',
-                inputVehicle: '',
                 isSaving: false
             }));
             this.error = undefined;
@@ -62,25 +61,17 @@ export default class CrewBoard extends LightningElement {
         this._inputs[crewId].truck = event.target.value;
     }
 
-    handleVehicleChange(event) {
-        const crewId = event.target.dataset.crewId;
-        if (!this._inputs[crewId]) this._inputs[crewId] = {};
-        this._inputs[crewId].vehicle = event.target.value;
-    }
-
     async handleAssign(event) {
         const crewId = event.target.dataset.crewId;
         const inputs = this._inputs[crewId] ?? {};
         const truckNumber = inputs.truck ?? '';
-        const vehicle = inputs.vehicle ?? '';
 
-        // Mark crew as saving
         this.crews = this.crews.map(c =>
             c.id === crewId ? { ...c, isSaving: true } : c
         );
 
         try {
-            await assignRig({ crewId, truckNumber, vehicle });
+            await assignRig({ crewId, truckNumber });
             // Clear pending inputs for this crew
             this._inputs[crewId] = {};
             await refreshApex(this._wiredCrews);

@@ -33,16 +33,15 @@ private class CrewAssignControllerTest {
     }
 
     @IsTest
-    static void assignRig_setsFields() {
+    static void assignRig_setsTruckNumber() {
         Crew__c c = makeCrew('Test Crew B', true, true, null);
 
         Test.startTest();
-        CrewAssignController.assignRig(c.Id, 'TRK-42', 'Ford F-250');
+        CrewAssignController.assignRig(c.Id, 'TRK-42');
         Test.stopTest();
 
-        Crew__c updated = [SELECT Truck_Number__c, Vehicle__c FROM Crew__c WHERE Id = :c.Id];
-        System.assertEquals('TRK-42',     updated.Truck_Number__c, 'Truck number not updated');
-        System.assertEquals('Ford F-250', updated.Vehicle__c,       'Vehicle not updated');
+        Crew__c updated = [SELECT Truck_Number__c FROM Crew__c WHERE Id = :c.Id];
+        System.assertEquals('TRK-42', updated.Truck_Number__c, 'Truck number not updated');
     }
 
     @IsTest

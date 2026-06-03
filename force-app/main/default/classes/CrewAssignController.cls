@@ -45,18 +45,15 @@ public with sharing class CrewAssignController {
         return rows;
     }
 
+    // Vehicle__c is a Lookup(Vehicle) — assigning a rig from the crew board writes
+    // Truck_Number__c (text). Vehicle lookup assignment requires a separate record picker.
     @AuraEnabled
-    public static void assignRig(Id crewId, String truckNumber, String vehicle) {
+    public static void assignRig(Id crewId, String truckNumber) {
         if (!Schema.sObjectType.Crew__c.isAccessible() ||
             !Schema.sObjectType.Crew__c.isUpdateable()) {
             throw new AuraHandledException('Insufficient access to update Crew');
         }
 
-        Crew__c c = new Crew__c(
-            Id            = crewId,
-            Truck_Number__c = truckNumber,
-            Vehicle__c     = vehicle
-        );
-        update c;
+        update new Crew__c(Id = crewId, Truck_Number__c = truckNumber);
     }
 }
