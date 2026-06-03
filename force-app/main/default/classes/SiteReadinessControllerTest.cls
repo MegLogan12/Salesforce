@@ -85,15 +85,15 @@ private class SiteReadinessControllerTest {
         Test.stopTest();
     }
 
-    // ─── Test: getView covers SOQL path (queries real ServiceAppointment) ──────
+    // ─── Test: getView covers SOQL path (queries any real ServiceAppointment) ──
 
     @IsTest(SeeAllData=true)
     static void getView_integration() {
         List<ServiceAppointment> sas = [
-            SELECT Id FROM ServiceAppointment WHERE ParentRecordId != null LIMIT 1
+            SELECT Id FROM ServiceAppointment LIMIT 1
         ];
         if (sas.isEmpty()) {
-            System.assert(true, 'No SA with linked WO in org; skipping.');
+            System.assert(true, 'No SA in org; skipping.');
             return;
         }
         Test.startTest();
