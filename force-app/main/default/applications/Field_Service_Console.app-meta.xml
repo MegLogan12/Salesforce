@@ -1073,6 +1073,8 @@
     <tabs>Inventory_Materials_Console</tabs>
     <tabs>Scanner_Receiving</tabs>
     <tabs>Night_Loading_Queue</tabs>
+    <tabs>Invoice_Accounting_Console</tabs>
+    <tabs>COO_Command_Center</tabs>
     <tabs>FSL__FieldService</tabs>
     <tabs>standard-WorkOrder</tabs>
     <tabs>standard-ServiceAppointment</tabs>
@@ -1109,6 +1111,12 @@
         </mappings>
         <mappings>
             <tab>Night_Loading_Queue</tab>
+        </mappings>
+        <mappings>
+            <tab>Invoice_Accounting_Console</tab>
+        </mappings>
+        <mappings>
+            <tab>COO_Command_Center</tab>
         </mappings>
         <mappings>
             <tab>FSL__FieldService</tab>
