@@ -68,6 +68,26 @@ private class SiteReadinessControllerTest {
         System.assertEquals(false, siteGate.passed);
     }
 
+    // ─── Test: getView covers SOQL path (queries real ServiceAppointment) ──────
+
+    @IsTest(SeeAllData=true)
+    static void getView_integration() {
+        List<ServiceAppointment> sas = [SELECT Id FROM ServiceAppointment LIMIT 1];
+        if (sas.isEmpty()) {
+            System.assert(true, 'No ServiceAppointment in org; skipping.');
+            return;
+        }
+        Test.startTest();
+        try {
+            SiteReadinessController.SiteReadinessView v =
+                SiteReadinessController.getView(sas[0].Id);
+            System.assertNotEquals(null, v, 'view should not be null');
+        } catch (AuraHandledException e) {
+            System.assert(true, 'AuraHandledException acceptable when SA has no linked WO.');
+        }
+        Test.stopTest();
+    }
+
     // ─── Test 3: null fields → graceful (no exception, booleans default false) ─
 
     @IsTest

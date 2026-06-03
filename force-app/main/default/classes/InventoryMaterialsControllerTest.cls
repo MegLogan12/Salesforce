@@ -8,19 +8,19 @@ private class InventoryMaterialsControllerTest {
             new Aqua_Inventory__c(
                 Item_Type__c    = 'Rotor Head',
                 Location__c     = 'Warehouse A',
-                Location_Type__c = 'Warehouse',
+                Location_Type__c = 'Shop',
                 Quantity__c     = 25
             ),
             new Aqua_Inventory__c(
                 Item_Type__c    = 'Spray Nozzle',
                 Location__c     = 'Truck 01',
-                Location_Type__c = 'Truck',
+                Location_Type__c = 'Van',
                 Quantity__c     = 12
             ),
             new Aqua_Inventory__c(
                 Item_Type__c    = 'Valve Box',
                 Location__c     = 'Warehouse B',
-                Location_Type__c = 'Warehouse',
+                Location_Type__c = 'Shop',
                 Quantity__c     = 3          // low stock — below 10
             )
         };
@@ -74,6 +74,18 @@ private class InventoryMaterialsControllerTest {
             'Third row item type should be Valve Box.');
         System.assertEquals(true, third.isLowStock,
             'Valve Box qty 3 should be low stock.');
+    }
+
+    // ── Test: getInventory covers SOQL entry point ───────────────────────────
+
+    @IsTest(SeeAllData=true)
+    static void getInventory_integration() {
+        Test.startTest();
+        InventoryMaterialsController.InventoryView v =
+            InventoryMaterialsController.getInventory();
+        Test.stopTest();
+        System.assertNotEquals(null, v, 'view should not be null');
+        System.assertNotEquals(null, v.rows, 'rows should not be null');
     }
 
     // ── Test 3: buildView handles empty list without error ────────────────────

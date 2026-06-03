@@ -74,6 +74,38 @@ private class CloseoutApprovalControllerTest {
         System.assertEquals(0, view.rows.size(), 'rows should be empty');
     }
 
+    // ─── Test: buildView with in-memory stub covers loop body ────────────────
+
+    @IsTest
+    static void buildView_stubWo_coversLoop() {
+        WorkOrder wo = new WorkOrder();
+        wo.Status      = 'Completed';
+        wo.Job_Type__c = 'Landscaping';
+        wo.Invoice_Amount__c = 1000.00;
+
+        Test.startTest();
+        CloseoutApprovalController.CloseoutView view =
+            CloseoutApprovalController.buildView(new List<WorkOrder>{ wo });
+        Test.stopTest();
+
+        System.assertEquals(1, view.total,         'total should be 1');
+        System.assertEquals(0, view.variance,      'variance = 0 when GrandTotal null');
+        System.assertEquals(1, view.rows.size(),   'rows should have 1 entry');
+        CloseoutApprovalController.WoRow row = view.rows[0];
+        System.assertEquals('Landscaping', row.jobType, 'jobType should match');
+    }
+
+    // ─── Test: getQueue covers SOQL path ────────────────────────────────────
+
+    @IsTest
+    static void getQueue_integration() {
+        Test.startTest();
+        CloseoutApprovalController.CloseoutView view = CloseoutApprovalController.getQueue();
+        Test.stopTest();
+        System.assertNotEquals(null, view, 'view should not be null');
+        System.assertNotEquals(null, view.rows, 'rows should not be null');
+    }
+
     // ─── Test 3: approveCloseout writes Invoice_Notes__c ────────────────────
 
     @IsTest

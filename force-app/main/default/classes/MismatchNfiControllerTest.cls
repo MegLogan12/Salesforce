@@ -40,7 +40,7 @@ private class MismatchNfiControllerTest {
         insert new List<Builder_PO__c>{ priceFail, qtyFail, bothFail };
 
         List<Builder_PO__c> pos = [
-            SELECT Id, Builder_Account__c, Builder_Account__r.Name,
+            SELECT Id, Name, Builder_Account__c, Builder_Account__r.Name,
                    Community__c, Community__r.Name, Division_Account__c,
                    Division_Account__r.Name, PO_Amount__c, Price_Book_Total__c,
                    Price_Check_Result__c, Qty_Check_Result__c, NFI_Count__c,
@@ -75,7 +75,7 @@ private class MismatchNfiControllerTest {
         insert priceFail;
 
         Builder_PO__c po = [
-            SELECT Id, Builder_Account__c, Builder_Account__r.Name,
+            SELECT Id, Name, Builder_Account__c, Builder_Account__r.Name,
                    Community__c, Community__r.Name, Division_Account__c,
                    Division_Account__r.Name, PO_Amount__c, Price_Book_Total__c,
                    Price_Check_Result__c, Qty_Check_Result__c, NFI_Count__c,
@@ -96,6 +96,15 @@ private class MismatchNfiControllerTest {
         System.assertEquals(10000, row.poAmount, 'poAmount should match');
     }
 
+    @IsTest(SeeAllData=true)
+    static void getMismatches_integration() {
+        Test.startTest();
+        MismatchNfiController.MismatchView view = MismatchNfiController.getMismatches();
+        Test.stopTest();
+        System.assertNotEquals(null, view, 'view should not be null');
+        System.assertNotEquals(null, view.rows, 'rows should not be null');
+    }
+
     @IsTest
     static void nfiFailRow_typeIsQty() {
         Account divAcct = getDivisionAccount();
@@ -112,7 +121,7 @@ private class MismatchNfiControllerTest {
         insert qtyFail;
 
         Builder_PO__c po = [
-            SELECT Id, Builder_Account__c, Builder_Account__r.Name,
+            SELECT Id, Name, Builder_Account__c, Builder_Account__r.Name,
                    Community__c, Community__r.Name, Division_Account__c,
                    Division_Account__r.Name, PO_Amount__c, Price_Book_Total__c,
                    Price_Check_Result__c, Qty_Check_Result__c, NFI_Count__c,

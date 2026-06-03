@@ -67,6 +67,17 @@ private class NightLoadingControllerTest {
             'Trucks list should not be null.');
     }
 
+    // ── Test: getLoadingQueue covers SOQL path with real org data ──────────────
+
+    @IsTest(SeeAllData=true)
+    static void getLoadingQueue_integration() {
+        Test.startTest();
+        NightLoadingController.NightLoadingView v = NightLoadingController.getLoadingQueue();
+        Test.stopTest();
+        System.assertNotEquals(null, v, 'view should not be null');
+        System.assertNotEquals(null, v.trucks, 'trucks list should not be null');
+    }
+
     // ── Test 3: markLoaded updates Status__c to Loaded ────────────────────────
 
     @IsTest

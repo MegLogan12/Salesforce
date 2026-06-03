@@ -74,6 +74,17 @@ private class InvoiceAccountingControllerTest {
             'hasVariance should be false when GrandTotal is null (formula field).');
     }
 
+    // ─── Test: getQueue covers SOQL entry point ───────────────────────────────
+
+    @IsTest(SeeAllData=true)
+    static void getQueue_integration() {
+        Test.startTest();
+        InvoiceAccountingController.InvoiceView v = InvoiceAccountingController.getQueue();
+        Test.stopTest();
+        System.assertNotEquals(null, v, 'view should not be null');
+        System.assertNotEquals(null, v.rows, 'rows should not be null');
+    }
+
     // ─── Test 3: empty list → zeros ───────────────────────────────────────────
 
     @IsTest(SeeAllData=false)

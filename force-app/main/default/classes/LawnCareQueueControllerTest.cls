@@ -65,6 +65,17 @@ private class LawnCareQueueControllerTest {
         System.assertEquals(null, row.crewName,     'crewName should be null when unassigned');
     }
 
+    // ─── Test: getQueue covers SOQL path with real org data ─────────────────
+
+    @IsTest(SeeAllData=true)
+    static void getQueue_integration() {
+        Test.startTest();
+        LawnCareQueueController.LawnCareView v = LawnCareQueueController.getQueue();
+        Test.stopTest();
+        System.assertNotEquals(null, v, 'view should not be null');
+        System.assertNotEquals(null, v.rows, 'rows should not be null');
+    }
+
     // ─── Test 3: WO with a Crew__c Id is NOT flagged as unassigned ───────────
 
     @IsTest

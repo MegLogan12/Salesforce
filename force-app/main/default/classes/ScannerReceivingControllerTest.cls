@@ -10,7 +10,7 @@ private class ScannerReceivingControllerTest {
             'Rotor Head',
             10,
             'Warehouse A',
-            'Warehouse',
+            'Shop',
             null
         );
         Test.stopTest();
@@ -33,13 +33,13 @@ private class ScannerReceivingControllerTest {
                 Item_Type__c     = 'Spray Nozzle',
                 Quantity__c      = 5,
                 Location__c      = 'Truck 02',
-                Location_Type__c = 'Truck'
+                Location_Type__c = 'Van'
             ),
             new Aqua_Inventory__c(
                 Item_Type__c     = 'Valve Box',
                 Quantity__c      = 8,
                 Location__c      = 'Warehouse B',
-                Location_Type__c = 'Warehouse'
+                Location_Type__c = 'Shop'
             )
         };
 
@@ -61,7 +61,7 @@ private class ScannerReceivingControllerTest {
             'Control Module',
             3,
             'Warehouse A',
-            'Warehouse',
+            'Shop',
             null    // explicitly null — no WO association
         );
         Test.stopTest();
