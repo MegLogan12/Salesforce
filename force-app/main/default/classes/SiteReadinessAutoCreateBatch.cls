@@ -1,4 +1,4 @@
-public class SiteReadinessAutoCreateBatch implements Database.Batchable<SObject> {
+public class SiteReadinessAutoCreateBatch implements Database.Batchable<SObject>, Schedulable {
 
     // Open statuses: WOs in terminal states should not get a readiness record.
     private static final Set<String> SKIP_STATUSES = new Set<String>{
@@ -9,6 +9,10 @@ public class SiteReadinessAutoCreateBatch implements Database.Batchable<SObject>
     // StartDate is exactly 2 days from today (48-hour advance creation).
     // Idempotency is enforced inside SiteReadinessHandler.autoCreate (skips if exists).
     public static void run() {
+        Database.executeBatch(new SiteReadinessAutoCreateBatch(), 50);
+    }
+
+    public void execute(SchedulableContext sc) {
         Database.executeBatch(new SiteReadinessAutoCreateBatch(), 50);
     }
 

@@ -1,4 +1,4 @@
-public class NightLoadingBatch implements Database.Batchable<SObject> {
+public class NightLoadingBatch implements Database.Batchable<SObject>, Schedulable {
 
     // One Loading_Ticket__c per WorkOrder scheduled for loadDate.
     // External_Key__c (upsert key) = WO_Id + '-' + loadDate, ensuring idempotency:
@@ -13,6 +13,10 @@ public class NightLoadingBatch implements Database.Batchable<SObject> {
     public NightLoadingBatch(Date d) { this.loadDate = d; }
 
     public static void run() {
+        Database.executeBatch(new NightLoadingBatch(), 200);
+    }
+
+    public void execute(SchedulableContext sc) {
         Database.executeBatch(new NightLoadingBatch(), 200);
     }
 
