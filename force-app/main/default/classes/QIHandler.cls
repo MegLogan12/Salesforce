@@ -36,7 +36,6 @@ public class QIHandler {
 
             if (qi.Result__c != null && qi.Result__c.contains('Rework Required')) {
                 wo.QI_Result__c  = 'Red — Rework Required';
-                wo.QI_Status__c  = 'FM QI Review (Red Hold)';
                 wo.QI_Complete__c = false;
                 taskInserts.add(new Task(
                     WhatId      = qi.Work_Order__c,
@@ -50,7 +49,6 @@ public class QIHandler {
                 ));
             } else if (qi.Result__c == 'Acceptable' || qi.Result__c == 'Excellent') {
                 wo.QI_Result__c  = qi.Result__c;
-                wo.QI_Status__c  = 'Approved';
                 wo.QI_Complete__c = true;
             } else if (qi.Result__c == 'Pending') {
                 wo.QI_Complete__c = false;
@@ -59,7 +57,7 @@ public class QIHandler {
             woUpdates.add(wo);
         }
 
-        if (!woUpdates.isEmpty())  update woUpdates;
+        if (!woUpdates.isEmpty())  Database.update(woUpdates, false);
         if (!taskInserts.isEmpty()) insert taskInserts;
     }
 
