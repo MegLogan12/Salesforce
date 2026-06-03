@@ -1,0 +1,167 @@
+<template>
+    <lightning-card title="Agentforce Console" icon-name="standard:agent_session">
+        <div class="slds-card__body slds-card__body_inner">
+
+            <lightning-tabset>
+
+                <!-- ============================================================ -->
+                <!-- TAB 1: Agents                                                 -->
+                <!-- ============================================================ -->
+                <lightning-tab label="Agents" value="agents">
+                    <div class="slds-m-top_small">
+                        <ul class="slds-list_vertical slds-has-dividers_top-space">
+                            <template for:each={agents} for:item="agent">
+                                <li key={agent.id} class="slds-item">
+
+                                    <!-- Agent summary row -->
+                                    <div class="slds-media slds-media_center slds-p-vertical_small">
+                                        <div class="slds-media__body">
+                                            <div class="slds-grid slds-grid_vertical-align-center slds-gutters_small">
+                                                <div class="slds-col slds-size_3-of-12">
+                                                    <span class="slds-text-title_bold">{agent.name}</span>
+                                                </div>
+                                                <div class="slds-col slds-size_5-of-12">
+                                                    <span class="slds-text-body_small slds-text-color_weak">{agent.actions}</span>
+                                                </div>
+                                                <div class="slds-col slds-size_2-of-12">
+                                                    <span class="slds-badge slds-badge_warning">{agent.status}</span>
+                                                </div>
+                                                <div class="slds-col slds-size_2-of-12 slds-text-align_right">
+                                                    <lightning-button
+                                                        label={agent.detailButtonLabel}
+                                                        variant="base"
+                                                        data-agent-id={agent.id}
+                                                        onclick={handleToggleDetail}>
+                                                    </lightning-button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Expanded detail panel -->
+                                    <template if:true={agent.isExpanded}>
+                                        <div class="slds-box slds-box_x-small slds-theme_shade slds-m-bottom_small">
+                                            <div class="slds-grid slds-wrap slds-gutters_small">
+                                                <div class="slds-col slds-size_1-of-2 slds-m-bottom_x-small">
+                                                    <span class="slds-text-label">Topic</span>
+                                                    <div class="slds-text-body_regular">{agent.topic}</div>
+                                                </div>
+                                                <div class="slds-col slds-size_1-of-2 slds-m-bottom_x-small">
+                                                    <span class="slds-text-label">Trigger</span>
+                                                    <div class="slds-text-body_regular">{agent.trigger}</div>
+                                                </div>
+                                                <div class="slds-col slds-size_1-of-2 slds-m-bottom_x-small">
+                                                    <span class="slds-text-label">Reads</span>
+                                                    <div class="slds-text-body_regular">{agent.reads}</div>
+                                                </div>
+                                                <div class="slds-col slds-size_1-of-2 slds-m-bottom_x-small">
+                                                    <span class="slds-text-label">External Comms</span>
+                                                    <div class="slds-text-body_regular">{agent.extComms}</div>
+                                                </div>
+                                                <div class="slds-col slds-size_1-of-1">
+                                                    <span class="slds-text-label">Actions</span>
+                                                    <div class="slds-text-body_regular">{agent.actions}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </lightning-tab>
+
+                <!-- ============================================================ -->
+                <!-- TAB 2: Topics & Actions                                       -->
+                <!-- ============================================================ -->
+                <lightning-tab label="Topics &amp; Actions" value="topics">
+                    <div class="slds-m-top_small slds-scrollable_x">
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <th scope="col"><div class="slds-truncate">Agent</div></th>
+                                    <th scope="col"><div class="slds-truncate">Topic</div></th>
+                                    <th scope="col"><div class="slds-truncate">Allowed Actions</div></th>
+                                    <th scope="col"><div class="slds-truncate">External Comms</div></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={agents} for:item="agent">
+                                    <tr key={agent.id}>
+                                        <td><div class="slds-truncate">{agent.name}</div></td>
+                                        <td><div class="slds-truncate">{agent.topic}</div></td>
+                                        <td><div>{agent.actions}</div></td>
+                                        <td><div class="slds-truncate">{agent.extComms}</div></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </lightning-tab>
+
+                <!-- ============================================================ -->
+                <!-- TAB 3: Activity Log                                           -->
+                <!-- ============================================================ -->
+                <lightning-tab label="Activity Log" value="log">
+                    <div class="slds-m-top_small">
+                        <div class="slds-box slds-box_x-small slds-theme_shade slds-m-bottom_small">
+                            <p class="slds-text-body_small slds-text-color_weak">
+                                Live audit trail requires Agentforce audit log API — sample entries shown.
+                            </p>
+                        </div>
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <th scope="col"><div class="slds-truncate">Agent</div></th>
+                                    <th scope="col"><div class="slds-truncate">Action</div></th>
+                                    <th scope="col"><div class="slds-truncate">Timestamp</div></th>
+                                    <th scope="col"><div class="slds-truncate">Status</div></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={logEntries} for:item="entry">
+                                    <tr key={entry.id}>
+                                        <td><div class="slds-truncate">{entry.agentName}</div></td>
+                                        <td><div>{entry.action}</div></td>
+                                        <td><div class="slds-truncate">{entry.timestamp}</div></td>
+                                        <td>
+                                            <div>
+                                                <span class="slds-badge slds-badge_success">{entry.status}</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </lightning-tab>
+
+                <!-- ============================================================ -->
+                <!-- TAB 4: Guardrails                                             -->
+                <!-- ============================================================ -->
+                <lightning-tab label="Guardrails" value="guardrails">
+                    <div class="slds-m-top_small">
+                        <ul class="slds-list_vertical slds-has-dividers_top-space">
+                            <template for:each={guardrails} for:item="guardrail">
+                                <li key={guardrail.id} class="slds-item slds-p-vertical_small">
+                                    <div class="slds-media slds-media_center">
+                                        <div class="slds-media__figure">
+                                            <span class={guardrail.badgeClass}>{guardrail.enforcement}</span>
+                                        </div>
+                                        <div class="slds-media__body">
+                                            <div class="slds-text-title_bold">{guardrail.name}</div>
+                                            <div class="slds-text-body_small slds-text-color_weak">{guardrail.description}</div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </lightning-tab>
+
+            </lightning-tabset>
+
+        </div>
+    </lightning-card>
+</template>
