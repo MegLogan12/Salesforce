@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
-    <apiVersion>62.0</apiVersion>
+    <apiVersion>59.0</apiVersion>
     <isExposed>true</isExposed>
+    <masterLabel>VP Operations Dashboard</masterLabel>
+    <description>VP Field Operations daily workspace. 9 tabs: Home, My FMs, Production Install, Lawn Care, Escalations, FJ Roll-up, 2 PM Health, Quality KPIs, Weekly 1:1s.</description>
     <targets>
         <target>lightning__AppPage</target>
+        <target>lightning__HomePage</target>
     </targets>
 </LightningComponentBundle>

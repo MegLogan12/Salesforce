@@ -4,8 +4,6 @@
     <isExposed>true</isExposed>
     <targets>
         <target>lightning__UtilityBar</target>
-        <target>lightning__HomePage</target>
-        <target>lightning__AppPage</target>
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__UtilityBar">

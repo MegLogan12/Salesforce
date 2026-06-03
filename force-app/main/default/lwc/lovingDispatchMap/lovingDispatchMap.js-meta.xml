@@ -7,7 +7,7 @@
     </targets>
     <targetConfigs>
         <targetConfig targets="lightning__AppPage">
-            <property name="territory" type="String" label="Service Territory" description="Service territory or division name (e.g. Charlotte Metro, Greenville)"/>
+            <property name="territory" type="String" label="Territory Label" description="Display name shown in the dispatch header (e.g. Charlotte North)"/>
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>
