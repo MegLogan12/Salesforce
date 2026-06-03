@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Division_Revenue_T12M__c</fullName>
-    <description>Trailing-12-month division revenue. Sum of paid Invoice__c.Amount__c (Date_Paid__c >= TODAY-365) for WOs on this division. Maintained by DivisionKpiRecalcBatch. System-maintained; set FLS read-only. Spec Section 3.5.</description>
     <label>Division Revenue (T12M)</label>
-    <precision>16</precision>
-    <required>false</required>
-    <scale>2</scale>
-    <trackFeedHistory>false</trackFeedHistory>
+    <description>Trailing 12-month paid revenue from Invoice__c for this division. Populated nightly by DivisionKpiRecalcBatch.</description>
     <type>Currency</type>
+    <precision>18</precision>
+    <scale>2</scale>
 </CustomField>

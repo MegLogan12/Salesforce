@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Division_GP_Pct__c</fullName>
-    <description>Division gross profit %: (revenue - sum of Work_Order__c.Total_Cost__c) / revenue, T12M. Maintained by DivisionKpiRecalcBatch. System-maintained; set FLS read-only. Spec Section 3.5.</description>
-    <label>Division Gross Profit %</label>
-    <precision>5</precision>
-    <required>false</required>
-    <scale>2</scale>
-    <trackFeedHistory>false</trackFeedHistory>
+    <label>Division GP %</label>
+    <description>Trailing 12-month gross profit percentage. Null when there is no revenue. Populated nightly by DivisionKpiRecalcBatch.</description>
     <type>Percent</type>
+    <precision>5</precision>
+    <scale>2</scale>
 </CustomField>

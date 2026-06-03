@@ -64,39 +64,40 @@ public class DivisionKpiRecalcBatch implements Database.Batchable<SObject> {
             costByDiv.put(div, c != null ? c : 0);
         }
 
-        // Open WO count (not in terminal statuses)
+        // Open WO count (standard WorkOrder, not in terminal statuses).
+        // Division link: WorkOrder → Community__c → Community__r.Builder_Account__c.
         Map<Id, Integer> openWoByDiv = new Map<Id, Integer>();
         for (AggregateResult ar : [
-            SELECT Builder_Market_Account__c div, COUNT(Id) cnt
-            FROM Work_Order__c
-            WHERE Builder_Market_Account__c IN :divIds
-              AND Status__c NOT IN :WO_TERMINAL
-            GROUP BY Builder_Market_Account__c
+            SELECT Community__r.Builder_Account__c div, COUNT(Id) cnt
+            FROM WorkOrder
+            WHERE Community__r.Builder_Account__c IN :divIds
+              AND Status NOT IN :WO_TERMINAL
+            GROUP BY Community__r.Builder_Account__c
         ]) {
             openWoByDiv.put((Id) ar.get('div'), (Integer) ar.get('cnt'));
         }
 
-        // NFI count (canonical single value after picklist consolidation)
+        // NFI count
         Map<Id, Integer> nfiByDiv = new Map<Id, Integer>();
         for (AggregateResult ar : [
-            SELECT Builder_Market_Account__c div, COUNT(Id) cnt
-            FROM Work_Order__c
-            WHERE Builder_Market_Account__c IN :divIds
-              AND Status__c = 'Need Further Info (NFI)'
-            GROUP BY Builder_Market_Account__c
+            SELECT Community__r.Builder_Account__c div, COUNT(Id) cnt
+            FROM WorkOrder
+            WHERE Community__r.Builder_Account__c IN :divIds
+              AND Status = 'Need Further Info (NFI)'
+            GROUP BY Community__r.Builder_Account__c
         ]) {
             nfiByDiv.put((Id) ar.get('div'), (Integer) ar.get('cnt'));
         }
 
-        // Open Warranty count (Is_Warranty__c = true, not terminal)
+        // Open Warranty count: WorkOrders linked to a warranty (AssetWarrantyId != null), not terminal.
         Map<Id, Integer> warrantyByDiv = new Map<Id, Integer>();
         for (AggregateResult ar : [
-            SELECT Builder_Market_Account__c div, COUNT(Id) cnt
-            FROM Work_Order__c
-            WHERE Builder_Market_Account__c IN :divIds
-              AND Is_Warranty__c = true
-              AND Status__c NOT IN :WO_TERMINAL
-            GROUP BY Builder_Market_Account__c
+            SELECT Community__r.Builder_Account__c div, COUNT(Id) cnt
+            FROM WorkOrder
+            WHERE Community__r.Builder_Account__c IN :divIds
+              AND AssetWarrantyId != null
+              AND Status NOT IN :WO_TERMINAL
+            GROUP BY Community__r.Builder_Account__c
         ]) {
             warrantyByDiv.put((Id) ar.get('div'), (Integer) ar.get('cnt'));
         }
@@ -139,22 +140,23 @@ public class DivisionKpiRecalcBatch implements Database.Batchable<SObject> {
         }
 
         // On-Time Completion % (trailing 30 days).
-        // Promise date  = Scheduled_End_DateTime__c (confirmed by Meg).
-        // Actual finish = Field_Complete_Date__c (crew completion DateTime, comparable to the promise).
-        // A WO is measurable only if it has a promise date; WOs without one are excluded from
-        // both numerator and denominator so they neither help nor hurt the score.
+        // Promise date  = EndDate (standard WorkOrder scheduled end).
+        // Actual finish = Field_Complete_Date__c (crew completion DateTime).
+        // A WO is measurable only if it has a promise date; WOs without EndDate are excluded
+        // from both numerator and denominator so they neither help nor hurt the score.
         Map<Id, Integer> completedByDiv = new Map<Id, Integer>();
         Map<Id, Integer> onTimeByDiv = new Map<Id, Integer>();
-        for (Work_Order__c wo : [
-            SELECT Builder_Market_Account__c, Field_Complete_Date__c, Scheduled_End_DateTime__c
-            FROM Work_Order__c
-            WHERE Builder_Market_Account__c IN :divIds
+        for (WorkOrder wo : [
+            SELECT Community__r.Builder_Account__c, Field_Complete_Date__c, EndDate
+            FROM WorkOrder
+            WHERE Community__r.Builder_Account__c IN :divIds
               AND Field_Complete_Date__c >= :T30
-              AND Scheduled_End_DateTime__c != null
+              AND EndDate != null
         ]) {
-            Id d = wo.Builder_Market_Account__c;
+            Id d = wo.Community__r != null ? wo.Community__r.Builder_Account__c : null;
+            if (d == null) continue;
             completedByDiv.put(d, (completedByDiv.containsKey(d) ? completedByDiv.get(d) : 0) + 1);
-            if (wo.Field_Complete_Date__c <= wo.Scheduled_End_DateTime__c) {
+            if (wo.Field_Complete_Date__c <= wo.EndDate) {
                 onTimeByDiv.put(d, (onTimeByDiv.containsKey(d) ? onTimeByDiv.get(d) : 0) + 1);
             }
         }
