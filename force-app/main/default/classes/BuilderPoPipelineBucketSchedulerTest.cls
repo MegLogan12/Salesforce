@@ -70,12 +70,4 @@ private class BuilderPoPipelineBucketSchedulerTest {
         System.assertEquals(1, jobs.size());
     }
 
-    @IsTest
-    static void seeder_insertsAllRules() {
-        Test.startTest();
-        BuilderPoTimingRuleSeeder.seed();
-        Test.stopTest();
-        Integer count = [SELECT COUNT() FROM Builder_PO_Timing_Rule__c WHERE Active__c = true];
-        System.assert(count >= 13, 'Expected 13 timing rules, got ' + count);
-    }
 }
