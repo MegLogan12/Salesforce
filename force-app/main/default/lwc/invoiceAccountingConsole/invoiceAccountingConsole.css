@@ -122,8 +122,8 @@
 }
 
 .subtab.active {
-    color: var(--orange);
-    border-bottom-color: var(--orange);
+    color: var(--green);
+    border-bottom-color: var(--green);
 }
 
 .subtab:hover:not(.active) {

@@ -110,8 +110,8 @@
 }
 
 .subtab.active {
-    color: var(--orange);
-    border-bottom-color: var(--orange);
+    color: var(--green);
+    border-bottom-color: var(--green);
 }
 
 .subtab:hover:not(.active) {
@@ -328,9 +328,9 @@
     font-weight: 600;
     padding: 6px 13px;
     border-radius: 8px;
-    border: 1px solid #c0552a;
+    border: 1px solid #7abb96;
     background: #ffffff;
-    color: #9e3d14;
+    color: var(--green);
     cursor: pointer;
     white-space: nowrap;
     transition: background 0.1s;
@@ -338,7 +338,7 @@
 }
 
 .btn-escalate:hover {
-    background: var(--orange-bg);
+    background: var(--green-bg);
 }
 
 /* ── Exceptions list ── */
