@@ -1,4 +1,4 @@
-public class DivisionKpiRecalcBatch implements Database.Batchable<SObject> {
+public class DivisionKpiRecalcBatch implements Database.Batchable<SObject>, Schedulable {
 
     private static final Date T12M = Date.today().addDays(-365);
     // On-Time % is a trailing-30-day measure (field description / Spec 3.5).
@@ -192,6 +192,10 @@ public class DivisionKpiRecalcBatch implements Database.Batchable<SObject> {
         if (!updates.isEmpty()) {
             update updates;
         }
+    }
+
+    public void execute(SchedulableContext sc) {
+        Database.executeBatch(new DivisionKpiRecalcBatch(), 200);
     }
 
     public void finish(Database.BatchableContext bc) {
