@@ -1,0 +1,169 @@
+<template>
+    <lightning-card>
+        <div slot="title">
+            <lightning-icon icon-name="utility:email" size="small" class="slds-m-right_x-small"></lightning-icon>
+            Microsoft 365 Activity
+        </div>
+        <div slot="actions">
+            <lightning-button-group>
+                <lightning-button label="Send Email"     onclick={openEmailModal}    icon-name="utility:send_email"></lightning-button>
+                <lightning-button label="Schedule Meeting" onclick={openCalendarModal} icon-name="utility:event"></lightning-button>
+            </lightning-button-group>
+        </div>
+
+        <div class="slds-p-horizontal_medium">
+
+            <!-- No Microsoft UPN configured -->
+            <template if:true={noUpn}>
+                <div class="slds-box slds-theme_warning slds-m-bottom_small">
+                    <lightning-icon icon-name="utility:warning" size="small" class="slds-m-right_x-small"></lightning-icon>
+                    Your Salesforce user profile does not have a Microsoft UPN set.
+                    Ask your admin to populate <strong>Microsoft UPN</strong> on your User record.
+                </div>
+            </template>
+
+            <!-- Tabs: Emails / Calendar -->
+            <lightning-tabset>
+
+                <!-- ── Emails ─────────────────────────────────────────────── -->
+                <lightning-tab label="Emails" icon-name="utility:email">
+                    <template if:true={emailsLoading}>
+                        <lightning-spinner alternative-text="Loading emails…" size="small"></lightning-spinner>
+                    </template>
+                    <template if:false={emailsLoading}>
+                        <template if:true={emailError}>
+                            <p class="slds-text-color_error slds-m-around_small">{emailError}</p>
+                        </template>
+                        <template if:false={emailError}>
+                            <template if:true={hasEmails}>
+                                <ul class="slds-has-dividers_bottom-space slds-m-top_x-small">
+                                    <template for:each={emails} for:item="em">
+                                        <li key={em.id} class="slds-item slds-p-vertical_x-small">
+                                            <div class="slds-grid slds-grid_align-spread slds-wrap">
+                                                <div class="slds-col slds-size_3-of-4">
+                                                    <p class="slds-text-title_bold">{em.subject}</p>
+                                                    <p class="slds-text-body_small slds-text-color_weak">
+                                                        From: {em.fromAddress} &nbsp;·&nbsp; To: {em.toAddress}
+                                                    </p>
+                                                    <p class="slds-text-body_small slds-m-top_xx-small">{em.preview}</p>
+                                                </div>
+                                                <div class="slds-col slds-size_1-of-4 slds-text-align_right">
+                                                    <p class="slds-text-body_small slds-text-color_weak">{em.messageDate}</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </template>
+                            <template if:false={hasEmails}>
+                                <p class="slds-text-color_weak slds-m-around_small">No emails logged for this record.</p>
+                            </template>
+                        </template>
+                    </template>
+                </lightning-tab>
+
+                <!-- ── Calendar ───────────────────────────────────────────── -->
+                <lightning-tab label="Calendar" icon-name="utility:event">
+                    <template if:true={calendarLoading}>
+                        <lightning-spinner alternative-text="Loading calendar…" size="small"></lightning-spinner>
+                    </template>
+                    <template if:false={calendarLoading}>
+                        <template if:true={calendarError}>
+                            <p class="slds-text-color_error slds-m-around_small">{calendarError}</p>
+                        </template>
+                        <template if:false={calendarError}>
+                            <template if:true={hasEvents}>
+                                <ul class="slds-has-dividers_bottom-space slds-m-top_x-small">
+                                    <template for:each={events} for:item="ev">
+                                        <li key={ev.graphId} class="slds-item slds-p-vertical_x-small">
+                                            <div class="slds-grid slds-grid_align-spread slds-wrap">
+                                                <div class="slds-col slds-size_3-of-4">
+                                                    <p class="slds-text-title_bold">{ev.subject}</p>
+                                                    <p class="slds-text-body_small slds-text-color_weak">
+                                                        {ev.startLabel} – {ev.endLabel}
+                                                        <template if:true={ev.location}>
+                                                            &nbsp;·&nbsp; {ev.location}
+                                                        </template>
+                                                    </p>
+                                                    <template if:true={ev.bodyPreview}>
+                                                        <p class="slds-text-body_small slds-m-top_xx-small">{ev.bodyPreview}</p>
+                                                    </template>
+                                                </div>
+                                                <div class="slds-col slds-size_1-of-4 slds-text-align_right">
+                                                    <template if:true={ev.webLink}>
+                                                        <a href={ev.webLink} target="_blank" class="slds-text-body_small">Open in Outlook</a>
+                                                    </template>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </template>
+                            <template if:false={hasEvents}>
+                                <p class="slds-text-color_weak slds-m-around_small">No upcoming events found for the next 14 days.</p>
+                            </template>
+                        </template>
+                    </template>
+                </lightning-tab>
+
+            </lightning-tabset>
+        </div>
+    </lightning-card>
+
+    <!-- ── Send Email Modal ─────────────────────────────────────────────────── -->
+    <template if:true={emailModalOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 class="slds-modal__title">Send Email via Outlook</h2>
+                    <button class="slds-button slds-button_icon slds-modal__close" onclick={closeEmailModal} title="Close">
+                        <lightning-icon icon-name="utility:close" size="small"></lightning-icon>
+                    </button>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <lightning-input label="To (comma-separated)"  type="text"  value={emailTo}      onchange={onEmailTo}      required></lightning-input>
+                    <lightning-input label="Subject"               type="text"  value={emailSubject} onchange={onEmailSubject} required class="slds-m-top_small"></lightning-input>
+                    <lightning-textarea label="Body (HTML allowed)" value={emailBody} onchange={onEmailBody} class="slds-m-top_small" min-length="1"></lightning-textarea>
+                    <template if:true={emailSendError}>
+                        <p class="slds-text-color_error slds-m-top_small">{emailSendError}</p>
+                    </template>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancel" onclick={closeEmailModal}></lightning-button>
+                    <lightning-button label="Send via Outlook" variant="brand" onclick={handleSendEmail} disabled={sendingEmail} class="slds-m-left_small"></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <!-- ── Schedule Meeting Modal ───────────────────────────────────────────── -->
+    <template if:true={calendarModalOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 class="slds-modal__title">Schedule Meeting in Outlook</h2>
+                    <button class="slds-button slds-button_icon slds-modal__close" onclick={closeCalendarModal} title="Close">
+                        <lightning-icon icon-name="utility:close" size="small"></lightning-icon>
+                    </button>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <lightning-input label="Subject"              type="text"           value={meetingSubject}   onchange={onMeetingSubject}   required></lightning-input>
+                    <lightning-input label="Start (UTC)"          type="datetime-local"  value={meetingStart}     onchange={onMeetingStart}     required class="slds-m-top_small"></lightning-input>
+                    <lightning-input label="End (UTC)"            type="datetime-local"  value={meetingEnd}       onchange={onMeetingEnd}       required class="slds-m-top_small"></lightning-input>
+                    <lightning-input label="Location (optional)"  type="text"           value={meetingLocation}  onchange={onMeetingLocation}  class="slds-m-top_small"></lightning-input>
+                    <lightning-input label="Attendees (comma-separated emails)" type="text" value={meetingAttendees} onchange={onMeetingAttendees} class="slds-m-top_small"></lightning-input>
+                    <lightning-textarea label="Notes"             value={meetingNotes}  onchange={onMeetingNotes} class="slds-m-top_small"></lightning-textarea>
+                    <template if:true={meetingCreateError}>
+                        <p class="slds-text-color_error slds-m-top_small">{meetingCreateError}</p>
+                    </template>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancel" onclick={closeCalendarModal}></lightning-button>
+                    <lightning-button label="Create in Outlook" variant="brand" onclick={handleCreateMeeting} disabled={creatingMeeting} class="slds-m-left_small"></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>
