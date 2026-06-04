@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customSettingsType>Hierarchy</customSettingsType>
+    <description>Stores Stripe API credentials. Set via Setup > Custom Settings > Manage after deploy.</description>
+    <enableFeeds>false</enableFeeds>
+    <label>Stripe Settings</label>
+    <visibility>Public</visibility>
+</CustomObject>

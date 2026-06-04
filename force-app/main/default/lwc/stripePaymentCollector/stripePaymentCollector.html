@@ -1,0 +1,121 @@
+<template>
+    <lightning-card title="Stripe Payment" icon-name="utility:payment_gateway">
+        <div class="slds-p-horizontal_medium slds-p-bottom_medium">
+
+            <!-- Existing payments list -->
+            <template if:true={payments}>
+                <template for:each={payments} for:item="p">
+                    <div key={p.Id} class="slds-box slds-m-bottom_small slds-p-around_small">
+                        <div class="slds-grid slds-gutters slds-grid_vertical-align-center">
+                            <div class="slds-col">
+                                <p class="slds-text-heading_small">{p.Name}</p>
+                                <p class="slds-text-body_small slds-text-color_weak">{p.formattedDate}</p>
+                            </div>
+                            <div class="slds-col slds-text-align_center">
+                                <p class="slds-text-body_regular"><strong>{p.formattedAmount}</strong></p>
+                            </div>
+                            <div class="slds-col slds-text-align_right">
+                                <lightning-badge
+                                    label={p.Status__c}
+                                    class={p.badgeClass}>
+                                </lightning-badge>
+                            </div>
+                        </div>
+
+                        <!-- Actions for pending payments -->
+                        <template if:true={p.isPending}>
+                            <div class="slds-m-top_small slds-grid slds-gutters">
+                                <div class="slds-col">
+                                    <lightning-button-icon
+                                        icon-name="utility:copy"
+                                        variant="border"
+                                        title="Copy payment link"
+                                        data-id={p.Id}
+                                        data-url={p.Checkout_URL__c}
+                                        onclick={handleCopyLink}>
+                                    </lightning-button-icon>
+                                    <lightning-button
+                                        label="Open Link"
+                                        variant="neutral"
+                                        class="slds-m-left_x-small"
+                                        data-url={p.Checkout_URL__c}
+                                        onclick={handleOpenLink}>
+                                    </lightning-button>
+                                </div>
+                                <div class="slds-col slds-text-align_right">
+                                    <lightning-button
+                                        label="Refresh Status"
+                                        variant="neutral"
+                                        icon-name="utility:refresh"
+                                        data-id={p.Id}
+                                        onclick={handleRefresh}
+                                        disabled={isRefreshing}>
+                                    </lightning-button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+            </template>
+
+            <!-- Empty state -->
+            <template if:true={noPayments}>
+                <p class="slds-text-body_regular slds-text-color_weak slds-m-bottom_medium">
+                    No payments collected yet for this work order.
+                </p>
+            </template>
+
+            <!-- New payment form -->
+            <template if:true={showForm}>
+                <div class="slds-box slds-m-bottom_small">
+                    <p class="slds-text-heading_small slds-m-bottom_small">New Payment</p>
+                    <lightning-input
+                        type="number"
+                        label="Amount (USD)"
+                        formatter="currency"
+                        value={newAmount}
+                        step="0.01"
+                        min="0.01"
+                        onchange={handleAmountChange}>
+                    </lightning-input>
+                    <lightning-input
+                        type="text"
+                        label="Description"
+                        placeholder="e.g. Labor + materials"
+                        value={newDescription}
+                        class="slds-m-top_small"
+                        onchange={handleDescriptionChange}>
+                    </lightning-input>
+                    <div class="slds-m-top_medium slds-grid slds-gutters">
+                        <div class="slds-col">
+                            <lightning-button label="Cancel" onclick={handleCancelForm}></lightning-button>
+                        </div>
+                        <div class="slds-col slds-text-align_right">
+                            <lightning-button
+                                label="Generate Payment Link"
+                                variant="brand"
+                                onclick={handleCreatePayment}
+                                disabled={isCreating}>
+                            </lightning-button>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Collect payment button -->
+            <template if:false={showForm}>
+                <lightning-button
+                    label="Collect Payment"
+                    variant="brand"
+                    icon-name="utility:new"
+                    onclick={handleShowForm}>
+                </lightning-button>
+            </template>
+
+            <!-- Spinner -->
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </template>
+        </div>
+    </lightning-card>
+</template>
