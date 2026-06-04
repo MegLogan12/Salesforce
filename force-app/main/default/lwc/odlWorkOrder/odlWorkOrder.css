@@ -1,4 +1,5 @@
-:host { display: block; }
+:host {
+    width: 100%; display: block; }
 
 .ch {
     background: var(--ch-bg, #f4f6f9);

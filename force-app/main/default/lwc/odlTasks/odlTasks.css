@@ -73,6 +73,8 @@
 
 /* ── Body layout ──────────────────────────────────────────────────────────── */
 .sf-body {
+    box-sizing: border-box;
+    width: 100%;
     background: #f5f2ec;
     padding: 14px;
 }

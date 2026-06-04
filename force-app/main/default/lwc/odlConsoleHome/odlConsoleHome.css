@@ -1,5 +1,6 @@
 /* ── Design tokens ──────────────────────────────────────────────────────── */
 :host {
+    display: block;
     --odl-orange:      #e8936a;
     --odl-orange-dark: #c06040;
     --odl-blue:        #2c7a4b;

@@ -1,4 +1,6 @@
 :host {
+    display: block;
+    width: 100%;
     --green:          #2c7a4b;
     --green-dark:     #1f5c38;
     --green-light:    #e6f3ea;

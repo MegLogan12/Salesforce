@@ -18,11 +18,17 @@
     --ink:            #1f2421;
     --muted:          #706e6b;
     --border-warm:    #e6e2d9;
+
+    display: block;
+    width: 100%;
+    background: #f5f2ec;
 }
 
 .close-page-root {
-    padding: 12px;
-    max-width: 680px;
+    padding: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    max-width: 900px;
 }
 
 .close-loading,
@@ -35,11 +41,12 @@
 
 /* ── Header ──────────────────────────────────── */
 .close-header-card {
-    background: #fff;
-    border: 1px solid #e6e2d9;
+    background: linear-gradient(135deg, #fff 60%, #f0f7f3 100%);
+    border: 1.5px solid #e6e2d9;
+    border-left: 4px solid #2c7a4b;
     border-radius: 8px;
-    padding: 14px 16px;
-    margin-bottom: 12px;
+    padding: 16px 20px;
+    margin-bottom: 14px;
 }
 
 .close-opp-name {
