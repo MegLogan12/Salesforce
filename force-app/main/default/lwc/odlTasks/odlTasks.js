@@ -101,4 +101,20 @@ export default class OdlTasks extends LightningElement {
 
     get hasError() { return !!this.error; }
     get noTasks() { return !this.error && this.visibleTasks.length === 0; }
+
+    handleCompleteTask() {
+        console.log('handleCompleteTask');
+    }
+
+    handleDraftEmail() {
+        console.log('handleDraftEmail');
+    }
+
+    handleNewTask() {
+        console.log('handleNewTask');
+    }
+
+    handleSummarizeActivity() {
+        console.log('handleSummarizeActivity');
+    }
 }

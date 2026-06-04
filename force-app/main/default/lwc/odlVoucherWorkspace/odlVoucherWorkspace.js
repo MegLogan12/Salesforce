@@ -92,4 +92,12 @@ export default class OdlVoucherWorkspace extends NavigationMixin(LightningElemen
     async handleRefresh() {
         await refreshApex(this.wiredResult);
     }
+
+    handleApplyVoucher() {
+        console.log('handleApplyVoucher');
+    }
+
+    handleVoid() {
+        console.log('handleVoid');
+    }
 }

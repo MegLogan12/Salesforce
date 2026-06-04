@@ -274,4 +274,8 @@ export default class OdlWorkOrderFieldExecutionWorkspace extends NavigationMixin
             }
         });
     }
+
+    handleUpdatePunchItem() {
+        console.log('handleUpdatePunchItem');
+    }
 }
