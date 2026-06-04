@@ -1,11 +1,12 @@
 import { LightningElement, api, wire } from 'lwc';
-import getLots from '@salesforce/apex/CommunityRecordController.getLots';
+import getLotTracker from '@salesforce/apex/CommunityRecordController.getLotTracker';
 
 const COLUMNS = [
-    { label: 'Lot Number', fieldName: 'lotNumber', type: 'text' },
-    { label: 'Lot Name', fieldName: 'name', type: 'text' },
+    { label: 'Lot', fieldName: 'lotLabel', type: 'text' },
+    { label: 'Work Order', fieldName: 'workOrderName', type: 'text' },
     { label: 'Status', fieldName: 'status', type: 'text' },
-    { label: 'Active WO', fieldName: 'hasActiveWo', type: 'boolean' }
+    { label: 'Foreman', fieldName: 'foreman', type: 'text' },
+    { label: 'Scheduled', fieldName: 'scheduled', type: 'text' }
 ];
 
 export default class CommunityLotTracker extends LightningElement {
@@ -15,10 +16,10 @@ export default class CommunityLotTracker extends LightningElement {
     _loaded = false;
     columns = COLUMNS;
 
-    @wire(getLots, { communityId: '$recordId' })
+    @wire(getLotTracker, { communityId: '$recordId' })
     wired({ data, error }) {
         if (data) {
-            this.lots = data;
+            this.lots = data.rows ?? [];
             this.error = null;
             this._loaded = true;
         } else if (error) {
