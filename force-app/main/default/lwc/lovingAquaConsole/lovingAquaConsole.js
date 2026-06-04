@@ -758,6 +758,8 @@ export default class LovingAquaConsole extends NavigationMixin(LightningElement)
     }
 
     handleRetrieveAll() {
+        if (this._actionInFlight) return;
+        this._actionInFlight = true;
         bulkRetrieveEndOfSeason()
             .then(() => {
                 this._toast('Retrieve All Complete', 'Pickup tickets created for all active lots.', 'success');
@@ -765,6 +767,9 @@ export default class LovingAquaConsole extends NavigationMixin(LightningElement)
             })
             .catch(err => {
                 this._toast('Retrieve Failed', err.body ? err.body.message : String(err), 'error');
+            })
+            .finally(() => {
+                this._actionInFlight = false;
             });
     }
 
