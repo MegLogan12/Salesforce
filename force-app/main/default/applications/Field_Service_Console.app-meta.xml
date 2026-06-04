@@ -1103,37 +1103,34 @@
     <utilityBar>LOVING_Field_Service_UtilityBar</utilityBar>
     <workspaceConfig>
         <mappings>
-            <tab>Dispatch_Map</tab>
-        </mappings>
-        <mappings>
-            <tab>Inventory_Materials_Console</tab>
-        </mappings>
-        <mappings>
-            <tab>Scanner_Receiving</tab>
-        </mappings>
-        <mappings>
-            <tab>Night_Loading_Queue</tab>
-        </mappings>
-        <mappings>
-            <tab>Invoice_Accounting_Console</tab>
-        </mappings>
-        <mappings>
             <tab>COO_Command_Center</tab>
         </mappings>
         <mappings>
             <tab>Customer_Success_Console</tab>
         </mappings>
         <mappings>
-            <tab>Scheduling_Console</tab>
+            <tab>Dispatch_Map</tab>
         </mappings>
         <mappings>
             <tab>FSL__FieldService</tab>
+        </mappings>
+        <mappings>
+            <tab>Inventory_Materials_Console</tab>
+        </mappings>
+        <mappings>
+            <tab>Invoice_Accounting_Console</tab>
+        </mappings>
+        <mappings>
+            <tab>Night_Loading_Queue</tab>
         </mappings>
         <mappings>
             <tab>Purchase_Order__c</tab>
         </mappings>
         <mappings>
             <tab>Route_GPS</tab>
+        </mappings>
+        <mappings>
+            <tab>Scanner_Receiving</tab>
         </mappings>
         <mappings>
             <tab>Sched_Auto</tab>
@@ -1161,6 +1158,9 @@
         </mappings>
         <mappings>
             <tab>Schedule_Decision_Rule__c</tab>
+        </mappings>
+        <mappings>
+            <tab>Scheduling_Console</tab>
         </mappings>
         <mappings>
             <tab>standard-Account</tab>

@@ -3,8 +3,8 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>c:invoiceAccountingConsole</componentName>
-                <identifier>c_invoiceAccountingConsole</identifier>
+                <componentName>invoiceAccountingConsole</componentName>
+                <identifier>invoice_accounting_console_main</identifier>
             </componentInstance>
         </itemInstances>
         <name>main</name>
