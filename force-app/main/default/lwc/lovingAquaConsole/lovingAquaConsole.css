@@ -295,6 +295,33 @@
 .ab-b { background: #e6f3ea; border-color: #2c7a4b; color: #1f5c38; }
 .ab-ic { font-size: 14px; flex-shrink: 0; }
 
+/* ── Route optimization banner ─────────────────────────────────────── */
+.route-opt-banner {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-bottom: 14px;
+}
+.route-rule {
+    background: #fff;
+    border: 1px solid #e6e2d9;
+    border-left: 3px solid #2c7a4b;
+    border-radius: 0 4px 4px 0;
+    padding: 8px 10px;
+    font-size: 11px;
+    color: #1f2421;
+    line-height: 1.4;
+}
+.route-rule strong {
+    display: block;
+    color: #1f5c38;
+    margin-bottom: 3px;
+    font-weight: 600;
+}
+@media (max-width: 900px) {
+    .route-opt-banner { grid-template-columns: 1fr; }
+}
+
 /* ── Team card ─────────────────────────────────────────────────────── */
 .team-card {
     background: #fff;

@@ -389,6 +389,16 @@ export default class LovingAquaConsole extends NavigationMixin(LightningElement)
     get invLoading() { return this._invData == null; }
     get invData()    { return this._invData || {}; }
 
+    get invKpiTotalParts() {
+        return (this._invData?.partRows || []).reduce((s, r) => s + (r.totalQty || 0), 0) || '—';
+    }
+    get invKpiBelowReorder() {
+        return (this._invData?.partRows || []).filter(r => r.isBelowThreshold).length;
+    }
+    get invKpiVariancesWeek() {
+        return (this._invData?.logRows || []).length;
+    }
+
     get invPartRows() {
         return ((this._invData && this._invData.partRows) ? this._invData.partRows : []).map(r => ({
             ...r,

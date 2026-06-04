@@ -76,7 +76,7 @@
 
                     <div class="card aqua">
                         <div class="ch" style="background:#e6f4f7">
-                            <div class="ci" style="background:#0a8aa6">💧</div>
+                            <div class="ci" style="background:#2c7a4b">💧</div>
                             <h3>Today's Aqua Installs</h3>
                             <button type="button" class="ch-link" data-target="installs" onclick={handleNavToTab}>View all {homeData.kpiInstallsToday} →</button>
                         </div>
@@ -129,7 +129,7 @@
 
                     <div class="card">
                         <div class="ch">
-                            <div class="ci" style="background:#0a8aa6">👥</div>
+                            <div class="ci" style="background:#2c7a4b">👥</div>
                             <h3>Field Manager Schedule Coverage</h3>
                         </div>
                         <table class="tbl">
@@ -194,7 +194,7 @@
 
                     <div class="card">
                         <div class="ch">
-                            <div class="ci" style="background:#0a8aa6">⚡</div>
+                            <div class="ci" style="background:#2c7a4b">⚡</div>
                             <h3>Quick Actions</h3>
                         </div>
                         <div class="qa-list">
@@ -210,7 +210,7 @@
 
                     <div class="card">
                         <div class="ch">
-                            <div class="ci" style="background:#06b6d4">🌡</div>
+                            <div class="ci" style="background:#4a9e6b">🌡</div>
                             <h3>{wateringRailTitle}</h3>
                         </div>
                         <div class="water-rail-body">
@@ -248,12 +248,17 @@
         <!-- ═══════════ INSTALLS TODAY TAB ═══════════ -->
         <template if:true={showInstallsTab}>
             <div class="rec-header">
-                <div class="rec-icon" style="background:#0a8aa6">💧</div>
+                <div class="rec-icon" style="background:#2c7a4b">💧</div>
                 <div class="rec-info">
                     <div class="rec-breadcrumb">Aqua Service · Installs Today</div>
                     <div class="rec-title">Today's Aqua Install Schedule — {homeData.todayLabel}</div>
                     <div class="rec-subtitle">{homeData.kpiInstallsToday} installs scheduled under field manager coverage</div>
                 </div>
+            </div>
+
+            <div class="ab ab-g">
+                <span class="ab-ic">💧</span>
+                <div><strong>Auto-trigger logic:</strong> when a Production Install WO is scheduled at a community where Aqua is enabled, the system creates an Aqua install WO for the same date with the assigned FM. Install crew lays sod first, Aqua FM follows for irrigation setup. Closing the install ticket auto-creates a Check ticket for the next business day.</div>
             </div>
 
             <div class="toolbar">
@@ -264,7 +269,7 @@
 
             <div class="card">
                 <div class="ch">
-                    <div class="ci" style="background:#0a8aa6">💧</div>
+                    <div class="ci" style="background:#2c7a4b">💧</div>
                     <h3>Today's Aqua install schedule</h3>
                 </div>
                 <table class="tbl">
@@ -291,7 +296,7 @@
 
             <div class="card last">
                 <div class="ch">
-                    <div class="ci" style="background:#0a8aa6">📋</div>
+                    <div class="ci" style="background:#2c7a4b">📋</div>
                     <h3>Standard install scope</h3>
                 </div>
                 <table class="tbl">
@@ -323,7 +328,7 @@
         <!-- ═══════════ CHECK ROUTES TAB ═══════════ -->
         <template if:true={showRoutesTab}>
             <div class="rec-header">
-                <div class="rec-icon" style="background:#06b6d4">🗺</div>
+                <div class="rec-icon" style="background:#4a9e6b">🗺</div>
                 <div class="rec-info">
                     <div class="rec-breadcrumb">Aqua Service · Field Routes</div>
                     <div class="rec-title">Today's Community Watering Routes — by Field Manager</div>
@@ -334,9 +339,17 @@
                 </div>
             </div>
 
+            <div class="route-opt-banner">
+                <div class="route-rule"><strong>1. Same community first</strong>Cluster stops by community and lot sequence to minimize drive time.</div>
+                <div class="route-rule"><strong>2. Emergency insert</strong>Same-day tickets jump the route when sod loss risk is high.</div>
+                <div class="route-rule"><strong>3. Inventory-aware</strong>Route to shop first when the van lacks required parts for planned stops.</div>
+                <div class="route-rule"><strong>4. Install windows</strong>Protect Aqua installs tied to production install crew timing.</div>
+                <div class="route-rule"><strong>5. GPS support</strong>WEX GPS informs location and ETA — scheduler stays in full control.</div>
+            </div>
+
             <div class="card">
                 <div class="ch">
-                            <div class="ci" style="background:#06b6d4">📍</div>
+                            <div class="ci" style="background:#4a9e6b">📍</div>
                             <h3>Live route map — {homeData.divisionTerritory}</h3>
                             <span class="ch-link">WEX GPS · refreshes every 3 min</span>
                 </div>
@@ -345,7 +358,7 @@
                         <svg width="680" height="280" viewBox="0 0 680 280" xmlns="http://www.w3.org/2000/svg">
                             <template for:each={techRouteMap} for:item="t">
                                 <g key={t.id}>
-                                    <polygon points={t.svgPoints} fill="#0a8aa6" opacity="0.9" />
+                                    <polygon points={t.svgPoints} fill="#2c7a4b" opacity="0.9" />
                                     <text x={t.labelX} y={t.labelY} class="map-label" fill="#16325c" font-size="10">{t.techInitials} · {t.techName}</text>
                                 </g>
                             </template>
@@ -415,6 +428,11 @@
                 </div>
             </div>
 
+            <div class="ab ab-r">
+                <span class="ab-ic">🚨</span>
+                <div><strong>Same-day Aqua repairs</strong> bypass the routine check schedule. Auto-route to the nearest FM with appropriate van inventory. 8-hour SLA from time reported. Photos required at close. If required part is out of van, route to shop pickup first before dispatch.</div>
+            </div>
+
             <template if:true={hasSameDayTickets}>
                 <template for:each={sameDayQueue} for:item="ticket">
                     <div key={ticket.id} class="card alert">
@@ -462,7 +480,7 @@
         <!-- ═══════════ INVENTORY TAB ═══════════ -->
         <template if:true={showInventoryTab}>
             <div class="rec-header">
-                <div class="rec-icon" style="background:#0a8aa6">📦</div>
+                <div class="rec-icon" style="background:#2c7a4b">📦</div>
                 <div class="rec-info">
                     <div class="rec-breadcrumb">Aqua Service · Inventory</div>
                     <div class="rec-title">Aqua Inventory — {homeData.todayLabel}</div>
@@ -474,9 +492,21 @@
                 </div>
             </div>
 
+            <div class="ab ab-g">
+                <span class="ab-ic">ℹ</span>
+                <div><strong>The 3-point model:</strong> every Aqua part lives in Shop (LOVING facility), Van (tech vans), or On-Site (installed at a specific lot). Material moves between buckets via documented workflows. When a FM logs material added during a check, a reason code is required: <strong>Missing</strong> (stolen → bills client + decrements inventory), <strong>Damaged</strong> (warranty → decrements only), <strong>Additional Coverage</strong> (bills client + decrements). All variances roll up to weekly review.</div>
+            </div>
+
+            <div class="g4" style="margin-bottom:14px">
+                <div class="kpi kaqua"><div class="kn">{invKpiTotalParts}</div><div class="kl">Total parts (all buckets)</div></div>
+                <div class="kpi kg"><div class="kn">{homeData.kpiOnSiteLots}</div><div class="kl">Active on-site lots</div></div>
+                <div class="kpi ka"><div class="kn">{invKpiBelowReorder}</div><div class="kl">Items below reorder</div></div>
+                <div class="kpi kr"><div class="kn">{invKpiVariancesWeek}</div><div class="kl">Variances this week</div></div>
+            </div>
+
             <div class="card">
                 <div class="ch">
-                    <div class="ci" style="background:#0a8aa6">📦</div>
+                    <div class="ci" style="background:#2c7a4b">📦</div>
                     <h3>Inventory by part — distribution across Shop / Van / On-Site</h3>
                 </div>
                 <template if:true={invPartRows.length}>
@@ -506,7 +536,7 @@
 
             <div class="card">
                 <div class="ch">
-                    <div class="ci" style="background:#06b6d4">🚐</div>
+                    <div class="ci" style="background:#4a9e6b">🚐</div>
                     <h3>Van inventory by assigned owner</h3>
                 </div>
                 <table class="tbl">
@@ -565,7 +595,7 @@
         <!-- ═══════════ COMMUNITY ASSIGNMENTS TAB ═══════════ -->
         <template if:true={showAssignTab}>
             <div class="rec-header">
-                <div class="rec-icon" style="background:#0a8aa6">👤</div>
+                <div class="rec-icon" style="background:#2c7a4b">👤</div>
                 <div class="rec-info">
                     <div class="rec-breadcrumb">Aqua Service · Field Manager Assignments</div>
                     <div class="rec-title">Community Coverage — all Aqua-enabled communities</div>
@@ -573,9 +603,14 @@
                 </div>
             </div>
 
+            <div class="ab ab-g">
+                <span class="ab-ic">ℹ</span>
+                <div><strong>Each Aqua-enabled community gets one assigned FM</strong> plus designated service days (M–F). The system auto-creates check tickets on those days. Changes apply to future tickets only — history is preserved. If a FM doesn't have enough volume for a 5-day rotation, the schedule condenses automatically.</div>
+            </div>
+
             <div class="card">
                 <div class="ch">
-                    <div class="ci" style="background:#0a8aa6">👤</div>
+                    <div class="ci" style="background:#2c7a4b">👤</div>
                     <h3>All Aqua-enabled communities</h3>
                 </div>
                 <div class="assign-row header">
@@ -603,7 +638,7 @@
 
             <div class="card last">
                 <div class="ch">
-                    <div class="ci" style="background:#06b6d4">📊</div>
+                    <div class="ci" style="background:#4a9e6b">📊</div>
                     <h3>Field manager capacity utilization</h3>
                 </div>
                 <table class="tbl">
@@ -629,7 +664,7 @@
         <!-- ═══════════ WATERING SCHEDULE TAB ═══════════ -->
         <template if:true={showWaterTab}>
             <div class="rec-header">
-                <div class="rec-icon" style="background:#06b6d4">🌡</div>
+                <div class="rec-icon" style="background:#4a9e6b">🌡</div>
                 <div class="rec-info">
                     <div class="rec-title">Watering Schedule</div>
                     <div class="rec-subtitle">{wateringSubtitle}</div>
@@ -665,7 +700,7 @@
 
             <div class="card">
                 <div class="ch">
-                    <div class="ci" style="background:#06b6d4">🌡</div>
+                    <div class="ci" style="background:#4a9e6b">🌡</div>
                     <h3>{waterGridTitle}</h3>
                 </div>
                 <div class="water-control-grid">
@@ -735,7 +770,7 @@
 
             <div class="card last">
                 <div class="ch">
-                    <div class="ci" style="background:#0a8aa6">📋</div>
+                    <div class="ci" style="background:#2c7a4b">📋</div>
                     <h3>Schedule history</h3>
                 </div>
                 <table class="tbl">
@@ -953,7 +988,7 @@
 
             <div class="card last">
                 <div class="ch">
-                    <div class="ci" style="background:#06b6d4">🚨</div>
+                    <div class="ci" style="background:#4a9e6b">🚨</div>
                     <h3>End-of-Season Retrieve — bulk action</h3>
                 </div>
                 <div class="retrieve-panel">
