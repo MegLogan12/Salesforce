@@ -18,8 +18,8 @@ private class MicrosoftGraphServiceTest {
         }
     }
 
-    private static final String TOKEN_BODY = '{"access_token":"test_token_abc","expires_in":3600,"token_type":"Bearer"}';
-    private static final String EVENTS_BODY = '{"value":['
+    private static final String TOKEN_BODY   = '{"access_token":"test_token_abc","expires_in":3600,"token_type":"Bearer"}';
+    private static final String EVENTS_BODY  = '{"value":['
         + '{"id":"ev1","subject":"Site Visit — Lot 118","isAllDay":false,'
         + '"bodyPreview":"Takeoff appointment","webLink":"https://outlook.office365.com/ev1",'
         + '"location":{"displayName":"Lot 118, Oak Ridge"},'
@@ -82,6 +82,25 @@ private class MicrosoftGraphServiceTest {
     }
 
     @IsTest
+    static void acquireToken_returnsTokenFromHttp() {
+        MicrosoftGraphService.testAccessToken = null;
+        MicrosoftGraphService.testCfg = new Microsoft_Graph_Config__mdt(
+            Tenant_ID__c = 'tenant-id', Client_ID__c = 'client-id'
+        );
+        MicrosoftGraphService.testSecret = 'test-client-secret';
+        Test.setMock(HttpCalloutMock.class, new GraphMock(200, TOKEN_BODY));
+        try {
+            Test.startTest();
+            String token = MicrosoftGraphService.acquireToken();
+            Test.stopTest();
+            System.assertEquals('test_token_abc', token);
+        } finally {
+            MicrosoftGraphService.testCfg   = null;
+            MicrosoftGraphService.testSecret = null;
+        }
+    }
+
+    @IsTest
     static void acquireToken_throwsOnBadResponse() {
         MicrosoftGraphService.testAccessToken = null;
         Test.setMock(HttpCalloutMock.class, new GraphMock(401, '{"error":"invalid_client"}'));
@@ -135,6 +154,11 @@ private class MicrosoftGraphServiceTest {
         System.assertEquals('meg@loving.com',    em.FromAddress);
         System.assertEquals('3',                 em.Status);
         System.assertEquals(a.Id,                em.RelatedToId);
+
+        // Exercise getLoggedEmails with actual data
+        List<MicrosoftEmailService.EmailLogItem> logs = MicrosoftEmailService.getLoggedEmails(a.Id);
+        System.assertEquals(1, logs.size());
+        System.assertEquals('Work Order Update', logs[0].subject);
     }
 
     @IsTest
@@ -160,7 +184,6 @@ private class MicrosoftGraphServiceTest {
 
     @IsTest
     static void getCurrentUserUpn_returnsNull() {
-        // In test context, User.Microsoft_UPN__c is blank for the running user
         Test.startTest();
         String upn = MicrosoftEmailService.getCurrentUserUpn();
         Test.stopTest();
@@ -171,7 +194,6 @@ private class MicrosoftGraphServiceTest {
 
     @IsTest
     static void getMyEvents_returnsEmptyWhenNoUpn() {
-        // Running test user has no Microsoft_UPN__c
         Test.startTest();
         List<MicrosoftCalendarService.CalendarEventItem> items = MicrosoftCalendarService.getMyEvents();
         Test.stopTest();
@@ -188,11 +210,11 @@ private class MicrosoftGraphServiceTest {
             MicrosoftCalendarService.fetchEvents('meg@loving.com', '2026-06-10T00:00:00Z', '2026-06-11T00:00:00Z');
         Test.stopTest();
 
-        System.assertEquals(1,                       items.size());
-        System.assertEquals('ev1',                   items[0].graphId);
-        System.assertEquals('meg@loving.com',        items[0].organizer);
-        System.assertEquals('Lot 118, Oak Ridge',    items[0].location);
-        System.assertNotEquals(null,                 items[0].startLabel);
+        System.assertEquals(1,                    items.size());
+        System.assertEquals('ev1',                items[0].graphId);
+        System.assertEquals('meg@loving.com',     items[0].organizer);
+        System.assertEquals('Lot 118, Oak Ridge', items[0].location);
+        System.assertNotEquals(null,              items[0].startLabel);
     }
 
     @IsTest
@@ -219,20 +241,39 @@ private class MicrosoftGraphServiceTest {
     }
 
     @IsTest
-    static void syncToSalesforce_insertsAndUpdates() {
+    static void syncToSalesforce_insertsEvents() {
         useToken();
         Test.setMock(HttpCalloutMock.class, new GraphMock(200, EVENTS_BODY));
 
         Test.startTest();
-        // First call: inserts the event
-        MicrosoftCalendarService.syncToSalesforce('meg@loving.com', UserInfo.getUserId(), 14);
-        // Second call: updates the same event (it now exists)
         MicrosoftCalendarService.syncToSalesforce('meg@loving.com', UserInfo.getUserId(), 14);
         Test.stopTest();
 
         List<Event> events = [SELECT MS_Graph_Event_ID__c FROM Event
                               WHERE OwnerId = :UserInfo.getUserId() AND MS_Graph_Event_ID__c = 'ev1'];
         System.assertEquals(1, events.size());
+    }
+
+    @IsTest
+    static void syncToSalesforce_updatesExistingEvent() {
+        useToken();
+        // DML before Test.startTest() is committed before the callout runs — safe per Salesforce docs
+        Event existing = new Event(
+            Subject = 'Old Subject',
+            StartDateTime = DateTime.now().addHours(1),
+            EndDateTime   = DateTime.now().addHours(2),
+            OwnerId       = UserInfo.getUserId(),
+            MS_Graph_Event_ID__c = 'ev1'
+        );
+        insert existing;
+
+        Test.setMock(HttpCalloutMock.class, new GraphMock(200, EVENTS_BODY));
+        Test.startTest();
+        MicrosoftCalendarService.syncToSalesforce('meg@loving.com', UserInfo.getUserId(), 14);
+        Test.stopTest();
+
+        Event updated = [SELECT Subject FROM Event WHERE Id = :existing.Id];
+        System.assertEquals('Site Visit — Lot 118', updated.Subject);
     }
 
     // ── MicrosoftCalendarSync ─────────────────────────────────────────────────
@@ -261,7 +302,7 @@ private class MicrosoftGraphServiceTest {
             new MicrosoftCalendarSync().execute(null);
             Test.stopTest();
         } finally {
-            MicrosoftCalendarSync.testCfg = null;
+            MicrosoftCalendarSync.testCfg   = null;
             MicrosoftCalendarSync.testUsers = null;
         }
     }

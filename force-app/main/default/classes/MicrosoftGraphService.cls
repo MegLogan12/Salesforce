@@ -5,6 +5,7 @@ public with sharing class MicrosoftGraphService {
 
     @TestVisible private static String testAccessToken;
     @TestVisible private static Microsoft_Graph_Config__mdt testCfg;
+    @TestVisible private static String testSecret;
 
     // ── Config ────────────────────────────────────────────────────────────────
 
@@ -32,7 +33,7 @@ public with sharing class MicrosoftGraphService {
         if (testAccessToken != null) { return testAccessToken; }
 
         Microsoft_Graph_Config__mdt cfg = testCfg != null ? testCfg : getConfig();
-        String secret = getSecret();
+        String secret = testSecret != null ? testSecret : getSecret();
 
         if (cfg == null || String.isBlank(cfg.Tenant_ID__c) || String.isBlank(cfg.Client_ID__c)) {
             throw new AuraHandledException(
