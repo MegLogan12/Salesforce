@@ -1085,25 +1085,5 @@
         <mappings>
             <tab>Scheduling_Console</tab>
         </mappings>
-        <mappings>
-            <fieldName>AccountId</fieldName>
-            <tab>standard-Case</tab>
-        </mappings>
-        <mappings>
-            <fieldName>AccountId</fieldName>
-            <tab>standard-Contact</tab>
-        </mappings>
-        <mappings>
-            <fieldName>AccountId</fieldName>
-            <tab>standard-ServiceAppointment</tab>
-        </mappings>
-        <mappings>
-            <fieldName>ServiceResourceId</fieldName>
-            <tab>standard-TimeSheet</tab>
-        </mappings>
-        <mappings>
-            <fieldName>AccountId</fieldName>
-            <tab>standard-WorkOrder</tab>
-        </mappings>
     </workspaceConfig>
 </CustomApplication>
