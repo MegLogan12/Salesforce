@@ -4,7 +4,6 @@
     <externalId>true</externalId>
     <label>Microsoft Graph Event ID</label>
     <length>255</length>
-    <trackHistory>false</trackHistory>
     <type>Text</type>
     <unique>false</unique>
 </CustomField>
