@@ -1,37 +1,5 @@
 <template>
 
-<!-- Console identity banner -->
-<div class="sc-banner">
-    <div class="sc-banner-icon">📅</div>
-    <div class="sc-banner-text">
-        <div class="sc-banner-title">LOVING Schedule Console</div>
-        <div class="sc-banner-sub">{todayDisplay} · {territory}</div>
-    </div>
-    <div style="display:flex;gap:8px;align-items:center;margin-right:16px">
-        <button type="button" class="btn btn-lav" onclick={handleSchedule}>Schedule</button>
-        <button type="button" class="btn btn-primary" onclick={handleAssignCrew}>Assign Crew</button>
-        <button type="button" class="btn btn-peach" onclick={handleBlockDate}>Block Date</button>
-    </div>
-    <div class="sc-banner-kpis">
-        <div class="sc-bk">
-            <span class="sc-bk-n">{todayKpi.crewsOut}</span>
-            <span class="sc-bk-l">Crews Out</span>
-        </div>
-        <div class="sc-bk">
-            <span class="sc-bk-n">{unscheduledCount}</span>
-            <span class="sc-bk-l">Unscheduled</span>
-        </div>
-        <div class={blockedBannerCls}>
-            <span class="sc-bk-n">{blockedCount}</span>
-            <span class="sc-bk-l">Blocked</span>
-        </div>
-        <div class={requestBannerCls}>
-            <span class="sc-bk-n">{requestCount}</span>
-            <span class="sc-bk-l">Requests</span>
-        </div>
-    </div>
-</div>
-
 <!-- Tab navigation -->
 <div class="sf-nav">
     <template for:each={tabs} for:item="t">

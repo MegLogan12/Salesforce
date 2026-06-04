@@ -1051,16 +1051,6 @@
         <profile>Standard</profile>
     </profileActionOverrides>
     <tabs>Scheduling_Console</tabs>
-    <tabs>Route_GPS</tabs>
-    <tabs>Schedule_Decision_Rule__c</tabs>
-    <tabs>Sched_Auto</tabs>
-    <tabs>Sched_DayOf</tabs>
-    <tabs>Sched_MeasuringCup</tabs>
-    <tabs>Sched_Traffic</tabs>
-    <tabs>Sched_Weather</tabs>
-    <tabs>Sched_Overtime</tabs>
-    <tabs>Sched_CrewOpt</tabs>
-    <tabs>Sched_DraftReview</tabs>
     <tabs>Dispatch_Map</tabs>
     <tabs>Inventory_Materials_Console</tabs>
     <tabs>Scanner_Receiving</tabs>
@@ -1068,27 +1058,6 @@
     <tabs>Invoice_Accounting_Console</tabs>
     <tabs>COO_Command_Center</tabs>
     <tabs>FSL__FieldService</tabs>
-    <tabs>standard-WorkOrder</tabs>
-    <tabs>standard-ServiceAppointment</tabs>
-    <tabs>standard-ServiceTerritory</tabs>
-    <tabs>standard-ServiceResource</tabs>
-    <tabs>standard-OperatingHours</tabs>
-    <tabs>standard-ServiceCrew</tabs>
-    <tabs>standard-Location</tabs>
-    <tabs>standard-ProductItem</tabs>
-    <tabs>standard-Asset</tabs>
-    <tabs>standard-MaintenancePlan</tabs>
-    <tabs>standard-ServiceContract</tabs>
-    <tabs>standard-ProductRequest</tabs>
-    <tabs>standard-ReturnOrder</tabs>
-    <tabs>standard-WorkType</tabs>
-    <tabs>standard-TimeSheet</tabs>
-    <tabs>Purchase_Order__c</tabs>
-    <tabs>standard-Account</tabs>
-    <tabs>standard-Contact</tabs>
-    <tabs>standard-Case</tabs>
-    <tabs>standard-report</tabs>
-    <tabs>standard-Dashboard</tabs>
     <uiType>Lightning</uiType>
     <utilityBar>LOVING_Field_Service_UtilityBar</utilityBar>
     <workspaceConfig>
@@ -1111,49 +1080,10 @@
             <tab>Night_Loading_Queue</tab>
         </mappings>
         <mappings>
-            <tab>Purchase_Order__c</tab>
-        </mappings>
-        <mappings>
-            <tab>Route_GPS</tab>
-        </mappings>
-        <mappings>
             <tab>Scanner_Receiving</tab>
         </mappings>
         <mappings>
-            <tab>Sched_Auto</tab>
-        </mappings>
-        <mappings>
-            <tab>Sched_CrewOpt</tab>
-        </mappings>
-        <mappings>
-            <tab>Sched_DayOf</tab>
-        </mappings>
-        <mappings>
-            <tab>Sched_DraftReview</tab>
-        </mappings>
-        <mappings>
-            <tab>Sched_MeasuringCup</tab>
-        </mappings>
-        <mappings>
-            <tab>Sched_Overtime</tab>
-        </mappings>
-        <mappings>
-            <tab>Sched_Traffic</tab>
-        </mappings>
-        <mappings>
-            <tab>Sched_Weather</tab>
-        </mappings>
-        <mappings>
-            <tab>Schedule_Decision_Rule__c</tab>
-        </mappings>
-        <mappings>
             <tab>Scheduling_Console</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-Account</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-Asset</tab>
         </mappings>
         <mappings>
             <fieldName>AccountId</fieldName>
@@ -1164,41 +1094,8 @@
             <tab>standard-Contact</tab>
         </mappings>
         <mappings>
-            <tab>standard-Dashboard</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-Location</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-MaintenancePlan</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-OperatingHours</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-ProductItem</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-ProductRequest</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-ReturnOrder</tab>
-        </mappings>
-        <mappings>
             <fieldName>AccountId</fieldName>
             <tab>standard-ServiceAppointment</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-ServiceContract</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-ServiceCrew</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-ServiceResource</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-ServiceTerritory</tab>
         </mappings>
         <mappings>
             <fieldName>ServiceResourceId</fieldName>
@@ -1207,12 +1104,6 @@
         <mappings>
             <fieldName>AccountId</fieldName>
             <tab>standard-WorkOrder</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-WorkType</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-report</tab>
         </mappings>
     </workspaceConfig>
 </CustomApplication>
