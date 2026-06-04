@@ -24,6 +24,8 @@
     <screens>
         <name>Screen_SiteReady</name>
         <label>Confirm Site Ready</label>
+        <locationX>50</locationX>
+        <locationY>100</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -84,6 +86,7 @@
             <field>Utilities_Cleared__c</field>
             <value><booleanValue>true</booleanValue></value>
         </inputAssignments>
+        <connector><targetReference>Create_SiteReadiness</targetReference></connector>
         <object>WorkOrder</object>
     </recordUpdates>
 

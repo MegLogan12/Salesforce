@@ -24,6 +24,8 @@
     <screens>
         <name>Screen_Closeout</name>
         <label>Submit Closeout</label>
+        <locationX>50</locationX>
+        <locationY>100</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -67,11 +69,10 @@
         </fields>
         <fields>
             <name>inp_PhotosAttached</name>
-            <dataType>Number</dataType>
-            <fieldText>Number of Photos Attached</fieldText>
+            <dataType>Boolean</dataType>
+            <fieldText>Photos Confirmed Attached?</fieldText>
             <fieldType>InputField</fieldType>
             <isRequired>true</isRequired>
-            <scale>0</scale>
         </fields>
         <fields>
             <name>inp_CloseoutNotes</name>

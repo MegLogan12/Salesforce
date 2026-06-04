@@ -61,6 +61,8 @@
     <screens>
         <name>Screen_Reschedule</name>
         <label>Request Reschedule</label>
+        <locationX>50</locationX>
+        <locationY>100</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>

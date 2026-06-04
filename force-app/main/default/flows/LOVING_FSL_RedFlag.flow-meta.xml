@@ -24,6 +24,8 @@
     <screens>
         <name>Screen_RedFlag</name>
         <label>Flag Red Flag Issue</label>
+        <locationX>50</locationX>
+        <locationY>100</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>

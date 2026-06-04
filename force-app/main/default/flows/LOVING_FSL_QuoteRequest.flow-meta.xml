@@ -43,6 +43,8 @@
     <screens>
         <name>Screen_QuoteRequest</name>
         <label>Submit Quote Request</label>
+        <locationX>50</locationX>
+        <locationY>100</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>

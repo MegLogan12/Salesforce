@@ -61,6 +61,8 @@
     <screens>
         <name>Screen_SiteNotReady</name>
         <label>Flag Site Not Ready</label>
+        <locationX>50</locationX>
+        <locationY>100</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -115,6 +117,7 @@
             <field>Site_Not_Ready_Reason__c</field>
             <value><elementReference>inp_NotReadyReason</elementReference></value>
         </inputAssignments>
+        <connector><targetReference>Create_SiteReadiness</targetReference></connector>
         <object>WorkOrder</object>
     </recordUpdates>
 
