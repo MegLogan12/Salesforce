@@ -699,7 +699,7 @@
         </fields>
         <fields>
             <name>C_HelpText</name>
-            <fieldText>&lt;p&gt;Parent Account will be auto-populated from the selected Division Account.&lt;/p&gt;</fieldText>
+            <fieldText></fieldText>
             <fieldType>DisplayText</fieldType>
         </fields>
         <fields>
@@ -784,7 +784,7 @@
         </fields>
         <fields>
             <name>DV_BackHelp</name>
-            <fieldText>&lt;p&gt;Parent Account not listed? Click &lt;b&gt;Previous&lt;/b&gt; twice to go back and create the Parent Account first.&lt;/p&gt;</fieldText>
+            <fieldText>&lt;p&gt;Need to create a Parent Account first? Go back twice.&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
         </fields>
         <fields>

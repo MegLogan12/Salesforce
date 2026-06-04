@@ -268,7 +268,7 @@
             <name>DisplayIssueType</name>
             <fieldText>&lt;p&gt;&lt;b&gt;Issue Type:&lt;/b&gt; {!Get_DQC_Record.Delivery_Issue_Type__c}&lt;/p&gt;
 &lt;p&gt;&lt;b&gt;Foreman Notes:&lt;/b&gt; {!Get_DQC_Record.Issue_Notes__c}&lt;/p&gt;
-&lt;p&gt;Record your decision below. This will mark you as notified and allow the foreman to proceed or requeue the delivery.&lt;/p&gt;</fieldText>
+&lt;p&gt;Record your decision.&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
         </fields>
         <fields>

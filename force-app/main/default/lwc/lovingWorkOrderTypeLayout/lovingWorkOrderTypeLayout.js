@@ -18,20 +18,20 @@ const GRADING_TYPES    = new Set(['Grading', 'Plant_Sod_Grading', 'Land_Developm
 const EXECUTION_TYPES  = new Set(['Lawn Care', 'Hardscape']);
 
 const NOTICE_MAP = {
-    'Production Install': 'Main builder install workflow. This page keeps PO, takeoff, package, scope, FSL readiness, proof, QI, and invoice readiness in one operating view.',
-    'Finished Job': 'Finished Job is FM-owned return work. Foreman flags what cannot complete. FM reviews, approves, and creates the Finished Job.',
-    Warranty: 'Warranty work must prove coverage, cause, responsibility, photos, and billable/non-billable decision before scheduling.',
-    'Customer Success': 'Customer Success work starts from a Case or builder/customer issue. The page emphasizes source, priority, SLA, coverage, communication, and resolution path.',
-    'Aqua Check': 'Aqua Check is the routine health check. It captures sod score, flags, patch photos, tampering, equipment condition, and needed repair work.',
-    'Aqua Pickup': 'Aqua Pickup closes the temporary irrigation cycle. It verifies homeowner and home status, removes LOVING-owned equipment, recovers inventory, and ends recurring checks.',
-    'Aqua Emergency': 'Emergency Aqua work is a same-day exception. It requires reason, SLA, issue photo, part use, and dispatch priority without breaking inventory accountability.',
-    'Site Visit': 'Site Visit verifies pre-work conditions, measurements, access, red flags, photos, and whether the job is ready for takeoff and scheduling.',
-    Irrigation: 'Irrigation work captures zone, controller, valve, head, solenoid, water source, photos, and repair path. It can be standalone or linked to install, warranty, or aqua work.',
-    Grading: 'Grading work happens 24 hours before the main install when it needs separate crew accountability and scheduling proof.',
-    'Lawn Care': 'Lawn Care work uses the standard WorkOrder and FSL path with live schedule, photo proof, and closeout notes.',
-    'Hardscape': 'Hardscape work uses the standard WorkOrder and FSL path with live schedule, field proof, and closeout notes.',
-    'Loading Ticket': 'Loading verifies what LOVING loads onto the truck. Supplier-delivered material is verified at arrival, not on the loading checklist.',
-    'QI Closeout': 'QI and Closeout control whether field work can move to invoice readiness. It requires photos, line completion, score, failed items, corrective action, and handoff status.'
+    'Production Install': 'PO · Takeoff · Package · QI · Invoice readiness.',
+    'Finished Job': 'FM-owned return work. Foreman flags · FM reviews and approves.',
+    Warranty: 'Required before scheduling: coverage, responsibility, photos, billable decision.',
+    'Customer Success': 'Case or customer issue. Track source, priority, SLA, coverage, and resolution.',
+    'Aqua Check': 'Routine health check: sod score, flags, photos, equipment condition, repair needs.',
+    'Aqua Pickup': 'Closes temp irrigation. Verify home status, remove equipment, recover inventory.',
+    'Aqua Emergency': 'Same-day exception. Required: reason, SLA, issue photo, part use, dispatch priority.',
+    'Site Visit': 'Pre-work conditions: measurements, access, red flags, photos, takeoff readiness.',
+    Irrigation: 'Zone, controller, valve, head, water source, photos, and repair path.',
+    Grading: '24 hrs before install. Separate crew accountability and scheduling proof.',
+    'Lawn Care': 'Live schedule, photo proof, and closeout notes.',
+    'Hardscape': 'Live schedule, field proof, and closeout notes.',
+    'Loading Ticket': 'Verifies truck load. Supplier-delivered material verified at arrival only.',
+    'QI Closeout': 'Required: photos, line completion, score, failed items, corrective action, handoff status.'
 };
 
 function normalizeType(value) {

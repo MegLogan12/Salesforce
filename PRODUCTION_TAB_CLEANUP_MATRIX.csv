@@ -1,0 +1,6 @@
+App,Tab API Name,Label,Action,Reason
+Field_Service_Console,standard-home,Home,REMOVED,Generic Salesforce home — not a valid landing page for Field Services
+Field_Service_Console,Customer_Success_Console,Customer Success,REMOVED,Wrong app; belongs in Sales or CS app only
+Field_Service_Console,Scheduling_Console,Dispatch / Scheduling,PROMOTED TO FIRST,Correct operational home for Field Services
+Field_Service_Console,(all tabs),Nav personalization,LOCKED (isNavPersonalizationDisabled=true),Eliminates More dropdown overflow from 39+ tabs
+LOVING_Foreman_Mobile_App,LOVING_Foreman_Mobile_App,Foreman Prototype → Foreman,RENAMED,Remove prototype/build signal from production label

@@ -1,0 +1,5 @@
+Component,Type,Location,Finding,Action,Status
+Getting_Started_Home,Flexipage (App Home),Sales/Home tab,Label reads "Getting Started Home" — sounds like onboarding. Content is real: Sales Person Activity report chart, Team Pipeline, Leads by Source, opportunity/lead filter lists, today tasks and events.,KEEP — label misleading but content is live production data. Rename label only if desired.,No change made
+lovingWorkOrderTypeLayout,LWC Banner / Notice,Work Order record pages,14 NOTICE_MAP entries displaying verbose multi-sentence instructional paragraphs above every work order type's form,REWRITTEN — condensed to single-line operational labels,Done
+Invoice_Accounting_Console,App Page (LWC),Field Services app,KPI header row + tabbed datatable. G5 warning banner visible. All 3 tabs (Ready to Invoice / Invoiced / Paid) load datatables.,VERIFY — UI is production-ready. No cleanup required.,Verified via Playwright
+COO_Command_Center,App Page (LWC),Field Services app,"8 KPI cards, Overview / By Division / Gates / Exceptions tabs, G5 Escalate button with toast.",VERIFY — UI is production-ready. By Division shows expected batch-pending banner.,Verified via Playwright

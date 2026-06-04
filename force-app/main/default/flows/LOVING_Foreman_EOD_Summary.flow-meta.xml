@@ -96,7 +96,7 @@
         </connector>
         <fields>
             <name>EODSummaryText</name>
-            <fieldText>&lt;p&gt;&lt;strong style=&quot;font-size: 16px;&quot;&gt;End of Day Summary / Resumen de Fin de Día&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Good work today! Add any notes for your FM below.&lt;/p&gt;&lt;p&gt;&lt;em&gt;¡Buen trabajo hoy! Agrega notas para tu FM a continuación.&lt;/em&gt;&lt;/p&gt;</fieldText>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;font-size: 16px;&quot;&gt;End of Day Summary / Resumen de Fin de Día&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Add any notes for your FM below.&lt;/p&gt;&lt;p&gt;&lt;em&gt;Agrega notas para tu FM a continuación.&lt;/em&gt;&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
         </fields>
         <fields>

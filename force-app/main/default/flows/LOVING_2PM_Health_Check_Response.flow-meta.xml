@@ -386,7 +386,7 @@
         </connector>
         <fields>
             <name>Header_Text</name>
-            <fieldText>&lt;p&gt;&lt;strong&gt;2PM Health Check&lt;/strong&gt;&lt;/p&gt;&lt;p style=&quot;color:#54698d;&quot;&gt;Be honest. Your FM sees this. A flagged issue creates a Schedule Issue — not a problem for you. A hidden problem that becomes a crisis IS a problem for you.&lt;/p&gt;</fieldText>
+            <fieldText>&lt;p&gt;&lt;strong&gt;2PM Health Check&lt;/strong&gt;&lt;/p&gt;&lt;p style=&quot;color:#54698d;&quot;&gt;Be honest. Your FM sees this. Flagged issues are normal workflow — hidden problems become crises.&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
         </fields>
         <fields>

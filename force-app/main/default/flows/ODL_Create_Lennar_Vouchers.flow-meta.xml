@@ -147,7 +147,7 @@
         </connector>
         <fields>
             <name>IntroText</name>
-            <fieldText>&lt;p&gt;&lt;strong&gt;Campaign:&lt;/strong&gt; {!Get_Campaign.Name}&lt;/p&gt;&lt;p&gt;This creator generates duplicate-safe Lennar standard grill vouchers in the format &lt;strong&gt;LENNAR-XXXXXXXX&lt;/strong&gt;.&lt;/p&gt;</fieldText>
+            <fieldText>&lt;p&gt;&lt;strong&gt;Campaign:&lt;/strong&gt; {!Get_Campaign.Name}&lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
         </fields>
         <fields>
