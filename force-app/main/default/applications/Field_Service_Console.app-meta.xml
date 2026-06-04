@@ -82,7 +82,7 @@
     <formFactors>Small</formFactors>
     <formFactors>Large</formFactors>
     <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
-    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <isNavPersonalizationDisabled>true</isNavPersonalizationDisabled>
     <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
     <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
     <label>Field Services</label>
@@ -1058,7 +1058,6 @@
         <type>Flexipage</type>
         <profile>Standard</profile>
     </profileActionOverrides>
-    <tabs>standard-home</tabs>
     <tabs>Scheduling_Console</tabs>
     <tabs>Route_GPS</tabs>
     <tabs>Schedule_Decision_Rule__c</tabs>
@@ -1076,7 +1075,6 @@
     <tabs>Night_Loading_Queue</tabs>
     <tabs>Invoice_Accounting_Console</tabs>
     <tabs>COO_Command_Center</tabs>
-    <tabs>Customer_Success_Console</tabs>
     <tabs>FSL__FieldService</tabs>
     <tabs>standard-WorkOrder</tabs>
     <tabs>standard-ServiceAppointment</tabs>
@@ -1104,9 +1102,6 @@
     <workspaceConfig>
         <mappings>
             <tab>COO_Command_Center</tab>
-        </mappings>
-        <mappings>
-            <tab>Customer_Success_Console</tab>
         </mappings>
         <mappings>
             <tab>Dispatch_Map</tab>
