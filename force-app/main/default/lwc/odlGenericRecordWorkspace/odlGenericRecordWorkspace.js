@@ -1,10 +1,15 @@
 import { LightningElement, api } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 
-export default class OdlGenericRecordWorkspace extends LightningElement {
+export default class OdlGenericRecordWorkspace extends NavigationMixin(LightningElement) {
     @api recordId;
     @api objectApiName;
 
     handleEditRecord() {
-        console.log('handleEditRecord');
+        if (!this.recordId) return;
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: { recordId: this.recordId, actionName: 'edit' }
+        });
     }
 }

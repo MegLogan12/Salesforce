@@ -110,7 +110,10 @@ export default class OdlLeadRecordWorkspace extends NavigationMixin(LightningEle
     }
 
     handleDisqualify() {
-        console.log('handleDisqualify');
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: { recordId: this.recordId, actionName: 'edit' }
+        });
     }
 
     handleLogActivity() {
@@ -132,6 +135,10 @@ export default class OdlLeadRecordWorkspace extends NavigationMixin(LightningEle
     }
 
     handleSendEmail() {
-        console.log('handleSendEmail');
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.SendEmail' },
+            state: { recordId: this.recordId }
+        });
     }
 }

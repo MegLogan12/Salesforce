@@ -1,11 +1,14 @@
 import { LightningElement, wire, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
+import { updateRecord } from 'lightning/uiRecordApi';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { loadStyle } from 'lightning/platformResourceLoader';
 import homeownerStyles from '@salesforce/resourceUrl/homeownerStyles';
 import getTaskDashboard from '@salesforce/apex/ODL_TaskController.getTaskDashboard';
 
 const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-export default class OdlTasks extends LightningElement {
+export default class OdlTasks extends NavigationMixin(LightningElement) {
     @track allTasks = [];
     @track overdueTasks = [];
     @track todayTasks = [];
@@ -102,19 +105,37 @@ export default class OdlTasks extends LightningElement {
     get hasError() { return !!this.error; }
     get noTasks() { return !this.error && this.visibleTasks.length === 0; }
 
-    handleCompleteTask() {
-        console.log('handleCompleteTask');
+    async handleCompleteTask(event) {
+        const taskId = event?.currentTarget?.dataset?.id;
+        if (!taskId) return;
+        try {
+            await updateRecord({ fields: { Id: taskId, Status: 'Completed' } });
+            this.dispatchEvent(new ShowToastEvent({ title: 'Done', message: 'Task marked complete.', variant: 'success' }));
+        } catch (err) {
+            this.dispatchEvent(new ShowToastEvent({ title: 'Error', message: err?.body?.message ?? 'Could not complete task.', variant: 'error' }));
+        }
     }
 
     handleDraftEmail() {
-        console.log('handleDraftEmail');
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.SendEmail' },
+            state: { recordId: '' }
+        });
     }
 
     handleNewTask() {
-        console.log('handleNewTask');
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.NewTask' },
+            state: { recordId: '' }
+        });
     }
 
     handleSummarizeActivity() {
-        console.log('handleSummarizeActivity');
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Task', actionName: 'list' }
+        });
     }
 }

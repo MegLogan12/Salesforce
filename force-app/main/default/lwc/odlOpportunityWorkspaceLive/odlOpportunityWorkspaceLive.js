@@ -298,7 +298,12 @@ export default class OdlOpportunityWorkspaceLive extends NavigationMixin(Lightni
         });
     }
 
-    handleSendEmail() {
-        console.log('handleSendEmail');
+    handleSendEmail(event) {
+        const recordId = event?.currentTarget?.dataset?.id || '';
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.SendEmail' },
+            state: { recordId }
+        });
     }
 }

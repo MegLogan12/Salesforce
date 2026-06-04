@@ -105,10 +105,31 @@ export default class OdlTaskRecord extends NavigationMixin(LightningElement) {
     }
 
     handleReassign() {
-        console.log('handleReassign');
+        if (!this.recordId) return;
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: { recordId: this.recordId, actionName: 'edit' }
+        });
     }
 
-    handleSnooze() {
-        console.log('handleSnooze');
+    async handleSnooze() {
+        if (!this.recordId) return;
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const isoDate = tomorrow.toISOString().split('T')[0];
+        try {
+            await updateRecord({ fields: { Id: this.recordId, ActivityDate: isoDate } });
+            this.dispatchEvent(new ShowToastEvent({
+                title: 'Snoozed',
+                message: 'Task due date moved to tomorrow.',
+                variant: 'success'
+            }));
+        } catch (err) {
+            this.dispatchEvent(new ShowToastEvent({
+                title: 'Error',
+                message: err?.body?.message ?? 'Could not snooze task.',
+                variant: 'error'
+            }));
+        }
     }
 }

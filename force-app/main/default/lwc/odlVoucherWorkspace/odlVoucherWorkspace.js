@@ -93,11 +93,23 @@ export default class OdlVoucherWorkspace extends NavigationMixin(LightningElemen
         await refreshApex(this.wiredResult);
     }
 
-    handleApplyVoucher() {
-        console.log('handleApplyVoucher');
+    handleApplyVoucher(event) {
+        const recordId = event?.currentTarget?.dataset?.id;
+        if (recordId) {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: { recordId, actionName: 'view' }
+            });
+        }
     }
 
-    handleVoid() {
-        console.log('handleVoid');
+    handleVoid(event) {
+        const recordId = event?.currentTarget?.dataset?.id;
+        if (recordId) {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: { recordId, actionName: 'edit' }
+            });
+        }
     }
 }

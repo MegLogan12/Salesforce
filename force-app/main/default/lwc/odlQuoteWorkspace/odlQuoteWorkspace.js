@@ -91,15 +91,38 @@ export default class OdlQuoteWorkspace extends NavigationMixin(LightningElement)
         await refreshApex(this.wiredResult);
     }
 
-    handleDownloadPdf() {
-        console.log('handleDownloadPdf');
+    handleDownloadPdf(event) {
+        const recordId = event?.currentTarget?.dataset?.id;
+        if (recordId) {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: { recordId, actionName: 'view' }
+            });
+        }
     }
 
-    handleRecordPayment() {
-        console.log('handleRecordPayment');
+    handleRecordPayment(event) {
+        const recordId = event?.currentTarget?.dataset?.id;
+        if (recordId) {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: { recordId, actionName: 'view' }
+            });
+        }
     }
 
-    handleSendQuote() {
-        console.log('handleSendQuote');
+    handleSendQuote(event) {
+        const recordId = event?.currentTarget?.dataset?.id;
+        if (recordId) {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: { recordId, actionName: 'view' }
+            });
+        } else {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__objectPage',
+                attributes: { objectApiName: 'Quote', actionName: 'list' }
+            });
+        }
     }
 }

@@ -120,6 +120,10 @@ export default class OdlContactRecordWorkspace extends NavigationMixin(Lightning
     }
 
     handleSendEmail() {
-        console.log('handleSendEmail');
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.SendEmail' },
+            state: { recordId: this.recordId }
+        });
     }
 }

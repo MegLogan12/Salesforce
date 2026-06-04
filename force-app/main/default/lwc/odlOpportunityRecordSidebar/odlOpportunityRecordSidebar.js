@@ -1,7 +1,8 @@
 import { LightningElement, api, wire } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import getPageData from '@salesforce/apex/ODLOpportunityRecordController.getPageData';
 
-export default class OdlOpportunityRecordSidebar extends LightningElement {
+export default class OdlOpportunityRecordSidebar extends NavigationMixin(LightningElement) {
     @api recordId;
     pageData;
 
@@ -41,10 +42,18 @@ export default class OdlOpportunityRecordSidebar extends LightningElement {
     }
 
     handleCreateTask() {
-        console.log('handleCreateTask');
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.NewTask' },
+            state: { recordId: this.recordId }
+        });
     }
 
     handleLogActivity() {
-        console.log('handleLogActivity');
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.LogACall' },
+            state: { recordId: this.recordId }
+        });
     }
 }

@@ -1,7 +1,8 @@
 import { LightningElement, api, wire } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import getContactPageData from '@salesforce/apex/ODLContactRecordController.getContactPageData';
 
-export default class OdlContactRecordSidebar extends LightningElement {
+export default class OdlContactRecordSidebar extends NavigationMixin(LightningElement) {
     @api recordId;
 
     @wire(getContactPageData, { contactId: '$recordId' })
@@ -24,14 +25,26 @@ export default class OdlContactRecordSidebar extends LightningElement {
     }
 
     handleAddNote() {
-        console.log('handleAddNote');
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.NewTask' },
+            state: { recordId: this.recordId }
+        });
     }
 
     handleNewActivity() {
-        console.log('handleNewActivity');
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.NewTask' },
+            state: { recordId: this.recordId }
+        });
     }
 
     handleSendEmail() {
-        console.log('handleSendEmail');
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.SendEmail' },
+            state: { recordId: this.recordId }
+        });
     }
 }

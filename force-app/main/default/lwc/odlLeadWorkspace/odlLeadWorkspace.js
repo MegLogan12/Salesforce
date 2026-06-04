@@ -128,8 +128,14 @@ export default class OdlLeadWorkspace extends NavigationMixin(LightningElement) 
         }
     }
 
-    handleDisqualify() {
-        console.log('handleDisqualify');
+    handleDisqualify(event) {
+        const recordId = event?.currentTarget?.dataset?.id;
+        if (recordId) {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: { recordId, actionName: 'edit' }
+            });
+        }
     }
 
     handleLogActivity(event) {
@@ -141,7 +147,12 @@ export default class OdlLeadWorkspace extends NavigationMixin(LightningElement) 
         });
     }
 
-    handleSendEmail() {
-        console.log('handleSendEmail');
+    handleSendEmail(event) {
+        const recordId = event?.currentTarget?.dataset?.id || '';
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.SendEmail' },
+            state: { recordId }
+        });
     }
 }

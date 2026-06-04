@@ -99,10 +99,31 @@ export default class OdlCampaignWorkspace extends NavigationMixin(LightningEleme
     }
 
     handleAddMember() {
-        console.log('handleAddMember');
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'CampaignMember', actionName: 'new' }
+        });
     }
 
     handleExportList() {
-        console.log('handleExportList');
+        const rows = this.visibleRows;
+        if (!rows.length) return;
+        const headers = ['Name', 'Status', 'Start Date', 'End Date'];
+        const lines = [headers.join(',')];
+        rows.forEach(r => {
+            lines.push([
+                `"${(r.name || '').replace(/"/g, '""')}"`,
+                `"${r.status || ''}"`,
+                `"${r.startDate || ''}"`,
+                `"${r.endDate || ''}"`
+            ].join(','));
+        });
+        const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'odl_campaigns.csv';
+        a.click();
+        URL.revokeObjectURL(url);
     }
 }

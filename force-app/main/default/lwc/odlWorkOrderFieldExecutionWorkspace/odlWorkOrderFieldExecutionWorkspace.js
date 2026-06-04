@@ -276,6 +276,10 @@ export default class OdlWorkOrderFieldExecutionWorkspace extends NavigationMixin
     }
 
     handleUpdatePunchItem() {
-        console.log('handleUpdatePunchItem');
+        if (!this.recordId) return;
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: { recordId: this.recordId, actionName: 'edit' }
+        });
     }
 }

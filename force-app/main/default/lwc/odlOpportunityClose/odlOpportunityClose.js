@@ -4,6 +4,7 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { refreshApex } from '@salesforce/apex';
 import getClosePageData from '@salesforce/apex/ODLOpportunityCloseController.getClosePageData';
 import markClosedWon from '@salesforce/apex/ODLOpportunityCloseController.markClosedWon';
+import markClosedLost from '@salesforce/apex/ODLOpportunityCloseController.markClosedLost';
 
 export default class OdlOpportunityClose extends NavigationMixin(LightningElement) {
     @api recordId;
@@ -91,7 +92,25 @@ export default class OdlOpportunityClose extends NavigationMixin(LightningElemen
         }
     }
 
-    handleCloseLost() {
-        console.log('handleCloseLost');
+    async handleCloseLost() {
+        if (!confirm('Mark this opportunity as Closed Lost?')) return;
+        this.isUpdating = true;
+        try {
+            await markClosedLost({ opportunityId: this.recordId });
+            await refreshApex(this._wiredResult);
+            this.dispatchEvent(new ShowToastEvent({
+                title: 'Closed Lost',
+                message: 'Opportunity marked as Closed Lost.',
+                variant: 'info'
+            }));
+        } catch (err) {
+            this.dispatchEvent(new ShowToastEvent({
+                title: 'Error',
+                message: err?.body?.message ?? 'Failed to close opportunity.',
+                variant: 'error'
+            }));
+        } finally {
+            this.isUpdating = false;
+        }
     }
 }

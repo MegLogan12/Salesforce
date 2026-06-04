@@ -1,7 +1,8 @@
 import { LightningElement, api, wire } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import getPageData from '@salesforce/apex/ODLLeadRecordController.getPageData';
 
-export default class OdlLeadRecordSidebar extends LightningElement {
+export default class OdlLeadRecordSidebar extends NavigationMixin(LightningElement) {
     @api recordId;
     pageData;
 
@@ -49,14 +50,25 @@ export default class OdlLeadRecordSidebar extends LightningElement {
     }
 
     handleDisqualify() {
-        console.log('handleDisqualify');
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: { recordId: this.recordId, actionName: 'edit' }
+        });
     }
 
     handleLogActivity() {
-        console.log('handleLogActivity');
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.NewTask' },
+            state: { recordId: this.recordId }
+        });
     }
 
     handleSendEmail() {
-        console.log('handleSendEmail');
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.SendEmail' },
+            state: { recordId: this.recordId }
+        });
     }
 }

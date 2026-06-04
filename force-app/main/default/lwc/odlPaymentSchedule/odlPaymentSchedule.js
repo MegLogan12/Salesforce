@@ -1,8 +1,10 @@
 import { LightningElement, api } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 
-export default class OdlPaymentSchedule extends LightningElement {
+export default class OdlPaymentSchedule extends NavigationMixin(LightningElement) {
     @api paymentData;
     @api isUmb;
+    @api recordId;
 
     get depositPaidDateDisplay() {
         const d = this.paymentData?.depositPaidDate;
@@ -20,10 +22,18 @@ export default class OdlPaymentSchedule extends LightningElement {
     }
 
     handleDownloadPdf() {
-        console.log('handleDownloadPdf');
+        if (!this.recordId) return;
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: { recordId: this.recordId, actionName: 'view' }
+        });
     }
 
     handleRecordPayment() {
-        console.log('handleRecordPayment');
+        if (!this.recordId) return;
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: { recordId: this.recordId, actionName: 'edit' }
+        });
     }
 }

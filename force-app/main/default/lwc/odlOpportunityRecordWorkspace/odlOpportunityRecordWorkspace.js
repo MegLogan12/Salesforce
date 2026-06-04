@@ -116,17 +116,17 @@ export default class OdlOpportunityRecordWorkspace extends NavigationMixin(Light
     }
 
     handleCloseLost() {
-        console.log('handleCloseLost');
+        this.activeTab = 'close';
     }
 
     handleCloseWon() {
-        console.log('handleCloseWon');
+        this.activeTab = 'close';
     }
 
     handleLogCall() {
         this[NavigationMixin.Navigate]({
             type: 'standard__quickAction',
-            attributes: { apiName: 'Global.NewTask' },
+            attributes: { apiName: 'Global.LogACall' },
             state: { recordId: this.recordId }
         });
     }
@@ -149,15 +149,31 @@ export default class OdlOpportunityRecordWorkspace extends NavigationMixin(Light
         }
     }
 
-    handleRecordPayment() {
-        console.log('handleRecordPayment');
+    handleRecordPayment(event) {
+        const recordId = event?.currentTarget?.dataset?.id;
+        if (recordId) {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: { recordId, actionName: 'edit' }
+            });
+        }
     }
 
     handleSendEmail() {
-        console.log('handleSendEmail');
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.SendEmail' },
+            state: { recordId: this.recordId }
+        });
     }
 
-    handleSendQuote() {
-        console.log('handleSendQuote');
+    handleSendQuote(event) {
+        const recordId = event?.currentTarget?.dataset?.id;
+        if (recordId) {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: { recordId, actionName: 'view' }
+            });
+        }
     }
 }

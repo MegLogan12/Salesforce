@@ -106,6 +106,24 @@ public with sharing class ODLOpportunityCloseController {
         }
     }
 
+    @AuraEnabled
+    public static void markClosedLost(Id opportunityId) {
+        if (opportunityId == null) {
+            throw new AuraHandledException('Opportunity Id is required.');
+        }
+        try {
+            Opportunity opp = [SELECT Id, StageName FROM Opportunity WHERE Id = :opportunityId WITH SECURITY_ENFORCED LIMIT 1];
+            if (opp.StageName == 'Closed Lost') {
+                throw new AuraHandledException('Opportunity is already Closed Lost.');
+            }
+            update new Opportunity(Id = opportunityId, StageName = 'Closed Lost');
+        } catch (AuraHandledException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            throw new AuraHandledException('Failed to close opportunity: ' + ex.getMessage());
+        }
+    }
+
     // Exact same voucher lookup pattern as ODLOpportunityRecordController — dynamic SOQL,
     // silently returns null when Reserved_Opportunity__c field is absent or query fails.
     private static SObject voucherLookup(Id opportunityId) {
