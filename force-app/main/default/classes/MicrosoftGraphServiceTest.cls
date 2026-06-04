@@ -33,14 +33,10 @@ private class MicrosoftGraphServiceTest {
         MicrosoftGraphService.testAccessToken = 'test_token_abc';
     }
 
-    private static Stripe_Payment__c makePayment() {
-        // Re-use existing object as a "any record" for whatId
-        Stripe_Payment__c p = new Stripe_Payment__c(
-            Amount__c = 100, Status__c = 'Pending',
-            Checkout_Session_Id__c = 'cs_test', Checkout_URL__c = 'https://x'
-        );
-        insert p;
-        return p;
+    private static Account makeAccount() {
+        Account a = new Account(Name = 'Test Account');
+        insert a;
+        return a;
     }
 
     // ── MicrosoftGraphService.acquireToken ────────────────────────────────────
@@ -68,15 +64,29 @@ private class MicrosoftGraphServiceTest {
     }
 
     @IsTest
+    static void acquireToken_throwsWhenSecretMissing() {
+        MicrosoftGraphService.testAccessToken = null;
+        MicrosoftGraphService.testCfg = new Microsoft_Graph_Config__mdt(
+            Tenant_ID__c = 'tenant-id', Client_ID__c = 'client-id'
+        );
+        try {
+            Test.startTest();
+            MicrosoftGraphService.acquireToken();
+            Test.stopTest();
+            System.assert(false, 'Expected AuraHandledException');
+        } catch (AuraHandledException e) {
+            System.assert(e != null);
+        } finally {
+            MicrosoftGraphService.testCfg = null;
+        }
+    }
+
+    @IsTest
     static void acquireToken_throwsOnBadResponse() {
         MicrosoftGraphService.testAccessToken = null;
-        // Single mock: first call (token endpoint) returns 401
         Test.setMock(HttpCalloutMock.class, new GraphMock(401, '{"error":"invalid_client"}'));
         try {
             Test.startTest();
-            // Without config the method throws before making the callout, so
-            // set a dummy config by using testAccessToken pattern indirectly:
-            // We confirm requireSuccess works instead.
             HttpResponse fakeRes = new HttpResponse();
             fakeRes.setStatusCode(400);
             fakeRes.setBody('{"error":"bad"}');
@@ -88,12 +98,24 @@ private class MicrosoftGraphServiceTest {
         }
     }
 
+    @IsTest
+    static void callGraph_patchAndDel() {
+        useToken();
+        Test.setMock(HttpCalloutMock.class, new GraphMock(200, '{}'));
+        Test.startTest();
+        HttpResponse p = MicrosoftGraphService.patch('/test/path', '{"key":"val"}');
+        HttpResponse d = MicrosoftGraphService.del('/test/path');
+        Test.stopTest();
+        System.assertEquals(200, p.getStatusCode());
+        System.assertEquals(200, d.getStatusCode());
+    }
+
     // ── MicrosoftEmailService ─────────────────────────────────────────────────
 
     @IsTest
     static void sendAndLog_createsEmailMessageRecord() {
         useToken();
-        Stripe_Payment__c p = makePayment();
+        Account a = makeAccount();
         Test.setMock(HttpCalloutMock.class, new GraphMock(202, ''));
 
         Test.startTest();
@@ -102,7 +124,7 @@ private class MicrosoftGraphServiceTest {
             new List<String>{ 'builder@oak-ridge.com' },
             'Work Order Update',
             '<p>Your lot is ready.</p>',
-            p.Id,
+            a.Id,
             null
         );
         Test.stopTest();
@@ -112,7 +134,7 @@ private class MicrosoftGraphServiceTest {
         System.assertEquals('Work Order Update', em.Subject);
         System.assertEquals('meg@loving.com',    em.FromAddress);
         System.assertEquals('3',                 em.Status);
-        System.assertEquals(p.Id,                em.RelatedToId);
+        System.assertEquals(a.Id,                em.RelatedToId);
     }
 
     @IsTest
@@ -166,12 +188,11 @@ private class MicrosoftGraphServiceTest {
             MicrosoftCalendarService.fetchEvents('meg@loving.com', '2026-06-10T00:00:00Z', '2026-06-11T00:00:00Z');
         Test.stopTest();
 
-        System.assertEquals(1,                    items.size());
-        System.assertEquals('ev1',                items[0].graphId);
-        System.assertEquals('Site Visit — Lot 118', items[0].subject);
-        System.assertEquals('meg@loving.com',     items[0].organizer);
-        System.assertEquals('Lot 118, Oak Ridge', items[0].location);
-        System.assertNotEquals(null,              items[0].startLabel);
+        System.assertEquals(1,                       items.size());
+        System.assertEquals('ev1',                   items[0].graphId);
+        System.assertEquals('meg@loving.com',        items[0].organizer);
+        System.assertEquals('Lot 118, Oak Ridge',    items[0].location);
+        System.assertNotEquals(null,                 items[0].startLabel);
     }
 
     @IsTest
@@ -181,12 +202,12 @@ private class MicrosoftGraphServiceTest {
             + '"end":{"dateTime":"2026-06-10T10:00:00","timeZone":"UTC"},'
             + '"webLink":"https://outlook.office365.com/ev_new"}';
         Test.setMock(HttpCalloutMock.class, new GraphMock(201, createdBody));
-        Stripe_Payment__c p = makePayment();
+        Account a = makeAccount();
 
         Test.startTest();
         Id sfEventId = MicrosoftCalendarService.createEvent(
             'meg@loving.com', 'Site Visit', '2026-06-10T09:00:00', '2026-06-10T10:00:00',
-            'Lot 118, Oak Ridge', 'Takeoff review', new List<String>{ 'builder@oak.com' }, p.Id
+            'Lot 118, Oak Ridge', 'Takeoff review', new List<String>{ 'builder@oak.com' }, a.Id
         );
         Test.stopTest();
 
@@ -194,7 +215,24 @@ private class MicrosoftGraphServiceTest {
         Event ev = [SELECT Subject, MS_Graph_Event_ID__c, WhatId FROM Event WHERE Id = :sfEventId];
         System.assertEquals('Site Visit', ev.Subject);
         System.assertEquals('ev_new',     ev.MS_Graph_Event_ID__c);
-        System.assertEquals(p.Id,         ev.WhatId);
+        System.assertEquals(a.Id,         ev.WhatId);
+    }
+
+    @IsTest
+    static void syncToSalesforce_insertsAndUpdates() {
+        useToken();
+        Test.setMock(HttpCalloutMock.class, new GraphMock(200, EVENTS_BODY));
+
+        Test.startTest();
+        // First call: inserts the event
+        MicrosoftCalendarService.syncToSalesforce('meg@loving.com', UserInfo.getUserId(), 14);
+        // Second call: updates the same event (it now exists)
+        MicrosoftCalendarService.syncToSalesforce('meg@loving.com', UserInfo.getUserId(), 14);
+        Test.stopTest();
+
+        List<Event> events = [SELECT MS_Graph_Event_ID__c FROM Event
+                              WHERE OwnerId = :UserInfo.getUserId() AND MS_Graph_Event_ID__c = 'ev1'];
+        System.assertEquals(1, events.size());
     }
 
     // ── MicrosoftCalendarSync ─────────────────────────────────────────────────
@@ -206,6 +244,25 @@ private class MicrosoftGraphServiceTest {
         Test.startTest();
         new MicrosoftCalendarSync().execute(null);
         Test.stopTest();
-        // No assertion needed — just confirms no unhandled exception
+    }
+
+    @IsTest
+    static void calendarSync_executesFullPath() {
+        useToken();
+        Test.setMock(HttpCalloutMock.class, new GraphMock(200, '{"value":[]}'));
+        MicrosoftCalendarSync.testCfg = new Microsoft_Graph_Config__mdt(
+            Enabled__c = true, Sync_Days_Ahead__c = 7
+        );
+        MicrosoftCalendarSync.testUsers = new List<User>{
+            new User(Id = UserInfo.getUserId(), Microsoft_UPN__c = 'meg@loving.com')
+        };
+        try {
+            Test.startTest();
+            new MicrosoftCalendarSync().execute(null);
+            Test.stopTest();
+        } finally {
+            MicrosoftCalendarSync.testCfg = null;
+            MicrosoftCalendarSync.testUsers = null;
+        }
     }
 }

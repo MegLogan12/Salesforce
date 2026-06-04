@@ -4,6 +4,7 @@ public with sharing class MicrosoftGraphService {
     private static final String GRAPH_BASE = 'https://graph.microsoft.com/v1.0';
 
     @TestVisible private static String testAccessToken;
+    @TestVisible private static Microsoft_Graph_Config__mdt testCfg;
 
     // ── Config ────────────────────────────────────────────────────────────────
 
@@ -30,7 +31,7 @@ public with sharing class MicrosoftGraphService {
     static String acquireToken() {
         if (testAccessToken != null) { return testAccessToken; }
 
-        Microsoft_Graph_Config__mdt cfg = getConfig();
+        Microsoft_Graph_Config__mdt cfg = testCfg != null ? testCfg : getConfig();
         String secret = getSecret();
 
         if (cfg == null || String.isBlank(cfg.Tenant_ID__c) || String.isBlank(cfg.Client_ID__c)) {

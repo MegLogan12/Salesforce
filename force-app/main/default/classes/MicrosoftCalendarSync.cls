@@ -7,16 +7,19 @@
  */
 public class MicrosoftCalendarSync implements Schedulable {
 
+    @TestVisible private static Microsoft_Graph_Config__mdt testCfg;
+    @TestVisible private static List<User> testUsers;
+
     public void execute(SchedulableContext ctx) {
         Microsoft_Graph_Config__mdt cfg;
         try {
-            cfg = MicrosoftGraphService.getConfig();
+            cfg = testCfg != null ? testCfg : MicrosoftGraphService.getConfig();
         } catch (Exception e) { return; }
 
         if (cfg == null || !cfg.Enabled__c) { return; }
         Integer daysAhead = cfg.Sync_Days_Ahead__c != null ? (Integer) cfg.Sync_Days_Ahead__c : 14;
 
-        List<User> users = [
+        List<User> users = testUsers != null ? testUsers : [
             SELECT Id, Microsoft_UPN__c
             FROM   User
             WHERE  IsActive        = true
