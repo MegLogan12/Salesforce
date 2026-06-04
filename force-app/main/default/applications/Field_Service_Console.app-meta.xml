@@ -826,14 +826,6 @@
         <profile>Site_Service_Messaging_for_Web_53703831 Profile</profile>
     </profileActionOverrides>
     <profileActionOverrides>
-        <actionName>Tab</actionName>
-        <content>LOVING_FSL_Scheduling_Home</content>
-        <formFactor>Large</formFactor>
-        <pageOrSobjectType>standard-home</pageOrSobjectType>
-        <type>Flexipage</type>
-        <profile>Admin</profile>
-    </profileActionOverrides>
-    <profileActionOverrides>
         <actionName>View</actionName>
         <content>ODL_Opportunity_Record_Page</content>
         <formFactor>Small</formFactor>
@@ -1218,9 +1210,6 @@
         </mappings>
         <mappings>
             <tab>standard-WorkType</tab>
-        </mappings>
-        <mappings>
-            <tab>standard-home</tab>
         </mappings>
         <mappings>
             <tab>standard-report</tab>
