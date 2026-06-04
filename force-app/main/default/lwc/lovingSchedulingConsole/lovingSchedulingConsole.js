@@ -32,6 +32,16 @@ export default class LovingSchedulingConsole extends NavigationMixin(LightningEl
 
     @api pageTitle = 'Schedule Console';
 
+    _headerHidden = false;
+    renderedCallback() {
+        if (this._headerHidden) return;
+        const header = document.querySelector('.slds-page-header.flexipageHeader');
+        if (header) {
+            header.style.cssText += ';display:none!important;height:0!important;min-height:0!important;overflow:hidden!important;';
+            this._headerHidden = true;
+        }
+    }
+
     // ── State ──────────────────────────────────────────────────────────────────
     @track activeTab    = 'today';
     @track territory    = 'Charlotte Metro';
