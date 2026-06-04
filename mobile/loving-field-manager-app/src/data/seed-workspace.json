@@ -1136,7 +1136,7 @@
       "workOrder": {
         "number": "WO-004315",
         "status": "NFI",
-        "serviceAppointment": "Not created",
+        "serviceAppointment": "Takeoff Appointment — SA pending",
         "assignedResource": "Unassigned",
         "scheduledDate": "Not scheduled",
         "routeSequence": "None",

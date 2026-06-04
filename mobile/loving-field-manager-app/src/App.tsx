@@ -522,9 +522,63 @@ function QiTab({ job, onOpenModal, onSubmitQi, onApproveCloseout }: { job: JobRe
   );
 }
 
-function MobileTab({ job, onOpenModal }: { job: JobRecord; onOpenModal: (key: ModalKey) => void }) {
+function MobileTab({ job, onOpenModal, onSwitchTab }: { job: JobRecord; onOpenModal: (key: ModalKey) => void; onSwitchTab: (tab: TabId) => void }) {
+  const isTakeoffStage = job.stageIndex <= 1;
   const status = job.workOrder.status;
   const photoText = `${job.photos.filter(p => p.status === "complete").length} of ${job.photos.filter(p => p.status !== "add").length} categories uploaded. Tap to review.`;
+
+  const lines = job.takeoff.lineItems ?? [];
+  const verifiedCount = lines.filter(l => l.verifiedQuantity !== null).length;
+  const has811 = (job.takeoff.tasks ?? []).some(t => /811/.test(t.title) && t.done);
+  const hasTakeoffPhoto = job.photos.some(p => p.status === "complete" && ["Takeoff", "Site Overview", "Measurements", "Access Notes"].includes(p.category));
+
+  const phoneBody = isTakeoffStage ? (
+    <>
+      <div className="mobile-step">
+        <strong>Takeoff Appointment</strong>
+        <span>{job.workOrder.serviceAppointment && job.workOrder.serviceAppointment !== "Not created" ? job.workOrder.serviceAppointment : "Takeoff Appointment — not yet scheduled"}</span>
+      </div>
+      <div className="mobile-step">
+        <strong>811 Utility Call</strong>
+        <span>{has811 ? "Complete ✓" : "Required before takeoff can validate"}</span>
+      </div>
+      <div className="mobile-step">
+        <strong>Field Measurements</strong>
+        <span>{lines.length === 0 ? "No PO lines loaded" : `${verifiedCount} of ${lines.length} PO lines measured. Takeoff: ${job.takeoff.matchStatus}`}</span>
+      </div>
+      <div className="mobile-step">
+        <strong>Takeoff Status</strong>
+        <span>{job.takeoff.statusPill.label}. {job.takeoff.matchStatus === "Validated" ? "Ready to move to scheduling." : "Measurements or checklist items still required."}</span>
+      </div>
+      <button className="button primary" style={{ width: "100%", justifyContent: "center" }} onClick={() => onSwitchTab("takeoffTab")}>Enter Measurements</button>
+    </>
+  ) : (
+    <>
+      <div className="mobile-step"><strong>Job Status</strong><span>{status}, {job.meta.find(m => m.startsWith("Foreman")) ?? job.meta.find(m => m.startsWith("Aqua Tech")) ?? "field update pending"}</span></div>
+      <div className="mobile-step"><strong>Photo Gate</strong><span>{photoText}</span></div>
+      <div className="mobile-step"><strong>QI Required</strong><span>{job.qi.status}. Sod, plant, cleanup, Aqua score required when applicable.</span></div>
+      <div className="mobile-step"><strong>Aqua</strong><span>{job.aqua.installTicket}. {job.aqua.checks[0]?.status ?? "No active check"}</span></div>
+      <button className="button primary" style={{ width: "100%", justifyContent: "center" }} onClick={() => onOpenModal("qi")}>Start QI</button>
+    </>
+  );
+
+  const mobileActions = isTakeoffStage
+    ? [
+        { title: "Enter verified field measurements", note: "Open Takeoff tab and fill all PO line quantities", done: verifiedCount === lines.length && lines.length > 0 },
+        { title: "Complete 811 Utility Call", note: "Required before takeoff can validate", done: has811 },
+        { title: "Submit takeoff photo proof", note: "At least one categorized takeoff photo required", done: hasTakeoffPhoto },
+        { title: "Validate takeoff", note: "Move job to Ready to Schedule", done: job.takeoff.matchStatus === "Validated" }
+      ]
+    : [
+        { title: "Review photos", note: "Open categorized proof", done: job.photos.filter(p => p.status === "complete").length >= 4 },
+        { title: "Score QI", note: "Submit pass/fail", done: job.qi.status === "Passed" },
+        { title: "Approve closeout", note: "Unlock invoice path", done: job.stageIndex >= 7 }
+      ];
+
+  const trainingNote = isTakeoffStage
+    ? "At the Takeoff Appointment, the FM's job is to measure each PO line item in the field, complete the 811 utility call, and submit takeoff photos. No scheduling is created until the verified field measurements match the community package within tolerance."
+    : "The FM should be trained to ask only three questions: Is the scope complete? Is the proof complete? Is the quality acceptable? If yes, approve closeout. If no, return or create Finished Job.";
+
   return (
     <div id="mobileTab" className="tab-content active">
       <div className="layout">
@@ -535,22 +589,15 @@ function MobileTab({ job, onOpenModal }: { job: JobRecord; onOpenModal: (key: Mo
               <div className="phone-wrap">
                 <div className="phone-screen">
                   <div className="phone-header">LOVING FM Review<br />{job.queueTitle}</div>
-                  <div className="phone-body">
-                    <div className="mobile-step"><strong>Job Status</strong><span>{status}, {job.meta.find(m => m.startsWith("Foreman")) ?? job.meta.find(m => m.startsWith("Aqua Tech")) ?? "field update pending"}</span></div>
-                    <div className="mobile-step"><strong>Takeoff Match</strong><span>{job.takeoff.matchStatus}: PO amount, verified field amount, and package amount.</span></div>
-                    <div className="mobile-step"><strong>Photo Gate</strong><span>{photoText}</span></div>
-                    <div className="mobile-step"><strong>QI Required</strong><span>{job.qi.status}. Sod, plant, cleanup, Aqua score required when applicable.</span></div>
-                    <div className="mobile-step"><strong>Aqua</strong><span>{job.aqua.installTicket}. {job.aqua.checks[0]?.status ?? "No active check"}</span></div>
-                    <button className="button primary" style={{ width: "100%", justifyContent: "center" }} onClick={() => onOpenModal("qi")}>Start QI</button>
-                  </div>
+                  <div className="phone-body">{phoneBody}</div>
                 </div>
               </div>
-              <div className="card" style={{ boxShadow: "none" }}><div className="card-header"><div className="card-title">FM Mobile Actions</div></div><div className="card-body"><Checklist items={[{title:"Review photos",note:"Open categorized proof",done:job.photos.filter(p => p.status === "complete").length >= 4},{title:"Score QI",note:"Submit pass/fail",done:job.qi.status === "Passed"},{title:"Approve closeout",note:"Unlock invoice path",done:job.stageIndex >= 7}]} /></div></div>
+              <div className="card" style={{ boxShadow: "none" }}><div className="card-header"><div className="card-title">FM Mobile Actions</div></div><div className="card-body"><Checklist items={mobileActions} /></div></div>
               <div className="card" style={{ boxShadow: "none" }}><div className="card-header"><div className="card-title">What is hidden from FM Mobile</div></div><div className="card-body"><div className="alert red"><div>!</div><div>BMG pricing edits, Parent Account billing, admin setup, and destructive record actions stay out of the FM mobile flow.</div></div><div className="alert aqua"><div>ⓘ</div><div>The mobile screen is focused on review, proof, QI, and closeout decisions.</div></div></div></div>
             </div>
           </div>
         </div>
-        <aside className="right-rail"><div className="card"><div className="card-header"><div className="card-title">Training Note</div></div><div className="card-body">The FM should be trained to ask only three questions: Is the scope complete? Is the proof complete? Is the quality acceptable? If yes, approve closeout. If no, return or create Finished Job.</div></div></aside>
+        <aside className="right-rail"><div className="card"><div className="card-header"><div className="card-title">Training Note</div></div><div className="card-body">{trainingNote}</div></div></aside>
       </div>
     </div>
   );
@@ -759,7 +806,7 @@ export default function App() {
                 {activeTab === "aquaTab" && <AquaTab job={job} onOpenModal={setModalKey} onToggleChecklist={(area, itemId) => commit(completeChecklistItem(workspace, job.id, area, itemId))} />}
                 {activeTab === "photosTab" && <PhotosTab job={job} onOpenModal={setModalKey} onAccept={() => commit(acceptPhotoPackage(workspace, job.id), sfApi ? (api) => api.acceptPhotoPackage(job.id) : undefined)} />}
                 {activeTab === "qiTab" && <QiTab job={job} onOpenModal={setModalKey} onSubmitQi={() => setModalKey("qi")} onApproveCloseout={() => commit(approveCloseout(workspace, job.id), sfApi ? (api) => api.approveCloseout(job.id, '') : undefined)} />}
-                {activeTab === "mobileTab" && <MobileTab job={job} onOpenModal={setModalKey} />}
+                {activeTab === "mobileTab" && <MobileTab job={job} onOpenModal={setModalKey} onSwitchTab={setActiveTab} />}
               </section>
             </>
           )}
