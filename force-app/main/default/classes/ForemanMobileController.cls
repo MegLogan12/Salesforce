@@ -123,6 +123,13 @@ public with sharing class ForemanMobileController {
         @AuraEnabled public Boolean complete;
         @AuraEnabled public Integer scopeCount;
         @AuraEnabled public List<ScopeLineItemDto> scopeItems;
+        @AuraEnabled public String loadingTicketId;
+        @AuraEnabled public String loadingTicketName;
+        @AuraEnabled public String loadingTicketStatus;
+        @AuraEnabled public Date loadingTicketDate;
+        @AuraEnabled public Decimal truckNumber;
+        @AuraEnabled public Decimal sodSqftExpected;
+        @AuraEnabled public String plantsExpected;
     }
 
     public class ChecklistGroupDto {
@@ -213,7 +220,31 @@ public with sharing class ForemanMobileController {
             ORDER BY Scheduled_Date__c DESC NULLS LAST, CreatedDate DESC
             LIMIT 1
         ];
-        return openWos.isEmpty() ? null : openWos[0].Id;
+        if (!openWos.isEmpty()) {
+            return openWos[0].Id;
+        }
+
+        List<WorkOrder> standardToday = [
+            SELECT Id
+            FROM WorkOrder
+            WHERE (FM_Assignment__c = :me OR Foreman__c = :me OR Field_Manager__c = :me OR OwnerId = :me)
+            AND Scheduled_Date__c = :today
+            ORDER BY CreatedDate DESC
+            LIMIT 1
+        ];
+        if (!standardToday.isEmpty()) {
+            return standardToday[0].Id;
+        }
+
+        List<WorkOrder> standardOpen = [
+            SELECT Id
+            FROM WorkOrder
+            WHERE (FM_Assignment__c = :me OR Foreman__c = :me OR Field_Manager__c = :me OR OwnerId = :me)
+            AND Status IN ('New', 'Pending Takeoff', 'Scheduled', 'In Progress', 'Pending Closeout')
+            ORDER BY Scheduled_Date__c DESC NULLS LAST, CreatedDate DESC
+            LIMIT 1
+        ];
+        return standardOpen.isEmpty() ? null : standardOpen[0].Id;
     }
 
     @AuraEnabled(cacheable=true)
@@ -235,6 +266,10 @@ public with sharing class ForemanMobileController {
         Id resolvedId = workOrderId == null ? getTodaysJobId() : workOrderId;
         if (resolvedId == null) {
             return newJob();
+        }
+        if (isStandardWorkOrderId(resolvedId)) {
+            WorkOrder activeStandard = queryStandardWorkOrderById(resolvedId);
+            return activeStandard == null ? newJob() : toJob(activeStandard, queryPrimaryAppointment(resolvedId));
         }
         Work_Order__c active = queryWorkOrderById(resolvedId);
         if (active == null) {
@@ -267,6 +302,9 @@ public with sharing class ForemanMobileController {
             ctx.beginDriveReason = 'No active work order assigned.';
             ctx.canSubmitCloseout = false;
             return ctx;
+        }
+        if (isStandardWorkOrderId(resolvedId)) {
+            return getStandardMobileContext(ctx, resolvedId);
         }
 
         List<Work_Order__c> dayWorkOrders = queryDayWorkOrders(resolvedId);
@@ -338,6 +376,14 @@ public with sharing class ForemanMobileController {
         if (workOrderId == null) {
             return;
         }
+        if (isStandardWorkOrderId(workOrderId)) {
+            WorkOrder standard = new WorkOrder(
+                Id = workOrderId,
+                Morning_Check_Complete__c = complete == true
+            );
+            update standard;
+            return;
+        }
         Work_Order__c w = new Work_Order__c(
             Id = workOrderId,
             Vehicle_Check_Completed__c = complete == true
@@ -355,6 +401,9 @@ public with sharing class ForemanMobileController {
         checklist.Material_Count_Matches__c = complete == true;
         update checklist;
 
+        if (isStandardWorkOrderId(workOrderId)) {
+            return;
+        }
         Work_Order__c w = new Work_Order__c(
             Id = workOrderId,
             Loading_Check_Completed__c = complete == true
@@ -384,10 +433,6 @@ public with sharing class ForemanMobileController {
         if (lat == null || lng == null) {
             throw new AuraHandledException('Device location is required to confirm arrival.');
         }
-        Integer beforeCount = buildPhotoSummary(workOrderId).beforeCount;
-        if (beforeCount < 4) {
-            throw new AuraHandledException('4 before photos are required before starting the job.');
-        }
         try {
             GPSArrivalService.PingResult result = GPSArrivalService.processPing(workOrderId, lat, lng);
             ArrivalDto out = new ArrivalDto();
@@ -410,16 +455,16 @@ public with sharing class ForemanMobileController {
         if (workOrderId == null) {
             throw new AuraHandledException('Missing Work Order Id');
         }
+        if (isStandardWorkOrderId(workOrderId)) {
+            startStandardJob(workOrderId);
+            return;
+        }
         Work_Order__c existing = [
             SELECT Id, Arrived_At__c, Lot_Latitude__c, Lot_Longitude__c
             FROM Work_Order__c
             WHERE Id = :workOrderId
             LIMIT 1
         ];
-        Integer beforeCount = buildPhotoSummary(workOrderId).beforeCount;
-        if (beforeCount < 4) {
-            throw new AuraHandledException('4 before photos are required before starting the job.');
-        }
         if (existing.Arrived_At__c == null && existing.Lot_Latitude__c != null && existing.Lot_Longitude__c != null) {
             throw new AuraHandledException('Confirm arrival with device GPS before starting this job.');
         }
@@ -473,6 +518,23 @@ public with sharing class ForemanMobileController {
         }
 
         try {
+            if (isStandardWorkOrderId(workOrderId)) {
+                WorkOrder standardWorkOrder = queryStandardWorkOrderById(workOrderId);
+                Schedule_Issue__c issue = new Schedule_Issue__c(
+                    Standard_Work_Order__c = workOrderId,
+                    Standard_WorkOrder__c = workOrderId,
+                    Issue_Type__c = issueType,
+                    Severity__c = severity,
+                    Status__c = 'Open',
+                    Summary__c = summary,
+                    Resolution_Notes__c = notes,
+                    Field_Manager__c = resolveStandardIssueFieldManagerId(standardWorkOrder),
+                    Required_Action__c = resolveRequiredAction(issueType, severity),
+                    Market__c = standardWorkOrder == null ? null : standardWorkOrder.ServiceTerritoryId
+                );
+                insert issue;
+                return issue.Id;
+            }
             Work_Order__c workOrder = queryWorkOrderById(workOrderId);
             Schedule_Issue__c issue = new Schedule_Issue__c(
                 Work_Order__c = workOrderId,
@@ -498,6 +560,15 @@ public with sharing class ForemanMobileController {
     public static void saveCloseoutDetails(Id workOrderId, Decimal installedSodSqft, String closeoutNotes) {
         if (workOrderId == null) {
             throw new AuraHandledException('Missing Work Order Id');
+        }
+        if (isStandardWorkOrderId(workOrderId)) {
+            WorkOrder wo = new WorkOrder(Id = workOrderId);
+            wo.Installed_Sod_Sqft__c = installedSodSqft;
+            if (closeoutNotes != null) {
+                wo.Closeout_Notes__c = closeoutNotes;
+            }
+            update wo;
+            return;
         }
         Work_Order__c wo = new Work_Order__c(Id = workOrderId);
         wo.Installed_Sod_Sqft__c = installedSodSqft;
@@ -592,6 +663,10 @@ public with sharing class ForemanMobileController {
         if (workOrderId == null) {
             throw new AuraHandledException('Missing Work Order Id');
         }
+        if (isStandardWorkOrderId(workOrderId)) {
+            closeoutStandardJob(workOrderId);
+            return;
+        }
 
         Work_Order__c existing = [
             SELECT Id, Closeout_Photo_Count__c, Installed_Sod_Sqft__c
@@ -600,10 +675,10 @@ public with sharing class ForemanMobileController {
             LIMIT 1
         ];
         if (existing.Closeout_Photo_Count__c == null || existing.Closeout_Photo_Count__c < 4) {
-            throw new AuraHandledException('Minimum 4 closeout photos are required before submitting closeout.');
+            throw new AuraHandledException('Minimum 4 completion photos are required before finishing the job.');
         }
         if (existing.Installed_Sod_Sqft__c == null) {
-            throw new AuraHandledException('Installed sod quantity is required before submitting closeout.');
+            throw new AuraHandledException('Installed sod quantity is required before finishing the job.');
         }
 
         Work_Order__c w = new Work_Order__c(Id = workOrderId, Status__c = 'Pending Closeout');
@@ -684,6 +759,99 @@ public with sharing class ForemanMobileController {
             LIMIT 1
         ];
         return recs.isEmpty() ? null : recs[0];
+    }
+
+    private static Boolean isStandardWorkOrderId(Id recordId) {
+        return recordId != null && recordId.getSObjectType() == WorkOrder.SObjectType;
+    }
+
+    private static WorkOrder queryStandardWorkOrderById(Id workOrderId) {
+        List<WorkOrder> rows = [
+            SELECT Id, WorkOrderNumber, Status, Status__c, Subject, Work_Order_Type__c, Job_Type__c,
+                   Sod_Sqft__c, Sod_Square_Footage__c, Sod_Species__c, FM_Assignment__c,
+                   FM_Assignment__r.Name, Field_Manager__c, Foreman__c, Foreman__r.Name,
+                   Goal_Hours__c, Crew__c, Scheduled_Date__c, Morning_Check_Complete__c,
+                   Lot__r.Name, Lot__r.Address__c, Lot__r.City__c,
+                   Lot__r.State__c, Lot__r.Lot_Latitude__c, Lot__r.Lot_Longitude__c,
+                   Community__r.Name, Builder_Market_Account__r.Name, Builder_Regional__r.Name,
+                   Drive_Started_At__c, Arrived_At__c, Takeoff_Photo_Count__c,
+                   Closeout_Photo_Count__c, Installed_Sod_Sqft__c, Closeout_Notes__c,
+                   Schedule_Locked__c, Lot_Latitude__c, Lot_Longitude__c, Lot_Address__c,
+                   Street, City, State, PostalCode, StartDate, EndDate, ServiceTerritoryId
+            FROM WorkOrder
+            WHERE Id = :workOrderId
+            LIMIT 1
+        ];
+        return rows.isEmpty() ? null : rows[0];
+    }
+
+    private static List<WorkOrder> queryStandardDayWorkOrders(Id includeWorkOrderId) {
+        Id me = UserInfo.getUserId();
+        Date today = Date.today();
+        return [
+            SELECT Id, WorkOrderNumber, Status, Status__c, Subject, Work_Order_Type__c, Job_Type__c,
+                   Sod_Sqft__c, Sod_Square_Footage__c, Sod_Species__c, FM_Assignment__c,
+                   FM_Assignment__r.Name, Field_Manager__c, Foreman__c, Foreman__r.Name,
+                   Goal_Hours__c, Crew__c, Scheduled_Date__c, Morning_Check_Complete__c,
+                   Lot__r.Name, Lot__r.Address__c, Lot__r.City__c,
+                   Lot__r.State__c, Lot__r.Lot_Latitude__c, Lot__r.Lot_Longitude__c,
+                   Community__r.Name, Builder_Market_Account__r.Name, Builder_Regional__r.Name,
+                   Drive_Started_At__c, Arrived_At__c, Takeoff_Photo_Count__c,
+                   Closeout_Photo_Count__c, Installed_Sod_Sqft__c, Closeout_Notes__c,
+                   Schedule_Locked__c, Lot_Latitude__c, Lot_Longitude__c, Lot_Address__c,
+                   Street, City, State, PostalCode, StartDate, EndDate, ServiceTerritoryId
+            FROM WorkOrder
+            WHERE (
+                FM_Assignment__c = :me
+                OR Foreman__c = :me
+                OR Field_Manager__c = :me
+                OR OwnerId = :me
+                OR Id = :includeWorkOrderId
+            )
+            AND (
+                Scheduled_Date__c = :today
+                OR Status IN ('New', 'Pending Takeoff', 'Scheduled', 'In Progress', 'Pending Closeout')
+                OR Id = :includeWorkOrderId
+            )
+            ORDER BY Scheduled_Date__c ASC NULLS LAST, CreatedDate ASC
+        ];
+    }
+
+    private static MobileContextDto getStandardMobileContext(MobileContextDto ctx, Id resolvedId) {
+        List<WorkOrder> dayWorkOrders = queryStandardDayWorkOrders(resolvedId);
+        Map<Id, WorkOrder> woById = new Map<Id, WorkOrder>(dayWorkOrders);
+        WorkOrder active = woById.get(resolvedId);
+        if (active == null) {
+            active = queryStandardWorkOrderById(resolvedId);
+            if (active != null) {
+                dayWorkOrders.add(active);
+                woById.put(active.Id, active);
+            }
+        }
+        if (active == null) {
+            ctx.activeJob = newJob();
+            ctx.canBeginDrive = false;
+            ctx.beginDriveReason = 'Selected work order was not found.';
+            ctx.canSubmitCloseout = false;
+            return ctx;
+        }
+
+        Map<Id, ServiceAppointment> apptByWorkOrderId = queryStandardAppointmentsByWorkOrder(new Set<Id>(woById.keySet()));
+        ctx.activeJob = toJob(active, apptByWorkOrderId.get(active.Id));
+        ctx.foremanName = String.isBlank(ctx.activeJob.fm) ? ctx.foremanName : ctx.activeJob.fm;
+        ctx.crewName = ctx.activeJob.crewName;
+        ctx.schedule = buildStandardSchedule(dayWorkOrders, apptByWorkOrderId, active.Id);
+        ctx.lineItems = queryStandardScopeLineItems(active.Id);
+        ctx.vehicleChecklist = buildVehicleChecklist(active.Id);
+        ctx.loadedChecklist = buildStandardLoadedChecklist(active, ctx.lineItems);
+        ctx.workOrderChecklists = new List<ChecklistGroupDto>();
+        ctx.openIssues = new List<IssueDto>();
+        ctx.photoSummary = buildPhotoSummary(active.Id);
+        ctx.beginDriveReason = getStandardBeginDriveReason(active);
+        ctx.canBeginDrive = String.isBlank(ctx.beginDriveReason);
+        ctx.closeoutGates = buildStandardCloseoutGates(active, ctx.photoSummary);
+        ctx.canSubmitCloseout = ctx.closeoutGates.isEmpty() && active.Status == 'In Progress';
+        return ctx;
     }
 
     private static Map<Id, ServiceAppointment> queryAppointmentsByWorkOrder(Set<Id> workOrderIds) {
@@ -808,8 +976,75 @@ public with sharing class ForemanMobileController {
     }
 
     private static ServiceAppointment queryPrimaryAppointment(Id workOrderId) {
+        if (isStandardWorkOrderId(workOrderId)) {
+            Map<Id, ServiceAppointment> standardApptByWo = queryStandardAppointmentsByWorkOrder(new Set<Id>{ workOrderId });
+            return standardApptByWo.get(workOrderId);
+        }
         Map<Id, ServiceAppointment> apptByWo = queryAppointmentsByWorkOrder(new Set<Id>{ workOrderId });
         return apptByWo.get(workOrderId);
+    }
+
+    private static Map<Id, ServiceAppointment> queryStandardAppointmentsByWorkOrder(Set<Id> workOrderIds) {
+        Map<Id, ServiceAppointment> out = new Map<Id, ServiceAppointment>();
+        if (workOrderIds == null || workOrderIds.isEmpty()) {
+            return out;
+        }
+        for (ServiceAppointment appointment : [
+            SELECT Id, AppointmentNumber, Status, SchedStartTime, ParentRecordId
+            FROM ServiceAppointment
+            WHERE ParentRecordId IN :workOrderIds
+            ORDER BY SchedStartTime ASC NULLS LAST, CreatedDate ASC
+        ]) {
+            if (appointment.ParentRecordId != null && !out.containsKey(appointment.ParentRecordId)) {
+                out.put(appointment.ParentRecordId, appointment);
+            }
+        }
+        return out;
+    }
+
+    private static void startStandardJob(Id workOrderId) {
+        WorkOrder existing = [
+            SELECT Id, Arrived_At__c, Lot_Latitude__c, Lot_Longitude__c
+            FROM WorkOrder
+            WHERE Id = :workOrderId
+            LIMIT 1
+        ];
+        if (existing.Arrived_At__c == null && existing.Lot_Latitude__c != null && existing.Lot_Longitude__c != null) {
+            throw new AuraHandledException('Confirm arrival with device GPS before starting this job.');
+        }
+
+        WorkOrder updateRow = new WorkOrder(Id = workOrderId);
+        updateRow.Status = 'In Progress';
+        updateRow.Status__c = 'In Progress';
+        try {
+            update updateRow;
+        } catch (DmlException e) {
+            throw new AuraHandledException(extractDmlMessage(e));
+        }
+    }
+
+    private static void closeoutStandardJob(Id workOrderId) {
+        WorkOrder existing = [
+            SELECT Id, Closeout_Photo_Count__c, Installed_Sod_Sqft__c
+            FROM WorkOrder
+            WHERE Id = :workOrderId
+            LIMIT 1
+        ];
+        if (existing.Closeout_Photo_Count__c == null || existing.Closeout_Photo_Count__c < 4) {
+            throw new AuraHandledException('Minimum 4 completion photos are required before finishing the job.');
+        }
+        if (existing.Installed_Sod_Sqft__c == null) {
+            throw new AuraHandledException('Installed sod quantity is required before finishing the job.');
+        }
+
+        WorkOrder updateRow = new WorkOrder(Id = workOrderId);
+        updateRow.Status = 'Pending Closeout';
+        updateRow.Status__c = 'Pending Closeout';
+        try {
+            update updateRow;
+        } catch (DmlException e) {
+            throw new AuraHandledException(extractDmlMessage(e));
+        }
     }
 
     private static List<ScheduleCardDto> buildSchedule(
@@ -839,6 +1074,36 @@ public with sharing class ForemanMobileController {
             row.isActive = wo.Id == activeWorkOrderId;
             row.latitude = resolveLatitude(wo);
             row.longitude = resolveLongitude(wo);
+            out.add(row);
+        }
+        return out;
+    }
+
+    private static List<ScheduleCardDto> buildStandardSchedule(
+        List<WorkOrder> workOrders,
+        Map<Id, ServiceAppointment> apptByWorkOrderId,
+        Id activeWorkOrderId
+    ) {
+        List<ScheduleCardDto> out = new List<ScheduleCardDto>();
+        for (WorkOrder wo : workOrders) {
+            ScheduleCardDto row = new ScheduleCardDto();
+            ServiceAppointment appt = apptByWorkOrderId.get(wo.Id);
+            row.workOrderId = wo.Id;
+            row.serviceAppointmentId = appt == null ? null : appt.Id;
+            row.serviceAppointmentNumber = appt == null ? null : appt.AppointmentNumber;
+            row.serviceAppointmentStatus = appt == null ? null : appt.Status;
+            row.scheduledStart = appt == null ? null : appt.SchedStartTime;
+            row.workOrderNumber = wo.WorkOrderNumber;
+            row.lotName = safeStandardLotName(wo);
+            row.address = buildStandardAddress(wo);
+            row.communityName = wo.Community__r == null ? null : wo.Community__r.Name;
+            row.builderName = resolveStandardBuilderName(wo);
+            row.workType = String.isBlank(wo.Work_Order_Type__c) ? wo.Job_Type__c : wo.Work_Order_Type__c;
+            row.status = wo.Status;
+            row.goalHours = wo.Goal_Hours__c;
+            row.isActive = wo.Id == activeWorkOrderId;
+            row.latitude = resolveStandardLatitude(wo);
+            row.longitude = resolveStandardLongitude(wo);
             out.add(row);
         }
         return out;
@@ -885,26 +1150,96 @@ public with sharing class ForemanMobileController {
         return j;
     }
 
+    private static JobDto toJob(WorkOrder w, ServiceAppointment appt) {
+        JobDto j = newJob();
+        j.id = w.Id;
+        j.woNumber = w.WorkOrderNumber;
+        j.subject = safeStandardLotName(w);
+        j.status = w.Status;
+        j.statusLabel = w.Status;
+        j.workOrderType = String.isBlank(w.Work_Order_Type__c) ? w.Job_Type__c : w.Work_Order_Type__c;
+        j.subStatus = w.Status__c;
+        j.sodSqft = w.Sod_Sqft__c == null ? w.Sod_Square_Footage__c : w.Sod_Sqft__c;
+        j.sodSpecies = w.Sod_Species__c;
+        j.fm = w.FM_Assignment__r != null ? w.FM_Assignment__r.Name : (w.Foreman__r == null ? null : w.Foreman__r.Name);
+        j.goalHours = w.Goal_Hours__c;
+        j.crewName = w.Crew__c;
+        j.lotName = safeStandardLotName(w);
+        j.communityName = w.Community__r == null ? null : w.Community__r.Name;
+        j.builderName = resolveStandardBuilderName(w);
+        j.address = buildStandardAddress(w);
+        j.cityStateZip = buildStandardCityStateZip(w);
+        j.latitude = resolveStandardLatitude(w);
+        j.longitude = resolveStandardLongitude(w);
+        j.scheduledDate = w.Scheduled_Date__c;
+        j.driveStartedAt = w.Drive_Started_At__c;
+        j.arrivedAt = w.Arrived_At__c;
+        j.takeoffPhotoCount = w.Takeoff_Photo_Count__c;
+        j.closeoutPhotoCount = w.Closeout_Photo_Count__c;
+        j.installedSodSqft = w.Installed_Sod_Sqft__c;
+        j.closeoutNotes = w.Closeout_Notes__c;
+        j.vehicleCheckCompleted = w.Morning_Check_Complete__c == true;
+        j.loadingCheckCompleted = isLoadingChecklistComplete();
+        j.scheduleLocked = w.Schedule_Locked__c == true;
+        if (appt != null) {
+            j.appointmentNumber = appt.AppointmentNumber;
+            j.appointmentStatus = appt.Status;
+            j.appointmentStart = appt.SchedStartTime;
+        }
+        return j;
+    }
+
     private static List<ScopeLineItemDto> queryScopeLineItems(Id workOrderId) {
         List<ScopeLineItemDto> out = new List<ScopeLineItemDto>();
         if (workOrderId == null) {
             return out;
         }
-        for (Work_Order_Line_Item__c li : [
-            SELECT Id, Package_Item__c, Description__c, Quantity__c, Goal_Minutes__c, Source__c, Sequence__c
-            FROM Work_Order_Line_Item__c
-            WHERE Work_Order__c = :workOrderId
-            ORDER BY Sequence__c NULLS LAST, Name
+        Map<String, Schema.SObjectField> fields = Work_Order_Line_Item__c.SObjectType.getDescribe().fields.getMap();
+        if (!fields.containsKey('Work_Order__c')) {
+            return out;
+        }
+
+        String soql =
+            'SELECT Id, Package_Item__c, Description__c, Quantity__c, Goal_Minutes__c, Source__c, Sequence__c ' +
+            'FROM Work_Order_Line_Item__c ' +
+            'WHERE Work_Order__c = :workOrderId ' +
+            'ORDER BY Sequence__c NULLS LAST, Name ' +
+            'LIMIT 200';
+        for (SObject li : Database.query(soql)) {
+            ScopeLineItemDto dto = new ScopeLineItemDto();
+            dto.id = (String) li.get('Id');
+            dto.packageItem = (String) li.get('Package_Item__c');
+            dto.description = (String) li.get('Description__c');
+            dto.quantity = (Decimal) li.get('Quantity__c');
+            dto.goalMinutes = (Decimal) li.get('Goal_Minutes__c');
+            dto.source = (String) li.get('Source__c');
+            Decimal sequence = (Decimal) li.get('Sequence__c');
+            dto.sequence = sequence == null ? null : Integer.valueOf(sequence);
+            out.add(dto);
+        }
+        return out;
+    }
+
+    private static List<ScopeLineItemDto> queryStandardScopeLineItems(Id workOrderId) {
+        List<ScopeLineItemDto> out = new List<ScopeLineItemDto>();
+        if (workOrderId == null) {
+            return out;
+        }
+        for (WorkOrderLineItem li : [
+            SELECT Id, LineItemNumber, Description, Quantity, Goal_Minutes__c, Catalog_Item__c
+            FROM WorkOrderLineItem
+            WHERE WorkOrderId = :workOrderId
+            ORDER BY CreatedDate ASC
             LIMIT 200
         ]) {
             ScopeLineItemDto dto = new ScopeLineItemDto();
             dto.id = li.Id;
-            dto.packageItem = li.Package_Item__c;
-            dto.description = li.Description__c;
-            dto.quantity = li.Quantity__c;
+            dto.packageItem = String.isBlank(li.Catalog_Item__c) ? li.LineItemNumber : li.Catalog_Item__c;
+            dto.description = li.Description;
+            dto.quantity = li.Quantity;
             dto.goalMinutes = li.Goal_Minutes__c;
-            dto.source = li.Source__c;
-            dto.sequence = li.Sequence__c == null ? null : Integer.valueOf(li.Sequence__c);
+            dto.source = 'WorkOrderLineItem';
+            dto.sequence = out.size() + 1;
             out.add(dto);
         }
         return out;
@@ -935,8 +1270,45 @@ public with sharing class ForemanMobileController {
         LoadedChecklistDto dto = newLoadedChecklist();
         dto.scopeItems = lineItems;
         dto.scopeCount = lineItems == null ? 0 : lineItems.size();
-        dto.complete = active.Loading_Check_Completed__c == true;
+        dto.complete = isLoadingChecklistComplete();
+        applyLoadingTicket(dto, active.Id);
         return dto;
+    }
+
+    private static LoadedChecklistDto buildStandardLoadedChecklist(WorkOrder active, List<ScopeLineItemDto> lineItems) {
+        LoadedChecklistDto dto = newLoadedChecklist();
+        dto.scopeItems = lineItems;
+        dto.scopeCount = lineItems == null ? 0 : lineItems.size();
+        dto.complete = isLoadingChecklistComplete();
+        applyLoadingTicket(dto, active.Id);
+        return dto;
+    }
+
+    private static void applyLoadingTicket(LoadedChecklistDto dto, Id workOrderId) {
+        if (dto == null || workOrderId == null) {
+            return;
+        }
+        List<Loading_Ticket__c> tickets = [
+            SELECT Id, Name, Status__c, Scheduled_Date__c, Truck_Number__c,
+                   Sod_Sqft_Expected__c, Plants_Expected__c
+            FROM Loading_Ticket__c
+            WHERE Work_Order__c = :workOrderId
+               OR LOVING_Work_Order__c = :workOrderId
+            ORDER BY Scheduled_Date__c DESC NULLS LAST, CreatedDate DESC
+            LIMIT 1
+        ];
+        if (tickets.isEmpty()) {
+            return;
+        }
+
+        Loading_Ticket__c ticket = tickets[0];
+        dto.loadingTicketId = ticket.Id;
+        dto.loadingTicketName = ticket.Name;
+        dto.loadingTicketStatus = ticket.Status__c;
+        dto.loadingTicketDate = ticket.Scheduled_Date__c;
+        dto.truckNumber = ticket.Truck_Number__c;
+        dto.sodSqftExpected = ticket.Sod_Sqft_Expected__c;
+        dto.plantsExpected = ticket.Plants_Expected__c;
     }
 
     private static List<ChecklistGroupDto> buildChecklistGroups(Id workOrderId) {
@@ -1091,11 +1463,49 @@ public with sharing class ForemanMobileController {
             return out;
         }
         if (wo.Status__c != 'In Progress') {
-            out.add('Job must be in progress before it can be submitted to closeout.');
+            out.add('Job must be in progress before the crew can finish it.');
         }
         Integer closeoutPhotos = photoSummary == null ? 0 : photoSummary.afterCount;
         if (closeoutPhotos < 4) {
-            out.add('4 after / closeout photos are required.');
+            out.add('4 completion photos are required.');
+        }
+        if (wo.Installed_Sod_Sqft__c == null) {
+            out.add('Installed sod square footage is required.');
+        }
+        return out;
+    }
+
+    private static String getStandardBeginDriveReason(WorkOrder wo) {
+        if (wo == null) {
+            return 'No active work order assigned.';
+        }
+        if (wo.Schedule_Locked__c != true) {
+            return 'Schedule is not locked for this work order.';
+        }
+        if (wo.Morning_Check_Complete__c != true) {
+            return 'Vehicle checklist is incomplete.';
+        }
+        if (!isLoadingChecklistComplete()) {
+            return 'Loaded checklist is incomplete.';
+        }
+        if (wo.Drive_Started_At__c != null) {
+            return 'Drive has already been started.';
+        }
+        return null;
+    }
+
+    private static List<String> buildStandardCloseoutGates(WorkOrder wo, PhotoSummaryDto photoSummary) {
+        List<String> out = new List<String>();
+        if (wo == null) {
+            out.add('No active work order assigned.');
+            return out;
+        }
+        if (wo.Status != 'In Progress') {
+            out.add('Job must be in progress before the crew can finish it.');
+        }
+        Integer closeoutPhotos = photoSummary == null ? 0 : photoSummary.afterCount;
+        if (closeoutPhotos < 4) {
+            out.add('4 completion photos are required.');
         }
         if (wo.Installed_Sod_Sqft__c == null) {
             out.add('Installed sod square footage is required.');
@@ -1117,6 +1527,13 @@ public with sharing class ForemanMobileController {
             LIMIT 1
         ];
         return rows.isEmpty() ? null : rows[0];
+    }
+
+    private static Boolean isLoadingChecklistComplete() {
+        Morning_Vehicle_Checklist__c checklist = queryMorningChecklist();
+        return checklist != null
+            && checklist.Loading_Verified__c == true
+            && checklist.Material_Count_Matches__c == true;
     }
 
     private static Morning_Vehicle_Checklist__c ensureMorningChecklist() {
@@ -1158,6 +1575,14 @@ public with sharing class ForemanMobileController {
     }
 
     private static void syncVehicleRollup(Id workOrderId, Morning_Vehicle_Checklist__c checklist) {
+        if (isStandardWorkOrderId(workOrderId)) {
+            WorkOrder updateRow = new WorkOrder(
+                Id = workOrderId,
+                Morning_Check_Complete__c = areVehicleItemsComplete(checklist)
+            );
+            update updateRow;
+            return;
+        }
         Work_Order__c updateRow = new Work_Order__c(
             Id = workOrderId,
             Vehicle_Check_Completed__c = areVehicleItemsComplete(checklist)
@@ -1177,6 +1602,27 @@ public with sharing class ForemanMobileController {
 
     private static void incrementPhotoCounters(Id workOrderId, String photoCategory) {
         if (workOrderId == null || String.isBlank(photoCategory)) {
+            return;
+        }
+        if (isStandardWorkOrderId(workOrderId)) {
+            WorkOrder standardUpdate = new WorkOrder(Id = workOrderId);
+            WorkOrder standardCurrent = [
+                SELECT Id, Takeoff_Photo_Count__c, Closeout_Photo_Count__c
+                FROM WorkOrder
+                WHERE Id = :workOrderId
+                LIMIT 1
+            ];
+            if (photoCategory.startsWith('before_')) {
+                Decimal cur = standardCurrent.Takeoff_Photo_Count__c == null ? 0 : standardCurrent.Takeoff_Photo_Count__c;
+                standardUpdate.Takeoff_Photo_Count__c = cur + 1;
+                update standardUpdate;
+                return;
+            }
+            if (photoCategory.startsWith('after_')) {
+                Decimal cur = standardCurrent.Closeout_Photo_Count__c == null ? 0 : standardCurrent.Closeout_Photo_Count__c;
+                standardUpdate.Closeout_Photo_Count__c = cur + 1;
+                update standardUpdate;
+            }
             return;
         }
         Work_Order__c updateRow = new Work_Order__c(Id = workOrderId);
@@ -1337,6 +1783,13 @@ public with sharing class ForemanMobileController {
         dto.complete = false;
         dto.scopeCount = 0;
         dto.scopeItems = new List<ScopeLineItemDto>();
+        dto.loadingTicketId = null;
+        dto.loadingTicketName = '';
+        dto.loadingTicketStatus = '';
+        dto.loadingTicketDate = null;
+        dto.truckNumber = null;
+        dto.sodSqftExpected = null;
+        dto.plantsExpected = '';
         return dto;
     }
 
@@ -1431,6 +1884,29 @@ public with sharing class ForemanMobileController {
         return wo.Name;
     }
 
+    private static String safeStandardLotName(WorkOrder wo) {
+        if (wo == null) {
+            return null;
+        }
+        if (wo.Lot__r != null && !String.isBlank(wo.Lot__r.Name)) {
+            return wo.Lot__r.Name;
+        }
+        if (!String.isBlank(wo.Subject)) {
+            return wo.Subject;
+        }
+        return wo.WorkOrderNumber;
+    }
+
+    private static String resolveStandardBuilderName(WorkOrder wo) {
+        if (wo == null) {
+            return null;
+        }
+        if (wo.Builder_Market_Account__r != null && !String.isBlank(wo.Builder_Market_Account__r.Name)) {
+            return wo.Builder_Market_Account__r.Name;
+        }
+        return wo.Builder_Regional__r == null ? null : wo.Builder_Regional__r.Name;
+    }
+
     private static String buildAddress(Work_Order__c wo) {
         if (wo == null) {
             return null;
@@ -1442,6 +1918,19 @@ public with sharing class ForemanMobileController {
             return wo.Community__r.Community_Address__c;
         }
         return null;
+    }
+
+    private static String buildStandardAddress(WorkOrder wo) {
+        if (wo == null) {
+            return null;
+        }
+        if (wo.Lot__r != null && !String.isBlank(wo.Lot__r.Address__c)) {
+            return wo.Lot__r.Address__c;
+        }
+        if (!String.isBlank(wo.Lot_Address__c)) {
+            return wo.Lot_Address__c;
+        }
+        return wo.Street;
     }
 
     private static String buildCityStateZip(Work_Order__c wo) {
@@ -1476,6 +1965,27 @@ public with sharing class ForemanMobileController {
         return base;
     }
 
+    private static String buildStandardCityStateZip(WorkOrder wo) {
+        if (wo == null) {
+            return null;
+        }
+        String city = wo.Lot__r == null ? wo.City : wo.Lot__r.City__c;
+        String state = wo.Lot__r == null ? wo.State : wo.Lot__r.State__c;
+        String zip = wo.PostalCode;
+        List<String> left = new List<String>();
+        if (!String.isBlank(city)) {
+            left.add(city);
+        }
+        if (!String.isBlank(state)) {
+            left.add(state);
+        }
+        String base = left.isEmpty() ? '' : String.join(left, ', ');
+        if (!String.isBlank(zip)) {
+            base = String.isBlank(base) ? zip : base + ' ' + zip;
+        }
+        return base;
+    }
+
     private static Decimal resolveLatitude(Work_Order__c wo) {
         if (wo == null) {
             return null;
@@ -1485,6 +1995,16 @@ public with sharing class ForemanMobileController {
         }
         if (wo.Community__r != null && wo.Community__r.GPS_Latitude__c != null) {
             return wo.Community__r.GPS_Latitude__c;
+        }
+        return wo.Lot_Latitude__c;
+    }
+
+    private static Decimal resolveStandardLatitude(WorkOrder wo) {
+        if (wo == null) {
+            return null;
+        }
+        if (wo.Lot__r != null && wo.Lot__r.Lot_Latitude__c != null) {
+            return wo.Lot__r.Lot_Latitude__c;
         }
         return wo.Lot_Latitude__c;
     }
@@ -1502,6 +2022,16 @@ public with sharing class ForemanMobileController {
         return wo.Lot_Longitude__c;
     }
 
+    private static Decimal resolveStandardLongitude(WorkOrder wo) {
+        if (wo == null) {
+            return null;
+        }
+        if (wo.Lot__r != null && wo.Lot__r.Lot_Longitude__c != null) {
+            return wo.Lot__r.Lot_Longitude__c;
+        }
+        return wo.Lot_Longitude__c;
+    }
+
     private static Id resolveIssueFieldManagerId(Work_Order__c workOrder) {
         if (workOrder == null) {
             return null;
@@ -1510,6 +2040,19 @@ public with sharing class ForemanMobileController {
             return workOrder.Field_Manager__c;
         }
         return workOrder.FM_Assignment__c;
+    }
+
+    private static Id resolveStandardIssueFieldManagerId(WorkOrder workOrder) {
+        if (workOrder == null) {
+            return null;
+        }
+        if (workOrder.Field_Manager__c != null) {
+            return workOrder.Field_Manager__c;
+        }
+        if (workOrder.FM_Assignment__c != null) {
+            return workOrder.FM_Assignment__c;
+        }
+        return workOrder.Foreman__c;
     }
 
     private static Id resolveIssueMarketId(Work_Order__c workOrder) {
@@ -1566,5 +2109,179 @@ public with sharing class ForemanMobileController {
         ctx.photoSummary = newPhotoSummary();
         ctx.closeoutGates = new List<String>();
         System.assertNotEquals(null, ctx);
+
+        System.assertEquals(0, queryScopeLineItems(null).size());
+        System.assertEquals(0, buildChecklistGroups(null).size());
+        System.assertEquals(0, buildIssues(null).size());
+        System.assertEquals(0, buildPhotoSummary(null).totalCount);
+        System.assertEquals(null, normalizePhotoCategory(null));
+        System.assertEquals('before_front', normalizePhotoCategory('Before Front'));
+        System.assertEquals(null, normalizePhotoCategoryFromTitle(null));
+        System.assertEquals('after_hero', normalizePhotoCategoryFromTitle('after_hero - closeout.jpg'));
+
+        Work_Order__c blank = new Work_Order__c();
+        System.assertEquals(null, safeLotName(blank));
+        System.assertEquals(null, buildAddress(null));
+        System.assertEquals('', buildCityStateZip(blank));
+        System.assertEquals(null, resolveLatitude(null));
+        System.assertEquals(null, resolveLongitude(null));
+        System.assertEquals(null, resolveIssueFieldManagerId(null));
+        System.assertEquals(null, resolveIssueMarketId(null));
+        System.assertEquals(null, resolveRequiredAction('Weather', 'Low'));
+        System.assertEquals('Review Weather Hold', resolveRequiredAction('Weather', 'High'));
+        System.assertEquals('Review Traffic Impact', resolveRequiredAction('Traffic', 'Critical'));
+        System.assertEquals('Confirm Site Ready', resolveRequiredAction('Site Readiness', 'High'));
+        System.assertEquals('Resolve Inventory Hold', resolveRequiredAction('Inventory', 'High'));
+        System.assertEquals('Other', resolveRequiredAction('Other', 'High'));
+        System.assertEquals(true, isHighSeverity('Critical'));
+        System.assertEquals(false, isHighSeverity('Medium'));
+
+        System.assertEquals('No active work order assigned.', getBeginDriveReason(null));
+        System.assertEquals('Schedule is not locked for this work order.', getBeginDriveReason(blank));
+        blank.Schedule_Locked__c = true;
+        System.assertEquals('Vehicle checklist is incomplete.', getBeginDriveReason(blank));
+        blank.Vehicle_Check_Completed__c = true;
+        System.assertEquals('Loaded checklist is incomplete.', getBeginDriveReason(blank));
+        blank.Loading_Check_Completed__c = true;
+        System.assertEquals(null, getBeginDriveReason(blank));
+        blank.Drive_Started_At__c = System.now();
+        System.assertEquals('Drive has already been started.', getBeginDriveReason(blank));
+
+        List<String> noWorkOrderGates = buildCloseoutGates(null, null);
+        System.assertEquals(1, noWorkOrderGates.size());
+        List<String> missingCloseoutGates = buildCloseoutGates(blank, newPhotoSummary());
+        System.assertEquals(true, missingCloseoutGates.contains('Job must be in progress before the crew can finish it.'));
+        System.assertEquals(true, missingCloseoutGates.contains('4 completion photos are required.'));
+        System.assertEquals(true, missingCloseoutGates.contains('Installed sod square footage is required.'));
+
+        System.assertEquals(true, isStandardWorkOrderId((Id) '0WOVu0000000001OAA'));
+        System.assertEquals(0, queryStandardScopeLineItems(null).size());
+        System.assertEquals(0, queryStandardAppointmentsByWorkOrder(null).size());
+        System.assertEquals(0, queryStandardDayWorkOrders(null).size());
+        System.assertEquals(null, safeStandardLotName(null));
+        System.assertEquals(null, resolveStandardBuilderName(null));
+        System.assertEquals(null, buildStandardAddress(null));
+        System.assertEquals(null, buildStandardCityStateZip(null));
+        System.assertEquals(null, resolveStandardLatitude(null));
+        System.assertEquals(null, resolveStandardLongitude(null));
+        System.assertEquals(null, resolveStandardIssueFieldManagerId(null));
+        System.assertEquals('No active work order assigned.', getStandardBeginDriveReason(null));
+
+        Id standardId = (Id) '0WOVu0000000001OAA';
+        System.assertEquals(null, queryStandardWorkOrderById(standardId));
+        System.assertEquals(0, queryStandardAppointmentsByWorkOrder(new Set<Id>{ standardId }).size());
+        System.assertEquals(null, queryPrimaryAppointment(standardId));
+        MobileContextDto missingStandardCtx = getStandardMobileContext(new MobileContextDto(), standardId);
+        System.assertEquals('Selected work order was not found.', missingStandardCtx.beginDriveReason);
+
+        WorkOrder standardBlank = new WorkOrder(
+            Id = standardId,
+            Subject = 'Standard Blank',
+            Status = 'Scheduled',
+            Status__c = 'Scheduled',
+            Work_Order_Type__c = 'Production Install',
+            Job_Type__c = 'Sod',
+            Sod_Sqft__c = 5000,
+            Sod_Square_Footage__c = 5000,
+            Sod_Species__c = 'Bermuda',
+            Scheduled_Date__c = Date.today(),
+            Street = '500 Crew Mobile Way',
+            City = 'Charlotte',
+            State = 'NC',
+            PostalCode = '28217',
+            Closeout_Photo_Count__c = 0
+        );
+        System.assertEquals('Standard Blank', safeStandardLotName(standardBlank));
+        System.assertEquals('500 Crew Mobile Way', buildStandardAddress(standardBlank));
+        System.assertEquals('Charlotte, NC 28217', buildStandardCityStateZip(standardBlank));
+        System.assertEquals('Schedule is not locked for this work order.', getStandardBeginDriveReason(standardBlank));
+        standardBlank.Schedule_Locked__c = true;
+        System.assertEquals('Vehicle checklist is incomplete.', getStandardBeginDriveReason(standardBlank));
+        standardBlank.Morning_Check_Complete__c = true;
+        System.assertEquals('Loaded checklist is incomplete.', getStandardBeginDriveReason(standardBlank));
+
+        insert new Morning_Vehicle_Checklist__c(
+            Foreman__c = UserInfo.getUserId(),
+            Checklist_Date__c = Date.today(),
+            Status__c = 'Pending',
+            Truck_Number__c = '12',
+            Tires_Checked__c = true,
+            Lights_Checked__c = true,
+            Fluids_Checked__c = true,
+            Fuel_Checked__c = true,
+            Trailer_Checked__c = true,
+            Safety_Equipment_Checked__c = true,
+            Loading_Verified__c = true,
+            Material_Count_Matches__c = true
+        );
+
+        VehicleChecklistDto vehicle = buildVehicleChecklist(standardId);
+        System.assertEquals(true, vehicle.complete);
+        System.assertEquals(true, isLoadingChecklistComplete());
+        Morning_Vehicle_Checklist__c coverageChecklist = queryMorningChecklist();
+        applyVehicleChecklistItem(coverageChecklist, 'tires', false);
+        System.assertEquals(false, areVehicleItemsComplete(coverageChecklist));
+        applyVehicleChecklistItem(coverageChecklist, 'tires', true);
+        applyVehicleChecklistItem(coverageChecklist, 'lights', true);
+        applyVehicleChecklistItem(coverageChecklist, 'fluids', true);
+        applyVehicleChecklistItem(coverageChecklist, 'fuel', true);
+        applyVehicleChecklistItem(coverageChecklist, 'trailer', true);
+        applyVehicleChecklistItem(coverageChecklist, 'safety', true);
+        System.assertEquals(true, areVehicleItemsComplete(coverageChecklist));
+        try {
+            applyVehicleChecklistItem(coverageChecklist, 'bad-key', true);
+            System.assert(false, 'Unsupported checklist key should throw.');
+        } catch (AuraHandledException expected) {
+            System.assertNotEquals(null, expected.getMessage());
+        }
+        System.assertEquals(null, getStandardBeginDriveReason(standardBlank));
+        standardBlank.Drive_Started_At__c = System.now();
+        System.assertEquals('Drive has already been started.', getStandardBeginDriveReason(standardBlank));
+
+        ScopeLineItemDto scopeItem = new ScopeLineItemDto();
+        scopeItem.description = 'Install sod from standard WorkOrder line';
+        scopeItem.quantity = 10;
+        List<ScopeLineItemDto> scopeItems = new List<ScopeLineItemDto>{ scopeItem };
+        LoadedChecklistDto loaded = buildStandardLoadedChecklist(standardBlank, scopeItems);
+        System.assertEquals(1, loaded.scopeCount);
+        System.assertEquals(true, loaded.complete);
+
+        ServiceAppointment appointment = new ServiceAppointment(
+            Status = 'Scheduled',
+            SchedStartTime = System.now().addHours(1)
+        );
+        JobDto standardJob = toJob(standardBlank, appointment);
+        System.assertEquals('Scheduled', standardJob.status);
+        System.assertEquals(true, standardJob.vehicleCheckCompleted);
+        System.assertEquals(true, standardJob.loadingCheckCompleted);
+        System.assertEquals(5000, standardJob.sodSqft);
+
+        List<ScheduleCardDto> standardSchedule = buildStandardSchedule(
+            new List<WorkOrder>{ standardBlank },
+            new Map<Id, ServiceAppointment>{ standardId => appointment },
+            standardId
+        );
+        System.assertEquals(1, standardSchedule.size());
+        System.assertEquals(true, standardSchedule[0].isActive);
+        List<ScheduleCardDto> standardScheduleWithoutAppointment = buildStandardSchedule(
+            new List<WorkOrder>{ standardBlank },
+            new Map<Id, ServiceAppointment>(),
+            null
+        );
+        System.assertEquals(1, standardScheduleWithoutAppointment.size());
+        System.assertEquals(null, standardScheduleWithoutAppointment[0].serviceAppointmentId);
+        System.assertEquals(false, standardScheduleWithoutAppointment[0].isActive);
+
+        List<String> standardNoWorkOrderGates = buildStandardCloseoutGates(null, null);
+        System.assertEquals(1, standardNoWorkOrderGates.size());
+        List<String> standardMissingCloseoutGates = buildStandardCloseoutGates(standardBlank, newPhotoSummary());
+        System.assertEquals(true, standardMissingCloseoutGates.contains('Job must be in progress before the crew can finish it.'));
+        System.assertEquals(true, standardMissingCloseoutGates.contains('4 completion photos are required.'));
+        System.assertEquals(true, standardMissingCloseoutGates.contains('Installed sod square footage is required.'));
+        standardBlank.Status = 'In Progress';
+        standardBlank.Installed_Sod_Sqft__c = 4950;
+        PhotoSummaryDto completePhotos = newPhotoSummary();
+        completePhotos.afterCount = 4;
+        System.assertEquals(0, buildStandardCloseoutGates(standardBlank, completePhotos).size());
     }
 }
