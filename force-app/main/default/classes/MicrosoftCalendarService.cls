@@ -103,10 +103,22 @@ public with sharing class MicrosoftCalendarService {
         String endIso   = DateTime.now().addDays(daysAhead).formatGmt('yyyy-MM-dd\'T\'HH:mm:ss\'Z\'');
         List<CalendarEventItem> events = fetchEvents(upn, startIso, endIso);
 
-        List<Event> toUpsert = new List<Event>();
+        Set<String> graphIds = new Set<String>();
+        for (CalendarEventItem item : events) {
+            if (String.isNotBlank(item.graphId)) { graphIds.add(item.graphId); }
+        }
+        if (graphIds.isEmpty()) { return; }
+
+        Map<String, Id> existingByGraphId = new Map<String, Id>();
+        for (Event ev : [SELECT Id, MS_Graph_Event_ID__c FROM Event WHERE MS_Graph_Event_ID__c IN :graphIds]) {
+            existingByGraphId.put(ev.MS_Graph_Event_ID__c, ev.Id);
+        }
+
+        List<Event> toInsert = new List<Event>();
+        List<Event> toUpdate = new List<Event>();
         for (CalendarEventItem item : events) {
             if (String.isBlank(item.graphId)) { continue; }
-            toUpsert.add(new Event(
+            Event ev = new Event(
                 Subject              = item.subject ?? '(No subject)',
                 StartDateTime        = item.startDateTime,
                 EndDateTime          = item.endDateTime ?? item.startDateTime.addHours(1),
@@ -114,11 +126,16 @@ public with sharing class MicrosoftCalendarService {
                 Description          = item.bodyPreview,
                 OwnerId              = ownerId,
                 MS_Graph_Event_ID__c = item.graphId
-            ));
+            );
+            if (existingByGraphId.containsKey(item.graphId)) {
+                ev.Id = existingByGraphId.get(item.graphId);
+                toUpdate.add(ev);
+            } else {
+                toInsert.add(ev);
+            }
         }
-        if (!toUpsert.isEmpty()) {
-            upsert toUpsert MS_Graph_Event_ID__c;
-        }
+        if (!toInsert.isEmpty()) { insert toInsert; }
+        if (!toUpdate.isEmpty()) { update toUpdate; }
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
