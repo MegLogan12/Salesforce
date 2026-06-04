@@ -9,6 +9,12 @@
         <members>LOVING_PI_RedFlag_Automation</members>
         <members>LOVING_PI_Schedule_Automation</members>
         <members>LOVING_Takeoff_To_WO_Creation</members>
+        <members>LOVING_FSL_Closeout</members>
+        <members>LOVING_FSL_RedFlag</members>
+        <members>LOVING_FSL_SiteReady</members>
+        <members>LOVING_FSL_SiteNotReady</members>
+        <members>LOVING_FSL_QuoteRequest</members>
+        <members>LOVING_FSL_Reschedule</members>
         <name>Flow</name>
     </types>
     <types>
@@ -172,6 +178,19 @@
     <types>
         <members>Quote_Request__c</members>
         <name>CustomObject</name>
+    </types>
+    <types>
+        <members>WorkOrder.LOVING_Closeout</members>
+        <members>WorkOrder.LOVING_RedFlag</members>
+        <members>WorkOrder.LOVING_SiteReady</members>
+        <members>WorkOrder.LOVING_SiteNotReady</members>
+        <members>WorkOrder.LOVING_QuoteRequest</members>
+        <members>WorkOrder.LOVING_Reschedule</members>
+        <name>QuickAction</name>
+    </types>
+    <types>
+        <members>WorkOrder.LOVING_Mobile</members>
+        <name>CompactLayout</name>
     </types>
     <types>
         <members>WorkOrder.Takeoff_Required_Before_Scheduling</members>

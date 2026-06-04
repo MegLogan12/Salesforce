@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LOVING_Mobile</fullName>
+    <fields>WorkOrderNumber</fields>
+    <fields>Work_Order_Type__c</fields>
+    <fields>Lot_Number__c</fields>
+    <fields>Lot_Address__c</fields>
+    <fields>FM__c</fields>
+    <fields>Status</fields>
+    <fields>Takeoff_Status__c</fields>
+    <fields>Health_Check_Status__c</fields>
+    <label>LOVING Mobile</label>
+</CompactLayout>

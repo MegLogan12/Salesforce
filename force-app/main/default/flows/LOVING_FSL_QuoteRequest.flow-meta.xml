@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <description>FSL Mobile Quick Action: Create a Quote Request linked to a Work Order. Captures request type, scope description, and FM notes. Creates Quote_Request__c with Status New.</description>
+    <interviewLabel>LOVING FSL Quote Request {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING FSL — Quote Request</label>
+    <processMetadataValues><name>BuilderType</name><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues>
+    <processType>Flow</processType>
+
+    <variables>
+        <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+
+    <choices>
+        <name>choice_ScopeOutsidePO</name>
+        <choiceText>Scope Outside PO</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Scope Outside PO</stringValue></value>
+    </choices>
+    <choices>
+        <name>choice_ChangeOrder</name>
+        <choiceText>Change Order</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Change Order</stringValue></value>
+    </choices>
+    <choices>
+        <name>choice_WarrantyProposal</name>
+        <choiceText>Warranty Proposal</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Warranty Proposal</stringValue></value>
+    </choices>
+    <choices>
+        <name>choice_AquaAddition</name>
+        <choiceText>Aqua Addition</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Aqua Addition</stringValue></value>
+    </choices>
+
+    <screens>
+        <name>Screen_QuoteRequest</name>
+        <label>Submit Quote Request</label>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector><targetReference>Create_QuoteRequest</targetReference></connector>
+        <fields>
+            <name>disp_Header</name>
+            <fieldText>&lt;p&gt;&lt;strong&gt;Submit a quote request for this work order.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Scope description is required. The CSM will follow up with pricing.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>inp_RequestType</name>
+            <choiceReferences>choice_ScopeOutsidePO</choiceReferences>
+            <choiceReferences>choice_ChangeOrder</choiceReferences>
+            <choiceReferences>choice_WarrantyProposal</choiceReferences>
+            <choiceReferences>choice_AquaAddition</choiceReferences>
+            <dataType>String</dataType>
+            <defaultSelectedChoiceReference>choice_ScopeOutsidePO</defaultSelectedChoiceReference>
+            <fieldText>Request Type</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>inp_ScopeDescription</name>
+            <fieldText>Scope Description</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>inp_FMNotes</name>
+            <fieldText>FM Notes (optional)</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+    </screens>
+
+    <recordCreates>
+        <name>Create_QuoteRequest</name>
+        <label>Create Quote Request</label>
+        <locationX>200</locationX>
+        <locationY>200</locationY>
+        <inputAssignments>
+            <field>Work_Order__c</field>
+            <value><elementReference>recordId</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Request_Type__c</field>
+            <value><elementReference>inp_RequestType</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Scope_Description__c</field>
+            <value><elementReference>inp_ScopeDescription</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>FM_Notes__c</field>
+            <value><elementReference>inp_FMNotes</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value><stringValue>New</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Requested_By__c</field>
+            <value><elementReference>$User.Id</elementReference></value>
+        </inputAssignments>
+        <object>Quote_Request__c</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector><targetReference>Screen_QuoteRequest</targetReference></connector>
+    </start>
+    <status>Active</status>
+</Flow>

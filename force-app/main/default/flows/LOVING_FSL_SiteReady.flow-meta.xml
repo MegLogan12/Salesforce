@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <description>FSL Mobile Quick Action: Mark a Work Order site as ready for installation. Sets all site readiness checkboxes and Site_Ready_Overall__c to true. Creates a Site_Readiness__c record.</description>
+    <interviewLabel>LOVING FSL Site Ready {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING FSL — Site Ready</label>
+    <processMetadataValues><name>BuilderType</name><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues>
+    <processType>Flow</processType>
+
+    <variables>
+        <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+
+    <formulas>
+        <name>fToday</name>
+        <dataType>Date</dataType>
+        <expression>TODAY()</expression>
+    </formulas>
+
+    <screens>
+        <name>Screen_SiteReady</name>
+        <label>Confirm Site Ready</label>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector><targetReference>Update_WorkOrder</targetReference></connector>
+        <fields>
+            <name>disp_Header</name>
+            <fieldText>&lt;p&gt;&lt;strong&gt;Confirm the site is ready for installation.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;This will mark all site readiness checks as passed and set the site ready date.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>inp_Notes</name>
+            <fieldText>Notes (optional)</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+    </screens>
+
+    <recordUpdates>
+        <name>Update_WorkOrder</name>
+        <label>Update Work Order — Site Ready</label>
+        <locationX>200</locationX>
+        <locationY>200</locationY>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value><elementReference>recordId</elementReference></value>
+        </filters>
+        <inputAssignments>
+            <field>Site_Ready_Overall__c</field>
+            <value><booleanValue>true</booleanValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Site_Readiness_Status__c</field>
+            <value><stringValue>Ready</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Grading_OK__c</field>
+            <value><booleanValue>true</booleanValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Access_OK__c</field>
+            <value><booleanValue>true</booleanValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Irrigation_OK__c</field>
+            <value><booleanValue>true</booleanValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Debris_Clear__c</field>
+            <value><booleanValue>true</booleanValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Builder_Punch_Clear__c</field>
+            <value><booleanValue>true</booleanValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Utilities_Cleared__c</field>
+            <value><booleanValue>true</booleanValue></value>
+        </inputAssignments>
+        <object>WorkOrder</object>
+    </recordUpdates>
+
+    <recordCreates>
+        <name>Create_SiteReadiness</name>
+        <label>Create Site Readiness Record</label>
+        <locationX>400</locationX>
+        <locationY>200</locationY>
+        <inputAssignments>
+            <field>Work_Order__c</field>
+            <value><elementReference>recordId</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value><stringValue>Ready</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Field_Manager__c</field>
+            <value><elementReference>$User.Id</elementReference></value>
+        </inputAssignments>
+        <object>Site_Readiness__c</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector><targetReference>Screen_SiteReady</targetReference></connector>
+    </start>
+    <status>Active</status>
+</Flow>

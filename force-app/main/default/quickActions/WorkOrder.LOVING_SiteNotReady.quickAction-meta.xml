@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Flag site as not ready — blocks scheduling and documents the reason</description>
+    <flowDefinition>LOVING_FSL_SiteNotReady</flowDefinition>
+    <label>⛔ Site Not Ready</label>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <type>Flow</type>
+</QuickAction>

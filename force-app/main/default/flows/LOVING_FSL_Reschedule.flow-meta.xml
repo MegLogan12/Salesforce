@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <description>FSL Mobile Quick Action: Request a reschedule for a Work Order. Captures reason, requested date, and notes. Creates a Schedule_Issue__c record with Issue_Type Reschedule Request.</description>
+    <interviewLabel>LOVING FSL Reschedule {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING FSL — Reschedule Request</label>
+    <processMetadataValues><name>BuilderType</name><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues>
+    <processType>Flow</processType>
+
+    <variables>
+        <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+
+    <formulas>
+        <name>fSummary</name>
+        <dataType>String</dataType>
+        <expression>&quot;Reschedule request: &quot; &amp; {!inp_Reason}</expression>
+    </formulas>
+
+    <choices>
+        <name>choice_SiteNotReady</name>
+        <choiceText>Site not ready</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Site not ready</stringValue></value>
+    </choices>
+    <choices>
+        <name>choice_CrewAvailability</name>
+        <choiceText>Crew availability</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Crew availability</stringValue></value>
+    </choices>
+    <choices>
+        <name>choice_Weather</name>
+        <choiceText>Weather</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Weather</stringValue></value>
+    </choices>
+    <choices>
+        <name>choice_BuilderConflict</name>
+        <choiceText>Builder conflict</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Builder conflict</stringValue></value>
+    </choices>
+    <choices>
+        <name>choice_Equipment</name>
+        <choiceText>Equipment issue</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Equipment issue</stringValue></value>
+    </choices>
+    <choices>
+        <name>choice_Other</name>
+        <choiceText>Other — see notes</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Other</stringValue></value>
+    </choices>
+
+    <screens>
+        <name>Screen_Reschedule</name>
+        <label>Request Reschedule</label>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector><targetReference>Create_ScheduleIssue</targetReference></connector>
+        <fields>
+            <name>disp_Header</name>
+            <fieldText>&lt;p&gt;&lt;strong&gt;Request a reschedule for this work order.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;This creates a Schedule Issue for the scheduling team to review.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>inp_Reason</name>
+            <choiceReferences>choice_SiteNotReady</choiceReferences>
+            <choiceReferences>choice_CrewAvailability</choiceReferences>
+            <choiceReferences>choice_Weather</choiceReferences>
+            <choiceReferences>choice_BuilderConflict</choiceReferences>
+            <choiceReferences>choice_Equipment</choiceReferences>
+            <choiceReferences>choice_Other</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Reschedule Reason</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>inp_RequestedDate</name>
+            <dataType>Date</dataType>
+            <fieldText>Requested Date</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>inp_Notes</name>
+            <fieldText>Notes</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+    </screens>
+
+    <recordCreates>
+        <name>Create_ScheduleIssue</name>
+        <label>Create Schedule Issue</label>
+        <locationX>200</locationX>
+        <locationY>200</locationY>
+        <inputAssignments>
+            <field>Issue_Type__c</field>
+            <value><stringValue>Reschedule Request</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Severity__c</field>
+            <value><stringValue>Medium</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value><stringValue>Open</stringValue></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Summary__c</field>
+            <value><elementReference>fSummary</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Resolution_Notes__c</field>
+            <value><elementReference>inp_Notes</elementReference></value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Standard_Work_Order__c</field>
+            <value><elementReference>recordId</elementReference></value>
+        </inputAssignments>
+        <object>Schedule_Issue__c</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector><targetReference>Screen_Reschedule</targetReference></connector>
+    </start>
+    <status>Active</status>
+</Flow>

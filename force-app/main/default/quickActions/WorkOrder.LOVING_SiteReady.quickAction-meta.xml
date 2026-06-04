@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Confirm all site readiness checks passed — marks site ready for scheduling</description>
+    <flowDefinition>LOVING_FSL_SiteReady</flowDefinition>
+    <label>✅ Site Ready</label>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <type>Flow</type>
+</QuickAction>
