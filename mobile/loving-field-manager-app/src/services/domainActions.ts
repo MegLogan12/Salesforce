@@ -224,3 +224,51 @@ export function approveCloseout(workspace: FieldManagerWorkspace, jobId: string)
   job.activity.unshift(event("Closeout approved. Invoice path released to Builder Division account only.", next.currentUser.name, "record-update"));
   return { ok: true, message: "Closeout approved. Invoice path released to the Division Account.", workspace: next };
 }
+
+export function markSiteReady(workspace: FieldManagerWorkspace, jobId: string, notes: string): ActionResult {
+  const next = clone(workspace);
+  const job = findJob(next, jobId);
+  job.takeoff.siteReadiness = (job.takeoff.siteReadiness ?? []).map(item => ({ ...item, done: true, pill: "Done", tone: "green" as const }));
+  setKpi(job, "siteReadiness", "Ready", "FM confirmed site is ready for crew");
+  job.activity.unshift(event(`Site marked ready by FM. ${notes ? "Notes: " + notes : ""}`.trim(), next.currentUser.name, "record-update"));
+  return { ok: true, message: "Site marked ready. Scheduling can proceed.", workspace: next };
+}
+
+export function flagSiteNotReady(workspace: FieldManagerWorkspace, jobId: string, reason: string, notes: string): ActionResult {
+  const next = clone(workspace);
+  const job = findJob(next, jobId);
+  if (!reason.trim()) return { ok: false, message: "A reason is required to flag the site as not ready.", workspace };
+  job.takeoff.siteReadiness = (job.takeoff.siteReadiness ?? []).map(item => ({ ...item, done: false, pill: "Blocked", tone: "red" as const }));
+  setKpi(job, "siteReadiness", "Not Ready", reason);
+  job.queuePill = { label: "Site Blocked", tone: "red" };
+  job.activity.unshift(event(`Site flagged NOT READY. Reason: ${reason}. ${notes ? "Notes: " + notes : ""}`.trim(), next.currentUser.name, "warning"));
+  return { ok: true, message: "Site flagged as not ready. Scheduling Manager and Builder Regional will be notified.", workspace: next };
+}
+
+export function createQuoteRequest(workspace: FieldManagerWorkspace, jobId: string, requestType: string, scopeDescription: string, notes: string): ActionResult {
+  const next = clone(workspace);
+  const job = findJob(next, jobId);
+  if (!scopeDescription.trim()) return { ok: false, message: "Scope description is required before submitting a quote request.", workspace };
+  const photosAccepted = job.photos.filter(p => p.status === "complete").length;
+  if (photosAccepted < 1) return { ok: false, message: "At least one accepted photo is required before submitting a quote request.", workspace };
+  const qrNumber = `QR-${String(job.activity.length + 1).padStart(4, "0")}`;
+  job.activity.unshift(event(
+    `Quote request ${qrNumber} submitted. Type: ${requestType}. Scope: ${scopeDescription}. Notes: ${notes || "None"}. Photos: ${photosAccepted}.`,
+    next.currentUser.name, "record-update"
+  ));
+  return { ok: true, message: `Quote request ${qrNumber} submitted to CSM. You will be notified when a decision is made.`, workspace: next };
+}
+
+export function createWarrantyJob(workspace: FieldManagerWorkspace, jobId: string, scope: string, notes: string): ActionResult {
+  const next = clone(workspace);
+  const job = findJob(next, jobId);
+  if (!scope.trim()) return { ok: false, message: "Warranty scope description is required.", workspace };
+  const photosAccepted = job.photos.filter(p => p.status === "complete").length;
+  if (photosAccepted < 2) return { ok: false, message: "At least 2 accepted photos are required before creating a warranty job.", workspace };
+  const childNumber = `${job.workOrder.number}-WTY-${job.activity.length + 1}`;
+  job.activity.unshift(event(
+    `Warranty job ${childNumber} created. Scope: ${scope}. Notes: ${notes || "None"}. Division Manager notified.`,
+    next.currentUser.name, "record-update"
+  ));
+  return { ok: true, message: `Warranty WorkOrder ${childNumber} created and linked to ${job.workOrder.number}. Division Manager has been notified.`, workspace: next };
+}

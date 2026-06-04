@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 import type { ActionResult, FieldManagerWorkspace, JobRecord, PillTone, PhotoProof } from "./types";
-import { exportWorkspace, loadWorkspace, loadLiveWorkspace, resetWorkspace, saveWorkspace, commitLiveAction } from "./services/fieldManagerRepository";
-import { acceptPhotoPackage, advanceStage, approveCloseout, completeChecklistItem, createFinishedJob, dispatchAquaRepair, requestReschedule, returnWork, selectJob, submitQiPass, updateTakeoffVerifiedAmount, uploadPhoto, validateTakeoff } from "./services/domainActions";
+import { exportWorkspace, loadWorkspace, loadLiveWorkspace, resetWorkspace, saveWorkspace, commitLiveAction, type SalesforceWrite } from "./services/fieldManagerRepository";
+import { acceptPhotoPackage, advanceStage, approveCloseout, completeChecklistItem, createFinishedJob, createQuoteRequest, createWarrantyJob, dispatchAquaRepair, flagSiteNotReady, markSiteReady, requestReschedule, returnWork, selectJob, submitQiPass, updateTakeoffVerifiedAmount, uploadPhoto, validateTakeoff } from "./services/domainActions";
 import { captureFieldPhoto } from "./mobile/camera";
 import { resolveStartupMode, handleOAuthCallback, startOAuthFlow, clearSession, type AppMode, type SalesforceSession } from "./services/auth";
 import { SalesforceFieldManagerApi } from "./services/salesforceApiClient";
 
 type TabId = "command" | "takeoffTab" | "workTab" | "aquaTab" | "photosTab" | "qiTab" | "mobileTab";
-type ModalKey = "takeoff" | "schedule" | "photos" | "qi" | "fj" | "return" | "reschedule" | "aquaRepair" | "photoUpload" | "jsonExport" | "siteVisit" | "siteReadiness" | "healthCheck" | "aquaCheck" | "aquaPickup";
+type ModalKey = "takeoff" | "schedule" | "photos" | "qi" | "fj" | "return" | "reschedule" | "aquaRepair" | "photoUpload" | "jsonExport" | "siteVisit" | "siteReadiness" | "healthCheck" | "aquaCheck" | "aquaPickup" | "siteReady" | "siteNotReady" | "quoteRequest" | "warrantyJob";
 
 const tabOrder: { id: TabId; label: string }[] = [
   { id: "command", label: "FM Command Center" },
@@ -280,7 +280,8 @@ function CommandTab({ workspace, job, onOpenModal, onSwitchTab, onApproveCloseou
             <div className="card-body">
               <div className="alert green"><div>✓</div><div><strong>FM can:</strong> review takeoff, return field work, approve QI, create Finished Jobs, approve closeout, manage Aqua decisions.</div></div>
               <div className="alert red"><div>!</div><div><strong>FM cannot:</strong> change builder BMG pricing, bill Parent Account, skip CSM takeoff approval, or close without required proof.</div></div>
-              <button className="button green" onClick={onApproveCloseout}>Approve Closeout</button>
+              <button className="button green" onClick={onApproveCloseout}>Approve Closeout</button><br /><br />
+              <button className="button" onClick={() => onOpenModal("quoteRequest")}>Request Quote</button>
             </div>
           </div>
         </aside>
@@ -373,11 +374,12 @@ function TakeoffTab({ job, onOpenModal, onUpdateVerified, onValidateTakeoff, onT
               <table><thead><tr><th>Purpose</th><th>Status</th><th>Decision</th><th>Checklist</th><th>Notes</th></tr></thead><tbody>
                 {(job.takeoff.siteVisits ?? []).map(visit => <tr key={visit.id}><td>{visit.purpose}</td><td><Pill tone={visit.status === "Complete" ? "green" : "blue"}>{visit.status}</Pill></td><td>{visit.decision}</td><td>{visit.checklist.filter(item => item.done).length} / {visit.checklist.length}</td><td>{visit.notes}</td></tr>)}
               </tbody></table>
+              <br /><button className="button amber" onClick={() => onOpenModal("warrantyJob")}>Create Warranty Job</button>
             </div>
           </div>
         </div>
         <aside className="right-rail">
-          <div className="card"><div className="card-header"><div className="card-title">FM Decision</div></div><div className="card-body"><button className="button green" onClick={onValidateTakeoff}>Validate and Move to Ready to Schedule</button><br /><br /><button className="button" onClick={() => onOpenModal("return")}>Return with Notes</button></div></div>
+          <div className="card"><div className="card-header"><div className="card-title">FM Decision</div></div><div className="card-body"><button className="button green" onClick={onValidateTakeoff}>Validate and Move to Ready to Schedule</button><br /><br /><button className="button" onClick={() => onOpenModal("siteReady")}>Mark Site Ready</button><br /><br /><button className="button red" onClick={() => onOpenModal("siteNotReady")}>Flag Site Not Ready</button><br /><br /><button className="button" onClick={() => onOpenModal("return")}>Return with Notes</button></div></div>
           <div className="alert amber"><div>!</div><div><strong>Guardrail:</strong> If the PO line amount, verified takeoff amount, and community package amount do not match within tolerance, the job cannot move to scheduling. It goes to CSM mismatch review.</div></div>
         </aside>
       </div>
@@ -603,7 +605,7 @@ function MobileTab({ job, onOpenModal, onSwitchTab }: { job: JobRecord; onOpenMo
   );
 }
 
-function Modal({ keyName, workspace, job, onClose, onCommit }: { keyName: ModalKey | null; workspace: FieldManagerWorkspace; job: JobRecord; onClose: () => void; onCommit: (result: ActionResult) => void }) {
+function Modal({ keyName, workspace, job, onClose, onCommit }: { keyName: ModalKey | null; workspace: FieldManagerWorkspace; job: JobRecord; onClose: () => void; onCommit: (result: ActionResult, sfWrite?: SalesforceWrite) => void }) {
   const [form, setForm] = useState<Record<string, string>>({});
   if (!keyName) return null;
 
@@ -625,20 +627,74 @@ function Modal({ keyName, workspace, job, onClose, onCommit }: { keyName: ModalK
     siteReadiness: { title: "Site Readiness Checklist", subtitle: "48 hours before job start", primary: "Close" },
     healthCheck: { title: "2 PM Health Check", subtitle: "Crew and job status checkpoint", primary: "Close" },
     aquaCheck: { title: "Aqua Check Checklist", subtitle: "Recurring Aqua condition and coverage check", primary: "Close" },
-    aquaPickup: { title: "Aqua Pickup Checklist", subtitle: "Retrieve equipment and reconcile inventory", primary: "Close" }
+    aquaPickup: { title: "Aqua Pickup Checklist", subtitle: "Retrieve equipment and reconcile inventory", primary: "Close" },
+    siteReady: { title: "Mark Site Ready", subtitle: "Confirm site is clear for crew to start", primary: "Mark Site Ready" },
+    siteNotReady: { title: "Flag Site Not Ready", subtitle: "Block scheduling until site issue is resolved", primary: "Flag Not Ready" },
+    quoteRequest: { title: "Request Quote — Scope Outside PO", subtitle: "Submit to CSM for pricing. FM cannot set or approve the quote amount.", primary: "Submit Quote Request" },
+    warrantyJob: { title: "Create Warranty Job", subtitle: "Loving's responsibility — no charge to builder. Division Manager will be notified.", primary: "Create Warranty Job" }
   };
 
   const submit = async () => {
-    if (keyName === "qi") onCommit(submitQiPass(workspace, job.id, undefined, form.notes));
-    else if (keyName === "fj") onCommit(createFinishedJob(workspace, job.id, form.reason || workspace.forms.fjReasons[0], form.scope || ""));
-    else if (keyName === "return") onCommit(returnWork(workspace, job.id, form.owner || workspace.forms.returnOwners[0], form.reason || workspace.forms.returnReasons[0], form.instructions || ""));
-    else if (keyName === "reschedule") onCommit(requestReschedule(workspace, job.id, form.reason || workspace.forms.rescheduleReasons[0], form.requestedDate || "", form.notes || ""));
-    else if (keyName === "aquaRepair") onCommit(dispatchAquaRepair(workspace, job.id, form.issueType || workspace.forms.aquaIssues[0], form.priority || workspace.forms.aquaPriorities[0], form.tech || job.aqua.tech || "Unassigned", form.inventory || "", form.notes || ""));
-    else if (keyName === "photos") onCommit(acceptPhotoPackage(workspace, job.id));
-    else if (keyName === "photoUpload") {
+    const reason = form.reason || workspace.forms.rescheduleReasons?.[0] || '';
+    const requestedDate = form.requestedDate || '';
+    const notes = form.notes || '';
+    const owner = form.owner || workspace.forms.returnOwners?.[0] || '';
+    const instructions = form.instructions || '';
+    const fjReason = form.reason || workspace.forms.fjReasons?.[0] || '';
+    const scope = form.scope || '';
+    const issueType = form.issueType || workspace.forms.aquaIssues?.[0] || '';
+    const priority = form.priority || workspace.forms.aquaPriorities?.[0] || '';
+    const tech = form.tech || job.aqua.tech || 'Unassigned';
+    const inventory = form.inventory || '';
+    const requestType = form.requestType || 'Scope Outside PO';
+    const scopeDescription = form.scopeDescription || '';
+    const fmNotes = form.fmNotes || '';
+    const warrantyScope = form.warrantyScope || '';
+
+    if (keyName === "qi") {
+      const result = submitQiPass(workspace, job.id, undefined, notes);
+      onCommit(result, (api) => api.submitQI(job.id, {}, notes));
+    } else if (keyName === "fj") {
+      const result = createFinishedJob(workspace, job.id, fjReason, scope);
+      onCommit(result, (api) => api.createFinishJob(job.id, fjReason, scope));
+    } else if (keyName === "return") {
+      const returnReason = form.reason || workspace.forms.returnReasons?.[0] || '';
+      const result = returnWork(workspace, job.id, owner, returnReason, instructions);
+      onCommit(result, (api) => api.returnWork(job.id, owner, returnReason, instructions));
+    } else if (keyName === "reschedule") {
+      const result = requestReschedule(workspace, job.id, reason, requestedDate, notes);
+      onCommit(result, (api) => api.requestReschedule(job.id, reason, requestedDate, notes));
+    } else if (keyName === "aquaRepair") {
+      const result = dispatchAquaRepair(workspace, job.id, issueType, priority, tech, inventory, notes);
+      onCommit(result, (api) => api.dispatchAquaRepair(job.id, issueType, priority, tech, inventory, notes));
+    } else if (keyName === "photos") {
+      onCommit(acceptPhotoPackage(workspace, job.id), (api) => api.acceptPhotoPackage(job.id));
+    } else if (keyName === "photoUpload") {
       const photo: PhotoProof = { category: form.category || "Additional Proof", caption: form.caption || "Uploaded by FM", status: "complete", uri: form.uri || undefined };
       onCommit(uploadPhoto(workspace, job.id, photo));
-    } else onClose();
+    } else if (keyName === "siteReady") {
+      const result = markSiteReady(workspace, job.id, notes);
+      onCommit(result, (api) => api.markSiteReady(job.id, notes));
+    } else if (keyName === "siteNotReady") {
+      const siteReason = form.reason || '';
+      const result = flagSiteNotReady(workspace, job.id, siteReason, notes);
+      if (result.ok) onCommit(result, (api) => api.flagSiteNotReady(job.id, siteReason, notes));
+      else { onCommit(result); return; }
+    } else if (keyName === "quoteRequest") {
+      const photosCount = job.photos.filter(p => p.status === "complete").length;
+      const lotNum = job.takeoff.fields.find(f => f.label === "PO Number")?.value ?? '';
+      const result = createQuoteRequest(workspace, job.id, requestType, scopeDescription, fmNotes);
+      if (result.ok) onCommit(result, (api) => api.createQuoteRequest(job.id, requestType, scopeDescription, lotNum, '', fmNotes, photosCount));
+      else { onCommit(result); return; }
+    } else if (keyName === "warrantyJob") {
+      const result = createWarrantyJob(workspace, job.id, warrantyScope, notes);
+      const lotNum = job.takeoff.fields.find(f => f.label === "PO Number")?.value ?? job.queueTitle;
+      if (result.ok) onCommit(result, (api) => api.createWarrantyJob(job.id, warrantyScope, notes, lotNum));
+      else { onCommit(result); return; }
+    } else {
+      onClose();
+      return;
+    }
     onClose();
   };
 
@@ -664,6 +720,10 @@ function Modal({ keyName, workspace, job, onClose, onCommit }: { keyName: ModalK
     if (keyName === "aquaPickup") return <InteractiveChecklist items={job.aqua.pickupChecklist ?? []} onToggle={(id) => onCommit(completeChecklistItem(workspace, job.id, "aquaPickup", id))} />;
     if (keyName === "siteVisit") return <div className="checklist">{(job.takeoff.siteVisits ?? []).map(visit => <div className="check-item" key={visit.id}><div className="dot blue">?</div><div><div className="check-title">{visit.purpose}: {visit.decision}</div><div className="check-note">{visit.notes}</div></div><Pill tone={visit.status === "Complete" ? "green" : "blue"}>{visit.status}</Pill></div>)}</div>;
     if (keyName === "jsonExport") return <textarea value={exportWorkspace(workspace)} readOnly style={{ minHeight: 360, fontFamily: "monospace" }} />;
+    if (keyName === "siteReady") return <div className="field-grid"><div className="field full"><label>Confirmation Notes</label><textarea value={form.notes ?? ""} onChange={(e) => set("notes", e.target.value)} placeholder="Confirm site conditions are clear: grading complete, access clear, utilities marked, no builder conflicts." /></div><div className="alert green"><div>✓</div><div>Marking site ready will create a Site_Readiness__c record in Salesforce and update the WorkOrder. Scheduling Manager will be notified that this lot can be dispatched.</div></div></div>;
+    if (keyName === "siteNotReady") return <div className="field-grid"><div className="field full"><label>Reason (required)</label><input value={form.reason ?? ""} onChange={(e) => set("reason", e.target.value)} placeholder="e.g. Grading not complete, utilities not marked, builder blocking access" /></div><div className="field full"><label>Additional Notes</label><textarea value={form.notes ?? ""} onChange={(e) => set("notes", e.target.value)} placeholder="Describe what needs to happen before this lot can be dispatched." /></div><div className="alert red"><div>!</div><div>Flagging site not ready will block scheduling and notify Scheduling Manager and Builder Regional. The site readiness record will be created in Salesforce.</div></div></div>;
+    if (keyName === "quoteRequest") return <div className="field-grid"><div className="field"><label>Request Type</label><select value={form.requestType ?? "Scope Outside PO"} onChange={(e) => set("requestType", e.target.value)}><option>Scope Outside PO</option><option>Change Order</option><option>Warranty Proposal</option><option>Aqua Addition</option></select></div><div className="field full"><label>Scope Description (required)</label><textarea value={form.scopeDescription ?? ""} onChange={(e) => set("scopeDescription", e.target.value)} placeholder="Describe the scope of work that falls outside the original PO. Be specific — the CSM prices from this description." /></div><div className="field full"><label>FM Notes</label><textarea value={form.fmNotes ?? ""} onChange={(e) => set("fmNotes", e.target.value)} placeholder="Any additional context for the CSM." /></div><div className="alert red"><div>!</div><div><strong>Guardrail:</strong> FM cannot set or approve the quote amount. This request goes to CSM for pricing. You will be notified when a decision is made.</div></div></div>;
+    if (keyName === "warrantyJob") return <div className="field-grid"><div className="field full"><label>Warranty Scope (required)</label><textarea value={form.warrantyScope ?? ""} onChange={(e) => set("warrantyScope", e.target.value)} placeholder="Describe the defect that is Loving's installation responsibility. Be specific — what failed, when, and why it is not builder or homeowner damage." /></div><div className="field full"><label>Notes for Division Manager</label><textarea value={form.notes ?? ""} onChange={(e) => set("notes", e.target.value)} placeholder="Include any site conditions, photo context, or timeline details." /></div><div className="alert amber"><div>!</div><div>A Warranty WorkOrder will be created in Salesforce as a child of this WorkOrder. Work_Order_Type__c will be set to Warranty. Division Manager will be notified. This does NOT block the original invoice.</div></div><div className="alert red"><div>!</div><div><strong>Requires 2 accepted photos minimum.</strong> Attach photo proof before submitting.</div></div></div>;
   };
 
   const meta = modalMeta[keyName];
@@ -817,17 +877,7 @@ export default function App() {
           </div>
         </main>
       </div>
-      <Modal keyName={modalKey} workspace={workspace} job={job ?? workspace.jobs[0]} onClose={() => setModalKey(null)} onCommit={(result) => {
-        const sfWrite = sfApi && job ? (() => {
-          if (modalKey === 'fj') return (api: SalesforceFieldManagerApi) => api.createFinishJob(job.id, '', '');
-          if (modalKey === 'return') return (api: SalesforceFieldManagerApi) => api.returnWork(job.id, '', '', '');
-          if (modalKey === 'reschedule') return (api: SalesforceFieldManagerApi) => api.requestReschedule(job.id, '', '', '');
-          if (modalKey === 'aquaRepair') return (api: SalesforceFieldManagerApi) => api.dispatchAquaRepair(job.id, '', '', '', '', '');
-          if (modalKey === 'qi') return (api: SalesforceFieldManagerApi) => api.submitQI(job.id, {}, '');
-          return undefined;
-        })() : undefined;
-        commit(result, sfWrite);
-      }} />
+      <Modal keyName={modalKey} workspace={workspace} job={job ?? workspace.jobs[0]} onClose={() => setModalKey(null)} onCommit={(result, sfWrite) => commit(result, sfApi ? sfWrite : undefined)} />
       <Toast message={toast} />
     </>
   );

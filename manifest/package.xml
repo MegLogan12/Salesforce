@@ -124,6 +124,21 @@
         <!-- Finish_Job__c custom fields -->
         <members>Finish_Job__c.Accountability_Notes__c</members>
         <members>Finish_Job__c.FJ_Date__c</members>
+        <!-- Quote_Request__c custom fields -->
+        <members>Quote_Request__c.Work_Order__c</members>
+        <members>Quote_Request__c.Scope_Description__c</members>
+        <members>Quote_Request__c.Request_Type__c</members>
+        <members>Quote_Request__c.Status__c</members>
+        <members>Quote_Request__c.Quote_Amount__c</members>
+        <members>Quote_Request__c.Builder_Approval__c</members>
+        <members>Quote_Request__c.Builder_PO_Ref__c</members>
+        <members>Quote_Request__c.Lot_Number__c</members>
+        <members>Quote_Request__c.Photos_Attached__c</members>
+        <members>Quote_Request__c.FM_Notes__c</members>
+        <members>Quote_Request__c.Decision_Date__c</members>
+        <members>Quote_Request__c.Requested_By__c</members>
+        <!-- Site_Readiness__c custom fields -->
+        <members>Site_Readiness__c.Not_Ready_Reason__c</members>
         <!-- Account (Community + Lot) custom fields -->
         <members>Account.Pipeline_Bucket__c</members>
         <members>Account.Target_Start_Date__c</members>
@@ -153,6 +168,10 @@
         <members>Account.Spec_Type__c</members>
         <members>Account.DR_Horton_Tree_Avg__c</members>
         <name>CustomField</name>
+    </types>
+    <types>
+        <members>Quote_Request__c</members>
+        <name>CustomObject</name>
     </types>
     <types>
         <members>WorkOrder.Takeoff_Required_Before_Scheduling</members>

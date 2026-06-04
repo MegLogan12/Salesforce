@@ -782,15 +782,72 @@ export class SalesforceFieldManagerApi {
     return { id: workOrderId, taskId };
   }
 
-  async requestReschedule(workOrderId: string, reason: string, requestedDate: string, notes: string): Promise<{ id: string; taskId: string }> {
-    const taskId = await this.create('Task', {
-      Subject: `Reschedule request: ${reason}`,
-      Description: `Requested date: ${requestedDate}. ${notes}`,
-      Status: 'Not Started',
-      Priority: 'Normal',
-      WhatId: workOrderId
+  async requestReschedule(workOrderId: string, reason: string, requestedDate: string, notes: string): Promise<{ id: string; issueId: string }> {
+    const issueId = await this.create('Schedule_Issue__c', {
+      Issue_Type__c: 'Reschedule Request',
+      Severity__c: 'Medium',
+      Status__c: 'Open',
+      Summary__c: `Reschedule request: ${reason}`,
+      Resolution_Notes__c: `Requested date: ${requestedDate}. ${notes}`.trim(),
+      Standard_Work_Order__c: workOrderId
     });
-    return { id: workOrderId, taskId };
+    return { id: workOrderId, issueId };
+  }
+
+  async markSiteReady(workOrderId: string, notes: string): Promise<{ id: string; siteReadinessId: string }> {
+    const siteReadinessId = await this.create('Site_Readiness__c', {
+      Work_Order__c: workOrderId,
+      Status__c: 'Ready',
+      Field_Manager__c: this.userId
+    });
+    await this.patch('WorkOrder', workOrderId, {
+      Site_Readiness_Status__c: 'Ready',
+      Site_Ready_Overall__c: true,
+      Closeout_Notes__c: notes || null
+    });
+    return { id: workOrderId, siteReadinessId };
+  }
+
+  async flagSiteNotReady(workOrderId: string, reason: string, notes: string): Promise<{ id: string; siteReadinessId: string }> {
+    const siteReadinessId = await this.create('Site_Readiness__c', {
+      Work_Order__c: workOrderId,
+      Status__c: 'Blocked',
+      Not_Ready_Reason__c: reason,
+      FM_Missing__c: true,
+      Field_Manager__c: this.userId
+    });
+    await this.patch('WorkOrder', workOrderId, {
+      Site_Readiness_Status__c: 'Not Ready',
+      Site_Ready_Overall__c: false,
+      Site_Not_Ready_Reason__c: `${reason}. ${notes}`.trim()
+    });
+    return { id: workOrderId, siteReadinessId };
+  }
+
+  async createQuoteRequest(workOrderId: string, requestType: string, scopeDescription: string, lotNumber: string, poRef: string, fmNotes: string, photosAttached: number): Promise<{ id: string; qrId: string }> {
+    const qrId = await this.create('Quote_Request__c', {
+      Work_Order__c: workOrderId,
+      Request_Type__c: requestType,
+      Scope_Description__c: scopeDescription,
+      FM_Notes__c: fmNotes || null,
+      Status__c: 'New',
+      Lot_Number__c: lotNumber || null,
+      Builder_PO_Ref__c: poRef || null,
+      Photos_Attached__c: photosAttached,
+      Requested_By__c: this.userId
+    });
+    return { id: workOrderId, qrId };
+  }
+
+  async createWarrantyJob(workOrderId: string, scope: string, notes: string, lotNumber: string): Promise<{ id: string; warrantyWoId: string }> {
+    const warrantyWoId = await this.create('WorkOrder', {
+      Subject: `WARRANTY — ${lotNumber || 'Lot'}`,
+      Status: 'New',
+      Work_Order_Type__c: 'Warranty',
+      Description: `${scope}. Notes: ${notes || 'None'}`,
+      ParentWorkOrderId: workOrderId
+    });
+    return { id: workOrderId, warrantyWoId };
   }
 
   async flagIssue(workOrderId: string, serviceAppointmentId: string, issueType: string, severity: string, summary: string, notes: string): Promise<{ issueId: string }> {
