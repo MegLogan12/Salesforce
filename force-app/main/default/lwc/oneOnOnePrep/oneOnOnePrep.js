@@ -1,7 +1,7 @@
 import { LightningElement, api, wire, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { refreshApex } from '@salesforce/apex';
-import getPrepData from '@salesforce/apex/OneOnOnePrepController.getPrepData';
+import getPrepView from '@salesforce/apex/OneOnOnePrepController.getPrepView';
 
 export default class OneOnOnePrep extends NavigationMixin(LightningElement) {
     @api recordId;
@@ -12,7 +12,7 @@ export default class OneOnOnePrep extends NavigationMixin(LightningElement) {
 
     _wiredResult;
 
-    @wire(getPrepData, { recordId: '$recordId' })
+    @wire(getPrepView, { oneOnOneId: '$recordId' })
     wiredData(result) {
         this._wiredResult = result;
         if (result.data) {
@@ -28,55 +28,64 @@ export default class OneOnOnePrep extends NavigationMixin(LightningElement) {
     // ── Computed getters ──────────────────────────────────────────────────────
 
     get recordName() {
-        return this.prepData?.name ?? '';
+        const m = this.prepData?.managerName;
+        const d = this.prepData?.directReportName;
+        if (m && d) return `${m} & ${d}`;
+        return m || d || '';
     }
 
     get meetingDateLabel() {
-        return this.prepData?.meetingDateLabel ?? '';
+        return null;
     }
 
     get hasMeetingDate() {
-        return !!this.prepData?.meetingDateLabel;
+        return false;
     }
 
     get recordStatus() {
-        return this.prepData?.status ?? '';
+        return '';
     }
 
     get hasStatus() {
-        return !!this.prepData?.status;
+        return false;
     }
 
     get recordAttendees() {
-        return this.prepData?.attendees ?? '';
+        const m = this.prepData?.managerName ?? '';
+        const d = this.prepData?.directReportName ?? '';
+        return [m, d].filter(Boolean).join(', ');
     }
 
     get hasAttendees() {
-        return !!this.prepData?.attendees;
+        return !!(this.prepData?.managerName || this.prepData?.directReportName);
     }
 
     get recordNotes() {
-        return this.prepData?.notes ?? '';
+        return this.prepData?.existingNotes ?? '';
     }
 
     get hasNotes() {
-        return !!this.prepData?.notes;
+        return !!this.prepData?.existingNotes;
     }
 
     get actionItems() {
-        const rows = this.prepData?.actionItems ?? [];
+        const rows = this.prepData?.openActionItems ?? [];
         return rows.map(r => ({
-            ...r,
-            statusChipFull: 'status-chip ' + (r.statusChip || 'chip-neutral')
+            id: r.Id,
+            name: r.Name,
+            status: r.Status__c ?? '',
+            dueDateLabel: r.Due_Date__c ?? '',
+            isOverdue: false,
+            statusChipFull: 'status-chip chip-neutral'
         }));
     }
 
     get hasActionItems() {
-        return (this.prepData?.actionItems ?? []).length > 0;
+        return (this.prepData?.openActionItems ?? []).length > 0;
     }
 
     get actionItemCount() {
-        return (this.prepData?.actionItems ?? []).length;
+        return (this.prepData?.openActionItems ?? []).length;
     }
 
     get hasError() {
