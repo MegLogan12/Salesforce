@@ -1059,6 +1059,7 @@
         <profile>Standard</profile>
     </profileActionOverrides>
     <tabs>standard-home</tabs>
+    <tabs>Scheduling_Console</tabs>
     <tabs>Route_GPS</tabs>
     <tabs>Schedule_Decision_Rule__c</tabs>
     <tabs>Sched_Auto</tabs>
@@ -1075,6 +1076,7 @@
     <tabs>Night_Loading_Queue</tabs>
     <tabs>Invoice_Accounting_Console</tabs>
     <tabs>COO_Command_Center</tabs>
+    <tabs>Customer_Success_Console</tabs>
     <tabs>FSL__FieldService</tabs>
     <tabs>standard-WorkOrder</tabs>
     <tabs>standard-ServiceAppointment</tabs>
@@ -1117,6 +1119,12 @@
         </mappings>
         <mappings>
             <tab>COO_Command_Center</tab>
+        </mappings>
+        <mappings>
+            <tab>Customer_Success_Console</tab>
+        </mappings>
+        <mappings>
+            <tab>Scheduling_Console</tab>
         </mappings>
         <mappings>
             <tab>FSL__FieldService</tab>
