@@ -22,4 +22,16 @@ export default class OdlContactRecordSidebar extends LightningElement {
         const name = this.pageData?.ownerName ?? '';
         return name.split(' ').map(w => w[0]).join('').toUpperCase().substring(0, 2);
     }
+
+    handleAddNote() {
+        console.log('handleAddNote');
+    }
+
+    handleNewActivity() {
+        console.log('handleNewActivity');
+    }
+
+    handleSendEmail() {
+        console.log('handleSendEmail');
+    }
 }

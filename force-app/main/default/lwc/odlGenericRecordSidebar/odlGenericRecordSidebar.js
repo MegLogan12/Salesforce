@@ -7,4 +7,12 @@ export default class OdlGenericRecordSidebar extends LightningElement {
     get recordUrl() {
         return this.recordId ? `/${this.recordId}` : '#';
     }
+
+    handleEditRecord() {
+        console.log('handleEditRecord');
+    }
+
+    handleViewRecord() {
+        console.log('handleViewRecord');
+    }
 }

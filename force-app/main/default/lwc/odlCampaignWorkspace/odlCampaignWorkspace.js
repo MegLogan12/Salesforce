@@ -97,4 +97,12 @@ export default class OdlCampaignWorkspace extends NavigationMixin(LightningEleme
     async handleRefresh() {
         await refreshApex(this.wiredResult);
     }
+
+    handleAddMember() {
+        console.log('handleAddMember');
+    }
+
+    handleExportList() {
+        console.log('handleExportList');
+    }
 }

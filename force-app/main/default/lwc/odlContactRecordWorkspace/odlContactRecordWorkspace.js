@@ -85,4 +85,41 @@ export default class OdlContactRecordWorkspace extends NavigationMixin(Lightning
             });
         }
     }
+
+    handleAddNote() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.NewTask' },
+            state: { recordId: this.recordId }
+        });
+    }
+
+    handleEditContact() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: { recordId: this.recordId, actionName: 'edit' }
+        });
+    }
+
+    handleNewActivity() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.NewTask' },
+            state: { recordId: this.recordId }
+        });
+    }
+
+    handleOpenRecord(event) {
+        const recordId = event.currentTarget.dataset.id || event.currentTarget.dataset.recordId;
+        if (recordId) {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: { recordId, actionName: 'view' }
+            });
+        }
+    }
+
+    handleSendEmail() {
+        console.log('handleSendEmail');
+    }
 }

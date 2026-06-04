@@ -90,4 +90,16 @@ export default class OdlQuoteWorkspace extends NavigationMixin(LightningElement)
     async handleRefresh() {
         await refreshApex(this.wiredResult);
     }
+
+    handleDownloadPdf() {
+        console.log('handleDownloadPdf');
+    }
+
+    handleRecordPayment() {
+        console.log('handleRecordPayment');
+    }
+
+    handleSendQuote() {
+        console.log('handleSendQuote');
+    }
 }

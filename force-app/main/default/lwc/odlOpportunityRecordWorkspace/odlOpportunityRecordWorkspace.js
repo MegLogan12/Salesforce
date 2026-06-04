@@ -114,4 +114,50 @@ export default class OdlOpportunityRecordWorkspace extends NavigationMixin(Light
             state: { recordId: this.recordId }
         });
     }
+
+    handleCloseLost() {
+        console.log('handleCloseLost');
+    }
+
+    handleCloseWon() {
+        console.log('handleCloseWon');
+    }
+
+    handleLogCall() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.NewTask' },
+            state: { recordId: this.recordId }
+        });
+    }
+
+    handleNewActivity() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.NewTask' },
+            state: { recordId: this.recordId }
+        });
+    }
+
+    handleOpenRecord(event) {
+        const recordId = event.currentTarget.dataset.id || event.currentTarget.dataset.recordId;
+        if (recordId) {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: { recordId, actionName: 'view' }
+            });
+        }
+    }
+
+    handleRecordPayment() {
+        console.log('handleRecordPayment');
+    }
+
+    handleSendEmail() {
+        console.log('handleSendEmail');
+    }
+
+    handleSendQuote() {
+        console.log('handleSendQuote');
+    }
 }

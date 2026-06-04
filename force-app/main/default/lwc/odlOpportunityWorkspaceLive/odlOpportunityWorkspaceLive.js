@@ -279,4 +279,26 @@ export default class OdlOpportunityWorkspaceLive extends NavigationMixin(Lightni
         if (Array.isArray(error.body)) return error.body.map(e => e.message).join(', ');
         return error.body?.message || error.message || 'Unable to load opportunities.';
     }
+
+    handleLogCall(event) {
+        const id = event.currentTarget.dataset.id;
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.NewTask' },
+            state: { recordId: id || '' }
+        });
+    }
+
+    handleNewActivity(event) {
+        const id = event.currentTarget.dataset.id;
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.NewTask' },
+            state: { recordId: id || '' }
+        });
+    }
+
+    handleSendEmail() {
+        console.log('handleSendEmail');
+    }
 }

@@ -103,4 +103,12 @@ export default class OdlTaskRecord extends NavigationMixin(LightningElement) {
             this.isSaving = false;
         }
     }
+
+    handleReassign() {
+        console.log('handleReassign');
+    }
+
+    handleSnooze() {
+        console.log('handleSnooze');
+    }
 }

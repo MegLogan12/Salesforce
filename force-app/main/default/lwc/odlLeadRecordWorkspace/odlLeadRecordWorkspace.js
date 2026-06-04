@@ -101,4 +101,37 @@ export default class OdlLeadRecordWorkspace extends NavigationMixin(LightningEle
             }
         });
     }
+
+    handleConvertLead() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: { recordId: this.recordId, actionName: 'view' }
+        });
+    }
+
+    handleDisqualify() {
+        console.log('handleDisqualify');
+    }
+
+    handleLogActivity() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: NEW_TASK_ACTION },
+            state: { recordId: this.recordId }
+        });
+    }
+
+    handleOpenRecord(event) {
+        const recordId = event.currentTarget.dataset.id || event.currentTarget.dataset.recordId;
+        if (recordId) {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: { recordId, actionName: 'view' }
+            });
+        }
+    }
+
+    handleSendEmail() {
+        console.log('handleSendEmail');
+    }
 }

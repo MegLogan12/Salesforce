@@ -158,4 +158,19 @@ export default class OdlConsoleHome extends NavigationMixin(LightningElement) {
             attributes: { objectApiName: 'Lead', actionName: 'new' }
         });
     }
+
+    handleCompleteTask(event) {
+        const recordId = event.currentTarget.dataset.id;
+        this[NavigationMixin.Navigate]({
+            type: 'standard__recordPage',
+            attributes: { recordId, actionName: 'view' }
+        });
+    }
+
+    handleNewTask() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.NewTask' }
+        });
+    }
 }

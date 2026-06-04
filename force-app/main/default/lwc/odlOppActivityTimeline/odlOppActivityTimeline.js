@@ -8,4 +8,12 @@ export default class OdlOppActivityTimeline extends LightningElement {
     get hasInteractions() {
         return Array.isArray(this.interactions) && this.interactions.length > 0;
     }
+
+    handleLogCall() {
+        console.log('handleLogCall');
+    }
+
+    handleNewActivity() {
+        console.log('handleNewActivity');
+    }
 }

@@ -18,4 +18,12 @@ export default class OdlPaymentSchedule extends LightningElement {
             ? 'payment-value payment-value-strong payment-remaining-paid'
             : 'payment-value payment-value-strong payment-remaining-due';
     }
+
+    handleDownloadPdf() {
+        console.log('handleDownloadPdf');
+    }
+
+    handleRecordPayment() {
+        console.log('handleRecordPayment');
+    }
 }

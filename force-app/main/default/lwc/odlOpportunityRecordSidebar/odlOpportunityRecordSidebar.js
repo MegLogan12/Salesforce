@@ -39,4 +39,12 @@ export default class OdlOpportunityRecordSidebar extends LightningElement {
     get hasOpenItems() {
         return this.openItems.length > 0;
     }
+
+    handleCreateTask() {
+        console.log('handleCreateTask');
+    }
+
+    handleLogActivity() {
+        console.log('handleLogActivity');
+    }
 }

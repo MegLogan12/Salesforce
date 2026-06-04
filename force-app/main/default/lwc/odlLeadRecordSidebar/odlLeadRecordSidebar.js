@@ -47,4 +47,16 @@ export default class OdlLeadRecordSidebar extends LightningElement {
     get hasServiceInterests() {
         return this.serviceInterests.length > 0;
     }
+
+    handleDisqualify() {
+        console.log('handleDisqualify');
+    }
+
+    handleLogActivity() {
+        console.log('handleLogActivity');
+    }
+
+    handleSendEmail() {
+        console.log('handleSendEmail');
+    }
 }

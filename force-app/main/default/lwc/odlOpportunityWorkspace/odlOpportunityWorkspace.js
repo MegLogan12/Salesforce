@@ -142,4 +142,26 @@ export default class OdlOpportunityWorkspace extends NavigationMixin(LightningEl
     async handleRefresh() {
         await refreshApex(this.wiredResult);
     }
+
+    handleLogCall(event) {
+        const recordId = event.currentTarget.dataset.id || event.currentTarget.dataset.recordId;
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.NewTask' },
+            state: { recordId: recordId || '' }
+        });
+    }
+
+    handleNewActivity(event) {
+        const recordId = event.currentTarget.dataset.id || event.currentTarget.dataset.recordId;
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.NewTask' },
+            state: { recordId: recordId || '' }
+        });
+    }
+
+    handleSendEmail() {
+        console.log('handleSendEmail');
+    }
 }

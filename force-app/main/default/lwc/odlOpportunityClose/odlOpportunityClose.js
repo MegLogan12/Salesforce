@@ -90,4 +90,8 @@ export default class OdlOpportunityClose extends NavigationMixin(LightningElemen
             this.isUpdating = false;
         }
     }
+
+    handleCloseLost() {
+        console.log('handleCloseLost');
+    }
 }

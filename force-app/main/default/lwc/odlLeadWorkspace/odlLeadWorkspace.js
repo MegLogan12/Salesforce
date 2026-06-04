@@ -117,4 +117,31 @@ export default class OdlLeadWorkspace extends NavigationMixin(LightningElement) 
     async handleRefresh() {
         await refreshApex(this.wiredResult);
     }
+
+    handleConvertLead(event) {
+        const recordId = event.currentTarget.dataset.id || event.currentTarget.dataset.recordId;
+        if (recordId) {
+            this[NavigationMixin.Navigate]({
+                type: 'standard__recordPage',
+                attributes: { recordId, actionName: 'view' }
+            });
+        }
+    }
+
+    handleDisqualify() {
+        console.log('handleDisqualify');
+    }
+
+    handleLogActivity(event) {
+        const recordId = event.currentTarget.dataset.id || event.currentTarget.dataset.recordId;
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.NewTask' },
+            state: { recordId: recordId || '' }
+        });
+    }
+
+    handleSendEmail() {
+        console.log('handleSendEmail');
+    }
 }
