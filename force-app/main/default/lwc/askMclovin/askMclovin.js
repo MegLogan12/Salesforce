@@ -413,6 +413,8 @@ export default class AskMclovin extends LightningElement {
         p.querySelector('.badge').addEventListener('mousedown',  (e) => this._onDragStart(e));
         p.querySelector('.badge').addEventListener('touchstart', (e) => this._onDragStart(e), {passive:false});
         p.querySelector('.badge').addEventListener('click',      ()  => this._onBadgeClick());
+        p.querySelector('.walker').addEventListener('mousedown', (e) => this._onDragStart(e));
+        p.querySelector('.walker').addEventListener('touchstart',(e) => this._onDragStart(e), {passive:false});
         p.querySelector('.perched').addEventListener('click',    ()  => this.open());
         p.querySelector('.perched').addEventListener('mousedown',(e) => this._onDragStart(e));
         p.querySelector('.edge-hang').addEventListener('click',  ()  => this.open());
@@ -461,12 +463,13 @@ export default class AskMclovin extends LightningElement {
         // Bob on badge only when idle
         this._badgeEl.classList.toggle('bobbing', this._state === S.BADGE && !this._isWalking);
 
-        // State visibility
-        this._badgeEl.style.display   = this._state === S.BADGE    ? '' : 'none';
-        this._walkerEl.style.display  = this._state === S.ENTER    ? '' : 'none';
-        this._perchedEl.style.display = this._state === S.PERCH    ? '' : 'none';
-        this._edgeEl.style.display    = this._state === S.EDGE     ? '' : 'none';
-        this._openEl.style.display    = this._state === S.WELCOME  ? '' : 'none';
+        // State visibility — walker shows whenever moving or dragging
+        const moving = this._isWalking || this._state === S.DRAG;
+        this._walkerEl.style.display  = (moving || this._state === S.ENTER) ? '' : 'none';
+        this._badgeEl.style.display   = (!moving && this._state === S.BADGE)   ? '' : 'none';
+        this._perchedEl.style.display = (!moving && this._state === S.PERCH)   ? '' : 'none';
+        this._edgeEl.style.display    = (!moving && this._state === S.EDGE)    ? '' : 'none';
+        this._openEl.style.display    = (!moving && this._state === S.WELCOME) ? '' : 'none';
 
         // Nudge bubble
         if (this._nudgeOn && this._nudgeText) {
@@ -681,11 +684,40 @@ export default class AskMclovin extends LightningElement {
         // eslint-disable-next-line @lwc/lwc/no-async-operation
         this._idleTimer = setTimeout(() => {
             if ([S.BADGE, S.PERCH, S.EDGE].includes(this._state)) {
-                if (Math.random() < 0.4) this._doPeek();
-                else this._showBubble(pick(C.dialogue.idle, this._lastLine), false);
+                const roll = Math.random();
+                if (roll < 0.25) {
+                    this._doPeek();
+                } else if (roll < 0.55 && C.flags.wanderWhenIdle) {
+                    this._wander();
+                } else {
+                    this._showBubble(pick(C.dialogue.idle, this._lastLine), false);
+                }
             }
             this._scheduleIdle();
         }, delay);
+    }
+
+    _wander() {
+        const perch = this._findBestPerch();
+        if (perch) {
+            this._perchOn(perch);
+            return;
+        }
+        // Stroll to a random spot along the bottom third of the screen, then settle
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const tx = clamp(vw * (0.1 + Math.random() * 0.75), 50, vw - 150);
+        const ty = vh - 180 + (Math.random() * 40 - 20);
+        this._walkTo(tx, ty, () => {
+            // After wandering, go to edge or hang at current spot
+            if (Math.random() < 0.5) {
+                this._goToEdgeOrBadge();
+            } else {
+                this._setState(S.PERCH);
+                this._showBubble(pick(C.dialogue.perch_generic, this._lastLine), false);
+                this._scheduleIdle();
+            }
+        });
     }
 
     _doPeek() {
