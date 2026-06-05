@@ -1,0 +1,84 @@
+<template lwc:render-mode="light">
+    <div class="lov-wrap">
+        <div class="lov-card"
+             data-mclovin-perch="lean-right"
+             data-mclovin-context="opportunity"
+             data-mclovin-priority="8">
+
+            <div class="lov-hd">
+                <span class="lov-dot"></span>
+                <h2 class="lov-title">Change Order</h2>
+                <span class="lov-pill">OPPORTUNITY</span>
+            </div>
+
+            <template lwc:if={saved}>
+                <div class="lov-success">
+                    <span>&#10003;</span> Change order saved.
+                    <button class="lov-btn" type="button" onclick={handleNew}>New</button>
+                </div>
+            </template>
+
+            <template lwc:else>
+                <lightning-record-edit-form
+                    object-api-name="Change_Order__c"
+                    onsuccess={handleSuccess}
+                    onerror={handleError}>
+
+                    <div class="lov-bd">
+                        <div class="lov-field">
+                            <label>Opportunity</label>
+                            <lightning-input-field field-name="Opportunity__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field">
+                            <label>Requested date</label>
+                            <lightning-input-field field-name="Requested_Date__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field lov-full">
+                            <label>Change description</label>
+                            <lightning-input-field field-name="Description__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field lov-full">
+                            <label>Reason</label>
+                            <lightning-input-field field-name="Reason__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field">
+                            <label>Cost impact ($)</label>
+                            <lightning-input-field field-name="Cost_Impact__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field">
+                            <label>Revenue impact ($)</label>
+                            <lightning-input-field field-name="Revenue_Impact__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field">
+                            <label>Approved by</label>
+                            <lightning-input-field field-name="Approved_By__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field">
+                            <label>Approval date</label>
+                            <lightning-input-field field-name="Approved_Date__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field">
+                            <label>Status</label>
+                            <lightning-input-field field-name="Status__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field lov-full">
+                            <label>Downstream impact notes</label>
+                            <lightning-input-field field-name="Downstream_Impact__c"></lightning-input-field>
+                        </div>
+
+                        <div class="lov-actions">
+                            <lightning-messages></lightning-messages>
+                            <button class="lov-btn" type="reset">Clear</button>
+                            <lightning-button
+                                variant="brand"
+                                label="Save Change Order"
+                                type="submit"
+                                class="lov-submit">
+                            </lightning-button>
+                        </div>
+                    </div>
+                </lightning-record-edit-form>
+            </template>
+        </div>
+    </div>
+</template>

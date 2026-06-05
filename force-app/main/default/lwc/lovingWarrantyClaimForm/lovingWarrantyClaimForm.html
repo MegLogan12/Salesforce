@@ -1,0 +1,101 @@
+<template lwc:render-mode="light">
+    <div class="lov-wrap">
+        <div class="lov-card"
+             data-mclovin-perch="lean-right"
+             data-mclovin-context="account"
+             data-mclovin-priority="9">
+
+            <div class="lov-hd">
+                <span class="lov-dot"></span>
+                <h2 class="lov-title">Warranty Claim</h2>
+                <span class="lov-pill">ACCOUNT</span>
+            </div>
+
+            <template lwc:if={saved}>
+                <div class="lov-success">
+                    <span>&#10003;</span> Warranty claim saved.
+                    <button class="lov-btn" type="button" onclick={handleNew}>New</button>
+                </div>
+            </template>
+
+            <template lwc:else>
+                <lightning-record-edit-form
+                    object-api-name="Warranty_Record__c"
+                    onsuccess={handleSuccess}
+                    onerror={handleError}>
+
+                    <div class="lov-bd">
+                        <div class="lov-field">
+                            <label>Homeowner account</label>
+                            <lightning-input-field field-name="Homeowner_Account__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field">
+                            <label>Date original work completed</label>
+                            <lightning-input-field field-name="Date_Original_Work_Completed__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field">
+                            <label>Issue category</label>
+                            <lightning-input-field field-name="Category__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field">
+                            <label>Severity</label>
+                            <lightning-input-field field-name="Severity__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field lov-full">
+                            <label>Issue description</label>
+                            <lightning-input-field field-name="Issue_Description__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field">
+                            <label>Lot</label>
+                            <lightning-input-field field-name="Lot__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field">
+                            <label>Submit date</label>
+                            <lightning-input-field field-name="Submit_Date__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field">
+                            <label>Reported by</label>
+                            <lightning-input-field field-name="Reported_By__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field">
+                            <label>CS assigned to</label>
+                            <lightning-input-field field-name="CS_Assigned_To__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field lov-full">
+                            <label>Checklist</label>
+                            <div class="lov-checks">
+                                <label class="lov-check"><input type="checkbox"> Photos attached to record</label>
+                                <label class="lov-check"><input type="checkbox"> Under warranty period</label>
+                                <label class="lov-check"><input type="checkbox"> FM notified</label>
+                                <label class="lov-check"><input type="checkbox"> Visit scheduled</label>
+                            </div>
+                        </div>
+                        <div class="lov-field">
+                            <label>Coverage decision</label>
+                            <lightning-input-field field-name="Coverage_Decision__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field">
+                            <label>Status</label>
+                            <lightning-input-field field-name="Status__c"></lightning-input-field>
+                        </div>
+                        <div class="lov-field lov-full">
+                            <label>CS notes / resolution plan</label>
+                            <lightning-input-field field-name="CS_Notes__c"></lightning-input-field>
+                        </div>
+
+                        <div class="lov-actions">
+                            <lightning-messages></lightning-messages>
+                            <button class="lov-btn" type="reset">Clear</button>
+                            <lightning-button
+                                variant="brand"
+                                label="Save Warranty Claim"
+                                type="submit"
+                                class="lov-submit">
+                            </lightning-button>
+                        </div>
+                    </div>
+                </lightning-record-edit-form>
+            </template>
+        </div>
+    </div>
+</template>

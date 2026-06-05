@@ -1,0 +1,92 @@
+<template lwc:render-mode="light">
+    <div class="lov-wrap">
+        <div class="lov-card"
+             data-mclovin-perch="lean-right"
+             data-mclovin-context="task"
+             data-mclovin-priority="7">
+
+            <div class="lov-hd">
+                <span class="lov-dot"></span>
+                <h2 class="lov-title">Customer Follow-up</h2>
+                <span class="lov-pill">TASK</span>
+            </div>
+
+            <template lwc:if={saved}>
+                <div class="lov-success">
+                    <span>&#10003;</span> Follow-up task saved.
+                    <button class="lov-btn" type="button" onclick={handleNew}>New</button>
+                </div>
+            </template>
+
+            <template lwc:else>
+                <lightning-record-edit-form
+                    object-api-name="Task"
+                    onsuccess={handleSuccess}
+                    onerror={handleError}>
+
+                    <div class="lov-bd">
+                        <div class="lov-field">
+                            <label>Contact / lead</label>
+                            <lightning-input-field field-name="WhoId"></lightning-input-field>
+                        </div>
+                        <div class="lov-field">
+                            <label>Due date</label>
+                            <lightning-input-field field-name="ActivityDate"></lightning-input-field>
+                        </div>
+                        <div class="lov-field lov-full">
+                            <label>Purpose</label>
+                            <div class="lov-checks">
+                                <label class="lov-check"><input type="radio" name="purpose" value="estimate"> Estimate follow-up</label>
+                                <label class="lov-check"><input type="radio" name="purpose" value="post-install"> Post-install check</label>
+                                <label class="lov-check"><input type="radio" name="purpose" value="referral"> Referral ask</label>
+                                <label class="lov-check"><input type="radio" name="purpose" value="upsell"> Seasonal upsell</label>
+                                <label class="lov-check"><input type="radio" name="purpose" value="other"> Other</label>
+                            </div>
+                        </div>
+                        <div class="lov-field">
+                            <label>Preferred channel</label>
+                            <select>
+                                <option value="">Select...</option>
+                                <option>Phone call</option>
+                                <option>Text</option>
+                                <option>Email</option>
+                                <option>In person</option>
+                            </select>
+                        </div>
+                        <div class="lov-field">
+                            <label>Priority</label>
+                            <lightning-input-field field-name="Priority"></lightning-input-field>
+                        </div>
+                        <div class="lov-field lov-full">
+                            <label>Subject</label>
+                            <lightning-input-field field-name="Subject"></lightning-input-field>
+                        </div>
+                        <div class="lov-field lov-full">
+                            <label>Talking points / notes</label>
+                            <lightning-input-field field-name="Description"></lightning-input-field>
+                        </div>
+                        <div class="lov-field">
+                            <label>Status</label>
+                            <lightning-input-field field-name="Status"></lightning-input-field>
+                        </div>
+                        <div class="lov-field">
+                            <label>Related to (optional)</label>
+                            <lightning-input-field field-name="WhatId"></lightning-input-field>
+                        </div>
+
+                        <div class="lov-actions">
+                            <lightning-messages></lightning-messages>
+                            <button class="lov-btn" type="reset">Clear</button>
+                            <lightning-button
+                                variant="brand"
+                                label="Save Follow-up Task"
+                                type="submit"
+                                class="lov-submit">
+                            </lightning-button>
+                        </div>
+                    </div>
+                </lightning-record-edit-form>
+            </template>
+        </div>
+    </div>
+</template>
