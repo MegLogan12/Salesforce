@@ -12,7 +12,7 @@
   border:1px solid rgba(0,0,0,.08); box-shadow:0 14px 34px rgba(20,24,40,.22); overflow:hidden;
   display:grid; place-items:end center; cursor:grab; }
 .badge:active { cursor:grabbing; }
-.badge img { width:108px; margin-bottom:-6px; animation: mc-bob 4.2s ease-in-out infinite; transform-origin:bottom center; }
+.badge img { width:108px; margin-bottom:-6px; animation: mc-bob 4.2s ease-in-out infinite; animation-fill-mode:both; transform-origin:bottom center; will-change:transform; }
 .badge .pulse { position:absolute; right:6px; bottom:6px; width:26px; height:26px; border-radius:50%;
   background:#FCD400; display:grid; place-items:center; font-size:13px; animation: mc-ping 2.4s infinite; }
 @keyframes mc-ping { 0%{box-shadow:0 0 0 0 rgba(252,212,0,.45);} 70%{box-shadow:0 0 0 12px rgba(252,212,0,0);} 100%{box-shadow:0 0 0 0 rgba(252,212,0,0);} }
@@ -21,7 +21,7 @@
 .open { position:relative; width:540px; height:430px; }
 .open .body { position:absolute; left:0; bottom:0; height:400px;
   filter: drop-shadow(0 16px 26px rgba(20,24,40,.28)); animation: mc-bob 4.2s ease-in-out infinite;
-  transform-origin:bottom center; cursor:grab; }
+  animation-fill-mode:both; transform-origin:bottom center; will-change:transform; cursor:grab; }
 .open .close { position:absolute; right:0; top:0; width:30px; height:30px; border-radius:50%; background:#fff;
   border:1px solid rgba(0,0,0,.08); cursor:pointer; font-size:16px; color:#6b7280; display:grid; place-items:center; }
 .open .panel { position:absolute; right:0; top:54px; width:300px; display:flex; flex-direction:column; gap:10px; }

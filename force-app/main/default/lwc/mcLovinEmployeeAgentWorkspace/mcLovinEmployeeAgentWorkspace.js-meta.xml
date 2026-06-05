@@ -5,5 +5,18 @@
     <targets>
         <target>lightning__UtilityBar</target>
         <target>lightning__AppPage</target>
+        <target>lightning__HomePage</target>
     </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__UtilityBar">
+            <property name="contextKey" type="String" label="Context Key" description="Optional context identifier"/>
+            <property name="pageTitle" type="String" label="Page Title" description="Optional page title override"/>
+        </targetConfig>
+        <targetConfig targets="lightning__AppPage">
+            <property name="contextKey" type="String" label="Context Key" description="Optional context identifier"/>
+        </targetConfig>
+        <targetConfig targets="lightning__HomePage">
+            <property name="contextKey" type="String" label="Context Key" description="Optional context identifier"/>
+        </targetConfig>
+    </targetConfigs>
 </LightningComponentBundle>

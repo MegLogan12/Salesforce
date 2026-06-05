@@ -1,4 +1,4 @@
-import { LightningElement, track } from 'lwc';
+import { LightningElement, track, api } from 'lwc';
 import sendMessage from '@salesforce/apex/McLovinChatController.sendMessage';
 
 const DEFAULT_PLACEHOLDER = 'Paste an email, PO, scope, or notes...';
@@ -33,6 +33,8 @@ const QUICK_ACTIONS = {
 let nextId = 0;
 
 export default class McLovinEmployeeAgentWorkspace extends LightningElement {
+    @api contextKey;
+    @api pageTitle;
     @track messages = [];
     @track inputText = '';
     @track inputPlaceholder = DEFAULT_PLACEHOLDER;
