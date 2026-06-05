@@ -1,0 +1,37 @@
+/* LIGHT DOM: styles are global, so everything is namespaced under
+   .loving-lead-qualifier to avoid leaking into the console. */
+.loving-lead-qualifier { --y:#FCD400; --line:#e9eaee; --ink:#1b1f25; }
+
+.loving-lead-qualifier .lq-card {
+  background:#fff; border:1px solid var(--line); border-radius:18px;
+  box-shadow:0 2px 0 rgba(20,24,40,.02); max-width:720px;
+  /* leave room on the right so mcLOVIN can lean here without covering fields */
+  margin-right:110px;
+}
+.loving-lead-qualifier .lq-hd {
+  display:flex; align-items:center; gap:10px; padding:16px 20px; border-bottom:1px solid var(--line);
+}
+.loving-lead-qualifier .lq-dot { width:9px; height:9px; border-radius:50%; background:var(--y); }
+.loving-lead-qualifier .lq-title { font-size:16px; font-weight:800; margin:0; }
+.loving-lead-qualifier .lq-pill {
+  margin-left:auto; font-size:11px; font-weight:700; color:#8a7400; background:#fff7cc;
+  border:1px solid #f1e08a; padding:4px 9px; border-radius:999px; letter-spacing:.02em;
+}
+.loving-lead-qualifier .lq-bd {
+  padding:18px 20px 22px; display:grid; grid-template-columns:1fr 1fr; gap:14px 18px;
+}
+.loving-lead-qualifier .lq-field { display:flex; flex-direction:column; gap:6px; }
+.loving-lead-qualifier .lq-full { grid-column:1 / -1; }
+.loving-lead-qualifier .lq-label { font-size:12.5px; font-weight:700; color:#525a66; }
+.loving-lead-qualifier .lq-select {
+  font-size:14px; border:1px solid #dfe2e8; border-radius:10px; padding:10px 11px; background:#fcfcfd; color:var(--ink);
+}
+.loving-lead-qualifier .lq-select:focus { outline:none; border-color:var(--y); box-shadow:0 0 0 3px rgba(252,212,0,.18); }
+.loving-lead-qualifier .lq-checks { display:flex; flex-wrap:wrap; gap:8px; }
+.loving-lead-qualifier .lq-check {
+  display:flex; align-items:center; gap:7px; border:1px solid #dfe2e8; border-radius:999px;
+  padding:7px 12px; font-size:13px; cursor:pointer; background:#fcfcfd;
+}
+.loving-lead-qualifier .lq-actions {
+  grid-column:1 / -1; display:flex; gap:10px; justify-content:flex-end; margin-top:4px;
+}

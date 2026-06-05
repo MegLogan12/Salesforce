@@ -1,7 +1,7 @@
-/* LOVING form card — shared pattern */
+/* LOVING form card — scoped under .lov-wrap to prevent light-DOM leakage */
 .lov-wrap { padding: 20px clamp(16px, 4vw, 80px) 20px; max-width: 760px; }
 
-.lov-card {
+.lov-wrap .lov-card {
     background: #fff;
     border: 1px solid #e9eaee;
     border-radius: 18px;
@@ -10,118 +10,61 @@
     /* 110 px right clearance for mcLOVIN lean-right perch */
     margin-right: 120px;
 }
-
-.lov-hd {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 16px 20px;
-    border-bottom: 1px solid #e9eaee;
+.lov-wrap .lov-hd {
+    display: flex; align-items: center; gap: 10px;
+    padding: 16px 20px; border-bottom: 1px solid #e9eaee;
 }
-.lov-dot { width: 9px; height: 9px; border-radius: 50%; background: #FCD400; flex-shrink: 0; }
-.lov-title { font-size: 16px; font-weight: 800; color: #1b1f25; margin: 0; }
-.lov-pill {
-    margin-left: auto;
-    font-size: 11px;
-    font-weight: 700;
-    color: #8a7400;
-    background: #fff7cc;
-    border: 1px solid #f1e08a;
-    padding: 4px 9px;
-    border-radius: 999px;
-    letter-spacing: .02em;
+.lov-wrap .lov-dot { width: 9px; height: 9px; border-radius: 50%; background: #FCD400; flex-shrink: 0; }
+.lov-wrap .lov-title { font-size: 16px; font-weight: 800; color: #1b1f25; margin: 0; }
+.lov-wrap .lov-pill {
+    margin-left: auto; font-size: 11px; font-weight: 700; color: #8a7400;
+    background: #fff7cc; border: 1px solid #f1e08a; padding: 4px 9px;
+    border-radius: 999px; letter-spacing: .02em;
 }
-
-.lov-bd {
+.lov-wrap .lov-bd {
     padding: 18px 20px 22px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px 18px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px;
 }
-
-.lov-field { display: flex; flex-direction: column; gap: 5px; }
-.lov-field.lov-full { grid-column: 1 / -1; }
-.lov-field > label {
-    font-size: 12.5px;
-    font-weight: 700;
-    color: #525a66;
+.lov-wrap .lov-field { display: flex; flex-direction: column; gap: 5px; }
+.lov-wrap .lov-field.lov-full { grid-column: 1 / -1; }
+.lov-wrap .lov-field > label { font-size: 12.5px; font-weight: 700; color: #525a66; }
+.lov-wrap .lov-field input:not([type=checkbox]):not([type=radio]),
+.lov-wrap .lov-field select,
+.lov-wrap .lov-field textarea {
+    font-size: 14px; border: 1px solid #dfe2e8; border-radius: 10px;
+    padding: 9px 11px; background: #fcfcfd; color: #1b1f25;
+    font-family: inherit; width: 100%;
 }
-.lov-field input:not([type=checkbox]):not([type=radio]),
-.lov-field select,
-.lov-field textarea {
-    font-size: 14px;
-    border: 1px solid #dfe2e8;
-    border-radius: 10px;
-    padding: 9px 11px;
-    background: #fcfcfd;
-    color: #1b1f25;
-    font-family: inherit;
-    width: 100%;
-}
-.lov-field input:focus,
-.lov-field select:focus,
-.lov-field textarea:focus {
-    outline: none;
-    border-color: #FCD400;
-    background: #fff;
+.lov-wrap .lov-field input:focus,
+.lov-wrap .lov-field select:focus,
+.lov-wrap .lov-field textarea:focus {
+    outline: none; border-color: #FCD400; background: #fff;
     box-shadow: 0 0 0 3px rgba(252,212,0,.18);
 }
-.lov-field textarea { resize: vertical; min-height: 64px; }
-
-.lov-checks { display: flex; flex-wrap: wrap; gap: 8px; }
-.lov-check {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    border: 1px solid #dfe2e8;
-    border-radius: 999px;
-    padding: 7px 12px;
-    font-size: 13px;
-    color: #1b1f25;
-    cursor: pointer;
-    background: #fcfcfd;
+.lov-wrap .lov-field textarea { resize: vertical; min-height: 64px; }
+.lov-wrap .lov-checks { display: flex; flex-wrap: wrap; gap: 8px; }
+.lov-wrap .lov-check {
+    display: flex; align-items: center; gap: 7px; border: 1px solid #dfe2e8;
+    border-radius: 999px; padding: 7px 12px; font-size: 13px; color: #1b1f25;
+    cursor: pointer; background: #fcfcfd;
 }
-.lov-check input { width: 15px; height: 15px; cursor: pointer; }
-
-.lov-actions {
-    grid-column: 1 / -1;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    justify-content: flex-end;
-    margin-top: 4px;
+.lov-wrap .lov-check input { width: 15px; height: 15px; cursor: pointer; }
+.lov-wrap .lov-actions {
+    grid-column: 1 / -1; display: flex; align-items: center;
+    gap: 10px; justify-content: flex-end; margin-top: 4px;
 }
-.lov-btn {
-    font-family: inherit;
-    font-weight: 700;
-    border-radius: 11px;
-    padding: 10px 16px;
-    cursor: pointer;
-    border: 1px solid #e9eaee;
-    background: #fff;
-    font-size: 14px;
-    color: #1b1f25;
+.lov-wrap .lov-btn {
+    font-family: inherit; font-weight: 700; border-radius: 11px; padding: 10px 16px;
+    cursor: pointer; border: 1px solid #e9eaee; background: #fff; font-size: 14px; color: #1b1f25;
 }
-.lov-btn.lov-primary,
-.lov-btn:focus { background: #FCD400; border-color: #e7c200; outline: none; }
-
-.lov-todo {
-    font-size: 11px;
-    color: #e07b00;
-    background: #fff6e8;
-    border: 1px solid #ffd599;
-    border-radius: 8px;
-    padding: 5px 10px;
-    margin-right: auto;
+.lov-wrap .lov-btn.lov-primary { background: #FCD400; border-color: #e7c200; }
+.lov-wrap .lov-btn:focus { outline: 2px solid #FCD400; outline-offset: 2px; }
+.lov-wrap .lov-todo {
+    font-size: 11px; color: #e07b00; background: #fff6e8; border: 1px solid #ffd599;
+    border-radius: 8px; padding: 5px 10px; margin-right: auto;
 }
-
-.lov-success {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 20px;
-    color: #1b1f25;
-    font-weight: 700;
-    font-size: 15px;
+.lov-wrap .lov-success {
+    display: flex; align-items: center; gap: 12px; padding: 20px;
+    color: #1b1f25; font-weight: 700; font-size: 15px;
 }
-.lov-success span { color: #2e7d32; font-size: 20px; }
+.lov-wrap .lov-success span { color: #2e7d32; font-size: 20px; }
