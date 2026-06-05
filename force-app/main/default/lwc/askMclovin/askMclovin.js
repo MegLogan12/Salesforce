@@ -180,8 +180,9 @@ const PORTAL_CSS = `
 // ── Component ──────────────────────────────────────────────────────────────
 export default class AskMclovin extends LightningElement {
 
-    _fullUrl = '';
-    _peekUrl = '';
+    _fullUrl  = '';
+    _peekUrl  = '';
+    _happyUrl = '';
 
     _state       = S.PERCH;
     _currentCard = null;
@@ -226,8 +227,9 @@ export default class AskMclovin extends LightningElement {
 
     /* ── Lifecycle ────────────────────────────────────────────────────────── */
     connectedCallback() {
-        this._fullUrl = ASSETS + '/full.png';
-        this._peekUrl = ASSETS + '/peek.png';
+        this._fullUrl  = ASSETS + '/full.png';
+        this._peekUrl  = ASSETS + '/peek.png';
+        this._happyUrl = ASSETS + '/happy.png';
 
         if (_portalOwned || document.getElementById(PORTAL_ID)) return;
         _portalOwned = true;
@@ -307,7 +309,7 @@ export default class AskMclovin extends LightningElement {
         return `
 <div class="mc pe">
   <div class="flip">
-    <img class="lean-img" src="${this._fullUrl}" alt="mcLOVIN'">
+    <img class="lean-img" src="${this._peekUrl}" alt="mcLOVIN'">
     <div class="open-card">
       <button class="close-btn pe" aria-label="Close">&#8211;</button>
       <div class="chips pe">
@@ -535,11 +537,25 @@ export default class AskMclovin extends LightningElement {
 
     /* ── Click on character ───────────────────────────────────────────────── */
     _onCharacterClick() {
+        this._expressionFlash();
         if (this._state === S.OPEN) {
             this._hideOpenCard();
         } else {
             this._showOpenCard();
         }
+    }
+
+    _expressionFlash() {
+        if (!this._leanEl || !this._happyUrl) return;
+        // Quick squash blink + happy expression, then back to lean pose
+        this._leanEl.style.transform = 'scaleY(.88)';
+        // eslint-disable-next-line @lwc/lwc/no-async-operation
+        setTimeout(() => {
+            this._leanEl.style.transform = '';
+            this._leanEl.src = this._happyUrl;
+            // eslint-disable-next-line @lwc/lwc/no-async-operation
+            setTimeout(() => { this._leanEl.src = this._peekUrl; }, 1400);
+        }, 110);
     }
 
     /* ── Typing detection ─────────────────────────────────────────────────── */
