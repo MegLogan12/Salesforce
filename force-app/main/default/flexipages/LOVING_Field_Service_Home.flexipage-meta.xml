@@ -7,12 +7,7 @@
                 <identifier>fs_home_ops_links</identifier>
             </componentInstance>
         </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentName>askMclovin</componentName>
-                <identifier>c_askMclovin_page</identifier>
-            </componentInstance>
-        </itemInstances>
+
         <name>main</name>
         <type>Region</type>
     </flexiPageRegions>

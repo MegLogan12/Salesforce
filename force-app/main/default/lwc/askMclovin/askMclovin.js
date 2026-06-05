@@ -1,25 +1,20 @@
-import { LightningElement, track, api } from 'lwc';
+import { LightningElement, api } from 'lwc';
 import ASSETS from '@salesforce/resourceUrl/askMclovin';
 import sendMessage from '@salesforce/apex/McLovinChatController.sendMessage';
 
-// Behavior config — tune timings, flags, and dialogue here without touching logic
+// ── Config ────────────────────────────────────────────────────────────────────
 const C = {
     timings: {
         entranceDelayMs:          600,
         entranceFadeMs:           350,
         walkSpeedPxPerSec:        240,
         runSpeedPxPerSec:         470,
-        turnMs:                   320,
         idleBeforeWanderMinMs:  12000,
         idleBeforeWanderMaxMs:  22000,
         perchSettleMs:            450,
-        peekIntervalMinMs:      30000,
-        peekIntervalMaxMs:      60000,
         peekHoldMs:              4200,
         lineCooldownMs:          9000,
-        maxLinesPerMinute:           4,
         quietWhileTypingMs:      4000,
-        returnToPerchAfterIdleMs:8000,
         celebrateCooldownMs:   120000
     },
     flags: {
@@ -27,7 +22,6 @@ const C = {
         wanderWhenIdle:            true,
         perchOnForms:              true,
         hangOnEdgeWhenNoPerch:     true,
-        followOnRecordChange:      true,
         rememberLastPosition:      true,
         neverCoverFocusedField:    true,
         muteLinesWhileTyping:      true
@@ -59,43 +53,20 @@ const C = {
             "Take your time, I've got nowhere to be."
         ],
         context: {
-            opportunity: [
-                "Want the smart way to close this one?",
-                "Tell me the objection and I'll hand you the line.",
-                "Stage looks ready to move. Nudge it?"
-            ],
-            account: [
-                "Want a quick read on this account before you call?",
-                "I can pull the last three touches if you want."
-            ],
-            lead: [
-                "Fresh lead. Want a fast qualifying question?",
-                "I can draft the first outreach if you like."
-            ],
-            quote: [
-                "Want me to sanity check this quote?",
-                "Margins look tight. Want options?"
-            ],
-            task: [
-                "Knock this out and I'll cheer.",
-                "Want me to draft the follow up?"
-            ],
-            report: [
-                "Want the one number that actually matters here?",
-                "I can summarize this in a sentence."
-            ]
+            opportunity: ["Want the smart way to close this one?", "Tell me the objection and I'll hand you the line.", "Stage looks ready to move. Nudge it?"],
+            account:     ["Want a quick read on this account before you call?", "I can pull the last three touches if you want."],
+            lead:        ["Fresh lead. Want a fast qualifying question?", "I can draft the first outreach if you like."],
+            quote:       ["Want me to sanity check this quote?", "Margins look tight. Want options?"],
+            task:        ["Knock this out and I'll cheer.", "Want me to draft the follow up?"],
+            report:      ["Want the one number that actually matters here?", "I can summarize this in a sentence."]
         },
-        minimized: [ "Need a hand?", "Tap me anytime.", "I'll be over here." ],
-        peek:      [ "Psst... need help closing this?", "Psst... I do shortcuts too.", "Knock knock. It's your unfair advantage." ],
-        drag_pickup: [ "Wheee.", "Where to, boss?" ],
-        drag_drop:   [ "Good spot.", "Right here works.", "Cozy." ]
+        minimized:   ["Need a hand?", "Tap me anytime.", "I'll be over here."],
+        peek:        ["Psst... need help closing this?", "Psst... I do shortcuts too.", "Knock knock. It's your unfair advantage."],
+        drag_pickup: ["Wheee.", "Where to, boss?"],
+        drag_drop:   ["Good spot.", "Right here works.", "Cozy."]
     }
 };
 
-// States
-const S = { ENTER:'enter', BADGE:'badge', WELCOME:'welcome', PERCH:'perch', EDGE:'edge', DRAG:'drag' };
-
-// Chip prompts wired to OpenAI
 const CHIP_PROMPTS = {
     po:        'I need to process a Purchase Order. What information do I need and how do I enter it in Salesforce? Keep it brief.',
     scope:     'Walk me through a scope of work intake quickly. What do I need to provide?',
@@ -105,82 +76,233 @@ const CHIP_PROMPTS = {
     missing:   'What information is most commonly missing on work orders that causes problems later? Be specific and brief.'
 };
 
-// Pick a random item from an array, never the same as last
+const PORTAL_ID  = 'mclovin-portal';
+const STYLES_ID  = 'mclovin-styles';
+const S = { ENTER:'enter', BADGE:'badge', WELCOME:'welcome', PERCH:'perch', EDGE:'edge', DRAG:'drag' };
+
 function pick(arr, last) {
     if (!arr || !arr.length) return '';
     const opts = arr.filter(l => l !== last);
     return opts[Math.floor(Math.random() * opts.length)] || arr[0];
 }
 
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+// ── CSS injected into document.head ──────────────────────────────────────────
+const PORTAL_CSS = `
+#mc-portal { position:fixed; inset:0; z-index:9999; pointer-events:none; }
+#mc-portal .mc {
+  position:fixed; pointer-events:auto; transition-property:left,top;
+  transition-timing-function:cubic-bezier(.22,.1,.3,1);
+}
+#mc-portal .mc.face-left { transform:scaleX(-1); }
+
+@keyframes mcBob {
+  0%,100% { transform:translateY(0) scale(1); }
+  50%     { transform:translateY(-7px) scale(1.006); }
+}
+@keyframes mcBobFlip {
+  0%,100% { transform:scaleX(-1) translateY(0) scale(1); }
+  50%     { transform:scaleX(-1) translateY(-7px) scale(1.006); }
+}
+@keyframes mcWalkBob {
+  0%,100% { transform:translateY(0); }
+  50%     { transform:translateY(-5px); }
+}
+@keyframes mcPing {
+  0%   { box-shadow:0 0 0 0 rgba(252,212,0,.45); }
+  70%  { box-shadow:0 0 0 12px rgba(252,212,0,0); }
+  100% { box-shadow:0 0 0 0 rgba(252,212,0,0); }
+}
+
+/* BADGE */
+#mc-portal .badge {
+  width:96px; height:96px; border-radius:50%; background:#fff;
+  border:1px solid rgba(0,0,0,.08); box-shadow:0 14px 34px rgba(20,24,40,.22);
+  overflow:hidden; display:grid; place-items:end center; cursor:grab;
+}
+#mc-portal .badge img {
+  width:108px; margin-bottom:-6px; transform-origin:bottom center;
+  will-change:transform;
+}
+#mc-portal .badge.bobbing img { animation:mcBob 4.2s ease-in-out infinite both; }
+#mc-portal .mc.face-left .badge.bobbing img { animation:mcBobFlip 4.2s ease-in-out infinite both; }
+#mc-portal .badge .pulse {
+  position:absolute; right:6px; bottom:6px; width:26px; height:26px;
+  border-radius:50%; background:#FCD400; display:grid; place-items:center;
+  font-size:13px; animation:mcPing 2.4s infinite;
+}
+
+/* WALKING */
+#mc-portal .walker {
+  height:160px; display:block; cursor:grab;
+  filter:drop-shadow(0 12px 20px rgba(20,24,40,.25));
+  animation:mcWalkBob .45s ease-in-out infinite both;
+  transform-origin:bottom center; will-change:transform;
+}
+
+/* PERCHED */
+#mc-portal .perched {
+  height:140px; display:block; cursor:pointer;
+  filter:drop-shadow(0 12px 20px rgba(20,24,40,.22));
+  animation:mcBob 4.5s ease-in-out infinite both;
+  transform-origin:bottom center; will-change:transform;
+}
+
+/* EDGE HANG */
+#mc-portal .edge-hang {
+  height:160px; display:block; cursor:pointer;
+  filter:drop-shadow(-10px 14px 22px rgba(20,24,40,.25));
+  animation:mcBob 5s ease-in-out infinite both;
+  transform-origin:center; will-change:transform;
+}
+
+/* OPEN CARD */
+#mc-portal .open { position:relative; width:540px; height:430px; }
+#mc-portal .open .body {
+  position:absolute; left:0; bottom:0; height:400px;
+  filter:drop-shadow(0 16px 26px rgba(20,24,40,.28));
+  animation:mcBob 4.2s ease-in-out infinite both;
+  transform-origin:bottom center; will-change:transform; cursor:grab;
+}
+#mc-portal .close-btn {
+  position:absolute; right:0; top:0; width:30px; height:30px; border-radius:50%;
+  background:#fff; border:1px solid rgba(0,0,0,.08); cursor:pointer;
+  font-size:16px; color:#6b7280; display:grid; place-items:center;
+}
+#mc-portal .panel {
+  position:absolute; right:0; top:54px; width:300px;
+  display:flex; flex-direction:column; gap:10px;
+}
+#mc-portal .chips { display:flex; gap:7px; flex-wrap:wrap; }
+#mc-portal .chip {
+  background:#fff; border:1px solid rgba(0,0,0,.08); border-radius:999px;
+  padding:7px 12px; font-size:13px; font-weight:600; cursor:pointer;
+}
+#mc-portal .chip:hover { border-color:#FCD400; background:#fffdf0; }
+#mc-portal .askbar {
+  display:flex; gap:8px; background:#fff; border:1px solid rgba(0,0,0,.08);
+  border-radius:14px; padding:7px 8px 7px 13px;
+  box-shadow:0 10px 26px rgba(20,24,40,.12);
+}
+#mc-portal .askbar input { flex:1; border:none; outline:none; font-size:14px; background:transparent; }
+#mc-portal .askbar button {
+  border:none; background:#FCD400; color:#1b1f25; font-weight:800;
+  border-radius:10px; padding:8px 12px; cursor:pointer; min-width:50px;
+}
+#mc-portal .askbar button:disabled { opacity:.5; cursor:default; }
+
+/* BUBBLE */
+#mc-portal .bubble {
+  position:fixed; max-width:260px; background:#fff; border:1px solid rgba(0,0,0,.08);
+  border-radius:18px; padding:12px 14px; box-shadow:0 18px 40px rgba(20,24,40,.18);
+  font-size:14px; line-height:1.4; color:#1b1f25;
+  opacity:0; transform:translateY(6px) scale(.98);
+  transition:opacity .25s, transform .25s; pointer-events:none; z-index:10000;
+}
+#mc-portal .bubble.show { opacity:1; transform:none; }
+#mc-portal .open .bubble { position:absolute; opacity:1; transform:none; }
+#mc-portal .bubble b { color:#caa500; }
+#mc-portal .spark {
+  display:inline-grid; place-items:center; width:22px; height:22px; border-radius:50%;
+  background:#FCD400; font-size:12px; vertical-align:-5px; margin-right:7px;
+}
+#mc-portal .tail {
+  position:absolute; width:14px; height:14px; background:#fff;
+  border-right:1px solid rgba(0,0,0,.08); border-bottom:1px solid rgba(0,0,0,.08);
+  transform:rotate(45deg);
+}
+
+/* PEEK */
+#mc-portal .peek {
+  position:fixed; right:-260px; bottom:120px; width:240px;
+  transition:right .5s cubic-bezier(.2,.8,.2,1); pointer-events:none; z-index:9998;
+}
+#mc-portal .peek.in { right:-20px; }
+#mc-portal .peek img { width:240px; filter:drop-shadow(-12px 16px 26px rgba(20,24,40,.25)); }
+#mc-portal .peek .bubble { position:absolute; right:220px; bottom:100px; }
+
+@media (prefers-reduced-motion:reduce) {
+  #mc-portal .walker,#mc-portal .perched,#mc-portal .edge-hang,
+  #mc-portal .badge img,#mc-portal .open .body { animation:none; }
+  #mc-portal .peek { transition:none; }
+  #mc-portal .bubble { transition:none; }
+  #mc-portal .mc { transition:none !important; }
+}
+`;
+
+// ── Component ─────────────────────────────────────────────────────────────────
 export default class AskMclovin extends LightningElement {
-    headUrl = ASSETS + '/head.png';
-    fullUrl  = ASSETS + '/full.png';
-    peekUrl  = ASSETS + '/peek.png';
 
-    @track _state     = S.ENTER;
-    @track pos        = { x: -160, y: 0 };   // off-screen left initially
-    @track isWalking  = false;
-    @track faceRight  = true;
-    @track nudgeText  = '';
-    @track nudgeOn    = false;
-    @track isThinking = false;
+    // Asset URLs (set in connectedCallback once ASSETS is resolved)
+    _headUrl = '';
+    _fullUrl  = '';
+    _peekUrl  = '';
 
-    _history       = [];
-    _drag          = null;
-    _dragMoved     = false;
-    _moveH         = null;
-    _upH           = null;
-    _peekTimer     = null;
-    _idleTimer     = null;
-    _nudgeTimer    = null;
-    _walkTimer     = null;
-    _lastLine      = '';
-    _lineCount     = 0;
-    _lineMinute    = 0;
-    _typingTimer   = null;
-    _typing        = false;
-    _currentPerch  = null;
+    // State
+    _state     = S.BADGE;
+    _posX      = null;   // null = use default corner
+    _posY      = null;
+    _faceRight = true;
+    _isWalking = false;
+    _isThinking = false;
+    _nudgeText  = '';
+    _nudgeOn    = false;
+    _peekVis    = false;
+    _peekBubble = false;
     _reducedMotion = false;
-    _walkTrans     = '';
 
-    /* ---- computed getters ---- */
-    get isBadge()   { return this._state === S.BADGE; }
-    get isOpen()    { return this._state === S.WELCOME; }
-    get isPerch()   { return this._state === S.PERCH; }
-    get isEdge()    { return this._state === S.EDGE; }
-    get isEntering(){ return this._state === S.ENTER; }
+    // DOM refs (portal elements)
+    _portal    = null;
+    _mcEl      = null;
+    _badgeEl   = null;
+    _walkerEl  = null;
+    _perchedEl = null;
+    _edgeEl    = null;
+    _openEl    = null;
+    _nudgeEl   = null;
+    _peekEl    = null;
+    _peekBubEl = null;
+    _inputEl   = null;
 
-    get mcStyle() {
-        const trans = this._walkTrans ? `transition:${this._walkTrans};` : '';
-        const flip  = this.faceRight  ? '' : 'transform:scaleX(-1);';
-        if (this.pos.x === null) return `left:auto;right:34px;top:auto;bottom:34px;${trans}${flip}`;
-        return `left:${this.pos.x}px;top:${this.pos.y}px;right:auto;bottom:auto;${trans}${flip}`;
-    }
-    get overlayClass() { return this.isWalking ? 'mc-overlay walking' : 'mc-overlay'; }
-    get nudgeClass()   { return 'bubble nudge pe' + (this.nudgeOn ? ' show' : ''); }
-    get nudgeStyle()   { return this._nudgeStyle || ''; }
-    get peekClass()    { return 'peek' + (this._peekVis ? ' in' : ''); }
-    get peekBubbleClass() { return 'bubble' + (this._peekBubble ? ' show' : ''); }
+    // Timers / misc
+    _walkTimer   = null;
+    _idleTimer   = null;
+    _nudgeTimer  = null;
+    _typingTimer = null;
+    _drag        = null;
+    _dragMoved   = false;
+    _lastLine    = '';
+    _typing      = false;
+    _history     = [];
+    _isOwner     = false;   // true if this instance created the portal
 
-    /* ---- lifecycle ---- */
+    // Bound handlers stored for cleanup
+    _onMove = null;
+    _onUp   = null;
+    _onKey  = null;
+    _onType = null;
+
+    /* ── Lifecycle ─────────────────────────────────────────────────────────── */
     connectedCallback() {
-        this._reducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-        this._moveH = (e) => this._onDragMove(e);
-        this._upH   = () => this._onDragEnd();
-        window.addEventListener('mousemove',  this._moveH);
-        window.addEventListener('touchmove',  this._moveH, { passive: false });
-        window.addEventListener('mouseup',    this._upH);
-        window.addEventListener('touchend',   this._upH);
-        window.addEventListener('keydown',    (e) => { if (e.key === 'Escape') this.minimize(); });
-        // Listen for typing to suppress lines
-        window.addEventListener('keypress', () => this._onTyping());
+        this._headUrl = ASSETS + '/head.png';
+        this._fullUrl  = ASSETS + '/full.png';
+        this._peekUrl  = ASSETS + '/peek.png';
+        this._reducedMotion = window.matchMedia?.('(prefers-reduced-motion:reduce)').matches;
 
-        // Restore saved position
-        if (C.flags.rememberLastPosition) {
-            try {
-                const saved = JSON.parse(localStorage.getItem('mclovin_pos') || 'null');
-                if (saved) this._savedPos = saved;
-            } catch (_) { /* ignore */ }
+        // Only the first mounted instance owns the portal
+        if (document.getElementById(PORTAL_ID)) {
+            return; // another instance already owns it
+        }
+        this._isOwner = true;
+        this._injectStyles();
+        this._createPortal();
+        this._bindGlobalEvents();
+
+        const savedX = this._loadPos();
+        if (savedX !== null) {
+            this._posX = savedX.x;
+            this._posY = savedX.y;
         }
 
         // eslint-disable-next-line @lwc/lwc/no-async-operation
@@ -188,31 +310,216 @@ export default class AskMclovin extends LightningElement {
     }
 
     disconnectedCallback() {
-        window.removeEventListener('mousemove', this._moveH);
-        window.removeEventListener('touchmove', this._moveH);
-        window.removeEventListener('mouseup',   this._upH);
-        window.removeEventListener('touchend',  this._upH);
-        clearTimeout(this._peekTimer);
+        if (!this._isOwner) return;
+        clearTimeout(this._walkTimer);
         clearTimeout(this._idleTimer);
         clearTimeout(this._nudgeTimer);
-        clearTimeout(this._walkTimer);
+        clearTimeout(this._typingTimer);
+        window.removeEventListener('mousemove', this._onMove);
+        window.removeEventListener('touchmove', this._onMove);
+        window.removeEventListener('mouseup',   this._onUp);
+        window.removeEventListener('touchend',  this._onUp);
+        window.removeEventListener('keydown',   this._onKey);
+        window.removeEventListener('keypress',  this._onType);
+        const portal = document.getElementById(PORTAL_ID);
+        if (portal) portal.remove();
+        const styles = document.getElementById(STYLES_ID);
+        if (styles) styles.remove();
     }
 
-    /* ---- public API ---- */
-    @api open()     { this._setState(S.WELCOME); this.nudgeOn = false; }
+    /* ── Public API ────────────────────────────────────────────────────────── */
+    @api open()     { this._setState(S.WELCOME); this._setNudge('', false); }
     @api minimize() { this._goToBadgeOrPerch(); }
     @api peek()     { this._doPeek(); }
     @api say(text)  { this._showBubble(text, true); }
 
-    /* ---- entrance ---- */
+    /* ── Styles + Portal creation ──────────────────────────────────────────── */
+    _injectStyles() {
+        if (document.getElementById(STYLES_ID)) return;
+        const s = document.createElement('style');
+        s.id = STYLES_ID;
+        s.textContent = PORTAL_CSS;
+        document.head.appendChild(s);
+    }
+
+    _createPortal() {
+        const p = document.createElement('div');
+        p.id = PORTAL_ID;
+        p.innerHTML = this._portalHTML();
+        document.body.appendChild(p);
+        this._portal  = p;
+        this._cacheRefs();
+        this._bindPortalEvents();
+        this._syncDOM();
+    }
+
+    _portalHTML() {
+        return `
+<div class="mc">
+  <div class="badge pe grab">
+    <img src="${this._headUrl}" alt="Ask mcLOVIN'">
+    <div class="pulse">&#10022;</div>
+  </div>
+  <img class="walker" src="${this._fullUrl}" alt="mcLOVIN walking">
+  <img class="perched" src="${this._fullUrl}" alt="mcLOVIN perched">
+  <img class="edge-hang" src="${this._peekUrl}" alt="mcLOVIN edge">
+  <div class="open pe">
+    <button class="close-btn">&#8211;</button>
+    <img class="body grab" src="${this._fullUrl}" alt="mcLOVIN">
+    <div class="panel">
+      <div class="bubble show intro-bubble">
+        <span class="spark">&#10022;</span>
+        Hey, I&rsquo;m <b>Ask mcLOVIN&rsquo;</b>. Drop the details here and I&rsquo;ll find the right path.
+        <span class="tail" style="left:18px;bottom:-7px"></span>
+      </div>
+      <div class="chips pe">
+        <span class="chip" data-q="po">Upload PO</span>
+        <span class="chip" data-q="scope">Scope</span>
+        <span class="chip" data-q="account">New Account</span>
+        <span class="chip" data-q="homeowner">Homeowner Intake</span>
+        <span class="chip" data-q="find">Find Existing Job</span>
+        <span class="chip" data-q="missing">What&rsquo;s Missing?</span>
+      </div>
+      <div class="askbar pe">
+        <input type="text" placeholder="Ask mcLOVIN' anything...">
+        <button class="send-btn">Ask</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="bubble nudge-bubble pe"></div>
+<div class="peek">
+  <div class="bubble peek-bubble"></div>
+  <img src="${this._peekUrl}" alt="peek">
+</div>`;
+    }
+
+    _cacheRefs() {
+        const p = this._portal;
+        this._mcEl      = p.querySelector('.mc');
+        this._badgeEl   = p.querySelector('.badge');
+        this._walkerEl  = p.querySelector('.walker');
+        this._perchedEl = p.querySelector('.perched');
+        this._edgeEl    = p.querySelector('.edge-hang');
+        this._openEl    = p.querySelector('.open');
+        this._nudgeEl   = p.querySelector('.nudge-bubble');
+        this._peekEl    = p.querySelector('.peek');
+        this._peekBubEl = p.querySelector('.peek-bubble');
+        this._inputEl   = p.querySelector('.askbar input');
+    }
+
+    _bindPortalEvents() {
+        const p = this._portal;
+        p.querySelector('.badge').addEventListener('mousedown',  (e) => this._onDragStart(e));
+        p.querySelector('.badge').addEventListener('touchstart', (e) => this._onDragStart(e), {passive:false});
+        p.querySelector('.badge').addEventListener('click',      ()  => this._onBadgeClick());
+        p.querySelector('.perched').addEventListener('click',    ()  => this.open());
+        p.querySelector('.perched').addEventListener('mousedown',(e) => this._onDragStart(e));
+        p.querySelector('.edge-hang').addEventListener('click',  ()  => this.open());
+        p.querySelector('.edge-hang').addEventListener('mousedown',(e)=>this._onDragStart(e));
+        p.querySelector('.open .body').addEventListener('mousedown',(e)=>this._onDragStart(e));
+        p.querySelector('.open .body').addEventListener('touchstart',(e)=>this._onDragStart(e),{passive:false});
+        p.querySelector('.close-btn').addEventListener('click',  ()  => this.minimize());
+        p.querySelector('.send-btn').addEventListener('click',   ()  => this._onSend());
+        this._inputEl.addEventListener('keyup', (e) => { if (e.key==='Enter') this._onSend(); });
+        p.querySelectorAll('.chip').forEach(c => c.addEventListener('click', (e) => this._onChip(e)));
+    }
+
+    _bindGlobalEvents() {
+        this._onMove = (e) => this._onDragMove(e);
+        this._onUp   = ()  => this._onDragEnd();
+        this._onKey  = (e) => { if (e.key==='Escape') this.minimize(); };
+        this._onType = ()  => this._onTyping();
+        window.addEventListener('mousemove', this._onMove);
+        window.addEventListener('touchmove', this._onMove, {passive:false});
+        window.addEventListener('mouseup',   this._onUp);
+        window.addEventListener('touchend',  this._onUp);
+        window.addEventListener('keydown',   this._onKey);
+        window.addEventListener('keypress',  this._onType);
+    }
+
+    /* ── DOM sync ─────────────────────────────────────────────────────────── */
+    _syncDOM() {
+        if (!this._mcEl) return;
+
+        // Position
+        if (this._posX === null) {
+            this._mcEl.style.left   = 'auto';
+            this._mcEl.style.right  = '34px';
+            this._mcEl.style.top    = 'auto';
+            this._mcEl.style.bottom = '34px';
+        } else {
+            this._mcEl.style.left   = this._posX + 'px';
+            this._mcEl.style.top    = this._posY + 'px';
+            this._mcEl.style.right  = 'auto';
+            this._mcEl.style.bottom = 'auto';
+        }
+
+        // Direction flip
+        this._mcEl.classList.toggle('face-left', !this._faceRight);
+
+        // Bob on badge only when idle
+        this._badgeEl.classList.toggle('bobbing', this._state === S.BADGE && !this._isWalking);
+
+        // State visibility
+        this._badgeEl.style.display   = this._state === S.BADGE    ? '' : 'none';
+        this._walkerEl.style.display  = this._state === S.ENTER    ? '' : 'none';
+        this._perchedEl.style.display = this._state === S.PERCH    ? '' : 'none';
+        this._edgeEl.style.display    = this._state === S.EDGE     ? '' : 'none';
+        this._openEl.style.display    = this._state === S.WELCOME  ? '' : 'none';
+
+        // Nudge bubble
+        if (this._nudgeOn && this._nudgeText) {
+            this._nudgeEl.innerHTML = `<span class="spark">&#10022;</span>${this._nudgeText}<span class="tail" style="right:-7px;bottom:20px"></span>`;
+            this._nudgeEl.classList.add('show');
+        } else {
+            this._nudgeEl.classList.remove('show');
+        }
+
+        // Peek
+        this._peekEl.classList.toggle('in', this._peekVis);
+        if (this._peekBubble && this._nudgeText) {
+            this._peekBubEl.innerHTML = `<span class="spark">&#10022;</span>${this._nudgeText}`;
+            this._peekBubEl.classList.add('show');
+        } else {
+            this._peekBubEl.classList.remove('show');
+        }
+
+        // Send button thinking state
+        const sendBtn = this._portal?.querySelector('.send-btn');
+        if (sendBtn) {
+            sendBtn.textContent = this._isThinking ? '...' : 'Ask';
+            sendBtn.disabled    = this._isThinking;
+        }
+        if (this._inputEl) this._inputEl.disabled = this._isThinking;
+    }
+
+    _setPos(x, y) { this._posX = x; this._posY = y; this._syncDOM(); }
+    _setState(s)   { this._state = s; this._syncDOM(); }
+
+    _setNudge(text, on) {
+        // Position nudge near the character
+        if (on && text && this._mcEl) {
+            const b = this._mcEl.getBoundingClientRect();
+            const nx = clamp(b.left - 270, 12, window.innerWidth - 280);
+            const ny = clamp(b.top - 12, 8, window.innerHeight - 120);
+            this._nudgeEl.style.left = nx + 'px';
+            this._nudgeEl.style.top  = ny + 'px';
+        }
+        this._nudgeText = text;
+        this._nudgeOn   = on;
+        this._syncDOM();
+    }
+
+    /* ── Entrance ──────────────────────────────────────────────────────────── */
     _runEntrance() {
+        if (!this._isOwner || !this._mcEl) return;
         const vw = window.innerWidth;
         const vh = window.innerHeight;
-        const groundY = vh - 160;
+        const groundY = vh - 180;
 
         if (this._reducedMotion) {
-            // Fade in directly, show welcome bubble, then settle
-            this.pos = { x: vw - 160, y: groundY };
+            this._setPos(vw - 160, groundY);
             this._setState(S.ENTER);
             this._showBubble(pick(C.dialogue.entrance, this._lastLine), true);
             // eslint-disable-next-line @lwc/lwc/no-async-operation
@@ -220,20 +527,17 @@ export default class AskMclovin extends LightningElement {
             return;
         }
 
-        // Place off-screen left, at ground level
-        this.pos     = { x: -160, y: groundY };
-        this.faceRight = true;
+        this._faceRight = true;
+        this._setPos(-170, groundY);
         this._setState(S.ENTER);
 
-        // Walk to resting spot
         // eslint-disable-next-line @lwc/lwc/no-async-operation
         setTimeout(() => {
-            const perch = this._findBestPerch();
-            const targetX = perch ? this._perchX(perch) : Math.max(vw * 0.18, 100);
+            const perch   = this._findBestPerch();
+            const targetX = perch ? this._perchX(perch) : clamp(vw * 0.18, 100, vw - 180);
             this._walkTo(targetX, groundY, () => {
-                // Arrived — show entrance line, then settle
-                this.isWalking = false;
-                this._walkTrans = '';
+                this._isWalking = false;
+                this._clearTransition();
                 this._showBubble(pick(C.dialogue.entrance, this._lastLine), true);
                 // eslint-disable-next-line @lwc/lwc/no-async-operation
                 setTimeout(() => {
@@ -244,80 +548,83 @@ export default class AskMclovin extends LightningElement {
         }, C.timings.entranceFadeMs);
     }
 
-    /* ---- walking ---- */
-    _walkTo(targetX, targetY, onDone) {
-        const dist     = Math.hypot(targetX - this.pos.x, targetY - this.pos.y);
-        const duration = Math.round((dist / C.timings.walkSpeedPxPerSec) * 1000);
-        this.faceRight  = targetX > this.pos.x;
-        this.isWalking  = true;
-        this._walkTrans = `left ${duration}ms cubic-bezier(0.22,0.1,0.3,1), top ${duration}ms cubic-bezier(0.22,0.1,0.3,1)`;
-
-        // Trigger the CSS transition
-        // eslint-disable-next-line @lwc/lwc/no-async-operation
-        setTimeout(() => { this.pos = { x: targetX, y: targetY }; }, 30);
+    /* ── Walking ───────────────────────────────────────────────────────────── */
+    _walkTo(tx, ty, onDone, fast) {
+        if (!this._mcEl) return;
+        const dist = Math.hypot(tx - this._posX, ty - this._posY);
+        const spd  = fast ? C.timings.runSpeedPxPerSec : C.timings.walkSpeedPxPerSec;
+        const dur  = Math.round((dist / spd) * 1000);
+        this._faceRight = tx > this._posX;
+        this._isWalking = true;
+        this._mcEl.classList.toggle('face-left', !this._faceRight);
+        // Apply transition
+        this._mcEl.style.transitionDuration = dur + 'ms';
+        // Nudge layout by reading offsetLeft before setting new pos
+        // eslint-disable-next-line no-unused-expressions
+        this._mcEl.offsetLeft; // force reflow
+        this._setPos(tx, ty);
         clearTimeout(this._walkTimer);
         // eslint-disable-next-line @lwc/lwc/no-async-operation
-        this._walkTimer = setTimeout(onDone, duration + 60);
+        this._walkTimer = setTimeout(() => {
+            this._isWalking = false;
+            this._clearTransition();
+            onDone();
+        }, dur + 80);
     }
 
-    /* ---- perch system ---- */
+    _clearTransition() {
+        if (this._mcEl) this._mcEl.style.transitionDuration = '0ms';
+    }
+
+    /* ── Perch system ──────────────────────────────────────────────────────── */
     _findBestPerch() {
         if (!C.flags.perchOnForms) return null;
-        const els = this.template?.querySelectorAll?.('[data-mclovin-perch]')
-               || document.querySelectorAll('[data-mclovin-perch]');
-        if (!els || !els.length) return null;
+        const els = document.querySelectorAll('[data-mclovin-perch]');
+        if (!els.length) return null;
         let best = null, bestScore = -Infinity;
         els.forEach(el => {
             const r = el.getBoundingClientRect();
-            if (r.width < 10 || r.height < 10) return;
-            if (r.bottom < 0 || r.top > window.innerHeight) return;
-            const priority  = parseInt(el.dataset.mclovinPriority || '0', 10);
-            const centerDx  = Math.abs((r.left + r.width / 2) - window.innerWidth / 2);
-            const score     = priority * 100 - centerDx;
+            if (r.width < 10 || r.bottom < 0 || r.top > window.innerHeight) return;
+            const pri   = parseInt(el.dataset.mclovinPriority || '0', 10);
+            const score = pri * 100 - Math.abs((r.left + r.width/2) - window.innerWidth/2);
             if (score > bestScore) { bestScore = score; best = el; }
         });
         return best;
     }
 
     _perchX(el) {
-        const r    = el.getBoundingClientRect();
-        const type = el.dataset.mclovinPerch || 'stand';
-        const cfg  = C.perchTypes[type] || C.perchTypes['stand'];
-        const anchor = cfg.anchor;
+        const r   = el.getBoundingClientRect();
+        const cfg = C.perchTypes[el.dataset.mclovinPerch] || C.perchTypes['stand'];
         let x = 0;
-        if (anchor === 'topRight' || anchor === 'rightMid' || anchor === 'bottomRight') x = r.right + cfg.offsetX;
-        else if (anchor === 'leftMid')   x = r.left + cfg.offsetX;
-        else if (anchor === 'topCenter') x = r.left + r.width / 2 + cfg.offsetX;
-        else                             x = r.right + cfg.offsetX;
-        return Math.max(8, Math.min(window.innerWidth - 120, x));
+        if (cfg.anchor === 'topRight' || cfg.anchor === 'rightMid' || cfg.anchor === 'bottomRight') x = r.right + cfg.offsetX;
+        else if (cfg.anchor === 'leftMid')   x = r.left  + cfg.offsetX;
+        else if (cfg.anchor === 'topCenter') x = r.left  + r.width/2 + cfg.offsetX;
+        else                                 x = r.right + cfg.offsetX;
+        return clamp(x, 8, window.innerWidth - 130);
     }
 
     _perchY(el) {
-        const r    = el.getBoundingClientRect();
-        const type = el.dataset.mclovinPerch || 'stand';
-        const cfg  = C.perchTypes[type] || C.perchTypes['stand'];
-        const anchor = cfg.anchor;
+        const r   = el.getBoundingClientRect();
+        const cfg = C.perchTypes[el.dataset.mclovinPerch] || C.perchTypes['stand'];
         let y = 0;
-        if (anchor === 'topRight' || anchor === 'topCenter' || anchor === 'bottomRight') y = r.top + cfg.offsetY;
-        else if (anchor === 'leftMid' || anchor === 'rightMid') y = r.top + r.height / 2 + cfg.offsetY;
+        if (cfg.anchor === 'topRight' || cfg.anchor === 'topCenter') y = r.top + cfg.offsetY;
+        else if (cfg.anchor === 'leftMid' || cfg.anchor === 'rightMid') y = r.top + r.height/2 + cfg.offsetY;
+        else if (cfg.anchor === 'bottomRight') y = r.bottom + cfg.offsetY;
         else y = r.top + cfg.offsetY;
-        return Math.max(8, Math.min(window.innerHeight - 120, y));
+        return clamp(y, 8, window.innerHeight - 160);
     }
 
     _perchOn(el) {
-        const ctx  = el.dataset.mclovinContext;
-        const x    = this._perchX(el);
-        const y    = this._perchY(el);
-        this._currentPerch = el;
+        const ctx = el.dataset.mclovinContext;
+        const tx  = this._perchX(el);
+        const ty  = this._perchY(el);
         if (this._reducedMotion) {
-            this.pos = { x, y };
+            this._setPos(tx, ty);
             this._setState(S.PERCH);
             this._sayContextLine(ctx);
             this._scheduleIdle();
         } else {
-            this._walkTo(x, y, () => {
-                this.isWalking = false;
-                this._walkTrans = '';
+            this._walkTo(tx, ty, () => {
                 this._setState(S.PERCH);
                 this._sayContextLine(ctx);
                 this._scheduleIdle();
@@ -326,31 +633,27 @@ export default class AskMclovin extends LightningElement {
     }
 
     _sayContextLine(ctx) {
-        let bank = (ctx && C.dialogue.context[ctx]) ? C.dialogue.context[ctx] : C.dialogue.perch_generic;
+        const bank = (ctx && C.dialogue.context[ctx]) ? C.dialogue.context[ctx] : C.dialogue.perch_generic;
         const line = pick(bank, this._lastLine);
         // eslint-disable-next-line @lwc/lwc/no-async-operation
         setTimeout(() => this._showBubble(line, false), C.timings.perchSettleMs);
     }
 
-    /* ---- edge hang ---- */
+    /* ── Edge / badge ─────────────────────────────────────────────────────── */
     _goToEdgeOrBadge() {
         if (!C.flags.hangOnEdgeWhenNoPerch) {
             this._setState(S.BADGE);
             this._scheduleIdle();
             return;
         }
-        const vw = window.innerWidth;
-        const vh = window.innerHeight;
-        const targetX = vw - 90;
-        const targetY = vh * 0.5;
+        const tx = window.innerWidth  - 110;
+        const ty = window.innerHeight * 0.45;
         if (this._reducedMotion) {
-            this.pos = { x: targetX, y: targetY };
+            this._setPos(tx, ty);
             this._setState(S.EDGE);
             this._scheduleIdle();
         } else {
-            this._walkTo(targetX, targetY, () => {
-                this.isWalking = false;
-                this._walkTrans = '';
+            this._walkTo(tx, ty, () => {
                 this._setState(S.EDGE);
                 this._scheduleIdle();
             });
@@ -360,21 +663,24 @@ export default class AskMclovin extends LightningElement {
     _goToBadgeOrPerch() {
         clearTimeout(this._idleTimer);
         const perch = this._findBestPerch();
-        if (perch) this._perchOn(perch);
-        else {
+        if (perch) {
+            this._perchOn(perch);
+        } else {
+            this._posX = null; // snap to corner
+            this._posY = null;
             this._setState(S.BADGE);
             this._scheduleIdle();
         }
     }
 
-    /* ---- idle scheduling ---- */
+    /* ── Idle / peek ───────────────────────────────────────────────────────── */
     _scheduleIdle() {
         clearTimeout(this._idleTimer);
         const delay = C.timings.idleBeforeWanderMinMs
             + Math.random() * (C.timings.idleBeforeWanderMaxMs - C.timings.idleBeforeWanderMinMs);
         // eslint-disable-next-line @lwc/lwc/no-async-operation
         this._idleTimer = setTimeout(() => {
-            if (this._state === S.BADGE || this._state === S.PERCH || this._state === S.EDGE) {
+            if ([S.BADGE, S.PERCH, S.EDGE].includes(this._state)) {
                 if (Math.random() < 0.4) this._doPeek();
                 else this._showBubble(pick(C.dialogue.idle, this._lastLine), false);
             }
@@ -382,20 +688,30 @@ export default class AskMclovin extends LightningElement {
         }, delay);
     }
 
-    /* ---- peek ---- */
     _doPeek() {
         if (this._peekVis) return;
+        const line = pick(C.dialogue.peek, this._lastLine);
+        this._lastLine = line;
         this._peekVis = true;
+        this._syncDOM();
         // eslint-disable-next-line @lwc/lwc/no-async-operation
-        setTimeout(() => { this._peekBubble = true; }, 420);
+        setTimeout(() => { this._peekBubble = true; this._nudgeText = line; this._syncDOM(); }, 420);
         // eslint-disable-next-line @lwc/lwc/no-async-operation
-        setTimeout(() => {
-            this._peekBubble = false;
-            this._peekVis    = false;
-        }, C.timings.peekHoldMs);
+        setTimeout(() => { this._peekBubble = false; this._peekVis = false; this._syncDOM(); }, C.timings.peekHoldMs);
     }
 
-    /* ---- typing detection ---- */
+    /* ── Bubble ────────────────────────────────────────────────────────────── */
+    _showBubble(text, sticky) {
+        if (!text) return;
+        if (this._typing && C.flags.muteLinesWhileTyping && !sticky) return;
+        clearTimeout(this._nudgeTimer);
+        this._setNudge(text, true);
+        this._lastLine = text;
+        // eslint-disable-next-line @lwc/lwc/no-async-operation
+        this._nudgeTimer = setTimeout(() => this._setNudge('', false), sticky ? 7000 : 3500);
+    }
+
+    /* ── Typing detection ──────────────────────────────────────────────────── */
     _onTyping() {
         this._typing = true;
         clearTimeout(this._typingTimer);
@@ -403,50 +719,25 @@ export default class AskMclovin extends LightningElement {
         this._typingTimer = setTimeout(() => { this._typing = false; }, C.timings.quietWhileTypingMs);
     }
 
-    /* ---- nudge bubble ---- */
-    _showBubble(text, sticky) {
-        if (!text) return;
-        if (this._typing && C.flags.muteLinesWhileTyping && !sticky) return;
-        this._lastLine = text;
-        this.nudgeText = text;
-        const mc = this.template.querySelector('.mc');
-        if (mc) {
-            const b = mc.getBoundingClientRect();
-            this._nudgeStyle = `left:${Math.max(12, b.left - 240)}px;top:${Math.max(8, b.top - 10)}px;max-width:230px;`;
-        }
-        this.nudgeOn = true;
-        clearTimeout(this._nudgeTimer);
-        // eslint-disable-next-line @lwc/lwc/no-async-operation
-        this._nudgeTimer = setTimeout(() => { this.nudgeOn = false; }, sticky ? 7000 : 3500);
-    }
+    /* ── Interactions ──────────────────────────────────────────────────────── */
+    _onBadgeClick()  { if (!this._dragMoved) this.open(); }
 
-    /* ---- state helper ---- */
-    _setState(s) { this._state = s; }
-
-    /* ---- interactions ---- */
-    onBadgeClick() { if (!this._dragMoved) this.open(); }
-    onPerchClick()  { this.open(); }
-    onEdgeClick()   { this.open(); }
-
-    onChip(e) {
+    _onChip(e) {
         const prompt = CHIP_PROMPTS[e.currentTarget.dataset.q];
         if (prompt) this._callAI(prompt);
     }
 
-    onSend() {
-        const inp = this.template.querySelector('.askbar input');
-        if (inp && inp.value.trim()) {
-            this._callAI(inp.value.trim());
-            inp.value = '';
-        }
+    _onSend() {
+        if (!this._inputEl) return;
+        const val = this._inputEl.value.trim();
+        if (val) { this._callAI(val); this._inputEl.value = ''; }
     }
 
-    onAskKey(e) { if (e.key === 'Enter') this.onSend(); }
-
-    /* ---- AI call ---- */
+    /* ── AI call ────────────────────────────────────────────────────────────── */
     async _callAI(text) {
-        if (this.isThinking) return;
-        this.isThinking = true;
+        if (this._isThinking) return;
+        this._isThinking = true;
+        this._syncDOM();
         this._showBubble('Thinking...', false);
         this._history.push({ role: 'user', content: text });
         const recent = this._history.slice(-10);
@@ -456,56 +747,67 @@ export default class AskMclovin extends LightningElement {
                 this._history.push({ role: 'assistant', content: result.reply });
                 const display = result.reply.length > 280 ? result.reply.slice(0, 277) + '...' : result.reply;
                 this._showBubble(display, true);
+                // Show reply in panel bubble too
+                const introBubble = this._openEl?.querySelector('.intro-bubble');
+                if (introBubble) introBubble.innerHTML = `<span class="spark">&#10022;</span>${display}`;
             } else {
                 this._showBubble('Ran into an issue. ' + (result.errorMessage || 'Try again.'), true);
             }
         } catch (err) {
-            const msg = (err.body && err.body.message) ? err.body.message : 'Check your connection.';
+            const msg = err?.body?.message || 'Check your connection.';
             this._showBubble('Could not reach the server. ' + msg, true);
         } finally {
-            this.isThinking = false;
+            this._isThinking = false;
+            this._syncDOM();
         }
     }
 
-    /* ---- drag ---- */
-    onDragStart(e) {
-        const p  = e.touches ? e.touches[0] : e;
-        const mc = this.template.querySelector('.mc');
-        const b  = mc.getBoundingClientRect();
+    /* ── Drag ───────────────────────────────────────────────────────────────── */
+    _onDragStart(e) {
+        const p = e.touches ? e.touches[0] : e;
+        if (!this._mcEl) return;
+        const b = this._mcEl.getBoundingClientRect();
         this._drag      = { baseX: b.left, baseY: b.top, startX: p.clientX, startY: p.clientY };
         this._dragMoved = false;
-        this._walkTrans = '';
+        this._clearTransition();
         this._setState(S.DRAG);
         this._showBubble(pick(C.dialogue.drag_pickup, this._lastLine), false);
         e.preventDefault();
     }
+
     _onDragMove(e) {
         if (!this._drag) return;
         const p  = e.touches ? e.touches[0] : e;
         const dx = p.clientX - this._drag.startX;
         const dy = p.clientY - this._drag.startY;
         if (Math.abs(dx) + Math.abs(dy) > 4) this._dragMoved = true;
-        this.faceRight = dx >= 0;
-        this.pos = {
-            x: Math.max(8, Math.min(window.innerWidth - 100, this._drag.baseX + dx)),
-            y: Math.max(8, Math.min(window.innerHeight - 100, this._drag.baseY + dy))
-        };
+        this._faceRight = dx >= 0;
+        this._setPos(
+            clamp(this._drag.baseX + dx, 8, window.innerWidth  - 110),
+            clamp(this._drag.baseY + dy, 8, window.innerHeight - 110)
+        );
     }
+
     _onDragEnd() {
         if (!this._drag) return;
         this._drag = null;
-
-        if (C.flags.rememberLastPosition) {
-            try { localStorage.setItem('mclovin_pos', JSON.stringify(this.pos)); } catch (_) { /* ignore */ }
+        if (C.flags.rememberLastPosition && this._posX !== null) {
+            try { localStorage.setItem('mclovin_pos', JSON.stringify({x:this._posX,y:this._posY})); } catch(_) { /* ignore */ }
         }
-
         this._showBubble(pick(C.dialogue.drag_drop, this._lastLine), false);
-        // Snap to perch or edge
         const perch = this._findBestPerch();
         if (perch) this._perchOn(perch);
         else       this._goToEdgeOrBadge();
-
         // eslint-disable-next-line @lwc/lwc/no-async-operation
         setTimeout(() => { this._dragMoved = false; }, 30);
+    }
+
+    /* ── Position persistence ─────────────────────────────────────────────── */
+    _loadPos() {
+        if (!C.flags.rememberLastPosition) return null;
+        try {
+            const s = localStorage.getItem('mclovin_pos');
+            return s ? JSON.parse(s) : null;
+        } catch (_) { return null; }
     }
 }
