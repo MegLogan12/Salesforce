@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>FM flags the job site as not ready. Records the reason and creates a Schedule Issue so the scheduling team can plan accordingly.</description>
+    <label>Flag Site Not Ready</label>
+    <lightningWebComponent>lovingFmFlagSiteNotReadyAction</lightningWebComponent>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <type>LightningWebComponent</type>
+</QuickAction>

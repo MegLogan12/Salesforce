@@ -302,10 +302,17 @@ export default class LovingWorkOrderTypeLayout extends NavigationMixin(Lightning
                 { label: 'Complete Takeoff', icon: '📐', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Complete_Takeoff', note: 'Record field measurements', rowClass: 'lwtl-action-row' },
                 { label: 'Log Issue', icon: '⚠️', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Log_Issue', note: 'Flag a job-site issue', rowClass: 'lwtl-action-row' },
                 { label: 'Create Quote Request', icon: '💰', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Quote_Request', note: 'Request a change order quote', rowClass: 'lwtl-action-row' },
+                { label: 'Mark Site Ready', icon: '✅', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Mark_Site_Ready', note: 'Confirm site is ready for install', rowClass: 'lwtl-action-row' },
+                { label: 'Flag Site Not Ready', icon: '🚫', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Flag_Site_Not_Ready', note: 'Report site readiness blocker', rowClass: 'lwtl-action-row' },
+                { label: 'Request Reschedule', icon: '📆', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Request_Reschedule', note: 'Request new install date', rowClass: 'lwtl-action-row' },
+                { label: '2 PM Health Check', icon: '🟢', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_2PM_Health_Check', note: 'Daily completion forecast', rowClass: 'lwtl-action-row' },
+                { label: 'Complete QI', icon: '🔍', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Complete_QI', note: 'Submit quality inspection result', rowClass: 'lwtl-action-row' },
+                { label: 'Create Finished Job', icon: '🚩', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Create_Finished_Job', note: 'Create FJ for remaining scope', rowClass: 'lwtl-action-row' },
+                { label: 'Create Warranty Job', icon: '🛡️', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Create_Warranty_Job', note: 'Create warranty rework WO', rowClass: 'lwtl-action-row' },
+                { label: 'Approve Closeout', icon: '✓', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Approve_Closeout', note: 'Submit for final review', rowClass: 'lwtl-action-row' },
                 { label: 'Open Service Appointment', icon: '📅', actionType: 'navigate', target: 'ServiceAppointment', note: saNote, rowClass: saRow },
                 { label: 'Upload Photo', icon: '📷', actionType: 'file', target: null, note: 'Attach closeout photo', rowClass: 'lwtl-action-row' },
                 { label: 'Add Invoice Notes', icon: '✏️', actionType: 'edit', target: 'Invoice_Notes__c', note: 'Required before closeout', rowClass: 'lwtl-action-row' },
-                { label: 'Flag Finished Job Need', icon: '🚩', actionType: 'navigate', target: 'WorkOrder_new_FinishedJob', note: 'Create FJ from this WO', rowClass: 'lwtl-action-row' },
                 { label: 'Submit Job Complete', icon: '✓', actionType: 'submit', target: null, note: submitNote, rowClass: submitRow }
             ];
         }
@@ -313,6 +320,11 @@ export default class LovingWorkOrderTypeLayout extends NavigationMixin(Lightning
             return [
                 { label: 'Log Issue', icon: '⚠️', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Log_Issue', note: 'Flag a job-site issue', rowClass: 'lwtl-action-row' },
                 { label: 'Create Quote Request', icon: '💰', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Quote_Request', note: 'Request a change order quote', rowClass: 'lwtl-action-row' },
+                { label: 'Request Reschedule', icon: '📆', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Request_Reschedule', note: 'Request new date for FJ', rowClass: 'lwtl-action-row' },
+                { label: '2 PM Health Check', icon: '🟢', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_2PM_Health_Check', note: 'Daily completion forecast', rowClass: 'lwtl-action-row' },
+                { label: 'Complete QI', icon: '🔍', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Complete_QI', note: 'Submit quality inspection result', rowClass: 'lwtl-action-row' },
+                { label: 'Create Warranty Job', icon: '🛡️', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Create_Warranty_Job', note: 'Create warranty rework WO', rowClass: 'lwtl-action-row' },
+                { label: 'Approve Closeout', icon: '✓', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Approve_Closeout', note: 'Submit for final review', rowClass: 'lwtl-action-row' },
                 { label: 'Open Source Work Order', icon: '↗', actionType: 'navigate', target: 'WorkOrder', note: parentWoNote, rowClass: parentWoRow },
                 { label: 'Open Service Appointment', icon: '📅', actionType: 'navigate', target: 'ServiceAppointment', note: saNote, rowClass: saRow },
                 { label: 'Upload Proof Photo', icon: '📷', actionType: 'file', target: null, note: 'Before + after required', rowClass: 'lwtl-action-row' },
@@ -323,6 +335,9 @@ export default class LovingWorkOrderTypeLayout extends NavigationMixin(Lightning
             return [
                 { label: 'Log Issue', icon: '⚠️', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Log_Issue', note: 'Flag a job-site issue', rowClass: 'lwtl-action-row' },
                 { label: 'Create Quote Request', icon: '💰', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Quote_Request', note: 'Request a change order quote', rowClass: 'lwtl-action-row' },
+                { label: 'Request Reschedule', icon: '📆', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Request_Reschedule', note: 'Request new warranty date', rowClass: 'lwtl-action-row' },
+                { label: 'Complete QI', icon: '🔍', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Complete_QI', note: 'Submit quality inspection result', rowClass: 'lwtl-action-row' },
+                { label: 'Approve Closeout', icon: '✓', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Approve_Closeout', note: 'Submit for final review', rowClass: 'lwtl-action-row' },
                 { label: 'Open Source Case', icon: '📋', actionType: 'navigate', target: 'Case', note: caseNote, rowClass: caseRow },
                 { label: 'Open Service Appointment', icon: '📅', actionType: 'navigate', target: 'ServiceAppointment', note: saNote, rowClass: saRow },
                 { label: 'Upload Issue Photo', icon: '📷', actionType: 'file', target: null, note: 'Required for coverage review', rowClass: 'lwtl-action-row' },
@@ -333,6 +348,9 @@ export default class LovingWorkOrderTypeLayout extends NavigationMixin(Lightning
             return [
                 { label: 'Log Issue', icon: '⚠️', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Log_Issue', note: 'Flag a job-site issue', rowClass: 'lwtl-action-row' },
                 { label: 'Create Quote Request', icon: '💰', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Quote_Request', note: 'Request a change order quote', rowClass: 'lwtl-action-row' },
+                { label: 'Request Reschedule', icon: '📆', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Request_Reschedule', note: 'Request new appointment date', rowClass: 'lwtl-action-row' },
+                { label: 'Complete QI', icon: '🔍', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Complete_QI', note: 'Submit quality inspection result', rowClass: 'lwtl-action-row' },
+                { label: 'Approve Closeout', icon: '✓', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Approve_Closeout', note: 'Submit for final review', rowClass: 'lwtl-action-row' },
                 { label: 'Open Source Case', icon: '📋', actionType: 'navigate', target: 'Case', note: caseNote, rowClass: caseRow },
                 { label: 'Open Service Appointment', icon: '📅', actionType: 'navigate', target: 'ServiceAppointment', note: saNote, rowClass: saRow },
                 { label: 'Upload Photo', icon: '📷', actionType: 'file', target: null, note: 'Issue documentation', rowClass: 'lwtl-action-row' },
@@ -343,6 +361,9 @@ export default class LovingWorkOrderTypeLayout extends NavigationMixin(Lightning
             return [
                 { label: 'Complete Takeoff', icon: '📐', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Complete_Takeoff', note: 'Record field measurements', rowClass: 'lwtl-action-row' },
                 { label: 'Log Issue', icon: '⚠️', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Log_Issue', note: 'Flag a job-site issue', rowClass: 'lwtl-action-row' },
+                { label: 'Mark Site Ready', icon: '✅', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Mark_Site_Ready', note: 'Confirm site is ready for install', rowClass: 'lwtl-action-row' },
+                { label: 'Flag Site Not Ready', icon: '🚫', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Flag_Site_Not_Ready', note: 'Report site readiness blocker', rowClass: 'lwtl-action-row' },
+                { label: 'Request Reschedule', icon: '📆', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Request_Reschedule', note: 'Request new visit date', rowClass: 'lwtl-action-row' },
                 { label: 'Open Service Appointment', icon: '📅', actionType: 'navigate', target: 'ServiceAppointment', note: saNote, rowClass: saRow },
                 { label: 'Upload Site Photo', icon: '📷', actionType: 'file', target: null, note: 'Site condition documentation', rowClass: 'lwtl-action-row' },
                 { label: 'Submit Job Complete', icon: '✓', actionType: 'submit', target: null, note: submitNote, rowClass: submitRow }
@@ -351,6 +372,7 @@ export default class LovingWorkOrderTypeLayout extends NavigationMixin(Lightning
         if (rt === 'Aqua Check') {
             return [
                 { label: 'Log Issue', icon: '⚠️', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Log_Issue', note: 'Flag a job-site issue', rowClass: 'lwtl-action-row' },
+                { label: 'Request Reschedule', icon: '📆', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Request_Reschedule', note: 'Request new check date', rowClass: 'lwtl-action-row' },
                 { label: 'Open Service Appointment', icon: '📅', actionType: 'navigate', target: 'ServiceAppointment', note: saNote, rowClass: saRow },
                 { label: 'Upload Check Photos', icon: '📷', actionType: 'file', target: null, note: 'Yard + equipment required', rowClass: 'lwtl-action-row' },
                 { label: 'Submit Check Complete', icon: '✓', actionType: 'submit', target: null, note: submitNote, rowClass: submitRow }
@@ -359,6 +381,7 @@ export default class LovingWorkOrderTypeLayout extends NavigationMixin(Lightning
         if (rt === 'Aqua Pickup') {
             return [
                 { label: 'Log Issue', icon: '⚠️', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Log_Issue', note: 'Flag a job-site issue', rowClass: 'lwtl-action-row' },
+                { label: 'Request Reschedule', icon: '📆', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Request_Reschedule', note: 'Request new pickup date', rowClass: 'lwtl-action-row' },
                 { label: 'Open Service Appointment', icon: '📅', actionType: 'navigate', target: 'ServiceAppointment', note: saNote, rowClass: saRow },
                 { label: 'Upload Pickup Photo', icon: '📷', actionType: 'file', target: null, note: 'Retrieved equipment required', rowClass: 'lwtl-action-row' },
                 { label: 'Submit Pickup Complete', icon: '✓', actionType: 'submit', target: null, note: submitNote, rowClass: submitRow }
@@ -367,6 +390,7 @@ export default class LovingWorkOrderTypeLayout extends NavigationMixin(Lightning
         if (rt === 'Aqua Emergency') {
             return [
                 { label: 'Log Issue', icon: '⚠️', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Log_Issue', note: 'Flag a job-site issue', rowClass: 'lwtl-action-row' },
+                { label: 'Request Reschedule', icon: '📆', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Request_Reschedule', note: 'Request new emergency date', rowClass: 'lwtl-action-row' },
                 { label: 'Open Service Appointment', icon: '📅', actionType: 'navigate', target: 'ServiceAppointment', note: saNote, rowClass: saRow },
                 { label: 'Upload Issue Photo', icon: '📷', actionType: 'file', target: null, note: 'Emergency issue photo required', rowClass: 'lwtl-action-row' },
                 { label: 'Submit Repair Complete', icon: '✓', actionType: 'submit', target: null, note: submitNote, rowClass: submitRow }
@@ -375,6 +399,7 @@ export default class LovingWorkOrderTypeLayout extends NavigationMixin(Lightning
         if (IRRIGATION_TYPES.has(rt)) {
             return [
                 { label: 'Log Issue', icon: '⚠️', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Log_Issue', note: 'Flag a job-site issue', rowClass: 'lwtl-action-row' },
+                { label: 'Request Reschedule', icon: '📆', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Request_Reschedule', note: 'Request new irrigation date', rowClass: 'lwtl-action-row' },
                 { label: 'Open Service Appointment', icon: '📅', actionType: 'navigate', target: 'ServiceAppointment', note: saNote, rowClass: saRow },
                 { label: 'Upload Irrigation Photo', icon: '📷', actionType: 'file', target: null, note: 'Controller + zone photo required', rowClass: 'lwtl-action-row' },
                 { label: 'Submit Job Complete', icon: '✓', actionType: 'submit', target: null, note: submitNote, rowClass: submitRow }
@@ -383,6 +408,7 @@ export default class LovingWorkOrderTypeLayout extends NavigationMixin(Lightning
         if (GRADING_TYPES.has(rt)) {
             return [
                 { label: 'Log Issue', icon: '⚠️', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Log_Issue', note: 'Flag a job-site issue', rowClass: 'lwtl-action-row' },
+                { label: 'Request Reschedule', icon: '📆', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Request_Reschedule', note: 'Request new grading date', rowClass: 'lwtl-action-row' },
                 { label: 'Open Service Appointment', icon: '📅', actionType: 'navigate', target: 'ServiceAppointment', note: saNote, rowClass: saRow },
                 { label: 'Upload Site Photo', icon: '📷', actionType: 'file', target: null, note: 'Before + after required', rowClass: 'lwtl-action-row' },
                 { label: 'Submit Job Complete', icon: '✓', actionType: 'submit', target: null, note: submitNote, rowClass: submitRow }
@@ -391,6 +417,7 @@ export default class LovingWorkOrderTypeLayout extends NavigationMixin(Lightning
         if (EXECUTION_TYPES.has(rt)) {
             return [
                 { label: 'Log Issue', icon: '⚠️', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Log_Issue', note: 'Flag a job-site issue', rowClass: 'lwtl-action-row' },
+                { label: 'Request Reschedule', icon: '📆', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Request_Reschedule', note: 'Request new execution date', rowClass: 'lwtl-action-row' },
                 { label: 'Open Service Appointment', icon: '📅', actionType: 'navigate', target: 'ServiceAppointment', note: saNote, rowClass: saRow },
                 { label: 'Upload Field Photo', icon: '📷', actionType: 'file', target: null, note: 'Field proof required', rowClass: 'lwtl-action-row' },
                 { label: 'Add Closeout Notes', icon: '✏️', actionType: 'edit', target: 'Invoice_Notes__c', note: 'Required before closeout', rowClass: 'lwtl-action-row' },
@@ -400,6 +427,7 @@ export default class LovingWorkOrderTypeLayout extends NavigationMixin(Lightning
         // Default / Loading / QI
         return [
             { label: 'Log Issue', icon: '⚠️', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Log_Issue', note: 'Flag a job-site issue', rowClass: 'lwtl-action-row' },
+            { label: 'Request Reschedule', icon: '📆', actionType: 'quickAction', target: 'WorkOrder.LOVING_FM_Request_Reschedule', note: 'Request new date', rowClass: 'lwtl-action-row' },
             { label: 'Open Service Appointment', icon: '📅', actionType: 'navigate', target: 'ServiceAppointment', note: saNote, rowClass: saRow },
             { label: 'Upload Photo', icon: '📷', actionType: 'file', target: null, note: null, rowClass: 'lwtl-action-row' },
             { label: 'Submit Job Complete', icon: '✓', actionType: 'submit', target: null, note: submitNote, rowClass: submitRow }

@@ -549,6 +549,38 @@ export default class LovingStandardWorkOrderWorkspace extends NavigationMixin(Li
         this.navigateQuickAction('WorkOrder.LOVING_FM_Quote_Request');
     }
 
+    handleMarkSiteReady() {
+        this.navigateQuickAction('WorkOrder.LOVING_FM_Mark_Site_Ready');
+    }
+
+    handleFlagSiteNotReady() {
+        this.navigateQuickAction('WorkOrder.LOVING_FM_Flag_Site_Not_Ready');
+    }
+
+    handleCompleteQI() {
+        this.navigateQuickAction('WorkOrder.LOVING_FM_Complete_QI');
+    }
+
+    handleCreateFinishedJob() {
+        this.navigateQuickAction('WorkOrder.LOVING_FM_Create_Finished_Job');
+    }
+
+    handleCreateWarrantyJob() {
+        this.navigateQuickAction('WorkOrder.LOVING_FM_Create_Warranty_Job');
+    }
+
+    handleRequestReschedule() {
+        this.navigateQuickAction('WorkOrder.LOVING_FM_Request_Reschedule');
+    }
+
+    handle2pmHealthCheck() {
+        this.navigateQuickAction('WorkOrder.LOVING_FM_2PM_Health_Check');
+    }
+
+    handleApproveCloseout() {
+        this.navigateQuickAction('WorkOrder.LOVING_FM_Approve_Closeout');
+    }
+
     handleOpenFiles() {
         if (!this.recordId) return;
         this[NavigationMixin.Navigate]({

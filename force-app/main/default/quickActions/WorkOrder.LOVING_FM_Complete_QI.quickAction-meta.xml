@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>FM submits the Quality Inspection result. Records QI result, score, and notes; sets QI Status to Submitted and notifies the QI reviewer.</description>
+    <label>Complete QI</label>
+    <lightningWebComponent>lovingFmCompleteQiAction</lightningWebComponent>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <type>LightningWebComponent</type>
+</QuickAction>

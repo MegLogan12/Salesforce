@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>FM marks the job site as ready for production install. Confirms site readiness status and notifies the scheduling team.</description>
+    <label>Mark Site Ready</label>
+    <lightningWebComponent>lovingFmMarkSiteReadyAction</lightningWebComponent>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <type>LightningWebComponent</type>
+</QuickAction>
