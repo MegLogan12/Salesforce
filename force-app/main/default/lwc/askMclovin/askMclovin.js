@@ -77,34 +77,34 @@ const PORTAL_CSS = `
   transform-origin:bottom center; will-change:transform;
 }
 
-/* OPEN CARD — sits beside the character */
-#mclovin-portal .open-card {
-  display:none; position:absolute; left:0; bottom:calc(100% - 60px);
+/* OPEN CARD — position:fixed, placed programmatically near the character */
+#mclovin-open-card {
+  display:none; position:fixed; z-index:10001;
   width:320px; background:#fff; border:1px solid rgba(0,0,0,.08);
   border-radius:18px; padding:14px; box-shadow:0 18px 40px rgba(20,24,40,.18);
-  flex-direction:column; gap:10px;
+  flex-direction:column; gap:10px; pointer-events:auto;
 }
-#mclovin-portal .open-card.show { display:flex; }
-#mclovin-portal .open-card .close-btn {
+#mclovin-open-card.show { display:flex; }
+#mclovin-open-card .close-btn {
   align-self:flex-end; background:none; border:none; cursor:pointer;
   font-size:18px; color:#9aa1ad; line-height:1; padding:0 2px;
 }
-#mclovin-portal .chips { display:flex; gap:7px; flex-wrap:wrap; }
-#mclovin-portal .chip {
+#mclovin-open-card .chips { display:flex; gap:7px; flex-wrap:wrap; }
+#mclovin-open-card .chip {
   background:#fff; border:1px solid rgba(0,0,0,.08); border-radius:999px;
   padding:6px 12px; font-size:13px; font-weight:600; cursor:pointer;
 }
-#mclovin-portal .chip:hover { border-color:#FCD400; background:#fffdf0; }
-#mclovin-portal .askbar {
+#mclovin-open-card .chip:hover { border-color:#FCD400; background:#fffdf0; }
+#mclovin-open-card .askbar {
   display:flex; gap:8px; background:#fcfcfd; border:1px solid #dfe2e8;
   border-radius:12px; padding:7px 8px 7px 13px;
 }
-#mclovin-portal .askbar input { flex:1; border:none; outline:none; font-size:14px; background:transparent; }
-#mclovin-portal .askbar .send-btn {
+#mclovin-open-card .askbar input { flex:1; border:none; outline:none; font-size:14px; background:transparent; }
+#mclovin-open-card .askbar .send-btn {
   border:none; background:#FCD400; color:#1b1f25; font-weight:800;
   border-radius:9px; padding:7px 12px; cursor:pointer; min-width:46px;
 }
-#mclovin-portal .askbar .send-btn:disabled { opacity:.5; cursor:default; }
+#mclovin-open-card .askbar .send-btn:disabled { opacity:.5; cursor:default; }
 
 /* BUBBLE */
 #mclovin-portal .bubble {
@@ -264,6 +264,8 @@ export default class AskMclovin extends LightningElement {
         if (portal) portal.remove();
         const styles = document.getElementById(STYLES_ID);
         if (styles) styles.remove();
+        const oc = document.getElementById('mclovin-open-card');
+        if (oc) oc.remove();
         const scrim = document.getElementById('mclovin-scrim');
         if (scrim) scrim.remove();
         const pf = document.getElementById('mclovin-popform');
@@ -291,6 +293,12 @@ export default class AskMclovin extends LightningElement {
         document.body.appendChild(p);
         this._portal = p;
 
+        // Open card lives on body so position:fixed works outside any transform context
+        const oc = document.createElement('div');
+        oc.id = 'mclovin-open-card';
+        oc.innerHTML = this._openCardHTML();
+        document.body.appendChild(oc);
+
         // Scrim + popform live directly on body (outside the z-index stack)
         const scrim = document.createElement('div');
         scrim.id = 'mclovin-scrim';
@@ -309,26 +317,29 @@ export default class AskMclovin extends LightningElement {
         return `
 <div class="mc pe">
   <div class="flip">
-    <img class="lean-img" src="${this._peekUrl}" alt="mcLOVIN'">
-    <div class="open-card">
-      <button class="close-btn pe" aria-label="Close">&#8211;</button>
-      <div class="chips pe">
-        <span class="chip" data-q="po">Upload PO</span>
-        <span class="chip" data-q="scope">Scope</span>
-        <span class="chip" data-q="account">New Account</span>
-        <span class="chip" data-q="homeowner">Homeowner Intake</span>
-        <span class="chip" data-q="find">Find Job</span>
-        <span class="chip" data-q="missing">What&rsquo;s Missing?</span>
-      </div>
-      <div class="askbar pe">
-        <input type="text" placeholder="Ask mcLOVIN' anything&hellip;">
-        <button class="send-btn">Ask</button>
-      </div>
-    </div>
+    <img class="lean-img" src="${this._fullUrl}" alt="mcLOVIN'">
   </div>
 </div>
 <div class="bubble pe" id="mclovin-bubble">
   <span class="spark">&#10022;</span><span id="mclovin-bub-text"></span><span class="bubble-chip pe" id="mclovin-bub-chip" style="display:none">Log a site visit</span>
+</div>`;
+    }
+
+    _openCardHTML() {
+        return `
+<button class="close-btn pe">&#x2715;</button>
+<p class="intro-line" style="margin:0;font-size:13px;color:#525a66">What can I help with?</p>
+<div class="chips">
+  <span class="chip pe" data-q="po">PO</span>
+  <span class="chip pe" data-q="scope">Scope</span>
+  <span class="chip pe" data-q="account">Account</span>
+  <span class="chip pe" data-q="homeowner">Homeowner</span>
+  <span class="chip pe" data-q="find">Find job</span>
+  <span class="chip pe" data-q="missing">Missing info</span>
+</div>
+<div class="askbar">
+  <input type="text" placeholder="Ask me anything…">
+  <button class="send-btn pe">Ask</button>
 </div>`;
     }
 
@@ -357,26 +368,26 @@ export default class AskMclovin extends LightningElement {
         this._mcEl     = p.querySelector('.mc');
         this._flipEl   = p.querySelector('.flip');
         this._leanEl   = p.querySelector('.lean-img');
-        this._openCard = p.querySelector('.open-card');
+        this._openCard = document.getElementById('mclovin-open-card');
         this._bubbleEl = document.getElementById('mclovin-bubble');
         this._bubTxtEl = document.getElementById('mclovin-bub-text');
         this._bubChipEl= document.getElementById('mclovin-bub-chip');
-        this._inputEl  = p.querySelector('.askbar input');
+        this._inputEl  = this._openCard.querySelector('.askbar input');
         this._scrimEl  = document.getElementById('mclovin-scrim');
         this._popFormEl= document.getElementById('mclovin-popform');
     }
 
     _bindPortalEvents() {
-        const p = this._portal;
+        const oc = this._openCard;
         // Drag on the character image
         this._leanEl.addEventListener('mousedown',  (e) => this._onDragStart(e));
         this._leanEl.addEventListener('touchstart', (e) => this._onDragStart(e), {passive:false});
         this._leanEl.addEventListener('click',      ()  => { if (!this._dragMoved) this._onCharacterClick(); });
-        // Open card
-        p.querySelector('.close-btn').addEventListener('click', () => this._hideOpenCard());
-        p.querySelector('.send-btn').addEventListener('click',  () => this._onSend());
+        // Open card (body-level element)
+        oc.querySelector('.close-btn').addEventListener('click', () => this._hideOpenCard());
+        oc.querySelector('.send-btn').addEventListener('click',  () => this._onSend());
         this._inputEl.addEventListener('keyup', (e) => { if (e.key === 'Enter') this._onSend(); });
-        p.querySelectorAll('.chip').forEach(c => c.addEventListener('click', (e) => this._onChip(e)));
+        oc.querySelectorAll('.chip').forEach(c => c.addEventListener('click', (e) => this._onChip(e)));
         // Bubble chip → pop form
         this._bubChipEl.addEventListener('click', () => this._showPopForm());
         // Scrim + popform close
@@ -488,7 +499,16 @@ export default class AskMclovin extends LightningElement {
 
     /* ── Open card ────────────────────────────────────────────────────────── */
     _showOpenCard() {
+        if (!this._openCard || !this._mcEl) return;
         this._state = S.OPEN;
+        // Position card beside the character (prefer left, fall back to right)
+        const r = this._mcEl.getBoundingClientRect();
+        const cardW = 320;
+        let left = r.left - cardW - 16;
+        if (left < 10) left = Math.min(r.right + 10, window.innerWidth - cardW - 10);
+        const top = Math.max(10, r.top - 60);
+        this._openCard.style.left = left + 'px';
+        this._openCard.style.top  = top  + 'px';
         this._openCard.classList.add('show');
         this._hideBubble();
     }
@@ -554,7 +574,7 @@ export default class AskMclovin extends LightningElement {
             this._leanEl.style.transform = '';
             this._leanEl.src = this._happyUrl;
             // eslint-disable-next-line @lwc/lwc/no-async-operation
-            setTimeout(() => { this._leanEl.src = this._peekUrl; }, 1400);
+            setTimeout(() => { this._leanEl.src = this._fullUrl; }, 1400);
         }, 110);
     }
 
