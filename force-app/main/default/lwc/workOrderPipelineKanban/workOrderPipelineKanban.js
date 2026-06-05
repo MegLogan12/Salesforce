@@ -2,6 +2,7 @@ import { LightningElement, wire, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getPipeline from '@salesforce/apex/WorkOrderPipelineController.getPipeline';
 
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 export default class WorkOrderPipelineKanban extends NavigationMixin(LightningElement) {
     @track columns = [];
     error;
@@ -28,4 +29,8 @@ export default class WorkOrderPipelineKanban extends NavigationMixin(LightningEl
             attributes: { objectApiName: 'WorkOrder', actionName: 'new' }
         });
     }
+    renderedCallback() {
+        applyFullWidthLayout(this.template.host);
+    }
+
 }

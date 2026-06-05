@@ -1,6 +1,7 @@
 import { LightningElement, api } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 export default class OdlGenericRecordWorkspace extends NavigationMixin(LightningElement) {
     @api recordId;
     @api objectApiName;
@@ -12,4 +13,8 @@ export default class OdlGenericRecordWorkspace extends NavigationMixin(Lightning
             attributes: { recordId: this.recordId, actionName: 'edit' }
         });
     }
+    renderedCallback() {
+        applyFullWidthLayout(this.template.host);
+    }
+
 }

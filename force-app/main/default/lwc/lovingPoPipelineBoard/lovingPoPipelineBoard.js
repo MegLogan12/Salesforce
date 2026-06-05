@@ -56,6 +56,7 @@ function cardClass(status) {
     return 'po-card card-slate';
 }
 
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 export default class LovingPoPipelineBoard extends NavigationMixin(LightningElement) {
     /** Optional — when placed on Takeoff record page, filters context visually */
     @api recordId;
@@ -140,4 +141,8 @@ export default class LovingPoPipelineBoard extends NavigationMixin(LightningElem
             await refreshApex(this._wiredResult);
         }
     }
+    renderedCallback() {
+        applyFullWidthLayout(this.template.host);
+    }
+
 }

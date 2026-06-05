@@ -3,6 +3,7 @@ import { NavigationMixin } from 'lightning/navigation';
 import { refreshApex } from '@salesforce/apex';
 import getHomeData from '@salesforce/apex/VPOpsDashboardController.getHomeData';
 
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 export default class VpOpsDashboard extends NavigationMixin(LightningElement) {
     @track pageData  = null;
     @track error     = null;
@@ -134,4 +135,8 @@ export default class VpOpsDashboard extends NavigationMixin(LightningElement) {
             attributes: { objectApiName: 'Report', actionName: 'list' }
         });
     }
+    renderedCallback() {
+        applyFullWidthLayout(this.template.host);
+    }
+
 }

@@ -2,6 +2,7 @@ import { LightningElement, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getLotsWorkspace from '@salesforce/apex/LovingLotWorkspaceController.getLotsWorkspace';
 
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 export default class LovingLotsWorkspace extends NavigationMixin(LightningElement) {
     rows = [];
     columns = [];
@@ -138,4 +139,8 @@ export default class LovingLotsWorkspace extends NavigationMixin(LightningElemen
         link.download = 'loving-lots.csv';
         link.click();
     }
+    renderedCallback() {
+        applyFullWidthLayout(this.template.host);
+    }
+
 }

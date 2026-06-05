@@ -2,6 +2,7 @@ import { LightningElement, api, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import getPageData from '@salesforce/apex/ODLOpportunityRecordController.getPageData';
 
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 export default class OdlOpportunityRecordWorkspace extends NavigationMixin(LightningElement) {
     @api recordId;
 
@@ -176,4 +177,8 @@ export default class OdlOpportunityRecordWorkspace extends NavigationMixin(Light
             });
         }
     }
+    renderedCallback() {
+        applyFullWidthLayout(this.template.host);
+    }
+
 }

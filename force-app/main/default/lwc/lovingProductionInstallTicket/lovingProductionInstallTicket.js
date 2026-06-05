@@ -16,6 +16,7 @@ const PROOF_LABELS = new Set([
     'Total Scope Price', 'Total Cost', 'Gross Profit', 'Invoice Amount'
 ]);
 
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 export default class LovingProductionInstallTicket extends NavigationMixin(LightningElement) {
     @api recordId;
     workspace;
@@ -101,4 +102,8 @@ export default class LovingProductionInstallTicket extends NavigationMixin(Light
             }
         });
     }
+    renderedCallback() {
+        applyFullWidthLayout(this.template.host);
+    }
+
 }

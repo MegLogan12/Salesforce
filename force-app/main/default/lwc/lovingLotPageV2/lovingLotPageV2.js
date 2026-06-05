@@ -4,6 +4,7 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { refreshApex } from '@salesforce/apex';
 import getLotDetail from '@salesforce/apex/LovingLotWorkspaceController.getLotDetail';
 
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 export default class LovingLotPageV2 extends NavigationMixin(LightningElement) {
     static shellStyleId = 'loving-lot-record-v2-shell-style';
 
@@ -180,4 +181,8 @@ export default class LovingLotPageV2 extends NavigationMixin(LightningElement) {
     normalizeError(error) {
         return error?.body?.message || error?.message || 'Something went wrong loading the lot page.';
     }
+    renderedCallback() {
+        applyFullWidthLayout(this.template.host);
+    }
+
 }

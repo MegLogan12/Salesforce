@@ -7,6 +7,7 @@ import getTakeoffRecord from '@salesforce/apex/LovingTakeoffGateController.getTa
 import approveTakeoff from '@salesforce/apex/LovingTakeoffGateController.approveTakeoff';
 import returnTakeoff from '@salesforce/apex/LovingTakeoffGateController.returnTakeoff';
 
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 export default class LovingTakeoffGate extends NavigationMixin(LightningElement) {
     @api recordId;
 
@@ -226,4 +227,8 @@ export default class LovingTakeoffGate extends NavigationMixin(LightningElement)
             variant
         }));
     }
+    renderedCallback() {
+        applyFullWidthLayout(this.template.host);
+    }
+
 }

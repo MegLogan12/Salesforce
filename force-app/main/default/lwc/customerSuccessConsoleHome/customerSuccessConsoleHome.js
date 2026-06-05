@@ -3,6 +3,7 @@ import { NavigationMixin } from 'lightning/navigation';
 import { refreshApex } from '@salesforce/apex';
 import getHomeData from '@salesforce/apex/CustomerSuccessHomeController.getHomeData';
 
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 export default class CustomerSuccessConsoleHome extends NavigationMixin(LightningElement) {
     @track pageData  = null;
     @track error     = null;
@@ -100,4 +101,8 @@ export default class CustomerSuccessConsoleHome extends NavigationMixin(Lightnin
             attributes: { objectApiName: 'Report', actionName: 'list' }
         });
     }
+    renderedCallback() {
+        applyFullWidthLayout(this.template.host);
+    }
+
 }

@@ -28,6 +28,7 @@ import refreshSchedulingConsole  from '@salesforce/apex/SchedulingConsoleControl
 const DEFAULT_TERRITORY = 'Charlotte Metro';
 const DEFAULT_COORDS    = { lat: 35.2271, lon: -80.8431 };
 
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 export default class LovingSchedulingConsole extends NavigationMixin(LightningElement) {
 
     @api pageTitle = 'Schedule Console';
@@ -39,7 +40,8 @@ export default class LovingSchedulingConsole extends NavigationMixin(LightningEl
         if (header) {
             header.style.cssText += ';display:none!important;height:0!important;min-height:0!important;overflow:hidden!important;';
             this._headerHidden = true;
-        }
+                applyFullWidthLayout(this.template.host);
+    }
     }
 
     // ── State ──────────────────────────────────────────────────────────────────

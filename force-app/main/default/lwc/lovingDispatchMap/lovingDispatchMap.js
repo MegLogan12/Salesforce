@@ -25,6 +25,7 @@ const DEFAULT_TERRITORY = 'Charlotte Metro';
 
 const REFRESH_INTERVAL_MS = 60000;
 
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 export default class LovingDispatchMap extends LightningElement {
     @api territory;
     @track trucks     = [];
@@ -99,4 +100,8 @@ export default class LovingDispatchMap extends LightningElement {
         this.isLoading = true;
         refreshApex(this.wiredResult).finally(() => { this.isLoading = false; });
     }
+    renderedCallback() {
+        applyFullWidthLayout(this.template.host);
+    }
+
 }

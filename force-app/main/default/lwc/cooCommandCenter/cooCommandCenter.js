@@ -50,6 +50,7 @@ function fmtPct(val) {
     return val.toFixed(1) + '%';
 }
 
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 export default class CooCommandCenter extends LightningElement {
     @track kpis;
     @track pipeline;
@@ -207,4 +208,8 @@ export default class CooCommandCenter extends LightningElement {
                 );
             });
     }
+    renderedCallback() {
+        applyFullWidthLayout(this.template.host);
+    }
+
 }

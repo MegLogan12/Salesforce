@@ -12,6 +12,7 @@ import ensureTakeoffChecklist from '@salesforce/apex/LovingWOWorkspaceController
 import updateTakeoffReview from '@salesforce/apex/LovingWOWorkspaceController.updateTakeoffReview';
 import updateChecklistItem from '@salesforce/apex/LovingWOWorkspaceController.updateChecklistItem';
 import updateTakeoffLineScope from '@salesforce/apex/LovingWOWorkspaceController.updateTakeoffLineScope';
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 
 const NEW_TASK_ACTION = 'Global.NewTask';
 const NEW_NOTE_ACTION = 'Global.NewNote';
@@ -23,7 +24,6 @@ export default class LovingStandardWorkOrderWorkspace extends NavigationMixin(Li
     workspace;
     error;
     wiredResult;
-    _layoutFixed = false;
     isCreatingChildren = false;
     isEnsuringTakeoffChecklist = false;
     isSavingTakeoff = false;
@@ -51,9 +51,7 @@ export default class LovingStandardWorkOrderWorkspace extends NavigationMixin(Li
 
     renderedCallback() {
         this.ensureShellStyle();
-        if (!this._layoutFixed) {
-            this.applyFullWidthLayout();
-        }
+        applyFullWidthLayout(this.template.host);
     }
 
     disconnectedCallback() {
@@ -110,53 +108,6 @@ export default class LovingStandardWorkOrderWorkspace extends NavigationMixin(Li
             }
         `;
         document.head.appendChild(style);
-        // Native shadow DOM requires JS to pierce — retry until the template renders
-        this.fixFlexipageLayout(0);
-    }
-
-    fixFlexipageLayout(attempt) {
-        if (attempt > 20) return;
-        try {
-            // Walk shadow roots to find the flexipage template
-            const findTemplate = (root, depth) => {
-                if (depth > 6) return null;
-                for (const el of root.querySelectorAll('*')) {
-                    if (el.tagName && el.tagName.toUpperCase() === 'FLEXIPAGE-RECORD-HOME-TEMPLATE-DESKTOP2') return el;
-                    if (el.shadowRoot) {
-                        const found = findTemplate(el.shadowRoot, depth + 1);
-                        if (found) return found;
-                    }
-                }
-                return null;
-            };
-            const template = findTemplate(document, 0);
-            if (!template || !template.shadowRoot) {
-                // eslint-disable-next-line @lwc/lwc/no-async-operation
-                setTimeout(() => this.fixFlexipageLayout(attempt + 1), 150 + attempt * 50);
-                return;
-            }
-            const sr = template.shadowRoot;
-            // Collapse empty header region
-            const headerRow = sr.querySelector('.region-header');
-            if (headerRow) {
-                headerRow.style.cssText += '; display: none !important; height: 0 !important; min-height: 0 !important; padding: 0 !important; margin: 0 !important;';
-            }
-            // Expand main column to full width and hide empty sidebar
-            const mainCol = sr.querySelector('.slds-medium-size_8-of-12');
-            const sideCol = sr.querySelector('.slds-medium-size_4-of-12');
-            if (mainCol) {
-                mainCol.style.cssText += '; flex: 0 0 100% !important; max-width: 100% !important; width: 100% !important;';
-            }
-            if (sideCol) {
-                sideCol.style.cssText += '; display: none !important; width: 0 !important; flex: none !important;';
-            }
-            if (!mainCol && !headerRow) {
-                // eslint-disable-next-line @lwc/lwc/no-async-operation
-                setTimeout(() => this.fixFlexipageLayout(attempt + 1), 150 + attempt * 50);
-            }
-        } catch (e) {
-            // Locker/LWS blocked — silently ignore
-        }
     }
 
     removeShellStyle() {
@@ -164,35 +115,6 @@ export default class LovingStandardWorkOrderWorkspace extends NavigationMixin(Li
             return;
         }
         document.getElementById(LovingStandardWorkOrderWorkspace.shellStyleId)?.remove();
-    }
-
-    applyFullWidthLayout() {
-        try {
-            if (typeof window === 'undefined') return;
-            const host = this.template.host;
-            if (!host) return;
-            const rect = host.getBoundingClientRect();
-            if (!rect || rect.width === 0) return;
-            const vw = window.innerWidth;
-            // Only act when the component is significantly narrower than the viewport
-            if (rect.width >= vw * 0.9) {
-                this._layoutFixed = true;
-                return;
-            }
-            // Expand host to fill from its left edge to the right edge of the viewport
-            const rightPad = 0;
-            const newWidth = vw - rect.left - rightPad;
-            host.style.setProperty('width', `${newWidth}px`, 'important');
-            host.style.setProperty('max-width', 'none', 'important');
-            // Reduce top dead space: pull component up toward the tab bar (y≈90)
-            const targetTop = 90;
-            if (rect.top > targetTop + 5) {
-                host.style.setProperty('margin-top', `-${Math.round(rect.top - targetTop)}px`, 'important');
-            }
-            this._layoutFixed = true;
-        } catch (e) {
-            // LWS may block on some orgs — silently skip
-        }
     }
 
     get tabs() {

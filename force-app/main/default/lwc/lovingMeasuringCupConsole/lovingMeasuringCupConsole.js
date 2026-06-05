@@ -3,6 +3,7 @@ import { NavigationMixin } from 'lightning/navigation';
 import { refreshApex } from '@salesforce/apex';
 import getHomeData from '@salesforce/apex/MeasuringCupConsoleController.getHomeData';
 
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 export default class LovingMeasuringCupConsole extends NavigationMixin(LightningElement) {
     @api pageTitle = 'Measuring Cup';
     @track pageData  = null;
@@ -95,4 +96,8 @@ export default class LovingMeasuringCupConsole extends NavigationMixin(Lightning
             state: { filterName: 'Recent' }
         });
     }
+    renderedCallback() {
+        applyFullWidthLayout(this.template.host);
+    }
+
 }

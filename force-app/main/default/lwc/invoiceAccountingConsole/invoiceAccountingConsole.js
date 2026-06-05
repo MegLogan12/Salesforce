@@ -20,6 +20,7 @@ function fmtCurrency(val) {
     return USD_FORMAT.format(val);
 }
 
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 export default class InvoiceAccountingConsole extends LightningElement {
     @track activeTab = 'ready';
 
@@ -197,4 +198,8 @@ export default class InvoiceAccountingConsole extends LightningElement {
         }
         return 'An unexpected error occurred.';
     }
+    renderedCallback() {
+        applyFullWidthLayout(this.template.host);
+    }
+
 }

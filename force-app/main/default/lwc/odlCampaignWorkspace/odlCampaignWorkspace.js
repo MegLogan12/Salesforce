@@ -10,6 +10,7 @@ const FILTERS = [
     { value: 'Completed', label: 'Completed' }
 ];
 
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 export default class OdlCampaignWorkspace extends NavigationMixin(LightningElement) {
     selectedFilter = 'all';
     searchTerm = '';
@@ -126,4 +127,8 @@ export default class OdlCampaignWorkspace extends NavigationMixin(LightningEleme
         a.click();
         URL.revokeObjectURL(url);
     }
+    renderedCallback() {
+        applyFullWidthLayout(this.template.host);
+    }
+
 }

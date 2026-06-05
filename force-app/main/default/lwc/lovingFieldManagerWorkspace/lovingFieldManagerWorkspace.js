@@ -3,6 +3,7 @@ import { NavigationMixin } from 'lightning/navigation';
 import { refreshApex } from '@salesforce/apex';
 import getWorkspaceData from '@salesforce/apex/FieldManagerWorkspaceController.getWorkspaceData';
 
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 export default class LovingFieldManagerWorkspace extends NavigationMixin(LightningElement) {
     @track pageData  = null;
     @track error     = null;
@@ -98,4 +99,8 @@ export default class LovingFieldManagerWorkspace extends NavigationMixin(Lightni
             attributes: { objectApiName: 'WorkOrder', actionName: 'new' }
         });
     }
+    renderedCallback() {
+        applyFullWidthLayout(this.template.host);
+    }
+
 }

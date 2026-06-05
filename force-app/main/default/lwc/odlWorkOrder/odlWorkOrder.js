@@ -7,6 +7,7 @@ import getWorkOrderRecord from '@salesforce/apex/ODL_WorkController.getWorkOrder
 
 const WO_STAGES = ['Created', 'Scheduled', 'In Progress', 'Punch', 'Closeout', 'Closed'];
 
+import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
 export default class OdlWorkOrder extends NavigationMixin(LightningElement) {
     @api recordId;
     @track workOrder = {};
@@ -147,4 +148,8 @@ export default class OdlWorkOrder extends NavigationMixin(LightningElement) {
     }
     get completedPunchCount() { return this.lineItems.filter(li => li.Status === 'Completed').length; }
     get totalPunchCount() { return this.lineItems.length; }
+    renderedCallback() {
+        applyFullWidthLayout(this.template.host);
+    }
+
 }
