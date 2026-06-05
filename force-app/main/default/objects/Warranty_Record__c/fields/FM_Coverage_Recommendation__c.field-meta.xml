@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>FM_Coverage_Recommendation__c</fullName>
+    <label>FM Coverage Recommendation</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>LOVING responsible</fullName><default>false</default><label>LOVING responsible</label></value>
+            <value><fullName>Homeowner responsible</fullName><default>false</default><label>Homeowner responsible</label></value>
+            <value><fullName>Builder responsible</fullName><default>false</default><label>Builder responsible</label></value>
+            <value><fullName>Unknown / needs review</fullName><default>false</default><label>Unknown / needs review</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

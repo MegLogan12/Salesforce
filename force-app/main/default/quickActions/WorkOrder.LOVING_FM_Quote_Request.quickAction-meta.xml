@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>FM submits a field quote request for new or changed scope. Creates UMB_Quote_Request__c and notifies Customer Success. FM cannot set price, GP, discount, or approval status.</description>
+    <label>Create Quote Request</label>
+    <lightningWebComponent>lovingFmQuoteRequestAction</lightningWebComponent>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <type>LightningWebComponent</type>
+</QuickAction>

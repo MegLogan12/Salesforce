@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>FM records field takeoff measurements and confirms quantities against the PO. Sets Takeoff_Status to Confirmed and notifies the scheduling team.</description>
+    <label>Complete Takeoff</label>
+    <lightningWebComponent>lovingFmCompleteTakeoffAction</lightningWebComponent>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <type>LightningWebComponent</type>
+</QuickAction>

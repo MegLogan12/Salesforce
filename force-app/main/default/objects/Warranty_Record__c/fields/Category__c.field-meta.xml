@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Category__c</fullName>
+    <label>Warranty Category</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>Plant material warranty</fullName><default>false</default><label>Plant material warranty</label></value>
+            <value><fullName>Sod issue</fullName><default>false</default><label>Sod issue</label></value>
+            <value><fullName>Irrigation issue</fullName><default>false</default><label>Irrigation issue</label></value>
+            <value><fullName>Drainage issue</fullName><default>false</default><label>Drainage issue</label></value>
+            <value><fullName>Hardscape issue</fullName><default>false</default><label>Hardscape issue</label></value>
+            <value><fullName>Settlement</fullName><default>false</default><label>Settlement</label></value>
+            <value><fullName>Washout / erosion</fullName><default>false</default><label>Washout / erosion</label></value>
+            <value><fullName>Cleanup issue</fullName><default>false</default><label>Cleanup issue</label></value>
+            <value><fullName>Damage</fullName><default>false</default><label>Damage</label></value>
+            <value><fullName>Builder punch issue</fullName><default>false</default><label>Builder punch issue</label></value>
+            <value><fullName>Homeowner complaint</fullName><default>false</default><label>Homeowner complaint</label></value>
+            <value><fullName>Other</fullName><default>false</default><label>Other</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

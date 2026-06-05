@@ -1,0 +1,1107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <assignments>
+        <name>Assign_SI_Type</name>
+        <label>Map issue type to SI type</label>
+        <locationX>176</locationX>
+        <locationY>612</locationY>
+        <assignmentItems>
+            <assignToReference>vSI_IssueType</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>fSI_IssueTypeMapped</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>vSI_Status</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Open</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Decide_SI_WO_Update</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>Assign_SI_SiteNotReady</name>
+        <label>Set SI type for Site Not Ready</label>
+        <locationX>396</locationX>
+        <locationY>612</locationY>
+        <assignmentItems>
+            <assignToReference>vSI_IssueType</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Site Issue</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>vSI_Status</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Open</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Decide_SI_WO_Update</targetReference>
+        </connector>
+    </assignments>
+    <choices>
+        <name>ChoiceType_ScopeIncomplete</name>
+        <choiceText>Original scope incomplete — need to finish the job</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Scope Incomplete</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceType_Warranty</name>
+        <choiceText>Warranty concern — completed work failed or has a defect</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Warranty</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceType_Complaint</name>
+        <choiceText>Customer complaint — homeowner or builder dissatisfied</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Customer Complaint</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceType_BuilderPunch</name>
+        <choiceText>Builder punch item — builder-identified scope deficiency</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Builder Punch</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceType_QuoteRequest</name>
+        <choiceText>New requested scope — customer wants something added or changed</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Quote Request</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceType_QuantityVariance</name>
+        <choiceText>Quantity variance — field quantities differ from PO</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Quantity Variance</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceType_Drainage</name>
+        <choiceText>Drainage issue — standing water, drainage failing, or blocked</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Drainage</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceType_Utility</name>
+        <choiceText>Utility / waterline conflict — 811 hit or active utility issue</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Utility Conflict</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceType_SiteNotReady</name>
+        <choiceText>Site not ready — cannot start or continue work at this site</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Site Not Ready</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceType_CrewDamage</name>
+        <choiceText>Crew damage — LOVING crew damaged property or structure</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Crew Damage</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceType_MissingMaterial</name>
+        <choiceText>Missing material — materials not delivered or incorrect</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Missing Material</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceType_Safety</name>
+        <choiceText>Safety issue — hazard requiring immediate escalation</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Safety</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceType_Access</name>
+        <choiceText>Access issue — site gate locked, no access, or blocked entry</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Access</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceType_Other</name>
+        <choiceText>Other — describe below (required)</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Other</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceSev_Low</name>
+        <choiceText>Low — cosmetic, low urgency</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Low</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceSev_Medium</name>
+        <choiceText>Medium — functional issue, needs attention within 2 weeks</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Medium</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceSev_High</name>
+        <choiceText>High — significant failure, needs attention within 1 week</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>High</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceSev_Critical</name>
+        <choiceText>Critical — safety or major property concern, immediate</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Critical</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceWar_Plant</name>
+        <choiceText>Plant material warranty</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Plant material warranty</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceWar_Sod</name>
+        <choiceText>Sod issue</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Sod issue</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceWar_Irrigation</name>
+        <choiceText>Irrigation issue</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Irrigation issue</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceWar_Drainage</name>
+        <choiceText>Drainage issue</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Drainage issue</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceWar_Hardscape</name>
+        <choiceText>Hardscape issue</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Hardscape issue</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceWar_Settlement</name>
+        <choiceText>Settlement</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Settlement</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceWar_Washout</name>
+        <choiceText>Washout / erosion</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Washout / erosion</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceWar_Cleanup</name>
+        <choiceText>Cleanup issue</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Cleanup issue</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceWar_Damage</name>
+        <choiceText>Damage</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Damage</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceWar_BuilderPunch</name>
+        <choiceText>Builder punch issue</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Builder punch issue</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceWar_HOComplaint</name>
+        <choiceText>Homeowner complaint</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Homeowner complaint</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceWar_Other</name>
+        <choiceText>Other</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Other</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceRep_FM</name>
+        <choiceText>I identified it (Field Manager)</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Field Manager</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceRep_Homeowner</name>
+        <choiceText>Homeowner</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Homeowner</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceRep_Builder</name>
+        <choiceText>Builder</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Builder</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceRep_Other</name>
+        <choiceText>Other</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Other</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceFJ_NotEnoughTime</name>
+        <choiceText>Not enough time on install day</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Not enough time on install day</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceFJ_MaterialShort</name>
+        <choiceText>Material shortage</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Material shortage</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceFJ_Weather</name>
+        <choiceText>Weather / site conditions</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Weather / site conditions</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceFJ_SiteCondition</name>
+        <choiceText>Site condition blocked completion</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Site condition blocked completion</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceFJ_Other</name>
+        <choiceText>Other</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Other</stringValue></value>
+    </choices>
+    <decisions>
+        <name>Route_By_Type</name>
+        <label>Route By Issue Type</label>
+        <locationX>176</locationX>
+        <locationY>396</locationY>
+        <defaultConnector>
+            <targetReference>Screen_SI_Details</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Schedule Issue</defaultConnectorLabel>
+        <rules>
+            <name>Route_ScopeIncomplete</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Input_IssueType</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><stringValue>Scope Incomplete</stringValue></rightValue>
+            </conditions>
+            <connector><targetReference>Screen_FinishedJob_Details</targetReference></connector>
+            <label>Scope Incomplete</label>
+        </rules>
+        <rules>
+            <name>Route_Warranty</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Input_IssueType</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><stringValue>Warranty</stringValue></rightValue>
+            </conditions>
+            <connector><targetReference>Screen_Warranty_Details</targetReference></connector>
+            <label>Warranty</label>
+        </rules>
+        <rules>
+            <name>Route_Complaint</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Input_IssueType</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><stringValue>Customer Complaint</stringValue></rightValue>
+            </conditions>
+            <connector><targetReference>Screen_Complaint_Details</targetReference></connector>
+            <label>Customer Complaint</label>
+        </rules>
+        <rules>
+            <name>Route_QuoteRequest</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Input_IssueType</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><stringValue>Quote Request</stringValue></rightValue>
+            </conditions>
+            <connector><targetReference>Screen_QuoteRequest_Details</targetReference></connector>
+            <label>Quote Request</label>
+        </rules>
+        <rules>
+            <name>Route_SiteNotReady</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Input_IssueType</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><stringValue>Site Not Ready</stringValue></rightValue>
+            </conditions>
+            <connector><targetReference>Screen_SiteNotReady_Details</targetReference></connector>
+            <label>Site Not Ready</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Decide_SI_WO_Update</name>
+        <label>Does this type require a WO update?</label>
+        <locationX>176</locationX>
+        <locationY>720</locationY>
+        <defaultConnector>
+            <targetReference>Create_SI</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No WO Update</defaultConnectorLabel>
+        <rules>
+            <name>Is_SiteNotReady</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Input_IssueType</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue><stringValue>Site Not Ready</stringValue></rightValue>
+            </conditions>
+            <connector><targetReference>Update_WO_SiteNotReady</targetReference></connector>
+            <label>Site Not Ready — update WO</label>
+        </rules>
+    </decisions>
+    <description>Guided issue router for Field Managers. FM selects an issue type from 14 options; flow routes to the correct object (Schedule_Issue__c, Warranty_Record__c, child WorkOrder, UMB_Quote_Request__c, or Case). Launched as Quick Action from WorkOrder.</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>fTodayDate</name>
+        <dataType>Date</dataType>
+        <expression>TODAY()</expression>
+    </formulas>
+    <formulas>
+        <name>fSI_Summary</name>
+        <dataType>String</dataType>
+        <expression>{!Input_IssueType} &amp; &quot;: &quot; &amp; {!Input_Summary}</expression>
+    </formulas>
+    <formulas>
+        <name>fSI_IssueTypeMapped</name>
+        <dataType>String</dataType>
+        <expression>IF({!Input_IssueType} = &quot;Missing Material&quot;, &quot;Missing Material&quot;,
+IF({!Input_IssueType} = &quot;Safety&quot;, &quot;Safety Hazard&quot;,
+IF({!Input_IssueType} = &quot;Drainage&quot;, &quot;Site Issue&quot;,
+IF({!Input_IssueType} = &quot;Utility Conflict&quot;, &quot;Site Issue&quot;,
+IF({!Input_IssueType} = &quot;Access&quot;, &quot;Site Issue&quot;,
+IF({!Input_IssueType} = &quot;Crew Damage&quot;, &quot;Site Issue&quot;,
+IF({!Input_IssueType} = &quot;Quantity Variance&quot;, &quot;Other&quot;,
+IF({!Input_IssueType} = &quot;Builder Punch&quot;, &quot;Other&quot;,
+&quot;Other&quot;))))))))</expression>
+    </formulas>
+    <formulas>
+        <name>fFJ_Subject</name>
+        <dataType>String</dataType>
+        <expression>&quot;Finished Job — &quot; &amp; {!Get_WorkOrder.WorkOrderNumber}</expression>
+    </formulas>
+    <formulas>
+        <name>fCase_Subject</name>
+        <dataType>String</dataType>
+        <expression>&quot;Customer Complaint — &quot; &amp; {!Get_WorkOrder.WorkOrderNumber}</expression>
+    </formulas>
+    <interviewLabel>LOVING FM Log Issue {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING FM Log Issue</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordCreates>
+        <name>Create_SI</name>
+        <label>Create Schedule Issue</label>
+        <locationX>176</locationX>
+        <locationY>828</locationY>
+        <connector>
+            <targetReference>Screen_Confirm_SI</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Standard_Work_Order__c</field>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Issue_Type__c</field>
+            <value>
+                <elementReference>vSI_IssueType</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Summary__c</field>
+            <value>
+                <elementReference>fSI_Summary</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Severity__c</field>
+            <value>
+                <elementReference>Input_Severity</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Field_Manager__c</field>
+            <value>
+                <elementReference>$User.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <elementReference>vSI_Status</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Required_Action__c</field>
+            <value>
+                <elementReference>Input_Summary</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Schedule_Issue__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordCreates>
+        <name>Create_Warranty_Record</name>
+        <label>Create Warranty Record</label>
+        <locationX>616</locationX>
+        <locationY>828</locationY>
+        <connector>
+            <targetReference>Screen_Confirm_Warranty</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>WorkOrder__c</field>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>FM__c</field>
+            <value>
+                <elementReference>$User.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Category__c</field>
+            <value>
+                <elementReference>Input_WarrantyCategory</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Issue_Description__c</field>
+            <value>
+                <elementReference>Input_Summary</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Severity__c</field>
+            <value>
+                <elementReference>Input_Severity</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Reported_By__c</field>
+            <value>
+                <elementReference>Input_ReportedBy</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Date_Original_Work_Completed__c</field>
+            <value>
+                <elementReference>Input_OriginalWorkDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>Submitted to CS</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Submit_Date__c</field>
+            <value>
+                <elementReference>fTodayDate</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Warranty_Record__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordCreates>
+        <name>Create_FinishedJob_WO</name>
+        <label>Create Finished Job Work Order</label>
+        <locationX>836</locationX>
+        <locationY>828</locationY>
+        <connector>
+            <targetReference>Screen_Confirm_FJ</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>ParentWorkOrderId</field>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Is_Finish_Job__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Is_Finished_Job__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Finish_Job_Reason__c</field>
+            <value>
+                <elementReference>Input_FJ_Reason</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Finish_Job_Notes__c</field>
+            <value>
+                <elementReference>Input_Summary</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <elementReference>fFJ_Subject</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>AccountId</field>
+            <value>
+                <elementReference>Get_WorkOrder.AccountId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lot__c</field>
+            <value>
+                <elementReference>Get_WorkOrder.Lot__c</elementReference>
+            </value>
+        </inputAssignments>
+        <object>WorkOrder</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordCreates>
+        <name>Create_QuoteRequest</name>
+        <label>Create Quote Request</label>
+        <locationX>1056</locationX>
+        <locationY>828</locationY>
+        <connector>
+            <targetReference>Screen_Confirm_QR</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Work_Order__c</field>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lot__c</field>
+            <value>
+                <elementReference>Get_WorkOrder.Lot__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>FM__c</field>
+            <value>
+                <elementReference>$User.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Scope_Description__c</field>
+            <value>
+                <elementReference>Input_Summary</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Request_Type__c</field>
+            <value>
+                <stringValue>Scope Change</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>Submitted to Customer Success</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Submit_Date__c</field>
+            <value>
+                <elementReference>fTodayDate</elementReference>
+            </value>
+        </inputAssignments>
+        <object>UMB_Quote_Request__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordCreates>
+        <name>Create_Case</name>
+        <label>Create Customer Complaint Case</label>
+        <locationX>1276</locationX>
+        <locationY>828</locationY>
+        <connector>
+            <targetReference>Screen_Confirm_Case</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>AccountId</field>
+            <value>
+                <elementReference>Get_WorkOrder.AccountId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type</field>
+            <value>
+                <stringValue>Customer Complaint</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Description</field>
+            <value>
+                <elementReference>Input_Summary</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <elementReference>fCase_Subject</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>New</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Case</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordLookups>
+        <name>Get_WorkOrder</name>
+        <label>Get Work Order</label>
+        <locationX>176</locationX>
+        <locationY>72</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Screen_IssueType</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkOrder</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>WorkOrderNumber</queriedFields>
+        <queriedFields>Subject</queriedFields>
+        <queriedFields>Lot__c</queriedFields>
+        <queriedFields>AccountId</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_WO_SiteNotReady</name>
+        <label>Update WO — Site Not Ready</label>
+        <locationX>396</locationX>
+        <locationY>720</locationY>
+        <connector>
+            <targetReference>Create_SI</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Site_Ready__c</field>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Site_Not_Ready_Reason__c</field>
+            <value>
+                <elementReference>Input_SiteNotReadyReason</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Site_Readiness_Notes__c</field>
+            <value>
+                <elementReference>Input_Summary</elementReference>
+            </value>
+        </inputAssignments>
+        <object>WorkOrder</object>
+    </recordUpdates>
+    <screens>
+        <name>Screen_IssueType</name>
+        <label>What is the issue?</label>
+        <locationX>176</locationX>
+        <locationY>180</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Screen_IssueDetails</targetReference>
+        </connector>
+        <fields>
+            <name>Display_WO_Header</name>
+            <fieldText>&lt;p&gt;&lt;b&gt;Work Order:&lt;/b&gt; {!Get_WorkOrder.WorkOrderNumber} — {!Get_WorkOrder.Subject}&lt;/p&gt;
+&lt;p&gt;Select the type of issue to log. You cannot skip this selection.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Input_IssueType</name>
+            <choiceReferences>ChoiceType_ScopeIncomplete</choiceReferences>
+            <choiceReferences>ChoiceType_Warranty</choiceReferences>
+            <choiceReferences>ChoiceType_Complaint</choiceReferences>
+            <choiceReferences>ChoiceType_BuilderPunch</choiceReferences>
+            <choiceReferences>ChoiceType_QuoteRequest</choiceReferences>
+            <choiceReferences>ChoiceType_QuantityVariance</choiceReferences>
+            <choiceReferences>ChoiceType_Drainage</choiceReferences>
+            <choiceReferences>ChoiceType_Utility</choiceReferences>
+            <choiceReferences>ChoiceType_SiteNotReady</choiceReferences>
+            <choiceReferences>ChoiceType_CrewDamage</choiceReferences>
+            <choiceReferences>ChoiceType_MissingMaterial</choiceReferences>
+            <choiceReferences>ChoiceType_Safety</choiceReferences>
+            <choiceReferences>ChoiceType_Access</choiceReferences>
+            <choiceReferences>ChoiceType_Other</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Issue Type</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_IssueDetails</name>
+        <label>Issue Details</label>
+        <locationX>176</locationX>
+        <locationY>288</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Route_By_Type</targetReference>
+        </connector>
+        <fields>
+            <name>Display_Type_Selected</name>
+            <fieldText>&lt;p&gt;&lt;b&gt;Issue type selected:&lt;/b&gt; {!Input_IssueType}&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Input_Summary</name>
+            <fieldText>Describe the issue (required)</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Input_Severity</name>
+            <choiceReferences>ChoiceSev_Low</choiceReferences>
+            <choiceReferences>ChoiceSev_Medium</choiceReferences>
+            <choiceReferences>ChoiceSev_High</choiceReferences>
+            <choiceReferences>ChoiceSev_Critical</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Severity</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_SI_Details</name>
+        <label>Schedule Issue Details</label>
+        <locationX>176</locationX>
+        <locationY>612</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Assign_SI_Type</targetReference>
+        </connector>
+        <fields>
+            <name>Display_SI_Info</name>
+            <fieldText>&lt;p&gt;A Schedule Issue will be created and routed to your Scheduling Manager. The Work Order will be flagged.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_SiteNotReady_Details</name>
+        <label>Site Not Ready — Details</label>
+        <locationX>396</locationX>
+        <locationY>504</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Assign_SI_SiteNotReady</targetReference>
+        </connector>
+        <fields>
+            <name>Display_SNR_Info</name>
+            <fieldText>&lt;p&gt;The Work Order will be marked &lt;b&gt;Site Not Ready&lt;/b&gt; and blocked from dispatch until the issue is resolved.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Input_SiteNotReadyReason</name>
+            <fieldText>Reason site is not ready</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_Warranty_Details</name>
+        <label>Warranty — Details</label>
+        <locationX>616</locationX>
+        <locationY>504</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Create_Warranty_Record</targetReference>
+        </connector>
+        <fields>
+            <name>Display_Warranty_Info</name>
+            <fieldText>&lt;p&gt;A Warranty Record will be created and routed to Customer Success. You cannot set coverage decisions or billing — those are CS actions.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Input_WarrantyCategory</name>
+            <choiceReferences>ChoiceWar_Plant</choiceReferences>
+            <choiceReferences>ChoiceWar_Sod</choiceReferences>
+            <choiceReferences>ChoiceWar_Irrigation</choiceReferences>
+            <choiceReferences>ChoiceWar_Drainage</choiceReferences>
+            <choiceReferences>ChoiceWar_Hardscape</choiceReferences>
+            <choiceReferences>ChoiceWar_Settlement</choiceReferences>
+            <choiceReferences>ChoiceWar_Washout</choiceReferences>
+            <choiceReferences>ChoiceWar_Cleanup</choiceReferences>
+            <choiceReferences>ChoiceWar_Damage</choiceReferences>
+            <choiceReferences>ChoiceWar_BuilderPunch</choiceReferences>
+            <choiceReferences>ChoiceWar_HOComplaint</choiceReferences>
+            <choiceReferences>ChoiceWar_Other</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Warranty Category</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Input_ReportedBy</name>
+            <choiceReferences>ChoiceRep_FM</choiceReferences>
+            <choiceReferences>ChoiceRep_Homeowner</choiceReferences>
+            <choiceReferences>ChoiceRep_Builder</choiceReferences>
+            <choiceReferences>ChoiceRep_Other</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Who reported this?</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Input_OriginalWorkDate</name>
+            <dataType>Date</dataType>
+            <fieldText>When was the original work completed?</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_FinishedJob_Details</name>
+        <label>Finished Job — Details</label>
+        <locationX>836</locationX>
+        <locationY>504</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Create_FinishedJob_WO</targetReference>
+        </connector>
+        <fields>
+            <name>Display_FJ_Info</name>
+            <fieldText>&lt;p&gt;A child Work Order will be created as a &lt;b&gt;Finished Job&lt;/b&gt; and added to the scheduling queue. Billing will be set to No Charge.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Input_FJ_Reason</name>
+            <choiceReferences>ChoiceFJ_NotEnoughTime</choiceReferences>
+            <choiceReferences>ChoiceFJ_MaterialShort</choiceReferences>
+            <choiceReferences>ChoiceFJ_Weather</choiceReferences>
+            <choiceReferences>ChoiceFJ_SiteCondition</choiceReferences>
+            <choiceReferences>ChoiceFJ_Other</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Why was scope not completed?</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_QuoteRequest_Details</name>
+        <label>Quote Request — Details</label>
+        <locationX>1056</locationX>
+        <locationY>504</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Create_QuoteRequest</targetReference>
+        </connector>
+        <fields>
+            <name>Display_QR_Info</name>
+            <fieldText>&lt;p&gt;A Quote Request will be created and routed to Customer Success for pricing. You cannot set price or approve the quote.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_Complaint_Details</name>
+        <label>Customer Complaint — Details</label>
+        <locationX>1276</locationX>
+        <locationY>504</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Create_Case</targetReference>
+        </connector>
+        <fields>
+            <name>Display_Complaint_Info</name>
+            <fieldText>&lt;p&gt;A Case will be created and routed to Customer Success. Do not make promises to the customer about resolution — CS owns that conversation.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_Confirm_SI</name>
+        <label>Issue Logged</label>
+        <locationX>176</locationX>
+        <locationY>936</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>Display_Confirm_SI</name>
+            <fieldText>&lt;p&gt;&lt;b&gt;Issue logged.&lt;/b&gt; A Schedule Issue has been created on Work Order {!Get_WorkOrder.WorkOrderNumber} and routed to the Scheduling Manager.&lt;/p&gt;
+&lt;p&gt;Issue type: {!Input_IssueType} | Severity: {!Input_Severity}&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_Confirm_Warranty</name>
+        <label>Warranty Record Submitted</label>
+        <locationX>616</locationX>
+        <locationY>936</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>Display_Confirm_Warranty</name>
+            <fieldText>&lt;p&gt;&lt;b&gt;Warranty record submitted.&lt;/b&gt; Customer Success has been notified and will review coverage. A site visit may be scheduled.&lt;/p&gt;
+&lt;p&gt;Record ID: {!Create_Warranty_Record}&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_Confirm_FJ</name>
+        <label>Finished Job Created</label>
+        <locationX>836</locationX>
+        <locationY>936</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>Display_Confirm_FJ</name>
+            <fieldText>&lt;p&gt;&lt;b&gt;Finished Job created.&lt;/b&gt; A child Work Order has been added to the scheduling queue as a no-charge return visit.&lt;/p&gt;
+&lt;p&gt;Work Order ID: {!Create_FinishedJob_WO}&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_Confirm_QR</name>
+        <label>Quote Request Submitted</label>
+        <locationX>1056</locationX>
+        <locationY>936</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>Display_Confirm_QR</name>
+            <fieldText>&lt;p&gt;&lt;b&gt;Quote Request submitted.&lt;/b&gt; Customer Success will price and route this request. You will see a status update when pricing is complete.&lt;/p&gt;
+&lt;p&gt;Request ID: {!Create_QuoteRequest}&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_Confirm_Case</name>
+        <label>Complaint Logged</label>
+        <locationX>1276</locationX>
+        <locationY>936</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>Display_Confirm_Case</name>
+            <fieldText>&lt;p&gt;&lt;b&gt;Customer complaint logged.&lt;/b&gt; Customer Success has been notified and will follow up with the customer.&lt;/p&gt;
+&lt;p&gt;Case ID: {!Create_Case}&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_WorkOrder</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>vSI_IssueType</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>vSI_Status</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

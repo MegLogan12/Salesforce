@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <assignments>
+        <name>Assign_TaskPriority</name>
+        <label>Set Task Priority from Urgency</label>
+        <locationX>176</locationX>
+        <locationY>612</locationY>
+        <assignmentItems>
+            <assignToReference>vTaskPriority</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>fTaskPriorityMapped</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Create_Quote_Request</targetReference>
+        </connector>
+    </assignments>
+    <choices>
+        <name>ChoiceReqType_ScopeChange</name>
+        <choiceText>Scope Change</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Scope Change</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceReqType_DrainageFix</name>
+        <choiceText>Drainage Fix</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Drainage Fix</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceReqType_UtilityConflict</name>
+        <choiceText>Utility Conflict</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Utility Conflict</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceReqType_WarrantyAssessment</name>
+        <choiceText>Warranty Assessment</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Warranty Assessment</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceReqType_AdditionalInstall</name>
+        <choiceText>Additional Install</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Additional Install</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceReqType_Other</name>
+        <choiceText>Other</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Other</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceCustType_Homeowner</name>
+        <choiceText>Homeowner</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Homeowner</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceCustType_Builder</name>
+        <choiceText>Builder</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Builder</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceCustType_Internal</name>
+        <choiceText>Internal</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Internal</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceCustType_WarrantyReview</name>
+        <choiceText>Warranty Review</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Warranty Review</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceUrgency_Routine</name>
+        <choiceText>Routine</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Routine</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceUrgency_Week</name>
+        <choiceText>Within 1 week</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Within 1 week</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceUrgency_SameWeek</name>
+        <choiceText>Same week</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Same week</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceUrgency_Immediate</name>
+        <choiceText>Immediate</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Immediate</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceBill_Billable</name>
+        <choiceText>Billable</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Billable</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceBill_NonBillable</name>
+        <choiceText>Non-Billable</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Non-Billable</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceBill_Warranty</name>
+        <choiceText>Warranty</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Warranty</stringValue></value>
+    </choices>
+    <choices>
+        <name>ChoiceBill_Unknown</name>
+        <choiceText>Unknown</choiceText>
+        <dataType>String</dataType>
+        <value><stringValue>Unknown</stringValue></value>
+    </choices>
+    <description>FM captures new or changed scope in the field and routes it to Customer Success for pricing. Creates UMB_Quote_Request__c (Status: Submitted to Customer Success), creates Task for CS review, posts context from the active Work Order. FM cannot set price, GP, discount, or approve. Launched as Quick Action from WorkOrder.</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>fTodayDate</name>
+        <dataType>Date</dataType>
+        <expression>TODAY()</expression>
+    </formulas>
+    <formulas>
+        <name>fQR_TaskSubject</name>
+        <dataType>String</dataType>
+        <expression>&quot;Review quote request from FM on WO &quot; &amp; {!Get_WorkOrder.WorkOrderNumber}</expression>
+    </formulas>
+    <formulas>
+        <name>fTaskPriorityMapped</name>
+        <dataType>String</dataType>
+        <expression>IF({!Input_Urgency} = &quot;Immediate&quot;, &quot;High&quot;,
+IF({!Input_Urgency} = &quot;Same week&quot;, &quot;High&quot;,
+&quot;Normal&quot;))</expression>
+    </formulas>
+    <interviewLabel>LOVING FM Quote Request {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING FM Quote Request</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordCreates>
+        <name>Create_Quote_Request</name>
+        <label>Create Quote Request</label>
+        <locationX>176</locationX>
+        <locationY>720</locationY>
+        <connector>
+            <targetReference>Create_QR_Task</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Work_Order__c</field>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Lot__c</field>
+            <value>
+                <elementReference>Get_WorkOrder.Lot__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>FM__c</field>
+            <value>
+                <elementReference>$User.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Request_Type__c</field>
+            <value>
+                <elementReference>Input_RequestType</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Customer_Type__c</field>
+            <value>
+                <elementReference>Input_CustomerType</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Scope_Description__c</field>
+            <value>
+                <elementReference>Input_ScopeDescription</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Reason__c</field>
+            <value>
+                <elementReference>Input_Reason</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Measured_Sqft__c</field>
+            <value>
+                <elementReference>Input_MeasuredSqft</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Measured_Linear_Ft__c</field>
+            <value>
+                <elementReference>Input_MeasuredLinear</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Drainage_Impact__c</field>
+            <value>
+                <elementReference>Input_DrainageImpact</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Utility_Impact__c</field>
+            <value>
+                <elementReference>Input_UtilityImpact</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Access_Issue__c</field>
+            <value>
+                <elementReference>Input_AccessIssue</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Urgency__c</field>
+            <value>
+                <elementReference>Input_Urgency</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>FM_Billable_Recommendation__c</field>
+            <value>
+                <elementReference>Input_BillableRec</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>FM_Notes__c</field>
+            <value>
+                <elementReference>Input_FMNotes</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>Submitted to Customer Success</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Submit_Date__c</field>
+            <value>
+                <elementReference>fTodayDate</elementReference>
+            </value>
+        </inputAssignments>
+        <object>UMB_Quote_Request__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordCreates>
+        <name>Create_QR_Task</name>
+        <label>Create Task for Customer Success</label>
+        <locationX>176</locationX>
+        <locationY>828</locationY>
+        <connector>
+            <targetReference>Screen_Confirm</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <elementReference>fQR_TaskSubject</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhatId</field>
+            <value>
+                <elementReference>Create_Quote_Request</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ActivityDate</field>
+            <value>
+                <elementReference>fTodayDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Not Started</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value>
+                <elementReference>vTaskPriority</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Description</field>
+            <value>
+                <elementReference>Input_ScopeDescription</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Task</object>
+    </recordCreates>
+    <recordLookups>
+        <name>Get_WorkOrder</name>
+        <label>Get Work Order</label>
+        <locationX>176</locationX>
+        <locationY>72</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Screen_TypeAndContext</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkOrder</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>WorkOrderNumber</queriedFields>
+        <queriedFields>Subject</queriedFields>
+        <queriedFields>Lot__c</queriedFields>
+        <queriedFields>AccountId</queriedFields>
+        <queriedFields>ContactId</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <screens>
+        <name>Screen_TypeAndContext</name>
+        <label>Request Type</label>
+        <locationX>176</locationX>
+        <locationY>180</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Screen_ScopeDescription</targetReference>
+        </connector>
+        <fields>
+            <name>Display_WO_Context</name>
+            <fieldText>&lt;p&gt;&lt;b&gt;Work Order:&lt;/b&gt; {!Get_WorkOrder.WorkOrderNumber} — {!Get_WorkOrder.Subject}&lt;/p&gt;
+&lt;p&gt;You cannot set price, GP, discount, or approval on this request. Customer Success owns pricing.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Input_RequestType</name>
+            <choiceReferences>ChoiceReqType_ScopeChange</choiceReferences>
+            <choiceReferences>ChoiceReqType_DrainageFix</choiceReferences>
+            <choiceReferences>ChoiceReqType_UtilityConflict</choiceReferences>
+            <choiceReferences>ChoiceReqType_WarrantyAssessment</choiceReferences>
+            <choiceReferences>ChoiceReqType_AdditionalInstall</choiceReferences>
+            <choiceReferences>ChoiceReqType_Other</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>What type of request is this?</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Input_CustomerType</name>
+            <choiceReferences>ChoiceCustType_Homeowner</choiceReferences>
+            <choiceReferences>ChoiceCustType_Builder</choiceReferences>
+            <choiceReferences>ChoiceCustType_Internal</choiceReferences>
+            <choiceReferences>ChoiceCustType_WarrantyReview</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Who is the customer?</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_ScopeDescription</name>
+        <label>Scope Description</label>
+        <locationX>176</locationX>
+        <locationY>288</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Screen_Measurements</targetReference>
+        </connector>
+        <fields>
+            <name>Display_Scope_Prompt</name>
+            <fieldText>&lt;p&gt;Be specific. Customer Success needs enough detail to price or route this correctly.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Input_ScopeDescription</name>
+            <fieldText>Describe what is needed (required)</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>Input_Reason</name>
+            <fieldText>Why is this needed? (required)</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_Measurements</name>
+        <label>Measurements &amp; Constraints</label>
+        <locationX>176</locationX>
+        <locationY>396</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Screen_UrgencyAndNotes</targetReference>
+        </connector>
+        <fields>
+            <name>Display_Measurements_Prompt</name>
+            <fieldText>&lt;p&gt;Enter measurements if you have them. These help CS price accurately.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Input_MeasuredSqft</name>
+            <dataType>Number</dataType>
+            <fieldText>Measured square footage</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+            <scale>0</scale>
+        </fields>
+        <fields>
+            <name>Input_MeasuredLinear</name>
+            <dataType>Number</dataType>
+            <fieldText>Measured linear feet</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>false</isRequired>
+            <scale>1</scale>
+        </fields>
+        <fields>
+            <name>Input_DrainageImpact</name>
+            <dataType>Boolean</dataType>
+            <defaultValue>
+                <booleanValue>false</booleanValue>
+            </defaultValue>
+            <fieldText>Drainage impact</fieldText>
+            <fieldType>InputField</fieldType>
+            </fields>
+        <fields>
+            <name>Input_UtilityImpact</name>
+            <dataType>Boolean</dataType>
+            <defaultValue>
+                <booleanValue>false</booleanValue>
+            </defaultValue>
+            <fieldText>Utility / 811 impact</fieldText>
+            <fieldType>InputField</fieldType>
+            </fields>
+        <fields>
+            <name>Input_AccessIssue</name>
+            <dataType>Boolean</dataType>
+            <defaultValue>
+                <booleanValue>false</booleanValue>
+            </defaultValue>
+            <fieldText>Access constraint</fieldText>
+            <fieldType>InputField</fieldType>
+            </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_UrgencyAndNotes</name>
+        <label>Urgency &amp; Notes</label>
+        <locationX>176</locationX>
+        <locationY>504</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Assign_TaskPriority</targetReference>
+        </connector>
+        <fields>
+            <name>Display_Urgency_Prompt</name>
+            <fieldText>&lt;p&gt;Your billing recommendation is for context only — Customer Success makes the final decision.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>Input_Urgency</name>
+            <choiceReferences>ChoiceUrgency_Routine</choiceReferences>
+            <choiceReferences>ChoiceUrgency_Week</choiceReferences>
+            <choiceReferences>ChoiceUrgency_SameWeek</choiceReferences>
+            <choiceReferences>ChoiceUrgency_Immediate</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Urgency</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Input_BillableRec</name>
+            <choiceReferences>ChoiceBill_Billable</choiceReferences>
+            <choiceReferences>ChoiceBill_NonBillable</choiceReferences>
+            <choiceReferences>ChoiceBill_Warranty</choiceReferences>
+            <choiceReferences>ChoiceBill_Unknown</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Billing recommendation (your opinion — CS decides)</fieldText>
+            <fieldType>RadioButtons</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <fields>
+            <name>Input_FMNotes</name>
+            <fieldText>Additional notes for Customer Success</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>false</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_Confirm</name>
+        <label>Quote Request Submitted</label>
+        <locationX>176</locationX>
+        <locationY>936</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>Display_Confirm</name>
+            <fieldText>&lt;p&gt;&lt;b&gt;Quote Request Submitted.&lt;/b&gt;&lt;/p&gt;
+&lt;p&gt;Customer Success has been notified. You will receive a status update when pricing is complete.&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Request ID:&lt;/b&gt; {!Create_Quote_Request}&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;Work Order:&lt;/b&gt; {!Get_WorkOrder.WorkOrderNumber}&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_WorkOrder</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>vTaskPriority</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>
