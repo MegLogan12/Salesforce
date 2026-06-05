@@ -39,6 +39,10 @@ const PORTAL_ID = 'mclovin-portal';
 const STYLES_ID = 'mclovin-styles';
 const S = { PERCH:'perch', EDGE:'edge', OPEN:'open', DRAG:'drag' };
 
+// Module-level singleton — shared across all LWC instances in the page.
+// Prevents two utility bars mounting simultaneously from both creating a portal.
+let _portalOwned = false;
+
 function pick(arr, last) {
     if (!arr || !arr.length) return '';
     const opts = arr.filter(l => l !== last);
@@ -225,7 +229,8 @@ export default class AskMclovin extends LightningElement {
         this._fullUrl = ASSETS + '/full.png';
         this._peekUrl = ASSETS + '/peek.png';
 
-        if (document.getElementById(PORTAL_ID)) return;
+        if (_portalOwned || document.getElementById(PORTAL_ID)) return;
+        _portalOwned = true;
         this._isOwner = true;
 
         this._injectStyles();
@@ -240,6 +245,7 @@ export default class AskMclovin extends LightningElement {
 
     disconnectedCallback() {
         if (!this._isOwner) return;
+        _portalOwned = false;
         clearTimeout(this._bubTimer);
         clearTimeout(this._typingTimer);
         window.removeEventListener('mousemove',  this._onMove);
