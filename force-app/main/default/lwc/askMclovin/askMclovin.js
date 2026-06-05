@@ -23,7 +23,7 @@ export default class AskMclovin extends LightningElement {
     fullUrl  = ASSETS + '/full.png';
     peekUrl  = ASSETS + '/peek.png';
 
-    @track state      = 'badge';
+    @track state      = 'open';
     @track pos        = { x: null, y: null };
     @track nudgeText  = '';
     @track nudgeOn    = false;
@@ -58,9 +58,12 @@ export default class AskMclovin extends LightningElement {
         window.addEventListener('touchmove', this._moveH, { passive: false });
         window.addEventListener('mouseup',   this._upH);
         window.addEventListener('touchend',  this._upH);
-        this.scheduleIdle();
+        // Show full-body intro, then shrink to badge after 6 seconds
         // eslint-disable-next-line @lwc/lwc/no-async-operation
-        setTimeout(() => this.showNudge("Hey, I'm Ask mcLOVIN'. Tap me anytime."), 1200);
+        setTimeout(() => {
+            this.state = 'badge';
+            this.scheduleIdle();
+        }, 6000);
     }
 
     disconnectedCallback() {

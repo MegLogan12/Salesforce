@@ -90,6 +90,10 @@
         <name>utilityItems</name>
         <type>Region</type>
     </flexiPageRegions>
+    <flexiPageRegions>
+        <name>backgroundComponents</name>
+        <type>Background</type>
+    </flexiPageRegions>
     <masterLabel>Customer Success Utility Bar</masterLabel>
     <template>
         <name>one:utilityBarTemplateDesktop</name>
