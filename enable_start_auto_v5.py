@@ -50,9 +50,9 @@ def get_creds():
     r = data.get("result", {})
     return r.get("accessToken"), r.get("instanceUrl")
 
-def login(browser, access_token, instance_url):
+def login(context, access_token, instance_url):
     """Create a new page and login via frontdoor."""
-    page = browser.new_page()
+    page = context.new_page()
     token = urllib.parse.quote(access_token)
     url = f"{instance_url}/secur/frontdoor.jsp?sid={token}"
     print(f"  Navigating to frontdoor...")
@@ -577,6 +577,8 @@ def main():
                 '--disable-dev-shm-usage',
                 '--window-size=1440,900',
                 '--disable-extensions',
+                '--ignore-certificate-errors',
+                '--ignore-ssl-errors',
             ],
             slow_mo=50,
         )
@@ -586,7 +588,7 @@ def main():
         )
 
         try:
-            page = login(browser, access_token, instance_url)
+            page = login(context, access_token, instance_url)
 
             app_configs = [
                 ("Outdoor Living", ["Outdoor Living"]),

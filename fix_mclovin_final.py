@@ -119,12 +119,16 @@ def search_app_manager(page, search_term):
 
     return find_frame_with_table(page)
 
+def safe_name(s, maxlen=18):
+    return s.replace(' ', '_').replace("'", "").replace("/", "_")[:maxlen]
+
 def click_edit_on_row(page, frame, rows, app_display_name):
     """
     Find the row for app_display_name (or partial match) and click Edit.
     The table columns are: [0]=checkbox, [1]=App Name, [2]=Dev Name, etc.
     """
     target_row = None
+    sname = safe_name(app_display_name)
 
     for row in rows:
         try:
@@ -156,7 +160,7 @@ def click_edit_on_row(page, frame, rows, app_display_name):
         btn.scroll_into_view_if_needed()
         btn.click()
         time.sleep(1)
-        ss(page, f"dd_{app_display_name.replace(' ','_').replace(\"'\",'')[:18]}")
+        ss(page, f"dd_{sname}")
     except Exception as e:
         print(f"  Error clicking dropdown: {e}")
         return False
@@ -170,13 +174,13 @@ def click_edit_on_row(page, frame, rows, app_display_name):
             wait_for_sf(page, timeout=20000)
             time.sleep(2)
             print(f"  Editor opened: {page.url[:80]}")
-            ss(page, f"ed_{app_display_name.replace(' ','_').replace(\"'\",'')[:18]}")
+            ss(page, f"ed_{sname}")
             return True
         except Exception:
             pass
 
     print(f"  Edit option not found")
-    ss(page, f"noedit_{app_display_name.replace(' ','_').replace(\"'\",'')[:18]}")
+    ss(page, f"noedit_{sname}")
     return False
 
 def click_utility_items_tab(page, app_display_name):
