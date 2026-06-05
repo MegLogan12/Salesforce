@@ -16,7 +16,24 @@ const PROOF_LABELS = new Set([
     'Total Scope Price', 'Total Cost', 'Gross Profit', 'Invoice Amount'
 ]);
 
-import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
+function applyFullWidthLayout(host) {
+    try {
+        if (typeof window === 'undefined' || !host) return false;
+        const rect = host.getBoundingClientRect();
+        if (!rect || rect.width === 0) return false;
+        const vw = window.innerWidth;
+        if (rect.right < vw - 20) {
+            host.style.setProperty('width', `${vw - rect.left}px`, 'important');
+            host.style.setProperty('max-width', 'none', 'important');
+        }
+        if (rect.top > 95) {
+            host.style.setProperty('margin-top', `-${Math.round(rect.top - 90)}px`, 'important');
+        }
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
 export default class LovingProductionInstallTicket extends NavigationMixin(LightningElement) {
     @api recordId;
     workspace;

@@ -26,10 +26,4 @@
         <enabled>true</enabled>
         <name>ViewHelpLink</name>
     </userPermissions>
-    <recordTypeVisibilities>
-        <default>false</default>
-        <personAccountDefault>false</personAccountDefault>
-        <recordType>Account.PersonAccount</recordType>
-        <visible>false</visible>
-    </recordTypeVisibilities>
 </Profile>

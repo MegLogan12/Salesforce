@@ -11,8 +11,8 @@ export function applyFullWidthLayout(host) {
         const rect = host.getBoundingClientRect();
         if (!rect || rect.width === 0) return false;
         const vw = window.innerWidth;
-        // Expand width when component is narrower than 90% of viewport
-        if (rect.width < vw * 0.9) {
+        // Expand width when right edge doesn't reach the viewport edge
+        if (rect.right < vw - 20) {
             host.style.setProperty('width', `${vw - rect.left}px`, 'important');
             host.style.setProperty('max-width', 'none', 'important');
         }

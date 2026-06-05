@@ -7,7 +7,24 @@ import getWorkOrderRecord from '@salesforce/apex/ODL_WorkController.getWorkOrder
 
 const WO_STAGES = ['Created', 'Scheduled', 'In Progress', 'Punch', 'Closeout', 'Closed'];
 
-import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
+function applyFullWidthLayout(host) {
+    try {
+        if (typeof window === 'undefined' || !host) return false;
+        const rect = host.getBoundingClientRect();
+        if (!rect || rect.width === 0) return false;
+        const vw = window.innerWidth;
+        if (rect.right < vw - 20) {
+            host.style.setProperty('width', `${vw - rect.left}px`, 'important');
+            host.style.setProperty('max-width', 'none', 'important');
+        }
+        if (rect.top > 95) {
+            host.style.setProperty('margin-top', `-${Math.round(rect.top - 90)}px`, 'important');
+        }
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
 export default class OdlWorkOrder extends NavigationMixin(LightningElement) {
     @api recordId;
     @track workOrder = {};

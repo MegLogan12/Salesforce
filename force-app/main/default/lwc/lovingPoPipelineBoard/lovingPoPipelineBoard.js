@@ -56,7 +56,24 @@ function cardClass(status) {
     return 'po-card card-slate';
 }
 
-import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
+function applyFullWidthLayout(host) {
+    try {
+        if (typeof window === 'undefined' || !host) return false;
+        const rect = host.getBoundingClientRect();
+        if (!rect || rect.width === 0) return false;
+        const vw = window.innerWidth;
+        if (rect.right < vw - 20) {
+            host.style.setProperty('width', `${vw - rect.left}px`, 'important');
+            host.style.setProperty('max-width', 'none', 'important');
+        }
+        if (rect.top > 95) {
+            host.style.setProperty('margin-top', `-${Math.round(rect.top - 90)}px`, 'important');
+        }
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
 export default class LovingPoPipelineBoard extends NavigationMixin(LightningElement) {
     /** Optional — when placed on Takeoff record page, filters context visually */
     @api recordId;

@@ -12,8 +12,24 @@ import ensureTakeoffChecklist from '@salesforce/apex/LovingWOWorkspaceController
 import updateTakeoffReview from '@salesforce/apex/LovingWOWorkspaceController.updateTakeoffReview';
 import updateChecklistItem from '@salesforce/apex/LovingWOWorkspaceController.updateChecklistItem';
 import updateTakeoffLineScope from '@salesforce/apex/LovingWOWorkspaceController.updateTakeoffLineScope';
-import { applyFullWidthLayout } from 'c/lovingLayoutUtils';
-
+function applyFullWidthLayout(host) {
+    try {
+        if (typeof window === 'undefined' || !host) return false;
+        const rect = host.getBoundingClientRect();
+        if (!rect || rect.width === 0) return false;
+        const vw = window.innerWidth;
+        if (rect.right < vw - 20) {
+            host.style.setProperty('width', `${vw - rect.left}px`, 'important');
+            host.style.setProperty('max-width', 'none', 'important');
+        }
+        if (rect.top > 95) {
+            host.style.setProperty('margin-top', `-${Math.round(rect.top - 90)}px`, 'important');
+        }
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
 const NEW_TASK_ACTION = 'Global.NewTask';
 const NEW_NOTE_ACTION = 'Global.NewNote';
 
