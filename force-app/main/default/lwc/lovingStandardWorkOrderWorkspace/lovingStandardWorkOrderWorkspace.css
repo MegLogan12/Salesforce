@@ -203,6 +203,46 @@
     gap: 8px;
 }
 
+.fm-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: rgba(255,255,255,0.96);
+    border: 1px solid var(--border-warm);
+    border-radius: 12px;
+}
+
+.fm-strip-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-right: 4px;
+    white-space: nowrap;
+}
+
+.fm-btn {
+    border: 1px solid var(--border-warm);
+    background: #fff;
+    color: var(--ink);
+    border-radius: 8px;
+    padding: 5px 11px;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+
+.fm-btn:hover {
+    background: var(--canvas);
+    border-color: var(--green);
+    color: var(--green);
+}
+
 .hero-main {
     display: grid;
     grid-template-columns: minmax(0, 1.5fr) minmax(320px, 1fr);
