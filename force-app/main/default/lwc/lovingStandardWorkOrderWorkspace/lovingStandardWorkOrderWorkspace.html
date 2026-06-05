@@ -4,39 +4,6 @@
             <div class="ab ab-r"><div class="ab-ic">⚠</div><div>{error.body.message}</div></div>
         </template>
         <template if:true={hasData}>
-            <div class="hb-top">
-                <div class="hb-waffle" aria-hidden="true">
-                    <span></span><span></span><span></span>
-                    <span></span><span></span><span></span>
-                    <span></span><span></span><span></span>
-                </div>
-                <div class="hb-app">
-                    <div class="hb-app-icon">HB</div>
-                    <span>{builderAppLabel}</span>
-                </div>
-                <div class="hb-search">{builderSearchPlaceholder}</div>
-                <div class="hb-icons" aria-hidden="true">
-                    <div class="hb-ico">⚙</div>
-                    <div class="hb-ico">?</div>
-                    <div class="hb-ico">🔔</div>
-                    <div class="hb-avatar">{userInitials}</div>
-                </div>
-            </div>
-
-            <div class="hb-nav">
-                <template for:each={builderNavTabs} for:item="tab">
-                    <button
-                        type="button"
-                        key={tab.id}
-                        class={tab.className}
-                        data-id={tab.id}
-                        onclick={handleBuilderTabClick}
-                        disabled={tab.disabled}>
-                        {tab.label}
-                    </button>
-                </template>
-            </div>
-
             <div class="hero">
                 <div class="hero-band">
                     <div class="hero-kicker">{roleLabel}</div>
