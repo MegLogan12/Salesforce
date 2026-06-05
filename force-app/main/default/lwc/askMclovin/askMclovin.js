@@ -78,7 +78,7 @@ const CHIP_PROMPTS = {
 
 const PORTAL_ID  = 'mclovin-portal';
 const STYLES_ID  = 'mclovin-styles';
-const S = { ENTER:'enter', BADGE:'badge', WELCOME:'welcome', PERCH:'perch', EDGE:'edge', DRAG:'drag' };
+const S = { ENTER:'enter', WELCOME:'welcome', PERCH:'perch', EDGE:'edge', DRAG:'drag' };
 
 function pick(arr, last) {
     if (!arr || !arr.length) return '';
@@ -115,24 +115,6 @@ const PORTAL_CSS = `
   100% { box-shadow:0 0 0 0 rgba(252,212,0,0); }
 }
 
-/* BADGE */
-#mclovin-portal .badge {
-  width:96px; height:96px; border-radius:50%; background:#fff;
-  border:1px solid rgba(0,0,0,.08); box-shadow:0 14px 34px rgba(20,24,40,.22);
-  overflow:hidden; display:grid; place-items:end center; cursor:grab;
-}
-#mclovin-portal .badge img {
-  width:108px; margin-bottom:-6px; transform-origin:bottom center;
-  will-change:transform;
-}
-#mclovin-portal .badge.bobbing img { animation:mcBob 4.2s ease-in-out infinite both; }
-#mclovin-portal .mc.face-left .badge.bobbing img { animation:mcBobFlip 4.2s ease-in-out infinite both; }
-#mclovin-portal .badge .pulse {
-  position:absolute; right:6px; bottom:6px; width:26px; height:26px;
-  border-radius:50%; background:#FCD400; display:grid; place-items:center;
-  font-size:13px; animation:mcPing 2.4s infinite;
-}
-
 /* WALKING */
 #mclovin-portal .walker {
   height:160px; display:block; cursor:grab;
@@ -158,21 +140,25 @@ const PORTAL_CSS = `
 }
 
 /* OPEN CARD */
-#mclovin-portal .open { position:relative; width:540px; height:430px; }
+#mclovin-portal .open {
+  position:relative; width:320px; padding-top:100px;
+}
 #mclovin-portal .open .body {
-  position:absolute; left:0; bottom:0; height:400px;
+  position:absolute; right:8px; top:-180px; height:260px;
   filter:drop-shadow(0 16px 26px rgba(20,24,40,.28));
   animation:mcBob 4.2s ease-in-out infinite both;
   transform-origin:bottom center; will-change:transform; cursor:grab;
+  pointer-events:auto;
 }
 #mclovin-portal .close-btn {
-  position:absolute; right:0; top:0; width:30px; height:30px; border-radius:50%;
+  position:absolute; right:0; top:-180px; width:28px; height:28px; border-radius:50%;
   background:#fff; border:1px solid rgba(0,0,0,.08); cursor:pointer;
-  font-size:16px; color:#6b7280; display:grid; place-items:center;
+  font-size:15px; color:#6b7280; display:grid; place-items:center; z-index:1;
 }
 #mclovin-portal .panel {
-  position:absolute; right:0; top:54px; width:300px;
   display:flex; flex-direction:column; gap:10px;
+  background:#fff; border:1px solid rgba(0,0,0,.08); border-radius:18px;
+  padding:14px; box-shadow:0 18px 40px rgba(20,24,40,.18);
 }
 #mclovin-portal .chips { display:flex; gap:7px; flex-wrap:wrap; }
 #mclovin-portal .chip {
@@ -224,7 +210,7 @@ const PORTAL_CSS = `
 
 @media (prefers-reduced-motion:reduce) {
   #mclovin-portal .walker,#mclovin-portal .perched,#mclovin-portal .edge-hang,
-  #mclovin-portal .badge img,#mclovin-portal .open .body { animation:none; }
+  #mclovin-portal .open .body { animation:none; }
   #mclovin-portal .peek { transition:none; }
   #mclovin-portal .bubble { transition:none; }
   #mclovin-portal .mc { transition:none !important; }
@@ -240,7 +226,7 @@ export default class AskMclovin extends LightningElement {
     _peekUrl  = '';
 
     // State
-    _state     = S.BADGE;
+    _state     = S.EDGE;
     _posX      = null;   // null = use default corner
     _posY      = null;
     _faceRight = true;
@@ -255,7 +241,6 @@ export default class AskMclovin extends LightningElement {
     // DOM refs (portal elements)
     _portal    = null;
     _mcEl      = null;
-    _badgeEl   = null;
     _walkerEl  = null;
     _perchedEl = null;
     _edgeEl    = null;
@@ -328,8 +313,22 @@ export default class AskMclovin extends LightningElement {
     }
 
     /* ── Public API ────────────────────────────────────────────────────────── */
-    @api open()     { this._setState(S.WELCOME); this._setNudge('', false); }
-    @api minimize() { this._goToBadgeOrPerch(); }
+    @api open() {
+        // Ensure card lands in a visible corner (bottom-right)
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        if (this._posX === null) {
+            this._posX = vw - 380;
+            this._posY = vh - 420;
+        } else {
+            // Clamp existing position so 320px card + 260px character stay on screen
+            this._posX = clamp(this._posX, 10, vw - 380);
+            this._posY = clamp(this._posY, 200, vh - 320);
+        }
+        this._setState(S.WELCOME);
+        this._setNudge('', false);
+    }
+    @api minimize() { this._goToEdge(); }
     @api peek()     { this._doPeek(); }
     @api say(text)  { this._showBubble(text, true); }
 
@@ -356,21 +355,16 @@ export default class AskMclovin extends LightningElement {
     _portalHTML() {
         return `
 <div class="mc">
-  <div class="badge pe grab">
-    <img src="${this._headUrl}" alt="Ask mcLOVIN'">
-    <div class="pulse">&#10022;</div>
-  </div>
-  <img class="walker" src="${this._fullUrl}" alt="mcLOVIN walking">
-  <img class="perched" src="${this._fullUrl}" alt="mcLOVIN perched">
+  <img class="walker"    src="${this._fullUrl}" alt="mcLOVIN walking">
+  <img class="perched"   src="${this._fullUrl}" alt="mcLOVIN perched">
   <img class="edge-hang" src="${this._peekUrl}" alt="mcLOVIN edge">
   <div class="open pe">
-    <button class="close-btn">&#8211;</button>
     <img class="body grab" src="${this._fullUrl}" alt="mcLOVIN">
+    <button class="close-btn">&#8211;</button>
     <div class="panel">
       <div class="bubble show intro-bubble">
         <span class="spark">&#10022;</span>
-        Hey, I&rsquo;m <b>Ask mcLOVIN&rsquo;</b>. Drop the details here and I&rsquo;ll find the right path.
-        <span class="tail" style="left:18px;bottom:-7px"></span>
+        Hey, I&rsquo;m <b>mcLOVIN&rsquo;</b>. What do you need?
       </div>
       <div class="chips pe">
         <span class="chip" data-q="po">Upload PO</span>
@@ -397,7 +391,6 @@ export default class AskMclovin extends LightningElement {
     _cacheRefs() {
         const p = this._portal;
         this._mcEl      = p.querySelector('.mc');
-        this._badgeEl   = p.querySelector('.badge');
         this._walkerEl  = p.querySelector('.walker');
         this._perchedEl = p.querySelector('.perched');
         this._edgeEl    = p.querySelector('.edge-hang');
@@ -410,19 +403,17 @@ export default class AskMclovin extends LightningElement {
 
     _bindPortalEvents() {
         const p = this._portal;
-        p.querySelector('.badge').addEventListener('mousedown',  (e) => this._onDragStart(e));
-        p.querySelector('.badge').addEventListener('touchstart', (e) => this._onDragStart(e), {passive:false});
-        p.querySelector('.badge').addEventListener('click',      ()  => this._onBadgeClick());
-        p.querySelector('.walker').addEventListener('mousedown', (e) => this._onDragStart(e));
-        p.querySelector('.walker').addEventListener('touchstart',(e) => this._onDragStart(e), {passive:false});
-        p.querySelector('.perched').addEventListener('click',    ()  => this.open());
-        p.querySelector('.perched').addEventListener('mousedown',(e) => this._onDragStart(e));
-        p.querySelector('.edge-hang').addEventListener('click',  ()  => this.open());
-        p.querySelector('.edge-hang').addEventListener('mousedown',(e)=>this._onDragStart(e));
-        p.querySelector('.open .body').addEventListener('mousedown',(e)=>this._onDragStart(e));
-        p.querySelector('.open .body').addEventListener('touchstart',(e)=>this._onDragStart(e),{passive:false});
-        p.querySelector('.close-btn').addEventListener('click',  ()  => this.minimize());
-        p.querySelector('.send-btn').addEventListener('click',   ()  => this._onSend());
+        p.querySelector('.walker').addEventListener('mousedown',    (e) => this._onDragStart(e));
+        p.querySelector('.walker').addEventListener('touchstart',   (e) => this._onDragStart(e), {passive:false});
+        p.querySelector('.walker').addEventListener('click',        ()  => this.open());
+        p.querySelector('.perched').addEventListener('click',       ()  => this.open());
+        p.querySelector('.perched').addEventListener('mousedown',   (e) => this._onDragStart(e));
+        p.querySelector('.edge-hang').addEventListener('click',     ()  => this.open());
+        p.querySelector('.edge-hang').addEventListener('mousedown', (e) => this._onDragStart(e));
+        p.querySelector('.open .body').addEventListener('mousedown',(e) => this._onDragStart(e));
+        p.querySelector('.open .body').addEventListener('touchstart',(e)=> this._onDragStart(e), {passive:false});
+        p.querySelector('.close-btn').addEventListener('click',     ()  => this.minimize());
+        p.querySelector('.send-btn').addEventListener('click',      ()  => this._onSend());
         this._inputEl.addEventListener('keyup', (e) => { if (e.key==='Enter') this._onSend(); });
         p.querySelectorAll('.chip').forEach(c => c.addEventListener('click', (e) => this._onChip(e)));
     }
@@ -460,16 +451,17 @@ export default class AskMclovin extends LightningElement {
         // Direction flip
         this._mcEl.classList.toggle('face-left', !this._faceRight);
 
-        // Bob on badge only when idle
-        this._badgeEl.classList.toggle('bobbing', this._state === S.BADGE && !this._isWalking);
+        // Hide all — then show exactly one
+        this._walkerEl.style.display  = 'none';
+        this._perchedEl.style.display = 'none';
+        this._edgeEl.style.display    = 'none';
+        this._openEl.style.display    = 'none';
 
-        // State visibility — walker shows whenever moving or dragging
         const moving = this._isWalking || this._state === S.DRAG;
-        this._walkerEl.style.display  = (moving || this._state === S.ENTER) ? '' : 'none';
-        this._badgeEl.style.display   = (!moving && this._state === S.BADGE)   ? '' : 'none';
-        this._perchedEl.style.display = (!moving && this._state === S.PERCH)   ? '' : 'none';
-        this._edgeEl.style.display    = (!moving && this._state === S.EDGE)    ? '' : 'none';
-        this._openEl.style.display    = (!moving && this._state === S.WELCOME) ? '' : 'none';
+        if      (moving || this._state === S.ENTER)   this._walkerEl.style.display  = '';
+        else if (this._state === S.PERCH)              this._perchedEl.style.display = '';
+        else if (this._state === S.EDGE)               this._edgeEl.style.display    = '';
+        else if (this._state === S.WELCOME)            this._openEl.style.display    = '';
 
         // Nudge bubble
         if (this._nudgeOn && this._nudgeText) {
@@ -526,7 +518,7 @@ export default class AskMclovin extends LightningElement {
             this._setState(S.ENTER);
             this._showBubble(pick(C.dialogue.entrance, this._lastLine), true);
             // eslint-disable-next-line @lwc/lwc/no-async-operation
-            setTimeout(() => this._goToBadgeOrPerch(), 3000);
+            setTimeout(() => this._goToEdge(), 3000);
             return;
         }
 
@@ -642,13 +634,11 @@ export default class AskMclovin extends LightningElement {
         setTimeout(() => this._showBubble(line, false), C.timings.perchSettleMs);
     }
 
-    /* ── Edge / badge ─────────────────────────────────────────────────────── */
-    _goToEdgeOrBadge() {
-        if (!C.flags.hangOnEdgeWhenNoPerch) {
-            this._setState(S.BADGE);
-            this._scheduleIdle();
-            return;
-        }
+    /* ── Edge ─────────────────────────────────────────────────────────────── */
+    _goToEdge() {
+        clearTimeout(this._idleTimer);
+        const perch = this._findBestPerch();
+        if (perch) { this._perchOn(perch); return; }
         const tx = window.innerWidth  - 110;
         const ty = window.innerHeight * 0.45;
         if (this._reducedMotion) {
@@ -663,18 +653,7 @@ export default class AskMclovin extends LightningElement {
         }
     }
 
-    _goToBadgeOrPerch() {
-        clearTimeout(this._idleTimer);
-        const perch = this._findBestPerch();
-        if (perch) {
-            this._perchOn(perch);
-        } else {
-            this._posX = null; // snap to corner
-            this._posY = null;
-            this._setState(S.BADGE);
-            this._scheduleIdle();
-        }
-    }
+    _goToEdgeOrBadge() { this._goToEdge(); }
 
     /* ── Idle / peek ───────────────────────────────────────────────────────── */
     _scheduleIdle() {
@@ -683,7 +662,7 @@ export default class AskMclovin extends LightningElement {
             + Math.random() * (C.timings.idleBeforeWanderMaxMs - C.timings.idleBeforeWanderMinMs);
         // eslint-disable-next-line @lwc/lwc/no-async-operation
         this._idleTimer = setTimeout(() => {
-            if ([S.BADGE, S.PERCH, S.EDGE].includes(this._state)) {
+            if ([S.PERCH, S.EDGE].includes(this._state)) {
                 const roll = Math.random();
                 if (roll < 0.25) {
                     this._doPeek();
@@ -709,11 +688,10 @@ export default class AskMclovin extends LightningElement {
         const tx = clamp(vw * (0.1 + Math.random() * 0.75), 50, vw - 150);
         const ty = vh - 180 + (Math.random() * 40 - 20);
         this._walkTo(tx, ty, () => {
-            // After wandering, go to edge or hang at current spot
             if (Math.random() < 0.5) {
-                this._goToEdgeOrBadge();
+                this._goToEdge();
             } else {
-                this._setState(S.PERCH);
+                this._setState(S.EDGE);
                 this._showBubble(pick(C.dialogue.perch_generic, this._lastLine), false);
                 this._scheduleIdle();
             }
@@ -752,8 +730,6 @@ export default class AskMclovin extends LightningElement {
     }
 
     /* ── Interactions ──────────────────────────────────────────────────────── */
-    _onBadgeClick()  { if (!this._dragMoved) this.open(); }
-
     _onChip(e) {
         const prompt = CHIP_PROMPTS[e.currentTarget.dataset.q];
         if (prompt) this._callAI(prompt);
