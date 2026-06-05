@@ -7,19 +7,15 @@ const C = {
     timings: {
         entranceDelayMs:          600,
         entranceFadeMs:           350,
-        walkSpeedPxPerSec:        240,
-        runSpeedPxPerSec:         470,
-        idleBeforeWanderMinMs:  12000,
-        idleBeforeWanderMaxMs:  22000,
+        walkSpeedPxPerSec:        140,
+        runSpeedPxPerSec:         240,
         perchSettleMs:            450,
-        peekHoldMs:              4200,
-        lineCooldownMs:          9000,
+        pageChangeSettleMs:       900,
         quietWhileTypingMs:      4000,
         celebrateCooldownMs:   120000
     },
     flags: {
         walkInOnLoad:              true,
-        wanderWhenIdle:            true,
         perchOnForms:              true,
         hangOnEdgeWhenNoPerch:     true,
         rememberLastPosition:      true,
@@ -267,6 +263,7 @@ export default class AskMclovin extends LightningElement {
     _onUp   = null;
     _onKey  = null;
     _onType = null;
+    _onNav  = null;
 
     /* ── Lifecycle ─────────────────────────────────────────────────────────── */
     connectedCallback() {
@@ -300,12 +297,14 @@ export default class AskMclovin extends LightningElement {
         clearTimeout(this._idleTimer);
         clearTimeout(this._nudgeTimer);
         clearTimeout(this._typingTimer);
-        window.removeEventListener('mousemove', this._onMove);
-        window.removeEventListener('touchmove', this._onMove);
-        window.removeEventListener('mouseup',   this._onUp);
-        window.removeEventListener('touchend',  this._onUp);
-        window.removeEventListener('keydown',   this._onKey);
-        window.removeEventListener('keypress',  this._onType);
+        window.removeEventListener('mousemove',  this._onMove);
+        window.removeEventListener('touchmove',  this._onMove);
+        window.removeEventListener('mouseup',    this._onUp);
+        window.removeEventListener('touchend',   this._onUp);
+        window.removeEventListener('keydown',    this._onKey);
+        window.removeEventListener('keypress',   this._onType);
+        window.removeEventListener('hashchange', this._onNav);
+        window.removeEventListener('popstate',   this._onNav);
         const portal = document.getElementById(PORTAL_ID);
         if (portal) portal.remove();
         const styles = document.getElementById(STYLES_ID);
@@ -419,16 +418,19 @@ export default class AskMclovin extends LightningElement {
     }
 
     _bindGlobalEvents() {
-        this._onMove = (e) => this._onDragMove(e);
-        this._onUp   = ()  => this._onDragEnd();
-        this._onKey  = (e) => { if (e.key==='Escape') this.minimize(); };
-        this._onType = ()  => this._onTyping();
-        window.addEventListener('mousemove', this._onMove);
-        window.addEventListener('touchmove', this._onMove, {passive:false});
-        window.addEventListener('mouseup',   this._onUp);
-        window.addEventListener('touchend',  this._onUp);
-        window.addEventListener('keydown',   this._onKey);
-        window.addEventListener('keypress',  this._onType);
+        this._onMove   = (e) => this._onDragMove(e);
+        this._onUp     = ()  => this._onDragEnd();
+        this._onKey    = (e) => { if (e.key==='Escape') this.minimize(); };
+        this._onType   = ()  => this._onTyping();
+        this._onNav    = ()  => this._onPageChange();
+        window.addEventListener('mousemove',  this._onMove);
+        window.addEventListener('touchmove',  this._onMove,  {passive:false});
+        window.addEventListener('mouseup',    this._onUp);
+        window.addEventListener('touchend',   this._onUp);
+        window.addEventListener('keydown',    this._onKey);
+        window.addEventListener('keypress',   this._onType);
+        window.addEventListener('hashchange', this._onNav);
+        window.addEventListener('popstate',   this._onNav);
     }
 
     /* ── DOM sync ─────────────────────────────────────────────────────────── */
@@ -655,59 +657,19 @@ export default class AskMclovin extends LightningElement {
 
     _goToEdgeOrBadge() { this._goToEdge(); }
 
-    /* ── Idle / peek ───────────────────────────────────────────────────────── */
-    _scheduleIdle() {
+    /* ── Idle ─────────────────────────────────────────────────────────────── */
+    _scheduleIdle() { /* intentionally empty — mcLOVIN only moves on click or page change */ }
+
+    /* ── Page change ──────────────────────────────────────────────────────── */
+    _onPageChange() {
+        if (!this._isOwner || this._state === S.WELCOME) return;
         clearTimeout(this._idleTimer);
-        const delay = C.timings.idleBeforeWanderMinMs
-            + Math.random() * (C.timings.idleBeforeWanderMaxMs - C.timings.idleBeforeWanderMinMs);
         // eslint-disable-next-line @lwc/lwc/no-async-operation
         this._idleTimer = setTimeout(() => {
-            if ([S.PERCH, S.EDGE].includes(this._state)) {
-                const roll = Math.random();
-                if (roll < 0.25) {
-                    this._doPeek();
-                } else if (roll < 0.55 && C.flags.wanderWhenIdle) {
-                    this._wander();
-                } else {
-                    this._showBubble(pick(C.dialogue.idle, this._lastLine), false);
-                }
-            }
-            this._scheduleIdle();
-        }, delay);
-    }
-
-    _wander() {
-        const perch = this._findBestPerch();
-        if (perch) {
-            this._perchOn(perch);
-            return;
-        }
-        // Stroll to a random spot along the bottom third of the screen, then settle
-        const vw = window.innerWidth;
-        const vh = window.innerHeight;
-        const tx = clamp(vw * (0.1 + Math.random() * 0.75), 50, vw - 150);
-        const ty = vh - 180 + (Math.random() * 40 - 20);
-        this._walkTo(tx, ty, () => {
-            if (Math.random() < 0.5) {
-                this._goToEdge();
-            } else {
-                this._setState(S.EDGE);
-                this._showBubble(pick(C.dialogue.perch_generic, this._lastLine), false);
-                this._scheduleIdle();
-            }
-        });
-    }
-
-    _doPeek() {
-        if (this._peekVis) return;
-        const line = pick(C.dialogue.peek, this._lastLine);
-        this._lastLine = line;
-        this._peekVis = true;
-        this._syncDOM();
-        // eslint-disable-next-line @lwc/lwc/no-async-operation
-        setTimeout(() => { this._peekBubble = true; this._nudgeText = line; this._syncDOM(); }, 420);
-        // eslint-disable-next-line @lwc/lwc/no-async-operation
-        setTimeout(() => { this._peekBubble = false; this._peekVis = false; this._syncDOM(); }, C.timings.peekHoldMs);
+            const perch = this._findBestPerch();
+            if (perch) this._perchOn(perch);
+            else       this._goToEdge();
+        }, C.timings.pageChangeSettleMs);
     }
 
     /* ── Bubble ────────────────────────────────────────────────────────────── */
