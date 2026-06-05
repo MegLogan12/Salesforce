@@ -19,7 +19,7 @@
                         <path d="M3.51 15a9 9 0 1 0 .49-3.63"></path>
                     </svg>
                 </button>
-                <button class="hdr-btn close-btn" onclick={handleClose} title="Close">
+                <button class="hdr-btn close-btn" onclick={handleClose} title="Minimize / Restore">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -28,8 +28,15 @@
             </div>
         </div>
 
+        <!-- Collapsed notice -->
+        <template if:true={isCollapsed}>
+            <div class="collapsed-notice" onclick={handleClose}>
+                Tap to open mcLOVIN'
+            </div>
+        </template>
+
         <!-- Chat body -->
-        <div class="body" data-id="chatbody">
+        <div class={panelBodyClass} data-id="chatbody">
 
             <!-- Welcome / empty state -->
             <template if:true={isEmpty}>
@@ -104,7 +111,7 @@
         </div>
 
         <!-- Input area -->
-        <div class="input-wrap">
+        <div class={inputWrapClass}>
             <textarea
                 class="input-box"
                 placeholder={inputPlaceholder}

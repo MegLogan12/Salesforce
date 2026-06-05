@@ -1,5 +1,4 @@
 import { LightningElement, track } from 'lwc';
-import { closeUtilityBar } from 'lightning/utilityBarAPI';
 import sendMessage from '@salesforce/apex/McLovinChatController.sendMessage';
 
 const DEFAULT_PLACEHOLDER = 'Paste an email, PO, scope, or notes...';
@@ -38,6 +37,7 @@ export default class McLovinEmployeeAgentWorkspace extends LightningElement {
     @track inputText = '';
     @track inputPlaceholder = DEFAULT_PLACEHOLDER;
     @track isLoading = false;
+    @track isCollapsed = false;
 
     get isEmpty() {
         return this.messages.length === 0 && !this.isLoading;
@@ -45,6 +45,14 @@ export default class McLovinEmployeeAgentWorkspace extends LightningElement {
 
     get sendDisabled() {
         return this.isLoading || !this.inputText.trim();
+    }
+
+    get panelBodyClass() {
+        return this.isCollapsed ? 'body hidden' : 'body';
+    }
+
+    get inputWrapClass() {
+        return this.isCollapsed ? 'input-wrap hidden' : 'input-wrap';
     }
 
     handleInput(evt) {
@@ -74,11 +82,7 @@ export default class McLovinEmployeeAgentWorkspace extends LightningElement {
     }
 
     handleClose() {
-        try {
-            closeUtilityBar();
-        } catch (e) {
-            // not running inside a utility bar
-        }
+        this.isCollapsed = !this.isCollapsed;
     }
 
     handleClear() {

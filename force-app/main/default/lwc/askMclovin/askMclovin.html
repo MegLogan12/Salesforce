@@ -1,0 +1,60 @@
+<template>
+    <!-- Overlay floats above the console; clicks pass through except on .pe elements -->
+    <div class="mc-overlay">
+        <div class={mcClass} style={mcStyle}>
+
+            <!-- Minimized head badge -->
+            <template lwc:if={isBadge}>
+                <div class="badge pe grab" onmousedown={onDragStart} ontouchstart={onDragStart} onclick={onBadgeClick} title="Ask mcLOVIN'">
+                    <img src={headUrl} alt="Ask mcLOVIN'">
+                    <div class="pulse">&#10022;</div>
+                </div>
+            </template>
+
+            <!-- Open full-body welcome card -->
+            <template lwc:if={isOpen}>
+                <div class="open pe">
+                    <button class="close" title="Minimize" onclick={minimize}>&#8211;</button>
+                    <img class="body grab" src={fullUrl} alt="mcLOVIN" onmousedown={onDragStart} ontouchstart={onDragStart}>
+                    <div class="panel">
+                        <div class="bubble show">
+                            <span class="spark">&#10022;</span>
+                            Hey, I&rsquo;m <b>Ask mcLOVIN&rsquo;</b>. Drop the details here and I&rsquo;ll find the right path.
+                            <span class="tail" style="left:18px;bottom:-8px"></span>
+                        </div>
+                        <div class="chips">
+                            <span class="chip" data-q="po" onclick={onChip}>Upload PO</span>
+                            <span class="chip" data-q="scope" onclick={onChip}>Scope</span>
+                            <span class="chip" data-q="account" onclick={onChip}>New Account</span>
+                            <span class="chip" data-q="homeowner" onclick={onChip}>Homeowner Intake</span>
+                            <span class="chip" data-q="find" onclick={onChip}>Find Existing Job</span>
+                            <span class="chip" data-q="missing" onclick={onChip}>What&rsquo;s Missing?</span>
+                        </div>
+                        <div class="askbar">
+                            <input type="text" placeholder="Ask mcLOVIN' anything..." onkeyup={onAskKey} disabled={isThinking}>
+                            <button onclick={onSend} disabled={isThinking}>
+                                <template lwc:if={isThinking}>...</template>
+                                <template lwc:else>Ask</template>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- floating nudge bubble -->
+            <div class={nudgeClass} style={nudgeStyle}>
+                <span class="spark">&#10022;</span><span>{nudgeText}</span>
+                <span class="tail" style="right:-8px;bottom:22px"></span>
+            </div>
+        </div>
+
+        <!-- peek from the right edge -->
+        <div class={peekClass}>
+            <div class={peekBubbleClass}>
+                <span class="spark">&#10022;</span>Psst&hellip; need help with something?
+                <span class="tail" style="right:-8px;bottom:24px"></span>
+            </div>
+            <img src={peekUrl} alt="peek">
+        </div>
+    </div>
+</template>
