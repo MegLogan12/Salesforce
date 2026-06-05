@@ -41,6 +41,12 @@
                 <identifier>wo_workspace_odl_photos</identifier>
             </componentInstance>
         </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>qualityInspectionScorecard</componentName>
+                <identifier>wo_qi_scorecard</identifier>
+            </componentInstance>
+        </itemInstances>
         <name>main</name>
         <type>Region</type>
     </flexiPageRegions>
