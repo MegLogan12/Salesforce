@@ -300,39 +300,54 @@
     <platformActionList>
         <actionListContext>Record</actionListContext>
         <platformActionListItems>
-            <actionName>WorkOrder.Create_Quote_Request</actionName>
+            <actionName>WorkOrder.LOVING_FM_Complete_Takeoff</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>0</sortOrder>
         </platformActionListItems>
         <platformActionListItems>
-            <actionName>WorkOrder.Log_Issue_Red_Flag</actionName>
+            <actionName>WorkOrder.LOVING_FM_Log_Issue</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>1</sortOrder>
         </platformActionListItems>
         <platformActionListItems>
-            <actionName>WorkOrder.Mark_Site_Ready</actionName>
+            <actionName>WorkOrder.LOVING_FM_Quote_Request</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>2</sortOrder>
         </platformActionListItems>
         <platformActionListItems>
-            <actionName>WorkOrder.Flag_Site_Not_Ready</actionName>
+            <actionName>WorkOrder.Create_Quote_Request</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>3</sortOrder>
         </platformActionListItems>
         <platformActionListItems>
-            <actionName>WorkOrder.Request_Reschedule</actionName>
+            <actionName>WorkOrder.Log_Issue_Red_Flag</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>4</sortOrder>
         </platformActionListItems>
         <platformActionListItems>
-            <actionName>WorkOrder.Approve_Closeout</actionName>
+            <actionName>WorkOrder.Mark_Site_Ready</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>5</sortOrder>
         </platformActionListItems>
         <platformActionListItems>
-            <actionName>WorkOrder.Add_Photo</actionName>
+            <actionName>WorkOrder.Flag_Site_Not_Ready</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>6</sortOrder>
+        </platformActionListItems>
+        <platformActionListItems>
+            <actionName>WorkOrder.Request_Reschedule</actionName>
+            <actionType>QuickAction</actionType>
+            <sortOrder>7</sortOrder>
+        </platformActionListItems>
+        <platformActionListItems>
+            <actionName>WorkOrder.Approve_Closeout</actionName>
+            <actionType>QuickAction</actionType>
+            <sortOrder>8</sortOrder>
+        </platformActionListItems>
+        <platformActionListItems>
+            <actionName>WorkOrder.Add_Photo</actionName>
+            <actionType>QuickAction</actionType>
+            <sortOrder>9</sortOrder>
         </platformActionListItems>
     </platformActionList>
     <quickActionList>
@@ -340,16 +355,7 @@
             <quickActionName>FeedItem.TextPost</quickActionName>
         </quickActionListItems>
         <quickActionListItems>
-            <quickActionName>FeedItem.TextPost</quickActionName>
-        </quickActionListItems>
-        <quickActionListItems>
             <quickActionName>FeedItem.ContentPost</quickActionName>
-        </quickActionListItems>
-        <quickActionListItems>
-            <quickActionName>FeedItem.ContentPost</quickActionName>
-        </quickActionListItems>
-        <quickActionListItems>
-            <quickActionName>FSL__NewTask</quickActionName>
         </quickActionListItems>
         <quickActionListItems>
             <quickActionName>FSL__NewTask</quickActionName>

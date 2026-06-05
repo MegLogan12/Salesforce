@@ -363,7 +363,6 @@
             <actionType>QuickAction</actionType>
             <sortOrder>2</sortOrder>
         </platformActionListItems>
-
         <platformActionListItems>
             <actionName>WorkOrder.Create_Quote_Request</actionName>
             <actionType>QuickAction</actionType>

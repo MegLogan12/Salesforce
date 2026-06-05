@@ -537,6 +537,18 @@ export default class LovingStandardWorkOrderWorkspace extends NavigationMixin(Li
         this.navigateQuickAction(NEW_NOTE_ACTION);
     }
 
+    handleCompleteTakeoff() {
+        this.navigateQuickAction('WorkOrder.LOVING_FM_Complete_Takeoff');
+    }
+
+    handleLogIssue() {
+        this.navigateQuickAction('WorkOrder.LOVING_FM_Log_Issue');
+    }
+
+    handleCreateQuoteRequest() {
+        this.navigateQuickAction('WorkOrder.LOVING_FM_Quote_Request');
+    }
+
     handleOpenFiles() {
         if (!this.recordId) return;
         this[NavigationMixin.Navigate]({
