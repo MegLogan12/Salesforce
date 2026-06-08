@@ -4,42 +4,6 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentInstanceProperties>
-                    <name>eager</name>
-                    <type>decorator</type>
-                    <value>true</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>height</name>
-                    <type>decorator</type>
-                    <value>720</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>icon</name>
-                    <type>decorator</type>
-                    <value>bot</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>label</name>
-                    <type>decorator</type>
-                    <value>mcLOVIN&apos;</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>scrollable</name>
-                    <type>decorator</type>
-                    <value>true</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>width</name>
-                    <type>decorator</type>
-                    <value>480</value>
-                </componentInstanceProperties>
-                <componentName>mcLovinEmployeeAgentWorkspace</componentName>
-                <identifier>c_mcLovinEmployeeAgentWorkspace</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
                 <componentName>macros:macroUtilityItem</componentName>
                 <identifier>macros_macroUtilityItem</identifier>
             </componentInstance>
@@ -54,37 +18,6 @@
             <componentInstance>
                 <componentName>console:history</componentName>
                 <identifier>console_history</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>eager</name>
-                    <type>decorator</type>
-                    <value>true</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>height</name>
-                    <type>decorator</type>
-                    <value>80</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>icon</name>
-                    <type>decorator</type>
-                    <value>bot</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>label</name>
-                    <type>decorator</type>
-                    <value>Ask mcLOVIN&apos;</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>width</name>
-                    <type>decorator</type>
-                    <value>80</value>
-                </componentInstanceProperties>
-                <componentName>askMclovin</componentName>
-                <identifier>c_askMclovin</identifier>
             </componentInstance>
         </itemInstances>
         <name>utilityItems</name>
