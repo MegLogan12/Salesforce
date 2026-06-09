@@ -5,7 +5,7 @@
     <fields>Work_Order_Type__c</fields>
     <fields>Lot_Number__c</fields>
     <fields>Lot_Address__c</fields>
-    <fields>FM__c</fields>
+    <fields>Field_Manager__c</fields>
     <fields>Status</fields>
     <fields>Takeoff_Status__c</fields>
     <fields>Health_Check_Status__c</fields>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Locate Request</label>
+    <nameField>
+        <label>Locate Request Number</label>
+        <type>AutoNumber</type>
+        <displayFormat>LR-{0000}</displayFormat>
+    </nameField>
+    <pluralLabel>Locate Requests</pluralLabel>
+    <sharingModel>ReadWrite</sharingModel>
+    <deploymentStatus>Deployed</deploymentStatus>
+</CustomObject>

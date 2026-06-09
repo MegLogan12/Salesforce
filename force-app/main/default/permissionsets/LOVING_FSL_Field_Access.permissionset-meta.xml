@@ -4,7 +4,7 @@
     <description>Grants FSL field staff read/edit access to WorkOrder fields used in the LOVING_Mobile compact layout and FSL flows.</description>
     <hasActivationRequired>false</hasActivationRequired>
     <fieldPermissions>
-        <field>WorkOrder.FM__c</field>
+        <field>WorkOrder.Field_Manager__c</field>
         <readable>true</readable>
         <editable>true</editable>
     </fieldPermissions>
