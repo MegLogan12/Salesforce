@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <brand>
+        <headerColor>#0B5CAB</headerColor>
+        <shouldOverrideOrgTheme>false</shouldOverrideOrgTheme>
+    </brand>
+    <description>Internal mcLOVIN&apos; employee intake workspace for reviewing documents, proposing Salesforce records, and saving after confirmation.</description>
+    <formFactors>Small</formFactors>
+    <formFactors>Large</formFactors>
+    <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
+    <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
+    <label>mcLOVIN&apos;</label>
+    <navType>Standard</navType>
+    <tabs>mcLOVIN_Employee_Agent</tabs>
+    <tabs>mcLOVIN_Intake_Request__c</tabs>
+    <uiType>Lightning</uiType>
+</CustomApplication>

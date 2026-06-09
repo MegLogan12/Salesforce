@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <!-- Facet: Overview tab -->
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -15,6 +16,17 @@
         </itemInstances>
         <itemInstances>
             <componentInstance>
+                <componentName>lotMap</componentName>
+                <identifier>comm_lot_map_overview</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-tab-comm-overview</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <!-- Facet: Details tab -->
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
                 <componentName>communityOpsDetails</componentName>
                 <identifier>comm_ops</identifier>
             </componentInstance>
@@ -25,15 +37,38 @@
                 <identifier>comm_service_flags</identifier>
             </componentInstance>
         </itemInstances>
+        <name>Facet-tab-comm-details</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <!-- Facet: Scope tab -->
+    <flexiPageRegions>
         <itemInstances>
             <componentInstance>
                 <componentName>communityScope</componentName>
                 <identifier>comm_scope</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-tab-comm-overview</name>
+        <name>Facet-tab-comm-scope</name>
         <type>Facet</type>
     </flexiPageRegions>
+    <!-- Facet: Package + Tickets tab -->
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>communityStage</componentName>
+                <identifier>comm_stage</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>communityChangeOrders</componentName>
+                <identifier>comm_change_orders</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-tab-comm-package</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <!-- Facet: Lots tab -->
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -50,6 +85,7 @@
         <name>Facet-tab-comm-lots</name>
         <type>Facet</type>
     </flexiPageRegions>
+    <!-- Facet: Work Orders tab -->
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -60,6 +96,18 @@
         <name>Facet-tab-comm-wo</name>
         <type>Facet</type>
     </flexiPageRegions>
+    <!-- Facet: Aqua tab -->
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>lovingAquaConsole</componentName>
+                <identifier>comm_aqua</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Facet-tab-comm-aqua</name>
+        <type>Facet</type>
+    </flexiPageRegions>
+    <!-- Facet: Contacts tab -->
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -76,30 +124,7 @@
         <name>Facet-tab-comm-con</name>
         <type>Facet</type>
     </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentName>communityChangeOrders</componentName>
-                <identifier>comm_change_orders</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>Facet-tab-comm-rules</name>
-        <type>Facet</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>showLegacyActivityComposer</name>
-                    <value>false</value>
-                </componentInstanceProperties>
-                <componentName>runtime_sales_activities:activityPanel</componentName>
-                <identifier>comm_activity_panel</identifier>
-            </componentInstance>
-        </itemInstances>
-        <name>Facet-tab-comm-activity</name>
-        <type>Facet</type>
-    </flexiPageRegions>
+    <!-- Facet: Photos tab -->
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -109,19 +134,20 @@
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>rowsToDisplay</name>
-                    <value>10</value>
+                    <value>25</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>showActionBar</name>
                     <value>true</value>
                 </componentInstanceProperties>
                 <componentName>force:relatedListContainer</componentName>
-                <identifier>comm_related_lists</identifier>
+                <identifier>comm_photos_related</identifier>
             </componentInstance>
         </itemInstances>
-        <name>Facet-tab-comm-files</name>
+        <name>Facet-tab-comm-photos</name>
         <type>Facet</type>
     </flexiPageRegions>
+    <!-- Tabset facet -->
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -135,6 +161,48 @@
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
                 <identifier>comm_tab_overview</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-tab-comm-details</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Details</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>comm_tab_details</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-tab-comm-scope</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Scope</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>comm_tab_scope</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentInstanceProperties>
+                    <name>body</name>
+                    <value>Facet-tab-comm-package</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>title</name>
+                    <value>Package + Tickets</value>
+                </componentInstanceProperties>
+                <componentName>flexipage:tab</componentName>
+                <identifier>comm_tab_package</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -169,14 +237,14 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-tab-comm-rules</value>
+                    <value>Facet-tab-comm-aqua</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
-                    <value>Rules + Changes</value>
+                    <value>Aqua</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
-                <identifier>comm_tab_rules</identifier>
+                <identifier>comm_tab_aqua</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -197,33 +265,20 @@
             <componentInstance>
                 <componentInstanceProperties>
                     <name>body</name>
-                    <value>Facet-tab-comm-activity</value>
+                    <value>Facet-tab-comm-photos</value>
                 </componentInstanceProperties>
                 <componentInstanceProperties>
                     <name>title</name>
-                    <value>Activity</value>
+                    <value>Photos</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:tab</componentName>
-                <identifier>comm_tab_activity</identifier>
-            </componentInstance>
-        </itemInstances>
-        <itemInstances>
-            <componentInstance>
-                <componentInstanceProperties>
-                    <name>body</name>
-                    <value>Facet-tab-comm-files</value>
-                </componentInstanceProperties>
-                <componentInstanceProperties>
-                    <name>title</name>
-                    <value>Files</value>
-                </componentInstanceProperties>
-                <componentName>flexipage:tab</componentName>
-                <identifier>comm_tab_files</identifier>
+                <identifier>comm_tab_photos</identifier>
             </componentInstance>
         </itemInstances>
         <name>Facet-tabset-comm-main</name>
         <type>Facet</type>
     </flexiPageRegions>
+    <!-- Header region -->
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
@@ -251,9 +306,16 @@
                 <identifier>community_highlights</identifier>
             </componentInstance>
         </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>mcLovinDock</componentName>
+                <identifier>mcLovinDock_dock</identifier>
+            </componentInstance>
+        </itemInstances>
         <name>header</name>
         <type>Region</type>
     </flexiPageRegions>
+    <!-- Main region -->
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>

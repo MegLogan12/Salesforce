@@ -1,0 +1,34 @@
+<template>
+    <div class={wrapClass}>
+        <template if:false={expanded}>
+            <button class="mcl-head-button" type="button" onclick={openDock} title="Open mcLOVIN'" aria-label="Open mcLOVIN'">
+                <img class="mcl-head" src={headSrc} alt="mcLOVIN head" />
+            </button>
+        </template>
+        <template if:true={expanded}>
+            <section class="mcl-panel" aria-label="mcLOVIN assistant">
+                <button class="mcl-toggle" type="button" onclick={closeDock} title="Minimize mcLOVIN'" aria-label="Minimize mcLOVIN'">
+                &ndash;
+                </button>
+                <template if:true={message}>
+                    <div class="mcl-bubble">{message}</div>
+                </template>
+                <div class="mcl-stage">
+                    <div class="mcl-shadow"></div>
+                    <img class="mcl-body" src={bodySrc} alt="mcLOVIN full body" />
+                </div>
+                <div class="mcl-chat">
+                    <input
+                        class="mcl-inp"
+                        type="text"
+                        value={inputValue}
+                        oninput={handleInput}
+                        onkeydown={handleKey}
+                        placeholder="Ask mcLOVIN&hellip;"
+                    />
+                    <button class="mcl-send" type="button" onclick={send}>Ask</button>
+                </div>
+            </section>
+        </template>
+    </div>
+</template>
