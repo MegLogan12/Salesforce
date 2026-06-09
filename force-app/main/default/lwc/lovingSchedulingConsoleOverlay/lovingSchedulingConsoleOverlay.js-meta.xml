@@ -5,10 +5,12 @@
     <targets>
         <target>lightning__AppPage</target>
         <target>lightning__HomePage</target>
+        <target>lightning__UtilityBar</target>
     </targets>
     <targetConfigs>
-        <targetConfig targets="lightning__AppPage,lightning__HomePage">
+        <targetConfig targets="lightning__AppPage,lightning__HomePage,lightning__UtilityBar">
             <property name="defaultDivision" type="String" label="Default Division" default="Charlotte"/>
+            <property name="section" type="String" label="Pinned Section" description="Render only one section (dashboard, auto, issues, pending, board, calendar, route, dayof, mc, traffic, weather, ot, crew, draft, rules). Leave blank for full console with internal tabs."/>
         </targetConfig>
     </targetConfigs>
 </LightningComponentBundle>
