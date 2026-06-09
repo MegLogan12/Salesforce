@@ -20,6 +20,16 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>mcLovinDock</componentName>
+                <identifier>mcLovinDock_dock</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>header</name>
+        <type>Region</type>
+    </flexiPageRegions>
     <masterLabel>Outdoor Living Homeowner Property Record Page</masterLabel>
     <sobjectType>Homeowner_Property__c</sobjectType>
     <template>

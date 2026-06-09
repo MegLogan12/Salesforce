@@ -20,6 +20,16 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>mcLovinDock</componentName>
+                <identifier>mcLovinDock_dock</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>header</name>
+        <type>Region</type>
+    </flexiPageRegions>
     <masterLabel>Outdoor Living Warranty Record Page</masterLabel>
     <sobjectType>Warranty_Record__c</sobjectType>
     <template>

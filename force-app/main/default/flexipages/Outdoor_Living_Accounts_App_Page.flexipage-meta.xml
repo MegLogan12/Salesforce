@@ -7,6 +7,13 @@
                 <identifier>c_odlAccountWorkspace</identifier>
             </componentInstance>
         </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>mcLovinDock</componentName>
+                <identifier>mcLovinDock_dock</identifier>
+            </componentInstance>
+        </itemInstances>
+    
         <name>main</name>
         <type>Region</type>
     </flexiPageRegions>

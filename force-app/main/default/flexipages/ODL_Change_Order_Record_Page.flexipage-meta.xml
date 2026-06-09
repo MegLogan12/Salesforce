@@ -20,6 +20,16 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>mcLovinDock</componentName>
+                <identifier>mcLovinDock_dock</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>header</name>
+        <type>Region</type>
+    </flexiPageRegions>
     <masterLabel>Outdoor Living Change Order Record Page</masterLabel>
     <sobjectType>Change_Order__c</sobjectType>
     <template>

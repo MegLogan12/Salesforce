@@ -14,6 +14,16 @@
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>mcLovinDock</componentName>
+                <identifier>mcLovinDock_dock</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>header</name>
+        <type>Region</type>
+    </flexiPageRegions>
     <masterLabel>ODL WorkOrder Record Page</masterLabel>
     <sobjectType>WorkOrder</sobjectType>
     <template>
