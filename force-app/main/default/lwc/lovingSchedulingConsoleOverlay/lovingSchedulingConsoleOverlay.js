@@ -22,10 +22,13 @@ import getOvertimeRisks      from '@salesforce/apex/SchedulingConsoleController.
 import getCrewEfficiencyMtd  from '@salesforce/apex/SchedulingConsoleController.getCrewEfficiencyMtd';
 import getOptimizerRecs      from '@salesforce/apex/SchedulingConsoleController.getOptimizerRecommendations';
 import getDraftReview        from '@salesforce/apex/SchedulingConsoleController.getDraftReview';
-import getDecisionRules      from '@salesforce/apex/SchedulingConsoleController.getDecisionRules';
 import releaseSchedule       from '@salesforce/apex/SchedulingConsoleController.releaseSchedule';
 import resolveScheduleIssue  from '@salesforce/apex/SchedulingConsoleController.resolveScheduleIssue';
 import reassignStop          from '@salesforce/apex/SchedulingConsoleController.reassignStop';
+
+// Editable Decision Rules — backed by Decision_Rule__c via DecisionRulesController
+import getDecisionRules      from '@salesforce/apex/DecisionRulesController.getRules';
+import saveDecisionRules     from '@salesforce/apex/DecisionRulesController.saveRules';
 
 // 16 tabs per approved mockup — dispatch inserted between board and calendar
 const TAB_IDS = ['dashboard','auto','issues','pending','board','dispatch','calendar','route','dayof','mc','traffic','weather','ot','crew','draft','rules'];
@@ -73,6 +76,7 @@ export default class LovingSchedulingConsoleOverlay extends NavigationMixin(Ligh
     @track _editOptRulesArr    = [];
     @track _weightTotal        = 0;
     @track _rulesInitialized   = false;
+    @track _canEditRules       = false;
 
     // Dispatch territory selection (Set of territory IDs checked)
     @track _selectedTerritoryIds = ['clt28206','clt28217'];
@@ -175,7 +179,8 @@ export default class LovingSchedulingConsoleOverlay extends NavigationMixin(Ligh
         this._rulesWire = r;
         if (r.data) {
             this._rulesData = r.data;
-            this._initEditRules(r.data);
+            this._canEditRules = r.data.canEdit === true;
+            this._initEditRules(r.data.rules || []);
         }
     }
 
@@ -551,12 +556,12 @@ export default class LovingSchedulingConsoleOverlay extends NavigationMixin(Ligh
         const opts    = arr.filter(r => r.ruleType === 'Optimization' || r.Rule_Type__c === 'Optimization');
 
         this._editWeightRulesArr = weights.length
-            ? weights.map((r, i) => ({ _key:'w_'+i, name:r.name||r.Name||'', favors:r.favors||r.Favors__c||'', weight:Number(r.weightPct||r.Weight_Pct__c||0) }))
-            : DEFAULT_WEIGHT_RULES.map((r, i) => ({ _key:'w_'+i, ...r }));
+            ? weights.map((r, i) => ({ _key:'w_'+i, id:r.id||r.Id||null, name:r.name||r.Name||'', favors:r.favors||r.Favors__c||'', weight:Number(r.weightPct||r.Weight_Pct__c||0) }))
+            : DEFAULT_WEIGHT_RULES.map((r, i) => ({ _key:'w_'+i, id:null, ...r }));
 
         this._editOptRulesArr = opts.length
-            ? opts.map((r, i) => ({ _key:'o_'+i, name:r.name||r.Name||'', setting:r.setting||r.Setting__c||'', appliesTo:r.appliesTo||r.Applies_To__c||'All crews', active:r.active !== false }))
-            : DEFAULT_OPT_RULES.map((r, i) => ({ _key:'o_'+i, ...r }));
+            ? opts.map((r, i) => ({ _key:'o_'+i, id:r.id||r.Id||null, name:r.name||r.Name||'', setting:r.setting||r.Setting__c||'', appliesTo:r.appliesTo||r.Applies_To__c||'All crews', active:r.active !== false }))
+            : DEFAULT_OPT_RULES.map((r, i) => ({ _key:'o_'+i, id:null, ...r }));
 
         this._rulesInitialized = true;
         this._recalcWeightTotal();
@@ -624,10 +629,35 @@ export default class LovingSchedulingConsoleOverlay extends NavigationMixin(Ligh
             this._toast('Cannot save', 'Weights must total exactly 100% before saving (currently ' + this._weightTotal + '%)', 'error');
             return;
         }
-        // Decision_Rule__c upsert — requires custom object deploy per build spec section 6.
-        // Until deployed, rules are in session state and reset on reload.
-        this._toast('Saved', 'Decision rules saved. Next Auto-Schedule proposal will reflect updated weights.', 'success');
+        // Build the combined payload for Decision_Rule__c upsert (weights + optimization rules).
+        const payload = [
+            ...this._editWeightRulesArr.map((r, i) => ({
+                id: r.id || null, ruleType: 'Weight', name: r.name || ('Weight rule ' + (i + 1)),
+                favors: r.favors || '', weightPct: Number(r.weight) || 0,
+                setting: null, appliesTo: 'All crews', active: true, sortOrder: i
+            })),
+            ...this._editOptRulesArr.map((r, i) => ({
+                id: r.id || null, ruleType: 'Optimization', name: r.name || ('Rule ' + (i + 1)),
+                favors: null, weightPct: null, setting: r.setting || '',
+                appliesTo: r.appliesTo || 'All crews', active: r.active !== false, sortOrder: i
+            }))
+        ];
+        this.isLoading = true;
+        saveDecisionRules({ rulesJson: JSON.stringify(payload) })
+            .then((bundle) => {
+                this._canEditRules = bundle.canEdit === true;
+                this._initEditRules(bundle.rules || []);
+                this._toast('Saved', 'Decision rules saved. The next Auto-Schedule proposal will reflect the updated weights and rules.', 'success');
+                return refreshApex(this._rulesWire);
+            })
+            .catch((e) => {
+                const msg = (e && e.body && e.body.message) ? e.body.message : 'Could not save decision rules. Please retry.';
+                this._toast('Save failed', msg, 'error');
+            })
+            .finally(() => { this.isLoading = false; });
     }
+    get canEditRules() { return this._canEditRules; }
+    get rulesReadOnly() { return !this._canEditRules; }
 
     // ── Actions ───────────────────────────────────────────────────────────────
     handleRefreshAll() {

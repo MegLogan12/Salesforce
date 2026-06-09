@@ -12,11 +12,12 @@
     <div class="gbar-util">
         <button class="btn primary" onclick={handleReleaseSchedule} style="font-size:10.5px;padding:5px 10px;border-radius:7px">Release Schedule</button>
         <button class="btn" onclick={handleRefreshAll} style="font-size:10.5px;padding:5px 10px;border-radius:7px;background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:#fff">↻ Refresh</button>
-        <!-- mcLOVIN — loving command center agent -->
-        <c-mc-lovin-dock></c-mc-lovin-dock>
         <span class="gbar-av" aria-label="Current user">ML</span>
     </div>
 </div>
+
+<!-- mcLOVIN — loving command center agent: freestanding floating dock (position:fixed in its own CSS), not docked in the header -->
+<c-mc-lovin-dock></c-mc-lovin-dock>
 
 <!-- Tab bar — 16 tabs across the top, no dropdown -->
 <nav class="app-nav" aria-label="Field Services console tabs">
@@ -849,16 +850,23 @@
      TAB 16 — DECISION RULES (editable per approved mockup)
 ═══════════════════════════════════════════════════════ -->
 <template if:true={isDecisionRules}>
+    <template if:true={rulesReadOnly}>
+        <div class="alert info" style="margin-bottom:14px">
+            <strong>Read-only.</strong> You can review the scheduling decision rules but not change them. Editing requires the LOVING Scheduling Rules Admin permission.
+        </div>
+    </template>
     <!-- Weight rules -->
     <div class="panel">
         <div class="panel-head">
             <div class="panel-icon">⚖</div>
             <h3>Scheduling decision weights</h3>
             <span class={weightTotalChipCss}>{weightTotalLabel}</span>
-            <div style="margin-left:auto;display:flex;gap:8px">
-                <button class="btn" onclick={handleResetRules}>Reset to default</button>
-                <button class="btn primary" onclick={handleSaveRules}>Save changes</button>
-            </div>
+            <template if:true={canEditRules}>
+                <div style="margin-left:auto;display:flex;gap:8px">
+                    <button class="btn" onclick={handleResetRules}>Reset to default</button>
+                    <button class="btn primary" onclick={handleSaveRules}>Save changes</button>
+                </div>
+            </template>
         </div>
         <div class="panel-body" style="padding:0">
             <table class="table">
@@ -873,16 +881,18 @@
                 <tbody>
                     <template for:each={editWeightRules} for:item="r" for:index="idx">
                         <tr key={r._key}>
-                            <td><input class="rules-inp" type="text" value={r.name} data-idx={idx} data-field="name" onchange={handleWeightRuleChange} placeholder="Rule name"/></td>
-                            <td><input class="rules-inp" type="text" value={r.favors} data-idx={idx} data-field="favors" onchange={handleWeightRuleChange} placeholder="What it favors"/></td>
-                            <td class="num"><input class="rules-wt" type="number" min="0" max="100" value={r.weight} data-idx={idx} oninput={handleWeightPctInput}/> %</td>
-                            <td><button class="rules-del" data-idx={idx} onclick={handleDeleteWeightRule} aria-label="Remove rule">×</button></td>
+                            <td><input class="rules-inp" type="text" value={r.name} data-idx={idx} data-field="name" onchange={handleWeightRuleChange} placeholder="Rule name" disabled={rulesReadOnly}/></td>
+                            <td><input class="rules-inp" type="text" value={r.favors} data-idx={idx} data-field="favors" onchange={handleWeightRuleChange} placeholder="What it favors" disabled={rulesReadOnly}/></td>
+                            <td class="num"><input class="rules-wt" type="number" min="0" max="100" value={r.weight} data-idx={idx} oninput={handleWeightPctInput} disabled={rulesReadOnly}/> %</td>
+                            <td><button class="rules-del" data-idx={idx} onclick={handleDeleteWeightRule} aria-label="Remove rule" disabled={rulesReadOnly}>×</button></td>
                         </tr>
                     </template>
                 </tbody>
             </table>
         </div>
-        <button class="addrow-btn" onclick={handleAddWeightRule}>+ Add weight rule</button>
+        <template if:true={canEditRules}>
+            <button class="addrow-btn" onclick={handleAddWeightRule}>+ Add weight rule</button>
+        </template>
     </div>
 
     <!-- Optimization rules -->
@@ -905,10 +915,10 @@
                 <tbody>
                     <template for:each={editOptRules} for:item="r" for:index="idx">
                         <tr key={r._key}>
-                            <td><input class="rules-inp" type="text" value={r.name} data-idx={idx} data-field="name" onchange={handleOptRuleChange} placeholder="Rule"/></td>
-                            <td><input class="rules-inp" type="text" value={r.setting} data-idx={idx} data-field="setting" onchange={handleOptRuleChange} placeholder="Setting"/></td>
+                            <td><input class="rules-inp" type="text" value={r.name} data-idx={idx} data-field="name" onchange={handleOptRuleChange} placeholder="Rule" disabled={rulesReadOnly}/></td>
+                            <td><input class="rules-inp" type="text" value={r.setting} data-idx={idx} data-field="setting" onchange={handleOptRuleChange} placeholder="Setting" disabled={rulesReadOnly}/></td>
                             <td>
-                                <select class="rules-sel" data-idx={idx} onchange={handleOptAppliesTo}>
+                                <select class="rules-sel" data-idx={idx} onchange={handleOptAppliesTo} disabled={rulesReadOnly}>
                                     <template for:each={r.appliesOptions} for:item="opt">
                                         <option key={opt.value} value={opt.value} selected={opt.selected}>{opt.label}</option>
                                     </template>
@@ -920,13 +930,15 @@
                                     <span class="toggle-thumb"></span>
                                 </div>
                             </td>
-                            <td><button class="rules-del" data-idx={idx} onclick={handleDeleteOptRule} aria-label="Remove rule">×</button></td>
+                            <td><button class="rules-del" data-idx={idx} onclick={handleDeleteOptRule} aria-label="Remove rule" disabled={rulesReadOnly}>×</button></td>
                         </tr>
                     </template>
                 </tbody>
             </table>
         </div>
-        <button class="addrow-btn" onclick={handleAddOptRule}>+ Add optimization rule</button>
+        <template if:true={canEditRules}>
+            <button class="addrow-btn" onclick={handleAddOptRule}>+ Add optimization rule</button>
+        </template>
     </div>
 </template>
 

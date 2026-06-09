@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomPermission xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Grants write access to scheduling Decision Rules (Decision_Rule__c) from the Field Services Console. Users without it see the Decision Rules tab read-only.</description>
+    <isLicensed>false</isLicensed>
+    <label>LOVING Edit Scheduling Rules</label>
+</CustomPermission>
