@@ -1,337 +1,320 @@
 <template>
-    <div class="ltg-wrap">
+<div class="ltg-wrap">
 
-        <!-- Loading -->
-        <template if:true={isLoading}>
-            <div class="ltg-spinner">
-                <lightning-spinner alternative-text="Loading Takeoff Gate" size="medium"></lightning-spinner>
-            </div>
-        </template>
+    <!-- Loading -->
+    <template if:true={isLoading}>
+        <div class="slds-align_absolute-center slds-p-around_large">
+            <lightning-spinner alternative-text="Loading Takeoff Gate" size="medium"></lightning-spinner>
+        </div>
+    </template>
 
-        <!-- Error -->
-        <template if:true={errorMessage}>
-            <div class="ltg-alert ltg-alert-red">
-                <strong>Error:</strong> {errorMessage}
-            </div>
-        </template>
+    <!-- Error -->
+    <template if:true={errorMessage}>
+        <div class="slds-notify slds-notify_alert slds-theme_error slds-m-bottom_small" role="alert">
+            <lightning-icon icon-name="utility:error" size="x-small" class="slds-m-right_x-small" alternative-text="Error"></lightning-icon>
+            <strong>Error:</strong>&nbsp;{errorMessage}
+        </div>
+    </template>
 
-        <!-- Toast -->
-        <template if:true={toastMessage}>
-            <div class={toastClass}>{toastMessage}</div>
-        </template>
-
-        <!-- KPI Strip -->
-        <div class="ltg-kpi-strip">
-            <div class="ltg-kpi ltg-kpi-blue">
-                <div class="ltg-kpi-num">{kpi.totalTakeoffs}</div>
-                <div class="ltg-kpi-lbl">Takeoffs</div>
-            </div>
-            <div class="ltg-kpi ltg-kpi-amber">
-                <div class="ltg-kpi-num">{kpi.returned}</div>
-                <div class="ltg-kpi-lbl">Returned / NFI</div>
-            </div>
-            <div class="ltg-kpi ltg-kpi-green">
-                <div class="ltg-kpi-num">{kpi.matched}</div>
-                <div class="ltg-kpi-lbl">Approved</div>
-            </div>
-            <div class="ltg-kpi ltg-kpi-purple">
-                <div class="ltg-kpi-num">{kpi.submitted}</div>
-                <div class="ltg-kpi-lbl">Submitted</div>
+    <!-- KPI Strip -->
+    <div class="slds-grid slds-wrap slds-gutters_x-small slds-m-bottom_medium">
+        <div class="slds-col slds-size_1-of-4">
+            <div class="slds-box slds-box_small cs-kpi-tile">
+                <p class="slds-text-body_small slds-text-color_weak">Takeoffs</p>
+                <p class="slds-text-heading_large slds-m-vertical_xx-small cs-kpi-v cs-kpi-blue">{kpi.totalTakeoffs}</p>
             </div>
         </div>
-
-        <!-- Integration rule -->
-        <div class="ltg-alert ltg-alert-green">
-            <strong>Rule:</strong> Takeoff translates PO intent into execution lines. BMG Package Code and Community Package are the truth gates before Work Orders are created.
+        <div class="slds-col slds-size_1-of-4">
+            <div class="slds-box slds-box_small cs-kpi-tile">
+                <p class="slds-text-body_small slds-text-color_weak">Returned / NFI</p>
+                <p class="slds-text-heading_large slds-m-vertical_xx-small cs-kpi-v cs-kpi-amber">{kpi.returned}</p>
+            </div>
         </div>
-
-        <!-- No record state -->
-        <template if:false={hasRecord}>
-            <div class="ltg-empty">
-                <div class="ltg-empty-icon">📐</div>
-                <div class="ltg-empty-msg">Select a Takeoff record to view gate status and package compare.</div>
+        <div class="slds-col slds-size_1-of-4">
+            <div class="slds-box slds-box_small cs-kpi-tile">
+                <p class="slds-text-body_small slds-text-color_weak">Approved</p>
+                <p class="slds-text-heading_large slds-m-vertical_xx-small cs-kpi-v cs-kpi-green">{kpi.matched}</p>
             </div>
-        </template>
-
-        <!-- Record loaded -->
-        <template if:true={hasRecord}>
-
-            <!-- Record Header -->
-            <div class="ltg-card">
-                <div class="ltg-rec-head">
-                    <div class="ltg-rec-icon">📐</div>
-                    <div class="ltg-rec-meta">
-                        <div class="ltg-breadcrumb">LOVING Universal Home Builder Workflow</div>
-                        <div class="ltg-rec-title">{dto.name} · {dto.poName}</div>
-                        <div class="ltg-rec-chips">
-                            <span class={statusChipClass}>{dto.status}</span>
-                            <template if:true={dto.packageCode}>
-                                <span class="ltg-chip ltg-chip-blue">{dto.packageCode}</span>
-                            </template>
-                            <template if:false={dto.packageCode}>
-                                <span class="ltg-chip ltg-chip-amber">No BMG Package</span>
-                            </template>
-                        </div>
-                    </div>
-                    <div class="ltg-rec-actions">
-                        <button class="ltg-btn ltg-btn-primary"
-                                disabled={approveDisabled}
-                                onclick={handleApproveTakeoff}>Approve</button>
-                        <button class="ltg-btn"
-                                onclick={handleReturnTakeoff}>Return / NFI</button>
-                        <button class="ltg-btn"
-                                onclick={handleOpenPO}>Open PO</button>
-                    </div>
-                </div>
-
-                <!-- Highlights -->
-                <div class="ltg-highlights">
-                    <div>
-                        <div class="ltg-hl-label">Division</div>
-                        <div class="ltg-hl-value">{divisionDisplay}</div>
-                    </div>
-                    <div>
-                        <div class="ltg-hl-label">Community</div>
-                        <div class="ltg-hl-value">{communityDisplay}</div>
-                    </div>
-                    <div>
-                        <div class="ltg-hl-label">Lot</div>
-                        <div class="ltg-hl-value">{lotDisplay}</div>
-                    </div>
-                    <div>
-                        <div class="ltg-hl-label">Package</div>
-                        <div class="ltg-hl-value">{packageDisplay}</div>
-                    </div>
-                    <div>
-                        <div class="ltg-hl-label">PO Approval</div>
-                        <div class="ltg-hl-value">{poApprovalDisplay}</div>
-                    </div>
-                    <div>
-                        <div class="ltg-hl-label">Approved By</div>
-                        <div class="ltg-hl-value">{approvedByDisplay}</div>
-                    </div>
-                </div>
+        </div>
+        <div class="slds-col slds-size_1-of-4">
+            <div class="slds-box slds-box_small cs-kpi-tile">
+                <p class="slds-text-body_small slds-text-color_weak">Submitted</p>
+                <p class="slds-text-heading_large slds-m-vertical_xx-small cs-kpi-v cs-kpi-purple">{kpi.submitted}</p>
             </div>
+        </div>
+    </div>
 
-            <!-- NFI Return panel — visible when Return button clicked -->
-            <template if:true={showReturnPanel}>
-                <div class="ltg-card ltg-card-warn">
-                    <div class="ltg-card-head">
-                        <div class="ltg-ico ltg-ico-amber">!</div>
-                        <h3>Return / NFI — Reason Required</h3>
-                    </div>
-                    <div class="ltg-card-body">
-                        <lightning-textarea
-                            label="NFI Reason (required)"
-                            value={nfiReason}
-                            onchange={handleNfiReasonChange}
-                            max-length="2000"
-                            placeholder="Describe what is missing or incorrect...">
-                        </lightning-textarea>
-                        <div class="ltg-btn-row" style="margin-top:10px">
-                            <button class="ltg-btn ltg-btn-warn"
-                                    disabled={returnDisabled}
-                                    onclick={handleConfirmReturn}>Confirm Return</button>
-                            <button class="ltg-btn" onclick={handleCancelReturn}>Cancel</button>
+    <!-- Integration rule -->
+    <div class="slds-notify slds-notify_alert slds-theme_success slds-m-bottom_medium" role="alert">
+        <lightning-icon icon-name="utility:info" size="x-small" class="slds-m-right_x-small" alternative-text="Rule"></lightning-icon>
+        <strong>Rule:</strong>&nbsp;Takeoff translates PO intent into execution lines. BMG Package Code and Community Package are the truth gates before Work Orders are created.
+    </div>
+
+    <!-- No record state -->
+    <template if:false={hasRecord}>
+        <div class="slds-align_absolute-center slds-m-top_large slds-p-around_large">
+            <div class="slds-text-align_center">
+                <lightning-icon icon-name="utility:blueprint" size="large" class="slds-text-color_weak slds-m-bottom_medium"></lightning-icon>
+                <p class="slds-text-body_regular slds-text-color_weak">Select a Takeoff record to view gate status and package compare.</p>
+            </div>
+        </div>
+    </template>
+
+    <!-- Record loaded -->
+    <template if:true={hasRecord}>
+
+        <!-- Page Header -->
+        <div class="slds-page-header slds-m-bottom_medium">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <lightning-icon icon-name="standard:work_order" size="medium" alternative-text="Takeoff"></lightning-icon>
                         </div>
-                    </div>
-                </div>
-            </template>
-
-            <!-- Exception banner -->
-            <template if:true={dto.exceptionReason}>
-                <div class="ltg-alert ltg-alert-red">
-                    <strong>Exception on PO:</strong> {dto.exceptionReason} — Resolve this exception on the Purchase Order before approving.
-                </div>
-            </template>
-
-            <!-- Main layout -->
-            <div class="ltg-grid2">
-
-                <!-- Left: Package Compare + Gates -->
-                <div>
-
-                    <!-- Package Compare -->
-                    <div class="ltg-card">
-                        <div class="ltg-card-head">
-                            <div class="ltg-ico ltg-ico-blue">📦</div>
-                            <h3>Package Compare — Measured vs PO</h3>
-                        </div>
-                        <template if:true={hasLineItems}>
-                            <table class="ltg-tbl">
-                                <thead>
-                                    <tr>
-                                        <th>Line</th>
-                                        <th>PO Qty</th>
-                                        <th>Measured Qty</th>
-                                        <th>Unit</th>
-                                        <th>Decision</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <template for:each={lineItemsWithClasses} for:item="li">
-                                        <tr key={li.lineName}>
-                                            <td>{li.lineName}</td>
-                                            <td class="ltg-num">{li.poQty}</td>
-                                            <td class="ltg-num">{li.measuredQty}</td>
-                                            <td>{li.unit}</td>
-                                            <td><span class={li.decisionClass}>{li.decision}</span></td>
-                                        </tr>
-                                    </template>
-                                </tbody>
-                            </table>
-                            <div class="ltg-note">PO Qty sourced from Takeoff record. BMG pricing comparison requires BMG Master Price data to be loaded.</div>
-                        </template>
-                        <template if:false={hasLineItems}>
-                            <div class="ltg-empty-inline">No measurements recorded yet. Field team must complete measurements before approval.</div>
-                        </template>
-                    </div>
-
-                    <!-- Takeoff Gates -->
-                    <div class="ltg-card">
-                        <div class="ltg-card-head">
-                            <div class="ltg-ico ltg-ico-amber">🚦</div>
-                            <h3>Takeoff Gates</h3>
-                        </div>
-                        <div class="ltg-card-body">
-                            <div class="ltg-timeline">
-                                <template for:each={gatesWithClasses} for:item="gate">
-                                    <div key={gate.stepNum} class={gate.cssClass}>
-                                        <div class={gate.dotCssClass}>{gate.dotLabel}</div>
-                                        <div>
-                                            <div class="ltg-step-title">{gate.title}</div>
-                                            <div class="ltg-step-sub">{gate.description}</div>
-                                        </div>
-                                    </div>
+                        <div class="slds-media__body">
+                            <div class="slds-page-header__name">
+                                <div class="slds-page-header__name-title">
+                                    <h1><span class="slds-page-header__title">{dto.name} · {dto.poName}</span></h1>
+                                </div>
+                            </div>
+                            <p class="slds-page-header__name-meta">LOVING Universal Home Builder Workflow</p>
+                            <div class="slds-m-top_xx-small">
+                                <span class={statusChipClass}>{dto.status}</span>
+                                <template if:true={dto.packageCode}>
+                                    <span class="slds-badge slds-badge_lightest slds-m-left_xx-small">{dto.packageCode}</span>
+                                </template>
+                                <template if:false={dto.packageCode}>
+                                    <span class="slds-badge cs-badge-amber slds-m-left_xx-small">No BMG Package</span>
                                 </template>
                             </div>
                         </div>
                     </div>
-
                 </div>
-
-                <!-- Right: Mismatch Actions + Record Fields -->
-                <div>
-
-                    <!-- Mismatch Actions -->
-                    <div class="ltg-card">
-                        <div class="ltg-card-head">
-                            <div class="ltg-ico ltg-ico-purple">⚡</div>
-                            <h3>Mismatch Actions</h3>
-                        </div>
-                        <table class="ltg-tbl">
-                            <thead>
-                                <tr>
-                                    <th>Action</th>
-                                    <th>Outcome</th>
-                                    <th>Owner</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Approve as package</td>
-                                    <td>Moves to Approved — WO gate unlocked</td>
-                                    <td>CS</td>
-                                </tr>
-                                <tr>
-                                    <td>Return for corrections</td>
-                                    <td>Status set to Returned — NFI reason recorded</td>
-                                    <td>CS</td>
-                                </tr>
-                                <tr>
-                                    <td>Resolve PO exception</td>
-                                    <td>Exception Reason cleared on Purchase Order</td>
-                                    <td>CS / FM</td>
-                                </tr>
-                                <tr>
-                                    <td>Hold PO</td>
-                                    <td>Blocks Work Order on the Purchase Order record</td>
-                                    <td>CS</td>
-                                </tr>
-                                <tr>
-                                    <td>Update package</td>
-                                    <td>Requires Meg / admin approval</td>
-                                    <td>Admin</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Record fields -->
-                    <div class="ltg-card">
-                        <div class="ltg-card-head">
-                            <div class="ltg-ico ltg-ico-dark">📋</div>
-                            <h3>Record Details</h3>
-                        </div>
-                        <div class="ltg-fields-grid">
-                            <div>
-                                <div class="ltg-fl">Status</div>
-                                <div class="ltg-fv">{dto.status}</div>
-                            </div>
-                            <div>
-                                <div class="ltg-fl">PO Status</div>
-                                <div class="ltg-fv">{dto.poStatus}</div>
-                            </div>
-                            <div>
-                                <div class="ltg-fl">Photos Attached</div>
-                                <div class="ltg-fv">{photoDisplay}</div>
-                            </div>
-                            <div>
-                                <div class="ltg-fl">Checklist Complete</div>
-                                <div class="ltg-fv">{checklistDisplay}</div>
-                            </div>
-                            <div>
-                                <div class="ltg-fl">NFI Count</div>
-                                <div class="ltg-fv">{dto.nfiCount}</div>
-                            </div>
-                            <div>
-                                <div class="ltg-fl">FM Assignment</div>
-                                <div class="ltg-fv">{fmDisplay}</div>
-                            </div>
-                            <template if:true={dto.nfiReason}>
-                                <div class="ltg-field-full">
-                                    <div class="ltg-fl">Last NFI Reason</div>
-                                    <div class="ltg-fv ltg-fv-red">{dto.nfiReason}</div>
-                                </div>
-                            </template>
-                            <template if:true={dto.notes}>
-                                <div class="ltg-field-full">
-                                    <div class="ltg-fl">Notes</div>
-                                    <div class="ltg-fv">{dto.notes}</div>
-                                </div>
-                            </template>
+                <div class="slds-page-header__col-actions">
+                    <div class="slds-page-header__controls">
+                        <div class="slds-page-header__control">
+                            <lightning-button-group>
+                                <lightning-button label="Approve" variant="brand" disabled={approveDisabled} onclick={handleApproveTakeoff}></lightning-button>
+                                <lightning-button label="Return / NFI" onclick={handleReturnTakeoff}></lightning-button>
+                                <lightning-button label="Open PO" onclick={handleOpenPO}></lightning-button>
+                            </lightning-button-group>
                         </div>
                     </div>
-
-                    <!-- WO readiness -->
-                    <div class="ltg-card ltg-card-last">
-                        <div class="ltg-card-head">
-                            <div class="ltg-ico ltg-ico-green">WO</div>
-                            <h3>Work Order Readiness</h3>
-                        </div>
-                        <div class="ltg-card-body">
-                            <template if:true={dto.canCreateWo}>
-                                <div class="ltg-alert ltg-alert-green">
-                                    All gates passed. Work Order can be created from the Purchase Order.
-                                </div>
-                            </template>
-                            <template if:false={dto.canCreateWo}>
-                                <div class="ltg-alert ltg-alert-amber">
-                                    Work Order blocked. {woBlockedReason}
-                                </div>
-                            </template>
-                            <button class="ltg-btn ltg-btn-primary"
-                                    disabled={woDisabled}
-                                    onclick={handleOpenPO}
-                                    style="margin-top:10px;width:100%">
-                                Open Purchase Order to Create Work Order
-                            </button>
-                        </div>
-                    </div>
-
                 </div>
+            </div>
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-details">
+                    <ul class="slds-page-header__detail-list">
+                        <li class="slds-page-header__detail-block">
+                            <p class="slds-page-header__detail-title slds-truncate">Division</p>
+                            <p class="slds-text-body_regular slds-truncate">{divisionDisplay}</p>
+                        </li>
+                        <li class="slds-page-header__detail-block">
+                            <p class="slds-page-header__detail-title slds-truncate">Community</p>
+                            <p class="slds-text-body_regular slds-truncate">{communityDisplay}</p>
+                        </li>
+                        <li class="slds-page-header__detail-block">
+                            <p class="slds-page-header__detail-title slds-truncate">Lot</p>
+                            <p class="slds-text-body_regular slds-truncate">{lotDisplay}</p>
+                        </li>
+                        <li class="slds-page-header__detail-block">
+                            <p class="slds-page-header__detail-title slds-truncate">Package</p>
+                            <p class="slds-text-body_regular slds-truncate">{packageDisplay}</p>
+                        </li>
+                        <li class="slds-page-header__detail-block">
+                            <p class="slds-page-header__detail-title slds-truncate">PO Approval</p>
+                            <p class="slds-text-body_regular slds-truncate">{poApprovalDisplay}</p>
+                        </li>
+                        <li class="slds-page-header__detail-block">
+                            <p class="slds-page-header__detail-title slds-truncate">Approved By</p>
+                            <p class="slds-text-body_regular slds-truncate">{approvedByDisplay}</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- NFI Return panel -->
+        <template if:true={showReturnPanel}>
+            <lightning-card class="slds-m-bottom_medium">
+                <h2 slot="title">
+                    <lightning-icon icon-name="utility:warning" size="x-small" class="slds-m-right_x-small" alternative-text="Warning"></lightning-icon>
+                    Return / NFI — Reason Required
+                </h2>
+                <div class="slds-card__body slds-card__body_inner">
+                    <lightning-textarea
+                        label="NFI Reason (required)"
+                        value={nfiReason}
+                        onchange={handleNfiReasonChange}
+                        max-length="2000"
+                        placeholder="Describe what is missing or incorrect...">
+                    </lightning-textarea>
+                    <div class="slds-m-top_small">
+                        <lightning-button-group>
+                            <lightning-button label="Confirm Return" variant="destructive" disabled={returnDisabled} onclick={handleConfirmReturn}></lightning-button>
+                            <lightning-button label="Cancel" onclick={handleCancelReturn}></lightning-button>
+                        </lightning-button-group>
+                    </div>
+                </div>
+            </lightning-card>
+        </template>
+
+        <!-- Exception banner -->
+        <template if:true={dto.exceptionReason}>
+            <div class="slds-notify slds-notify_alert slds-theme_error slds-m-bottom_medium" role="alert">
+                <lightning-icon icon-name="utility:error" size="x-small" class="slds-m-right_x-small" alternative-text="Exception"></lightning-icon>
+                <strong>Exception on PO:</strong>&nbsp;{dto.exceptionReason} — Resolve this exception on the Purchase Order before approving.
             </div>
         </template>
 
-    </div>
+        <!-- Main layout -->
+        <div class="slds-grid slds-wrap slds-gutters_small">
+
+            <!-- Left column: Package Compare + Gates -->
+            <div class="slds-col slds-size_1-of-1 slds-large-size_7-of-12 slds-m-bottom_medium">
+
+                <!-- Package Compare -->
+                <lightning-card title="Package Compare — Measured vs PO" icon-name="utility:package" class="slds-m-bottom_medium">
+                    <div class="slds-card__body">
+                        <template if:true={hasLineItems}>
+                            <div class="slds-scrollable_x">
+                                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered slds-no-row-hover">
+                                    <thead>
+                                        <tr class="slds-line-height_reset">
+                                            <th scope="col"><div class="slds-truncate">Line</div></th>
+                                            <th scope="col"><div class="slds-truncate">PO Qty</div></th>
+                                            <th scope="col"><div class="slds-truncate">Measured Qty</div></th>
+                                            <th scope="col"><div class="slds-truncate">Unit</div></th>
+                                            <th scope="col"><div class="slds-truncate">Decision</div></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template for:each={lineItemsWithClasses} for:item="li">
+                                            <tr key={li.lineName}>
+                                                <td>{li.lineName}</td>
+                                                <td class="slds-text-align_right" style="font-variant-numeric:tabular-nums">{li.poQty}</td>
+                                                <td class="slds-text-align_right" style="font-variant-numeric:tabular-nums">{li.measuredQty}</td>
+                                                <td>{li.unit}</td>
+                                                <td><span class={li.decisionClass}>{li.decision}</span></td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <p class="slds-text-body_small slds-text-color_weak slds-p-around_small">PO Qty sourced from Takeoff record. BMG pricing comparison requires BMG Master Price data to be loaded.</p>
+                        </template>
+                        <template if:false={hasLineItems}>
+                            <div class="slds-p-around_medium slds-text-align_center">
+                                <p class="slds-text-body_regular slds-text-color_weak">No measurements recorded yet. Field team must complete measurements before approval.</p>
+                            </div>
+                        </template>
+                    </div>
+                </lightning-card>
+
+                <!-- Takeoff Gates -->
+                <lightning-card title="Takeoff Gates" icon-name="utility:steps">
+                    <div class="slds-card__body slds-card__body_inner">
+                        <div class="ltg-gate-list">
+                            <template for:each={gatesWithClasses} for:item="gate">
+                                <div key={gate.stepNum} class={gate.cssClass}>
+                                    <div class={gate.dotCssClass}>{gate.dotLabel}</div>
+                                    <div class="slds-m-left_small">
+                                        <p class="slds-text-body_regular ltg-step-title">{gate.title}</p>
+                                        <p class="slds-text-body_small slds-text-color_weak slds-m-top_xx-small">{gate.description}</p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </lightning-card>
+
+            </div>
+
+            <!-- Right column: Mismatch Actions + Record Details + WO Readiness -->
+            <div class="slds-col slds-size_1-of-1 slds-large-size_5-of-12 slds-m-bottom_medium">
+
+                <!-- Mismatch Actions -->
+                <lightning-card title="Mismatch Actions" icon-name="utility:warning" class="slds-m-bottom_medium">
+                    <div class="slds-card__body">
+                        <div class="slds-scrollable_x">
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-no-row-hover">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <th scope="col"><div class="slds-truncate">Action</div></th>
+                                        <th scope="col"><div class="slds-truncate">Outcome</div></th>
+                                        <th scope="col"><div class="slds-truncate">Owner</div></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>Approve as package</td><td>Moves to Approved — WO gate unlocked</td><td>CS</td></tr>
+                                    <tr><td>Return for corrections</td><td>Status set to Returned — NFI reason recorded</td><td>CS</td></tr>
+                                    <tr><td>Resolve PO exception</td><td>Exception Reason cleared on Purchase Order</td><td>CS / FM</td></tr>
+                                    <tr><td>Hold PO</td><td>Blocks Work Order on the Purchase Order record</td><td>CS</td></tr>
+                                    <tr><td>Update package</td><td>Requires Meg / admin approval</td><td>Admin</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </lightning-card>
+
+                <!-- Record Details -->
+                <lightning-card title="Record Details" icon-name="utility:description" class="slds-m-bottom_medium">
+                    <div class="slds-card__body slds-card__body_inner">
+                        <dl class="slds-dl_horizontal">
+                            <dt class="slds-dl_horizontal__label slds-text-color_weak">Status</dt>
+                            <dd class="slds-dl_horizontal__detail">{dto.status}</dd>
+                            <dt class="slds-dl_horizontal__label slds-text-color_weak">PO Status</dt>
+                            <dd class="slds-dl_horizontal__detail">{dto.poStatus}</dd>
+                            <dt class="slds-dl_horizontal__label slds-text-color_weak">Photos Attached</dt>
+                            <dd class="slds-dl_horizontal__detail">{photoDisplay}</dd>
+                            <dt class="slds-dl_horizontal__label slds-text-color_weak">Checklist Complete</dt>
+                            <dd class="slds-dl_horizontal__detail">{checklistDisplay}</dd>
+                            <dt class="slds-dl_horizontal__label slds-text-color_weak">NFI Count</dt>
+                            <dd class="slds-dl_horizontal__detail">{dto.nfiCount}</dd>
+                            <dt class="slds-dl_horizontal__label slds-text-color_weak">FM Assignment</dt>
+                            <dd class="slds-dl_horizontal__detail">{fmDisplay}</dd>
+                            <template if:true={dto.nfiReason}>
+                                <dt class="slds-dl_horizontal__label slds-text-color_weak">Last NFI Reason</dt>
+                                <dd class="slds-dl_horizontal__detail slds-text-color_error">{dto.nfiReason}</dd>
+                            </template>
+                            <template if:true={dto.notes}>
+                                <dt class="slds-dl_horizontal__label slds-text-color_weak">Notes</dt>
+                                <dd class="slds-dl_horizontal__detail">{dto.notes}</dd>
+                            </template>
+                        </dl>
+                    </div>
+                </lightning-card>
+
+                <!-- WO Readiness -->
+                <lightning-card title="Work Order Readiness" icon-name="standard:work_order">
+                    <div class="slds-card__body slds-card__body_inner">
+                        <template if:true={dto.canCreateWo}>
+                            <div class="slds-notify slds-notify_alert slds-theme_success" role="alert">
+                                <lightning-icon icon-name="utility:check" size="x-small" class="slds-m-right_x-small" alternative-text="OK"></lightning-icon>
+                                All gates passed. Work Order can be created from the Purchase Order.
+                            </div>
+                        </template>
+                        <template if:false={dto.canCreateWo}>
+                            <div class="slds-notify slds-notify_alert slds-theme_warning" role="alert">
+                                <lightning-icon icon-name="utility:warning" size="x-small" class="slds-m-right_x-small" alternative-text="Blocked"></lightning-icon>
+                                Work Order blocked.&nbsp;{woBlockedReason}
+                            </div>
+                        </template>
+                        <div class="slds-m-top_small">
+                            <lightning-button
+                                label="Open Purchase Order to Create Work Order"
+                                variant="brand"
+                                disabled={woDisabled}
+                                onclick={handleOpenPO}
+                                class="slds-size_1-of-1">
+                            </lightning-button>
+                        </div>
+                    </div>
+                </lightning-card>
+
+            </div>
+        </div>
+    </template>
+
+</div>
 </template>

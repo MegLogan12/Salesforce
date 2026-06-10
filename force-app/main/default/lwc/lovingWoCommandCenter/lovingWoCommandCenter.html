@@ -1,267 +1,286 @@
 <template>
-    <div class="lwcc-wrap">
+<div class="cs-wcc-wrap">
 
-        <!-- Loading -->
-        <template if:true={isLoading}>
-            <div class="lwcc-spinner">
-                <lightning-spinner alternative-text="Loading Work Orders" size="medium"></lightning-spinner>
-            </div>
-        </template>
+    <!-- Loading -->
+    <template if:true={isLoading}>
+        <div class="slds-align_absolute-center slds-p-around_large">
+            <lightning-spinner alternative-text="Loading Work Orders" size="medium"></lightning-spinner>
+        </div>
+    </template>
 
-        <!-- Error -->
-        <template if:true={errorMessage}>
-            <div class="lwcc-alert lwcc-alert-red">
-                <strong>Error:</strong> {errorMessage}
-            </div>
-        </template>
+    <!-- Error -->
+    <template if:true={errorMessage}>
+        <div class="slds-notify slds-notify_alert slds-theme_error slds-m-bottom_small" role="alert">
+            <lightning-icon icon-name="utility:error" size="x-small" class="slds-m-right_x-small" alternative-text="Error"></lightning-icon>
+            <strong>Error:</strong>&nbsp;{errorMessage}
+        </div>
+    </template>
 
-        <!-- KPI Strip -->
-        <div class="lwcc-kpi-strip">
-            <div class="lwcc-kpi lwcc-kpi-blue">
-                <div class="lwcc-kpi-num">{kpi.openWos}</div>
-                <div class="lwcc-kpi-lbl">Open WOs</div>
+    <!-- KPI Strip -->
+    <div class="slds-grid slds-wrap slds-gutters_x-small slds-m-bottom_medium">
+        <div class="slds-col slds-size_1-of-4">
+            <div class="slds-box slds-box_small cs-kpi-tile">
+                <p class="slds-text-body_small slds-text-color_weak">Open WOs</p>
+                <p class="slds-text-heading_large slds-m-vertical_xx-small cs-kpi-v cs-kpi-blue">{kpi.openWos}</p>
             </div>
-            <div class="lwcc-kpi lwcc-kpi-green">
-                <div class="lwcc-kpi-num">{kpi.scheduled}</div>
-                <div class="lwcc-kpi-lbl">Scheduled</div>
+        </div>
+        <div class="slds-col slds-size_1-of-4">
+            <div class="slds-box slds-box_small cs-kpi-tile">
+                <p class="slds-text-body_small slds-text-color_weak">Scheduled</p>
+                <p class="slds-text-heading_large slds-m-vertical_xx-small cs-kpi-v cs-kpi-green">{kpi.scheduled}</p>
             </div>
-            <div class="lwcc-kpi lwcc-kpi-amber">
-                <div class="lwcc-kpi-num">{kpi.fmReview}</div>
-                <div class="lwcc-kpi-lbl">FM Review</div>
+        </div>
+        <div class="slds-col slds-size_1-of-4">
+            <div class="slds-box slds-box_small cs-kpi-tile">
+                <p class="slds-text-body_small slds-text-color_weak">FM Review</p>
+                <p class="slds-text-heading_large slds-m-vertical_xx-small cs-kpi-v cs-kpi-amber">{kpi.fmReview}</p>
             </div>
-            <div class="lwcc-kpi lwcc-kpi-red">
-                <div class="lwcc-kpi-num">{kpi.blocked}</div>
-                <div class="lwcc-kpi-lbl">Blocked</div>
+        </div>
+        <div class="slds-col slds-size_1-of-4">
+            <div class="slds-box slds-box_small cs-kpi-tile">
+                <p class="slds-text-body_small slds-text-color_weak">Blocked</p>
+                <p class="slds-text-heading_large slds-m-vertical_xx-small cs-kpi-v cs-kpi-red">{kpi.blocked}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rule alert -->
+    <div class="slds-notify slds-notify_alert slds-theme_info slds-m-bottom_medium" role="alert">
+        <lightning-icon icon-name="utility:info" size="x-small" class="slds-m-right_x-small" alternative-text="Rule"></lightning-icon>
+        <strong>Rule:</strong>&nbsp;Production Install work orders come from approved PO and Takeoff. Exception work orders can be created only through controlled type-specific paths.
+    </div>
+
+    <!-- Pipeline board -->
+    <div class="cs-wcc-board slds-m-bottom_large">
+
+        <div class="cs-wcc-lane">
+            <div class="cs-wcc-lane-head">
+                <span class="slds-text-body_small" style="font-weight:700">Production Install</span>
+                <span class="slds-badge slds-badge_lightest slds-m-left_xx-small">{productionInstallCount}</span>
+            </div>
+            <div class="cs-wcc-lane-body">
+                <template if:true={hasProductionInstall}>
+                    <template for:each={productionInstallCards} for:item="card">
+                        <button key={card.id} class="cs-wcc-card" onclick={handleOpenWo} data-id={card.id}>
+                            <span class="cs-wcc-card-id">{card.name}<template if:true={card.lotName}> · {card.lotName}</template></span>
+                            <span class="cs-wcc-card-meta">{card.communityName}</span>
+                            <span class="cs-wcc-card-foot">
+                                <span class={card.statusChipClass}>{card.status}</span>
+                                <template if:true={card.woAmount}><span class="cs-wcc-money">{card.woAmountFormatted}</span></template>
+                            </span>
+                        </button>
+                    </template>
+                </template>
+                <template if:false={hasProductionInstall}>
+                    <p class="slds-text-body_small slds-text-color_weak slds-text-align_center slds-p-vertical_small">No open records</p>
+                </template>
             </div>
         </div>
 
-        <!-- Rule alert -->
-        <div class="lwcc-alert lwcc-alert-amber">
-            <strong>Rule:</strong> Production Install work orders come from approved PO and Takeoff. Exception work orders can be created only through controlled type-specific paths.
+        <div class="cs-wcc-lane">
+            <div class="cs-wcc-lane-head">
+                <span class="slds-text-body_small" style="font-weight:700">Finished Job</span>
+                <span class="slds-badge slds-badge_lightest slds-m-left_xx-small">{finishJobCount}</span>
+            </div>
+            <div class="cs-wcc-lane-body">
+                <template if:true={hasFinishJob}>
+                    <template for:each={finishJobCards} for:item="card">
+                        <button key={card.id} class="cs-wcc-card" onclick={handleOpenWo} data-id={card.id}>
+                            <span class="cs-wcc-card-id">{card.name}</span>
+                            <span class="cs-wcc-card-meta">{card.communityName}<template if:true={card.fieldManagerName}><br/>{card.fieldManagerName}</template></span>
+                            <span class="cs-wcc-card-foot">
+                                <span class={card.statusChipClass}>{card.status}</span>
+                                <template if:true={card.hasBlocker}><span class="slds-badge cs-badge-red slds-m-left_xx-small">NFI</span></template>
+                            </span>
+                        </button>
+                    </template>
+                </template>
+                <template if:false={hasFinishJob}>
+                    <p class="slds-text-body_small slds-text-color_weak slds-text-align_center slds-p-vertical_small">No open records</p>
+                </template>
+            </div>
         </div>
 
-        <!-- Pipeline board -->
-        <div class="lwcc-pipeline">
-
-            <!-- Production Install -->
-            <div class="lwcc-stage">
-                <div class="lwcc-stage-head">
-                    <span class="lwcc-stage-title">Production Install</span>
-                    <span class="lwcc-stage-count">{productionInstallCount}</span>
-                </div>
-                <div class="lwcc-stage-body">
-                    <template if:true={hasProductionInstall}>
-                        <template for:each={productionInstallCards} for:item="card">
-                            <div key={card.id} class="lwcc-mini-card" onclick={handleOpenWo} data-id={card.id}>
-                                <div class="lwcc-mini-title">{card.name}<template if:true={card.lotName}> · {card.lotName}</template></div>
-                                <div class="lwcc-mini-meta">{card.communityName}</div>
-                                <div class="lwcc-mini-line">
-                                    <span class={card.statusChipClass}>{card.status}</span>
-                                    <template if:true={card.woAmount}><span class="lwcc-money">{card.woAmountFormatted}</span></template>
-                                </div>
-                            </div>
-                        </template>
-                    </template>
-                    <template if:false={hasProductionInstall}>
-                        <div class="lwcc-stage-empty">No open records</div>
-                    </template>
-                </div>
+        <div class="cs-wcc-lane">
+            <div class="cs-wcc-lane-head">
+                <span class="slds-text-body_small" style="font-weight:700">Warranty</span>
+                <span class="slds-badge slds-badge_lightest slds-m-left_xx-small">{warrantyCount}</span>
             </div>
-
-            <!-- Finish Job -->
-            <div class="lwcc-stage">
-                <div class="lwcc-stage-head">
-                    <span class="lwcc-stage-title">Finished Job</span>
-                    <span class="lwcc-stage-count">{finishJobCount}</span>
-                </div>
-                <div class="lwcc-stage-body">
-                    <template if:true={hasFinishJob}>
-                        <template for:each={finishJobCards} for:item="card">
-                            <div key={card.id} class="lwcc-mini-card" onclick={handleOpenWo} data-id={card.id}>
-                                <div class="lwcc-mini-title">{card.name}</div>
-                                <div class="lwcc-mini-meta">{card.communityName}<template if:true={card.fieldManagerName}><br/>{card.fieldManagerName}</template></div>
-                                <div class="lwcc-mini-line">
-                                    <span class={card.statusChipClass}>{card.status}</span>
-                                    <template if:true={card.hasBlocker}><span class="lwcc-warn-txt">NFI</span></template>
-                                </div>
-                            </div>
-                        </template>
+            <div class="cs-wcc-lane-body">
+                <template if:true={hasWarranty}>
+                    <template for:each={warrantyCards} for:item="card">
+                        <button key={card.id} class="cs-wcc-card" onclick={handleOpenWo} data-id={card.id}>
+                            <span class="cs-wcc-card-id">{card.name}</span>
+                            <span class="cs-wcc-card-meta">{card.communityName}</span>
+                            <span class="cs-wcc-card-foot">
+                                <span class={card.statusChipClass}>{card.status}</span>
+                                <template if:true={card.hasBlocker}><span class="slds-badge cs-badge-red slds-m-left_xx-small">NFI</span></template>
+                            </span>
+                        </button>
                     </template>
-                    <template if:false={hasFinishJob}>
-                        <div class="lwcc-stage-empty">No open records</div>
-                    </template>
-                </div>
+                </template>
+                <template if:false={hasWarranty}>
+                    <p class="slds-text-body_small slds-text-color_weak slds-text-align_center slds-p-vertical_small">No open records</p>
+                </template>
             </div>
-
-            <!-- Warranty -->
-            <div class="lwcc-stage">
-                <div class="lwcc-stage-head">
-                    <span class="lwcc-stage-title">Warranty</span>
-                    <span class="lwcc-stage-count">{warrantyCount}</span>
-                </div>
-                <div class="lwcc-stage-body">
-                    <template if:true={hasWarranty}>
-                        <template for:each={warrantyCards} for:item="card">
-                            <div key={card.id} class="lwcc-mini-card" onclick={handleOpenWo} data-id={card.id}>
-                                <div class="lwcc-mini-title">{card.name}</div>
-                                <div class="lwcc-mini-meta">{card.communityName}</div>
-                                <div class="lwcc-mini-line">
-                                    <span class={card.statusChipClass}>{card.status}</span>
-                                    <template if:true={card.hasBlocker}><span class="lwcc-warn-txt">NFI</span></template>
-                                </div>
-                            </div>
-                        </template>
-                    </template>
-                    <template if:false={hasWarranty}>
-                        <div class="lwcc-stage-empty">No open records</div>
-                    </template>
-                </div>
-            </div>
-
-            <!-- Customer Success -->
-            <div class="lwcc-stage">
-                <div class="lwcc-stage-head">
-                    <span class="lwcc-stage-title">Customer Success</span>
-                    <span class="lwcc-stage-count">{customerCareCount}</span>
-                </div>
-                <div class="lwcc-stage-body">
-                    <template if:true={hasCustomerCare}>
-                        <template for:each={customerCareCards} for:item="card">
-                            <div key={card.id} class="lwcc-mini-card" onclick={handleOpenWo} data-id={card.id}>
-                                <div class="lwcc-mini-title">{card.name}</div>
-                                <div class="lwcc-mini-meta">{card.communityName}</div>
-                                <div class="lwcc-mini-line">
-                                    <span class={card.statusChipClass}>{card.status}</span>
-                                </div>
-                            </div>
-                        </template>
-                    </template>
-                    <template if:false={hasCustomerCare}>
-                        <div class="lwcc-stage-empty">No open records</div>
-                    </template>
-                </div>
-            </div>
-
-            <!-- Aqua -->
-            <div class="lwcc-stage">
-                <div class="lwcc-stage-head">
-                    <span class="lwcc-stage-title">Aqua</span>
-                    <span class="lwcc-stage-count">{aquaCount}</span>
-                </div>
-                <div class="lwcc-stage-body">
-                    <template if:true={hasAqua}>
-                        <template for:each={aquaCards} for:item="card">
-                            <div key={card.id} class="lwcc-mini-card" onclick={handleOpenWo} data-id={card.id}>
-                                <div class="lwcc-mini-title">{card.name}</div>
-                                <div class="lwcc-mini-meta">{card.woType}<template if:true={card.communityName}><br/>{card.communityName}</template></div>
-                                <div class="lwcc-mini-line">
-                                    <span class={card.statusChipClass}>{card.status}</span>
-                                </div>
-                            </div>
-                        </template>
-                    </template>
-                    <template if:false={hasAqua}>
-                        <div class="lwcc-stage-empty">No open records</div>
-                    </template>
-                </div>
-            </div>
-
-            <!-- Site / Grading / Irrigation -->
-            <div class="lwcc-stage">
-                <div class="lwcc-stage-head">
-                    <span class="lwcc-stage-title">Site / Grading / Irrigation</span>
-                    <span class="lwcc-stage-count">{siteGradingCount}</span>
-                </div>
-                <div class="lwcc-stage-body">
-                    <template if:true={hasSiteGrading}>
-                        <template for:each={siteGradingCards} for:item="card">
-                            <div key={card.id} class="lwcc-mini-card" onclick={handleOpenWo} data-id={card.id}>
-                                <div class="lwcc-mini-title">{card.name}</div>
-                                <div class="lwcc-mini-meta">{card.woType}<template if:true={card.communityName}><br/>{card.communityName}</template></div>
-                                <div class="lwcc-mini-line">
-                                    <span class={card.statusChipClass}>{card.status}</span>
-                                </div>
-                            </div>
-                        </template>
-                    </template>
-                    <template if:false={hasSiteGrading}>
-                        <div class="lwcc-stage-empty">No open records</div>
-                    </template>
-                </div>
-            </div>
-
         </div>
 
-        <!-- Bottom grid: Type Rules + Trigger Contract -->
-        <div class="lwcc-grid2">
-
-            <!-- WO Type Rules -->
-            <div class="lwcc-card">
-                <div class="lwcc-card-head">
-                    <div class="lwcc-ico lwcc-ico-purple">&#x1F9FE;</div>
-                    <h3>Work Order Type Rules</h3>
-                </div>
-                <table class="lwcc-tbl">
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Created by</th>
-                            <th>Can foreman close?</th>
-                            <th>Next gate</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Production Install</td><td>Approved PO / Takeoff</td><td>Field complete only</td><td>QI / invoice handoff</td></tr>
-                        <tr><td>Finished Job</td><td>FM after cannot-complete</td><td>No</td><td>FM approval</td></tr>
-                        <tr><td>Warranty</td><td>Customer Success / FM</td><td>No</td><td>Coverage decision</td></tr>
-                        <tr><td>Customer Success</td><td>Success intake</td><td>No</td><td>Triage / assign</td></tr>
-                        <tr><td>Aqua</td><td>Aqua process</td><td>No</td><td>Runtime / check / pickup</td></tr>
-                        <tr><td>Site Visit</td><td>Scheduler / FM</td><td>Field notes only</td><td>Decision</td></tr>
-                    </tbody>
-                </table>
+        <div class="cs-wcc-lane">
+            <div class="cs-wcc-lane-head">
+                <span class="slds-text-body_small" style="font-weight:700">Customer Success</span>
+                <span class="slds-badge slds-badge_lightest slds-m-left_xx-small">{customerCareCount}</span>
             </div>
-
-            <!-- Universal Trigger Contract -->
-            <div class="lwcc-card">
-                <div class="lwcc-card-head">
-                    <div class="lwcc-ico lwcc-ico-blue">&#x26A1;</div>
-                    <h3>Universal Trigger Contract</h3>
-                </div>
-                <div class="lwcc-card-body">
-                    <div class="lwcc-timeline">
-                        <div class="lwcc-step lwcc-step-done">
-                            <div class="lwcc-dot lwcc-dot-done">&#x2713;</div>
-                            <div>
-                                <div class="lwcc-step-title">Approved Takeoff</div>
-                                <div class="lwcc-step-sub">Creates or updates the correct work order type and execution lines.</div>
-                            </div>
-                        </div>
-                        <div class="lwcc-step lwcc-step-active">
-                            <div class="lwcc-dot lwcc-dot-active">2</div>
-                            <div>
-                                <div class="lwcc-step-title">WO Ready</div>
-                                <div class="lwcc-step-sub">Creates or updates ServiceAppointment with territory, duration, and crew rules.</div>
-                            </div>
-                        </div>
-                        <div class="lwcc-step">
-                            <div class="lwcc-dot">3</div>
-                            <div>
-                                <div class="lwcc-step-title">Foreman Arrival</div>
-                                <div class="lwcc-step-sub">Shows arrival checklist and DQC section only when supplier-delivered sod/mulch exists.</div>
-                            </div>
-                        </div>
-                        <div class="lwcc-step">
-                            <div class="lwcc-dot">4</div>
-                            <div>
-                                <div class="lwcc-step-title">Closeout</div>
-                                <div class="lwcc-step-sub">Requires photos, line status, notes, and escalation decisions.</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="cs-wcc-lane-body">
+                <template if:true={hasCustomerCare}>
+                    <template for:each={customerCareCards} for:item="card">
+                        <button key={card.id} class="cs-wcc-card" onclick={handleOpenWo} data-id={card.id}>
+                            <span class="cs-wcc-card-id">{card.name}</span>
+                            <span class="cs-wcc-card-meta">{card.communityName}</span>
+                            <span class="cs-wcc-card-foot">
+                                <span class={card.statusChipClass}>{card.status}</span>
+                            </span>
+                        </button>
+                    </template>
+                </template>
+                <template if:false={hasCustomerCare}>
+                    <p class="slds-text-body_small slds-text-color_weak slds-text-align_center slds-p-vertical_small">No open records</p>
+                </template>
             </div>
+        </div>
 
+        <div class="cs-wcc-lane">
+            <div class="cs-wcc-lane-head">
+                <span class="slds-text-body_small" style="font-weight:700">Aqua</span>
+                <span class="slds-badge slds-badge_lightest slds-m-left_xx-small">{aquaCount}</span>
+            </div>
+            <div class="cs-wcc-lane-body">
+                <template if:true={hasAqua}>
+                    <template for:each={aquaCards} for:item="card">
+                        <button key={card.id} class="cs-wcc-card" onclick={handleOpenWo} data-id={card.id}>
+                            <span class="cs-wcc-card-id">{card.name}</span>
+                            <span class="cs-wcc-card-meta">{card.woType}<template if:true={card.communityName}><br/>{card.communityName}</template></span>
+                            <span class="cs-wcc-card-foot">
+                                <span class={card.statusChipClass}>{card.status}</span>
+                            </span>
+                        </button>
+                    </template>
+                </template>
+                <template if:false={hasAqua}>
+                    <p class="slds-text-body_small slds-text-color_weak slds-text-align_center slds-p-vertical_small">No open records</p>
+                </template>
+            </div>
+        </div>
+
+        <div class="cs-wcc-lane">
+            <div class="cs-wcc-lane-head">
+                <span class="slds-text-body_small" style="font-weight:700">Site / Grading / Irrigation</span>
+                <span class="slds-badge slds-badge_lightest slds-m-left_xx-small">{siteGradingCount}</span>
+            </div>
+            <div class="cs-wcc-lane-body">
+                <template if:true={hasSiteGrading}>
+                    <template for:each={siteGradingCards} for:item="card">
+                        <button key={card.id} class="cs-wcc-card" onclick={handleOpenWo} data-id={card.id}>
+                            <span class="cs-wcc-card-id">{card.name}</span>
+                            <span class="cs-wcc-card-meta">{card.woType}<template if:true={card.communityName}><br/>{card.communityName}</template></span>
+                            <span class="cs-wcc-card-foot">
+                                <span class={card.statusChipClass}>{card.status}</span>
+                            </span>
+                        </button>
+                    </template>
+                </template>
+                <template if:false={hasSiteGrading}>
+                    <p class="slds-text-body_small slds-text-color_weak slds-text-align_center slds-p-vertical_small">No open records</p>
+                </template>
+            </div>
         </div>
 
     </div>
+
+    <!-- Bottom: Type Rules + Trigger Contract -->
+    <div class="slds-grid slds-wrap slds-gutters_small">
+        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-m-bottom_medium">
+            <lightning-card title="Work Order Type Rules">
+                <div class="slds-card__body">
+                    <div class="slds-scrollable_x">
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered slds-no-row-hover">
+                            <thead>
+                                <tr class="slds-line-height_reset">
+                                    <th scope="col"><div class="slds-truncate">Type</div></th>
+                                    <th scope="col"><div class="slds-truncate">Created by</div></th>
+                                    <th scope="col"><div class="slds-truncate">Can foreman close?</div></th>
+                                    <th scope="col"><div class="slds-truncate">Next gate</div></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>Production Install</td><td>Approved PO / Takeoff</td><td>Field complete only</td><td>QI / invoice handoff</td></tr>
+                                <tr><td>Finished Job</td><td>FM after cannot-complete</td><td>No</td><td>FM approval</td></tr>
+                                <tr><td>Warranty</td><td>Customer Success / FM</td><td>No</td><td>Coverage decision</td></tr>
+                                <tr><td>Customer Success</td><td>Success intake</td><td>No</td><td>Triage / assign</td></tr>
+                                <tr><td>Aqua</td><td>Aqua process</td><td>No</td><td>Runtime / check / pickup</td></tr>
+                                <tr><td>Site Visit</td><td>Scheduler / FM</td><td>Field notes only</td><td>Decision</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </lightning-card>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-m-bottom_medium">
+            <lightning-card title="Universal Trigger Contract">
+                <div class="slds-card__body slds-card__body_inner">
+                    <ol class="slds-timeline">
+                        <li class="slds-timeline__item">
+                            <span class="slds-assistive-text">Step 1</span>
+                            <div class="slds-media slds-media_timeline slds-timeline__media slds-timeline__media_task">
+                                <div class="slds-media__figure slds-media__figure_fixed-width slds-align_absolute-center slds-timeline__figure">
+                                    <lightning-icon icon-name="utility:check" size="x-small" variant="success" alternative-text="Done"></lightning-icon>
+                                </div>
+                                <div class="slds-media__body">
+                                    <p class="slds-text-body_regular slds-m-bottom_xx-small" style="font-weight:700">Approved Takeoff</p>
+                                    <p class="slds-text-body_small slds-text-color_weak">Creates or updates the correct work order type and execution lines.</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="slds-timeline__item">
+                            <span class="slds-assistive-text">Step 2</span>
+                            <div class="slds-media slds-media_timeline slds-timeline__media slds-timeline__media_task">
+                                <div class="slds-media__figure slds-media__figure_fixed-width slds-align_absolute-center slds-timeline__figure">
+                                    <lightning-icon icon-name="utility:settings" size="x-small" alternative-text="Active"></lightning-icon>
+                                </div>
+                                <div class="slds-media__body">
+                                    <p class="slds-text-body_regular slds-m-bottom_xx-small" style="font-weight:700">WO Ready</p>
+                                    <p class="slds-text-body_small slds-text-color_weak">Creates or updates ServiceAppointment with territory, duration, and crew rules.</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="slds-timeline__item">
+                            <span class="slds-assistive-text">Step 3</span>
+                            <div class="slds-media slds-media_timeline slds-timeline__media slds-timeline__media_task">
+                                <div class="slds-media__figure slds-media__figure_fixed-width slds-align_absolute-center slds-timeline__figure">
+                                    <lightning-icon icon-name="utility:location" size="x-small" alternative-text="Pending"></lightning-icon>
+                                </div>
+                                <div class="slds-media__body">
+                                    <p class="slds-text-body_regular slds-m-bottom_xx-small" style="font-weight:700">Foreman Arrival</p>
+                                    <p class="slds-text-body_small slds-text-color_weak">Shows arrival checklist and DQC section only when supplier-delivered sod/mulch exists.</p>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="slds-timeline__item">
+                            <span class="slds-assistive-text">Step 4</span>
+                            <div class="slds-media slds-media_timeline slds-timeline__media slds-timeline__media_task">
+                                <div class="slds-media__figure slds-media__figure_fixed-width slds-align_absolute-center slds-timeline__figure">
+                                    <lightning-icon icon-name="utility:lock" size="x-small" alternative-text="Pending"></lightning-icon>
+                                </div>
+                                <div class="slds-media__body">
+                                    <p class="slds-text-body_regular slds-m-bottom_xx-small" style="font-weight:700">Closeout</p>
+                                    <p class="slds-text-body_small slds-text-color_weak">Requires photos, line status, notes, and escalation decisions.</p>
+                                </div>
+                            </div>
+                        </li>
+                    </ol>
+                </div>
+            </lightning-card>
+        </div>
+    </div>
+
+</div>
 </template>

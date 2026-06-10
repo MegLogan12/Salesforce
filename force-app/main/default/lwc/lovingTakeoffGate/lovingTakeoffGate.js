@@ -92,10 +92,10 @@ export default class LovingTakeoffGate extends NavigationMixin(LightningElement)
     get lineItemsWithClasses() {
         if (!this.dto || !this.dto.lineItems) return [];
         return this.dto.lineItems.map(li => {
-            let decisionClass = 'ltg-chip ltg-chip-amber';
-            if (li.decision === 'Match')    decisionClass = 'ltg-chip ltg-chip-green';
-            if (li.decision === 'Mismatch') decisionClass = 'ltg-chip ltg-chip-red';
-            if (li.decision === 'Missing')  decisionClass = 'ltg-chip ltg-chip-red';
+            let decisionClass = 'slds-badge cs-badge-amber';
+            if (li.decision === 'Match')    decisionClass = 'slds-badge cs-badge-green';
+            if (li.decision === 'Mismatch') decisionClass = 'slds-badge cs-badge-red';
+            if (li.decision === 'Missing')  decisionClass = 'slds-badge cs-badge-red';
             return Object.assign({}, li, { decisionClass });
         });
     }
@@ -103,19 +103,13 @@ export default class LovingTakeoffGate extends NavigationMixin(LightningElement)
     // ── Display helpers ───────────────────────────────────────────────────────
 
     get statusChipClass() {
-        if (!this.dto) return 'ltg-chip';
+        if (!this.dto) return 'slds-badge slds-badge_lightest';
         const s = this.dto.status;
-        if (s === 'Approved')    return 'ltg-chip ltg-chip-green';
-        if (s === 'Returned')    return 'ltg-chip ltg-chip-red';
-        if (s === 'Submitted')   return 'ltg-chip ltg-chip-blue';
-        if (s === 'In Progress') return 'ltg-chip ltg-chip-amber';
-        return 'ltg-chip ltg-chip-gray';
-    }
-
-    get toastClass() {
-        return this.toastVariant === 'success'
-            ? 'ltg-alert ltg-alert-green'
-            : 'ltg-alert ltg-alert-red';
+        if (s === 'Approved')    return 'slds-badge cs-badge-green';
+        if (s === 'Returned')    return 'slds-badge cs-badge-red';
+        if (s === 'Submitted')   return 'slds-badge cs-badge-aqua';
+        if (s === 'In Progress') return 'slds-badge cs-badge-amber';
+        return 'slds-badge slds-badge_lightest';
     }
 
     get woBlockedReason() {
@@ -182,7 +176,7 @@ export default class LovingTakeoffGate extends NavigationMixin(LightningElement)
     }
 
     handleNfiReasonChange(event) {
-        this.nfiReason = event.target.value;
+        this.nfiReason = event.detail.value;
     }
 
     handleConfirmReturn() {
