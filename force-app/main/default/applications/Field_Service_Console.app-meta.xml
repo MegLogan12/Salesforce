@@ -2,8 +2,50 @@
 <CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
     <actionOverrides>
         <actionName>View</actionName>
+        <comment>LOVING command-center community workspace view.</comment>
+        <content>LOVING_Community_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Community__c</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Community_Record_Page</content>
+        <formFactor>Small</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Community__c</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <comment>LOVING command-center lot workspace view.</comment>
+        <content>LOVING_Lot_Record_Page</content>
+        <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Lot__c</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Lot_Record_Page</content>
+        <formFactor>Small</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Lot__c</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
         <content>LOVING_Account_Homeowner_Record_Page</content>
         <formFactor>Large</formFactor>
+        <skipRecordTypeSelect>false</skipRecordTypeSelect>
+        <type>Flexipage</type>
+        <pageOrSobjectType>Account</pageOrSobjectType>
+    </actionOverrides>
+    <actionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Account_Homeowner_Record_Page</content>
+        <formFactor>Small</formFactor>
         <skipRecordTypeSelect>false</skipRecordTypeSelect>
         <type>Flexipage</type>
         <pageOrSobjectType>Account</pageOrSobjectType>
@@ -87,6 +129,59 @@
     <isOmniPinnedViewEnabled>false</isOmniPinnedViewEnabled>
     <label>Field Services</label>
     <navType>Console</navType>
+    <profileActionOverrides>
+        <actionName>Tab</actionName>
+        <content>LOVING_FSL_Scheduling_Home</content>
+        <formFactor>Large</formFactor>
+        <pageOrSobjectType>standard-home</pageOrSobjectType>
+        <type>Flexipage</type>
+        <profile>Admin</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Standard_WorkOrder_Workspace_Page</content>
+        <formFactor>Small</formFactor>
+        <pageOrSobjectType>WorkOrder</pageOrSobjectType>
+        <recordType>WorkOrder.Production_Install</recordType>
+        <type>Flexipage</type>
+        <profile>SalesforceIQ Integration User</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Standard_WorkOrder_Workspace_Page</content>
+        <formFactor>Small</formFactor>
+        <pageOrSobjectType>WorkOrder</pageOrSobjectType>
+        <recordType>WorkOrder.Production_Install</recordType>
+        <type>Flexipage</type>
+        <profile>SolutionManager</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Standard_WorkOrder_Workspace_Page</content>
+        <formFactor>Small</formFactor>
+        <pageOrSobjectType>WorkOrder</pageOrSobjectType>
+        <recordType>WorkOrder.Production_Install</recordType>
+        <type>Flexipage</type>
+        <profile>Standard</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Standard_WorkOrder_Workspace_Page</content>
+        <formFactor>Small</formFactor>
+        <pageOrSobjectType>WorkOrder</pageOrSobjectType>
+        <recordType>WorkOrder.Production_Install</recordType>
+        <type>Flexipage</type>
+        <profile>Admin</profile>
+    </profileActionOverrides>
+    <profileActionOverrides>
+        <actionName>View</actionName>
+        <content>LOVING_Standard_WorkOrder_Workspace_Page</content>
+        <formFactor>Small</formFactor>
+        <pageOrSobjectType>WorkOrder</pageOrSobjectType>
+        <recordType>WorkOrder.Production_Install</recordType>
+        <type>Flexipage</type>
+        <profile>Site_Service_Messaging_for_Web_53703831 Profile</profile>
+    </profileActionOverrides>
     <profileActionOverrides>
         <actionName>View</actionName>
         <content>LOVING_Account_Builder_Parent_Record_Page</content>
