@@ -1,171 +1,173 @@
 <template>
-    <section class="card-shell">
-        <div class="card-header">
-            <div>
-                <div class="card-title">{cardTitle}</div>
-                <div class="card-subtitle">{cardSubtitle}</div>
-            </div>
-            <div class="header-actions">
-                <button class="ol-btn" onclick={refreshCard}>Refresh</button>
-                <button class="ol-btn primary" onclick={createFollowUpTask} disabled={disableFollowUp} title={followUpTitle}>Create Follow-Up Task</button>
-            </div>
+    <lightning-card title={cardTitle}>
+        <div slot="actions">
+            <button class="slds-button slds-button_neutral" onclick={refreshCard}>Refresh</button>
+            <button class="slds-button slds-button_brand" onclick={createFollowUpTask} disabled={disableFollowUp} title={followUpTitle}>Create Follow-Up Task</button>
         </div>
 
-        <template if:true={isLoading}>
-            <div class="state-message">Loading email history...</div>
-        </template>
+        <div class="slds-card__body slds-card__body_inner">
+            <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">{cardSubtitle}</p>
 
-        <template if:true={showSourceUnavailable}>
-            <div class="state-message warn">{sourceUnavailableReason}</div>
-        </template>
-
-        <template if:true={showError}>
-            <div class="state-message error">{errorMessage}</div>
-        </template>
-
-        <template if:true={showSummary}>
-            <div class="summary-grid">
-                <div class="summary-tile">
-                    <div class="tile-value">{totalEmails}</div>
-                    <div class="tile-label">Total Emails</div>
+            <template if:true={isLoading}>
+                <div class="slds-is-relative slds-p-around_large">
+                    <lightning-spinner alternative-text="Loading email history..." size="medium"></lightning-spinner>
                 </div>
-                <div class="summary-tile">
-                    <div class="tile-value">
-                        <template if:true={lastEmailDate}>
-                            <lightning-formatted-date-time value={lastEmailDate} year="numeric" month="short" day="2-digit"></lightning-formatted-date-time>
-                        </template>
-                        <template if:false={lastEmailDate}>Not available</template>
+            </template>
+
+            <template if:true={showSourceUnavailable}>
+                <div class="slds-notify slds-notify_alert slds-theme_warning" role="alert">
+                    {sourceUnavailableReason}
+                </div>
+            </template>
+
+            <template if:true={showError}>
+                <div class="slds-notify slds-notify_alert slds-theme_error" role="alert">
+                    {errorMessage}
+                </div>
+            </template>
+
+            <template if:true={showSummary}>
+                <div class="slds-grid slds-wrap slds-gutters_x-small slds-m-bottom_small">
+                    <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5">
+                        <div class="slds-box slds-box_x-small cs-kpi-tile">
+                            <div class="cs-kpi-v cs-kpi-aqua">{totalEmails}</div>
+                            <div class="slds-text-title">Total Emails</div>
+                        </div>
                     </div>
-                    <div class="tile-label">Last Email Date</div>
-                </div>
-                <div class="summary-tile">
-                    <div class="tile-value">{lastEmailDirection}</div>
-                    <div class="tile-label">Last Email Direction</div>
-                </div>
-                <div class="summary-tile">
-                    <div class="tile-value">{lastEmailOwner}</div>
-                    <div class="tile-label">Last Email Owner</div>
-                </div>
-                <div class="summary-tile">
-                    <div class="tile-value">{needsReplyLabel}</div>
-                    <div class="tile-label">Unread / Needs Reply</div>
-                </div>
-            </div>
-        </template>
-
-        <template if:true={showEmailTable}>
-            <div class="table-wrap">
-                <table class="record-table">
-                    <thead>
-                        <tr>
-                            <th>Direction</th>
-                            <th>Subject</th>
-                            <th>From</th>
-                            <th>To</th>
-                            <th>Related Record</th>
-                            <th>Sent Date</th>
-                            <th>Owner</th>
-                            <th>Status</th>
-                            <th>Has Attachment</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <template for:each={emailRows} for:item="row">
-                            <tr key={row.id} class={row.rowClass}>
-                                <td><span class={row.directionClass}>{row.direction}</span></td>
-                                <td>
-                                    <button class="link-button" data-id={row.id} data-source={row.sourceType} onclick={selectEmailRow}>
-                                        {row.subject}
-                                    </button>
-                                </td>
-                                <td>{row.fromAddress}</td>
-                                <td>{row.toAddress}</td>
-                                <td>{row.relatedRecordLabel}</td>
-                                <td>
-                                    <template if:true={row.sentDate}>
-                                        <lightning-formatted-date-time value={row.sentDate} year="numeric" month="short" day="2-digit" hour="2-digit" minute="2-digit"></lightning-formatted-date-time>
-                                    </template>
-                                </td>
-                                <td>{row.ownerName}</td>
-                                <td>{row.status}</td>
-                                <td>
-                                    <template if:true={row.hasAttachment}>
-                                        <span class="status-chip attachment">Attachment</span>
-                                    </template>
-                                    <template if:false={row.hasAttachment}>No</template>
-                                </td>
-                                <td>
-                                    <button class="ol-btn" data-id={row.id} data-source={row.sourceType} onclick={openSelectedEmail}>Open Email</button>
-                                </td>
-                            </tr>
-                        </template>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="detail-panel">
-                <div class="detail-header">
-                    <div>
-                        <div class="card-title small">Email Detail Preview</div>
-                        <div class="card-subtitle">Related customer emails, logged messages, and follow-up communications</div>
-                    </div>
-                    <div class="detail-actions">
-                        <button class="ol-btn" onclick={openEmail} disabled={disableOpenEmail}>Open Email</button>
-                        <button class="ol-btn primary" onclick={sendEmail} disabled={disableSendEmail} title={sendEmailTitle}>Send Email</button>
-                        <button class="ol-btn" onclick={logEmail} disabled={disableLogEmail} title={logEmailTitle}>Log Email</button>
-                        <button class="ol-btn" onclick={replyToEmail} disabled={disableReply} title={replyTitle}>Reply</button>
-                    </div>
-                </div>
-                <template if:true={selectedDetail}>
-                    <div class="detail-grid">
-                        <div>
-                            <div class="field-label">Subject</div>
-                            <div class="field-value">{selectedDetail.subject}</div>
-                        </div>
-                        <div>
-                            <div class="field-label">From</div>
-                            <div class="field-value">{selectedDetail.fromAddress}</div>
-                        </div>
-                        <div>
-                            <div class="field-label">To</div>
-                            <div class="field-value">{selectedDetail.toAddress}</div>
-                        </div>
-                        <div>
-                            <div class="field-label">CC</div>
-                            <div class="field-value">{selectedDetail.ccAddress}</div>
-                        </div>
-                        <div>
-                            <div class="field-label">Date</div>
-                            <div class="field-value">
-                                <template if:true={selectedDetail.sentDate}>
-                                    <lightning-formatted-date-time value={selectedDetail.sentDate} year="numeric" month="short" day="2-digit" hour="2-digit" minute="2-digit"></lightning-formatted-date-time>
+                    <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5">
+                        <div class="slds-box slds-box_x-small cs-kpi-tile">
+                            <div class="cs-kpi-v cs-kpi-aqua">
+                                <template if:true={lastEmailDate}>
+                                    <lightning-formatted-date-time value={lastEmailDate} year="numeric" month="short" day="2-digit"></lightning-formatted-date-time>
                                 </template>
+                                <template if:false={lastEmailDate}>Not available</template>
                             </div>
-                        </div>
-                        <div>
-                            <div class="field-label">Related Records</div>
-                            <div class="field-value">{selectedDetail.relatedRecordLabel}</div>
-                        </div>
-                        <div>
-                            <div class="field-label">Attachments</div>
-                            <div class="field-value">
-                                <template if:true={selectedDetail.hasAttachment}>Yes</template>
-                                <template if:false={selectedDetail.hasAttachment}>No</template>
-                            </div>
+                            <div class="slds-text-title">Last Email Date</div>
                         </div>
                     </div>
-                    <div class="preview-copy">
-                        {selectedDetail.plainTextPreview}
+                    <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5">
+                        <div class="slds-box slds-box_x-small cs-kpi-tile">
+                            <div class="cs-kpi-v cs-kpi-aqua">{lastEmailDirection}</div>
+                            <div class="slds-text-title">Last Email Direction</div>
+                        </div>
                     </div>
-                </template>
-            </div>
-        </template>
+                    <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5">
+                        <div class="slds-box slds-box_x-small cs-kpi-tile">
+                            <div class="cs-kpi-v cs-kpi-aqua">{lastEmailOwner}</div>
+                            <div class="slds-text-title">Last Email Owner</div>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-5">
+                        <div class="slds-box slds-box_x-small cs-kpi-tile">
+                            <div class="cs-kpi-v cs-kpi-aqua">{needsReplyLabel}</div>
+                            <div class="slds-text-title">Unread / Needs Reply</div>
+                        </div>
+                    </div>
+                </div>
+            </template>
 
-        <template if:true={showEmptyState}>
-            <div class="state-message">
-                No related emails found for this record. Use Send Email or Log Email to start the communication history.
-            </div>
-        </template>
-    </section>
+            <template if:true={showEmailTable}>
+                <div class="slds-scrollable_x">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th scope="col" class="slds-text-title_caps">Direction</th>
+                                <th scope="col" class="slds-text-title_caps">Subject</th>
+                                <th scope="col" class="slds-text-title_caps">From</th>
+                                <th scope="col" class="slds-text-title_caps">To</th>
+                                <th scope="col" class="slds-text-title_caps">Related Record</th>
+                                <th scope="col" class="slds-text-title_caps">Sent Date</th>
+                                <th scope="col" class="slds-text-title_caps">Owner</th>
+                                <th scope="col" class="slds-text-title_caps">Status</th>
+                                <th scope="col" class="slds-text-title_caps">Has Attachment</th>
+                                <th scope="col" class="slds-text-title_caps">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={emailRows} for:item="row">
+                                <tr key={row.id} class={row.rowClass}>
+                                    <td><span class={row.directionClass}>{row.direction}</span></td>
+                                    <td>
+                                        <button class="slds-button slds-button_reset slds-button_link" data-id={row.id} data-source={row.sourceType} onclick={selectEmailRow}>
+                                            {row.subject}
+                                        </button>
+                                    </td>
+                                    <td>{row.fromAddress}</td>
+                                    <td>{row.toAddress}</td>
+                                    <td>{row.relatedRecordLabel}</td>
+                                    <td>
+                                        <template if:true={row.sentDate}>
+                                            <lightning-formatted-date-time value={row.sentDate} year="numeric" month="short" day="2-digit" hour="2-digit" minute="2-digit"></lightning-formatted-date-time>
+                                        </template>
+                                    </td>
+                                    <td>{row.ownerName}</td>
+                                    <td>{row.status}</td>
+                                    <td>
+                                        <template if:true={row.hasAttachment}>
+                                            <span class="slds-badge cs-badge-aqua">Attachment</span>
+                                        </template>
+                                        <template if:false={row.hasAttachment}>No</template>
+                                    </td>
+                                    <td>
+                                        <button class="slds-button slds-button_neutral" data-id={row.id} data-source={row.sourceType} onclick={openSelectedEmail}>Open Email</button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+
+                <lightning-card title="Email Detail Preview" class="slds-m-top_small">
+                    <div slot="actions">
+                        <button class="slds-button slds-button_neutral" onclick={openEmail} disabled={disableOpenEmail}>Open Email</button>
+                        <button class="slds-button slds-button_brand" onclick={sendEmail} disabled={disableSendEmail} title={sendEmailTitle}>Send Email</button>
+                        <button class="slds-button slds-button_neutral" onclick={logEmail} disabled={disableLogEmail} title={logEmailTitle}>Log Email</button>
+                        <button class="slds-button slds-button_neutral" onclick={replyToEmail} disabled={disableReply} title={replyTitle}>Reply</button>
+                    </div>
+
+                    <div class="slds-card__body slds-card__body_inner">
+                        <p class="slds-text-body_small slds-text-color_weak slds-m-bottom_small">Related customer emails, logged messages, and follow-up communications</p>
+                        <template if:true={selectedDetail}>
+                            <dl class="slds-dl_horizontal slds-m-around_small">
+                                <dt class="slds-dl_horizontal__label slds-text-title_caps">Subject</dt>
+                                <dd class="slds-dl_horizontal__detail">{selectedDetail.subject}</dd>
+
+                                <dt class="slds-dl_horizontal__label slds-text-title_caps">From</dt>
+                                <dd class="slds-dl_horizontal__detail">{selectedDetail.fromAddress}</dd>
+
+                                <dt class="slds-dl_horizontal__label slds-text-title_caps">To</dt>
+                                <dd class="slds-dl_horizontal__detail">{selectedDetail.toAddress}</dd>
+
+                                <dt class="slds-dl_horizontal__label slds-text-title_caps">CC</dt>
+                                <dd class="slds-dl_horizontal__detail">{selectedDetail.ccAddress}</dd>
+
+                                <dt class="slds-dl_horizontal__label slds-text-title_caps">Date</dt>
+                                <dd class="slds-dl_horizontal__detail">
+                                    <template if:true={selectedDetail.sentDate}>
+                                        <lightning-formatted-date-time value={selectedDetail.sentDate} year="numeric" month="short" day="2-digit" hour="2-digit" minute="2-digit"></lightning-formatted-date-time>
+                                    </template>
+                                </dd>
+
+                                <dt class="slds-dl_horizontal__label slds-text-title_caps">Related Records</dt>
+                                <dd class="slds-dl_horizontal__detail">{selectedDetail.relatedRecordLabel}</dd>
+
+                                <dt class="slds-dl_horizontal__label slds-text-title_caps">Attachments</dt>
+                                <dd class="slds-dl_horizontal__detail">
+                                    <template if:true={selectedDetail.hasAttachment}>Yes</template>
+                                    <template if:false={selectedDetail.hasAttachment}>No</template>
+                                </dd>
+                            </dl>
+                            <div class="slds-m-around_small slds-text-body_small" style="white-space:pre-wrap;">{selectedDetail.plainTextPreview}</div>
+                        </template>
+                    </div>
+                </lightning-card>
+            </template>
+
+            <template if:true={showEmptyState}>
+                <div class="slds-align_absolute-center slds-p-around_medium slds-text-body_small slds-text-color_weak">
+                    No related emails found for this record. Use Send Email or Log Email to start the communication history.
+                </div>
+            </template>
+        </div>
+    </lightning-card>
 </template>

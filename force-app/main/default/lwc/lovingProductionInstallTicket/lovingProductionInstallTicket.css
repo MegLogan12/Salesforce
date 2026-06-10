@@ -1,223 +1,62 @@
-:host {
-    --blue: #0070d2;
-    --navy: #16325c;
-    --green: #04844b;
-    --amber: #fe9339;
-    --red: #c23934;
-    --purple: #534ab7;
-    --line: #d8dde6;
-    --soft: #fafaf9;
-    --text: #16325c;
-    --muted: #54698d;
-    --good: #e8f5e9;
-    --warn: #fef3c7;
-    --bad: #fce8e8;
-    --info: #e3f0fb;
-}
+:host { display: block; }
 
-.lpwi-wrap {
-    padding: 16px 20px;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    font-size: 13px;
-    color: var(--text);
-    background: #f3f3f3;
-    min-height: 100%;
-}
+/* KPI tiles */
+.cs-kpi-tile { height: 100%; }
+.cs-kpi-v { font-size: 18px; font-weight: 800; letter-spacing: -.02em; overflow-wrap: anywhere; color: #101828; }
+.cs-kpi-aqua  { color: #1265cf; }
+.cs-kpi-green { color: #13854e; }
+.cs-kpi-amber { color: #b27508; }
+.cs-kpi-red   { color: #d23b2e; }
 
-.lpwi-spinner { display: flex; justify-content: center; padding: 40px; }
+/* Badge overrides */
+.slds-badge.cs-badge-green  { background: #e3f5e9; color: #13854e; border: 1px solid #b3dfc0; }
+.slds-badge.cs-badge-amber  { background: #fff4df; color: #b27508; border: 1px solid #f5d18b; }
+.slds-badge.cs-badge-red    { background: #fde8e8; color: #d23b2e; border: 1px solid #f5b7bd; }
+.slds-badge.cs-badge-aqua   { background: #e9f1fc; color: #1265cf; border: 1px solid #cdddf3; }
+.slds-badge.cs-badge-purple { background: #ede9ff; color: #5a3ec8; border: 1px solid #d6ccf5; }
 
-/* KPI strip */
-.lpwi-kpi-strip {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-    margin-bottom: 14px;
-}
-.lpwi-kpi {
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 12px;
-    text-align: center;
-    box-shadow: 0 1px 2px rgba(0,0,0,.06);
-}
-.lpwi-kpi-blue  { background: var(--info); border-color: #b5d4f4; }
-.lpwi-kpi-amber { background: var(--warn); border-color: #f9c725; }
-.lpwi-kpi-green { background: var(--good); border-color: #a5d6a7; }
-.lpwi-kpi-red   { background: var(--bad);  border-color: #f09595; }
-.lpwi-kpi-num { font-size: 18px; font-weight: 700; color: var(--text); }
-.lpwi-kpi-lbl {
-    font-size: 10px; text-transform: uppercase; letter-spacing: .4px;
-    color: var(--muted); font-weight: 700; margin-top: 4px;
-}
+/* Chip classes returned by Apex (li.chipClass) — cannot change Apex */
+.lpwi-chip { display: inline-flex; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; white-space: nowrap; }
+.lpwi-chip-blue   { background: #e9f1fc; color: #0c447c; }
+.lpwi-chip-amber  { background: #fff4df; color: #92400e; }
+.lpwi-chip-red    { background: #fde8e8; color: #991b1b; }
+.lpwi-chip-green  { background: #e3f5e9; color: #2e7d32; }
 
-/* Alerts */
-.lpwi-alert {
-    border-left: 4px solid var(--blue);
-    background: var(--info); color: #0c447c;
-    border-radius: 0 6px 6px 0;
-    padding: 10px 12px; font-size: 12px; line-height: 1.5; margin-bottom: 14px;
-}
-.lpwi-alert-amber { border-left-color: var(--amber); background: var(--warn); color: #92400e; }
-.lpwi-alert-red   { border-left-color: var(--red);   background: var(--bad);  color: #991b1b; }
-.lpwi-alert-green { border-left-color: var(--green); background: var(--good); color: #2e7d32; }
-
-/* Empty state */
-.lpwi-empty { text-align: center; padding: 48px 24px; color: var(--muted); }
-.lpwi-empty-icon { font-size: 32px; margin-bottom: 10px; }
-.lpwi-empty-msg  { font-size: 12px; }
-.lpwi-empty-inline { padding: 12px 14px; font-size: 12px; color: var(--muted); }
-
-/* Cards */
-.lpwi-card {
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 8px;
-    box-shadow: 0 1px 2px rgba(0,0,0,.06);
-    overflow: hidden;
-    margin-bottom: 14px;
-}
-.lpwi-card-last { margin-bottom: 0; }
-.lpwi-card-head {
-    background: var(--soft);
-    border-bottom: 1px solid #e5e5e5;
-    padding: 10px 14px;
-    display: flex; align-items: center; gap: 8px;
-}
-.lpwi-card-head h3 { font-size: 13px; font-weight: 700; flex: 1; }
-.lpwi-card-body { padding: 12px 14px; }
-.lpwi-ico {
-    width: 22px; height: 22px; border-radius: 4px;
-    color: #fff; display: flex; align-items: center;
-    justify-content: center; font-weight: 800; font-size: 11px;
-}
-.lpwi-ico-blue   { background: var(--blue); }
-.lpwi-ico-green  { background: var(--green); }
-.lpwi-ico-amber  { background: var(--amber); }
-.lpwi-ico-purple { background: var(--purple); }
-
-/* Record header */
-.lpwi-rec-head {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: 12px 14px;
-}
+/* Record icon in page header */
 .lpwi-rec-icon {
     width: 42px; height: 42px; border-radius: 7px;
-    background: var(--purple); color: #fff;
+    background: #5a3ec8; color: #fff;
     display: flex; align-items: center; justify-content: center;
-    font-size: 18px; flex: 0 0 auto;
-}
-.lpwi-rec-meta { flex: 1; }
-.lpwi-breadcrumb { font-size: 11px; color: var(--muted); margin-bottom: 2px; }
-.lpwi-rec-title { font-size: 19px; font-weight: 700; margin-bottom: 4px; }
-.lpwi-rec-chips { display: flex; gap: 6px; flex-wrap: wrap; }
-.lpwi-rec-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
-
-/* Highlights */
-.lpwi-highlights {
-    display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px;
-    background: var(--soft);
-    border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5;
-    padding: 12px 14px;
-}
-.lpwi-hl-label {
-    font-size: 10px; color: var(--muted);
-    text-transform: uppercase; letter-spacing: .4px; font-weight: 700;
-}
-.lpwi-hl-value {
-    font-size: 12px; font-weight: 650; margin-top: 3px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-size: 18px;
 }
 
-/* Chips */
-.lpwi-chip {
-    display: inline-flex; padding: 2px 7px; border-radius: 4px;
-    font-size: 10px; font-weight: 700; white-space: nowrap;
-}
-.lpwi-chip-blue   { background: var(--info); color: #0c447c; }
-.lpwi-chip-amber  { background: var(--warn); color: #92400e; }
-.lpwi-chip-red    { background: var(--bad);  color: #991b1b; }
-.lpwi-chip-green  { background: var(--good); color: #2e7d32; }
-
-/* Buttons */
-.lpwi-btn {
-    border: 1px solid var(--line); background: #fff; color: var(--text);
-    border-radius: 5px; padding: 7px 12px; font-size: 12px; font-weight: 700; cursor: pointer;
-}
-.lpwi-btn:hover { background: #f4f6f9; }
-.lpwi-btn-primary { background: var(--blue); border-color: var(--blue); color: #fff; }
-.lpwi-btn-primary:hover { background: #005fb2; }
-.lpwi-btn-success { background: var(--green); border-color: var(--green); color: #fff; }
-.lpwi-btn-success:hover { background: #03703f; }
-.lpwi-btn[disabled] { background: #e5e5e5; color: #888; border-color: #ddd; cursor: not-allowed; }
-
-/* Grid */
-.lpwi-grid2 {
-    display: grid; grid-template-columns: 1fr 370px; gap: 14px;
-}
-
-/* Table */
-.lpwi-tbl { width: 100%; border-collapse: collapse; font-size: 11px; }
-.lpwi-tbl th {
-    text-align: left; background: var(--soft);
-    border-bottom: 1px solid #e5e5e5;
-    padding: 8px 10px; color: var(--muted);
-    font-size: 10px; text-transform: uppercase; letter-spacing: .35px; font-weight: 700;
-}
-.lpwi-tbl td { border-bottom: 1px solid #f0f0f0; padding: 8px 10px; vertical-align: top; }
-.lpwi-tbl tr:hover td { background: #f4f6f9; }
-.lpwi-num { text-align: right; font-variant-numeric: tabular-nums; }
-.lpwi-muted { color: var(--muted); }
-
-/* Timeline */
+/* Timeline — cssClass and dotCssClass returned by JS/Apex */
 .lpwi-timeline { display: flex; flex-direction: column; gap: 8px; }
 .lpwi-step {
     display: flex; gap: 9px;
     border: 1px solid #eee; background: #fff;
     border-radius: 7px; padding: 9px;
 }
-.lpwi-step-done  { background: var(--good); border-color: #a5d6a7; }
+.lpwi-step-done   { background: #e3f5e9; border-color: #a5d6a7; }
 .lpwi-step-active { border-color: #b5d4f4; background: #f8fbff; }
 .lpwi-dot {
     width: 22px; height: 22px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    background: #f4f6f9; color: var(--muted);
+    background: #f4f6f9; color: #5f6e85;
     font-weight: 800; font-size: 11px; flex: 0 0 auto;
 }
-.lpwi-dot-done   { background: var(--green); color: #fff; }
-.lpwi-dot-active { background: var(--blue);  color: #fff; }
-.lpwi-step-title { font-weight: 700; font-size: 12px; }
-.lpwi-step-sub   { font-size: 10px; color: var(--muted); line-height: 1.45; margin-top: 2px; }
+.lpwi-dot-done   { background: #04844b; color: #fff; }
+.lpwi-dot-active { background: #0070d2; color: #fff; }
+.lpwi-step-title { font-weight: 700; font-size: 12px; color: #032d60; }
+.lpwi-step-sub   { font-size: 10px; color: #5f6e85; line-height: 1.45; margin-top: 2px; }
 
-/* Photo grid */
-.lpwi-photo-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;
-    margin-bottom: 8px;
-}
+/* Photo gate slots — cssClass returned by JS */
 .lpwi-photo-slot {
-    height: 72px;
-    border: 2px dashed var(--line);
-    border-radius: 8px; background: #fff;
-    display: flex; align-items: center; justify-content: center;
-    text-align: center; color: var(--muted);
-    font-size: 10px; font-weight: 800;
+    height: 64px; border: 2px dashed #d8dde6; border-radius: 8px;
+    background: #fff; display: flex; align-items: center; justify-content: center;
+    text-align: center; color: #5f6e85; font-size: 10px; font-weight: 800;
 }
 .lpwi-photo-done {
     background: linear-gradient(135deg, #6ba84f, #4a7536);
     color: #fff; border-style: solid; border-color: transparent;
-}
-.lpwi-notice { font-size: 10px; color: var(--muted); line-height: 1.5; margin-top: 4px; }
-
-/* Notes preview */
-.lpwi-notes-preview { margin-top: 10px; padding-top: 10px; border-top: 1px solid #f0f0f0; }
-.lpwi-notes-label {
-    font-size: 10px; color: var(--muted);
-    text-transform: uppercase; letter-spacing: .35px; font-weight: 700; margin-bottom: 4px;
-}
-.lpwi-notes-body { font-size: 12px; line-height: 1.5; color: var(--text); }
-
-@media (max-width: 1100px) {
-    .lpwi-grid2 { grid-template-columns: 1fr; }
-    .lpwi-highlights { grid-template-columns: repeat(3, 1fr); }
-    .lpwi-kpi-strip { grid-template-columns: repeat(2, 1fr); }
 }

@@ -3,119 +3,147 @@
         <c-loving-standard-work-order-workspace record-id={recordId}></c-loving-standard-work-order-workspace>
     </template>
     <template lwc:elseif={hasData}>
-        <section class="workspace">
-            <section class="panel hero">
-                <div class="hero-copy">
-                    <h1>{pageData.title}</h1>
-                </div>
-                <div class="hero-actions">
-                    <button class="cta cta-secondary" onclick={handleOpenMobileView}>Open Mobile View</button>
-                    <button class="cta" onclick={handleEditWorkOrder}>Update Status</button>
-                </div>
-            </section>
-
-            <div class="layout">
-                <div class="layout-main">
-                    <section class="panel">
-                        <div class="panel-header">Work Order Status</div>
-                        <div class="path">
-                            <template for:each={statusPath} for:item="step">
-                                <span key={step.label} class={step.className}>{step.label}</span>
-                            </template>
+        <div class="slds-page-header slds-page-header_record-home slds-m-bottom_small">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__body">
+                            <p class="slds-page-header__name-title"><span>{pageData.title}</span></p>
                         </div>
-                    </section>
-
-                    <section class="panel info">
-                        <div class="panel-header">Work Order Header</div>
-                        <div class="fields-grid">
-                            <div><div class="field-label">Work Order</div><div class="field-value">{workOrderNumber}</div></div>
-                            <div><div class="field-label">Opportunity</div><div class="field-value"><a href={opportunityUrl}>{opportunityName}</a></div></div>
-                            <div><div class="field-label">Division</div><div class="field-value">{divisionValue}</div></div>
-                            <div><div class="field-label">Job Type</div><div class="field-value">{jobTypeValue}</div></div>
-                            <div><div class="field-label">Customer Visible Status</div><div class="field-value">{statusValue}</div></div>
-                            <div><div class="field-label">Property</div><div class="field-value"><a href={accountUrl}>{accountName}</a></div></div>
-                        </div>
-                    </section>
-
-                    <div class="two-up">
-                        <section class="panel">
-                            <div class="panel-header">Crew and Schedule</div>
-                            <div class="fields-grid compact">
-                                <div><div class="field-label">Crew</div><div class="field-value">{divisionValue}</div></div>
-                                <div><div class="field-label">Field Manager</div><div class="field-value">{fieldManagerValue}</div></div>
-                                <div><div class="field-label">Start Date</div><div class="field-value">{scheduledDateValue}</div></div>
-                                <div><div class="field-label">Target Completion</div><div class="field-value">{targetCompletionValue}</div></div>
-                            </div>
-                        </section>
-                        <section class="panel" lwc:if={hasFiles}>
-                            <div class="panel-header">Photos</div>
-                            <div class="photo-grid">
-                                <template for:each={fileRows} for:item="row">
-                                    <a key={row.key} class="photo-tile" href={row.url}>{row.label}</a>
-                                </template>
-                            </div>
-                        </section>
                     </div>
+                </div>
+                <div class="slds-page-header__col-actions">
+                    <div class="slds-page-header__controls">
+                        <div class="slds-page-header__control">
+                            <div class="slds-button-group">
+                                <button class="slds-button slds-button_neutral" onclick={handleOpenMobileView}>Open Mobile View</button>
+                                <button class="slds-button slds-button_brand" onclick={handleEditWorkOrder}>Update Status</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-                    <section class="panel" lwc:if={hasPunchItems}>
-                        <div class="panel-header">Punch Items</div>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Item</th>
-                                    <th>Owner</th>
-                                    <th>Status</th>
-                                    <th>Due</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <template for:each={punchRows} for:item="row">
-                                    <tr key={row.key}>
-                                        <td><a href={row.url}>{row.label}</a></td>
-                                        <td>{row.ownerText}</td>
-                                        <td><span class="chip">{row.status}</span></td>
-                                        <td>{row.dueText}</td>
-                                    </tr>
-                                </template>
-                            </tbody>
-                        </table>
-                    </section>
+        <div class="slds-grid slds-wrap slds-gutters_small">
+            <div class="slds-col slds-size_1-of-1 slds-large-size_8-of-12">
+                <lightning-card title="Work Order Status" class="slds-m-bottom_small">
+                    <div class="slds-p-around_small" style="display:flex;flex-wrap:wrap;gap:4px">
+                        <template for:each={statusPath} for:item="step">
+                            <span key={step.label} class={step.className}>{step.label}</span>
+                        </template>
+                    </div>
+                </lightning-card>
+
+                <lightning-card title="Work Order Header" class="slds-m-bottom_small">
+                    <dl class="slds-dl_horizontal slds-p-around_small">
+                        <dt class="slds-dl_horizontal__label slds-text-title_caps">Work Order</dt>
+                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{workOrderNumber}</dd>
+                        <dt class="slds-dl_horizontal__label slds-text-title_caps">Opportunity</dt>
+                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small"><a href={opportunityUrl}>{opportunityName}</a></dd>
+                        <dt class="slds-dl_horizontal__label slds-text-title_caps">Division</dt>
+                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{divisionValue}</dd>
+                        <dt class="slds-dl_horizontal__label slds-text-title_caps">Job Type</dt>
+                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{jobTypeValue}</dd>
+                        <dt class="slds-dl_horizontal__label slds-text-title_caps">Customer Visible Status</dt>
+                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{statusValue}</dd>
+                        <dt class="slds-dl_horizontal__label slds-text-title_caps">Property</dt>
+                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small"><a href={accountUrl}>{accountName}</a></dd>
+                    </dl>
+                </lightning-card>
+
+                <div class="slds-grid slds-wrap slds-gutters_small slds-m-bottom_small">
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                        <lightning-card title="Crew and Schedule">
+                            <dl class="slds-dl_horizontal slds-p-around_small">
+                                <dt class="slds-dl_horizontal__label slds-text-title_caps">Crew</dt>
+                                <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{divisionValue}</dd>
+                                <dt class="slds-dl_horizontal__label slds-text-title_caps">Field Manager</dt>
+                                <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{fieldManagerValue}</dd>
+                                <dt class="slds-dl_horizontal__label slds-text-title_caps">Start Date</dt>
+                                <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{scheduledDateValue}</dd>
+                                <dt class="slds-dl_horizontal__label slds-text-title_caps">Target Completion</dt>
+                                <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{targetCompletionValue}</dd>
+                            </dl>
+                        </lightning-card>
+                    </div>
+                    <template lwc:if={hasFiles}>
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                            <lightning-card title="Photos">
+                                <div class="slds-p-around_small" style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+                                    <template for:each={fileRows} for:item="row">
+                                        <a key={row.key} class="slds-box slds-box_x-small slds-text-link slds-m-around_xx-small" href={row.url}>{row.label}</a>
+                                    </template>
+                                </div>
+                            </lightning-card>
+                        </div>
+                    </template>
                 </div>
 
-                <aside class="layout-rail">
-                    <section class="panel">
-                        <div class="panel-header">Foreman Mobile Actions</div>
-                        <div class="action-list">
-                            <button class="rail-action" onclick={handleOpenFiles}>Open files and photos</button>
-                            <button class="rail-action" onclick={handleNewTask}>Create field task</button>
-                            <button class="rail-action" onclick={handleOpenAppointments}>Open appointments</button>
-                            <button class="rail-action" onclick={handleOpenActivity}>Open activity history</button>
+                <template lwc:if={hasPunchItems}>
+                    <lightning-card title="Punch Items" class="slds-m-bottom_small">
+                        <div class="slds-scrollable_x">
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <th scope="col" class="slds-text-title_caps">Item</th>
+                                        <th scope="col" class="slds-text-title_caps">Owner</th>
+                                        <th scope="col" class="slds-text-title_caps">Status</th>
+                                        <th scope="col" class="slds-text-title_caps">Due</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={punchRows} for:item="row">
+                                        <tr key={row.key}>
+                                            <td><a href={row.url}>{row.label}</a></td>
+                                            <td>{row.ownerText}</td>
+                                            <td><span class="slds-badge">{row.status}</span></td>
+                                            <td>{row.dueText}</td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
                         </div>
-                    </section>
-                    <section class="panel">
-                        <div class="panel-header">Record Links</div>
-                        <div class="action-list">
-                            <button class="rail-action" onclick={handleOpenOpportunity} disabled={disableOpenOpportunity}>Open opportunity</button>
-                            <button class="rail-action" onclick={handleOpenAccount} disabled={disableOpenAccount}>Open property</button>
-                            <button class="rail-action" onclick={handleEditWorkOrder}>Edit work order</button>
-                            <button class="rail-action" onclick={handleOpenAppointments}>Open related appointments</button>
-                        </div>
-                    </section>
-                    <section class="panel">
-                        <div class="panel-header">Activity Health</div>
-                        <div class="rail-body">
-                            <div class="rail-row"><span>Work order status</span><span>{statusValue}</span></div>
-                            <div class="rail-row"><span>Scheduled date</span><span>{scheduledDateValue}</span></div>
-                            <div class="rail-row"><span>Appointments</span><span>{appointmentCount}</span></div>
-                            <div class="rail-row"><span>Open items</span><span>{openItemsCount}</span></div>
-                        </div>
-                    </section>
-                </aside>
+                    </lightning-card>
+                </template>
             </div>
-        </section>
+
+            <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12">
+                <lightning-card title="Foreman Mobile Actions" class="slds-m-bottom_small">
+                    <div class="slds-p-around_small slds-grid slds-wrap" style="gap:6px">
+                        <button class="slds-button slds-button_neutral slds-m-bottom_x-small" style="width:100%" onclick={handleOpenFiles}>Open files and photos</button>
+                        <button class="slds-button slds-button_neutral slds-m-bottom_x-small" style="width:100%" onclick={handleNewTask}>Create field task</button>
+                        <button class="slds-button slds-button_neutral slds-m-bottom_x-small" style="width:100%" onclick={handleOpenAppointments}>Open appointments</button>
+                        <button class="slds-button slds-button_neutral slds-m-bottom_x-small" style="width:100%" onclick={handleOpenActivity}>Open activity history</button>
+                    </div>
+                </lightning-card>
+
+                <lightning-card title="Record Links" class="slds-m-bottom_small">
+                    <div class="slds-p-around_small slds-grid slds-wrap" style="gap:6px">
+                        <button class="slds-button slds-button_neutral slds-m-bottom_x-small" style="width:100%" onclick={handleOpenOpportunity} disabled={disableOpenOpportunity}>Open opportunity</button>
+                        <button class="slds-button slds-button_neutral slds-m-bottom_x-small" style="width:100%" onclick={handleOpenAccount} disabled={disableOpenAccount}>Open property</button>
+                        <button class="slds-button slds-button_neutral slds-m-bottom_x-small" style="width:100%" onclick={handleEditWorkOrder}>Edit work order</button>
+                        <button class="slds-button slds-button_neutral slds-m-bottom_x-small" style="width:100%" onclick={handleOpenAppointments}>Open related appointments</button>
+                    </div>
+                </lightning-card>
+
+                <lightning-card title="Activity Health" class="slds-m-bottom_small">
+                    <dl class="slds-dl_horizontal slds-p-around_small">
+                        <dt class="slds-dl_horizontal__label slds-text-title_caps">Work order status</dt>
+                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{statusValue}</dd>
+                        <dt class="slds-dl_horizontal__label slds-text-title_caps">Scheduled date</dt>
+                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{scheduledDateValue}</dd>
+                        <dt class="slds-dl_horizontal__label slds-text-title_caps">Appointments</dt>
+                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{appointmentCount}</dd>
+                        <dt class="slds-dl_horizontal__label slds-text-title_caps">Open items</dt>
+                        <dd class="slds-dl_horizontal__detail slds-m-bottom_x-small">{openItemsCount}</dd>
+                    </dl>
+                </lightning-card>
+            </div>
+        </div>
     </template>
 
     <template lwc:elseif={error}>
-        <div class="panel error">{errorMessage}</div>
+        <div class="slds-notify slds-notify_alert slds-theme_error">{errorMessage}</div>
     </template>
 </template>
