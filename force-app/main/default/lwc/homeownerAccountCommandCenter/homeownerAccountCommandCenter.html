@@ -1,25 +1,19 @@
 <template>
-    <section class="workspace">
+    <div class="slds-p-around_small">
         <template lwc:if={isLoading}>
-            <div class="state-panel">
+            <div class="slds-is-relative slds-p-around_large">
                 <lightning-spinner size="small" alternative-text="Loading homeowner workspace"></lightning-spinner>
             </div>
         </template>
 
         <template lwc:elseif={pageData}>
-            <div class={pageLayoutClass}>
-                <div class="layout-main">
-            <section class="panel standard-card profile-shell">
-                <div class="panel-header">
-                    <div class="header-title-row">
-                        <span class="section-icon section-icon-blue">A</span>
-                        <span>Account Snapshot</span>
-                    </div>
-                    <div class="header-actions">
-                        <lightning-button class="header-button" variant="neutral" label="Email" title={emailTitle} disabled={disableEmail} onclick={handleEmail}></lightning-button>
-                        <lightning-button class="header-button" variant="neutral" label="Call" title={ringCentralTitle} disabled={disableCall} onclick={handleRingCentralCall}></lightning-button>
-                        <lightning-button class="header-button" variant="neutral" label="Go to Activity" data-section="activity" onclick={handleJumpSection}></lightning-button>
-                    </div>
+            <div class="slds-grid slds-wrap slds-gutters_small slds-m-bottom_small">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_8-of-12">
+            <lightning-card title="Account Snapshot" class="slds-m-bottom_small">
+                <div slot="actions">
+                    <lightning-button class="header-button" variant="neutral" label="Email" title={emailTitle} disabled={disableEmail} onclick={handleEmail}></lightning-button>
+                    <lightning-button class="header-button" variant="neutral" label="Call" title={ringCentralTitle} disabled={disableCall} onclick={handleRingCentralCall}></lightning-button>
+                    <lightning-button class="header-button" variant="neutral" label="Go to Activity" data-section="activity" onclick={handleJumpSection}></lightning-button>
                 </div>
                 <div class="profile-shell-body">
                     <lightning-record-view-form record-id={recordId} object-api-name="Account">
@@ -52,114 +46,127 @@
                         </div>
                     </lightning-record-view-form>
                 </div>
-            </section>
+            </lightning-card>
 
-            <section class="panel" lwc:if={hasPropertyContext}>
-                <div class="panel-header">
-                    <div class="header-title-row">
-                        <span class="section-icon section-icon-green">PR</span>
-                        <span>Property Related Record</span>
-                    </div>
-                    <div class="header-actions">
-                        <lightning-button class="header-button" variant="neutral" label="Add Note" onclick={handleLeaveNote}></lightning-button>
-                        <template lwc:if={propertyRecordId}>
-                            <lightning-button class="header-button" variant="neutral" label="Edit Property" onclick={handleEditProperty}></lightning-button>
-                        </template>
-                        <template lwc:if={propertyRecordUrl}>
-                            <a class="header-link" href={propertyRecordUrl}>Open Property</a>
-                        </template>
-                    </div>
+            <lightning-card title="Property Related Record" class="slds-m-bottom_small" lwc:if={hasPropertyContext}>
+                <div slot="actions">
+                    <lightning-button class="header-button" variant="neutral" label="Add Note" onclick={handleLeaveNote}></lightning-button>
+                    <template lwc:if={propertyRecordId}>
+                        <lightning-button class="header-button" variant="neutral" label="Edit Property" onclick={handleEditProperty}></lightning-button>
+                    </template>
+                    <template lwc:if={propertyRecordUrl}>
+                        <a class="slds-button slds-button_neutral" href={propertyRecordUrl}>Open Property</a>
+                    </template>
                 </div>
-                <div class="detail-grid">
-                    <div>
-                        <div class="field-head">
-                            <span class="field-label">Property Name</span>
-                            <template lwc:if={propertyRecordId}>
-                                <lightning-button-icon icon-name="utility:edit" alternative-text="Edit Property Name" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon>
-                            </template>
-                        </div>
-                        <div class="field-value">
-                            <template lwc:if={propertyRecordUrl}>
-                                <a href={propertyRecordUrl}>{propertyRecordLabel}</a>
-                            </template>
-                            <template lwc:else>{propertyRecordLabel}</template>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="field-head">
-                            <span class="field-label">Property Address</span>
-                            <template lwc:if={propertyRecordId}>
-                                <lightning-button-icon icon-name="utility:edit" alternative-text="Edit Property Address" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon>
-                            </template>
-                        </div>
-                        <div class="field-value prewrap">{propertyContext.address}</div>
-                    </div>
-                    <div lwc:if={propertyContext.accessType}>
-                        <div class="field-head">
-                            <span class="field-label">Access Type</span>
-                            <template lwc:if={propertyRecordId}>
-                                <lightning-button-icon icon-name="utility:edit" alternative-text="Edit Access Type" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon>
-                            </template>
-                        </div>
-                        <div class="field-value">{propertyContext.accessType}</div>
-                    </div>
-                    <div lwc:if={propertyContext.drainageRisk}>
-                        <div class="field-head">
-                            <span class="field-label">Drainage Risk</span>
-                            <template lwc:if={propertyRecordId}>
-                                <lightning-button-icon icon-name="utility:edit" alternative-text="Edit Drainage Risk" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon>
-                            </template>
-                        </div>
-                        <div class="field-value">{propertyContext.drainageRisk}</div>
-                    </div>
-                    <div lwc:if={propertyContext.utilityReviewStatus}>
-                        <div class="field-head">
-                            <span class="field-label">Utility Review Status</span>
-                            <template lwc:if={propertyRecordId}>
-                                <lightning-button-icon icon-name="utility:edit" alternative-text="Edit Utility Review Status" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon>
-                            </template>
-                        </div>
-                        <div class="field-value">{propertyContext.utilityReviewStatus}</div>
-                    </div>
-                    <div lwc:if={propertyContext.customerReadiness}>
-                        <div class="field-head">
-                            <span class="field-label">Customer Readiness</span>
-                            <template lwc:if={propertyRecordId}>
-                                <lightning-button-icon icon-name="utility:edit" alternative-text="Edit Customer Readiness" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon>
-                            </template>
-                        </div>
-                        <div class="field-value">{propertyContext.customerReadiness}</div>
-                    </div>
-                </div>
-            </section>
+                <dl class="slds-dl_horizontal slds-p-around_small">
+                    <template>
+                        <dt class="slds-dl_horizontal__label">
+                            <div class="field-head">
+                                <span class="field-label">Property Name</span>
+                                <template lwc:if={propertyRecordId}>
+                                    <lightning-button-icon icon-name="utility:edit" alternative-text="Edit Property Name" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon>
+                                </template>
+                            </div>
+                        </dt>
+                        <dd class="slds-dl_horizontal__detail">
+                            <div class="field-value">
+                                <template lwc:if={propertyRecordUrl}>
+                                    <a href={propertyRecordUrl}>{propertyRecordLabel}</a>
+                                </template>
+                                <template lwc:else>{propertyRecordLabel}</template>
+                            </div>
+                        </dd>
+                    </template>
+                    <template>
+                        <dt class="slds-dl_horizontal__label">
+                            <div class="field-head">
+                                <span class="field-label">Property Address</span>
+                                <template lwc:if={propertyRecordId}>
+                                    <lightning-button-icon icon-name="utility:edit" alternative-text="Edit Property Address" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon>
+                                </template>
+                            </div>
+                        </dt>
+                        <dd class="slds-dl_horizontal__detail">
+                            <div class="field-value prewrap">{propertyContext.address}</div>
+                        </dd>
+                    </template>
+                    <template lwc:if={propertyContext.accessType}>
+                        <dt class="slds-dl_horizontal__label">
+                            <div class="field-head">
+                                <span class="field-label">Access Type</span>
+                                <template lwc:if={propertyRecordId}>
+                                    <lightning-button-icon icon-name="utility:edit" alternative-text="Edit Access Type" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon>
+                                </template>
+                            </div>
+                        </dt>
+                        <dd class="slds-dl_horizontal__detail">
+                            <div class="field-value">{propertyContext.accessType}</div>
+                        </dd>
+                    </template>
+                    <template lwc:if={propertyContext.drainageRisk}>
+                        <dt class="slds-dl_horizontal__label">
+                            <div class="field-head">
+                                <span class="field-label">Drainage Risk</span>
+                                <template lwc:if={propertyRecordId}>
+                                    <lightning-button-icon icon-name="utility:edit" alternative-text="Edit Drainage Risk" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon>
+                                </template>
+                            </div>
+                        </dt>
+                        <dd class="slds-dl_horizontal__detail">
+                            <div class="field-value">{propertyContext.drainageRisk}</div>
+                        </dd>
+                    </template>
+                    <template lwc:if={propertyContext.utilityReviewStatus}>
+                        <dt class="slds-dl_horizontal__label">
+                            <div class="field-head">
+                                <span class="field-label">Utility Review Status</span>
+                                <template lwc:if={propertyRecordId}>
+                                    <lightning-button-icon icon-name="utility:edit" alternative-text="Edit Utility Review Status" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon>
+                                </template>
+                            </div>
+                        </dt>
+                        <dd class="slds-dl_horizontal__detail">
+                            <div class="field-value">{propertyContext.utilityReviewStatus}</div>
+                        </dd>
+                    </template>
+                    <template lwc:if={propertyContext.customerReadiness}>
+                        <dt class="slds-dl_horizontal__label">
+                            <div class="field-head">
+                                <span class="field-label">Customer Readiness</span>
+                                <template lwc:if={propertyRecordId}>
+                                    <lightning-button-icon icon-name="utility:edit" alternative-text="Edit Customer Readiness" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon>
+                                </template>
+                            </div>
+                        </dt>
+                        <dd class="slds-dl_horizontal__detail">
+                            <div class="field-value">{propertyContext.customerReadiness}</div>
+                        </dd>
+                    </template>
+                </dl>
+            </lightning-card>
 
-            <section class="panel" data-section-anchor="opportunities">
-                <div class="panel-header">
-                    <div class="header-title-row">
-                        <span class="section-icon section-icon-orange">OP</span>
-                        <span>Related Opportunities</span>
-                    </div>
-                    <div class="header-actions">
-                        <lightning-button class="header-button" variant="neutral" label="Add Note" onclick={handleLeaveNote}></lightning-button>
-                        <lightning-button class="header-button" variant="neutral" label="New Task" onclick={handleNewTask}></lightning-button>
-                        <lightning-button class="header-button" variant="neutral" label="Log Call" onclick={handleLogCall}></lightning-button>
-                    </div>
+            <lightning-card title="Related Opportunities" class="slds-m-bottom_small" data-section-anchor="opportunities">
+                <div slot="actions">
+                    <lightning-button class="header-button" variant="neutral" label="Add Note" onclick={handleLeaveNote}></lightning-button>
+                    <lightning-button class="header-button" variant="neutral" label="New Task" onclick={handleNewTask}></lightning-button>
+                    <lightning-button class="header-button" variant="neutral" label="Log Call" onclick={handleLogCall}></lightning-button>
                 </div>
                 <template lwc:if={hasOpportunities}>
-                        <table class="data-table">
+                    <div class="slds-scrollable_x">
+                        <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
                             <thead>
                                 <tr>
-                                    <th>Opportunity</th>
-                                    <th>LOB</th>
-                                    <th>Stage</th>
-                                    <th>Amount</th>
-                                    <th>Last Activity</th>
-                                    <th>Next Follow-Up</th>
+                                    <th scope="col" class="slds-text-title_caps">Opportunity</th>
+                                    <th scope="col" class="slds-text-title_caps">LOB</th>
+                                    <th scope="col" class="slds-text-title_caps">Stage</th>
+                                    <th scope="col" class="slds-text-title_caps">Amount</th>
+                                    <th scope="col" class="slds-text-title_caps">Last Activity</th>
+                                    <th scope="col" class="slds-text-title_caps">Next Follow-Up</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <template for:each={pageData.opportunities} for:item="row">
-                                    <tr key={row.id}>
+                                    <tr class="slds-hint-parent" key={row.id}>
                                         <td><a href={row.url}>{row.label}</a></td>
                                         <td>{row.subtext}</td>
                                         <td>{row.status}</td>
@@ -170,113 +177,74 @@
                                 </template>
                             </tbody>
                         </table>
+                    </div>
                 </template>
                 <template lwc:else>
-                    <div class="empty-state empty-state-quiet"></div>
+                    <div></div>
                 </template>
-            </section>
+            </lightning-card>
 
                 </div>
 
-                <div class="layout-rail">
-                    <section class="panel rail-panel">
-                        <div class="panel-header">
-                            <div class="header-title-row">
-                                <span class="section-icon section-icon-purple">AI</span>
-                                <span>Assistant Panel</span>
-                            </div>
-                        </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12">
+                    <lightning-card title="Assistant Panel" class="slds-m-bottom_small">
                         <template lwc:if={hasNextActions}>
-                            <div class="qa-list">
+                            <ul class="slds-list_dotted slds-p-around_small">
                                 <template for:each={nextActions} for:item="item">
-                                    <div class="qa-item" key={item}>
-                                        <div class="qa-copy">
-                                            <div class="qa-title">{item}</div>
-                                        </div>
-                                    </div>
+                                    <li class="slds-item slds-m-bottom_x-small" key={item}>
+                                        {item}
+                                    </li>
                                 </template>
-                            </div>
+                            </ul>
                         </template>
                         <template lwc:else>
-                            <div class="empty-state empty-state-quiet"></div>
+                            <div></div>
                         </template>
-                    </section>
+                    </lightning-card>
 
-                    <section class="panel rail-panel">
-                        <div class="panel-header">
-                            <div class="header-title-row">
-                                <span class="section-icon section-icon-blue">SLA</span>
-                                <span>Activity Health</span>
-                            </div>
-                        </div>
-                        <div class="rail-body">
-                            <div class="rail-row">
-                                <span>Last touch</span>
-                                <span>{lastTouchDate}</span>
-                            </div>
-                            <div class="rail-row">
-                                <span>Voicemail</span>
-                                <span class="chip chip-neutral">{voicemailStatus}</span>
-                            </div>
-                            <div class="rail-row">
-                                <span>Next follow-up</span>
-                                <span class="chip chip-neutral">{nextFollowUp}</span>
-                            </div>
-                            <div class="rail-row">
-                                <span>Open tasks</span>
-                                <span>{openTaskCount}</span>
-                            </div>
-                        </div>
-                    </section>
+                    <lightning-card title="Activity Health" class="slds-m-bottom_small">
+                        <dl class="slds-dl_horizontal slds-p-around_small">
+                            <dt class="slds-dl_horizontal__label">Last touch</dt>
+                            <dd class="slds-dl_horizontal__detail">{lastTouchDate}</dd>
+                            <dt class="slds-dl_horizontal__label">Voicemail</dt>
+                            <dd class="slds-dl_horizontal__detail"><span class="slds-badge">{voicemailStatus}</span></dd>
+                            <dt class="slds-dl_horizontal__label">Next follow-up</dt>
+                            <dd class="slds-dl_horizontal__detail"><span class="slds-badge">{nextFollowUp}</span></dd>
+                            <dt class="slds-dl_horizontal__label">Open tasks</dt>
+                            <dd class="slds-dl_horizontal__detail">{openTaskCount}</dd>
+                        </dl>
+                    </lightning-card>
 
-                    <section class="panel rail-panel">
-                        <div class="panel-header">
-                            <div class="header-title-row">
-                                <span class="section-icon section-icon-green">$</span>
-                                <span>Payment Summary</span>
-                            </div>
-                        </div>
-                        <div class="rail-body">
-                            <div class="rail-row">
-                                <span>Open deposit</span>
-                                <span>{openDepositLabel}</span>
-                            </div>
-                            <div class="rail-row">
-                                <span>Deposit posted</span>
-                                <span>{depositPostedLabel}</span>
-                            </div>
-                            <div class="rail-row">
-                                <span>Final due later</span>
-                                <span>{finalDueLaterLabel}</span>
-                            </div>
-                        </div>
-                    </section>
+                    <lightning-card title="Payment Summary" class="slds-m-bottom_small">
+                        <dl class="slds-dl_horizontal slds-p-around_small">
+                            <dt class="slds-dl_horizontal__label">Open deposit</dt>
+                            <dd class="slds-dl_horizontal__detail">{openDepositLabel}</dd>
+                            <dt class="slds-dl_horizontal__label">Deposit posted</dt>
+                            <dd class="slds-dl_horizontal__detail">{depositPostedLabel}</dd>
+                            <dt class="slds-dl_horizontal__label">Final due later</dt>
+                            <dd class="slds-dl_horizontal__detail">{finalDueLaterLabel}</dd>
+                        </dl>
+                    </lightning-card>
                 </div>
             </div>
 
-            <div class="workspace">
-            <div class="two-up">
-                <section class="panel" data-section-anchor="activity">
-                    <div class="panel-header">
-                        <div class="header-title-row">
-                            <span class="section-icon section-icon-purple">ACT</span>
-                            <span>Activity Timeline</span>
-                        </div>
-                        <div class="header-actions">
-                            <lightning-button class="header-button" variant="neutral" label="Log Call" onclick={handleLogCall}></lightning-button>
-                            <lightning-button class="header-button" variant="neutral" label="New Task" onclick={handleNewTask}></lightning-button>
-                            <lightning-button class="header-button" variant="neutral" label="Schedule Event" onclick={handleNewEvent}></lightning-button>
-                            <lightning-button-menu class="header-button" variant="border" label="Schedule Interaction" alternative-text="Schedule Interaction" menu-alignment="right" onselect={handleScheduleSelect}>
-                                <lightning-menu-item value="call" label="Call"></lightning-menu-item>
-                                <lightning-menu-item value="virtual" label="Virtual Visit"></lightning-menu-item>
-                                <lightning-menu-item value="onsite" label="Onsite"></lightning-menu-item>
-                            </lightning-button-menu>
-                        </div>
+            <div class="slds-grid slds-wrap slds-gutters_small slds-m-bottom_small">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                <lightning-card title="Activity Timeline" class="slds-m-bottom_small" data-section-anchor="activity">
+                    <div slot="actions">
+                        <lightning-button class="header-button" variant="neutral" label="Log Call" onclick={handleLogCall}></lightning-button>
+                        <lightning-button class="header-button" variant="neutral" label="New Task" onclick={handleNewTask}></lightning-button>
+                        <lightning-button class="header-button" variant="neutral" label="Schedule Event" onclick={handleNewEvent}></lightning-button>
+                        <lightning-button-menu class="header-button" variant="border" label="Schedule Interaction" alternative-text="Schedule Interaction" menu-alignment="right" onselect={handleScheduleSelect}>
+                            <lightning-menu-item value="call" label="Call"></lightning-menu-item>
+                            <lightning-menu-item value="virtual" label="Virtual Visit"></lightning-menu-item>
+                            <lightning-menu-item value="onsite" label="Onsite"></lightning-menu-item>
+                        </lightning-button-menu>
                     </div>
                     <template lwc:if={hasInteractions}>
-                        <div class="qa-list">
+                        <ul class="slds-list_dotted slds-p-around_small">
                             <template for:each={pageData.interactions} for:item="row">
-                                <div class="qa-item" key={row.id}>
+                                <li class="slds-item slds-m-bottom_x-small" key={row.id}>
                                     <div class="qa-copy">
                                         <div class="qa-title">{row.subjectText}</div>
                                         <div class="qa-meta">{row.dateText} · {row.interactionType} · {row.ownerName}</div>
@@ -284,39 +252,37 @@
                                             <a class="qa-link" href={row.relatedUrl}>{row.relatedLabel}</a>
                                         </template>
                                     </div>
+                                </li>
+                            </template>
+                        </ul>
+                    </template>
+                    <template lwc:else>
+                        <div></div>
+                    </template>
+                </lightning-card>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                <lightning-card title="Files and Photos" class="slds-m-bottom_small" data-section-anchor="files">
+                    <div slot="actions">
+                        <lightning-button class="header-button" variant="neutral" label="Add Note" onclick={handleLeaveNote}></lightning-button>
+                        <lightning-button class="header-button" variant="neutral" label="Refresh Files" onclick={handleRefreshSection}></lightning-button>
+                    </div>
+                    <template lwc:if={hasFiles}>
+                        <div class="slds-grid slds-wrap slds-gutters_x-small slds-p-around_small">
+                            <template for:each={pageData.files} for:item="row">
+                                <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-4" key={row.id}>
+                                    <a class="slds-box slds-box_x-small slds-text-link" href={row.url}>
+                                        <div class="slds-text-body_small slds-text-color_default">{row.label}</div>
+                                        <div class="slds-text-body_small slds-text-color_weak">{row.subtext}</div>
+                                        <div class="slds-text-body_small slds-text-color_weak">{row.dateText}</div>
+                                    </a>
                                 </div>
                             </template>
                         </div>
                     </template>
                     <template lwc:else>
-                        <div class="empty-state empty-state-quiet"></div>
-                    </template>
-                </section>
-
-                <section class="panel" data-section-anchor="files">
-                    <div class="panel-header">
-                        <div class="header-title-row">
-                            <span class="section-icon section-icon-blue">FILE</span>
-                            <span>Files and Photos</span>
-                        </div>
-                        <div class="header-actions">
-                            <lightning-button class="header-button" variant="neutral" label="Add Note" onclick={handleLeaveNote}></lightning-button>
-                            <lightning-button class="header-button" variant="neutral" label="Refresh Files" onclick={handleRefreshSection}></lightning-button>
-                        </div>
-                    </div>
-                    <template lwc:if={hasFiles}>
-                        <div class="photo-grid">
-                            <template for:each={pageData.files} for:item="row">
-                                <a class="photo-tile" href={row.url} key={row.id}>
-                                    <span class="photo-title">{row.label}</span>
-                                    <span class="photo-meta">{row.subtext}</span>
-                                    <span class="photo-meta">{row.dateText}</span>
-                                </a>
-                            </template>
-                        </div>
-                    </template>
-                    <template lwc:else>
-                        <div class="empty-state empty-state-stack">
+                        <div class="slds-p-around_small">
                             <lightning-file-upload
                                 label="Upload files and photos"
                                 name="homeownerAccountFiles"
@@ -325,24 +291,19 @@
                             </lightning-file-upload>
                         </div>
                     </template>
-                </section>
+                </lightning-card>
+                </div>
 
             </div>
 
-            <section class="panel" data-section-anchor="notes">
-                <div class="panel-header">
-                    <div class="header-title-row">
-                        <span class="section-icon section-icon-purple">NT</span>
-                        <span>Notes</span>
-                    </div>
-                    <div class="header-actions">
-                        <lightning-button class="header-button" variant="neutral" label="Add Note" onclick={handleLeaveNote}></lightning-button>
-                    </div>
+            <lightning-card title="Notes" class="slds-m-bottom_small" data-section-anchor="notes">
+                <div slot="actions">
+                    <lightning-button class="header-button" variant="neutral" label="Add Note" onclick={handleLeaveNote}></lightning-button>
                 </div>
                 <template lwc:if={hasNotes}>
-                    <div class="qa-list">
+                    <ul class="slds-list_dotted slds-p-around_small">
                         <template for:each={pageData.notes} for:item="row">
-                            <div class="qa-item" key={row.id}>
+                            <li class="slds-item slds-m-bottom_x-small" key={row.id}>
                                 <div class="qa-copy">
                                     <a class="qa-title-link" href={row.url}>{row.label}</a>
                                     <div class="qa-meta">{row.subtext} · {row.dateText}</div>
@@ -351,26 +312,20 @@
                                         <a class="qa-link" href={row.relatedUrl}>{row.relatedLabel}</a>
                                     </template>
                                 </div>
-                            </div>
+                            </li>
                         </template>
-                    </div>
+                    </ul>
                 </template>
                 <template lwc:else>
-                    <div class="empty-state empty-state-quiet"></div>
+                    <div></div>
                 </template>
-            </section>
+            </lightning-card>
 
-            <section class="panel" data-section-anchor="vouchers" lwc:if={hasVouchers}>
-                <div class="panel-header">
-                    <div class="header-title-row">
-                        <span class="section-icon section-icon-green">VH</span>
-                        <span>Voucher History</span>
-                    </div>
-                </div>
+            <lightning-card title="Voucher History" class="slds-m-bottom_small" data-section-anchor="vouchers" lwc:if={hasVouchers}>
                 <template lwc:if={hasVouchers}>
-                    <div class="qa-list">
+                    <ul class="slds-list_dotted slds-p-around_small">
                         <template for:each={pageData.vouchers} for:item="row">
-                            <div class="qa-item" key={row.id}>
+                            <li class="slds-item slds-m-bottom_x-small" key={row.id}>
                                 <div class="qa-copy">
                                     <a class="qa-title-link" href={row.url}>{row.label}</a>
                                     <div class="qa-meta">{row.subtext} · {row.status} · {row.dateText}</div>
@@ -384,18 +339,16 @@
                                         <div class="field-value">{row.secondaryText}</div>
                                     </template>
                                 </div>
-                            </div>
+                            </li>
                         </template>
-                    </div>
+                    </ul>
                 </template>
-            </section>
+            </lightning-card>
 
-            </div>
-            </div>
         </template>
 
         <template lwc:elseif={error}>
-            <div class="state-panel error">{errorMessage}</div>
+            <div class="slds-notify slds-notify_alert slds-theme_error">{errorMessage}</div>
         </template>
 
         <template lwc:if={showScheduleModal}>
@@ -408,7 +361,7 @@
                         <h2 id="schedule-modal-heading" class="slds-text-heading_medium">Schedule {scheduleTypeLabel}</h2>
                     </header>
                     <div class="slds-modal__content slds-p-around_medium">
-                        <div class="modal-grid">
+                        <div class="slds-grid slds-wrap slds-gutters_small">
                             <lightning-input
                                 type="datetime"
                                 name="startDateTime"
@@ -442,5 +395,5 @@
             </section>
             <div class="slds-backdrop slds-backdrop_open"></div>
         </template>
-    </section>
+    </div>
 </template>
