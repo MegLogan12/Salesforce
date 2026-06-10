@@ -31,9 +31,9 @@
 
         <!-- Action Bar -->
         <div class="actionbar">
-            <button class="btn">Work Orders</button>
-            <button class="btn">Capacity</button>
-            <button class="btn">Billing</button>
+            <button class="btn" onclick={handleNavWorkOrders}>Work Orders</button>
+            <button class="btn" onclick={handleNavCapacity}>Capacity</button>
+            <button class="btn" onclick={handleNavBilling}>Billing</button>
         </div>
 
         <!-- KPI Strip (8 cells) -->
@@ -82,8 +82,8 @@
                 </svg>
             </div>
             <div class="nextbar-body">
-                <div class="nextbar-t1">Four decisions are holding work back</div>
-                <div class="nextbar-t2">The gates below each have an owner and an action. Clearing G5, G6, and G9 unblocks billing, scheduling, and the appointment model.</div>
+                <div class="nextbar-t1">{gateCount} open decision{gateCountPlural} holding work back</div>
+                <div class="nextbar-t2">Each gate has an owner and a required action. See the Gates tab to escalate or track progress.</div>
             </div>
             <div class="nextbar-sp"></div>
             <button class="btn btn-sm" onclick={handleOpenGates}>See gates</button>

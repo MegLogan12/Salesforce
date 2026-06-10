@@ -1,4 +1,5 @@
 import { LightningElement, wire, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getReadyToInvoice from '@salesforce/apex/InvoiceAccountingController.getReadyToInvoice';
@@ -38,7 +39,7 @@ function applyFullWidthLayout(host) {
         return false;
     }
 }
-export default class InvoiceAccountingConsole extends LightningElement {
+export default class InvoiceAccountingConsole extends NavigationMixin(LightningElement) {
     @track activeTab = 'ready';
 
     _wiredReady;
@@ -121,6 +122,15 @@ export default class InvoiceAccountingConsole extends LightningElement {
     get hasReadyRows()    { return this.readyRows    && this.readyRows.length    > 0; }
     get hasInvoicedRows() { return this.invoicedRows && this.invoicedRows.length > 0; }
     get hasPaidRows()     { return this.paidRows     && this.paidRows.length     > 0; }
+
+    get builderCount() {
+        const all = [
+            ...(this.readyRows    || []),
+            ...(this.invoicedRows || []),
+            ...(this.paidRows     || [])
+        ];
+        return new Set(all.map(r => r.builder).filter(Boolean)).size || 0;
+    }
 
     // ── Tab state ──────────────────────────────────────────────────────────────
 
@@ -215,6 +225,21 @@ export default class InvoiceAccountingConsole extends LightningElement {
         }
         return 'An unexpected error occurred.';
     }
+    handleNavCloseout() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'WorkOrder', actionName: 'list' },
+            state: { filterName: 'Pending_Closeout' }
+        });
+    }
+
+    handleNavWorkOrderConsole() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__navItemPage',
+            attributes: { apiName: 'Scheduling_Console' }
+        });
+    }
+
     renderedCallback() {
         applyFullWidthLayout(this.template.host);
     }

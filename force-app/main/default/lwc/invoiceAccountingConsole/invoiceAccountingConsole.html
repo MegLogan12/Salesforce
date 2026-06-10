@@ -26,8 +26,8 @@
 
         <!-- Action Bar -->
         <div class="actionbar">
-            <button class="btn">Closeout Approval</button>
-            <button class="btn">Work Order Console</button>
+            <button class="btn" onclick={handleNavCloseout}>Closeout Approval</button>
+            <button class="btn" onclick={handleNavWorkOrderConsole}>Work Order Console</button>
         </div>
 
         <!-- KPI Strip (6 cells) -->
@@ -45,8 +45,8 @@
                 <div class="hi-val sm"><span class="chip c-amber">G5</span></div>
             </div>
             <div class="hi-cell">
-                <div class="hi-lab">Terms</div>
-                <div class="hi-val sm">Per builder</div>
+                <div class="hi-lab">Builders</div>
+                <div class="hi-val sm">{builderCount}</div>
             </div>
             <div class="hi-cell">
                 <div class="hi-lab">Paid Today</div>
@@ -54,7 +54,7 @@
             </div>
             <div class="hi-cell">
                 <div class="hi-lab">Export</div>
-                <div class="hi-val sm">Pending</div>
+                <div class="hi-val sm"><span class="chip c-amber">G5</span></div>
             </div>
         </div>
 

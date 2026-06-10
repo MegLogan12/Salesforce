@@ -1,4 +1,5 @@
 import { LightningElement, wire, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getCooKpis from '@salesforce/apex/LovingCooController.getCooKpis';
 import getDivisionSummary from '@salesforce/apex/LovingCooController.getDivisionSummary';
@@ -68,7 +69,7 @@ function applyFullWidthLayout(host) {
         return false;
     }
 }
-export default class CooCommandCenter extends LightningElement {
+export default class CooCommandCenter extends NavigationMixin(LightningElement) {
     @track kpis;
     @track pipeline;
     @track gpSummary;
@@ -81,6 +82,10 @@ export default class CooCommandCenter extends LightningElement {
 
     get gateCount() {
         return GATES.length;
+    }
+
+    get gateCountPlural() {
+        return GATES.length === 1 ? '' : 's';
     }
 
     get divisionCount() {
@@ -225,6 +230,27 @@ export default class CooCommandCenter extends LightningElement {
                 );
             });
     }
+    handleNavWorkOrders() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'WorkOrder', actionName: 'list' }
+        });
+    }
+
+    handleNavCapacity() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__navItemPage',
+            attributes: { apiName: 'Scheduling_Console' }
+        });
+    }
+
+    handleNavBilling() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__navItemPage',
+            attributes: { apiName: 'Invoice_Accounting' }
+        });
+    }
+
     renderedCallback() {
         applyFullWidthLayout(this.template.host);
     }
