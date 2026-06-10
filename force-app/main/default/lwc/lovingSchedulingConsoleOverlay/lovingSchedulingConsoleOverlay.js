@@ -251,8 +251,8 @@ export default class LovingSchedulingConsoleOverlay extends NavigationMixin(Ligh
         ];
         return specs.map(s => ({
             ...s,
-            cls:      'nav-tab' + (this.activeTab === s.id ? ' on' : ''),
-            badgeCls: s.badgeAlert ? 'badge alert' : 'badge'
+            cls:      'slds-button ' + (this.activeTab === s.id ? 'slds-button_brand' : 'slds-button_neutral'),
+            badgeCls: s.badgeAlert ? 'slds-badge slds-badge_inverse slds-m-left_xx-small' : 'slds-badge slds-m-left_xx-small'
         }));
     }
 
@@ -290,7 +290,9 @@ export default class LovingSchedulingConsoleOverlay extends NavigationMixin(Ligh
     get dashAlert() {
         const d = this._dashData || {};
         if (!d.alertNotice) return { message: null };
-        return { cls: 'notice ' + (d.alertLevel || 'amber'), headline: 'Dispatch notice:', message: d.alertNotice };
+        const levelMap = { green:'slds-theme_success', red:'slds-theme_error', amber:'slds-theme_warning', blue:'slds-theme_info' };
+        const theme = levelMap[d.alertLevel] || 'slds-theme_warning';
+        return { cls: 'slds-notify slds-notify_alert ' + theme + ' slds-m-bottom_small', headline: 'Dispatch notice:', message: d.alertNotice };
     }
     get dashHealth() {
         const d = this._dashData || {};
@@ -448,7 +450,7 @@ export default class LovingSchedulingConsoleOverlay extends NavigationMixin(Ligh
         return {
             totalCrews: d.totalCrews || 0,
             totalStops: d.totalStops || 0,
-            chipCss:    d.flagCount > 0 ? 'chip amber' : 'chip green'
+            chipCss:    d.flagCount > 0 ? 'slds-badge cs-badge-amber' : 'slds-badge cs-badge-green'
         };
     }
     get boardDateOptions() {
@@ -568,8 +570,8 @@ export default class LovingSchedulingConsoleOverlay extends NavigationMixin(Ligh
             active:   rows.length - stale,
             stale,
             label:    stale > 0 ? stale + ' stale GPS' : 'GPS OK',
-            chipCss:  stale > 0 ? 'chip amber' : 'chip green',
-            staleCss: stale > 0 ? 'chip amber' : 'chip green'
+            chipCss:  stale > 0 ? 'slds-badge cs-badge-amber' : 'slds-badge cs-badge-green',
+            staleCss: stale > 0 ? 'slds-badge cs-badge-amber' : 'slds-badge cs-badge-green'
         };
     }
 
@@ -594,7 +596,7 @@ export default class LovingSchedulingConsoleOverlay extends NavigationMixin(Ligh
     get hasDayOfChecks() { return this.dayOfChecks.length > 0; }
     get dayOfSummary() {
         const red = this.dayOfChecks.filter(h => h.status === 'Red').length;
-        return { redLabel: red + ' red', redCss: red > 0 ? 'chip red' : 'chip green' };
+        return { redLabel: red + ' red', redCss: red > 0 ? 'slds-badge cs-badge-red' : 'slds-badge cs-badge-green' };
     }
 
     // ── MEASURING CUP getters ─────────────────────────────────────────────────
@@ -702,28 +704,28 @@ export default class LovingSchedulingConsoleOverlay extends NavigationMixin(Ligh
         }));
     }
     get weightTotalLabel() { return 'Total ' + this._weightTotal + '%'; }
-    get weightTotalChipCss() { return 'wt-chip ' + (this._weightTotal === 100 ? 'ok' : 'bad'); }
+    get weightTotalChipCss() { return this._weightTotal === 100 ? 'slds-badge cs-badge-green' : 'slds-badge cs-badge-red'; }
     get canEditRules() { return this._canEditRules; }
     get rulesReadOnly() { return !this._canEditRules; }
 
     handleWeightRuleChange(event) {
         const idx = Number(event.target.dataset.idx);
         const field = event.target.dataset.field;
-        this._editWeightRulesArr = this._editWeightRulesArr.map((r, i) => i === idx ? { ...r, [field]:event.target.value } : r);
+        this._editWeightRulesArr = this._editWeightRulesArr.map((r, i) => i === idx ? { ...r, [field]:event.detail.value } : r);
     }
     handleWeightPctInput(event) {
         const idx = Number(event.target.dataset.idx);
-        this._editWeightRulesArr = this._editWeightRulesArr.map((r, i) => i === idx ? { ...r, weight:Number(event.target.value)||0 } : r);
+        this._editWeightRulesArr = this._editWeightRulesArr.map((r, i) => i === idx ? { ...r, weight:Number(event.detail.value)||0 } : r);
         this._recalcWeightTotal();
     }
     handleOptRuleChange(event) {
         const idx = Number(event.target.dataset.idx);
         const field = event.target.dataset.field;
-        this._editOptRulesArr = this._editOptRulesArr.map((r, i) => i === idx ? { ...r, [field]:event.target.value } : r);
+        this._editOptRulesArr = this._editOptRulesArr.map((r, i) => i === idx ? { ...r, [field]:event.detail.value } : r);
     }
     handleOptAppliesTo(event) {
         const idx = Number(event.target.dataset.idx);
-        this._editOptRulesArr = this._editOptRulesArr.map((r, i) => i === idx ? { ...r, appliesTo:event.target.value } : r);
+        this._editOptRulesArr = this._editOptRulesArr.map((r, i) => i === idx ? { ...r, appliesTo:event.detail.value } : r);
     }
     handleToggleOptRule(event) {
         const idx = Number(event.currentTarget.dataset.idx);
@@ -981,7 +983,7 @@ export default class LovingSchedulingConsoleOverlay extends NavigationMixin(Ligh
     }
 
     handleBoardDateChange(event) {
-        this._boardDate = event.target.value;
+        this._boardDate = event.detail.value;
         refreshApex(this._boardWire);
     }
 
@@ -996,10 +998,10 @@ export default class LovingSchedulingConsoleOverlay extends NavigationMixin(Ligh
     handlePendingClear()    { this._pendingFilter = 'clear'; }
     handleOpenBacklog()     { this[NavigationMixin.Navigate]({ type: 'standard__objectPage', attributes: { objectApiName: 'WorkOrder', actionName: 'list' } }); }
 
-    get filterAllCss()       { return 'filter-chip' + (this._pendingFilter === 'all'       ? ' on' : ''); }
-    get filterInventoryCss() { return 'filter-chip' + (this._pendingFilter === 'inventory' ? ' on' : ''); }
-    get filterSiteCss()      { return 'filter-chip' + (this._pendingFilter === 'site'      ? ' on' : ''); }
-    get filterClearCss()     { return 'filter-chip' + (this._pendingFilter === 'clear'     ? ' on' : ''); }
+    get filterAllCss()       { return this._pendingFilter === 'all'       ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral'; }
+    get filterInventoryCss() { return this._pendingFilter === 'inventory' ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral'; }
+    get filterSiteCss()      { return this._pendingFilter === 'site'      ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral'; }
+    get filterClearCss()     { return this._pendingFilter === 'clear'     ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral'; }
 
     handleReroute()         { this._openModal('Re-route Crew', () => Promise.resolve(this._toast('Re-route', 'Route re-optimization submitted', 'success'))); }
     handleResolveOt()       { this._openModal('Resolve Overtime', () => Promise.resolve(this._toast('OT', 'Overtime resolution requires FM approval. Create a Schedule_Issue__c note.', 'warning'))); }

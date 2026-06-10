@@ -1,160 +1,194 @@
 <template>
 
-<!-- No decorative header. The Salesforce app/page header is the only header.
-     Internal tab nav renders only when this component is NOT pinned to a single
-     section via the `section` property (i.e., legacy single-page mode). -->
+<!-- Internal tab nav — shown only in legacy single-page mode (no pinned section) -->
 <template if:true={showInternalTabs}>
-<nav class="app-nav" aria-label="Scheduling console tabs">
-    <template for:each={tabs} for:item="t">
-        <button key={t.id} class={t.cls} data-id={t.id} onclick={handleTab}>
-            {t.label}
-            <template if:true={t.badge}><span class={t.badgeCls}>{t.badge}</span></template>
-        </button>
-    </template>
-</nav>
+    <div class="slds-scrollable_x sco-tab-bar">
+        <div class="slds-button-group" role="group">
+            <template for:each={tabs} for:item="t">
+                <button key={t.id} type="button" class={t.cls} data-id={t.id} onclick={handleTab}>
+                    {t.label}
+                    <template if:true={t.badge}><span class={t.badgeCls}>{t.badge}</span></template>
+                </button>
+            </template>
+        </div>
+    </div>
 </template>
 
 <!-- Loading -->
 <template if:true={isLoading}>
-    <div class="loading-wrap">
+    <div class="slds-is-relative slds-p-around_large">
         <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
     </div>
 </template>
 
-<main class="body">
+<div class="slds-p-around_small">
 
 <!-- ═══════════════════════════════════════════════════════
      TAB 1 — DASHBOARD
 ═══════════════════════════════════════════════════════ -->
 <template if:true={isDashboard}>
-
-    <!-- KPI strip -->
-    <div class="kpis">
-        <div class="kpi blue">
-            <div class="n">{dashKpi.scheduledThisMonth}</div>
-            <div class="l">Scheduled this month</div>
-            <div class="s">Appointments</div>
+    <div class="slds-grid slds-wrap slds-gutters_x-small slds-m-bottom_small">
+        <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-6">
+            <div class="slds-box slds-box_x-small cs-kpi-tile">
+                <div class="cs-kpi-v cs-kpi-aqua">{dashKpi.scheduledThisMonth}</div>
+                <div class="slds-text-title">Scheduled this month</div>
+                <div class="slds-text-body_small slds-text-color_weak">Appointments</div>
+            </div>
         </div>
-        <div class="kpi green">
-            <div class="n">{dashKpi.activeToday}</div>
-            <div class="l">Active today</div>
-            <div class="s">In Progress / Dispatched</div>
+        <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-6">
+            <div class="slds-box slds-box_x-small cs-kpi-tile">
+                <div class="cs-kpi-v cs-kpi-green">{dashKpi.activeToday}</div>
+                <div class="slds-text-title">Active today</div>
+                <div class="slds-text-body_small slds-text-color_weak">In Progress / Dispatched</div>
+            </div>
         </div>
-        <div class="kpi amber">
-            <div class="n">{dashKpi.readyToSchedule}</div>
-            <div class="l">Ready to schedule</div>
-            <div class="s">Clear-to-schedule queue</div>
+        <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-6">
+            <div class="slds-box slds-box_x-small cs-kpi-tile">
+                <div class="cs-kpi-v cs-kpi-amber">{dashKpi.readyToSchedule}</div>
+                <div class="slds-text-title">Ready to schedule</div>
+                <div class="slds-text-body_small slds-text-color_weak">Clear-to-schedule queue</div>
+            </div>
         </div>
-        <div class="kpi red">
-            <div class="n">{dashKpi.issueCount}</div>
-            <div class="l">Needs review</div>
-            <div class="s">Weather, PTO, GPS</div>
+        <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-6">
+            <div class="slds-box slds-box_x-small cs-kpi-tile">
+                <div class="cs-kpi-v cs-kpi-red">{dashKpi.issueCount}</div>
+                <div class="slds-text-title">Needs review</div>
+                <div class="slds-text-body_small slds-text-color_weak">Weather, PTO, GPS</div>
+            </div>
         </div>
-        <div class="kpi aqua">
-            <div class="n">{dashKpi.crewsActive}</div>
-            <div class="l">Crews active</div>
-            <div class="s">Crews</div>
+        <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-6">
+            <div class="slds-box slds-box_x-small cs-kpi-tile">
+                <div class="cs-kpi-v cs-kpi-aqua">{dashKpi.crewsActive}</div>
+                <div class="slds-text-title">Crews active</div>
+                <div class="slds-text-body_small slds-text-color_weak">Crews</div>
+            </div>
         </div>
-        <div class="kpi purple">
-            <div class="n">{dashKpi.capacityPct}%</div>
-            <div class="l">Capacity used</div>
-            <div class="s">Territories</div>
+        <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-6">
+            <div class="slds-box slds-box_x-small cs-kpi-tile">
+                <div class="cs-kpi-v">{dashKpi.capacityPct}%</div>
+                <div class="slds-text-title">Capacity used</div>
+                <div class="slds-text-body_small slds-text-color_weak">Territories</div>
+            </div>
         </div>
     </div>
 
-    <!-- Alert notice -->
     <template if:true={dashAlert.message}>
-        <div class={dashAlert.cls}><strong>{dashAlert.headline}</strong> {dashAlert.message}</div>
+        <div class={dashAlert.cls} role="alert"><strong>{dashAlert.headline}</strong> {dashAlert.message}</div>
     </template>
 
-    <div class="layout-rail">
-        <div>
-            <!-- Health card + weather -->
-            <div class="grid2">
-                <div class="panel">
-                    <div class="panel-head"><div class="panel-icon">📈</div><h3>Today's scheduling health</h3><span class="chip green">Live</span></div>
-                    <div class="panel-body">
-                        <div class="grid4">
-                            <div><div class="label-sm">Released</div><div class="value-sm strong">{dashHealth.releaseStatus}</div></div>
-                            <div><div class="label-sm">Next release</div><div class="value-sm strong">{dashHealth.nextRelease}</div></div>
-                            <div><div class="label-sm">Open stops</div><div class="value-sm strong">{dashHealth.openStops}</div></div>
-                            <div><div class="label-sm">Weather hold</div><div class="value-sm strong">{dashHealth.weatherHold}</div></div>
+    <div class="slds-grid slds-wrap slds-gutters_small">
+        <div class="slds-col slds-size_1-of-1 slds-large-size_8-of-12">
+            <div class="slds-grid slds-wrap slds-gutters_small slds-m-bottom_small">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <lightning-card title="Today's scheduling health" icon-name="standard:metrics">
+                        <div slot="actions"><span class="slds-badge cs-badge-green">Live</span></div>
+                        <div class="slds-p-around_small">
+                            <div class="slds-grid slds-wrap slds-gutters_x-small slds-m-bottom_small">
+                                <div class="slds-col slds-size_1-of-2">
+                                    <div class="slds-text-body_small slds-text-color_weak">Released</div>
+                                    <div class="slds-text-body_regular slds-text-title_bold">{dashHealth.releaseStatus}</div>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <div class="slds-text-body_small slds-text-color_weak">Next release</div>
+                                    <div class="slds-text-body_regular slds-text-title_bold">{dashHealth.nextRelease}</div>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2 slds-m-top_x-small">
+                                    <div class="slds-text-body_small slds-text-color_weak">Open stops</div>
+                                    <div class="slds-text-body_regular slds-text-title_bold">{dashHealth.openStops}</div>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2 slds-m-top_x-small">
+                                    <div class="slds-text-body_small slds-text-color_weak">Weather hold</div>
+                                    <div class="slds-text-body_regular slds-text-title_bold">{dashHealth.weatherHold}</div>
+                                </div>
+                            </div>
+                            <div class="sco-progress"><span class="sco-progress-fill" style={dashHealth.progressStyle}></span></div>
                         </div>
-                        <div class="gap-md"></div>
-                        <div class="progress"><span class="progress-fill" style={dashHealth.progressStyle}></span></div>
-                    </div>
+                    </lightning-card>
                 </div>
-                <div class="weather-card">
-                    <div class="weather-top">
-                        <div class="weather-ico">{wx.icon}</div>
-                        <div class="weather-tempwrap">
-                            <div class="weather-temp">{wx.tempLabel}</div>
-                            <div class="weather-desc">{wx.desc}</div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <div class="weather-card slds-box">
+                        <div class="weather-top">
+                            <div class="weather-ico">{wx.icon}</div>
+                            <div class="weather-tempwrap">
+                                <div class="weather-temp">{wx.tempLabel}</div>
+                                <div class="weather-desc">{wx.desc}</div>
+                            </div>
+                            <div class="weather-loc">Charlotte metro<br/><span class="weather-live">&#9679; Live radar</span></div>
                         </div>
-                        <div class="weather-loc">Charlotte metro<br/><span class="weather-live">&#9679; Live radar</span></div>
+                        <img class="weather-radar" src="https://radar.weather.gov/ridge/standard/KGSP_loop.gif" alt="Live weather radar"/>
+                        <template if:true={hasWeatherAlert}>
+                            <div class="weather-alert">
+                                <span class={topWeatherAlert.sevClass}>{topWeatherAlert.severity}</span>
+                                <span class="weather-alert-txt">{topWeatherAlert.shortHeadline}</span>
+                            </div>
+                        </template>
                     </div>
-                    <img class="weather-radar" src="https://radar.weather.gov/ridge/standard/KGSP_loop.gif" alt="Live weather radar"/>
-                    <template if:true={hasWeatherAlert}>
-                        <div class="weather-alert">
-                            <span class={topWeatherAlert.sevClass}>{topWeatherAlert.severity}</span>
-                            <span class="weather-alert-txt">{topWeatherAlert.shortHeadline}</span>
-                        </div>
-                    </template>
                 </div>
             </div>
 
-            <!-- Appointment queue table -->
-            <div class="panel">
-                <div class="panel-head">
-                    <div class="panel-icon">🚚</div>
-                    <h3>FSL appointment queue</h3>
-                    <button class="btn" onclick={handleShowBoard}>Open board</button>
+            <lightning-card title="FSL appointment queue" icon-name="standard:service_appointment">
+                <div slot="actions">
+                    <lightning-button label="Open board" onclick={handleShowBoard}></lightning-button>
                 </div>
-                <div class="panel-body" style="padding: 0">
+                <div class="slds-p-horizontal_small">
                     <template if:true={hasDashQueue}>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Appointment</th><th>Work Order</th><th>Community / Lot</th>
-                                    <th>Window</th><th>Assigned</th><th>Status</th><th>Risk</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <template for:each={dashQueue} for:item="a">
-                                    <tr key={a.saId}>
-                                        <td><span class="link" data-id={a.saId} onclick={handleNavigateSA}>{a.saNumber}</span></td>
-                                        <td><span class="link" data-id={a.workOrderId} onclick={handleNavigateWO}>{a.workOrderName}</span></td>
-                                        <td>{a.community} · Lot {a.lot}<br/><span style="color: var(--muted)">{a.builder}</span></td>
-                                        <td>{a.window}</td>
-                                        <td>{a.foremanName}<br/><span style="color: var(--muted)">{a.crewName}</span></td>
-                                        <td><span class={a.statusCss}>{a.status}</span></td>
-                                        <td><span class={a.riskCss}>{a.risk}</span></td>
+                        <div class="slds-scrollable_x">
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <th scope="col"><div class="slds-truncate">Appointment</div></th>
+                                        <th scope="col"><div class="slds-truncate">Work Order</div></th>
+                                        <th scope="col"><div class="slds-truncate">Community / Lot</div></th>
+                                        <th scope="col"><div class="slds-truncate">Window</div></th>
+                                        <th scope="col"><div class="slds-truncate">Assigned</div></th>
+                                        <th scope="col"><div class="slds-truncate">Status</div></th>
+                                        <th scope="col"><div class="slds-truncate">Risk</div></th>
                                     </tr>
-                                </template>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <template for:each={dashQueue} for:item="a">
+                                        <tr key={a.saId} class="slds-hint-parent">
+                                            <td data-label="Appointment"><span class="slds-text-link" data-id={a.saId} onclick={handleNavigateSA}>{a.saNumber}</span></td>
+                                            <td data-label="Work Order"><span class="slds-text-link" data-id={a.workOrderId} onclick={handleNavigateWO}>{a.workOrderName}</span></td>
+                                            <td data-label="Community / Lot">{a.community} · Lot {a.lot}<br/><span class="slds-text-color_weak">{a.builder}</span></td>
+                                            <td data-label="Window">{a.window}</td>
+                                            <td data-label="Assigned">{a.foremanName}<br/><span class="slds-text-color_weak">{a.crewName}</span></td>
+                                            <td data-label="Status"><span class={a.statusCss}>{a.status}</span></td>
+                                            <td data-label="Risk"><span class={a.riskCss}>{a.risk}</span></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
                     </template>
                     <template if:false={hasDashQueue}>
-                        <div style="padding: 20px; text-align: center; color: var(--muted); font-size: 11px">No Appointments records for today.</div>
+                        <div class="slds-notify slds-notify_alert slds-theme_info slds-m-around_small" role="alert">No Appointments records for today.</div>
                     </template>
                 </div>
-            </div>
+            </lightning-card>
         </div>
 
-        <!-- Sidebar: quick actions + integration status -->
-        <aside>
-            <div class="panel">
-                <div class="panel-head"><div class="panel-icon">⚡</div><h3>Quick actions</h3></div>
-                <div class="panel-body" style="display: flex; flex-direction: column; gap: 8px">
-                    <button class="btn primary wide" onclick={handleRunOptimizer}>Run FSL Optimizer</button>
-                    <button class="btn wide" onclick={handleCreateIssue}>Create schedule issue</button>
-                    <button class="btn wide" onclick={handleRecalcRoute}>Recalculate route</button>
-                    <button class="btn wide" onclick={handleNotifyForemen}>Notify foremen</button>
+        <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12">
+            <lightning-card title="Quick actions" icon-name="standard:task2">
+                <div class="slds-p-around_small">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_1-of-1 slds-m-bottom_x-small">
+                            <button type="button" class="slds-button slds-button_brand slds-button_stretch" onclick={handleRunOptimizer}>Run FSL Optimizer</button>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-m-bottom_x-small">
+                            <button type="button" class="slds-button slds-button_neutral slds-button_stretch" onclick={handleCreateIssue}>Create schedule issue</button>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-m-bottom_x-small">
+                            <button type="button" class="slds-button slds-button_neutral slds-button_stretch" onclick={handleRecalcRoute}>Recalculate route</button>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1">
+                            <button type="button" class="slds-button slds-button_neutral slds-button_stretch" onclick={handleNotifyForemen}>Notify foremen</button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="panel">
-                <div class="panel-head"><div class="panel-icon">🔌</div><h3>Integration status</h3></div>
-                <div class="panel-body">
+            </lightning-card>
+            <lightning-card title="Integration status" icon-name="standard:connected_apps">
+                <div class="slds-p-around_small">
                     <div class="pill-row">
                         <span class={integStatus.fslCss}>{integStatus.fslLabel}</span>
                         <span class={integStatus.weatherCss}>{integStatus.weatherLabel}</span>
@@ -163,8 +197,8 @@
                         <span class={integStatus.ripplingCss}>{integStatus.ripplingLabel}</span>
                     </div>
                 </div>
-            </div>
-        </aside>
+            </lightning-card>
+        </div>
     </div>
 </template>
 
@@ -172,109 +206,153 @@
      TAB 2 — AUTO-SCHEDULE
 ═══════════════════════════════════════════════════════ -->
 <template if:true={isAutoSchedule}>
-    <div class="notice">
+    <div class="slds-notify slds-notify_alert slds-theme_info slds-m-bottom_small" role="alert">
         <strong>Auto-Schedule overlays standard FSL.</strong> Proposes changes to Appointments and Crews. Does not replace FSL Dispatch.
     </div>
-    <div class="kpi3">
-        <div class="kpi green"><div class="n">{autoSchedule.eligibleJobs}</div><div class="l">Eligible jobs</div><div class="s">Ready-to-schedule</div></div>
-        <div class="kpi purple"><div class="n">{autoSchedule.crewsAvailable}</div><div class="l">Crews available</div><div class="s">time off checked</div></div>
-        <div class="kpi amber"><div class="n">{autoSchedule.humanReviewCount}</div><div class="l">Human review</div><div class="s">Weather + PTO</div></div>
-    </div>
-    <div class="panel">
-        <div class="panel-head">
-            <div class="panel-icon">⚡</div>
-            <h3>System-proposed schedule</h3>
-            <button class="btn" onclick={handleRunOptimizer}>Run again</button>
-            <button class="btn primary" onclick={handleApproveAllProposed}>Approve proposed</button>
+    <div class="slds-grid slds-wrap slds-gutters_x-small slds-m-bottom_small">
+        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+            <div class="slds-box slds-box_x-small cs-kpi-tile">
+                <div class="cs-kpi-v cs-kpi-green">{autoSchedule.eligibleJobs}</div>
+                <div class="slds-text-title">Eligible jobs</div>
+                <div class="slds-text-body_small slds-text-color_weak">Ready-to-schedule</div>
+            </div>
         </div>
-        <div class="panel-body">
+        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+            <div class="slds-box slds-box_x-small cs-kpi-tile">
+                <div class="cs-kpi-v">{autoSchedule.crewsAvailable}</div>
+                <div class="slds-text-title">Crews available</div>
+                <div class="slds-text-body_small slds-text-color_weak">time off checked</div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+            <div class="slds-box slds-box_x-small cs-kpi-tile">
+                <div class="cs-kpi-v cs-kpi-amber">{autoSchedule.humanReviewCount}</div>
+                <div class="slds-text-title">Human review</div>
+                <div class="slds-text-body_small slds-text-color_weak">Weather + PTO</div>
+            </div>
+        </div>
+    </div>
+
+    <lightning-card title="System-proposed schedule" icon-name="standard:shift">
+        <div slot="actions">
+            <div class="slds-button-group" role="group">
+                <button type="button" class="slds-button slds-button_neutral" onclick={handleRunOptimizer}>Run again</button>
+                <button type="button" class="slds-button slds-button_brand" onclick={handleApproveAllProposed}>Approve proposed</button>
+            </div>
+        </div>
+        <div class="slds-p-around_small">
             <template if:true={hasAutoProposals}>
-                <div class="grid2">
+                <div class="slds-grid slds-wrap slds-gutters_small">
                     <template for:each={autoSchedule.proposals} for:item="p">
-                        <div key={p.dateStr} class="job-card">
-                            <div class="job-head">
-                                <div class="job-ico">{p.icon}</div>
-                                <div>
-                                    <div class="job-title">{p.label}</div>
-                                    <div class="job-sub">{p.reviewNote}</div>
+                        <div key={p.dateStr} class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                            <div class="job-card slds-box slds-box_x-small">
+                                <div class="job-head">
+                                    <div class="job-ico">{p.icon}</div>
+                                    <div>
+                                        <div class="job-title">{p.label}</div>
+                                        <div class="job-sub">{p.reviewNote}</div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="pill-row">
-                                <span class={p.chipCss}>{p.chipLabel}</span>
-                                <span class="chip blue">{p.stops} stops</span>
-                            </div>
-                            <div class="job-actions">
-                                <button class="btn primary" data-date={p.dateStr} onclick={handleApproveProposal}>Approve</button>
-                                <button class="btn" onclick={handleShowBoard}>Review board</button>
+                                <div class="pill-row slds-m-top_x-small">
+                                    <span class={p.chipCss}>{p.chipLabel}</span>
+                                    <span class="slds-badge cs-badge-aqua">{p.stops} stops</span>
+                                </div>
+                                <div class="job-actions slds-m-top_x-small">
+                                    <button type="button" class="slds-button slds-button_brand" data-date={p.dateStr} onclick={handleApproveProposal}>Approve</button>
+                                    <button type="button" class="slds-button slds-button_neutral" onclick={handleShowBoard}>Review board</button>
+                                </div>
                             </div>
                         </div>
                     </template>
                 </div>
             </template>
             <template if:false={hasAutoProposals}>
-                <div style="padding: 16px; text-align: center; color: var(--muted)">Run the FSL Optimizer to generate schedule proposals.</div>
+                <div class="slds-notify slds-notify_alert slds-theme_info" role="alert">Run the FSL Optimizer to generate schedule proposals.</div>
             </template>
         </div>
-    </div>
-    <div class="panel">
-        <div class="panel-head"><div class="panel-icon">🕐</div><h3>Rippling PTO / FSL time off check</h3></div>
-        <div class="panel-body" style="padding: 0">
+    </lightning-card>
+
+    <lightning-card title="Rippling PTO / FSL time off check" icon-name="standard:timesheet">
+        <div class="slds-p-horizontal_small">
             <template if:true={hasResourceAvailability}>
-                <table class="table">
-                    <thead><tr><th>Resource</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Status</th></tr></thead>
-                    <tbody>
-                        <template for:each={autoSchedule.resourceAvailability} for:item="r">
-                            <tr key={r.resourceId}>
-                                <td class="link">{r.resourceName}</td>
-                                <td><span class={r.monCss}>{r.monLabel}</span></td>
-                                <td><span class={r.tueCss}>{r.tueLabel}</span></td>
-                                <td><span class={r.wedCss}>{r.wedLabel}</span></td>
-                                <td><span class={r.thuCss}>{r.thuLabel}</span></td>
-                                <td><span class={r.friCss}>{r.friLabel}</span></td>
-                                <td><span class={r.weekCss}>{r.weekStatus}</span></td>
+                <div class="slds-scrollable_x">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th scope="col"><div class="slds-truncate">Resource</div></th>
+                                <th scope="col"><div class="slds-truncate">Mon</div></th>
+                                <th scope="col"><div class="slds-truncate">Tue</div></th>
+                                <th scope="col"><div class="slds-truncate">Wed</div></th>
+                                <th scope="col"><div class="slds-truncate">Thu</div></th>
+                                <th scope="col"><div class="slds-truncate">Fri</div></th>
+                                <th scope="col"><div class="slds-truncate">Status</div></th>
                             </tr>
-                        </template>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <template for:each={autoSchedule.resourceAvailability} for:item="r">
+                                <tr key={r.resourceId} class="slds-hint-parent">
+                                    <td data-label="Resource">{r.resourceName}</td>
+                                    <td data-label="Mon"><span class={r.monCss}>{r.monLabel}</span></td>
+                                    <td data-label="Tue"><span class={r.tueCss}>{r.tueLabel}</span></td>
+                                    <td data-label="Wed"><span class={r.wedCss}>{r.wedLabel}</span></td>
+                                    <td data-label="Thu"><span class={r.thuCss}>{r.thuLabel}</span></td>
+                                    <td data-label="Fri"><span class={r.friCss}>{r.friLabel}</span></td>
+                                    <td data-label="Status"><span class={r.weekCss}>{r.weekStatus}</span></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
             </template>
             <template if:false={hasResourceAvailability}>
-                <div style="padding: 16px; text-align: center; color: var(--muted)">No time off data found for this week.</div>
+                <div class="slds-notify slds-notify_alert slds-theme_info slds-m-around_small" role="alert">No time off data found for this week.</div>
             </template>
         </div>
-    </div>
+    </lightning-card>
 </template>
 
 <!-- ═══════════════════════════════════════════════════════
      TAB 3 — SCHEDULE ISSUES
 ═══════════════════════════════════════════════════════ -->
 <template if:true={isIssues}>
-    <div class="kpi3">
-        <div class="kpi red"><div class="n">{issueKpi.weather}</div><div class="l">Weather issues</div><div class="s">Weather service</div></div>
-        <div class="kpi amber"><div class="n">{issueKpi.pto}</div><div class="l">PTO conflicts</div><div class="s">time off</div></div>
-        <div class="kpi amber"><div class="n">{issueKpi.gps}</div><div class="l">GPS stale</div><div class="s">Live GPS</div></div>
+    <div class="slds-grid slds-wrap slds-gutters_x-small slds-m-bottom_small">
+        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+            <div class="slds-box slds-box_x-small cs-kpi-tile">
+                <div class="cs-kpi-v cs-kpi-red">{issueKpi.weather}</div>
+                <div class="slds-text-title">Weather issues</div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+            <div class="slds-box slds-box_x-small cs-kpi-tile">
+                <div class="cs-kpi-v cs-kpi-amber">{issueKpi.pto}</div>
+                <div class="slds-text-title">PTO conflicts</div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+            <div class="slds-box slds-box_x-small cs-kpi-tile">
+                <div class="cs-kpi-v cs-kpi-amber">{issueKpi.gps}</div>
+                <div class="slds-text-title">GPS stale</div>
+            </div>
+        </div>
     </div>
-    <div class="gap-md"></div>
+
     <template if:true={hasIssues}>
         <template for:each={scheduleIssues} for:item="si">
-            <div key={si.id} class="panel">
-                <div class="panel-head">
-                    <div class="panel-icon">{si.icon}</div>
-                    <h3>{si.name}</h3>
-                    <span class={si.severityCss}>{si.issueType}</span>
-                </div>
-                <div class="panel-body">
-                    <p style="font-size: 12px; margin-bottom: 10px">{si.summary}</p>
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap">
-                        <button class="btn primary" data-id={si.id} onclick={handleResolveIssue}>Resolve</button>
-                        <button class="btn" data-id={si.id} onclick={handleReassignFromIssue}>Reassign</button>
-                        <span class="chip gray">{si.status}</span>
+            <lightning-card key={si.id} title={si.name} icon-name="standard:case">
+                <div slot="actions"><span class={si.severityCss}>{si.issueType}</span></div>
+                <div class="slds-p-around_small">
+                    <p class="slds-m-bottom_small">{si.summary}</p>
+                    <div class="slds-button-group" role="group">
+                        <button type="button" class="slds-button slds-button_brand" data-id={si.id} onclick={handleResolveIssue}>Resolve</button>
+                        <button type="button" class="slds-button slds-button_neutral" data-id={si.id} onclick={handleReassignFromIssue}>Reassign</button>
+                        <span class="slds-badge slds-m-left_x-small">{si.status}</span>
                     </div>
                 </div>
-            </div>
+            </lightning-card>
         </template>
     </template>
     <template if:false={hasIssues}>
-        <div class="notice green"><strong>All clear.</strong> No open schedule issues records for the current period.</div>
+        <div class="slds-notify slds-notify_alert slds-theme_success" role="alert"><strong>All clear.</strong> No open schedule issues records for the current period.</div>
     </template>
 </template>
 
@@ -282,95 +360,128 @@
      TAB 4 — PENDING
 ═══════════════════════════════════════════════════════ -->
 <template if:true={isPending}>
-    <div class="toolbar">
-        <button class={filterAllCss}       onclick={handlePendingAll}>All</button>
-        <button class={filterInventoryCss} onclick={handlePendingInventory}>Inventory</button>
-        <button class={filterSiteCss}      onclick={handlePendingSite}>Site</button>
-        <button class={filterClearCss}     onclick={handlePendingClear}>Clear to Schedule</button>
-        <span class="spacer"></span>
-        <button class="btn primary" onclick={handleOpenBacklog}>Open backlog</button>
-    </div>
-    <div class="grid2">
-        <div class="panel">
-            <div class="panel-head"><div class="panel-icon">📦</div><h3>Waiting for inventory</h3><span class="chip amber">{pendingData.inventoryCount}</span></div>
-            <div class="panel-body">
-                <template if:true={hasInventoryPending}>
-                    <template for:each={pendingData.inventoryBlocked} for:item="item">
-                        <div key={item.workOrderId} class="job-card">
-                            <div class="job-title">{item.communityName} · {item.name}</div>
-                            <div class="job-sub">{item.blockDetail}</div>
-                            <span class={item.chipCss}>{item.chipLabel}</span>
-                        </div>
-                    </template>
-                </template>
-                <template if:false={hasInventoryPending}>
-                    <div style="color: var(--muted); font-size: 11px">No inventory blocks.</div>
-                </template>
+    <div class="slds-m-bottom_small slds-grid slds-gutters_x-small slds-wrap">
+        <div class="slds-col">
+            <div class="slds-button-group" role="group">
+                <button type="button" class={filterAllCss}       onclick={handlePendingAll}>All</button>
+                <button type="button" class={filterInventoryCss} onclick={handlePendingInventory}>Inventory</button>
+                <button type="button" class={filterSiteCss}      onclick={handlePendingSite}>Site</button>
+                <button type="button" class={filterClearCss}     onclick={handlePendingClear}>Clear to Schedule</button>
             </div>
         </div>
-        <div class="panel">
-            <div class="panel-head"><div class="panel-icon">🏗</div><h3>Waiting for site</h3><span class="chip red">{pendingData.siteCount}</span></div>
-            <div class="panel-body">
-                <template if:true={hasSitePending}>
-                    <template for:each={pendingData.siteReadinessBlocked} for:item="item">
-                        <div key={item.workOrderId} class="job-card">
-                            <div class="job-title">{item.communityName} · {item.name}</div>
-                            <div class="job-sub">{item.blockDetail}</div>
-                            <span class={item.chipCss}>{item.chipLabel}</span>
-                        </div>
-                    </template>
-                </template>
-                <template if:false={hasSitePending}>
-                    <div style="color: var(--muted); font-size: 11px">No site readiness blocks.</div>
-                </template>
-            </div>
+        <div class="slds-col_bump-left">
+            <button type="button" class="slds-button slds-button_brand" onclick={handleOpenBacklog}>Open backlog</button>
         </div>
     </div>
-    <div class="panel">
-        <div class="panel-head"><div class="panel-icon">✓</div><h3>Clear to schedule backlog</h3><span class="chip blue">{pendingData.clearCount}</span></div>
-        <div class="panel-body" style="padding: 0">
-            <template if:true={hasClearPending}>
-                <table class="table">
-                    <thead><tr><th>Work Order</th><th>Community</th><th>Work Type</th><th>Ready Since</th><th>Action</th></tr></thead>
-                    <tbody>
-                        <template for:each={pendingData.sameDayUrgent} for:item="item">
-                            <tr key={item.workOrderId}>
-                                <td class="link">{item.name}</td>
-                                <td>{item.communityName}</td>
-                                <td>{item.chipLabel}</td>
-                                <td>{item.blockDetail}</td>
-                                <td><button class="btn" data-id={item.workOrderId} onclick={handleScheduleWO}>Schedule</button></td>
-                            </tr>
+
+    <div class="slds-grid slds-wrap slds-gutters_small slds-m-bottom_small">
+        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+            <lightning-card title="Waiting for inventory" icon-name="standard:product">
+                <div slot="actions"><span class="slds-badge cs-badge-amber">{pendingData.inventoryCount}</span></div>
+                <div class="slds-p-around_small">
+                    <template if:true={hasInventoryPending}>
+                        <template for:each={pendingData.inventoryBlocked} for:item="item">
+                            <div key={item.workOrderId} class="job-card slds-box slds-box_x-small slds-m-bottom_x-small">
+                                <div class="job-title">{item.communityName} · {item.name}</div>
+                                <div class="job-sub">{item.blockDetail}</div>
+                                <span class={item.chipCss}>{item.chipLabel}</span>
+                            </div>
                         </template>
-                    </tbody>
-                </table>
+                    </template>
+                    <template if:false={hasInventoryPending}>
+                        <div class="slds-text-color_weak slds-text-body_small">No inventory blocks.</div>
+                    </template>
+                </div>
+            </lightning-card>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+            <lightning-card title="Waiting for site" icon-name="standard:home">
+                <div slot="actions"><span class="slds-badge cs-badge-red">{pendingData.siteCount}</span></div>
+                <div class="slds-p-around_small">
+                    <template if:true={hasSitePending}>
+                        <template for:each={pendingData.siteReadinessBlocked} for:item="item">
+                            <div key={item.workOrderId} class="job-card slds-box slds-box_x-small slds-m-bottom_x-small">
+                                <div class="job-title">{item.communityName} · {item.name}</div>
+                                <div class="job-sub">{item.blockDetail}</div>
+                                <span class={item.chipCss}>{item.chipLabel}</span>
+                            </div>
+                        </template>
+                    </template>
+                    <template if:false={hasSitePending}>
+                        <div class="slds-text-color_weak slds-text-body_small">No site readiness blocks.</div>
+                    </template>
+                </div>
+            </lightning-card>
+        </div>
+    </div>
+
+    <lightning-card title="Clear to schedule backlog" icon-name="standard:work_order">
+        <div slot="actions"><span class="slds-badge cs-badge-aqua">{pendingData.clearCount}</span></div>
+        <div class="slds-p-horizontal_small">
+            <template if:true={hasClearPending}>
+                <div class="slds-scrollable_x">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th scope="col"><div class="slds-truncate">Work Order</div></th>
+                                <th scope="col"><div class="slds-truncate">Community</div></th>
+                                <th scope="col"><div class="slds-truncate">Work Type</div></th>
+                                <th scope="col"><div class="slds-truncate">Ready Since</div></th>
+                                <th scope="col"><div class="slds-truncate">Action</div></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={pendingData.sameDayUrgent} for:item="item">
+                                <tr key={item.workOrderId} class="slds-hint-parent">
+                                    <td data-label="Work Order">{item.name}</td>
+                                    <td data-label="Community">{item.communityName}</td>
+                                    <td data-label="Work Type">{item.chipLabel}</td>
+                                    <td data-label="Ready Since">{item.blockDetail}</td>
+                                    <td data-label="Action">
+                                        <button type="button" class="slds-button slds-button_neutral" data-id={item.workOrderId} onclick={handleScheduleWO}>Schedule</button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
             </template>
             <template if:false={hasClearPending}>
-                <div style="padding: 20px; text-align: center; color: var(--muted)">No urgent pending work orders.</div>
+                <div class="slds-notify slds-notify_alert slds-theme_info slds-m-around_small" role="alert">No urgent pending work orders.</div>
             </template>
         </div>
-    </div>
+    </lightning-card>
 </template>
 
 <!-- ═══════════════════════════════════════════════════════
      TAB 5 — SCHEDULE BOARD
 ═══════════════════════════════════════════════════════ -->
 <template if:true={isBoard}>
-    <div class="notice green">
+    <div class="slds-notify slds-notify_alert slds-theme_success slds-m-bottom_small" role="alert">
         <strong>Schedule Board:</strong> cards are Appointments records with Crews context. Assignments update through FSL-safe paths only.
     </div>
-    <div class="toolbar">
-        <select class="input-sm select-sm" onchange={handleBoardDateChange}>
-            <template for:each={boardDateOptions} for:item="d">
-                <option key={d.value} value={d.value}>{d.label}</option>
-            </template>
-        </select>
-        <button class="btn" onclick={handleRefreshBoard}>↻ Refresh</button>
-        <button class="btn primary" onclick={handleReleaseSchedule}>Release Day</button>
-        <span class="chip {boardSummary.chipCss}">{boardSummary.totalCrews} crews · {boardSummary.totalStops} stops</span>
+    <div class="slds-grid slds-gutters_x-small slds-m-bottom_small slds-wrap">
+        <div class="slds-col">
+            <lightning-combobox
+                label="Date"
+                variant="label-hidden"
+                value={_boardDate}
+                options={boardDateOptions}
+                onchange={handleBoardDateChange}>
+            </lightning-combobox>
+        </div>
+        <div class="slds-col">
+            <div class="slds-button-group" role="group">
+                <button type="button" class="slds-button slds-button_neutral" onclick={handleRefreshBoard}>↻ Refresh</button>
+                <button type="button" class="slds-button slds-button_brand" onclick={handleReleaseSchedule}>Release Day</button>
+            </div>
+        </div>
+        <div class="slds-col slds-m-top_xx-small">
+            <span class={boardSummary.chipCss}>{boardSummary.totalCrews} crews · {boardSummary.totalStops} stops</span>
+        </div>
     </div>
     <template if:true={hasBoardCrews}>
-        <div class="fsl-board">
+        <div class="fsl-board slds-scrollable_x">
             <template for:each={boardCrews} for:item="crew">
                 <div key={crew.crewId} class="crew-col">
                     <div class="crew-head">
@@ -385,10 +496,10 @@
                                 <div class="appt-sub">{stop.communityName} · {stop.address}</div>
                                 <div class="appt-actions">
                                     <template if:true={stop.hasWarning}>
-                                        <span class="chip amber">{stop.warningNote}</span>
+                                        <span class="slds-badge cs-badge-amber">{stop.warningNote}</span>
                                     </template>
-                                    <button class="btn" data-id={stop.workOrderId} onclick={handleNavigateWO}>Open WO</button>
-                                    <button class="btn" data-id={stop.stopId} onclick={handleReassignStop}>Reassign</button>
+                                    <button type="button" class="slds-button slds-button_neutral" data-id={stop.workOrderId} onclick={handleNavigateWO}>Open WO</button>
+                                    <button type="button" class="slds-button slds-button_neutral" data-id={stop.stopId} onclick={handleReassignStop}>Reassign</button>
                                 </div>
                             </div>
                         </template>
@@ -396,7 +507,7 @@
                             <div class="appt-card">
                                 <div class="appt-title">Open capacity</div>
                                 <div class="appt-sub">No assigned Appointments.</div>
-                                <span class="chip green">Available</span>
+                                <span class="slds-badge cs-badge-green">Available</span>
                             </div>
                         </template>
                     </div>
@@ -405,7 +516,7 @@
         </div>
     </template>
     <template if:false={hasBoardCrews}>
-        <div style="padding: 40px; text-align: center; color: var(--muted)">No Appointments records found for the selected date.</div>
+        <div class="slds-notify slds-notify_alert slds-theme_info" role="alert">No Appointments records found for the selected date.</div>
     </template>
 </template>
 
@@ -413,12 +524,11 @@
      TAB 6 — CALENDAR
 ═══════════════════════════════════════════════════════ -->
 <template if:true={isCalendar}>
-    <div class="toolbar">
-        <button class="btn" onclick={handlePrevWeek}>‹ Previous</button>
-        <button class="btn primary" onclick={handleThisWeek}>This Week</button>
-        <button class="btn" onclick={handleNextWeek}>Next ›</button>
-        <span class="spacer"></span>
-        <button class="btn" onclick={handleNewAppointment}>+ Manual Appointment</button>
+    <div class="slds-button-group slds-m-bottom_small" role="group">
+        <button type="button" class="slds-button slds-button_neutral" onclick={handlePrevWeek}>‹ Previous</button>
+        <button type="button" class="slds-button slds-button_brand" onclick={handleThisWeek}>This Week</button>
+        <button type="button" class="slds-button slds-button_neutral" onclick={handleNextWeek}>Next ›</button>
+        <button type="button" class="slds-button slds-button_neutral slds-m-left_small" onclick={handleNewAppointment}>+ Manual Appointment</button>
     </div>
     <div class="cal-grid">
         <template for:each={calDays} for:item="day">
@@ -431,7 +541,7 @@
                     <div key={item.id} class={item.css}>{item.label}</div>
                 </template>
                 <template if:false={day.hasItems}>
-                    <div class="day-item gray" style="border-left-color: var(--line)">No scheduled SAs</div>
+                    <div class="day-item day-item-gray">No scheduled SAs</div>
                 </template>
             </div>
         </template>
@@ -442,85 +552,95 @@
      TAB 7 — ROUTE + GPS
 ═══════════════════════════════════════════════════════ -->
 <template if:true={isRoute}>
-    <div class="layout-rail">
-        <div>
-            <div class="panel" style="margin-bottom: 12px">
-                <div class="panel-head">
-                    <div class="panel-icon">📍</div>
-                    <h3>Live vehicle map</h3>
-                    <span class="chip green" style="margin-left:auto">&#9679; Live &middot; WEX GPS</span>
+    <div class="slds-grid slds-wrap slds-gutters_small">
+        <div class="slds-col slds-size_1-of-1 slds-large-size_8-of-12">
+            <lightning-card title="Live vehicle map" icon-name="standard:location">
+                <div slot="actions"><span class="slds-badge cs-badge-green">&#9679; Live · WEX GPS</span></div>
+                <div class="slds-p-bottom_small">
+                    <c-loving-google-dispatch-map
+                        markers={googleMapMarkers}
+                        show-traffic
+                        map-height="420px"
+                        zoom="10">
+                    </c-loving-google-dispatch-map>
                 </div>
-                <c-loving-google-dispatch-map
-                    markers={googleMapMarkers}
-                    show-traffic
-                    map-height="420px"
-                    zoom="10">
-                </c-loving-google-dispatch-map>
-            </div>
-            <div class="panel">
-                <div class="panel-head">
-                    <div class="panel-icon">🗺</div>
-                    <h3>Route + GPS overlay</h3>
-                    <span class={gpsHealth.chipCss}>{gpsHealth.label}</span>
-                </div>
-                <!-- GPS position table — WEX/GPSInsights source -->
-                <div class="panel-body" style="padding: 0">
+            </lightning-card>
+
+            <lightning-card title="Route + GPS overlay" icon-name="standard:routing_offline">
+                <div slot="actions"><span class={gpsHealth.chipCss}>{gpsHealth.label}</span></div>
+                <div class="slds-p-horizontal_small">
                     <template if:true={hasGpsData}>
-                        <table class="table">
-                            <thead><tr><th>Crew / Vehicle</th><th>Speed</th><th>Ignition</th><th>Last Seen</th><th>Status</th><th>Coordinates</th></tr></thead>
-                            <tbody>
-                                <template for:each={gpsRows} for:item="g">
-                                    <tr key={g.markerId}>
-                                        <td><strong>{g.crewName}</strong></td>
-                                        <td>{g.speedMph}</td>
-                                        <td>{g.ignitionStatus}</td>
-                                        <td>{g.lastSeen}</td>
-                                        <td><span class={g.statusCss}>{g.status}</span></td>
-                                        <td style="font-family: monospace; font-size: 10px">{g.lat}, {g.lng}</td>
+                        <div class="slds-scrollable_x">
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <th scope="col"><div class="slds-truncate">Crew / Vehicle</div></th>
+                                        <th scope="col"><div class="slds-truncate">Speed</div></th>
+                                        <th scope="col"><div class="slds-truncate">Ignition</div></th>
+                                        <th scope="col"><div class="slds-truncate">Last Seen</div></th>
+                                        <th scope="col"><div class="slds-truncate">Status</div></th>
+                                        <th scope="col"><div class="slds-truncate">Coordinates</div></th>
                                     </tr>
-                                </template>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <template for:each={gpsRows} for:item="g">
+                                        <tr key={g.markerId} class="slds-hint-parent">
+                                            <td data-label="Crew"><strong>{g.crewName}</strong></td>
+                                            <td data-label="Speed">{g.speedMph}</td>
+                                            <td data-label="Ignition">{g.ignitionStatus}</td>
+                                            <td data-label="Last Seen">{g.lastSeen}</td>
+                                            <td data-label="Status"><span class={g.statusCss}>{g.status}</span></td>
+                                            <td data-label="Coordinates" class="slds-text-font_monospace slds-text-body_small">{g.lat}, {g.lng}</td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
                     </template>
                     <template if:false={hasGpsData}>
-                        <div style="padding: 24px; text-align: center; color: var(--muted)">
+                        <div class="slds-notify slds-notify_alert slds-theme_info slds-m-around_small" role="alert">
                             No Live GPS records within the last 24 hours. Verify WEX/GPSInsights integration and vehicle ignition signals.
                         </div>
                     </template>
-                </div>
-                <div class="map-legend">
-                    <span class="legend-item"><span class="dot" style="background: #0176d3"></span>Route</span>
-                    <span class="legend-item"><span class="dot" style="background: #5a45d1"></span>WEX/GPSInsights vehicle</span>
-                    <span class="legend-item"><span class="dot" style="background: #dd7a01"></span>Traffic delay</span>
-                    <span class="legend-item"><span class="dot" style="background: #2e844a"></span>Completed stop</span>
-                </div>
-            </div>
-        </div>
-        <aside>
-            <div class="panel">
-                <div class="panel-head"><div class="panel-icon">🚚</div><h3>Route sources</h3></div>
-                <div class="panel-body">
-                    <div style="padding: 8px 0; border-bottom: 1px solid var(--line-soft); font-size: 11px">Route source: Appointments sequence + Optimizer</div>
-                    <div style="padding: 8px 0; border-bottom: 1px solid var(--line-soft); font-size: 11px">Vehicle source: Live GPS</div>
-                    <div style="padding: 8px 0; border-bottom: 1px solid var(--line-soft); font-size: 11px">Traffic source: Traffic feed</div>
-                    <div style="padding: 8px 0; font-size: 11px">Weather source: Weather service</div>
-                    <div class="gap-md"></div>
-                    <button class="btn primary wide" onclick={handleRecalcRoute}>Re-optimize route</button>
-                </div>
-            </div>
-            <div class="panel">
-                <div class="panel-head"><div class="panel-icon">📍</div><h3>GPS health</h3></div>
-                <div class="panel-body">
-                    <div class="pill-row">
-                        <span class="chip green">{gpsHealth.active} active</span>
-                        <span class={gpsHealth.staleCss}>{gpsHealth.stale} stale</span>
-                        <span class="chip blue">WEX source</span>
+                    <div class="map-legend slds-m-top_small">
+                        <span class="legend-item"><span class="sco-dot" style="background: #1265cf"></span>Route</span>
+                        <span class="legend-item"><span class="sco-dot" style="background: #5a3ec8"></span>WEX/GPSInsights vehicle</span>
+                        <span class="legend-item"><span class="sco-dot" style="background: #b27508"></span>Traffic delay</span>
+                        <span class="legend-item"><span class="sco-dot" style="background: #13854e"></span>Completed stop</span>
                     </div>
-                    <div class="gap-md"></div>
-                    <button class="btn wide" onclick={handleRefreshGps}>↻ Refresh GPS</button>
                 </div>
-            </div>
-        </aside>
+            </lightning-card>
+        </div>
+
+        <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12">
+            <lightning-card title="Route sources" icon-name="standard:service_territory">
+                <div class="slds-p-around_small">
+                    <dl class="slds-dl_horizontal">
+                        <dt class="slds-dl_horizontal__label slds-text-color_weak">Route source</dt>
+                        <dd class="slds-dl_horizontal__detail">Appointments sequence + Optimizer</dd>
+                        <dt class="slds-dl_horizontal__label slds-text-color_weak">Vehicle source</dt>
+                        <dd class="slds-dl_horizontal__detail">Live GPS</dd>
+                        <dt class="slds-dl_horizontal__label slds-text-color_weak">Traffic source</dt>
+                        <dd class="slds-dl_horizontal__detail">Traffic feed</dd>
+                        <dt class="slds-dl_horizontal__label slds-text-color_weak">Weather source</dt>
+                        <dd class="slds-dl_horizontal__detail">Weather service</dd>
+                    </dl>
+                    <div class="slds-m-top_small">
+                        <button type="button" class="slds-button slds-button_brand slds-button_stretch" onclick={handleRecalcRoute}>Re-optimize route</button>
+                    </div>
+                </div>
+            </lightning-card>
+            <lightning-card title="GPS health" icon-name="standard:location">
+                <div class="slds-p-around_small">
+                    <div class="pill-row slds-m-bottom_small">
+                        <span class="slds-badge cs-badge-green">{gpsHealth.active} active</span>
+                        <span class={gpsHealth.staleCss}>{gpsHealth.stale} stale</span>
+                        <span class="slds-badge cs-badge-aqua">WEX source</span>
+                    </div>
+                    <button type="button" class="slds-button slds-button_neutral slds-button_stretch" onclick={handleRefreshGps}>↻ Refresh GPS</button>
+                </div>
+            </lightning-card>
+        </div>
     </div>
 </template>
 
@@ -528,313 +648,397 @@
      TAB 8 — DAY-OF MONITOR
 ═══════════════════════════════════════════════════════ -->
 <template if:true={isDayOf}>
-    <div class="panel">
-        <div class="panel-head"><div class="panel-icon">🔄</div><h3>Day-of refresh cadence</h3></div>
-        <div class="panel-body">
-            <div class="kpi5">
+    <lightning-card title="Day-of refresh cadence" icon-name="standard schedule" class="slds-m-bottom_small">
+        <div class="slds-p-around_small">
+            <div class="slds-grid slds-wrap slds-gutters_x-small">
                 <template for:each={dayOfCadence} for:item="c">
-                    <div key={c.slotTime} class={c.css}>
-                        <div class="n">{c.slotTime}</div>
-                        <div class="l">{c.label}</div>
+                    <div key={c.slotTime} class="slds-col slds-size_1-of-3 slds-large-size_1-of-5">
+                        <div class={c.css}>
+                            <div class="cs-kpi-v">{c.slotTime}</div>
+                            <div class="slds-text-title">{c.label}</div>
+                        </div>
                     </div>
                 </template>
             </div>
         </div>
-    </div>
-    <div class="panel">
-        <div class="panel-head">
-            <div class="panel-icon">🟢</div>
-            <h3>Health check monitor</h3>
-            <span class={dayOfSummary.redCss}>{dayOfSummary.redLabel}</span>
-        </div>
-        <div class="panel-body">
+    </lightning-card>
+
+    <lightning-card title="Health check monitor" icon-name="standard:task2">
+        <div slot="actions"><span class={dayOfSummary.redCss}>{dayOfSummary.redLabel}</span></div>
+        <div class="slds-p-around_small">
             <template if:true={hasDayOfChecks}>
-                <div class="grid4">
+                <div class="slds-grid slds-wrap slds-gutters_small">
                     <template for:each={dayOfChecks} for:item="h">
-                        <div key={h.crewName} class="job-card">
-                            <div class="job-title">{h.crewName}</div>
-                            <span class={h.statusCss}>{h.status} · {h.checkTime}</span>
-                            <div class="job-sub">{h.note}</div>
-                            <template if:true={h.isRed}>
-                                <div class="job-actions">
-                                    <button class="btn warning" data-crew={h.crewName} onclick={handleEscalateDayOf}>Escalate</button>
-                                </div>
-                            </template>
+                        <div key={h.crewName} class="slds-col slds-size_1-of-1 slds-large-size_1-of-4">
+                            <div class="job-card slds-box slds-box_x-small">
+                                <div class="job-title">{h.crewName}</div>
+                                <span class={h.statusCss}>{h.status} · {h.checkTime}</span>
+                                <div class="job-sub">{h.note}</div>
+                                <template if:true={h.isRed}>
+                                    <div class="job-actions slds-m-top_x-small">
+                                        <button type="button" class="slds-button slds-button_destructive" data-crew={h.crewName} onclick={handleEscalateDayOf}>Escalate</button>
+                                    </div>
+                                </template>
+                            </div>
                         </div>
                     </template>
                 </div>
             </template>
             <template if:false={hasDayOfChecks}>
-                <div style="padding: 20px; text-align: center; color: var(--muted)">No health check data. Foreman submissions sync from Appointments status updates.</div>
+                <div class="slds-notify slds-notify_alert slds-theme_info" role="alert">No health check data. Foreman submissions sync from Appointments status updates.</div>
             </template>
         </div>
-    </div>
+    </lightning-card>
 </template>
 
 <!-- ═══════════════════════════════════════════════════════
      TAB 9 — MEASURING CUP
 ═══════════════════════════════════════════════════════ -->
 <template if:true={isMeasuringCup}>
-    <div class="kpi4">
-        <div class="kpi purple"><div class="n">{mcKpi.goalHours}</div><div class="l">Goal hours</div></div>
-        <div class="kpi green"><div class="n">{mcKpi.actualHours}</div><div class="l">Actual so far</div></div>
-        <div class="kpi amber"><div class="n">{mcKpi.dayVariance}</div><div class="l">Day variance</div></div>
-        <div class="kpi green"><div class="n">{mcKpi.crewsGreen} / {mcKpi.crewsTotal}</div><div class="l">Crews green</div></div>
-    </div>
-    <div class="panel">
-        <div class="panel-head"><div class="panel-icon">📊</div><h3>Measuring Cup live crew rollup</h3></div>
-        <div class="panel-body" style="padding: 0">
-            <template if:true={hasMcRows}>
-                <table class="table">
-                    <thead><tr><th>Crew</th><th>Work Type</th><th class="num">Goal</th><th class="num">Actual</th><th class="num">Variance</th><th>Source</th><th>Status</th><th></th></tr></thead>
-                    <tbody>
-                        <template for:each={mcRows} for:item="r">
-                            <tr key={r.crewName}>
-                                <td>{r.crewName}</td>
-                                <td>{r.workType}</td>
-                                <td class="num">{r.goalHours}</td>
-                                <td class="num">{r.actualHours}</td>
-                                <td class="num"><span class={r.varianceCss}>{r.variance}</span></td>
-                                <td style="font-size: 10px; color: var(--muted)">{r.source}</td>
-                                <td><span class={r.statusCss}>{r.status}</span></td>
-                                <td>
-                                    <template if:true={r.workOrderId}>
-                                        <button class="btn" data-id={r.workOrderId} onclick={handleViewMcWo}>View WO</button>
-                                    </template>
-                                </td>
-                            </tr>
-                        </template>
-                    </tbody>
-                </table>
-            </template>
-            <template if:false={hasMcRows}>
-                <div style="padding: 20px; text-align: center; color: var(--muted)">No crew utilization data. Source: WorkOrderLineItem, TimeSheetEntry, Rippling time entries.</div>
-            </template>
+    <div class="slds-grid slds-wrap slds-gutters_x-small slds-m-bottom_small">
+        <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-4">
+            <div class="slds-box slds-box_x-small cs-kpi-tile">
+                <div class="cs-kpi-v">{mcKpi.goalHours}</div>
+                <div class="slds-text-title">Goal hours</div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-4">
+            <div class="slds-box slds-box_x-small cs-kpi-tile">
+                <div class="cs-kpi-v cs-kpi-green">{mcKpi.actualHours}</div>
+                <div class="slds-text-title">Actual so far</div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-4">
+            <div class="slds-box slds-box_x-small cs-kpi-tile">
+                <div class="cs-kpi-v cs-kpi-amber">{mcKpi.dayVariance}</div>
+                <div class="slds-text-title">Day variance</div>
+            </div>
+        </div>
+        <div class="slds-col slds-size_1-of-2 slds-large-size_1-of-4">
+            <div class="slds-box slds-box_x-small cs-kpi-tile">
+                <div class="cs-kpi-v cs-kpi-green">{mcKpi.crewsGreen} / {mcKpi.crewsTotal}</div>
+                <div class="slds-text-title">Crews green</div>
+            </div>
         </div>
     </div>
+
+    <lightning-card title="Measuring Cup live crew rollup" icon-name="standard:metrics">
+        <div class="slds-p-horizontal_small">
+            <template if:true={hasMcRows}>
+                <div class="slds-scrollable_x">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th scope="col"><div class="slds-truncate">Crew</div></th>
+                                <th scope="col"><div class="slds-truncate">Work Type</div></th>
+                                <th scope="col" class="slds-text-align_right"><div class="slds-truncate">Goal</div></th>
+                                <th scope="col" class="slds-text-align_right"><div class="slds-truncate">Actual</div></th>
+                                <th scope="col" class="slds-text-align_right"><div class="slds-truncate">Variance</div></th>
+                                <th scope="col"><div class="slds-truncate">Source</div></th>
+                                <th scope="col"><div class="slds-truncate">Status</div></th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={mcRows} for:item="r">
+                                <tr key={r.crewName} class="slds-hint-parent">
+                                    <td data-label="Crew">{r.crewName}</td>
+                                    <td data-label="Work Type">{r.workType}</td>
+                                    <td data-label="Goal" class="slds-text-align_right">{r.goalHours}</td>
+                                    <td data-label="Actual" class="slds-text-align_right">{r.actualHours}</td>
+                                    <td data-label="Variance" class="slds-text-align_right"><span class={r.varianceCss}>{r.variance}</span></td>
+                                    <td data-label="Source" class="slds-text-color_weak slds-text-body_small">{r.source}</td>
+                                    <td data-label="Status"><span class={r.statusCss}>{r.status}</span></td>
+                                    <td>
+                                        <template if:true={r.workOrderId}>
+                                            <button type="button" class="slds-button slds-button_neutral" data-id={r.workOrderId} onclick={handleViewMcWo}>View WO</button>
+                                        </template>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </template>
+            <template if:false={hasMcRows}>
+                <div class="slds-notify slds-notify_alert slds-theme_info slds-m-around_small" role="alert">No crew utilization data. Source: WorkOrderLineItem, TimeSheetEntry, Rippling time entries.</div>
+            </template>
+        </div>
+    </lightning-card>
 </template>
 
 <!-- ═══════════════════════════════════════════════════════
      TAB 10 — TRAFFIC
 ═══════════════════════════════════════════════════════ -->
 <template if:true={isTraffic}>
-    <div class="notice amber">
+    <div class="slds-notify slds-notify_alert slds-theme_warning slds-m-bottom_small" role="alert">
         <strong>Traffic overlay:</strong> Live Google traffic across all markets. Zoom in or out to inspect each market. ETA deltas below come from the Traffic feed and Optimizer; if that source is unavailable a warning state is shown, never a fake ETA.
     </div>
-    <div class="panel">
-        <div class="panel-head"><div class="panel-icon">🗺️</div><h3>Live traffic map — all markets</h3><span class="chip green">Live traffic layer</span></div>
-        <div class="panel-body" style="padding:0">
-            <c-loving-google-dispatch-map
-                markers={marketMapMarkers}
-                show-traffic
-                map-height="460px"
-                zoom="8">
-            </c-loving-google-dispatch-map>
-        </div>
-    </div>
-    <div class="gap-md"></div>
-    <div class="panel">
-        <div class="panel-head"><div class="panel-icon">🚦</div><h3>Active traffic impacts</h3></div>
-        <div class="panel-body" style="padding: 0">
+    <lightning-card title="Live traffic map — all markets" icon-name="standard:location" class="slds-m-bottom_small">
+        <div slot="actions"><span class="slds-badge cs-badge-green">Live traffic layer</span></div>
+        <c-loving-google-dispatch-map
+            markers={marketMapMarkers}
+            show-traffic
+            map-height="460px"
+            zoom="8">
+        </c-loving-google-dispatch-map>
+    </lightning-card>
+
+    <lightning-card title="Active traffic impacts" icon-name="standard:case">
+        <div class="slds-p-horizontal_small">
             <template if:true={hasTraffic}>
-                <table class="table">
-                    <thead><tr><th>Route</th><th>Segment</th><th>Impact</th><th>ETA Delta</th><th>System Response</th><th>Action</th></tr></thead>
-                    <tbody>
-                        <template for:each={trafficImpacts} for:item="t">
-                            <tr key={t.id}>
-                                <td>{t.crewName}</td>
-                                <td>{t.segment}</td>
-                                <td><span class={t.impactCss}>{t.impactLevel}</span></td>
-                                <td>{t.etaDelta}</td>
-                                <td style="font-size: 10px; color: var(--muted)">{t.systemResponse}</td>
-                                <td><button class="btn" data-id={t.id} onclick={handleReroute}>Re-route</button></td>
+                <div class="slds-scrollable_x">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th scope="col"><div class="slds-truncate">Route</div></th>
+                                <th scope="col"><div class="slds-truncate">Segment</div></th>
+                                <th scope="col"><div class="slds-truncate">Impact</div></th>
+                                <th scope="col"><div class="slds-truncate">ETA Delta</div></th>
+                                <th scope="col"><div class="slds-truncate">System Response</div></th>
+                                <th scope="col"><div class="slds-truncate">Action</div></th>
                             </tr>
-                        </template>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <template for:each={trafficImpacts} for:item="t">
+                                <tr key={t.id} class="slds-hint-parent">
+                                    <td data-label="Route">{t.crewName}</td>
+                                    <td data-label="Segment">{t.segment}</td>
+                                    <td data-label="Impact"><span class={t.impactCss}>{t.impactLevel}</span></td>
+                                    <td data-label="ETA Delta">{t.etaDelta}</td>
+                                    <td data-label="System Response" class="slds-text-color_weak slds-text-body_small">{t.systemResponse}</td>
+                                    <td data-label="Action">
+                                        <button type="button" class="slds-button slds-button_neutral" data-id={t.id} onclick={handleReroute}>Re-route</button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
             </template>
             <template if:false={hasTraffic}>
-                <div style="padding: 24px; text-align: center; color: var(--muted)">No Traffic feed records — or traffic integration not configured. Connect approved traffic provider to this object.</div>
+                <div class="slds-notify slds-notify_alert slds-theme_info slds-m-around_small" role="alert">No Traffic feed records — or traffic integration not configured. Connect approved traffic provider to this object.</div>
             </template>
         </div>
-    </div>
+    </lightning-card>
 </template>
 
 <!-- ═══════════════════════════════════════════════════════
      TAB 11 — WEATHER
 ═══════════════════════════════════════════════════════ -->
 <template if:true={isWeather}>
-    <!-- Per-division live weather: temp + rain% + radar per LOVING territory -->
-    <div class="panel">
-        <div class="panel-head">
-            <div class="panel-icon">🌧️</div>
-            <h3>Live weather by division</h3>
-            <span class="chip green" style="margin-left:auto">Live · NWS + Open-Meteo</span>
-        </div>
-        <div class="panel-body" style="padding:14px">
-            <div class="grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+    <lightning-card title="Live weather by division" icon-name="standard:topic" class="slds-m-bottom_small">
+        <div slot="actions"><span class="slds-badge cs-badge-green">Live · NWS + Open-Meteo</span></div>
+        <div class="slds-p-around_small">
+            <div class="slds-grid slds-wrap slds-gutters_small">
                 <template for:each={divisionWeather} for:item="d">
-                    <div key={d.division} class="weather-tile" style="background:#fff;border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px">
-                        <div style="display:flex;align-items:center;justify-content:space-between">
-                            <div style="font-weight:700;font-size:13px;color:#1f2421">{d.division}</div>
-                            <div style="font-size:22px">{d.icon}</div>
+                    <div key={d.division} class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                        <div class="slds-box slds-box_x-small">
+                            <div class="slds-grid slds-grid_align-spread slds-m-bottom_x-small">
+                                <div class="slds-text-title_bold">{d.division}</div>
+                                <div style="font-size: 22px">{d.icon}</div>
+                            </div>
+                            <div class="slds-grid slds-grid_vertical-align-end slds-m-bottom_x-small">
+                                <div class="cs-kpi-v">{d.tempLabel}</div>
+                                <div class="slds-text-color_weak slds-m-left_x-small">{d.condition}</div>
+                            </div>
+                            <div class="slds-text-body_small slds-text-color_weak slds-m-bottom_x-small">
+                                <span>🌧 {d.rainPct}% rain</span>
+                                <span class="slds-m-left_small">💨 {d.windMph} mph</span>
+                            </div>
+                            <img src={d.radarUrl} alt="Radar" class="sco-radar-img"/>
                         </div>
-                        <div style="display:flex;align-items:baseline;gap:10px">
-                            <div style="font-size:28px;font-weight:700;color:#1f2421">{d.tempLabel}</div>
-                            <div style="font-size:12px;color:var(--muted)">{d.condition}</div>
-                        </div>
-                        <div style="display:flex;gap:8px;font-size:11px;color:var(--muted)">
-                            <span>🌧 {d.rainPct}% rain</span>
-                            <span>💨 {d.windMph} mph</span>
-                        </div>
-                        <img src={d.radarUrl} alt="Radar" style="width:100%;height:160px;object-fit:cover;border-radius:6px;border:1px solid var(--line)"/>
                     </div>
                 </template>
             </div>
         </div>
-    </div>
-    <div class="gap-md"></div>
+    </lightning-card>
+
     <template if:true={hasWeatherAlerts}>
-        <div class="grid3">
+        <div class="slds-grid slds-wrap slds-gutters_small slds-m-bottom_small">
             <template for:each={weatherAlerts} for:item="wa">
-                <div key={wa.id} class="weather-card">
-                    <div class="weather-main">
-                        <div class="weather-ico">{wa.icon}</div>
-                        <div>
-                            <div class="label-sm">{wa.division}</div>
-                            <div class="temp">{wa.summary}</div>
-                            <div class="weather-meta">{wa.details} · {wa.startDisplay} – {wa.endDisplay}</div>
+                <div key={wa.id} class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                    <div class="weather-card slds-box">
+                        <div class="weather-main">
+                            <div class="weather-ico">{wa.icon}</div>
+                            <div>
+                                <div class="slds-text-body_small slds-text-color_weak">{wa.division}</div>
+                                <div class="slds-text-title_bold">{wa.summary}</div>
+                                <div class="slds-text-body_small slds-text-color_weak">{wa.details} · {wa.startDisplay} – {wa.endDisplay}</div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="gap-sm"></div>
-                    <div class="pill-row">
-                        <span class={wa.severityCss}>{wa.severity}</span>
-                        <span class="chip blue">{wa.affectedStops} stops affected</span>
-                    </div>
-                    <div class="job-actions" style="margin-top: 8px">
-                        <button class="btn warning" data-id={wa.id} onclick={handleWeatherHold}>Place Hold</button>
+                        <div class="pill-row slds-m-top_x-small">
+                            <span class={wa.severityCss}>{wa.severity}</span>
+                            <span class="slds-badge cs-badge-aqua">{wa.affectedStops} stops affected</span>
+                        </div>
+                        <div class="slds-m-top_x-small">
+                            <button type="button" class="slds-button slds-button_destructive" data-id={wa.id} onclick={handleWeatherHold}>Place Hold</button>
+                        </div>
                     </div>
                 </div>
             </template>
         </div>
-        <div class="gap-md"></div>
     </template>
     <template if:false={hasWeatherAlerts}>
-        <div class="notice green"><strong>No active weather alerts.</strong> Weather service source shows clear conditions.</div>
-        <div class="gap-md"></div>
+        <div class="slds-notify slds-notify_alert slds-theme_success slds-m-bottom_small" role="alert"><strong>No active weather alerts.</strong> Weather service source shows clear conditions.</div>
     </template>
-    <div class="panel">
-        <div class="panel-head"><div class="panel-icon">⚖</div><h3>Weather decision tiers</h3></div>
-        <div class="panel-body" style="padding: 0">
-            <table class="table">
-                <thead><tr><th>Severity</th><th>Source</th><th>System Response</th><th>Human Review</th></tr></thead>
-                <tbody>
-                    <tr><td><span class="chip green">Clear</span></td><td>Weather service / NWS</td><td>Proceed</td><td>No</td></tr>
-                    <tr><td><span class="chip blue">Watch</span></td><td>Weather service / NWS</td><td>Flag on board</td><td>FM / Scheduling</td></tr>
-                    <tr><td><span class="chip amber">Warning</span></td><td>Weather service / NWS</td><td>Move affected stops to review</td><td>Scheduling Manager</td></tr>
-                    <tr><td><span class="chip red">Severe</span></td><td>Weather service / NWS</td><td>Auto-hold territory</td><td>COO override only</td></tr>
-                </tbody>
-            </table>
+
+    <lightning-card title="Weather decision tiers" icon-name="standard:process">
+        <div class="slds-p-horizontal_small">
+            <div class="slds-scrollable_x">
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th scope="col"><div class="slds-truncate">Severity</div></th>
+                            <th scope="col"><div class="slds-truncate">Source</div></th>
+                            <th scope="col"><div class="slds-truncate">System Response</div></th>
+                            <th scope="col"><div class="slds-truncate">Human Review</div></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="slds-hint-parent">
+                            <td><span class="slds-badge cs-badge-green">Clear</span></td>
+                            <td>Weather service / NWS</td><td>Proceed</td><td>No</td>
+                        </tr>
+                        <tr class="slds-hint-parent">
+                            <td><span class="slds-badge cs-badge-aqua">Watch</span></td>
+                            <td>Weather service / NWS</td><td>Flag on board</td><td>FM / Scheduling</td>
+                        </tr>
+                        <tr class="slds-hint-parent">
+                            <td><span class="slds-badge cs-badge-amber">Warning</span></td>
+                            <td>Weather service / NWS</td><td>Move affected stops to review</td><td>Scheduling Manager</td>
+                        </tr>
+                        <tr class="slds-hint-parent">
+                            <td><span class="slds-badge cs-badge-red">Severe</span></td>
+                            <td>Weather service / NWS</td><td>Auto-hold territory</td><td>COO override only</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    </lightning-card>
 </template>
 
 <!-- ═══════════════════════════════════════════════════════
      TAB 12 — OVERTIME
 ═══════════════════════════════════════════════════════ -->
 <template if:true={isOvertime}>
-    <div class="notice amber">
+    <div class="slds-notify slds-notify_alert slds-theme_warning slds-m-bottom_small" role="alert">
         <strong>Overtime uses Rippling clock-in/out.</strong> Actual hours are summed from Rippling time entries; projected = hours clocked plus scheduled hours remaining this week. Never calculated from display-only cards or the schedule alone.
     </div>
     <template if:true={clockDataUnavailable}>
-        <div class="notice red">
-            <strong>Rippling clock data not yet synced for this week.</strong> Actual and projected hours show “—” and overtime cannot be calculated from clock-in/out until the time-entry sync completes.
+        <div class="slds-notify slds-notify_alert slds-theme_error slds-m-bottom_small" role="alert">
+            <strong>Rippling clock data not yet synced for this week.</strong> Actual and projected hours show "—" and overtime cannot be calculated from clock-in/out until the time-entry sync completes.
         </div>
     </template>
-    <div class="panel">
-        <div class="panel-head"><div class="panel-icon">⏱</div><h3>Weekly hours and release block</h3></div>
-        <div class="panel-body" style="padding: 0">
+    <lightning-card title="Weekly hours and release block" icon-name="standard:timesheet">
+        <div class="slds-p-horizontal_small">
             <template if:true={hasOtRows}>
-                <table class="table">
-                    <thead><tr><th>Resource</th><th>Crew</th><th class="num">Scheduled hrs</th><th class="num">Actual hrs (clocked)</th><th class="num">Projected hrs</th><th>Status</th><th>Action</th></tr></thead>
-                    <tbody>
-                        <template for:each={otRows} for:item="r">
-                            <tr key={r.rowKey}>
-                                <td class="link">{r.resourceName}</td>
-                                <td>{r.crewName}</td>
-                                <td class="num">{r.scheduledHours}</td>
-                                <td class="num">{r.actualDisp}</td>
-                                <td class="num">{r.projectedDisp}</td>
-                                <td><span class={r.chipCss}>{r.otLabel}</span></td>
-                                <td>
-                                    <template if:true={r.otRisk}>
-                                        <button class="btn warning" data-id={r.employeeId} onclick={handleResolveOt}>Resolve</button>
-                                    </template>
-                                    <template if:false={r.otRisk}>
-                                        <button class="btn disabled">No action</button>
-                                    </template>
-                                </td>
+                <div class="slds-scrollable_x">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th scope="col"><div class="slds-truncate">Resource</div></th>
+                                <th scope="col"><div class="slds-truncate">Crew</div></th>
+                                <th scope="col" class="slds-text-align_right"><div class="slds-truncate">Scheduled hrs</div></th>
+                                <th scope="col" class="slds-text-align_right"><div class="slds-truncate">Actual hrs (clocked)</div></th>
+                                <th scope="col" class="slds-text-align_right"><div class="slds-truncate">Projected hrs</div></th>
+                                <th scope="col"><div class="slds-truncate">Status</div></th>
+                                <th scope="col"><div class="slds-truncate">Action</div></th>
                             </tr>
-                        </template>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <template for:each={otRows} for:item="r">
+                                <tr key={r.rowKey} class="slds-hint-parent">
+                                    <td data-label="Resource">{r.resourceName}</td>
+                                    <td data-label="Crew">{r.crewName}</td>
+                                    <td data-label="Scheduled hrs" class="slds-text-align_right">{r.scheduledHours}</td>
+                                    <td data-label="Actual hrs" class="slds-text-align_right">{r.actualDisp}</td>
+                                    <td data-label="Projected hrs" class="slds-text-align_right">{r.projectedDisp}</td>
+                                    <td data-label="Status"><span class={r.chipCss}>{r.otLabel}</span></td>
+                                    <td data-label="Action">
+                                        <template if:true={r.otRisk}>
+                                            <button type="button" class="slds-button slds-button_destructive" data-id={r.employeeId} onclick={handleResolveOt}>Resolve</button>
+                                        </template>
+                                        <template if:false={r.otRisk}>
+                                            <button type="button" class="slds-button slds-button_neutral" disabled>No action</button>
+                                        </template>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
             </template>
             <template if:false={hasOtRows}>
-                <div style="padding: 20px; text-align: center; color: var(--muted)">No overtime risks detected. Source: Rippling time entries and time off.</div>
+                <div class="slds-notify slds-notify_alert slds-theme_info slds-m-around_small" role="alert">No overtime risks detected. Source: Rippling time entries and time off.</div>
             </template>
         </div>
-    </div>
+    </lightning-card>
 </template>
 
 <!-- ═══════════════════════════════════════════════════════
      TAB 13 — CREW OPTIMIZATION
 ═══════════════════════════════════════════════════════ -->
 <template if:true={isCrewOpt}>
-    <div class="grid2">
-        <div class="panel">
-            <div class="panel-head"><div class="panel-icon">👥</div><h3>Crew efficiency MTD</h3></div>
-            <div class="panel-body" style="padding: 0">
-                <template if:true={hasCrewEfficiency}>
-                    <table class="table">
-                        <thead><tr><th>Crew</th><th class="num">Stops</th><th class="num">Goal hrs</th><th class="num">Actual hrs</th><th class="num">QI</th><th class="num">FJ%</th></tr></thead>
-                        <tbody>
-                            <template for:each={crewEfficiency} for:item="e">
-                                <tr key={e.crewName}>
-                                    <td>{e.crewName}</td>
-                                    <td class="num">{e.stops}</td>
-                                    <td class="num">{e.goalHours}</td>
-                                    <td class="num">{e.actualHours}</td>
-                                    <td class="num">{e.qiScore}</td>
-                                    <td class="num">{e.fjPct}%</td>
-                                </tr>
-                            </template>
-                        </tbody>
-                    </table>
-                </template>
-                <template if:false={hasCrewEfficiency}>
-                    <div style="padding: 20px; text-align: center; color: var(--muted)">No crew efficiency data. Source: WorkOrderLineItem, Rippling, QI score.</div>
-                </template>
-            </div>
-        </div>
-        <div class="panel">
-            <div class="panel-head"><div class="panel-icon">💡</div><h3>Optimizer recommendations</h3></div>
-            <div class="panel-body">
-                <template if:true={hasOptimizerRecs}>
-                    <template for:each={optimizerRecs} for:item="rec">
-                        <div key={rec.id} class="job-card">
-                            <div class="job-title">{rec.crewName}</div>
-                            <div class="job-sub">{rec.recommendation} · <span class={rec.chipCss}>{rec.minutesSaved} min saved</span></div>
-                            <div class="job-actions">
-                                <button class="btn primary" data-id={rec.id} onclick={handleApplyOptimizerRec}>Apply</button>
-                                <button class="btn" onclick={handleDismissRec}>Dismiss</button>
-                            </div>
+    <div class="slds-grid slds-wrap slds-gutters_small">
+        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+            <lightning-card title="Crew efficiency MTD" icon-name="standard:account_team_member">
+                <div class="slds-p-horizontal_small">
+                    <template if:true={hasCrewEfficiency}>
+                        <div class="slds-scrollable_x">
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <th scope="col"><div class="slds-truncate">Crew</div></th>
+                                        <th scope="col" class="slds-text-align_right"><div class="slds-truncate">Stops</div></th>
+                                        <th scope="col" class="slds-text-align_right"><div class="slds-truncate">Goal hrs</div></th>
+                                        <th scope="col" class="slds-text-align_right"><div class="slds-truncate">Actual hrs</div></th>
+                                        <th scope="col" class="slds-text-align_right"><div class="slds-truncate">QI</div></th>
+                                        <th scope="col" class="slds-text-align_right"><div class="slds-truncate">FJ%</div></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={crewEfficiency} for:item="e">
+                                        <tr key={e.crewName} class="slds-hint-parent">
+                                            <td data-label="Crew">{e.crewName}</td>
+                                            <td data-label="Stops" class="slds-text-align_right">{e.stops}</td>
+                                            <td data-label="Goal hrs" class="slds-text-align_right">{e.goalHours}</td>
+                                            <td data-label="Actual hrs" class="slds-text-align_right">{e.actualHours}</td>
+                                            <td data-label="QI" class="slds-text-align_right">{e.qiScore}</td>
+                                            <td data-label="FJ%" class="slds-text-align_right">{e.fjPct}%</td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
                         </div>
                     </template>
-                </template>
-                <template if:false={hasOptimizerRecs}>
-                    <div style="color: var(--muted); font-size: 11px">No Optimizer proposals. Run optimizer to generate recommendations.</div>
-                </template>
-            </div>
+                    <template if:false={hasCrewEfficiency}>
+                        <div class="slds-notify slds-notify_alert slds-theme_info slds-m-around_small" role="alert">No crew efficiency data. Source: WorkOrderLineItem, Rippling, QI score.</div>
+                    </template>
+                </div>
+            </lightning-card>
+        </div>
+        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+            <lightning-card title="Optimizer recommendations" icon-name="standard:multi_picklist">
+                <div class="slds-p-around_small">
+                    <template if:true={hasOptimizerRecs}>
+                        <template for:each={optimizerRecs} for:item="rec">
+                            <div key={rec.id} class="job-card slds-box slds-box_x-small slds-m-bottom_x-small">
+                                <div class="job-title">{rec.crewName}</div>
+                                <div class="job-sub">{rec.recommendation} · <span class={rec.chipCss}>{rec.minutesSaved} min saved</span></div>
+                                <div class="job-actions slds-m-top_x-small">
+                                    <button type="button" class="slds-button slds-button_brand" data-id={rec.id} onclick={handleApplyOptimizerRec}>Apply</button>
+                                    <button type="button" class="slds-button slds-button_neutral" onclick={handleDismissRec}>Dismiss</button>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+                    <template if:false={hasOptimizerRecs}>
+                        <div class="slds-text-color_weak slds-text-body_small">No Optimizer proposals. Run optimizer to generate recommendations.</div>
+                    </template>
+                </div>
+            </lightning-card>
         </div>
     </div>
 </template>
@@ -843,181 +1047,227 @@
      TAB 14 — DRAFT REVIEW
 ═══════════════════════════════════════════════════════ -->
 <template if:true={isDraftReview}>
-    <div class="notice amber">
+    <div class="slds-notify slds-notify_alert slds-theme_warning slds-m-bottom_small" role="alert">
         <strong>{draftReview.draftTime} draft review:</strong> Schedule can be approved in sections. Auto-release is blocked for weather, stale GPS, PTO conflict, or overtime conflicts.
     </div>
-    <div class="panel">
-        <div class="panel-head">
-            <div class="panel-icon">✓</div>
-            <h3>Draft release readiness</h3>
-            <button class="btn primary" onclick={handleReleaseSchedule}>Approve cleared release</button>
+    <lightning-card title="Draft release readiness" icon-name="standard:approval">
+        <div slot="actions">
+            <button type="button" class="slds-button slds-button_brand" onclick={handleReleaseSchedule}>Approve cleared release</button>
         </div>
-        <div class="panel-body" style="padding: 0">
+        <div class="slds-p-horizontal_small">
             <template if:true={hasDraftCrews}>
-                <table class="table">
-                    <thead><tr><th>Crew</th><th>Stops</th><th>Route miles</th><th>Weather</th><th>PTO</th><th>OT</th><th>Release Status</th></tr></thead>
-                    <tbody>
-                        <template for:each={draftCrews} for:item="c">
-                            <tr key={c.crewName}>
-                                <td>{c.crewName} <span style="color: var(--muted); font-size: 10px">· {c.foremanName}</span></td>
-                                <td>{c.stops}</td>
-                                <td>{c.routeMiles} mi</td>
-                                <td><span class={c.weatherCss}>{c.weatherStatus}</span></td>
-                                <td><span class={c.ptoCss}>{c.ptoStatus}</span></td>
-                                <td><span class={c.otCss}>{c.otStatus}</span></td>
-                                <td><span class={c.chipCss}>{c.releaseStatus}</span></td>
+                <div class="slds-scrollable_x">
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th scope="col"><div class="slds-truncate">Crew</div></th>
+                                <th scope="col"><div class="slds-truncate">Stops</div></th>
+                                <th scope="col"><div class="slds-truncate">Route miles</div></th>
+                                <th scope="col"><div class="slds-truncate">Weather</div></th>
+                                <th scope="col"><div class="slds-truncate">PTO</div></th>
+                                <th scope="col"><div class="slds-truncate">OT</div></th>
+                                <th scope="col"><div class="slds-truncate">Release Status</div></th>
                             </tr>
-                        </template>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <template for:each={draftCrews} for:item="c">
+                                <tr key={c.crewName} class="slds-hint-parent">
+                                    <td data-label="Crew">{c.crewName} <span class="slds-text-color_weak slds-text-body_small">· {c.foremanName}</span></td>
+                                    <td data-label="Stops">{c.stops}</td>
+                                    <td data-label="Route miles">{c.routeMiles} mi</td>
+                                    <td data-label="Weather"><span class={c.weatherCss}>{c.weatherStatus}</span></td>
+                                    <td data-label="PTO"><span class={c.ptoCss}>{c.ptoStatus}</span></td>
+                                    <td data-label="OT"><span class={c.otCss}>{c.otStatus}</span></td>
+                                    <td data-label="Release Status"><span class={c.chipCss}>{c.releaseStatus}</span></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
             </template>
             <template if:false={hasDraftCrews}>
-                <div style="padding: 20px; text-align: center; color: var(--muted)">No scheduled crews for draft review. Source: service day, WorkOrder.</div>
+                <div class="slds-notify slds-notify_alert slds-theme_info slds-m-around_small" role="alert">No scheduled crews for draft review. Source: service day, WorkOrder.</div>
             </template>
         </div>
-    </div>
+    </lightning-card>
 </template>
 
 <!-- ═══════════════════════════════════════════════════════
      TAB 15 — DECISION RULES
 ═══════════════════════════════════════════════════════ -->
 <template if:true={isDecisionRules}>
-
     <template if:true={rulesReadOnly}>
-        <div class="notice" style="margin-bottom:14px">
+        <div class="slds-notify slds-notify_alert slds-theme_info slds-m-bottom_small" role="alert">
             <strong>Read-only.</strong> You can review the scheduling decision rules but not change them. Editing requires the LOVING Scheduling Rules Admin permission.
         </div>
     </template>
 
-    <!-- Editable: scheduling decision weights -->
-    <div class="panel">
-        <div class="panel-head">
-            <div class="panel-icon">⚖</div>
-            <h3>Scheduling decision weights</h3>
-            <span class={weightTotalChipCss} style="margin-left:10px">{weightTotalLabel}</span>
+    <lightning-card title="Scheduling decision weights" icon-name="standard:approval" class="slds-m-bottom_small">
+        <div slot="actions">
+            <span class={weightTotalChipCss}>{weightTotalLabel}</span>
             <template if:true={canEditRules}>
-                <div class="panel-actions" style="margin-left:auto;display:flex;gap:6px">
-                    <button class="btn" onclick={handleResetRules}>Reset to default</button>
-                    <button class="btn primary" onclick={handleSaveRules}>Save changes</button>
+                <div class="slds-button-group slds-m-left_small" role="group">
+                    <button type="button" class="slds-button slds-button_neutral" onclick={handleResetRules}>Reset to default</button>
+                    <button type="button" class="slds-button slds-button_brand" onclick={handleSaveRules}>Save changes</button>
                 </div>
             </template>
         </div>
-        <div class="panel-body" style="padding:0">
-            <table class="table">
-                <thead><tr><th style="width:26%">Rule</th><th>What it favors</th><th class="num" style="width:110px">Weight %</th><th style="width:44px"></th></tr></thead>
-                <tbody>
-                    <template for:each={editWeightRules} for:item="r" for:index="idx">
-                        <tr key={r._key}>
-                            <td><input class="rules-inp" type="text" value={r.name} data-idx={idx} data-field="name" onchange={handleWeightRuleChange} placeholder="Rule name" disabled={rulesReadOnly}/></td>
-                            <td><input class="rules-inp" type="text" value={r.favors} data-idx={idx} data-field="favors" onchange={handleWeightRuleChange} placeholder="What it favors" disabled={rulesReadOnly}/></td>
-                            <td class="num"><input class="rules-wt" type="number" min="0" max="100" value={r.weight} data-idx={idx} oninput={handleWeightPctInput} disabled={rulesReadOnly}/> %</td>
-                            <td><button class="rules-del" data-idx={idx} onclick={handleDeleteWeightRule} aria-label="Remove rule" disabled={rulesReadOnly}>×</button></td>
+        <div class="slds-p-horizontal_small">
+            <div class="slds-scrollable_x">
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th scope="col" style="width:26%"><div class="slds-truncate">Rule</div></th>
+                            <th scope="col"><div class="slds-truncate">What it favors</div></th>
+                            <th scope="col" style="width:110px" class="slds-text-align_right"><div class="slds-truncate">Weight %</div></th>
+                            <th scope="col" style="width:44px"></th>
                         </tr>
-                    </template>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <template for:each={editWeightRules} for:item="r" for:index="idx">
+                            <tr key={r._key} class="slds-hint-parent">
+                                <td>
+                                    <lightning-input label="Rule name" variant="label-hidden" value={r.name} data-idx={idx} data-field="name" onchange={handleWeightRuleChange} disabled={rulesReadOnly}></lightning-input>
+                                </td>
+                                <td>
+                                    <lightning-input label="What it favors" variant="label-hidden" value={r.favors} data-idx={idx} data-field="favors" onchange={handleWeightRuleChange} disabled={rulesReadOnly}></lightning-input>
+                                </td>
+                                <td class="slds-text-align_right">
+                                    <lightning-input label="Weight %" variant="label-hidden" type="number" min="0" max="100" value={r.weight} data-idx={idx} onchange={handleWeightPctInput} disabled={rulesReadOnly}></lightning-input>
+                                </td>
+                                <td>
+                                    <button type="button" class="slds-button slds-button_icon slds-button_icon-border-filled" data-idx={idx} onclick={handleDeleteWeightRule} aria-label="Remove rule" disabled={rulesReadOnly}>
+                                        <lightning-icon icon-name="utility:delete" size="x-small"></lightning-icon>
+                                    </button>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+            <template if:true={canEditRules}>
+                <button type="button" class="slds-button slds-button_neutral slds-m-top_small" onclick={handleAddWeightRule}>+ Add weight rule</button>
+            </template>
         </div>
-        <template if:true={canEditRules}>
-            <button class="addrow-btn" onclick={handleAddWeightRule}>+ Add weight rule</button>
-        </template>
-    </div>
+    </lightning-card>
 
-    <!-- Editable: optimization rules -->
-    <div class="panel">
-        <div class="panel-head">
-            <div class="panel-icon">⚙</div>
-            <h3>Optimization rules</h3>
-        </div>
-        <div class="panel-body" style="padding:0">
-            <table class="table">
-                <thead><tr><th style="width:28%">Rule</th><th>Setting</th><th style="width:160px">Applies to</th><th style="width:56px;text-align:center">Active</th><th style="width:44px"></th></tr></thead>
-                <tbody>
-                    <template for:each={editOptRules} for:item="r" for:index="idx">
-                        <tr key={r._key}>
-                            <td><input class="rules-inp" type="text" value={r.name} data-idx={idx} data-field="name" onchange={handleOptRuleChange} placeholder="Rule" disabled={rulesReadOnly}/></td>
-                            <td><input class="rules-inp" type="text" value={r.setting} data-idx={idx} data-field="setting" onchange={handleOptRuleChange} placeholder="Setting" disabled={rulesReadOnly}/></td>
-                            <td>
-                                <select class="rules-sel" data-idx={idx} onchange={handleOptAppliesTo} disabled={rulesReadOnly}>
-                                    <template for:each={r.appliesOptions} for:item="opt">
-                                        <option key={opt.value} value={opt.value} selected={opt.selected}>{opt.label}</option>
-                                    </template>
-                                </select>
-                            </td>
-                            <td style="text-align:center">
-                                <div class={r.toggleCls} data-idx={idx} onclick={handleToggleOptRule} role="switch" aria-checked={r.active} tabindex="0">
-                                    <span class="toggle-track"></span><span class="toggle-thumb"></span>
-                                </div>
-                            </td>
-                            <td><button class="rules-del" data-idx={idx} onclick={handleDeleteOptRule} aria-label="Remove rule" disabled={rulesReadOnly}>×</button></td>
+    <lightning-card title="Optimization rules" icon-name="standard:settings" class="slds-m-bottom_small">
+        <div class="slds-p-horizontal_small">
+            <div class="slds-scrollable_x">
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th scope="col" style="width:28%"><div class="slds-truncate">Rule</div></th>
+                            <th scope="col"><div class="slds-truncate">Setting</div></th>
+                            <th scope="col" style="width:160px"><div class="slds-truncate">Applies to</div></th>
+                            <th scope="col" style="width:56px" class="slds-text-align_center"><div class="slds-truncate">Active</div></th>
+                            <th scope="col" style="width:44px"></th>
                         </tr>
-                    </template>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <template for:each={editOptRules} for:item="r" for:index="idx">
+                            <tr key={r._key} class="slds-hint-parent">
+                                <td>
+                                    <lightning-input label="Rule" variant="label-hidden" value={r.name} data-idx={idx} data-field="name" onchange={handleOptRuleChange} disabled={rulesReadOnly}></lightning-input>
+                                </td>
+                                <td>
+                                    <lightning-input label="Setting" variant="label-hidden" value={r.setting} data-idx={idx} data-field="setting" onchange={handleOptRuleChange} disabled={rulesReadOnly}></lightning-input>
+                                </td>
+                                <td>
+                                    <lightning-combobox label="Applies to" variant="label-hidden" value={r.appliesTo} options={r.appliesOptions} data-idx={idx} onchange={handleOptAppliesTo} disabled={rulesReadOnly}></lightning-combobox>
+                                </td>
+                                <td class="slds-text-align_center">
+                                    <div class={r.toggleCls} data-idx={idx} onclick={handleToggleOptRule} role="switch" aria-checked={r.active} tabindex="0">
+                                        <span class="toggle-track"></span><span class="toggle-thumb"></span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button type="button" class="slds-button slds-button_icon slds-button_icon-border-filled" data-idx={idx} onclick={handleDeleteOptRule} aria-label="Remove rule" disabled={rulesReadOnly}>
+                                        <lightning-icon icon-name="utility:delete" size="x-small"></lightning-icon>
+                                    </button>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+            <template if:true={canEditRules}>
+                <button type="button" class="slds-button slds-button_neutral slds-m-top_small" onclick={handleAddOptRule}>+ Add optimization rule</button>
+            </template>
         </div>
-        <template if:true={canEditRules}>
-            <button class="addrow-btn" onclick={handleAddOptRule}>+ Add optimization rule</button>
-        </template>
-    </div>
+    </lightning-card>
 
-    <!-- Read-only: automation rules (condition / system response) -->
-    <div class="panel">
-        <div class="panel-head">
-            <div class="panel-icon">⚖</div>
-            <h3>Automation rules</h3>
-            <div class="panel-actions" style="margin-left:auto;display:flex;gap:6px">
-                <button class="btn primary" onclick={handleNewDecisionRule}>+ New Rule</button>
-                <button class="btn" onclick={handleRefreshDecisionRules}>Refresh</button>
+    <lightning-card title="Automation rules" icon-name="standard:process">
+        <div slot="actions">
+            <div class="slds-button-group" role="group">
+                <button type="button" class="slds-button slds-button_brand" onclick={handleNewDecisionRule}>+ New Rule</button>
+                <button type="button" class="slds-button slds-button_neutral" onclick={handleRefreshDecisionRules}>Refresh</button>
             </div>
         </div>
-        <div class="panel-body" style="padding: 0">
-            <table class="table">
-                <thead><tr><th>Condition</th><th>Source</th><th>System Response</th><th>Human?</th><th>Actions</th></tr></thead>
-                <tbody>
-                    <template for:each={decisionRules} for:item="r">
-                        <tr key={r.id}>
-                            <td>{r.condition}</td>
-                            <td style="font-size: 11px; color: var(--muted)">{r.source}</td>
-                            <td>{r.systemAction}</td>
-                            <td><span class={r.humanCss}>{r.requiresHuman}</span></td>
-                            <td style="white-space:nowrap">
-                                <button class="btn-link" data-id={r.id} onclick={handleEditDecisionRule} style="margin-right:8px">Edit</button>
-                                <button class="btn-link" data-id={r.id} onclick={handleViewDecisionRule}>View</button>
-                            </td>
+        <div class="slds-p-horizontal_small">
+            <div class="slds-scrollable_x">
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th scope="col"><div class="slds-truncate">Condition</div></th>
+                            <th scope="col"><div class="slds-truncate">Source</div></th>
+                            <th scope="col"><div class="slds-truncate">System Response</div></th>
+                            <th scope="col"><div class="slds-truncate">Human?</div></th>
+                            <th scope="col"><div class="slds-truncate">Actions</div></th>
                         </tr>
-                    </template>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <template for:each={decisionRules} for:item="r">
+                            <tr key={r.id} class="slds-hint-parent">
+                                <td data-label="Condition">{r.condition}</td>
+                                <td data-label="Source" class="slds-text-color_weak slds-text-body_small">{r.source}</td>
+                                <td data-label="System Response">{r.systemAction}</td>
+                                <td data-label="Human?"><span class={r.humanCss}>{r.requiresHuman}</span></td>
+                                <td data-label="Actions">
+                                    <button type="button" class="slds-button slds-button_neutral slds-button_small slds-m-right_x-small" data-id={r.id} onclick={handleEditDecisionRule}>Edit</button>
+                                    <button type="button" class="slds-button slds-button_neutral slds-button_small" data-id={r.id} onclick={handleViewDecisionRule}>View</button>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    </lightning-card>
 </template>
 
-</main>
+</div>
 
 <!-- Action modal -->
 <template if:true={showModal}>
-    <div class="modal-backdrop" onclick={handleCloseModal}>
-        <div class="modal-card" onclick={stopPropagation}>
-            <div class="modal-head">
-                <h3>{modalTitle}</h3>
-                <button class="btn" onclick={handleCloseModal} style="background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.3); color: #fff">Close</button>
-            </div>
-            <div class="modal-body">
-                <div class="notice">
+    <section role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="sco-modal-heading" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container" onclick={stopPropagation}>
+            <header class="slds-modal__header">
+                <lightning-button-icon icon-name="utility:close" alternative-text="Close" variant="bare-inverse" size="large" class="slds-modal__close" onclick={handleCloseModal}></lightning-button-icon>
+                <h2 id="sco-modal-heading" class="slds-modal__title slds-hyphenate">{modalTitle}</h2>
+            </header>
+            <div class="slds-modal__content slds-p-around_medium">
+                <div class="slds-notify slds-notify_alert slds-theme_warning slds-m-bottom_small" role="alert">
                     <strong>This action updates FSL and LOVING records and writes to the audit log.</strong>
                 </div>
-                <div class="field-grid">
-                    <div><div class="label-sm">Primary source</div><div class="value-sm strong">Appointments / Crews</div></div>
-                    <div><div class="label-sm">Validation</div><div class="value-sm strong">Weather, Traffic, PTO, GPS, Crew capacity</div></div>
-                    <div><div class="label-sm">Audit log</div><div class="value-sm strong">schedule issues or Salesforce Chatter</div></div>
-                    <div><div class="label-sm">Rollback</div><div class="value-sm strong">Restore prior SA assignment and status</div></div>
-                </div>
-                <div style="display: flex; gap: 8px; margin-top: 14px">
-                    <button class="btn primary" onclick={handleConfirmModal}>Confirm</button>
-                    <button class="btn" onclick={handleCloseModal}>Cancel</button>
-                </div>
+                <dl class="slds-dl_horizontal">
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Primary source</dt>
+                    <dd class="slds-dl_horizontal__detail">Appointments / Crews</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Validation</dt>
+                    <dd class="slds-dl_horizontal__detail">Weather, Traffic, PTO, GPS, Crew capacity</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Audit log</dt>
+                    <dd class="slds-dl_horizontal__detail">schedule issues or Salesforce Chatter</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Rollback</dt>
+                    <dd class="slds-dl_horizontal__detail">Restore prior SA assignment and status</dd>
+                </dl>
             </div>
+            <footer class="slds-modal__footer">
+                <button type="button" class="slds-button slds-button_neutral" onclick={handleCloseModal}>Cancel</button>
+                <button type="button" class="slds-button slds-button_brand" onclick={handleConfirmModal}>Confirm</button>
+            </footer>
         </div>
-    </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open" onclick={handleCloseModal}></div>
 </template>
 
 <!-- mcLOVIN — loving command center agent. Freestanding floating dock (its own
