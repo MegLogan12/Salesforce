@@ -1,35 +1,25 @@
 <template>
     <template lwc:if={isLoaded}>
-        <div class="card">
-            <div class="card-header">
-                <div class="ch-icon">👥</div>
-                <div class="ch-label">Key Builder Contacts</div>
-            </div>
-            <div class="contacts-grid">
-                <template for:each={contacts} for:item="contact">
-                    <div key={contact.id} class="contact-card">
-                        <div class="contact-header">
-                            <span class="contact-icon">{contact.icon}</span>
-                            <span class="contact-role">{contact.role}</span>
-                        </div>
-                        <div class="contact-name">{contact.name}</div>
-                        <div class="contact-meta">
+        <lightning-card title="Key Builder Contacts" icon-name="utility:people">
+            <div class="slds-card__body">
+                <div class="slds-grid slds-wrap">
+                    <template for:each={contacts} for:item="contact">
+                        <div key={contact.id} class="slds-col slds-size_1-of-2 slds-border_right slds-border_bottom div-contact-cell">
+                            <p class="slds-text-body_small slds-text-color_weak div-contact-role">{contact.role}</p>
+                            <p class="slds-text-body_regular" style="font-weight:600">{contact.name}</p>
                             <template lwc:if={contact.email}>
-                                <a href={contact.emailHref} class="contact-link">✉ {contact.email}</a>
+                                <p class="slds-m-top_xx-small"><a href={contact.emailHref} class="slds-text-link">✉ {contact.email}</a></p>
                             </template>
-                        </div>
-                        <div class="contact-meta">
                             <template lwc:if={contact.phone}>
-                                <a href={contact.phoneHref} class="contact-link">📞 {contact.phone}</a>
+                                <p><a href={contact.phoneHref} class="slds-text-link">📞 {contact.phone}</a></p>
                             </template>
                         </div>
-                    </div>
-                </template>
+                    </template>
+                </div>
             </div>
-        </div>
+        </lightning-card>
     </template>
-
     <template lwc:if={hasError}>
-        <div class="card error-state">Unable to load contact data.</div>
+        <div class="slds-notify slds-notify_alert slds-theme_error" role="alert">Unable to load contact data.</div>
     </template>
 </template>

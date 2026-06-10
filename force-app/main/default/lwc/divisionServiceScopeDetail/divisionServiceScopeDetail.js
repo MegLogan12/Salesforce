@@ -69,7 +69,7 @@ export default class DivisionServiceScopeDetail extends LightningElement {
     get lotReadyApprover(){ return this._str(LOT_READY_APPVR); }
     get lotReleaseTrigger(){ return this._str(LOT_RELEASE); }
     get englishCrew()     { return this._bool(ENGLISH_CREW) ? 'Required' : 'Not required'; }
-    get englishCrewChip() { return this._bool(ENGLISH_CREW) ? 'chip cr' : 'chip cgr'; }
+    get englishCrewChip() { return this._bool(ENGLISH_CREW) ? 'slds-badge cs-badge-red' : 'slds-badge slds-badge_lightest'; }
     get speedLimit()      { return this._val(SPEED_LIMIT)   != null ? `${this._val(SPEED_LIMIT)} mph` : '—'; }
     get stagingRule()     { return this._str(STAGING_RULE); }
     get drainageStd()     { return this._str(DRAINAGE_STD); }
@@ -81,10 +81,10 @@ export default class DivisionServiceScopeDetail extends LightningElement {
     get durCondo()        { return this._val(DUR_CONDO)   != null ? `${this._val(DUR_CONDO)} min`   : '—'; }
     get durTownhome()     { return this._val(DUR_TOWNHOME)!= null ? `${this._val(DUR_TOWNHOME)} min` : '—'; }
     get fwoOos()          { return this._bool(FWO_OOS) ? 'Required' : 'Not required'; }
-    get fwoChip()         { return this._bool(FWO_OOS) ? 'chip ca' : 'chip cgr'; }
+    get fwoChip()         { return this._bool(FWO_OOS) ? 'slds-badge cs-badge-amber' : 'slds-badge slds-badge_lightest'; }
     get seasonalTree()    { return this._str(SEASONAL_TREE); }
     get careGuide()       { return this._bool(CARE_GUIDE) ? 'Required' : 'Not required'; }
-    get careGuideChip()   { return this._bool(CARE_GUIDE) ? 'chip cb2' : 'chip cgr'; }
+    get careGuideChip()   { return this._bool(CARE_GUIDE) ? 'slds-badge cs-badge-aqua' : 'slds-badge slds-badge_lightest'; }
     get utilLocate()      { return this._val(UTIL_LOCATE)   != null ? `${this._val(UTIL_LOCATE)} hrs` : '—'; }
     get punchDays()       { return this._val(PUNCH_DAYS)    != null ? `${this._val(PUNCH_DAYS)} days` : '—'; }
     get warrantyPgm()     { return this._str(WARRANTY_PGM); }

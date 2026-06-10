@@ -1,90 +1,75 @@
 <template>
     <template lwc:if={isLoaded}>
-        <div class="card">
-            <!-- Header -->
-            <div class="card-header">
-                <div class="ch-icon">🏢</div>
-                <div class="ch-titles">
-                    <div class="ch-title">{accountName}</div>
-                    <div class="ch-chips">
-                        <template lwc:if={accountType}>
-                            <span class="chip caqua">{accountType}</span>
-                        </template>
-                        <template lwc:if={tradeTypeCode}>
-                            <span class="chip cgr">{tradeTypeCode}</span>
-                        </template>
-                    </div>
-                </div>
-                <button type="button" class="action-button" onclick={handleToggleEdit}>{editButtonLabel}</button>
+        <lightning-card>
+            <h2 slot="title">{accountName}</h2>
+            <div slot="title">
+                <template lwc:if={accountType}>
+                    <span class="slds-badge cs-badge-aqua slds-m-left_x-small">{accountType}</span>
+                </template>
+                <template lwc:if={tradeTypeCode}>
+                    <span class="slds-badge slds-badge_lightest slds-m-left_x-small">{tradeTypeCode}</span>
+                </template>
+            </div>
+            <div slot="actions">
+                <lightning-button label={editButtonLabel} onclick={handleToggleEdit}></lightning-button>
             </div>
 
             <template lwc:if={isEditing}>
-                <div class="edit-panel">
+                <div class="slds-card__body slds-card__body_inner">
                     <lightning-record-edit-form
                         object-api-name="Account"
                         record-id={recordId}
                         onsuccess={handleSuccess}
-                        onerror={handleError}
-                    >
-                        <div class="section-label">Division Identity</div>
-                        <div class="form-grid">
-                            <lightning-input-field field-name="Name"></lightning-input-field>
-                            <lightning-input-field field-name="Type"></lightning-input-field>
-                            <lightning-input-field field-name="Trade_Type_Code__c"></lightning-input-field>
-                            <lightning-input-field field-name="Market__c"></lightning-input-field>
-                            <lightning-input-field field-name="ParentId"></lightning-input-field>
+                        onerror={handleError}>
+                        <p class="slds-text-title_caps slds-m-bottom_x-small">Division Identity</p>
+                        <div class="slds-grid slds-wrap slds-gutters_small">
+                            <div class="slds-col slds-size_1-of-2"><lightning-input-field field-name="Name"></lightning-input-field></div>
+                            <div class="slds-col slds-size_1-of-2"><lightning-input-field field-name="Type"></lightning-input-field></div>
+                            <div class="slds-col slds-size_1-of-2"><lightning-input-field field-name="Trade_Type_Code__c"></lightning-input-field></div>
+                            <div class="slds-col slds-size_1-of-2"><lightning-input-field field-name="Market__c"></lightning-input-field></div>
+                            <div class="slds-col slds-size_1-of-1"><lightning-input-field field-name="ParentId"></lightning-input-field></div>
                         </div>
-                        <div class="section-divider"></div>
-                        <div class="section-label">LOVING Team</div>
-                        <div class="form-grid">
-                            <lightning-input-field field-name="Loving_CSM__c"></lightning-input-field>
-                            <lightning-input-field field-name="Loving_FM__c"></lightning-input-field>
-                            <lightning-input-field field-name="Loving_VP_Field_Ops__c"></lightning-input-field>
-                            <lightning-input-field field-name="Loving_Scheduler__c"></lightning-input-field>
-                            <lightning-input-field field-name="Loving_AP__c"></lightning-input-field>
-                            <lightning-input-field field-name="Loving_Warranty__c"></lightning-input-field>
+                        <p class="slds-text-title_caps slds-m-top_medium slds-m-bottom_x-small">LOVING Team</p>
+                        <div class="slds-grid slds-wrap slds-gutters_small">
+                            <div class="slds-col slds-size_1-of-2"><lightning-input-field field-name="Loving_CSM__c"></lightning-input-field></div>
+                            <div class="slds-col slds-size_1-of-2"><lightning-input-field field-name="Loving_FM__c"></lightning-input-field></div>
+                            <div class="slds-col slds-size_1-of-2"><lightning-input-field field-name="Loving_VP_Field_Ops__c"></lightning-input-field></div>
+                            <div class="slds-col slds-size_1-of-2"><lightning-input-field field-name="Loving_Scheduler__c"></lightning-input-field></div>
+                            <div class="slds-col slds-size_1-of-2"><lightning-input-field field-name="Loving_AP__c"></lightning-input-field></div>
+                            <div class="slds-col slds-size_1-of-2"><lightning-input-field field-name="Loving_Warranty__c"></lightning-input-field></div>
                         </div>
-                        <div class="form-actions">
-                            <button type="submit" class="action-button action-button_brand">Save Changes</button>
-                            <button type="button" class="action-button" onclick={handleCancel}>Cancel</button>
+                        <div class="slds-m-top_small">
+                            <button type="submit" class="slds-button slds-button_brand slds-m-right_x-small">Save Changes</button>
+                            <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>
                         </div>
                     </lightning-record-edit-form>
                 </div>
             </template>
-            <template lwc:else>
-                <div class="section-label">Classification</div>
-                <div class="fields-grid">
-                    <div class="field-item">
-                        <div class="field-label">Division (Market)</div>
-                        <div class="field-value">{division}</div>
-                    </div>
-                    <div class="field-item">
-                        <div class="field-label">Territory</div>
-                        <div class="field-value">{territory}</div>
-                    </div>
-                    <div class="field-item">
-                        <div class="field-label">Parent Builder</div>
-                        <div class="field-value">{parentName}</div>
-                    </div>
-                </div>
 
-                <div class="section-divider"></div>
-                <div class="section-label">LOVING Team</div>
-                <div class="team-grid">
-                    <template for:each={teamRows} for:item="row">
-                        <div key={row.label} class="team-item">
-                            <div class="field-label">{row.label}</div>
-                            <div class="field-value">{row.value}</div>
-                        </div>
-                    </template>
+            <template lwc:else>
+                <div class="slds-card__body slds-card__body_inner">
+                    <p class="slds-text-title_caps slds-m-bottom_x-small">Classification</p>
+                    <dl class="slds-dl_horizontal">
+                        <dt class="slds-dl_horizontal__label slds-text-color_weak">Division (Market)</dt>
+                        <dd class="slds-dl_horizontal__detail">{division}</dd>
+                        <dt class="slds-dl_horizontal__label slds-text-color_weak">Territory</dt>
+                        <dd class="slds-dl_horizontal__detail">{territory}</dd>
+                        <dt class="slds-dl_horizontal__label slds-text-color_weak">Parent Builder</dt>
+                        <dd class="slds-dl_horizontal__detail">{parentName}</dd>
+                    </dl>
+                    <p class="slds-text-title_caps slds-m-top_medium slds-m-bottom_x-small">LOVING Team</p>
+                    <dl class="slds-dl_horizontal">
+                        <template for:each={teamRows} for:item="row">
+                            <dt key={row.label} class="slds-dl_horizontal__label slds-text-color_weak">{row.label}</dt>
+                            <dd class="slds-dl_horizontal__detail">{row.value}</dd>
+                        </template>
+                    </dl>
                 </div>
             </template>
-        </div>
+        </lightning-card>
     </template>
-
     <template lwc:if={hasError}>
-        <div class="card error-state">{errorMessage}</div>
+        <div class="slds-notify slds-notify_alert slds-theme_error" role="alert">{errorMessage}</div>
     </template>
-
     <template lwc:elseif={account.data}><!-- already handled --></template>
 </template>

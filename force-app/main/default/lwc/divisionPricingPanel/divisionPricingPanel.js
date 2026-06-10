@@ -100,7 +100,7 @@ export default class DivisionPricingPanel extends LightningElement {
         return v != null ? `${v}%` : '—';
     }
     get lienWaiver()     { return this._bool(LIEN_WAIVER) ? 'Required' : 'Not required'; }
-    get lienChip()       { return this._bool(LIEN_WAIVER) ? 'chip ca' : 'chip cgr'; }
+    get lienChip()       { return this._bool(LIEN_WAIVER) ? 'slds-badge cs-badge-amber' : 'slds-badge slds-badge_lightest'; }
 
     get contractDate()   { return this._str(CONTRACT_DATE); }
     get exhibitA()       { return this._bool(EXHIBIT_A); }
@@ -109,7 +109,7 @@ export default class DivisionPricingPanel extends LightningElement {
     get exhibitD()       { return this._bool(EXHIBIT_D); }
 
     get agreements() {
-        const chip = (signed) => signed ? 'chip cg' : 'chip cr';
+        const chip = (signed) => signed ? 'slds-badge cs-badge-green' : 'slds-badge cs-badge-red';
         return [
             { id: 'a', label: 'Exhibit A — Scope of Work',  signed: this.exhibitA, chipClass: chip(this.exhibitA) },
             { id: 'b', label: 'Exhibit B — Payment Terms',  signed: this.exhibitB, chipClass: chip(this.exhibitB) },
@@ -119,21 +119,21 @@ export default class DivisionPricingPanel extends LightningElement {
     }
 
     get addlInsured()    { return this._bool(ADDL_INSURED) ? 'Required' : 'Not required'; }
-    get addlInsuredChip(){ return this._bool(ADDL_INSURED) ? 'chip ca' : 'chip cgr'; }
+    get addlInsuredChip(){ return this._bool(ADDL_INSURED) ? 'slds-badge cs-badge-amber' : 'slds-badge slds-badge_lightest'; }
     get autoLiab()       { return this._str(AUTO_LIAB); }
     get cglOcc()         { return this._str(CGL_OCC); }
     get cglAgg()         { return this._str(CGL_AGG); }
     get umbrella()       { return this._str(UMBRELLA); }
     get workersComp()    { return this._str(WORKERS_COMP); }
     get certsOnFile()    { return this._bool(CERTS_ON_FILE) ? 'On file ✓' : 'Not on file'; }
-    get certsChip()      { return this._bool(CERTS_ON_FILE) ? 'chip cg' : 'chip cr'; }
+    get certsChip()      { return this._bool(CERTS_ON_FILE) ? 'slds-badge cs-badge-green' : 'slds-badge cs-badge-red'; }
     get w9OnFile()       { return this._bool(W9_ON_FILE) ? 'On file ✓' : 'Not on file'; }
-    get w9Chip()         { return this._bool(W9_ON_FILE) ? 'chip cg' : 'chip cr'; }
+    get w9Chip()         { return this._bool(W9_ON_FILE) ? 'slds-badge cs-badge-green' : 'slds-badge cs-badge-red'; }
     get lovingLicense()  { return this._str(LOVING_LICENSE); }
     get renewalCert()    {
         const v = this._val(RENEWAL_CERT);
         return v != null ? `${v} days lead` : '—';
     }
     get waiverSubro()    { return this._bool(WAIVER_SUBRO) ? 'Required' : 'Not required'; }
-    get waiverChip()     { return this._bool(WAIVER_SUBRO) ? 'chip ca' : 'chip cgr'; }
+    get waiverChip()     { return this._bool(WAIVER_SUBRO) ? 'slds-badge cs-badge-amber' : 'slds-badge slds-badge_lightest'; }
 }

@@ -2,208 +2,137 @@
     <template lwc:if={isLoaded}>
 
         <!-- Billing Basis -->
-        <div class="card">
-            <div class="card-header">
-                <div class="ch-icon">💰</div>
-                <div class="ch-label">Billing Basis</div>
+        <lightning-card title="Billing Basis" icon-name="utility:currency" class="slds-m-bottom_small">
+            <div class="slds-card__body slds-card__body_inner">
+                <dl class="slds-dl_horizontal">
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Sod Billing Basis</dt>
+                    <dd class="slds-dl_horizontal__detail">{sodBasis}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Tree Billing Basis</dt>
+                    <dd class="slds-dl_horizontal__detail">{treeBasis}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Sod Type Notes</dt>
+                    <dd class="slds-dl_horizontal__detail">{sodTypeNotes}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Model Home Discount</dt>
+                    <dd class="slds-dl_horizontal__detail">{modelDiscPct}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Discount Notes</dt>
+                    <dd class="slds-dl_horizontal__detail">{modelDiscNotes}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Price Adjustment Notice</dt>
+                    <dd class="slds-dl_horizontal__detail">{priceAdjDays}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Back-Charge Admin Fee</dt>
+                    <dd class="slds-dl_horizontal__detail">{backChargeFee}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Price Adjustment Process</dt>
+                    <dd class="slds-dl_horizontal__detail">{priceAdjProc}</dd>
+                </dl>
             </div>
-            <div class="fields-grid">
-                <div class="field-item">
-                    <div class="field-label">Sod Billing Basis</div>
-                    <div class="field-value">{sodBasis}</div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">Tree Billing Basis</div>
-                    <div class="field-value">{treeBasis}</div>
-                </div>
-                <div class="field-item full-width">
-                    <div class="field-label">Sod Type Notes</div>
-                    <div class="field-value textarea-value">{sodTypeNotes}</div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">Model Home Discount</div>
-                    <div class="field-value">{modelDiscPct}</div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">Discount Notes</div>
-                    <div class="field-value">{modelDiscNotes}</div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">Price Adjustment Notice</div>
-                    <div class="field-value">{priceAdjDays}</div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">Back-Charge Admin Fee</div>
-                    <div class="field-value">{backChargeFee}</div>
-                </div>
-                <div class="field-item full-width">
-                    <div class="field-label">Price Adjustment Process</div>
-                    <div class="field-value textarea-value">{priceAdjProc}</div>
-                </div>
-            </div>
-        </div>
+        </lightning-card>
 
         <!-- Payment Terms -->
-        <div class="card">
-            <div class="card-header">
-                <div class="ch-icon">🏦</div>
-                <div class="ch-label">Payment Terms</div>
+        <lightning-card title="Payment Terms" icon-name="utility:moneybag" class="slds-m-bottom_small">
+            <div class="slds-card__body slds-card__body_inner">
+                <dl class="slds-dl_horizontal">
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Payment Method</dt>
+                    <dd class="slds-dl_horizontal__detail">{paymentMethod}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Invoice Deadline</dt>
+                    <dd class="slds-dl_horizontal__detail">{invDeadline}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Pay Schedule (Inv 1–15)</dt>
+                    <dd class="slds-dl_horizontal__detail">{paySchedule115}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Pay Schedule (Inv 16–End)</dt>
+                    <dd class="slds-dl_horizontal__detail">{paySchedule16E}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Lien Waiver</dt>
+                    <dd class="slds-dl_horizontal__detail"><span class={lienChip}>{lienWaiver}</span></dd>
+                </dl>
             </div>
-            <div class="fields-grid">
-                <div class="field-item">
-                    <div class="field-label">Payment Method</div>
-                    <div class="field-value">{paymentMethod}</div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">Invoice Deadline</div>
-                    <div class="field-value">{invDeadline}</div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">Pay Schedule (Inv 1–15)</div>
-                    <div class="field-value">{paySchedule115}</div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">Pay Schedule (Inv 16–End)</div>
-                    <div class="field-value">{paySchedule16E}</div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">Lien Waiver</div>
-                    <div class="field-value"><span class={lienChip}>{lienWaiver}</span></div>
-                </div>
-            </div>
-        </div>
+        </lightning-card>
 
-        <!-- Invoice &amp; Portals -->
-        <div class="card">
-            <div class="card-header">
-                <div class="ch-icon">📄</div>
-                <div class="ch-label">Invoice Methods &amp; Portals</div>
-            </div>
-            <div class="fields-grid">
-                <div class="field-item">
-                    <div class="field-label">Invoice Method (Primary)</div>
-                    <div class="field-value">{invMethodPri}</div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">Invoice Method (Non-Portal)</div>
-                    <div class="field-value">{invMethodNon}</div>
-                </div>
-                <div class="field-item full-width">
-                    <div class="field-label">Non-Portal Invoice Requirements</div>
-                    <div class="field-value textarea-value">{nonPortalReq}</div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">Builder Portal</div>
-                    <div class="field-value">
+        <!-- Invoice & Portals -->
+        <lightning-card title="Invoice Methods &amp; Portals" icon-name="utility:description" class="slds-m-bottom_small">
+            <div class="slds-card__body slds-card__body_inner">
+                <dl class="slds-dl_horizontal">
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Invoice Method (Primary)</dt>
+                    <dd class="slds-dl_horizontal__detail">{invMethodPri}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Invoice Method (Non-Portal)</dt>
+                    <dd class="slds-dl_horizontal__detail">{invMethodNon}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Non-Portal Invoice Req.</dt>
+                    <dd class="slds-dl_horizontal__detail">{nonPortalReq}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Builder Portal</dt>
+                    <dd class="slds-dl_horizontal__detail">
                         <template lwc:if={builderPortal}>
-                            <a href={builderPortal} target="_blank" class="field-link">Open Builder Portal →</a>
+                            <a href={builderPortal} target="_blank" class="slds-text-link">Open Builder Portal →</a>
                         </template>
                         <template lwc:else>—</template>
-                    </div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">Vendor Portal</div>
-                    <div class="field-value">
+                    </dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Vendor Portal</dt>
+                    <dd class="slds-dl_horizontal__detail">
                         <template lwc:if={vendorPortal}>
-                            <a href={vendorPortal} target="_blank" class="field-link">Open Vendor Portal →</a>
+                            <a href={vendorPortal} target="_blank" class="slds-text-link">Open Vendor Portal →</a>
                         </template>
                         <template lwc:else>—</template>
-                    </div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">AP Invoicing Email</div>
-                    <div class="field-value">
+                    </dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">AP Invoicing Email</dt>
+                    <dd class="slds-dl_horizontal__detail">
                         <template lwc:if={apEmailHref}>
-                            <a href={apEmailHref} class="field-link">{apEmail}</a>
+                            <a href={apEmailHref} class="slds-text-link">{apEmail}</a>
                         </template>
                         <template lwc:else>{apEmail}</template>
-                    </div>
-                </div>
+                    </dd>
+                </dl>
             </div>
-        </div>
+        </lightning-card>
 
         <!-- Agreements -->
-        <div class="card">
-            <div class="card-header">
-                <div class="ch-icon">✍</div>
-                <div class="ch-label">Agreements &amp; Compliance</div>
-            </div>
-            <div class="fields-grid">
-                <div class="field-item">
-                    <div class="field-label">Contractor Agreement Signed</div>
-                    <div class="field-value">{contractDate}</div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">LOVING License #</div>
-                    <div class="field-value">{lovingLicense}</div>
-                </div>
-            </div>
-            <div class="exhibits-list">
+        <lightning-card title="Agreements &amp; Compliance" icon-name="utility:contract_doc" class="slds-m-bottom_small">
+            <div class="slds-card__body slds-card__body_inner">
+                <dl class="slds-dl_horizontal slds-m-bottom_small">
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Contractor Agreement Signed</dt>
+                    <dd class="slds-dl_horizontal__detail">{contractDate}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">LOVING License #</dt>
+                    <dd class="slds-dl_horizontal__detail">{lovingLicense}</dd>
+                </dl>
                 <template for:each={agreements} for:item="ag">
-                    <div key={ag.id} class="exhibit-row">
-                        <span class={ag.chipClass}>
-                            <template lwc:if={ag.signed}>✓ Signed</template>
-                            <template lwc:else>Not signed</template>
-                        </span>
-                        <span class="exhibit-label">{ag.label}</span>
+                    <div key={ag.id} class="slds-grid slds-gutters_x-small slds-m-bottom_xx-small slds-align_absolute-center">
+                        <div class="slds-col slds-shrink-none">
+                            <span class={ag.chipClass}>
+                                <template lwc:if={ag.signed}>✓ Signed</template>
+                                <template lwc:else>Not signed</template>
+                            </span>
+                        </div>
+                        <div class="slds-col">
+                            <span class="slds-text-body_regular">{ag.label}</span>
+                        </div>
                     </div>
                 </template>
             </div>
-        </div>
+        </lightning-card>
 
         <!-- Insurance Requirements -->
-        <div class="card card-last">
-            <div class="card-header">
-                <div class="ch-icon">🔒</div>
-                <div class="ch-label">Insurance Requirements</div>
+        <lightning-card title="Insurance Requirements" icon-name="utility:shield">
+            <div class="slds-card__body slds-card__body_inner">
+                <dl class="slds-dl_horizontal">
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Additional Insured</dt>
+                    <dd class="slds-dl_horizontal__detail"><span class={addlInsuredChip}>{addlInsured}</span></dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Waiver of Subrogation</dt>
+                    <dd class="slds-dl_horizontal__detail"><span class={waiverChip}>{waiverSubro}</span></dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">CGL Per Occurrence</dt>
+                    <dd class="slds-dl_horizontal__detail">{cglOcc}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">CGL Aggregate</dt>
+                    <dd class="slds-dl_horizontal__detail">{cglAgg}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Auto Liability</dt>
+                    <dd class="slds-dl_horizontal__detail">{autoLiab}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Umbrella</dt>
+                    <dd class="slds-dl_horizontal__detail">{umbrella}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Workers' Comp</dt>
+                    <dd class="slds-dl_horizontal__detail">{workersComp}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Renewal Cert Lead Time</dt>
+                    <dd class="slds-dl_horizontal__detail">{renewalCert}</dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Insurance Certs on File</dt>
+                    <dd class="slds-dl_horizontal__detail"><span class={certsChip}>{certsOnFile}</span></dd>
+                    <dt class="slds-dl_horizontal__label slds-text-color_weak">W-9 on File</dt>
+                    <dd class="slds-dl_horizontal__detail"><span class={w9Chip}>{w9OnFile}</span></dd>
+                </dl>
             </div>
-            <div class="fields-grid">
-                <div class="field-item">
-                    <div class="field-label">Additional Insured</div>
-                    <div class="field-value"><span class={addlInsuredChip}>{addlInsured}</span></div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">Waiver of Subrogation</div>
-                    <div class="field-value"><span class={waiverChip}>{waiverSubro}</span></div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">CGL Per Occurrence</div>
-                    <div class="field-value">{cglOcc}</div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">CGL Aggregate</div>
-                    <div class="field-value">{cglAgg}</div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">Auto Liability</div>
-                    <div class="field-value">{autoLiab}</div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">Umbrella</div>
-                    <div class="field-value">{umbrella}</div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">Workers' Comp</div>
-                    <div class="field-value">{workersComp}</div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">Renewal Cert Lead Time</div>
-                    <div class="field-value">{renewalCert}</div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">Insurance Certs on File</div>
-                    <div class="field-value"><span class={certsChip}>{certsOnFile}</span></div>
-                </div>
-                <div class="field-item">
-                    <div class="field-label">W-9 on File</div>
-                    <div class="field-value"><span class={w9Chip}>{w9OnFile}</span></div>
-                </div>
-            </div>
-        </div>
+        </lightning-card>
 
     </template>
-
     <template lwc:if={hasError}>
-        <div class="card error-state">Unable to load pricing data.</div>
+        <div class="slds-notify slds-notify_alert slds-theme_error" role="alert">Unable to load pricing data.</div>
     </template>
 </template>
