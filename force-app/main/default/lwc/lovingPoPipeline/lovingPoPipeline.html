@@ -1,281 +1,315 @@
 <template>
-    <div class="po-wrap">
+<div class="po-wrap">
 
-        <!-- ── Record banner ─────────────────────────────────── -->
-        <div class="record-banner">
-            <div class="record-title-row">
-                <div class="object-icon">📋</div>
-                <div class="banner-text">
-                    <div class="eyebrow">Purchase Orders · Pipeline View</div>
-                    <div class="record-title">PO Pipeline Board</div>
-                    <div class="record-sub">{kpiAll} open POs · {kpiValidate} in review · {kpiForecast} in takeoff · {kpiValue} total value</div>
+    <!-- Page Header -->
+    <div class="slds-page-header slds-m-bottom_small">
+        <div class="slds-page-header__row">
+            <div class="slds-page-header__col-title">
+                <div class="slds-media">
+                    <div class="slds-media__figure">
+                        <lightning-icon icon-name="standard:opportunity" size="medium" alternative-text="PO Pipeline"></lightning-icon>
+                    </div>
+                    <div class="slds-media__body">
+                        <div class="slds-page-header__name">
+                            <div class="slds-page-header__name-title">
+                                <h1><span class="slds-page-header__title">PO Pipeline Board</span></h1>
+                            </div>
+                        </div>
+                        <p class="slds-page-header__name-meta">{kpiAll} open POs · {kpiValidate} in review · {kpiForecast} in takeoff · {kpiValue} total value</p>
+                    </div>
                 </div>
-                <div class="banner-actions">
-                    <template if:true={showDetail}>
-                        <button class="btn" onclick={handleBackToBoard}>← Board</button>
-                    </template>
-                    <button class="btn primary" onclick={handleNewPo}>+ Create New PO</button>
+            </div>
+            <div class="slds-page-header__col-actions">
+                <div class="slds-page-header__controls">
+                    <div class="slds-page-header__control">
+                        <template if:true={showDetail}>
+                            <lightning-button label="← Board" onclick={handleBackToBoard} class="slds-m-right_x-small"></lightning-button>
+                        </template>
+                        <lightning-button label="+ Create New PO" variant="brand" onclick={handleNewPo}></lightning-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <template if:true={isLoading}>
+        <div class="slds-align_absolute-center slds-p-around_large">
+            <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+        </div>
+    </template>
+
+    <!-- Board view -->
+    <template if:false={showDetail}>
+
+        <!-- KPI strip -->
+        <div class="slds-grid slds-wrap slds-gutters_x-small slds-m-bottom_medium">
+            <div class="slds-col slds-size_1-of-6">
+                <div class="slds-box slds-box_small cs-kpi-tile">
+                    <p class="slds-text-body_small slds-text-color_weak">Needs Review</p>
+                    <p class="slds-text-heading_medium slds-m-vertical_xx-small cs-kpi-v cs-kpi-amber">{kpiValidate}</p>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-6">
+                <div class="slds-box slds-box_small cs-kpi-tile">
+                    <p class="slds-text-body_small slds-text-color_weak">Open POs</p>
+                    <p class="slds-text-heading_medium slds-m-vertical_xx-small cs-kpi-v">{kpiAll}</p>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-6">
+                <div class="slds-box slds-box_small cs-kpi-tile">
+                    <p class="slds-text-body_small slds-text-color_weak">Takeoff Queue</p>
+                    <p class="slds-text-heading_medium slds-m-vertical_xx-small cs-kpi-v cs-kpi-blue">{kpiForecast}</p>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-6">
+                <div class="slds-box slds-box_small cs-kpi-tile">
+                    <p class="slds-text-body_small slds-text-color_weak">Clear for Schedule</p>
+                    <p class="slds-text-heading_medium slds-m-vertical_xx-small cs-kpi-v cs-kpi-green">{kpiClear}</p>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-6">
+                <div class="slds-box slds-box_small cs-kpi-tile">
+                    <p class="slds-text-body_small slds-text-color_weak">WorkOrder Queue</p>
+                    <p class="slds-text-heading_medium slds-m-vertical_xx-small cs-kpi-v cs-kpi-blue">{kpiSched}</p>
+                </div>
+            </div>
+            <div class="slds-col slds-size_1-of-6">
+                <div class="slds-box slds-box_small cs-kpi-tile">
+                    <p class="slds-text-body_small slds-text-color_weak">Total Value</p>
+                    <p class="slds-text-heading_medium slds-m-vertical_xx-small cs-kpi-v cs-kpi-green">{kpiValue}</p>
                 </div>
             </div>
         </div>
 
-        <!-- ── Spinner (additive) ────────────────────────────── -->
-        <template if:true={isLoading}>
-            <div class="loading-wrap">
-                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
-            </div>
-        </template>
-
-        <!-- ── Body ──────────────────────────────────────────── -->
-        <div class="body">
-
-            <!-- ── Board view ──────────────────────────────── -->
-            <template if:false={showDetail}>
-
-                <!-- KPI strip -->
-                <div class="kpis">
-                    <div class="kpi amber">
-                        <div class="kpi-n">{kpiValidate}</div>
-                        <div class="kpi-l">Needs Review</div>
-                    </div>
-                    <div class="kpi aqua">
-                        <div class="kpi-n">{kpiAll}</div>
-                        <div class="kpi-l">Open POs</div>
-                    </div>
-                    <div class="kpi aqua">
-                        <div class="kpi-n">{kpiForecast}</div>
-                        <div class="kpi-l">Takeoff Queue</div>
-                    </div>
-                    <div class="kpi green">
-                        <div class="kpi-n">{kpiClear}</div>
-                        <div class="kpi-l">Clear for Schedule</div>
-                    </div>
-                    <div class="kpi blue">
-                        <div class="kpi-n">{kpiSched}</div>
-                        <div class="kpi-l">WorkOrder Queue</div>
-                    </div>
-                    <div class="kpi green">
-                        <div class="kpi-n">{kpiValue}</div>
-                        <div class="kpi-l">Total Value</div>
-                    </div>
-                </div>
-
-                <!-- Toolbar -->
-                <div class="toolbar">
-                    <template for:each={filterOptions} for:item="f">
-                        <button key={f.value} class={f.cssClass} data-value={f.value} onclick={handleFilterClick}>{f.label}</button>
-                    </template>
-                    <span class="spacer"></span>
-                    <button class="btn primary" onclick={handleNewPo}>+ Create New PO</button>
-                    <select class="input select-sm" onchange={handleBuilderChange}>
-                        <option value="">All builders</option>
-                        <template for:each={builderNames} for:item="b">
-                            <option key={b} value={b}>{b}</option>
-                        </template>
-                    </select>
-                    <input type="text" class="input search-sm" placeholder="Search PO, community, item…" oninput={handleSearchInput} />
-                </div>
-
-                <!-- Board -->
-                <div class="board-outer" data-layout-version="object-home-grid-v6">
-                    <div class="board compact-board">
-                        <template for:each={stageColumns} for:item="stage">
-                            <div key={stage.key} class={stage.cssClass}>
-                                <div class="stage-head">
-                                    <div class="stage-top">
-                                        <span class="stage-num">{stage.num}</span>
-                                        <span class="stage-title">{stage.label}</span>
-                                        <span class="stage-count">{stage.count}</span>
-                                    </div>
-                                    <div class="stage-rule">{stage.rule}</div>
-                                </div>
-                                <div class="stage-body">
-                                    <template if:true={stage.hasRecords}>
-                                        <template for:each={stage.records} for:item="po">
-                                            <div key={po.id} class={po.cardClass} data-id={po.id} onclick={handlePoSelect}>
-                                                <div class="po-title"><span>{po.name}</span></div>
-                                                <div class="po-meta"><span class="po-meta-name">{po.communityName}</span></div>
-                                                <div class="po-row">
-                                                    <span class="money">{po.amountFormatted}</span>
-                                                    <span class={po.statusChipClass}>{po.statusLabel}</span>
-                                                </div>
-                                            </div>
-                                        </template>
-                                    </template>
-                                    <template if:false={stage.hasRecords}>
-                                        <div class="empty">No POs</div>
-                                    </template>
-                                </div>
-                            </div>
-                        </template>
-
-                    </div><!-- /.board -->
-                </div><!-- /.board-outer -->
-
-            </template><!-- /if:false showDetail -->
-
-            <!-- ── Detail view ──────────────────────────────── -->
-            <template if:true={showDetail}>
-
-                <!-- Action result banner -->
-                <template if:true={actionResult}>
-                    <div class={validationBannerClass}>
-                        <strong>{validationIcon}</strong> {actionResult.message}
-                    </div>
+        <!-- Toolbar -->
+        <div class="po-toolbar slds-m-bottom_medium">
+            <div class="slds-button-group" role="group">
+                <template for:each={filterOptions} for:item="f">
+                    <button key={f.value} class={f.cssClass} data-value={f.value} onclick={handleFilterClick}>{f.label}</button>
                 </template>
+            </div>
+            <span class="po-toolbar-spacer"></span>
+            <lightning-button label="+ Create New PO" variant="brand" onclick={handleNewPo}></lightning-button>
+            <div class="po-toolbar-combobox">
+                <lightning-combobox
+                    label=""
+                    placeholder="All Builders"
+                    value={builderFilter}
+                    options={builderOptions}
+                    onchange={handleBuilderChange}
+                    variant="label-hidden">
+                </lightning-combobox>
+            </div>
+            <div class="po-toolbar-search">
+                <lightning-input
+                    label=""
+                    type="search"
+                    placeholder="Search PO, community, item…"
+                    value={searchTerm}
+                    onchange={handleSearchInput}
+                    variant="label-hidden">
+                </lightning-input>
+            </div>
+        </div>
 
-                <div class="detail-layout">
-
-                    <!-- Main column -->
-                    <div class="detail-main">
-
-                        <!-- PO identity panel -->
-                        <div class="panel">
-                            <div class="panel-head">
-                                <div class="panel-icon">📋</div>
-                                <h3>{detailTitle}</h3>
-                                <button class="btn" onclick={handleOpenRecord}>Open Record</button>
-                            </div>
-                            <div class="panel-body fields">
-                                <div>
-                                    <div class="label">Builder</div>
-                                    <div class="value emph">{selectedPo.builderName}</div>
-                                </div>
-                                <div>
-                                    <div class="label">Community</div>
-                                    <div class="value">{selectedPo.communityName}</div>
-                                </div>
-                                <div>
-                                    <div class="label">Division</div>
-                                    <div class="value">{selectedPo.divisionName}</div>
-                                </div>
-                                <div>
-                                    <div class="label">Status</div>
-                                    <div class="value"><span class={selectedPo.statusChipClass}>{selectedPo.statusLabel}</span></div>
-                                </div>
-                                <div>
-                                    <div class="label">Pipeline Stage</div>
-                                    <div class="value emph">{selectedPo.pipelineStage}</div>
-                                </div>
-                                <div>
-                                    <div class="label">Estimated Start Date</div>
-                                    <div class="value">{selectedPo.estimatedStartDate}</div>
-                                </div>
-                                <div>
-                                    <div class="label">Total Amount</div>
-                                    <div class="value emph">{selectedPo.amountFormatted}</div>
-                                </div>
-                                <div>
-                                    <div class="label">Item</div>
-                                    <div class="value">{selectedPo.itemName}</div>
-                                </div>
-                                <div>
-                                    <div class="label">Quantity</div>
-                                    <div class="value">{selectedPo.quantity}</div>
-                                </div>
-                                <div>
-                                    <div class="label">Takeoff Status</div>
-                                    <div class="value">{selectedPo.takeoffStatus}</div>
-                                </div>
-                                <div>
-                                    <div class="label">Work Order</div>
-                                    <div class="value">{selectedPo.workOrderId}</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Readiness checklist -->
-                        <div class="panel">
-                            <div class="panel-head">
-                                <div class="panel-icon">✓</div>
-                                <h3>Readiness checklist</h3>
-                            </div>
-                            <div class="panel-body">
-                                <div class="flow-list">
-                                    <template for:each={validationChecklist} for:item="item">
-                                        <div key={item.label} class={item.flowClass}>
-                                            <div class="dot">{item.icon}</div>
-                                            <div>
-                                                <div class="flow-title">{item.label}</div>
-                                                <div class="flow-sub">{item.value}</div>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pipeline stages -->
-                        <div class="panel">
-                            <div class="panel-head">
-                                <div class="panel-icon">→</div>
-                                <h3>Pipeline stages</h3>
-                            </div>
-                            <div class="panel-body">
-                                <div class="flow-list">
-                                    <template for:each={stageFlows} for:item="stage">
-                                        <div key={stage.label} class={stage.flowClass}>
-                                            <div class="dot">{stage.icon}</div>
-                                            <div>
-                                                <div class="flow-title">{stage.label}</div>
-                                                <div class="flow-sub">{stage.rule}</div>
-                                            </div>
-                                        </div>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div><!-- /.detail-main -->
-
-                    <!-- Rail column -->
-                    <div class="detail-rail">
-                        <div class="panel">
-                            <div class="panel-head">
-                                <div class="panel-icon">⚡</div>
-                                <h3>Actions</h3>
-                            </div>
-                            <div class="panel-body panel-actions">
-                                <button class={primaryActionClass} onclick={handlePrimaryAction}>{primaryActionLabel}</button>
-                                <button class="btn wide" onclick={handleOpenModal}>Move Status</button>
-                                <button class="btn wide" onclick={handleOpenRecord}>View full record</button>
-                            </div>
-                        </div>
+        <!-- Board -->
+        <div class="po-board">
+            <template for:each={stageColumns} for:item="stage">
+                <div key={stage.key} class={stage.cssClass}>
+                    <div class="po-stage-head">
+                        <span class="po-stage-num">{stage.num}</span>
+                        <span class="slds-text-body_small po-stage-label">{stage.label}</span>
+                        <span class="slds-badge slds-badge_lightest slds-m-left_xx-small">{stage.count}</span>
                     </div>
-
-                </div><!-- /.detail-layout -->
-
-            </template><!-- /if:true showDetail -->
-
-        </div><!-- /.body -->
-
-        <!-- ── Move Status modal ──────────────────────────────── -->
-        <template if:true={showModal}>
-            <div class="modal-backdrop" onclick={handleModalBackdropClick}>
-                <div class="modal" onclick={handleModalClick}>
-                    <div class="modal-head">
-                        <div class="modal-title">Move Purchase Order</div>
-                        <div class="modal-sub">Select the new status to move this PO to.</div>
-                    </div>
-                    <div class="modal-body">
-                        <div class="label">New Status <span class="required">*</span></div>
-                        <select class="input" style="width:100%;margin-top:6px;" onchange={handleStatusChange}>
-                            <option value="">Select status...</option>
-                            <template for:each={statusOptions} for:item="opt">
-                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    <p class="po-stage-rule slds-text-body_small slds-text-color_weak">{stage.rule}</p>
+                    <div class="po-stage-body">
+                        <template if:true={stage.hasRecords}>
+                            <template for:each={stage.records} for:item="po">
+                                <button key={po.id} class={po.cardClass} data-id={po.id} onclick={handlePoSelect}>
+                                    <span class="po-card-name">{po.name}</span>
+                                    <span class="po-card-community">{po.communityName}</span>
+                                    <span class="po-card-foot">
+                                        <span class="po-card-money">{po.amountFormatted}</span>
+                                        <span class={po.statusChipClass}>{po.statusLabel}</span>
+                                    </span>
+                                </button>
                             </template>
-                        </select>
-                        <template if:true={modalError}>
-                            <div class="notice red" style="margin-top:12px;">{modalError}</div>
+                        </template>
+                        <template if:false={stage.hasRecords}>
+                            <p class="slds-text-body_small slds-text-color_weak slds-text-align_center slds-p-vertical_small">No POs</p>
                         </template>
                     </div>
-                    <div class="modal-foot">
-                        <button class="btn" onclick={handleCloseModal}>Cancel</button>
-                        <button class="btn success" onclick={handleSaveValidation} disabled={isSaving}>{saveLabel}</button>
-                    </div>
                 </div>
+            </template>
+        </div>
+
+    </template>
+
+    <!-- Detail view -->
+    <template if:true={showDetail}>
+
+        <!-- Action result banner -->
+        <template if:true={actionResult}>
+            <div class={validationBannerClass} role="alert">
+                <lightning-icon icon-name={validationIcon} size="x-small" class="slds-m-right_x-small" alternative-text="Result"></lightning-icon>
+                {actionResult.message}
             </div>
         </template>
 
-    </div><!-- /.po-wrap -->
+        <div class="slds-grid slds-wrap slds-gutters_small">
+
+            <!-- Main column -->
+            <div class="slds-col slds-size_1-of-1 slds-large-size_8-of-12 slds-m-bottom_medium">
+
+                <!-- PO Identity -->
+                <lightning-card class="slds-m-bottom_medium">
+                    <h2 slot="title">
+                        <lightning-icon icon-name="standard:opportunity" size="x-small" class="slds-m-right_x-small" alternative-text="PO"></lightning-icon>
+                        {detailTitle}
+                    </h2>
+                    <div slot="actions">
+                        <lightning-button label="Open Record" onclick={handleOpenRecord}></lightning-button>
+                    </div>
+                    <div class="slds-card__body slds-card__body_inner">
+                        <dl class="slds-dl_horizontal">
+                            <dt class="slds-dl_horizontal__label slds-text-color_weak">Builder</dt>
+                            <dd class="slds-dl_horizontal__detail" style="font-weight:600">{selectedPo.builderName}</dd>
+                            <dt class="slds-dl_horizontal__label slds-text-color_weak">Community</dt>
+                            <dd class="slds-dl_horizontal__detail">{selectedPo.communityName}</dd>
+                            <dt class="slds-dl_horizontal__label slds-text-color_weak">Division</dt>
+                            <dd class="slds-dl_horizontal__detail">{selectedPo.divisionName}</dd>
+                            <dt class="slds-dl_horizontal__label slds-text-color_weak">Status</dt>
+                            <dd class="slds-dl_horizontal__detail"><span class={selectedPo.statusChipClass}>{selectedPo.statusLabel}</span></dd>
+                            <dt class="slds-dl_horizontal__label slds-text-color_weak">Pipeline Stage</dt>
+                            <dd class="slds-dl_horizontal__detail" style="font-weight:600">{selectedPo.pipelineStage}</dd>
+                            <dt class="slds-dl_horizontal__label slds-text-color_weak">Est. Start Date</dt>
+                            <dd class="slds-dl_horizontal__detail">{selectedPo.estimatedStartDate}</dd>
+                            <dt class="slds-dl_horizontal__label slds-text-color_weak">Total Amount</dt>
+                            <dd class="slds-dl_horizontal__detail" style="font-weight:600">{selectedPo.amountFormatted}</dd>
+                            <dt class="slds-dl_horizontal__label slds-text-color_weak">Item</dt>
+                            <dd class="slds-dl_horizontal__detail">{selectedPo.itemName}</dd>
+                            <dt class="slds-dl_horizontal__label slds-text-color_weak">Quantity</dt>
+                            <dd class="slds-dl_horizontal__detail">{selectedPo.quantity}</dd>
+                            <dt class="slds-dl_horizontal__label slds-text-color_weak">Takeoff Status</dt>
+                            <dd class="slds-dl_horizontal__detail">{selectedPo.takeoffStatus}</dd>
+                            <dt class="slds-dl_horizontal__label slds-text-color_weak">Work Order</dt>
+                            <dd class="slds-dl_horizontal__detail">{selectedPo.workOrderId}</dd>
+                        </dl>
+                    </div>
+                </lightning-card>
+
+                <!-- Readiness checklist -->
+                <lightning-card title="Readiness Checklist" icon-name="utility:check" class="slds-m-bottom_medium">
+                    <div class="slds-card__body slds-card__body_inner">
+                        <div class="po-flow-list">
+                            <template for:each={validationChecklist} for:item="item">
+                                <div key={item.label} class={item.flowClass}>
+                                    <div class="po-flow-dot">{item.icon}</div>
+                                    <div class="slds-m-left_small">
+                                        <p class="slds-text-body_regular" style="font-weight:700">{item.label}</p>
+                                        <p class="slds-text-body_small slds-text-color_weak">{item.value}</p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </lightning-card>
+
+                <!-- Pipeline stages -->
+                <lightning-card title="Pipeline Stages" icon-name="utility:forward">
+                    <div class="slds-card__body slds-card__body_inner">
+                        <div class="po-flow-list">
+                            <template for:each={stageFlows} for:item="stage">
+                                <div key={stage.label} class={stage.flowClass}>
+                                    <div class="po-flow-dot">{stage.icon}</div>
+                                    <div class="slds-m-left_small">
+                                        <p class="slds-text-body_regular" style="font-weight:700">{stage.label}</p>
+                                        <p class="slds-text-body_small slds-text-color_weak">{stage.rule}</p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </lightning-card>
+
+            </div>
+
+            <!-- Rail column -->
+            <div class="slds-col slds-size_1-of-1 slds-large-size_4-of-12 slds-m-bottom_medium">
+                <lightning-card title="Actions" icon-name="utility:action_cadence">
+                    <div class="slds-card__body slds-card__body_inner">
+                        <div class="slds-grid slds-wrap slds-gutters_xx-small">
+                            <div class="slds-col slds-size_1-of-1 slds-m-bottom_x-small">
+                                <lightning-button
+                                    label={primaryActionLabel}
+                                    variant={primaryActionVariant}
+                                    onclick={handlePrimaryAction}
+                                    class="slds-size_1-of-1">
+                                </lightning-button>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-m-bottom_x-small">
+                                <lightning-button
+                                    label="Move Status"
+                                    onclick={handleOpenModal}
+                                    class="slds-size_1-of-1">
+                                </lightning-button>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1">
+                                <lightning-button
+                                    label="View Full Record"
+                                    onclick={handleOpenRecord}
+                                    class="slds-size_1-of-1">
+                                </lightning-button>
+                            </div>
+                        </div>
+                    </div>
+                </lightning-card>
+            </div>
+
+        </div>
+    </template>
+
+    <!-- Move Status modal -->
+    <template if:true={showModal}>
+        <section aria-modal="true" aria-label="Move Purchase Order" role="dialog" tabindex="-1"
+                 class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning-button-icon
+                        icon-name="utility:close"
+                        alternative-text="Close"
+                        variant="bare-inverse"
+                        onclick={handleCloseModal}
+                        class="slds-modal__close">
+                    </lightning-button-icon>
+                    <h2 class="slds-modal__title slds-hyphenate">Move Purchase Order</h2>
+                    <p class="slds-m-top_x-small slds-text-color_inverse-weak">Select the new status to move this PO to.</p>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <lightning-combobox
+                        label="New Status"
+                        placeholder="Select status…"
+                        value={modalNewStatus}
+                        options={statusOptions}
+                        onchange={handleStatusChange}
+                        required>
+                    </lightning-combobox>
+                    <template if:true={modalError}>
+                        <div class="slds-notify slds-notify_alert slds-theme_error slds-m-top_small" role="alert">
+                            <lightning-icon icon-name="utility:error" size="x-small" class="slds-m-right_x-small" alternative-text="Error"></lightning-icon>
+                            {modalError}
+                        </div>
+                    </template>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancel" onclick={handleCloseModal} class="slds-m-right_x-small"></lightning-button>
+                    <lightning-button label={saveLabel} variant="brand" onclick={handleSaveValidation} disabled={isSaving}></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open" onclick={handleCloseModal}></div>
+    </template>
+
+</div>
 </template>

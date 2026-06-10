@@ -130,16 +130,17 @@ export default class LovingPoPipeline extends NavigationMixin(LightningElement) 
 
     enrichPo(po) {
         const col = po.boardColumn || mapToBoardColumn(po.pipelineStage, po.status, po.pipelineBucket);
+        const TAKEOFF_COLS = ['takeoffRequested', 'takeoffScheduled', 'takeoffProgress', 'takeoffComplete'];
         return {
             ...po,
             boardColumn:     col,
             cardClass:       'po-card',
             amountFormatted: this.formatCurrency(po.totalAmount || 0),
-            statusChipClass: col === 'packageCheck' || col === 'csmReview' ? 'chip amber'  :
-                             col === 'workOrderCreated' ? 'chip purple'  :
-                             col === 'clear'      ? 'chip green'   :
-                             col === 'takeoffRequested' || col === 'takeoffScheduled' || col === 'takeoffProgress' || col === 'takeoffComplete' ? 'chip blue' :
-                             col === 'received'   ? 'chip gray'    : 'chip aqua',
+            statusChipClass: col === 'packageCheck' || col === 'csmReview' ? 'slds-badge cs-badge-amber'  :
+                             col === 'workOrderCreated' ? 'slds-badge cs-badge-purple'  :
+                             col === 'clear'      ? 'slds-badge cs-badge-green'   :
+                             TAKEOFF_COLS.includes(col) ? 'slds-badge cs-badge-aqua' :
+                             col === 'received'   ? 'slds-badge slds-badge_lightest' : 'slds-badge cs-badge-aqua',
             statusLabel:     po.status || 'New'
         };
     }
@@ -147,7 +148,7 @@ export default class LovingPoPipeline extends NavigationMixin(LightningElement) 
     _stage(key) {
         const recs = this.filteredRecords
             .filter(r => r.boardColumn === key)
-            .map(r => ({ ...r, cardClass: this.selectedPo && this.selectedPo.id === r.id ? 'po-card on' : 'po-card' }));
+            .map(r => ({ ...r, cardClass: this.selectedPo && this.selectedPo.id === r.id ? 'po-card po-card-selected' : 'po-card' }));
         return { records: recs, count: recs.length, hasRecords: recs.length > 0 };
     }
 
@@ -167,7 +168,7 @@ export default class LovingPoPipeline extends NavigationMixin(LightningElement) 
             return {
                 ...stage,
                 ...column,
-                cssClass: ('stage board-stage ' + (stage.cls || '')).trim()
+                cssClass: ('po-stage' + (stage.cls ? ' po-stage-' + stage.cls : '')).trim()
             };
         });
     }
@@ -203,8 +204,13 @@ export default class LovingPoPipeline extends NavigationMixin(LightningElement) 
     get filterOptions() {
         return FILTER_OPTIONS.map(f => ({
             ...f,
-            cssClass: f.value === this.activeFilter ? 'filter on' : 'filter'
+            cssClass: f.value === this.activeFilter ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral'
         }));
+    }
+
+    get builderOptions() {
+        const opts = [{ label: 'All Builders', value: '' }];
+        return opts.concat(this.builderNames.map(b => ({ label: b, value: b })));
     }
 
     get statusOptions()  { return STATUS_OPTIONS; }
@@ -218,18 +224,25 @@ export default class LovingPoPipeline extends NavigationMixin(LightningElement) 
         if (col === 'received' || col === 'packageCheck' || col === 'csmReview') return 'Move Status';
         if (col === 'takeoffRequested' || col === 'takeoffScheduled' || col === 'takeoffProgress' || col === 'takeoffComplete') return 'Open Takeoff';
         if (col === 'workOrderCreated' || col === 'clear') return 'Open Record';
-        if (col === 'scheduling')                return 'View Work Order';
+        if (col === 'scheduling') return 'View Work Order';
         return 'Move Status';
     }
 
-    get primaryActionClass() {
+    get primaryActionVariant() {
         const col = this.selectedPo ? this.selectedPo.boardColumn : '';
-        return (col === 'clear' || col === 'scheduling') ? 'btn success' : 'btn primary';
+        return (col === 'clear' || col === 'scheduling') ? 'success' : 'brand';
     }
 
     get saveLabel()             { return this.isSaving ? 'Saving...' : 'Move PO'; }
-    get validationBannerClass() { return this.actionResult ? (this.actionResult.passed ? 'notice green' : 'notice red') : ''; }
-    get validationIcon()        { return this.actionResult ? (this.actionResult.passed ? '✓' : '⚠') : ''; }
+    get validationBannerClass() {
+        if (!this.actionResult) return '';
+        return this.actionResult.passed
+            ? 'slds-notify slds-notify_alert slds-theme_success slds-m-bottom_small'
+            : 'slds-notify slds-notify_alert slds-theme_error slds-m-bottom_small';
+    }
+    get validationIcon() {
+        return this.actionResult ? (this.actionResult.passed ? 'utility:success' : 'utility:warning') : '';
+    }
 
     get validationChecklist() {
         if (!this.selectedPo) return [];
@@ -245,7 +258,7 @@ export default class LovingPoPipeline extends NavigationMixin(LightningElement) 
         ].map((item, idx) => ({
             ...item,
             icon:      item.ok ? '✓' : (idx + 1),
-            flowClass: item.ok ? 'flow done' : 'flow active'
+            flowClass: item.ok ? 'po-flow po-flow-done' : 'po-flow po-flow-active'
         }));
     }
 
@@ -256,13 +269,13 @@ export default class LovingPoPipeline extends NavigationMixin(LightningElement) 
             label:     s.label,
             rule:      s.rule,
             icon:      idx < currentIdx ? '✓' : (idx + 1),
-            flowClass: idx < currentIdx ? 'flow done' : (idx === currentIdx ? 'flow active' : 'flow')
+            flowClass: idx < currentIdx ? 'po-flow po-flow-done' : (idx === currentIdx ? 'po-flow po-flow-active' : 'po-flow')
         }));
     }
 
     handleFilterClick(evt)   { this.activeFilter  = evt.currentTarget.dataset.value; }
-    handleBuilderChange(evt) { this.builderFilter  = evt.target.value; }
-    handleSearchInput(evt)   { this.searchTerm     = evt.target.value; }
+    handleBuilderChange(evt) { this.builderFilter  = evt.detail.value; }
+    handleSearchInput(evt)   { this.searchTerm     = evt.detail.value; }
 
     handlePoSelect(evt) {
         const id = evt.currentTarget.dataset.id;
@@ -313,7 +326,7 @@ export default class LovingPoPipeline extends NavigationMixin(LightningElement) 
     handleCloseModal()            { this.showModal = false; this.modalError = null; }
     handleModalBackdropClick(evt) { if (evt.target === evt.currentTarget) this.handleCloseModal(); }
     handleModalClick(evt)         { evt.stopPropagation(); }
-    handleStatusChange(evt)       { this.modalNewStatus = evt.target.value; }
+    handleStatusChange(evt)       { this.modalNewStatus = evt.detail.value; }
 
     handleSaveValidation() {
         if (!this.selectedPo || !this.modalNewStatus) {
