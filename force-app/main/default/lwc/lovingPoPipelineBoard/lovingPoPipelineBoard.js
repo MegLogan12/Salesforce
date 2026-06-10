@@ -190,22 +190,9 @@ export default class LovingPoPipelineBoard extends NavigationMixin(LightningElem
         return this.isPurchaseOrderRecordContext ? 'Purchase Order Detail' : 'Builder PO Detail';
     }
 
-    get builderAppLabel() {
-        return 'Home Builder Operations';
-    }
-
-    get builderSearchPlaceholder() {
-        if (this.isTakeoffView) {
-            return 'Search takeoffs, FM checklist, routing summary, review state, and execution children...';
-        }
-        if (this.isWoDetailView || this.isWorkOrdersView) {
-            return 'Search work orders, sub work orders, field routing, schedules, and execution holds...';
-        }
-        return 'Search builder POs, purchase orders, takeoff status, package match, and review holds...';
-    }
-
-    get userInitials() {
-        return 'ML';
+    get builderOptions() {
+        const opts = [{ label: 'All builders', value: '' }];
+        return opts.concat(this.builderNames.map((b) => ({ label: b, value: b })));
     }
 
     get recordButtonLabel() {
@@ -331,11 +318,11 @@ export default class LovingPoPipelineBoard extends NavigationMixin(LightningElem
             boardColumn: col,
             cardClass: 'po-card',
             amountFormatted: this.formatCurrency(po.totalAmount || 0),
-            statusChipClass: col === 'packageCheck' || col === 'csmReview' ? 'chip amber'
-                : col === 'workOrderCreated' ? 'chip purple'
-                    : col === 'clear' ? 'chip green'
-                        : col === 'takeoffRequested' || col === 'takeoffScheduled' || col === 'takeoffProgress' || col === 'takeoffComplete' ? 'chip blue'
-                            : col === 'received' ? 'chip gray' : 'chip aqua',
+            statusChipClass: col === 'packageCheck' || col === 'csmReview' ? 'slds-badge cs-badge-amber'
+                : col === 'workOrderCreated' ? 'slds-badge cs-badge-purple'
+                    : col === 'clear' ? 'slds-badge cs-badge-green'
+                        : col === 'takeoffRequested' || col === 'takeoffScheduled' || col === 'takeoffProgress' || col === 'takeoffComplete' ? 'slds-badge cs-badge-aqua'
+                            : col === 'received' ? 'slds-badge slds-badge_lightest' : 'slds-badge cs-badge-aqua',
             statusLabel: this.displayPoStatus(po.status) || 'New',
             communityLabel: po.communityName || '—',
             lotLabel: po.lotName || '—'
@@ -517,10 +504,10 @@ export default class LovingPoPipelineBoard extends NavigationMixin(LightningElem
 
     get nextActionList() {
         return [
-            { label: 'Run or review takeoff', detail: this.hasTakeoff ? valueOrDefault(this.selectedTakeoffStatusLabel, 'Takeoff available') : 'Create or open takeoff', className: 'flow active', icon: '!' },
-            { label: 'Confirm route summary', detail: `${this.takeoffRoutedCount} routed · ${this.reviewHoldCount} on hold`, className: this.reviewHoldCount > 0 ? 'flow active' : 'flow done', icon: this.reviewHoldCount > 0 ? '!' : '✓' },
-            { label: 'Create or sync sub work orders', detail: `${this.selectedChildWorkOrderCount} child work orders`, className: this.selectedChildWorkOrderCount > 0 ? 'flow done' : 'flow active', icon: this.selectedChildWorkOrderCount > 0 ? '✓' : '!' },
-            { label: 'Hand off to scheduling', detail: this.hasServiceAppointment ? this.serviceAppointmentStatus : 'No service appointment yet', className: this.hasServiceAppointment ? 'flow done' : 'flow active', icon: this.hasServiceAppointment ? '✓' : '!' }
+            { label: 'Run or review takeoff', detail: this.hasTakeoff ? valueOrDefault(this.selectedTakeoffStatusLabel, 'Takeoff available') : 'Create or open takeoff', className: 'po-flow po-flow-active', icon: '!' },
+            { label: 'Confirm route summary', detail: `${this.takeoffRoutedCount} routed · ${this.reviewHoldCount} on hold`, className: this.reviewHoldCount > 0 ? 'po-flow po-flow-active' : 'po-flow po-flow-done', icon: this.reviewHoldCount > 0 ? '!' : '✓' },
+            { label: 'Create or sync sub work orders', detail: `${this.selectedChildWorkOrderCount} child work orders`, className: this.selectedChildWorkOrderCount > 0 ? 'po-flow po-flow-done' : 'po-flow po-flow-active', icon: this.selectedChildWorkOrderCount > 0 ? '✓' : '!' },
+            { label: 'Hand off to scheduling', detail: this.hasServiceAppointment ? this.serviceAppointmentStatus : 'No service appointment yet', className: this.hasServiceAppointment ? 'po-flow po-flow-done' : 'po-flow po-flow-active', icon: this.hasServiceAppointment ? '✓' : '!' }
         ];
     }
 
@@ -553,23 +540,9 @@ export default class LovingPoPipelineBoard extends NavigationMixin(LightningElem
         return source.map((view) => ({
             ...view,
             label: view.id === 'poDetail' ? this.detailViewLabel : view.label,
-            className: view.id === this.currentView ? 'subtab active' : 'subtab',
+            className: view.id === this.currentView ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral',
             disabled: (view.id === 'poDetail' || view.id === 'takeoff' || view.id === 'woDetail') && !this.selectedPoId
         }));
-    }
-
-    get builderNavTabs() {
-        const active = this.isTakeoffView ? 'takeoff' : (this.isWoDetailView || this.isWorkOrdersView ? 'workorders' : 'builderPo');
-        return [
-            { id: 'home', label: 'Home', className: active === 'home' ? 'sf-tab on' : 'sf-tab', disabled: false },
-            { id: 'accounts', label: 'Accounts', className: active === 'accounts' ? 'sf-tab on' : 'sf-tab', disabled: false },
-            { id: 'builderPo', label: 'Builder PO', className: active === 'builderPo' ? 'sf-tab on' : 'sf-tab', disabled: false },
-            { id: 'takeoff', label: 'Takeoff', className: active === 'takeoff' ? 'sf-tab on' : 'sf-tab', disabled: !this.hasTakeoff },
-            { id: 'workorders', label: 'Work Order', className: active === 'workorders' ? 'sf-tab on' : 'sf-tab', disabled: !this.hasWorkOrder },
-            { id: 'scheduling', label: 'Scheduling', className: active === 'scheduling' ? 'sf-tab on' : 'sf-tab', disabled: !this.hasServiceAppointment },
-            { id: 'customerSuccess', label: 'Customer Success', className: active === 'customerSuccess' ? 'sf-tab on' : 'sf-tab', disabled: false },
-            { id: 'aqua', label: 'Aqua', className: active === 'aqua' ? 'sf-tab on' : 'sf-tab', disabled: false }
-        ];
     }
 
     get activityRows() {
@@ -613,7 +586,7 @@ export default class LovingPoPipelineBoard extends NavigationMixin(LightningElem
         return STAGE_FILTERS.map((filter) => ({
             ...filter,
             count: filter.id === 'all' ? base.length : base.filter((row) => row.boardColumn === filter.id).length,
-            className: this.activeFilter === filter.id ? 'filter on' : 'filter'
+            className: this.activeFilter === filter.id ? 'slds-button slds-button_brand' : 'slds-button slds-button_neutral'
         }));
     }
 
@@ -627,7 +600,7 @@ export default class LovingPoPipelineBoard extends NavigationMixin(LightningElem
             .map((row) => ({
                 ...row,
                 workOrderState: row.status || '—',
-                workOrderTone: row.workOrderId ? 'chip purple' : 'chip amber'
+                workOrderTone: row.workOrderId ? 'slds-badge cs-badge-purple' : 'slds-badge cs-badge-amber'
             }));
     }
 
@@ -660,7 +633,11 @@ export default class LovingPoPipelineBoard extends NavigationMixin(LightningElem
     }
 
     get validationBannerClass() {
-        return this.actionResult ? (this.actionResult.passed ? 'notice green' : 'notice red') : '';
+        return this.actionResult
+            ? (this.actionResult.passed
+                ? 'slds-notify slds-notify_alert slds-theme_success slds-m-bottom_small'
+                : 'slds-notify slds-notify_alert slds-theme_error slds-m-bottom_small')
+            : '';
     }
 
     get validationIcon() {
@@ -710,7 +687,7 @@ export default class LovingPoPipelineBoard extends NavigationMixin(LightningElem
     get takeoffGateRows() {
         return (this.detailData?.gateChecks || []).map((gate) => ({
             ...gate,
-            className: gate.passed ? 'flow done' : 'flow active',
+            className: gate.passed ? 'po-flow po-flow-done' : 'po-flow po-flow-active',
             icon: gate.passed ? '✓' : '!'
         }));
     }
@@ -724,11 +701,11 @@ export default class LovingPoPipelineBoard extends NavigationMixin(LightningElem
     }
 
     handleBuilderChange(evt) {
-        this.builderFilter = evt.target.value;
+        this.builderFilter = evt.detail.value;
     }
 
     handleSearchInput(evt) {
-        this.searchTerm = evt.target.value;
+        this.searchTerm = evt.detail.value;
     }
 
     handleViewChange(evt) {
@@ -739,64 +716,6 @@ export default class LovingPoPipelineBoard extends NavigationMixin(LightningElem
             this.loadPipeline();
         }
         this.currentView = viewId;
-    }
-
-    handleBuilderTabClick(evt) {
-        const target = evt.currentTarget.dataset.id;
-        if (!target) return;
-        switch (target) {
-            case 'home':
-                this[NavigationMixin.Navigate]({
-                    type: 'standard__navItemPage',
-                    attributes: { apiName: 'LOVING_PO_Pipeline' }
-                });
-                break;
-            case 'accounts':
-                this[NavigationMixin.Navigate]({
-                    type: 'standard__objectPage',
-                    attributes: { objectApiName: 'Account', actionName: 'home' }
-                });
-                break;
-            case 'builderPo':
-                if (this.isRecordContext) {
-                    this.currentView = 'poDetail';
-                } else {
-                    this[NavigationMixin.Navigate]({
-                        type: 'standard__objectPage',
-                        attributes: { objectApiName: 'Builder_PO__c', actionName: 'home' }
-                    });
-                }
-                break;
-            case 'takeoff':
-                if (this.hasTakeoff) {
-                    this.currentView = 'takeoff';
-                }
-                break;
-            case 'workorders':
-                if (this.hasWorkOrder) {
-                    this.currentView = 'woDetail';
-                }
-                break;
-            case 'scheduling':
-                if (this.hasServiceAppointment) {
-                    this.handleOpenServiceAppointmentRecord();
-                }
-                break;
-            case 'customerSuccess':
-                this[NavigationMixin.Navigate]({
-                    type: 'standard__navItemPage',
-                    attributes: { apiName: 'Customer_Success_Console' }
-                });
-                break;
-            case 'aqua':
-                this[NavigationMixin.Navigate]({
-                    type: 'standard__navItemPage',
-                    attributes: { apiName: 'Aqua_Service_Home' }
-                });
-                break;
-            default:
-                break;
-        }
     }
 
     async handlePoSelect(evt) {
@@ -817,23 +736,23 @@ export default class LovingPoPipelineBoard extends NavigationMixin(LightningElem
     }
 
     handleFieldManagerChange(evt) {
-        this.selectedFieldManagerId = evt.target.value;
+        this.selectedFieldManagerId = evt.detail.value;
     }
 
     handleTakeoffDateChange(evt) {
-        this.selectedTakeoffDate = evt.target.value;
+        this.selectedTakeoffDate = evt.detail.value;
     }
 
     handleTakeoffChecklistChange(evt) {
-        this.takeoffChecklistComplete = evt.target.checked;
+        this.takeoffChecklistComplete = evt.detail.checked;
     }
 
     handleTakeoffEight11Change(evt) {
-        this.takeoffEight11Confirmed = evt.target.checked;
+        this.takeoffEight11Confirmed = evt.detail.checked;
     }
 
     handleTakeoffPhotoCountChange(evt) {
-        const value = Number(evt.target.value);
+        const value = Number(evt.detail.value);
         this.takeoffPhotoCount = Number.isNaN(value) ? 0 : value;
     }
 
@@ -1053,7 +972,7 @@ export default class LovingPoPipelineBoard extends NavigationMixin(LightningElem
     }
 
     handleStatusChange(evt) {
-        this.modalNewStatus = evt.target.value;
+        this.modalNewStatus = evt.detail.value;
     }
 
     async handleSaveValidation() {
