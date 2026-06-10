@@ -989,4 +989,12 @@
         <default>false</default>
         <visible>true</visible>
     </applicationVisibilities>
+    <tabVisibilities>
+        <tab>COO_Command_Center</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
+    <tabVisibilities>
+        <tab>Invoice_Accounting_Console</tab>
+        <visibility>DefaultOn</visibility>
+    </tabVisibilities>
 </Profile>
