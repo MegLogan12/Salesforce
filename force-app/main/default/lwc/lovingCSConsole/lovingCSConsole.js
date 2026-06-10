@@ -35,19 +35,18 @@ const TABS = [
 ];
 const PO_PILL = { 'Pending CS Review': 'amber', NFI: 'red', Verified: 'aqua',
     'Mismatch Review': 'red', 'CS Approved': 'green', 'Work Order Created': 'gray' };
-// Draft Knowledge content pending review/publish (build rule 10) — not seeded to records.
 const KB = [
-    { id: 'KB-01', cat: 'Warranty', catCss: 'pill aqua', title: 'Warranty coverage windows',
+    { id: 'KB-01', cat: 'Warranty', catCss: 'slds-badge cs-badge-aqua', title: 'Warranty coverage windows',
       body: '90-day sod, 1-year tree, and workmanship terms by builder. Warranty WOs bill nothing (BR-032): no invoice or a $0 invoice. Whether warranty damage ever bills is open question Q-010, recommended No.' },
-    { id: 'KB-02', cat: 'BMG', catCss: 'pill orange', title: 'BMG pricing validation, step by step',
+    { id: 'KB-02', cat: 'BMG', catCss: 'slds-badge cs-badge-orange', title: 'BMG pricing validation, step by step',
       body: 'Every PO validates against the community BMG package code before approval. Compare PO unit pricing to the catalog line by line; any gap is a Price Variance mismatch. Resolution paths: builder correction, or an EPO at BMG pricing. Never approve over an open mismatch.' },
-    { id: 'KB-03', cat: 'PO process', catCss: 'pill gray', title: 'NFI returns done right',
+    { id: 'KB-03', cat: 'PO process', catCss: 'slds-badge slds-badge_lightest', title: 'NFI returns done right',
       body: 'NFI means Not For Install: the PO is missing something we need. Name exactly what is missing, return it, and the count increments automatically. Three NFIs on one PO is a builder-relationship conversation, not a fourth return.' },
-    { id: 'KB-04', cat: 'EPO', catCss: 'pill purple', title: 'When to raise an EPO',
+    { id: 'KB-04', cat: 'EPO', catCss: 'slds-badge cs-badge-purple', title: 'When to raise an EPO',
       body: 'Raise an EPO when verified field scope exceeds the PO. Price at catalog, draft in the Quote Builder, route through Approvals, and send. The auto-approve ceiling is an open Section 11 decision.' },
-    { id: 'KB-05', cat: 'Builders', catCss: 'pill gray', title: 'DR Horton invoicing requirement',
+    { id: 'KB-05', cat: 'Builders', catCss: 'slds-badge slds-badge_lightest', title: 'DR Horton invoicing requirement',
       body: 'DR Horton invoices require the Cloudscape entry-complete flag true before invoice generation fires (BR step 22). If an invoice is stuck Pending Send, check that flag first before escalating to Finance.' },
-    { id: 'KB-06', cat: 'Cases', catCss: 'pill gray', title: 'QI failure cases and the Close gate',
+    { id: 'KB-06', cat: 'Cases', catCss: 'slds-badge slds-badge_lightest', title: 'QI failure cases and the Close gate',
       body: 'QI scores 1 to 10 with a hard floor of 9. Any item below 9 fails, creates a case here, and blocks Close. The case cannot close until re-inspection passes with every item at 9 or above. CS coordinates the builder conversation; CS does not approve QI.' }
 ];
 
@@ -59,14 +58,14 @@ export default class LovingCSConsole extends LightningElement {
     @track openCaseId = null;
     @track openKbId = null;
     @track toastMsg = '';
-    @track toastCss = 'toast';
-    @track modal = null; // 'newpo' | 'newcase' | 'newcomm' | 'onboard' | 'email'
+    @track _toastKind = '';
+    @track modal = null;
     @track emailCtx = {};
     @track qbLines = [];
     @track qbKind = 'Customer Care';
     @track qbLot = '';
     @track qbFromPo = null;
-    @track afLog = [{ id: 1, css: 'afmsg', text: 'Morning. Ask about POs, quotes, zones, warranty, or cases. I read and route; I do not approve, schedule, or touch payments.' }];
+    @track afLog = [{ id: 1, css: 'cs-af-msg', text: 'Morning. Ask about POs, quotes, zones, warranty, or cases. I read and route; I do not approve, schedule, or touch payments.' }];
     @track busy = false;
 
     _wire;
@@ -96,9 +95,9 @@ export default class LovingCSConsole extends LightningElement {
     }
     toast(msg, kind) {
         this.toastMsg = msg;
-        this.toastCss = 'toast show' + (kind ? ' ' + kind : '');
+        this._toastKind = kind || '';
         clearTimeout(this._tt);
-        this._tt = setTimeout(() => { this.toastCss = 'toast'; }, 4600);
+        this._tt = setTimeout(() => { this.toastMsg = ''; }, 4600);
     }
     match(hay) {
         const g = (this.query || '').toLowerCase().trim();
@@ -108,6 +107,27 @@ export default class LovingCSConsole extends LightningElement {
         if (n === null || n === undefined) return '—';
         return '$' + Number(n).toLocaleString(undefined, { maximumFractionDigits: 0 });
     }
+    badgeCss(color) {
+        return color === 'gray' ? 'slds-badge slds-badge_lightest' : 'slds-badge cs-badge-' + color;
+    }
+
+    // ─── toast ──────────────────────────────────────────────────────────────
+    get showToast() { return !!this.toastMsg; }
+    get toastCss() {
+        const k = this._toastKind;
+        return 'slds-notify slds-notify_toast' +
+            (k === 'green' ? ' slds-theme_success' : '') +
+            (k === 'red' ? ' slds-theme_error' : '') +
+            (k === 'amber' ? ' slds-theme_warning' : '');
+    }
+    get toastIcon() {
+        const k = this._toastKind;
+        if (k === 'green') return 'utility:success';
+        if (k === 'red') return 'utility:error';
+        if (k === 'amber') return 'utility:warning';
+        return 'utility:info';
+    }
+    dismissToast() { this.toastMsg = ''; clearTimeout(this._tt); }
 
     // ─── nav ────────────────────────────────────────────────────────────────
     get tabs() {
@@ -121,7 +141,7 @@ export default class LovingCSConsole extends LightningElement {
         };
         return TABS.map(t => ({
             ...t,
-            css: 'htab' + (this.curTab === t.key ? ' active' : ''),
+            liCss: 'slds-tabs_default__item' + (this.curTab === t.key ? ' slds-is-active' : ''),
             count: counts[t.key] !== undefined ? String(counts[t.key]) : null
         }));
     }
@@ -188,15 +208,14 @@ export default class LovingCSConsole extends LightningElement {
                     ...p,
                     amountLabel: this.money(p.amount),
                     chips: [
-                        p.bucket ? { id: p.id + 'b', css: 'pill gray chip-sm', label: p.bucket } : null,
-                        p.nfi > 0 ? { id: p.id + 'n', css: 'pill amber chip-sm', label: 'NFI ×' + p.nfi } : null,
+                        p.bucket ? { id: p.id + 'b', css: this.badgeCss('gray'), label: p.bucket } : null,
+                        p.nfi > 0 ? { id: p.id + 'n', css: this.badgeCss('amber'), label: 'NFI ×' + p.nfi } : null,
                         p.mismatchType && p.status === 'Mismatch Review'
-                            ? { id: p.id + 'm', css: 'pill red chip-sm', label: p.mismatchType } : null
+                            ? { id: p.id + 'm', css: this.badgeCss('red'), label: p.mismatchType } : null
                     ].filter(Boolean)
                 }));
             const sum = cards.reduce((s, c) => s + (c.amount || 0), 0);
-            return { st, colCss: 'col' + (st === 'CS Approved' || st === 'Work Order Created' ? ' hot' : ''),
-                count: cards.length, sum: sum ? this.money(sum) : '', cards, empty: cards.length === 0 };
+            return { st, count: cards.length, sum: sum ? this.money(sum) : '', cards, empty: cards.length === 0 };
         });
     }
     get woLane() {
@@ -207,12 +226,12 @@ export default class LovingCSConsole extends LightningElement {
                 .map(w => ({
                     ...w,
                     amountLabel: w.billableType === 'Warranty (No Charge)' || w.billableType === 'FJ Internal' ? 'No charge' : '',
-                    typeChip: w.woType === 'Warranty' ? { css: 'pill aqua chip-sm', label: 'Warranty' }
-                        : w.woType === 'Finish Job' ? { css: 'pill purple chip-sm', label: 'FJ' } : null,
-                    subChip: w.subStatus ? { css: 'pill amber chip-sm', label: w.subStatus } : null,
+                    typeChip: w.woType === 'Warranty' ? { css: this.badgeCss('aqua'), label: 'Warranty' }
+                        : w.woType === 'Finish Job' ? { css: this.badgeCss('purple'), label: 'FJ' } : null,
+                    subChip: w.subStatus ? { css: this.badgeCss('amber'), label: w.subStatus } : null,
                     fmLabel: w.fmBlocked ? 'FM blocked (G6)' : w.fm
                 }));
-            return { st, stLabel: st === 'Need Further Info (NFI)' ? 'NFI' : st, colCss: 'col',
+            return { st, stLabel: st === 'Need Further Info (NFI)' ? 'NFI' : st,
                 count: cards.length, cards, empty: cards.length === 0 };
         });
     }
@@ -237,7 +256,7 @@ export default class LovingCSConsole extends LightningElement {
     // ─── PO intake ──────────────────────────────────────────────────────────
     get poFilterChips() {
         const mk = (k, l, n) => ({ key: k, label: l, count: String(n),
-            css: 'fchip' + (this.poFilter === k ? ' active' : '') });
+            css: 'slds-button slds-button_neutral' + (this.poFilter === k ? ' slds-button_brand' : '') });
         return [
             mk('all', 'All', this.d.pos.length),
             mk('nfi', 'NFI', this.d.pos.filter(p => p.status === 'NFI').length),
@@ -255,7 +274,7 @@ export default class LovingCSConsole extends LightningElement {
         }).map(p => ({
             ...p,
             amountLabel: this.money(p.amount),
-            pillCss: 'pill ' + (PO_PILL[p.status] || 'gray'),
+            pillCss: this.badgeCss(PO_PILL[p.status] || 'gray'),
             noFile: !p.hasFile,
             isMismatch: p.status === 'Mismatch Review',
             isNfi: p.status === 'NFI',
@@ -310,26 +329,26 @@ export default class LovingCSConsole extends LightningElement {
         const items = [];
         this.d.pos.forEach(p => {
             if (p.status === 'Verified') {
-                items.push({ key: 'po' + p.id, kind: 'PO approval', kindCss: 'pill aqua', id: p.id, rec: p.name,
+                items.push({ key: 'po' + p.id, kind: 'PO approval', kindCss: this.badgeCss('aqua'), id: p.id, rec: p.name,
                     desc: p.builder + ' · ' + p.lot + ' · ' + this.money(p.amount) + ' · install ' + p.install,
                     actLabel: 'Approve', rejLabel: 'Return', act: 'approvePo', rej: 'nfiPo' });
             }
             if (p.status === 'Mismatch Review') {
-                items.push({ key: 'mm' + p.id, kind: 'Mismatch resolution', kindCss: 'pill red', id: p.id, rec: p.name,
+                items.push({ key: 'mm' + p.id, kind: 'Mismatch resolution', kindCss: this.badgeCss('red'), id: p.id, rec: p.name,
                     desc: (p.mismatchType ? p.mismatchType + ': ' : '') + (p.mismatchNotes || 'open mismatch'),
                     actLabel: 'Create EPO', rejLabel: 'Escalate', act: 'epo', rej: 'escalate' });
             }
         });
         this.d.quotes.forEach(q => {
             if (q.status === 'Draft') {
-                items.push({ key: 'q' + q.id, kind: 'Quote approval', kindCss: 'pill purple', id: q.id, rec: q.name,
+                items.push({ key: 'q' + q.id, kind: 'Quote approval', kindCss: this.badgeCss('purple'), id: q.id, rec: q.name,
                     desc: q.kind + ' · ' + q.lot + ' · ' + this.money(q.amount) + (q.gp != null ? ' · GP ' + q.gp + '%' : ''),
                     actLabel: 'Approve', rejLabel: 'Reject', act: 'approveQuote', rej: 'rejectQuote' });
             }
         });
         this.d.warranty.forEach(w => {
             if (w.determinationPending) {
-                items.push({ key: 'w' + w.id, kind: 'Warranty determination', kindCss: 'pill orange', id: w.id, rec: w.name,
+                items.push({ key: 'w' + w.id, kind: 'Warranty determination', kindCss: this.badgeCss('orange'), id: w.id, rec: w.name,
                     desc: w.lot + ' · ' + w.community + (w.reason ? ' · ' + w.reason : ''),
                     actLabel: 'Approve', rejLabel: 'Deny', act: 'wApprove', rej: 'wDeny' });
             }
@@ -359,7 +378,7 @@ export default class LovingCSConsole extends LightningElement {
             .filter(c => this.match(c.name + ' ' + c.subject + ' ' + c.account + ' ' + c.lot))
             .map(c => ({
                 ...c,
-                rowCss: 'caserow' + (this.openCaseId === c.id ? ' open' : ''),
+                liCss: 'slds-accordion__list-item' + (this.openCaseId === c.id ? ' slds-is-open' : ''),
                 expanded: this.openCaseId === c.id,
                 noteLines: (c.notes || '').split('\n').filter(Boolean).map((x, i) => ({ id: c.id + 'n' + i, text: x })),
                 statusLabel: c.status + (c.subStatus ? ' · ' + c.subStatus : '')
@@ -371,7 +390,7 @@ export default class LovingCSConsole extends LightningElement {
     }
     handleCaseNote(e) {
         const id = e.currentTarget.dataset.id;
-        const ta = this.template.querySelector('textarea[data-note="' + id + '"]');
+        const ta = this.template.querySelector('lightning-textarea[data-note="' + id + '"]');
         const v = ta ? ta.value.trim() : '';
         if (!v) { this.toast('Type the note first.', 'amber'); return; }
         this.act(caseAddNote, { woId: id, note: v }, 'Note added.');
@@ -381,7 +400,7 @@ export default class LovingCSConsole extends LightningElement {
 
     // ─── quote builder ──────────────────────────────────────────────────────
     get catalogOptions() { return this.d.catalog; }
-    get qbKindCss() { return 'pill ml ' + (this.qbKind === 'EPO' ? 'orange' : 'purple'); }
+    get qbKindCss() { return this.qbKind === 'EPO' ? 'slds-badge cs-badge-orange' : 'slds-badge cs-badge-purple'; }
     get qbLineRows() {
         return this.qbLines.map(l => ({ ...l, lineTotal: this.money(l.qty * l.price),
             options: this.d.catalog.map(c => ({ ...c, selected: c.id === l.catalogId })) }));
@@ -391,7 +410,7 @@ export default class LovingCSConsole extends LightningElement {
         this.qbLines.forEach(l => { rev += (l.qty || 0) * (l.price || 0); cost += (l.qty || 0) * (l.cost || 0); });
         const gp = rev > 0 ? Math.round(((rev - cost) / rev) * 100) : 0;
         return { rev: this.money(rev), cost: this.money(cost), gp,
-            gpStyle: 'color:' + (gp >= 30 ? 'var(--green)' : 'var(--amber)') };
+            gpStyle: 'color:' + (gp >= 30 ? '#13854e' : '#b27508') };
     }
     addQbLine() {
         const first = this.d.catalog[0] || { id: null, name: '', price: 0, cost: 0 };
@@ -419,8 +438,8 @@ export default class LovingCSConsole extends LightningElement {
         const v = Math.max(0, Number(e.target.value) || 0);
         this.qbLines = this.qbLines.map(l => l.id === id ? { ...l, price: v } : l);
     }
-    handleQbKind(e) { this.qbKind = e.target.value; }
-    handleQbLot(e) { this.qbLot = e.target.value; }
+    handleQbKind(e) { this.qbKind = e.detail.value; }
+    handleQbLot(e) { this.qbLot = e.detail.value; }
     handleQbStartEpo() {
         this.qbKind = 'EPO'; this.qbFromPo = null; this.qbLot = ''; this.qbLines = [];
         this.curTab = 'quotes';
@@ -451,8 +470,8 @@ export default class LovingCSConsole extends LightningElement {
                 amountLabel: this.money(q.amount),
                 gpLabel: q.gp == null ? '·' : q.gp + '%',
                 daysLabel: q.days == null ? '·' : String(q.days),
-                kindCss: 'pill ' + (q.kind === 'EPO' ? 'orange' : 'purple'),
-                statusCss: 'pill ' + (q.status === 'Approved' ? 'green' : q.status === 'Draft' ? 'amber' : q.status === 'Rejected' ? 'red' : 'aqua'),
+                kindCss: this.badgeCss(q.kind === 'EPO' ? 'orange' : 'purple'),
+                statusCss: this.badgeCss(q.status === 'Approved' ? 'green' : q.status === 'Draft' ? 'amber' : q.status === 'Rejected' ? 'red' : 'aqua'),
                 statusLabel: q.status === 'Draft' ? 'Pending Approval' : q.status,
                 canSend: q.status === 'Approved' }));
     }
@@ -465,7 +484,7 @@ export default class LovingCSConsole extends LightningElement {
             .map(w => ({ ...w,
                 fmLabel: w.fmBlocked ? null : w.fm,
                 determination: w.determinationPending ? null : (w.coverage || 'Determined'),
-                detCss: 'pill green' }));
+                detCss: this.badgeCss('green') }));
     }
     get warrantyCount() { return String(this.warrantyRows.length); }
     handleWApprove(e) { this.act(warrantyDetermine, { woId: e.currentTarget.dataset.id, covered: true, note: '' }, 'Determination: Approved. No client billing (BR-032).'); }
@@ -475,11 +494,11 @@ export default class LovingCSConsole extends LightningElement {
     }
     get fjCount() { return String(this.fjRows.length); }
 
-    // ─── takeoffs (read-only) / invoices (read-only) ────────────────────────
+    // ─── takeoffs / invoices ────────────────────────────────────────────────
     get takeoffRows() {
         return this.d.takeoffs.filter(t => this.match(t.name + ' ' + t.lot + ' ' + t.community + ' ' + t.status + ' ' + t.po))
             .map(t => ({ ...t,
-                statusCss: 'pill ' + (t.status === 'Approved' ? 'green' : t.status === 'Returned' ? 'amber' : t.status === 'In Progress' ? 'gray' : 'aqua') }));
+                statusCss: this.badgeCss(t.status === 'Approved' ? 'green' : t.status === 'Returned' ? 'amber' : t.status === 'In Progress' ? 'gray' : 'aqua') }));
     }
     get takeoffCount() { return String(this.takeoffRows.length); }
     get invoiceRows() {
@@ -487,9 +506,9 @@ export default class LovingCSConsole extends LightningElement {
             .map(i => ({ ...i,
                 amountLabel: this.money(i.amount),
                 gpLabel: i.gp == null ? '·' : Number(i.gp).toFixed(0) + '%',
-                gpStyle: 'color:' + (i.gp >= 35 ? 'var(--green)' : i.gp > 0 ? 'var(--amber)' : 'var(--muted)'),
-                statusCss: 'pill ' + (i.status === 'Paid' ? 'green' : i.status === 'Sent' ? 'aqua' : 'amber'),
-                typeCss: 'pill ' + (i.invType === 'Standard' ? 'gray' : 'aqua') }));
+                gpStyle: 'color:' + (i.gp >= 35 ? '#13854e' : i.gp > 0 ? '#b27508' : '#7d8696'),
+                statusCss: this.badgeCss(i.status === 'Paid' ? 'green' : i.status === 'Sent' ? 'aqua' : 'amber'),
+                typeCss: this.badgeCss(i.invType === 'Standard' ? 'gray' : 'aqua') }));
     }
     get invoiceCount() { return String(this.invoiceRows.length); }
     handleCloudscape(e) {
@@ -501,7 +520,6 @@ export default class LovingCSConsole extends LightningElement {
 
     // ─── reports ────────────────────────────────────────────────────────────
     get rptPoAging() {
-        const today = new Date();
         return [...this.d.pos]
             .map(p => ({ id: p.id, c1: p.poNumber, c2: p.builder, c3: p.received, c4: p.status }))
             .slice(0, 25);
@@ -535,7 +553,7 @@ export default class LovingCSConsole extends LightningElement {
     get terrChips() {
         const terrs = ['all', ...new Set(this.d.communities.map(c => c.territory).filter(t => t && t !== '—'))];
         return terrs.slice(0, 8).map(t => ({ key: t, label: t === 'all' ? 'All territories' : t,
-            css: 'fchip' + (this.terrFilter === t ? ' active' : '') }));
+            css: 'slds-button slds-button_neutral' + (this.terrFilter === t ? ' slds-button_brand' : '') }));
     }
     handleTerrFilter(e) { this.terrFilter = e.currentTarget.dataset.key; }
     get communityRows() {
@@ -555,7 +573,7 @@ export default class LovingCSConsole extends LightningElement {
     }
     get kbRows() {
         return KB.filter(k => this.match(k.title + ' ' + k.cat + ' ' + k.body))
-            .map(k => ({ ...k, rowCss: 'krow' + (this.openKbId === k.id ? ' open' : ''),
+            .map(k => ({ ...k, liCss: 'slds-accordion__list-item' + (this.openKbId === k.id ? ' slds-is-open' : ''),
                 expanded: this.openKbId === k.id }));
     }
     handleToggleKb(e) {
@@ -636,7 +654,7 @@ export default class LovingCSConsole extends LightningElement {
             .finally(() => { this.busy = false; });
     }
 
-    // email with templates
+    // ─── email ───────────────────────────────────────────────────────────────
     get emailTemplates() {
         return [
             { key: '', label: 'No template' },
@@ -645,6 +663,9 @@ export default class LovingCSConsole extends LightningElement {
             { key: 'warranty', label: 'Warranty determination' },
             { key: 'update', label: 'General update' }
         ];
+    }
+    get emailTemplateOptions() {
+        return this.emailTemplates.map(t => ({ label: t.label, value: t.key }));
     }
     handleOpenEmail(e) {
         const id = e.currentTarget.dataset.id;
@@ -661,7 +682,7 @@ export default class LovingCSConsole extends LightningElement {
         this.modal = 'email';
     }
     handleEmailTpl(e) {
-        const k = e.target.value;
+        const k = e.detail.value;
         if (!k) return;
         const lot = this.emailCtx.lot || '';
         const id = this.emailCtx.label || '';
@@ -674,6 +695,7 @@ export default class LovingCSConsole extends LightningElement {
                 b: 'Hi,\n\nWe completed the warranty review for ' + lot + '. Determination: covered under warranty. The corrective visit is being scheduled at no charge.\n\nThank you,\nLOVING Customer Success' },
             update: { s: 'Update on ' + lot, b: 'Hi,\n\nQuick update on ' + lot + ': ' }
         }[k];
+        if (!T) return;
         const sub = this.template.querySelector('[data-f="emSub"]');
         const body = this.template.querySelector('[data-f="emBody"]');
         if (sub) sub.value = T.s;
@@ -692,6 +714,31 @@ export default class LovingCSConsole extends LightningElement {
                 this.toast('Email sent and logged to the record.', 'green'); return this.refresh(); })
             .catch(err => this.toast(this.errMsg(err), 'red'))
             .finally(() => { this.busy = false; });
+    }
+
+    // ─── modal combobox options ───────────────────────────────────────────────
+    get communityOptions() {
+        return this.d.communities.map(c => ({ label: c.name, value: c.id }));
+    }
+    get communityOptionsOptional() {
+        return [{ label: '—', value: '' }, ...this.communityOptions];
+    }
+    get builderOptions() {
+        return this.d.builders.map(b => ({ label: b.name, value: b.id }));
+    }
+    get originOptions() {
+        return [
+            { label: 'Builder call', value: 'Builder call' },
+            { label: 'Email', value: 'Email' },
+            { label: 'Portal', value: 'Portal' },
+            { label: 'Other', value: 'Other' }
+        ];
+    }
+    get quoteKindOptions() {
+        return [
+            { label: 'Customer Care', value: 'Customer Care' },
+            { label: 'EPO', value: 'EPO' }
+        ];
     }
 
     // ─── agentforce (read & route only) ─────────────────────────────────────
@@ -737,20 +784,20 @@ export default class LovingCSConsole extends LightningElement {
             a = 'I read and route across this console: POs, pipeline, approvals, cases, quotes, warranty, FJ, zones. I do not approve, schedule, or touch payments.';
         }
         this.afLog = [...this.afLog,
-            { id: this._afSeq++, css: 'afmsg user', text: q },
-            { id: this._afSeq++, css: 'afmsg', text: a }].slice(-6);
+            { id: this._afSeq++, css: 'cs-af-msg user', text: q },
+            { id: this._afSeq++, css: 'cs-af-msg', text: a }].slice(-6);
     }
 
     get alerts() {
         const out = [];
         this.d.pos.filter(p => p.status === 'Mismatch Review').slice(0, 2).forEach(p =>
-            out.push({ id: 'al' + p.id, css: 'aic red', title: 'PO mismatch open',
+            out.push({ id: 'al' + p.id, css: 'cs-alert cs-alert-red', icon: 'utility:error', title: 'PO mismatch open',
                 text: p.name + ' (' + p.lot + '): ' + (p.mismatchType || 'mismatch') + '. Resolve via correction or EPO.' }));
         this.d.pos.filter(p => p.status === 'NFI').slice(0, 1).forEach(p =>
-            out.push({ id: 'al' + p.id, css: 'aic amber', title: 'NFI PO returned',
+            out.push({ id: 'al' + p.id, css: 'cs-alert cs-alert-amber', icon: 'utility:warning', title: 'NFI PO returned',
                 text: p.name + ' returned (NFI ×' + p.nfi + ').' }));
         this.d.warranty.filter(w => w.determinationPending).slice(0, 1).forEach(w =>
-            out.push({ id: 'al' + w.id, css: 'aic aqua', title: 'Warranty determination waiting',
+            out.push({ id: 'al' + w.id, css: 'cs-alert cs-alert-aqua', icon: 'utility:info', title: 'Warranty determination waiting',
                 text: w.name + ' · ' + w.lot + ' · ' + w.community }));
         return out;
     }
