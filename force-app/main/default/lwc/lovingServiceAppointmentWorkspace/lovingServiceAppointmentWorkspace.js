@@ -18,7 +18,6 @@ const TABS = [
 ];
 
 export default class LovingServiceAppointmentWorkspace extends NavigationMixin(LightningElement) {
-    static shellStyleId = 'loving-service-appointment-shell-style';
     @api recordId;
     activeTab = 'overview';
     workspace;
@@ -30,44 +29,8 @@ export default class LovingServiceAppointmentWorkspace extends NavigationMixin(L
         this.error = error;
     }
 
-    renderedCallback() {
-        this.ensureShellStyle();
-    }
-
-    disconnectedCallback() {
-        this.removeShellStyle();
-    }
-
     get hasData() {
         return !!this.workspace && !!this.workspace.header;
-    }
-
-    ensureShellStyle() {
-        if (typeof window === 'undefined' || typeof document === 'undefined') {
-            return;
-        }
-        if (!window.location.pathname.includes('/lightning/r/ServiceAppointment/')) {
-            return;
-        }
-        if (document.getElementById(LovingServiceAppointmentWorkspace.shellStyleId)) {
-            return;
-        }
-        const style = document.createElement('style');
-        style.id = LovingServiceAppointmentWorkspace.shellStyleId;
-        style.textContent = `
-            .flexipageHeader,
-            app-flexipage-header {
-                display: none !important;
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    removeShellStyle() {
-        if (typeof document === 'undefined') {
-            return;
-        }
-        document.getElementById(LovingServiceAppointmentWorkspace.shellStyleId)?.remove();
     }
 
     get errorMessage() {
@@ -76,31 +39,6 @@ export default class LovingServiceAppointmentWorkspace extends NavigationMixin(L
 
     get header() {
         return this.workspace?.header || {};
-    }
-
-    get builderAppLabel() {
-        return 'Home Builder Operations';
-    }
-
-    get builderSearchPlaceholder() {
-        return 'Search builder appointments, work orders, routes, crews, lot context, and customer success handoffs...';
-    }
-
-    get userInitials() {
-        return 'ML';
-    }
-
-    get builderNavTabs() {
-        return [
-            { id: 'home', label: 'Home', className: 'sf-tab', disabled: false },
-            { id: 'accounts', label: 'Accounts', className: 'sf-tab', disabled: false },
-            { id: 'builderPo', label: 'Builder PO', className: 'sf-tab', disabled: false },
-            { id: 'takeoff', label: 'Takeoff', className: 'sf-tab', disabled: false },
-            { id: 'workorders', label: 'Work Order', className: 'sf-tab', disabled: !this.header.workOrderId },
-            { id: 'scheduling', label: 'Scheduling', className: 'sf-tab on', disabled: false },
-            { id: 'customerSuccess', label: 'Customer Success', className: 'sf-tab', disabled: false },
-            { id: 'aqua', label: 'Aqua', className: 'sf-tab', disabled: false }
-        ];
     }
 
     get crumbItems() {
@@ -128,31 +66,28 @@ export default class LovingServiceAppointmentWorkspace extends NavigationMixin(L
     }
 
     get headerMetaItems() {
+        const toneMap = { purple: 'slds-badge cs-badge-purple', blue: 'slds-badge cs-badge-aqua' };
         const rawItems = [
-            { key: 'appointmentType', value: this.header.appointmentType, className: 'pill purple' },
-            { key: 'status', value: this.header.status, className: 'pill blue' },
+            { key: 'appointmentType', value: this.header.appointmentType, className: toneMap.purple },
+            { key: 'status', value: this.header.status, className: toneMap.blue },
             { key: 'scheduledWindow', value: this.header.scheduledWindow, className: '' },
             { key: 'serviceTerritory', value: this.header.serviceTerritory, className: '' },
             { key: 'assignedResource', value: this.header.assignedResource, className: '' },
             { key: 'contactName', value: this.header.contactName, className: '' }
         ];
-
         return rawItems.filter((item) => this.isMeaningfulMetaValue(item.value));
     }
 
     get tabs() {
         return TABS.map((tab) => ({
             ...tab,
-            className: `tab-button${this.activeTab === tab.id ? ' active' : ''}`
+            className: this.activeTab === tab.id
+                ? 'slds-button slds-button_brand'
+                : 'slds-button slds-button_neutral'
         }));
     }
 
-    get kpis() {
-        return (this.workspace?.kpis || []).map((kpi) => ({
-            ...kpi,
-            className: `kpi ${kpi.tone || 'gray'}`
-        }));
-    }
+    get visionKpis() { return (this.workspace?.kpis || []).slice(0, 6); }
 
     get overviewRows() { return this.workspace?.overviewRows || []; }
     get typeRows() { return this.workspace?.typeRows || []; }
@@ -160,7 +95,6 @@ export default class LovingServiceAppointmentWorkspace extends NavigationMixin(L
     get builderRows() { return this.workspace?.builderRows || []; }
     get proofRows() { return this.workspace?.proofRows || []; }
     get activityRows() { return this.workspace?.activity || []; }
-    get visionKpis() { return (this.workspace?.kpis || []).slice(0, 6); }
 
     get showOverview() { return this.activeTab === 'overview'; }
     get showCrew() { return this.activeTab === 'crew'; }
@@ -173,33 +107,19 @@ export default class LovingServiceAppointmentWorkspace extends NavigationMixin(L
     }
 
     get routeTimeline() {
-        const tones = ['blue', 'aqua', 'amber', 'green'];
+        const tones = ['sa-dot-blue', 'sa-dot-aqua', 'sa-dot-amber', 'sa-dot-green'];
         return this.routeRows.map((row, index) => ({
             ...row,
             shortLabel: String(index + 1),
-            dotClass: `dot ${tones[index % tones.length]}`
+            dotClass: `sa-dot ${tones[index % tones.length]}`
         }));
     }
 
-    get disableOpenWorkOrder() {
-        return !this.header.workOrderId;
-    }
-
-    get disableOpenAccount() {
-        return !this.header.accountId;
-    }
-
-    get disableOpenContact() {
-        return !this.header.contactId;
-    }
-
-    get disableEmail() {
-        return !this.header.contactEmail;
-    }
-
-    get disableCall() {
-        return !this.header.contactPhone;
-    }
+    get disableOpenWorkOrder() { return !this.header.workOrderId; }
+    get disableOpenAccount() { return !this.header.accountId; }
+    get disableOpenContact() { return !this.header.contactId; }
+    get disableEmail() { return !this.header.contactEmail; }
+    get disableCall() { return !this.header.contactPhone; }
 
     get phoneHref() {
         return this.header.contactPhone ? `tel:${this.header.contactPhone}` : '';
@@ -213,66 +133,11 @@ export default class LovingServiceAppointmentWorkspace extends NavigationMixin(L
         this.activeTab = event.currentTarget.dataset.id;
     }
 
-    handleBuilderTabClick(event) {
-        const target = event.currentTarget.dataset.id;
-        if (!target) {
-            return;
-        }
-        switch (target) {
-            case 'home':
-                this[NavigationMixin.Navigate]({
-                    type: 'standard__navItemPage',
-                    attributes: { apiName: 'LOVING_PO_Pipeline' }
-                });
-                break;
-            case 'accounts':
-                this[NavigationMixin.Navigate]({
-                    type: 'standard__objectPage',
-                    attributes: { objectApiName: 'Account', actionName: 'home' }
-                });
-                break;
-            case 'builderPo':
-                this[NavigationMixin.Navigate]({
-                    type: 'standard__objectPage',
-                    attributes: { objectApiName: 'Builder_PO__c', actionName: 'home' }
-                });
-                break;
-            case 'takeoff':
-                this[NavigationMixin.Navigate]({
-                    type: 'standard__objectPage',
-                    attributes: { objectApiName: 'Takeoff__c', actionName: 'home' }
-                });
-                break;
-            case 'workorders':
-                if (!this.header.workOrderId) {
-                    return;
-                }
-                this.openWorkOrder();
-                break;
-            case 'customerSuccess':
-                this[NavigationMixin.Navigate]({
-                    type: 'standard__navItemPage',
-                    attributes: { apiName: 'Customer_Success_Console' }
-                });
-                break;
-            case 'aqua':
-                this[NavigationMixin.Navigate]({
-                    type: 'standard__navItemPage',
-                    attributes: { apiName: 'Aqua_Service_Home' }
-                });
-                break;
-            default:
-                break;
-        }
-    }
-
     openWorkOrder() {
         if (!this.header.workOrderId) return;
         this[NavigationMixin.Navigate]({
             type: 'standard__webPage',
-            attributes: {
-                url: `/lightning/r/WorkOrder/${this.header.workOrderId}/view`
-            }
+            attributes: { url: `/lightning/r/WorkOrder/${this.header.workOrderId}/view` }
         });
     }
 
@@ -288,14 +153,10 @@ export default class LovingServiceAppointmentWorkspace extends NavigationMixin(L
     }
 
     handleEmail() {
-        if (this.disableEmail) {
-            return;
-        }
+        if (this.disableEmail) return;
         this[NavigationMixin.Navigate]({
             type: 'standard__quickAction',
-            attributes: {
-                apiName: SEND_EMAIL_ACTION
-            },
+            attributes: { apiName: SEND_EMAIL_ACTION },
             state: {
                 recordId: this.recordId,
                 defaultFieldValues: `ToAddress=${encodeURIComponent(this.header.contactEmail)}`
@@ -304,58 +165,35 @@ export default class LovingServiceAppointmentWorkspace extends NavigationMixin(L
     }
 
     handleCall() {
-        if (this.disableCall) {
-            return;
-        }
+        if (this.disableCall) return;
         window.open(this.phoneHref, '_self');
     }
 
-    handleLogCall() {
-        this.navigateQuickAction(LOG_CALL_ACTION);
-    }
-
-    handleNewTask() {
-        this.navigateQuickAction(NEW_TASK_ACTION);
-    }
-
-    handleNewNote() {
-        this.navigateQuickAction(NEW_NOTE_ACTION);
-    }
-
-    handleNewEvent() {
-        this.navigateQuickAction(NEW_EVENT_ACTION);
-    }
+    handleLogCall() { this.navigateQuickAction(LOG_CALL_ACTION); }
+    handleNewTask() { this.navigateQuickAction(NEW_TASK_ACTION); }
+    handleNewNote() { this.navigateQuickAction(NEW_NOTE_ACTION); }
+    handleNewEvent() { this.navigateQuickAction(NEW_EVENT_ACTION); }
 
     handleOpenFiles() {
         this[NavigationMixin.Navigate]({
             type: 'standard__webPage',
-            attributes: {
-                url: `/lightning/r/ServiceAppointment/${this.recordId}/related/AttachedContentDocuments/view`
-            }
+            attributes: { url: `/lightning/r/ServiceAppointment/${this.recordId}/related/AttachedContentDocuments/view` }
         });
     }
 
     openAccount() {
-        if (this.disableOpenAccount) {
-            return;
-        }
+        if (this.disableOpenAccount) return;
         this[NavigationMixin.Navigate]({
             type: 'standard__webPage',
-            attributes: {
-                url: `/lightning/r/Account/${this.header.accountId}/view`
-            }
+            attributes: { url: `/lightning/r/Account/${this.header.accountId}/view` }
         });
     }
 
     openContact() {
-        if (this.disableOpenContact) {
-            return;
-        }
+        if (this.disableOpenContact) return;
         this[NavigationMixin.Navigate]({
             type: 'standard__webPage',
-            attributes: {
-                url: `/lightning/r/Contact/${this.header.contactId}/view`
-            }
+            attributes: { url: `/lightning/r/Contact/${this.header.contactId}/view` }
         });
     }
 
@@ -375,14 +213,8 @@ export default class LovingServiceAppointmentWorkspace extends NavigationMixin(L
         });
         this[NavigationMixin.Navigate]({
             type: 'standard__objectPage',
-            attributes: {
-                objectApiName: 'Event',
-                actionName: 'new'
-            },
-            state: {
-                defaultFieldValues: fieldValues,
-                navigationLocation: 'RELATED_LIST'
-            }
+            attributes: { objectApiName: 'Event', actionName: 'new' },
+            state: { defaultFieldValues: fieldValues, navigationLocation: 'RELATED_LIST' }
         });
     }
 

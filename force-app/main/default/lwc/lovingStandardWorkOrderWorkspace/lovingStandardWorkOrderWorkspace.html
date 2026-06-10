@@ -1,553 +1,632 @@
 <template>
-    <div class={shellClassName}>
-        <template if:true={error}>
-            <div class="ab ab-r"><div class="ab-ic">⚠</div><div>{error.body.message}</div></div>
-        </template>
-        <template if:true={hasData}>
-            <div class="hb-top">
-                <div class="hb-waffle" aria-hidden="true">
-                    <span></span><span></span><span></span>
-                    <span></span><span></span><span></span>
-                    <span></span><span></span><span></span>
-                </div>
-                <div class="hb-app">
-                    <div class="hb-app-icon">HB</div>
-                    <span>{builderAppLabel}</span>
-                </div>
-                <div class="hb-search">{builderSearchPlaceholder}</div>
-                <div class="hb-icons" aria-hidden="true">
-                    <div class="hb-ico">⚙</div>
-                    <div class="hb-ico">?</div>
-                    <div class="hb-ico">🔔</div>
-                    <div class="hb-avatar">{userInitials}</div>
-                </div>
-            </div>
+    <!-- Error state -->
+    <template if:true={error}>
+        <div class="slds-notify slds-notify_alert slds-theme_error slds-m-bottom_small" role="alert">
+            {error.body.message}
+        </div>
+    </template>
 
-            <div class="hb-nav">
-                <template for:each={builderNavTabs} for:item="tab">
-                    <button
-                        type="button"
-                        key={tab.id}
-                        class={tab.className}
-                        data-id={tab.id}
-                        onclick={handleBuilderTabClick}
-                        disabled={tab.disabled}>
-                        {tab.label}
-                    </button>
-                </template>
-            </div>
+    <template if:true={hasData}>
 
-            <div class="hero">
-                <div class="hero-band">
-                    <div class="hero-kicker">{roleLabel}</div>
-                    <div class="hero-actions">
-                        <button class="sf-btn" onclick={handleEditWorkOrder}>Edit</button>
-                        <button class="sf-btn" onclick={handleNewTask}>New Task</button>
-                        <button class="sf-btn" onclick={handleNewNote}>Add Note</button>
-                        <button class="sf-btn" onclick={handleOpenFiles}>Files</button>
-                        <button class="sf-btn" onclick={handleOpenTakeoffRecord} disabled={disableOpenTakeoffRecord}>Open Takeoff</button>
-                        <button class="sf-btn primary" onclick={openServiceAppointment} disabled={disableOpenServiceAppointment}>Open Appointment</button>
-                        <template if:true={isParentMode}>
-                            <button class="sf-btn" onclick={handleCreateChildren} disabled={disableCreateChildren}>Create / Sync Sub WorkOrders</button>
-                        </template>
-                        <template if:true={isChildMode}>
-                            <button class="sf-btn" onclick={openParentWorkOrder} disabled={disableOpenParentWorkOrder}>Open Parent</button>
-                        </template>
-                    </div>
-                </div>
-                <div class="hero-main">
-                    <div class="hero-mark">WO</div>
-                    <div class="hero-title-block">
-                        <div class="hero-title">{header.workOrderNumber} • {header.subject}</div>
-                        <div class="hero-subtitle">{commandSubtitle}</div>
-                    </div>
-                    <div class="hero-strip">
-                        <div class="hero-pill">
-                            <span class="hero-pill-label">{isParentMode ? 'Master Status' : 'Execution Status'}</span>
-                            <span class="hero-pill-value">{header.status}</span>
+        <!-- Page header -->
+        <div class="slds-page-header slds-page-header_record-home slds-m-bottom_small">
+            <div class="slds-page-header__row">
+                <div class="slds-page-header__col-title">
+                    <div class="slds-media">
+                        <div class="slds-media__figure">
+                            <lightning-icon icon-name="standard:work_order" size="large"></lightning-icon>
                         </div>
-                        <div class="hero-pill">
-                            <span class="hero-pill-label">Billing</span>
-                            <span class="hero-pill-value">{header.billingState}</span>
-                        </div>
-                        <div class="hero-pill">
-                            <span class="hero-pill-label">QI Outcome</span>
-                            <span class="hero-pill-value">{header.qiStatus}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="kpi-grid">
-                <template for:each={kpis} for:item="kpi">
-                    <div key={kpi.label} class={kpi.className}>
-                        <div class="kn">{kpi.value}</div>
-                        <div class="kl">{kpi.label}</div>
-                        <div class="ksub">{kpi.detail}</div>
-                    </div>
-                </template>
-            </div>
-
-            <div class="sf-nav">
-                <template for:each={tabs} for:item="tab">
-                    <button key={tab.id} class={tab.className} data-id={tab.id} onclick={handleTab}>{tab.label}</button>
-                </template>
-            </div>
-
-            <div class="sf-body">
-                <template if:true={showSummary}>
-                    <div class="grid-stack two-up">
-                        <div class="card">
-                            <div class="ch"><div class="ci">◎</div><h3>{isParentMode ? 'Lot Identity' : 'Execution Identity'}</h3></div>
-                            <div class="cb meta-grid">
-                                <template for:each={identityRows} for:item="row">
-                                    <div key={row.label} class="meta-item">
-                                        <div class="meta-label">{row.label}</div>
-                                        <div class="meta-value">{row.value}</div>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="ch"><div class="ci">#</div><h3>{isParentMode ? 'Master State' : 'Execution State'}</h3></div>
-                            <div class="cb meta-grid">
-                                <template for:each={stateRows} for:item="row">
-                                    <div key={row.label} class="meta-item">
-                                        <div class="meta-label">{row.label}</div>
-                                        <div class="meta-value">{row.value}</div>
-                                    </div>
-                                </template>
+                        <div class="slds-media__body">
+                            <p class="slds-text-color_weak slds-text-body_regular">{roleLabel}</p>
+                            <h1 class="slds-page-header__title">{header.workOrderNumber} &bull; {header.subject}</h1>
+                            <p class="slds-text-color_weak slds-text-body_regular slds-m-top_xx-small">{commandSubtitle}</p>
+                            <div class="slds-m-top_xx-small">
+                                <span class="slds-badge slds-badge_lightest slds-m-right_x-small">Status: {header.status}</span>
+                                <span class="slds-badge slds-badge_lightest slds-m-right_x-small">Billing: {header.billingState}</span>
+                                <span class="slds-badge slds-badge_lightest">QI: {header.qiStatus}</span>
                             </div>
                         </div>
                     </div>
-
-                    <div class="grid-stack two-up top-gap">
-                        <div class="card">
-                            <div class="ch"><div class="ci">↳</div><h3>{isParentMode ? 'Execution Chain' : 'Parent Execution Chain'}</h3></div>
-                            <div class="cb meta-grid">
-                                <template for:each={executionChainRows} for:item="row">
-                                    <div key={row.label} class="meta-item">
-                                        <div class="meta-label">{row.label}</div>
-                                        <div class="meta-value">{row.value}</div>
-                                    </div>
-                                </template>
-                            </div>
+                </div>
+                <div class="slds-page-header__col-actions">
+                    <div class="slds-page-header__controls">
+                        <div class="slds-page-header__control">
+                            <lightning-button-group>
+                                <lightning-button label="Edit" onclick={handleEditWorkOrder}></lightning-button>
+                                <lightning-button label="New Task" onclick={handleNewTask}></lightning-button>
+                                <lightning-button label="Add Note" onclick={handleNewNote}></lightning-button>
+                                <lightning-button label="Files" onclick={handleOpenFiles}></lightning-button>
+                                <lightning-button label="Open Takeoff" onclick={handleOpenTakeoffRecord} disabled={disableOpenTakeoffRecord}></lightning-button>
+                                <lightning-button variant="brand" label="Open Appointment" onclick={openServiceAppointment} disabled={disableOpenServiceAppointment}></lightning-button>
+                            </lightning-button-group>
                         </div>
-
-                        <div class="card">
-                            <div class="ch"><div class="ci">$</div><h3>Financial Truth</h3></div>
-                            <div class="cb meta-grid">
-                                <template for:each={financialOverviewRows} for:item="row">
-                                    <div key={row.label} class="meta-item">
-                                        <div class="meta-label">{row.label}</div>
-                                        <div class="meta-value">{row.value}</div>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card top-gap">
-                        <div class="ch"><div class="ci">▣</div><h3>Proof + Records</h3></div>
-                        <div class="cb meta-grid four-up">
-                            <template for:each={recordOverviewRows} for:item="row">
-                                <div key={row.label} class="meta-item">
-                                    <div class="meta-label">{row.label}</div>
-                                    <div class="meta-value">{row.value}</div>
-                                </div>
+                        <div class="slds-page-header__control slds-m-left_x-small">
+                            <template if:true={isParentMode}>
+                                <lightning-button label="Create / Sync Sub WorkOrders" onclick={handleCreateChildren} disabled={disableCreateChildren}></lightning-button>
+                            </template>
+                            <template if:true={isChildMode}>
+                                <lightning-button label="Open Parent" onclick={openParentWorkOrder} disabled={disableOpenParentWorkOrder}></lightning-button>
                             </template>
                         </div>
                     </div>
-                </template>
+                </div>
+            </div>
+        </div>
 
-                <template if:true={showExecution}>
-                    <template if:true={isParentMode}>
-                        <div class="grid-stack two-up">
-                            <div class="card">
-                                <div class="ch"><div class="ci">↳</div><h3>Sub WorkOrders</h3></div>
-                                <div class="cb">
-                                    <template if:true={childWorkOrders.length}>
-                                        <table class="tbl">
-                                            <thead><tr><th>WorkOrder</th><th>Type</th><th>Status</th><th>QI Status</th><th>Blocker</th><th class="num">Appointments</th><th class="num">Line Items</th><th>Subject</th><th></th></tr></thead>
-                                            <tbody>
-                                                <template for:each={childWorkOrders} for:item="row">
-                                                    <tr key={row.workOrderId}>
-                                                        <td>{row.workOrderNumber}</td>
-                                                        <td>{row.workType}</td>
-                                                        <td>{row.status}</td>
-                                                        <td>{row.qiStatus}</td>
-                                                        <td>{row.blockerState}</td>
-                                                        <td class="num">{row.serviceAppointmentCount}</td>
-                                                        <td class="num">{row.lineItemCount}</td>
-                                                        <td>{row.subject}</td>
-                                                        <td><button class="sf-btn dark" data-id={row.workOrderId} onclick={handleOpenChildWorkOrder}>Open</button></td>
-                                                    </tr>
-                                                </template>
-                                            </tbody>
-                                        </table>
-                                    </template>
-                                    <template if:false={childWorkOrders.length}>
-                                        <div class="empty-note">0 sub work orders linked.</div>
-                                    </template>
-                                </div>
-                            </div>
+        <!-- KPI strip -->
+        <div class="slds-grid slds-wrap slds-gutters_x-small slds-m-bottom_small">
+            <template for:each={kpis} for:item="kpi">
+                <div key={kpi.label} class="slds-col slds-size_1-of-2 slds-large-size_1-of-4 slds-m-bottom_x-small">
+                    <div class={kpi.tileClass}>
+                        <div class={kpi.numClass}>{kpi.value}</div>
+                        <div class="slds-text-title slds-m-top_xx-small">{kpi.label}</div>
+                        <div class="slds-text-color_weak slds-text-body_small">{kpi.detail}</div>
+                    </div>
+                </div>
+            </template>
+        </div>
 
-                            <div class="card">
-                                <div class="ch"><div class="ci">⧉</div><h3>Sub WorkOrder Appointments</h3></div>
-                                <div class="cb">
-                                    <template if:true={childAppointments.length}>
-                                        <table class="tbl">
-                                            <thead><tr><th>Appointment</th><th>Status</th><th>Child WorkOrder</th><th>Type</th><th>Assigned Resource</th><th>Scheduled Window</th><th></th></tr></thead>
-                                            <tbody>
-                                                <template for:each={childAppointments} for:item="row">
-                                                    <tr key={row.serviceAppointmentId}>
-                                                        <td>{row.appointmentNumber}</td>
-                                                        <td>{row.status}</td>
-                                                        <td>{row.workOrderNumber}</td>
-                                                        <td>{row.workType}</td>
-                                                        <td>{row.assignedResource}</td>
-                                                        <td>{row.scheduledWindow}</td>
-                                                        <td><button class="sf-btn dark" data-id={row.serviceAppointmentId} onclick={handleOpenServiceAppointmentRow}>Open</button></td>
-                                                    </tr>
-                                                </template>
-                                            </tbody>
-                                        </table>
-                                    </template>
-                                    <template if:false={childAppointments.length}>
-                                        <div class="empty-note">0 sub work order appointments linked.</div>
-                                    </template>
-                                </div>
-                            </div>
+        <!-- Tab navigation -->
+        <div class="slds-button-group slds-m-bottom_small" role="group">
+            <template for:each={tabs} for:item="tab">
+                <button key={tab.id} class={tab.className} data-id={tab.id} onclick={handleTab}>{tab.label}</button>
+            </template>
+        </div>
+
+        <!-- Summary tab -->
+        <template if:true={showSummary}>
+            <div class="slds-grid slds-wrap slds-gutters_small">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <lightning-card title={isParentMode ? 'Lot Identity' : 'Execution Identity'} icon-name="utility:identity" class="slds-m-bottom_small">
+                        <div class="slds-card__body slds-card__body_inner">
+                            <dl class="slds-dl_horizontal">
+                                <template for:each={identityRows} for:item="row">
+                                    <dt key={row.label} class="slds-dl_horizontal__label slds-text-color_weak">{row.label}</dt>
+                                    <dd key={row.label} class="slds-dl_horizontal__detail">{row.value}</dd>
+                                </template>
+                            </dl>
                         </div>
-                    </template>
+                    </lightning-card>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <lightning-card title={isParentMode ? 'Master State' : 'Execution State'} icon-name="utility:metrics" class="slds-m-bottom_small">
+                        <div class="slds-card__body slds-card__body_inner">
+                            <dl class="slds-dl_horizontal">
+                                <template for:each={stateRows} for:item="row">
+                                    <dt key={row.label} class="slds-dl_horizontal__label slds-text-color_weak">{row.label}</dt>
+                                    <dd key={row.label} class="slds-dl_horizontal__detail">{row.value}</dd>
+                                </template>
+                            </dl>
+                        </div>
+                    </lightning-card>
+                </div>
+            </div>
+            <div class="slds-grid slds-wrap slds-gutters_small">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <lightning-card title={isParentMode ? 'Execution Chain' : 'Parent Execution Chain'} icon-name="utility:flow" class="slds-m-bottom_small">
+                        <div class="slds-card__body slds-card__body_inner">
+                            <dl class="slds-dl_horizontal">
+                                <template for:each={executionChainRows} for:item="row">
+                                    <dt key={row.label} class="slds-dl_horizontal__label slds-text-color_weak">{row.label}</dt>
+                                    <dd key={row.label} class="slds-dl_horizontal__detail">{row.value}</dd>
+                                </template>
+                            </dl>
+                        </div>
+                    </lightning-card>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <lightning-card title="Financial Truth" icon-name="utility:currency" class="slds-m-bottom_small">
+                        <div class="slds-card__body slds-card__body_inner">
+                            <dl class="slds-dl_horizontal">
+                                <template for:each={financialOverviewRows} for:item="row">
+                                    <dt key={row.label} class="slds-dl_horizontal__label slds-text-color_weak">{row.label}</dt>
+                                    <dd key={row.label} class="slds-dl_horizontal__detail">{row.value}</dd>
+                                </template>
+                            </dl>
+                        </div>
+                    </lightning-card>
+                </div>
+            </div>
+            <lightning-card title="Proof + Records" icon-name="utility:description" class="slds-m-bottom_small">
+                <div class="slds-card__body slds-card__body_inner">
+                    <dl class="slds-dl_horizontal">
+                        <template for:each={recordOverviewRows} for:item="row">
+                            <dt key={row.label} class="slds-dl_horizontal__label slds-text-color_weak">{row.label}</dt>
+                            <dd key={row.label} class="slds-dl_horizontal__detail">{row.value}</dd>
+                        </template>
+                    </dl>
+                </div>
+            </lightning-card>
+        </template>
 
-                    <template if:true={isChildMode}>
-                        <div class="card">
-                            <div class="ch"><div class="ci">⧉</div><h3>Assigned Appointments</h3></div>
-                            <div class="cb">
-                                <template if:true={relatedAppointments.length}>
-                                    <table class="tbl">
-                                        <thead><tr><th>Appointment</th><th>Status</th><th>Scheduled Window</th><th>Territory</th><th>Assigned Resource</th><th></th></tr></thead>
+        <!-- Execution / Sub WorkOrders tab -->
+        <template if:true={showExecution}>
+            <template if:true={isParentMode}>
+                <div class="slds-grid slds-wrap slds-gutters_small">
+                    <div class="slds-col slds-size_1-of-1">
+                        <lightning-card title="Sub WorkOrders" icon-name="utility:work_order" class="slds-m-bottom_small">
+                            <div class="slds-card__body slds-card__body_inner">
+                                <template if:true={childWorkOrders.length}>
+                                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                                        <thead>
+                                            <tr class="slds-line-height_reset">
+                                                <th scope="col"><div class="slds-truncate">WorkOrder</div></th>
+                                                <th scope="col"><div class="slds-truncate">Type</div></th>
+                                                <th scope="col"><div class="slds-truncate">Status</div></th>
+                                                <th scope="col"><div class="slds-truncate">QI Status</div></th>
+                                                <th scope="col"><div class="slds-truncate">Blocker</div></th>
+                                                <th scope="col"><div class="slds-truncate">Appts</div></th>
+                                                <th scope="col"><div class="slds-truncate">Lines</div></th>
+                                                <th scope="col"><div class="slds-truncate">Subject</div></th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                        </thead>
                                         <tbody>
-                                            <template for:each={relatedAppointments} for:item="row">
+                                            <template for:each={childWorkOrders} for:item="row">
+                                                <tr key={row.workOrderId}>
+                                                    <td>{row.workOrderNumber}</td>
+                                                    <td>{row.workType}</td>
+                                                    <td>{row.status}</td>
+                                                    <td>{row.qiStatus}</td>
+                                                    <td>{row.blockerState}</td>
+                                                    <td>{row.serviceAppointmentCount}</td>
+                                                    <td>{row.lineItemCount}</td>
+                                                    <td>{row.subject}</td>
+                                                    <td><lightning-button label="Open" data-id={row.workOrderId} onclick={handleOpenChildWorkOrder}></lightning-button></td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
+                                    </table>
+                                </template>
+                                <template if:false={childWorkOrders.length}>
+                                    <div class="slds-notify slds-notify_alert slds-theme_info" role="alert">0 sub work orders linked.</div>
+                                </template>
+                            </div>
+                        </lightning-card>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1">
+                        <lightning-card title="Sub WorkOrder Appointments" icon-name="utility:event" class="slds-m-bottom_small">
+                            <div class="slds-card__body slds-card__body_inner">
+                                <template if:true={childAppointments.length}>
+                                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                                        <thead>
+                                            <tr class="slds-line-height_reset">
+                                                <th scope="col"><div class="slds-truncate">Appointment</div></th>
+                                                <th scope="col"><div class="slds-truncate">Status</div></th>
+                                                <th scope="col"><div class="slds-truncate">Child WorkOrder</div></th>
+                                                <th scope="col"><div class="slds-truncate">Type</div></th>
+                                                <th scope="col"><div class="slds-truncate">Assigned Resource</div></th>
+                                                <th scope="col"><div class="slds-truncate">Scheduled Window</div></th>
+                                                <th scope="col"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <template for:each={childAppointments} for:item="row">
                                                 <tr key={row.serviceAppointmentId}>
                                                     <td>{row.appointmentNumber}</td>
                                                     <td>{row.status}</td>
-                                                    <td>{row.scheduledWindow}</td>
-                                                    <td>{row.serviceTerritory}</td>
+                                                    <td>{row.workOrderNumber}</td>
+                                                    <td>{row.workType}</td>
                                                     <td>{row.assignedResource}</td>
-                                                    <td><button class="sf-btn dark" data-id={row.serviceAppointmentId} onclick={handleOpenServiceAppointmentRow}>Open</button></td>
+                                                    <td>{row.scheduledWindow}</td>
+                                                    <td><lightning-button label="Open" data-id={row.serviceAppointmentId} onclick={handleOpenServiceAppointmentRow}></lightning-button></td>
                                                 </tr>
                                             </template>
                                         </tbody>
                                     </table>
                                 </template>
-                                <template if:false={relatedAppointments.length}>
-                                    <div class="empty-note">0 Appointments linked.</div>
+                                <template if:false={childAppointments.length}>
+                                    <div class="slds-notify slds-notify_alert slds-theme_info" role="alert">0 sub work order appointments linked.</div>
                                 </template>
                             </div>
+                        </lightning-card>
+                    </div>
+                </div>
+            </template>
+
+            <template if:true={isChildMode}>
+                <lightning-card title="Assigned Appointments" icon-name="utility:event" class="slds-m-bottom_small">
+                    <div class="slds-card__body slds-card__body_inner">
+                        <template if:true={relatedAppointments.length}>
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <th scope="col"><div class="slds-truncate">Appointment</div></th>
+                                        <th scope="col"><div class="slds-truncate">Status</div></th>
+                                        <th scope="col"><div class="slds-truncate">Scheduled Window</div></th>
+                                        <th scope="col"><div class="slds-truncate">Territory</div></th>
+                                        <th scope="col"><div class="slds-truncate">Assigned Resource</div></th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={relatedAppointments} for:item="row">
+                                        <tr key={row.serviceAppointmentId}>
+                                            <td>{row.appointmentNumber}</td>
+                                            <td>{row.status}</td>
+                                            <td>{row.scheduledWindow}</td>
+                                            <td>{row.serviceTerritory}</td>
+                                            <td>{row.assignedResource}</td>
+                                            <td><lightning-button label="Open" data-id={row.serviceAppointmentId} onclick={handleOpenServiceAppointmentRow}></lightning-button></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </template>
+                        <template if:false={relatedAppointments.length}>
+                            <div class="slds-notify slds-notify_alert slds-theme_info" role="alert">0 Appointments linked.</div>
+                        </template>
+                    </div>
+                </lightning-card>
+            </template>
+        </template>
+
+        <!-- Takeoff + Routing tab -->
+        <template if:true={showTakeoff}>
+            <div class="slds-grid slds-wrap slds-gutters_small">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <lightning-card title={isParentMode ? 'Parent Takeoff' : 'Parent Takeoff Header'} icon-name="utility:preview" class="slds-m-bottom_small">
+                        <div class="slds-card__body slds-card__body_inner">
+                            <dl class="slds-dl_horizontal">
+                                <template for:each={takeoffHeaderRows} for:item="row">
+                                    <dt key={row.label} class="slds-dl_horizontal__label slds-text-color_weak">{row.label}</dt>
+                                    <dd key={row.label} class="slds-dl_horizontal__detail">{row.value}</dd>
+                                </template>
+                            </dl>
+                        </div>
+                    </lightning-card>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <lightning-card title="Routing + Sub WorkOrder Summary" icon-name="utility:routing_offline" class="slds-m-bottom_small">
+                        <div class="slds-card__body slds-card__body_inner">
+                            <dl class="slds-dl_horizontal">
+                                <template for:each={takeoffRoutingRows} for:item="row">
+                                    <dt key={row.label} class="slds-dl_horizontal__label slds-text-color_weak">{row.label}</dt>
+                                    <dd key={row.label} class="slds-dl_horizontal__detail">{row.value}</dd>
+                                </template>
+                            </dl>
+                        </div>
+                    </lightning-card>
+                </div>
+            </div>
+
+            <div class="slds-grid slds-wrap slds-gutters_small">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <lightning-card title={isParentMode ? 'Takeoff Review' : 'Parent Takeoff Review'} icon-name="utility:edit" class="slds-m-bottom_small">
+                        <div class="slds-card__body slds-card__body_inner">
+                            <template if:true={showTakeoffEditor}>
+                                <dl class="slds-dl_horizontal slds-m-bottom_small">
+                                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Package Match State</dt>
+                                    <dd class="slds-dl_horizontal__detail">{packageMatchState}</dd>
+                                    <template for:each={takeoffStateRows} for:item="row">
+                                        <dt key={row.label} class="slds-dl_horizontal__label slds-text-color_weak">{row.label}</dt>
+                                        <dd key={row.label} class="slds-dl_horizontal__detail">{row.value}</dd>
+                                    </template>
+                                    <dt class="slds-dl_horizontal__label slds-text-color_weak">Lines Requiring Review</dt>
+                                    <dd class="slds-dl_horizontal__detail">{routedReviewCount}</dd>
+                                </dl>
+                                <lightning-combobox
+                                    label="Takeoff Review Status"
+                                    value={takeoffDraft.status}
+                                    options={takeoffStatusOptions}
+                                    data-field="status"
+                                    onchange={handleTakeoffFieldChange}
+                                    class="slds-m-bottom_small">
+                                </lightning-combobox>
+                                <lightning-input
+                                    type="checkbox"
+                                    label="Customer Success Review Required"
+                                    checked={takeoffDraft.mismatchFound}
+                                    data-field="mismatchFound"
+                                    onchange={handleTakeoffFieldChange}
+                                    class="slds-m-bottom_small">
+                                </lightning-input>
+                                <lightning-input
+                                    type="checkbox"
+                                    label="Customer Success Approved"
+                                    checked={takeoffDraft.csApproved}
+                                    data-field="csApproved"
+                                    onchange={handleTakeoffFieldChange}
+                                    class="slds-m-bottom_small">
+                                </lightning-input>
+                                <lightning-textarea
+                                    label="Return Reason"
+                                    value={takeoffDraft.returnReason}
+                                    data-field="returnReason"
+                                    onchange={handleTakeoffFieldChange}
+                                    class="slds-m-bottom_small">
+                                </lightning-textarea>
+                                <lightning-textarea
+                                    label="Mismatch Notes"
+                                    value={takeoffDraft.mismatchNotes}
+                                    data-field="mismatchNotes"
+                                    onchange={handleTakeoffFieldChange}
+                                    class="slds-m-bottom_small">
+                                </lightning-textarea>
+                                <lightning-textarea
+                                    label="Takeoff Notes"
+                                    value={takeoffDraft.notes}
+                                    data-field="notes"
+                                    onchange={handleTakeoffFieldChange}
+                                    class="slds-m-bottom_small">
+                                </lightning-textarea>
+                                <lightning-button-group>
+                                    <lightning-button variant="brand" label="Save Takeoff Review" onclick={handleSaveTakeoffReview} disabled={isSavingTakeoff}></lightning-button>
+                                    <lightning-button label="Open Takeoff Record" onclick={handleOpenTakeoffRecord} disabled={disableOpenTakeoffRecord}></lightning-button>
+                                    <lightning-button label="Create / Sync Sub WorkOrders" onclick={handleCreateChildren} disabled={disableCreateChildren}></lightning-button>
+                                </lightning-button-group>
+                            </template>
+                            <template if:false={showTakeoffEditor}>
+                                <dl class="slds-dl_horizontal">
+                                    <template for:each={takeoffStateRows} for:item="row">
+                                        <dt key={row.label} class="slds-dl_horizontal__label slds-text-color_weak">{row.label}</dt>
+                                        <dd key={row.label} class="slds-dl_horizontal__detail">{row.value}</dd>
+                                    </template>
+                                </dl>
+                            </template>
+                        </div>
+                    </lightning-card>
+                </div>
+
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <lightning-card title="Takeoff Checklist" icon-name="utility:checklist" class="slds-m-bottom_small">
+                        <div class="slds-card__body slds-card__body_inner">
+                            <dl class="slds-dl_horizontal slds-m-bottom_small">
+                                <dt class="slds-dl_horizontal__label slds-text-color_weak">Checklist Status</dt>
+                                <dd class="slds-dl_horizontal__detail">{takeoffChecklist.status}</dd>
+                                <dt class="slds-dl_horizontal__label slds-text-color_weak">Checklist Type</dt>
+                                <dd class="slds-dl_horizontal__detail">{takeoffChecklist.checklistType}</dd>
+                                <dt class="slds-dl_horizontal__label slds-text-color_weak">Completed By</dt>
+                                <dd class="slds-dl_horizontal__detail">{takeoffChecklist.completedBy}</dd>
+                                <dt class="slds-dl_horizontal__label slds-text-color_weak">Completed Date</dt>
+                                <dd class="slds-dl_horizontal__detail">{takeoffChecklist.completedDate}</dd>
+                            </dl>
+                            <template if:true={checklistItems.length}>
+                                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                                    <thead>
+                                        <tr class="slds-line-height_reset">
+                                            <th scope="col"><div class="slds-truncate">Checklist Item</div></th>
+                                            <th scope="col"><div class="slds-truncate">Status</div></th>
+                                            <th scope="col"><div class="slds-truncate">Requirement</div></th>
+                                            <th scope="col"><div class="slds-truncate">Notes</div></th>
+                                            <th scope="col"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template for:each={checklistItems} for:item="item">
+                                            <tr key={item.checklistItemId}>
+                                                <td>{item.label}</td>
+                                                <td>
+                                                    <template if:true={showTakeoffEditor}>
+                                                        <lightning-combobox
+                                                            variant="label-hidden"
+                                                            value={item.statusValue}
+                                                            options={item.statusOptions}
+                                                            data-id={item.checklistItemId}
+                                                            onchange={handleChecklistStatusChange}>
+                                                        </lightning-combobox>
+                                                    </template>
+                                                    <template if:false={showTakeoffEditor}>{item.status}</template>
+                                                </td>
+                                                <td>{item.requiredLabel} · {item.photoRequiredLabel}</td>
+                                                <td>
+                                                    <template if:true={showTakeoffEditor}>
+                                                        <lightning-textarea
+                                                            variant="label-hidden"
+                                                            value={item.notesValue}
+                                                            data-id={item.checklistItemId}
+                                                            onchange={handleChecklistNotesChange}>
+                                                        </lightning-textarea>
+                                                    </template>
+                                                    <template if:false={showTakeoffEditor}>{item.notes}</template>
+                                                </td>
+                                                <td>
+                                                    <template if:true={showTakeoffEditor}>
+                                                        <lightning-button label="Save" data-id={item.checklistItemId} onclick={handleSaveChecklistItem}></lightning-button>
+                                                    </template>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </template>
+                            <template if:false={checklistItems.length}>
+                                <div class="slds-notify slds-notify_alert slds-theme_info" role="alert">0 checklist items linked.</div>
+                            </template>
+                        </div>
+                    </lightning-card>
+                </div>
+            </div>
+
+            <lightning-card title="Takeoff Line Items" icon-name="utility:list" class="slds-m-bottom_small">
+                <div class="slds-card__body slds-card__body_inner">
+                    <template if:true={takeoffLines.length}>
+                        <div class="slds-scrollable_x">
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <th scope="col"><div class="slds-truncate">Description</div></th>
+                                        <th scope="col"><div class="slds-truncate">Ordered</div></th>
+                                        <th scope="col"><div class="slds-truncate">Verified</div></th>
+                                        <th scope="col"><div class="slds-truncate">Measured</div></th>
+                                        <th scope="col"><div class="slds-truncate">Unit</div></th>
+                                        <th scope="col"><div class="slds-truncate">Unit Price</div></th>
+                                        <th scope="col"><div class="slds-truncate">Execution Scope</div></th>
+                                        <th scope="col"><div class="slds-truncate">Routing Result</div></th>
+                                        <th scope="col"><div class="slds-truncate">Determination</div></th>
+                                        <th scope="col"><div class="slds-truncate">Substitution</div></th>
+                                        <th scope="col"><div class="slds-truncate">Variance</div></th>
+                                        <th scope="col"><div class="slds-truncate">Notes</div></th>
+                                        <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={takeoffLines} for:item="line">
+                                        <tr key={line.takeoffLineId}>
+                                            <td>{line.description}</td>
+                                            <td>{line.orderedQuantity}</td>
+                                            <td>{line.verifiedQuantity}</td>
+                                            <td>{line.measuredQuantity}</td>
+                                            <td>{line.unit}</td>
+                                            <td>{line.unitPrice}</td>
+                                            <td>
+                                                <template if:true={showTakeoffEditor}>
+                                                    <lightning-combobox
+                                                        variant="label-hidden"
+                                                        value={line.executionScopeValue}
+                                                        options={line.scopeOptions}
+                                                        data-id={line.takeoffLineId}
+                                                        onchange={handleTakeoffLineScopeChange}>
+                                                    </lightning-combobox>
+                                                </template>
+                                                <template if:false={showTakeoffEditor}>{line.executionScope}</template>
+                                            </td>
+                                            <td>{line.routeState}</td>
+                                            <td>{line.determination}</td>
+                                            <td>{line.substitutionState}</td>
+                                            <td>{line.variance}</td>
+                                            <td>{line.notes}</td>
+                                            <td>
+                                                <template if:true={showTakeoffEditor}>
+                                                    <lightning-button label="Save" data-id={line.takeoffLineId} onclick={handleSaveTakeoffLineScope}></lightning-button>
+                                                </template>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
                         </div>
                     </template>
-                </template>
+                    <template if:false={takeoffLines.length}>
+                        <div class="slds-notify slds-notify_alert slds-theme_info" role="alert">0 takeoff lines linked.</div>
+                    </template>
+                </div>
+            </lightning-card>
+        </template>
 
-                <template if:true={showTakeoff}>
-                    <div class="grid-stack two-up">
-                        <div class="card">
-                            <div class="ch"><div class="ci">△</div><h3>{isParentMode ? 'Parent Takeoff' : 'Parent Takeoff Header'}</h3></div>
-                            <div class="cb meta-grid">
-                                <template for:each={takeoffHeaderRows} for:item="row">
-                                    <div key={row.label} class="meta-item">
-                                        <div class="meta-label">{row.label}</div>
-                                        <div class="meta-value">{row.value}</div>
-                                    </div>
-                                </template>
-                            </div>
+        <!-- Scope / Line Items tab -->
+        <template if:true={showScope}>
+            <lightning-card title={isParentMode ? 'Lot-Wide Scope + Line Items' : 'Child Scope + Line Items'} icon-name="utility:list" class="slds-m-bottom_small">
+                <div class="slds-card__body slds-card__body_inner">
+                    <template if:true={lineItems.length}>
+                        <div class="slds-scrollable_x">
+                            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                                <thead>
+                                    <tr class="slds-line-height_reset">
+                                        <th scope="col"><div class="slds-truncate">Description</div></th>
+                                        <th scope="col"><div class="slds-truncate">Scope</div></th>
+                                        <th scope="col"><div class="slds-truncate">Qty</div></th>
+                                        <th scope="col"><div class="slds-truncate">Unit</div></th>
+                                        <th scope="col"><div class="slds-truncate">Unit Price</div></th>
+                                        <th scope="col"><div class="slds-truncate">Extended Price</div></th>
+                                        <th scope="col"><div class="slds-truncate">Review</div></th>
+                                        <th scope="col"><div class="slds-truncate">Substitution</div></th>
+                                        <th scope="col"><div class="slds-truncate">Variance</div></th>
+                                        <th scope="col"><div class="slds-truncate">Status</div></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={lineItems} for:item="line">
+                                        <tr key={line.description}>
+                                            <td>{line.description}</td>
+                                            <td>{line.executionScope}</td>
+                                            <td>{line.quantity}</td>
+                                            <td>{line.unit}</td>
+                                            <td>{line.unitPrice}</td>
+                                            <td>{line.extendedPrice}</td>
+                                            <td>{line.reviewStatus}</td>
+                                            <td>{line.substitutionState}</td>
+                                            <td>{line.variance}</td>
+                                            <td>{line.status}</td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
                         </div>
+                    </template>
+                    <template if:false={lineItems.length}>
+                        <div class="slds-notify slds-notify_alert slds-theme_info" role="alert">0 line items linked.</div>
+                    </template>
+                </div>
+            </lightning-card>
+        </template>
 
-                        <div class="card">
-                            <div class="ch"><div class="ci">↯</div><h3>Routing + Sub WorkOrder Summary</h3></div>
-                            <div class="cb meta-grid">
-                                <template for:each={takeoffRoutingRows} for:item="row">
-                                    <div key={row.label} class="meta-item">
-                                        <div class="meta-label">{row.label}</div>
-                                        <div class="meta-value">{row.value}</div>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Files + Notes tab -->
+        <template if:true={showRecords}>
+            <lightning-card title="Files + Notes + Proof Records" icon-name="utility:file" class="slds-m-bottom_small">
+                <div class="slds-card__body slds-card__body_inner">
+                    <dl class="slds-dl_horizontal">
+                        <template for:each={recordsRows} for:item="row">
+                            <dt key={row.label} class="slds-dl_horizontal__label slds-text-color_weak">{row.label}</dt>
+                            <dd key={row.label} class="slds-dl_horizontal__detail">{row.value}</dd>
+                        </template>
+                    </dl>
+                </div>
+            </lightning-card>
+        </template>
 
-                    <div class="grid-stack two-up top-gap">
-                        <div class="card">
-                            <div class="ch"><div class="ci">☰</div><h3>{isParentMode ? 'Takeoff Review' : 'Parent Takeoff Review'}</h3></div>
-                            <div class="cb">
-                                <template if:true={showTakeoffEditor}>
-                                    <div class="form-grid">
-                                        <label class="form-field">
-                                            <span class="meta-label">Takeoff Review Status</span>
-                                            <select class="field-input" data-field="status" value={takeoffDraft.status} onchange={handleTakeoffFieldChange}>
-                                                <template for:each={takeoffStatusOptions} for:item="option">
-                                                    <option key={option.value} value={option.value}>{option.label}</option>
-                                                </template>
-                                            </select>
-                                        </label>
-                                        <div class="meta-item">
-                                            <div class="meta-label">Package Match State</div>
-                                            <div class="meta-value">{packageMatchState}</div>
-                                        </div>
-                                        <template for:each={takeoffStateRows} for:item="row">
-                                            <div key={row.label} class="meta-item">
-                                                <div class="meta-label">{row.label}</div>
-                                                <div class="meta-value">{row.value}</div>
-                                            </div>
-                                        </template>
-                                        <div class="meta-item">
-                                            <div class="meta-label">Lines Requiring Review</div>
-                                            <div class="meta-value">{routedReviewCount}</div>
-                                        </div>
-                                        <label class="form-field checkbox-row">
-                                            <input type="checkbox" data-field="mismatchFound" checked={takeoffDraft.mismatchFound} onchange={handleTakeoffFieldChange} />
-                                            <span>Customer Success Review Required</span>
-                                        </label>
-                                        <label class="form-field checkbox-row">
-                                            <input type="checkbox" data-field="csApproved" checked={takeoffDraft.csApproved} onchange={handleTakeoffFieldChange} />
-                                            <span>Customer Success Approved</span>
-                                        </label>
-                                        <label class="form-field">
-                                            <span class="meta-label">Return Reason</span>
-                                            <textarea class="field-input field-textarea" data-field="returnReason" value={takeoffDraft.returnReason} onchange={handleTakeoffFieldChange}></textarea>
-                                        </label>
-                                        <label class="form-field">
-                                            <span class="meta-label">Mismatch Notes</span>
-                                            <textarea class="field-input field-textarea" data-field="mismatchNotes" value={takeoffDraft.mismatchNotes} onchange={handleTakeoffFieldChange}></textarea>
-                                        </label>
-                                        <label class="form-field">
-                                            <span class="meta-label">Takeoff Notes</span>
-                                            <textarea class="field-input field-textarea" data-field="notes" value={takeoffDraft.notes} onchange={handleTakeoffFieldChange}></textarea>
-                                        </label>
-                                    </div>
-                                    <div class="action-row">
-                                        <button class="sf-btn primary" onclick={handleSaveTakeoffReview} disabled={isSavingTakeoff}>Save Takeoff Review</button>
-                                        <button class="sf-btn" onclick={handleOpenTakeoffRecord} disabled={disableOpenTakeoffRecord}>Open Takeoff Record</button>
-                                        <button class="sf-btn" onclick={handleCreateChildren} disabled={disableCreateChildren}>Create / Sync Sub WorkOrders</button>
-                                    </div>
-                                </template>
-                                <template if:false={showTakeoffEditor}>
-                                    <div class="meta-grid">
-                                        <template for:each={takeoffStateRows} for:item="row">
-                                            <div key={row.label} class="meta-item">
-                                                <div class="meta-label">{row.label}</div>
-                                                <div class="meta-value">{row.value}</div>
-                                            </div>
-                                        </template>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="ch"><div class="ci">☑</div><h3>Takeoff Checklist</h3></div>
-                            <div class="cb">
-                                <div class="meta-grid">
-                                    <div class="meta-item"><div class="meta-label">Checklist Status</div><div class="meta-value">{takeoffChecklist.status}</div></div>
-                                    <div class="meta-item"><div class="meta-label">Checklist Type</div><div class="meta-value">{takeoffChecklist.checklistType}</div></div>
-                                    <div class="meta-item"><div class="meta-label">Completed By</div><div class="meta-value">{takeoffChecklist.completedBy}</div></div>
-                                    <div class="meta-item"><div class="meta-label">Completed Date</div><div class="meta-value">{takeoffChecklist.completedDate}</div></div>
-                                </div>
-                                <template if:true={checklistItems.length}>
-                                    <table class="tbl">
-                                        <thead><tr><th>Checklist Item</th><th>Status</th><th>Requirement</th><th>Notes</th><th></th></tr></thead>
-                                        <tbody>
-                                            <template for:each={checklistItems} for:item="item">
-                                                <tr key={item.checklistItemId}>
-                                                    <td>{item.label}</td>
-                                                    <td>
-                                                        <template if:true={showTakeoffEditor}>
-                                                            <select class="field-input" data-id={item.checklistItemId} value={item.statusValue} onchange={handleChecklistStatusChange}>
-                                                                <template for:each={item.statusOptions} for:item="option">
-                                                                    <option key={option.value} value={option.value}>{option.label}</option>
-                                                                </template>
-                                                            </select>
-                                                        </template>
-                                                        <template if:false={showTakeoffEditor}>{item.status}</template>
-                                                    </td>
-                                                    <td>{item.requiredLabel} · {item.photoRequiredLabel}</td>
-                                                    <td>
-                                                        <template if:true={showTakeoffEditor}>
-                                                            <textarea class="field-input field-textarea mini" data-id={item.checklistItemId} value={item.notesValue} onchange={handleChecklistNotesChange}></textarea>
-                                                        </template>
-                                                        <template if:false={showTakeoffEditor}>{item.notes}</template>
-                                                    </td>
-                                                    <td>
-                                                        <template if:true={showTakeoffEditor}>
-                                                            <button class="sf-btn" data-id={item.checklistItemId} onclick={handleSaveChecklistItem}>Save</button>
-                                                        </template>
-                                                    </td>
-                                                </tr>
-                                            </template>
-                                        </tbody>
-                                    </table>
-                                </template>
-                                <template if:false={checklistItems.length}>
-                                    <div class="empty-note">0 checklist items linked.</div>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card top-gap">
-                        <div class="ch"><div class="ci">≡</div><h3>Takeoff Line Items</h3></div>
-                        <div class="cb">
-                            <template if:true={takeoffLines.length}>
-                                <table class="tbl">
-                                    <thead><tr><th>Description</th><th class="num">Ordered</th><th class="num">Verified</th><th class="num">Measured</th><th>Unit</th><th class="num">Unit Price</th><th>Execution Scope</th><th>Routing Result</th><th>Determination</th><th>Substitution</th><th>Variance</th><th>Notes</th><th></th></tr></thead>
-                                    <tbody>
-                                        <template for:each={takeoffLines} for:item="line">
-                                            <tr key={line.takeoffLineId}>
-                                                <td>{line.description}</td>
-                                                <td class="num">{line.orderedQuantity}</td>
-                                                <td class="num">{line.verifiedQuantity}</td>
-                                                <td class="num">{line.measuredQuantity}</td>
-                                                <td>{line.unit}</td>
-                                                <td class="num">{line.unitPrice}</td>
-                                                <td>
-                                                    <template if:true={showTakeoffEditor}>
-                                                        <select class="field-input" data-id={line.takeoffLineId} value={line.executionScopeValue} onchange={handleTakeoffLineScopeChange}>
-                                                            <template for:each={line.scopeOptions} for:item="option">
-                                                                <option key={option.value} value={option.value}>{option.label}</option>
-                                                            </template>
-                                                        </select>
-                                                    </template>
-                                                    <template if:false={showTakeoffEditor}>{line.executionScope}</template>
-                                                </td>
-                                                <td>{line.routeState}</td>
-                                                <td>{line.determination}</td>
-                                                <td>{line.substitutionState}</td>
-                                                <td>{line.variance}</td>
-                                                <td>{line.notes}</td>
-                                                <td>
-                                                    <template if:true={showTakeoffEditor}>
-                                                        <button class="sf-btn" data-id={line.takeoffLineId} onclick={handleSaveTakeoffLineScope}>Save</button>
-                                                    </template>
-                                                </td>
-                                            </tr>
-                                        </template>
-                                    </tbody>
-                                </table>
-                            </template>
-                            <template if:false={takeoffLines.length}>
-                                <div class="empty-note">0 takeoff lines linked.</div>
-                            </template>
-                        </div>
-                    </div>
-                </template>
-
-                <template if:true={showScope}>
-                    <div class="card">
-                        <div class="ch"><div class="ci">≡</div><h3>{isParentMode ? 'Lot-Wide Scope + Line Items' : 'Child Scope + Line Items'}</h3></div>
-                        <div class="cb">
-                            <template if:true={lineItems.length}>
-                                <table class="tbl">
-                                    <thead><tr><th>Description</th><th>Scope</th><th class="num">Qty</th><th>Unit</th><th class="num">Unit Price</th><th class="num">Extended Price</th><th>Review</th><th>Substitution</th><th>Variance</th><th>Status</th></tr></thead>
-                                    <tbody>
-                                        <template for:each={lineItems} for:item="line">
-                                            <tr key={line.description}>
-                                                <td>{line.description}</td>
-                                                <td>{line.executionScope}</td>
-                                                <td class="num">{line.quantity}</td>
-                                                <td>{line.unit}</td>
-                                                <td class="num">{line.unitPrice}</td>
-                                                <td class="num">{line.extendedPrice}</td>
-                                                <td>{line.reviewStatus}</td>
-                                                <td>{line.substitutionState}</td>
-                                                <td>{line.variance}</td>
-                                                <td>{line.status}</td>
-                                            </tr>
-                                        </template>
-                                    </tbody>
-                                </table>
-                            </template>
-                            <template if:false={lineItems.length}>
-                                <div class="empty-note">0 line items linked.</div>
-                            </template>
-                        </div>
-                    </div>
-                </template>
-
-                <template if:true={showRecords}>
-                    <div class="card">
-                        <div class="ch"><div class="ci">▣</div><h3>Files + Notes + Proof Records</h3></div>
-                        <div class="cb meta-grid four-up">
-                            <template for:each={recordsRows} for:item="row">
-                                <div key={row.label} class="meta-item">
-                                    <div class="meta-label">{row.label}</div>
-                                    <div class="meta-value">{row.value}</div>
-                                </div>
-                            </template>
-                        </div>
-                    </div>
-                </template>
-
-                <template if:true={showBlockers}>
-                    <div class="grid-stack two-up">
-                        <div class="card">
-                            <div class="ch"><div class="ci">!</div><h3>Execution Controls</h3></div>
-                            <div class="cb meta-grid">
+        <!-- Execution Controls tab -->
+        <template if:true={showBlockers}>
+            <div class="slds-grid slds-wrap slds-gutters_small">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <lightning-card title="Execution Controls" icon-name="utility:warning" class="slds-m-bottom_small">
+                        <div class="slds-card__body slds-card__body_inner">
+                            <dl class="slds-dl_horizontal">
                                 <template for:each={blockerRows} for:item="row">
-                                    <div key={row.label} class="meta-item">
-                                        <div class="meta-label">{row.label}</div>
-                                        <div class="meta-value">{row.value}</div>
-                                    </div>
+                                    <dt key={row.label} class="slds-dl_horizontal__label slds-text-color_weak">{row.label}</dt>
+                                    <dd key={row.label} class="slds-dl_horizontal__detail">{row.value}</dd>
                                 </template>
-                            </div>
+                            </dl>
                         </div>
-
-                        <div class="card">
-                            <div class="ch"><div class="ci">✓</div><h3>Readiness</h3></div>
-                            <div class="cb check-stack">
-                                <template for:each={readinessChecks} for:item="item">
-                                    <div key={item.label} class="check-row">
-                                        <span class={item.className}></span>
-                                        <div class="check-copy">
-                                            <div class="meta-value">{item.label}</div>
-                                            <div class="meta-note">{item.detail}</div>
-                                        </div>
+                    </lightning-card>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <lightning-card title="Readiness" icon-name="utility:check" class="slds-m-bottom_small">
+                        <div class="slds-card__body slds-card__body_inner">
+                            <template for:each={readinessChecks} for:item="item">
+                                <div key={item.label} class="slds-grid slds-grid_vertical-align-center slds-m-bottom_x-small">
+                                    <span class={item.className}></span>
+                                    <div class="slds-m-left_small">
+                                        <div class="slds-text-body_regular">{item.label}</div>
+                                        <div class="slds-text-color_weak slds-text-body_small">{item.detail}</div>
                                     </div>
-                                </template>
-                            </div>
+                                </div>
+                            </template>
                         </div>
-                    </div>
-                </template>
-
-                <template if:true={showProof}>
-                    <div class="grid-stack two-up">
-                        <div class="card">
-                            <div class="ch"><div class="ci">◎</div><h3>Billing + QI</h3></div>
-                            <div class="cb meta-grid">
-                                <template for:each={proofFinancialRows} for:item="row">
-                                    <div key={row.label} class="meta-item">
-                                        <div class="meta-label">{row.label}</div>
-                                        <div class="meta-value">{row.value}</div>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-
-                        <div class="card">
-                            <div class="ch"><div class="ci">⇄</div><h3>Appointment Handoff</h3></div>
-                            <div class="cb meta-grid">
-                                <template for:each={handoffRows} for:item="row">
-                                    <div key={row.label} class="meta-item">
-                                        <div class="meta-label">{row.label}</div>
-                                        <div class="meta-value">{row.value}</div>
-                                    </div>
-                                </template>
-                            </div>
-                        </div>
-                    </div>
-                </template>
+                    </lightning-card>
+                </div>
             </div>
         </template>
-    </div>
+
+        <!-- Billing + QI tab -->
+        <template if:true={showProof}>
+            <div class="slds-grid slds-wrap slds-gutters_small">
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <lightning-card title="Billing + QI" icon-name="utility:currency" class="slds-m-bottom_small">
+                        <div class="slds-card__body slds-card__body_inner">
+                            <dl class="slds-dl_horizontal">
+                                <template for:each={proofFinancialRows} for:item="row">
+                                    <dt key={row.label} class="slds-dl_horizontal__label slds-text-color_weak">{row.label}</dt>
+                                    <dd key={row.label} class="slds-dl_horizontal__detail">{row.value}</dd>
+                                </template>
+                            </dl>
+                        </div>
+                    </lightning-card>
+                </div>
+                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                    <lightning-card title="Appointment Handoff" icon-name="utility:share" class="slds-m-bottom_small">
+                        <div class="slds-card__body slds-card__body_inner">
+                            <dl class="slds-dl_horizontal">
+                                <template for:each={handoffRows} for:item="row">
+                                    <dt key={row.label} class="slds-dl_horizontal__label slds-text-color_weak">{row.label}</dt>
+                                    <dd key={row.label} class="slds-dl_horizontal__detail">{row.value}</dd>
+                                </template>
+                            </dl>
+                        </div>
+                    </lightning-card>
+                </div>
+            </div>
+        </template>
+
+    </template>
 </template>

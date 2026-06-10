@@ -164,7 +164,9 @@ export default class LovingWorkOrderTypeLayout extends NavigationMixin(Lightning
     get noticeClass() {
         const t = this.woType;
         const warn = (t === 'Aqua Emergency' || t === 'Loading Ticket');
-        return warn ? 'lwtl-notice lwtl-notice-warn' : 'lwtl-notice';
+        return (warn
+            ? 'slds-notify slds-notify_alert slds-theme_warning'
+            : 'slds-notify slds-notify_alert slds-theme_info') + ' slds-m-bottom_small';
     }
 
     // --- Type flags (standard) ---
@@ -497,24 +499,24 @@ export default class LovingWorkOrderTypeLayout extends NavigationMixin(Lightning
     }
 
     get statusBadgeClass() {
-        if (!this.dto) return 'lwtl-badge';
+        if (!this.dto) return 'slds-badge slds-badge_lightest';
         const s = this.effectiveStatus;
-        if (s === 'In Progress') return 'lwtl-badge lwtl-badge-blue';
-        if (s === 'Closed' || s === 'Paid') return 'lwtl-badge lwtl-badge-green';
-        if (s === 'Cancelled' || s === 'Cannot Complete') return 'lwtl-badge lwtl-badge-red';
-        if (s === 'Pending Takeoff' || s === 'New' || s === 'Ready to Schedule') return 'lwtl-badge lwtl-badge-gray';
-        return 'lwtl-badge lwtl-badge-orange';
+        if (s === 'In Progress') return 'slds-badge cs-badge-aqua';
+        if (s === 'Closed' || s === 'Paid') return 'slds-badge cs-badge-green';
+        if (s === 'Cancelled' || s === 'Cannot Complete') return 'slds-badge cs-badge-red';
+        if (s === 'Pending Takeoff' || s === 'New' || s === 'Ready to Schedule') return 'slds-badge slds-badge_lightest';
+        return 'slds-badge cs-badge-amber';
     }
 
     get typeBadgeClass() {
         const t = this.woType;
-        if (INSTALL_TYPES.has(t)) return 'lwtl-badge lwtl-badge-green';
-        if (t === 'Warranty' || t === 'Customer Success') return 'lwtl-badge lwtl-badge-orange';
-        if (t === 'Aqua Emergency') return 'lwtl-badge lwtl-badge-red';
-        if (AQUA_TYPES.has(t)) return 'lwtl-badge lwtl-badge-blue';
-        if (t === 'Site Visit') return 'lwtl-badge';
-        if (IRRIGATION_TYPES.has(t) || GRADING_TYPES.has(t) || EXECUTION_TYPES.has(t)) return 'lwtl-badge lwtl-badge-orange';
-        return 'lwtl-badge lwtl-badge-gray';
+        if (INSTALL_TYPES.has(t)) return 'slds-badge cs-badge-green';
+        if (t === 'Warranty' || t === 'Customer Success') return 'slds-badge cs-badge-amber';
+        if (t === 'Aqua Emergency') return 'slds-badge cs-badge-red';
+        if (AQUA_TYPES.has(t)) return 'slds-badge cs-badge-aqua';
+        if (t === 'Site Visit') return 'slds-badge slds-badge_lightest';
+        if (IRRIGATION_TYPES.has(t) || GRADING_TYPES.has(t) || EXECUTION_TYPES.has(t)) return 'slds-badge cs-badge-amber';
+        return 'slds-badge slds-badge_lightest';
     }
 
     // Aqua section display helpers (show available DTO data with type-appropriate labels)

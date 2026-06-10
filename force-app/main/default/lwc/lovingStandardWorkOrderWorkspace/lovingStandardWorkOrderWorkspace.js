@@ -2,10 +2,6 @@ import { LightningElement, api, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import { refreshApex } from '@salesforce/apex';
-import { getRecord, getFieldValue } from 'lightning/uiRecordApi';
-import userId from '@salesforce/user/Id';
-import FIRST_NAME from '@salesforce/schema/User.FirstName';
-import LAST_NAME from '@salesforce/schema/User.LastName';
 import getWorkspace from '@salesforce/apex/LovingWOWorkspaceController.getWorkspace';
 import createExecutionChildren from '@salesforce/apex/LovingWOWorkspaceController.createExecutionChildren';
 import ensureTakeoffChecklist from '@salesforce/apex/LovingWOWorkspaceController.ensureTakeoffChecklist';
@@ -17,7 +13,6 @@ const NEW_TASK_ACTION = 'Global.NewTask';
 const NEW_NOTE_ACTION = 'Global.NewNote';
 
 export default class LovingStandardWorkOrderWorkspace extends NavigationMixin(LightningElement) {
-    static shellStyleId = 'loving-workorder-shell-style';
     @api recordId;
     activeTab = 'summary';
     workspace;
@@ -30,9 +25,6 @@ export default class LovingStandardWorkOrderWorkspace extends NavigationMixin(Li
     takeoffDraft = {};
     checklistDrafts = {};
     takeoffLineDrafts = {};
-
-    @wire(getRecord, { recordId: userId, fields: [FIRST_NAME, LAST_NAME] })
-    currentUser;
 
     @wire(getWorkspace, { workOrderId: '$recordId' })
     wiredWorkspace({ data, error }) {
@@ -48,71 +40,8 @@ export default class LovingStandardWorkOrderWorkspace extends NavigationMixin(Li
         }
     }
 
-    renderedCallback() {
-        this.ensureShellStyle();
-    }
-
-    disconnectedCallback() {
-        this.removeShellStyle();
-    }
-
     get hasData() {
         return !!this.workspace && !!this.workspace.header;
-    }
-
-    get builderAppLabel() {
-        return 'Home Builder Operations';
-    }
-
-    get builderSearchPlaceholder() {
-        return 'Search builder POs, takeoffs, work orders, schedules, customer success, and aqua...';
-    }
-
-    get userInitials() {
-        const first = (getFieldValue(this.currentUser?.data, FIRST_NAME) || '')[0] || '';
-        const last = (getFieldValue(this.currentUser?.data, LAST_NAME) || '')[0] || '';
-        return (first + last).toUpperCase() || '--';
-    }
-
-    get builderNavTabs() {
-        return [
-            { id: 'home', label: 'Home', className: 'hb-tab', disabled: false },
-            { id: 'accounts', label: 'Accounts', className: 'hb-tab', disabled: false },
-            { id: 'builderPo', label: 'Builder PO', className: 'hb-tab', disabled: false },
-            { id: 'takeoff', label: 'Takeoff', className: 'hb-tab', disabled: !this.workspace?.takeoffId },
-            { id: 'workorders', label: 'Work Order', className: 'hb-tab on', disabled: false },
-            { id: 'scheduling', label: 'Scheduling', className: 'hb-tab', disabled: false },
-            { id: 'customerSuccess', label: 'Customer Success', className: 'hb-tab', disabled: false },
-            { id: 'aqua', label: 'Aqua', className: 'hb-tab', disabled: false }
-        ];
-    }
-
-    ensureShellStyle() {
-        if (typeof window === 'undefined' || typeof document === 'undefined') {
-            return;
-        }
-        if (!window.location.pathname.includes('/lightning/r/WorkOrder/')) {
-            return;
-        }
-        if (document.getElementById(LovingStandardWorkOrderWorkspace.shellStyleId)) {
-            return;
-        }
-        const style = document.createElement('style');
-        style.id = LovingStandardWorkOrderWorkspace.shellStyleId;
-        style.textContent = `
-            .flexipageHeader,
-            app-flexipage-header {
-                display: none !important;
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    removeShellStyle() {
-        if (typeof document === 'undefined') {
-            return;
-        }
-        document.getElementById(LovingStandardWorkOrderWorkspace.shellStyleId)?.remove();
     }
 
     get tabs() {
@@ -136,7 +65,9 @@ export default class LovingStandardWorkOrderWorkspace extends NavigationMixin(Li
             ];
         return tabs.map((tab) => ({
             ...tab,
-            className: `sf-tab${this.activeTab === tab.id ? ' on' : ''}`
+            className: this.activeTab === tab.id
+                ? 'slds-button slds-button_brand'
+                : 'slds-button slds-button_neutral'
         }));
     }
 
@@ -145,9 +76,11 @@ export default class LovingStandardWorkOrderWorkspace extends NavigationMixin(Li
     }
 
     get kpis() {
+        const toneMap = { blue: 'cs-kpi-aqua', green: 'cs-kpi-green', amber: 'cs-kpi-amber', red: 'cs-kpi-red' };
         return (this.workspace?.kpis || []).map((kpi) => ({
             ...kpi,
-            className: `kpi ${kpi.tone || 'gray'}`
+            tileClass: 'slds-box slds-box_x-small cs-kpi-tile',
+            numClass: 'cs-kpi-v ' + (toneMap[kpi.tone] || '')
         }));
     }
 
@@ -307,7 +240,7 @@ export default class LovingStandardWorkOrderWorkspace extends NavigationMixin(Li
     get readinessChecks() {
         return (this.workspace?.readinessChecks || []).map((item) => ({
             ...item,
-            className: item.passed ? 'check-dot pass' : 'check-dot fail'
+            className: item.passed ? 'wo-check-dot wo-check-pass' : 'wo-check-dot wo-check-fail'
         }));
     }
 
@@ -466,57 +399,6 @@ export default class LovingStandardWorkOrderWorkspace extends NavigationMixin(Li
         this.navigateToLightningRecord(this.workspace.takeoffId, 'Takeoff__c');
     }
 
-    handleBuilderTabClick(event) {
-        const target = event.currentTarget.dataset.id;
-        if (!target) return;
-        switch (target) {
-            case 'home':
-                this[NavigationMixin.Navigate]({
-                    type: 'standard__navItemPage',
-                    attributes: { apiName: 'LOVING_PO_Pipeline' }
-                });
-                break;
-            case 'accounts':
-                this[NavigationMixin.Navigate]({
-                    type: 'standard__objectPage',
-                    attributes: { objectApiName: 'Account', actionName: 'home' }
-                });
-                break;
-            case 'builderPo':
-                this[NavigationMixin.Navigate]({
-                    type: 'standard__objectPage',
-                    attributes: { objectApiName: 'Builder_PO__c', actionName: 'home' }
-                });
-                break;
-            case 'takeoff':
-                this.handleOpenTakeoffRecord();
-                break;
-            case 'workorders':
-                this.navigateToLightningRecord(this.recordId, 'WorkOrder');
-                break;
-            case 'scheduling':
-                this[NavigationMixin.Navigate]({
-                    type: 'standard__navItemPage',
-                    attributes: { apiName: 'Scheduling_Console' }
-                });
-                break;
-            case 'customerSuccess':
-                this[NavigationMixin.Navigate]({
-                    type: 'standard__navItemPage',
-                    attributes: { apiName: 'Customer_Success_Console' }
-                });
-                break;
-            case 'aqua':
-                this[NavigationMixin.Navigate]({
-                    type: 'standard__navItemPage',
-                    attributes: { apiName: 'Aqua_Service_Home' }
-                });
-                break;
-            default:
-                break;
-        }
-    }
-
     handleEditWorkOrder() {
         if (!this.recordId) return;
         this[NavigationMixin.Navigate]({
@@ -615,7 +497,7 @@ export default class LovingStandardWorkOrderWorkspace extends NavigationMixin(Li
 
     handleTakeoffFieldChange(event) {
         const field = event.currentTarget.dataset.field;
-        const value = event.currentTarget.type === 'checkbox' ? event.currentTarget.checked : event.currentTarget.value;
+        const value = event.detail.checked !== undefined ? event.detail.checked : event.detail.value;
         this.takeoffDraft = {
             ...this.takeoffDraft,
             [field]: value
@@ -658,10 +540,7 @@ export default class LovingStandardWorkOrderWorkspace extends NavigationMixin(Li
         const draft = this.checklistDrafts[checklistItemId] || {};
         this.checklistDrafts = {
             ...this.checklistDrafts,
-            [checklistItemId]: {
-                ...draft,
-                status: event.currentTarget.value
-            }
+            [checklistItemId]: { ...draft, status: event.detail.value }
         };
     }
 
@@ -670,10 +549,7 @@ export default class LovingStandardWorkOrderWorkspace extends NavigationMixin(Li
         const draft = this.checklistDrafts[checklistItemId] || {};
         this.checklistDrafts = {
             ...this.checklistDrafts,
-            [checklistItemId]: {
-                ...draft,
-                notes: event.currentTarget.value
-            }
+            [checklistItemId]: { ...draft, notes: event.detail.value }
         };
     }
 
@@ -709,10 +585,7 @@ export default class LovingStandardWorkOrderWorkspace extends NavigationMixin(Li
         const draft = this.takeoffLineDrafts[takeoffLineId] || {};
         this.takeoffLineDrafts = {
             ...this.takeoffLineDrafts,
-            [takeoffLineId]: {
-                ...draft,
-                executionScope: event.currentTarget.value
-            }
+            [takeoffLineId]: { ...draft, executionScope: event.detail.value }
         };
     }
 
