@@ -3,6 +3,10 @@
     <description>CS Console access: PO intake/verify/approve, quotes and EPOs, warranty determinations, case actions, onboarding, read-only invoices and takeoffs. No scheduling, field execution, QI approval, takeoff approval, or payments (G5).</description>
     <hasActivationRequired>false</hasActivationRequired>
     <label>LOVING CS Console</label>
+    <applicationVisibilities>
+        <application>LOVING_CS_Console</application>
+        <visible>true</visible>
+    </applicationVisibilities>
     <customPermissions>
         <enabled>true</enabled>
         <name>LOVING_CS_Console_Edit</name>
