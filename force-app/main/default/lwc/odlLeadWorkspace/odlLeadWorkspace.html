@@ -1,0 +1,99 @@
+<template>
+    <section class="workspace-shell">
+        <div class="workspace-header">
+            <div>
+                <p class="eyebrow">Outdoor Living Console</p>
+                <h1>ODL Leads</h1>
+                <p class="subtitle">Homeowner ODL leads. Follow-Up data pulls from live Salesforce activity.</p>
+            </div>
+            <div class="header-actions">
+                <button class="primary-btn" onclick={handleConvertLead}>Convert Lead</button>
+                <button class="primary-btn" onclick={handleLogActivity}>Log Activity</button>
+                <button class="secondary-btn" onclick={handleRefresh}>Refresh</button>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <div class="chip-row">
+                <template for:each={filters} for:item="filter">
+                    <button
+                        key={filter.value}
+                        class={filter.className}
+                        data-value={filter.value}
+                        onclick={handleFilterClick}
+                    >
+                        {filter.label}
+                    </button>
+                </template>
+            </div>
+            <lightning-input
+                class="search-input"
+                type="search"
+                variant="label-hidden"
+                placeholder="Search leads"
+                value={searchTerm}
+                onchange={handleSearchChange}
+            ></lightning-input>
+        </div>
+
+        <template if:true={isLoading}>
+            <div class="state-card">Loading leads...</div>
+        </template>
+
+        <template if:true={errorMessage}>
+            <div class="state-card error">{errorMessage}</div>
+        </template>
+
+        <template if:true={hasRows}>
+            <div class="list-card">
+                <div class="card-heading">
+                    <div>
+                        <h2>Lead Operating List</h2>
+                        <p>Live homeowner lead records. Last Action and Follow-Up pull from Salesforce activity.</p>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table class="workspace-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Phone</th>
+                                <th>Lead Source</th>
+                                <th>Community</th>
+                                <th>Follow-Up Due</th>
+                                <th>Owner</th>
+                                <th>CTA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={visibleRows} for:item="row">
+                                <tr key={row.id}>
+                                    <td>
+                                        <button class="link-button" data-id={row.id} onclick={handleOpenRecord}>{row.name}</button>
+                                    </td>
+                                    <td>{row.status}</td>
+                                    <td>{row.voicemail}</td>
+                                    <td>{row.leadSource}</td>
+                                    <td>{row.odPath}</td>
+                                    <td>{row.followUpDue}</td>
+                                    <td>{row.ownerName}</td>
+                                    <td>
+                                        <button class="btn-inline" data-id={row.id} onclick={handleLogActivity}>Log Activity</button>
+                                        <button class="btn-inline" data-id={row.id} onclick={handleSendEmail}>Send Email</button>
+                                        <button class="btn-inline-rose" data-id={row.id} onclick={handleDisqualify}>Disqualify</button>
+                                        <button class="primary-btn" data-id={row.id} onclick={handleOpenRecord}>Open</button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </template>
+
+        <template if:true={showEmptyState}>
+            <div class="state-card">No leads match the current filters.</div>
+        </template>
+    </section>
+</template>

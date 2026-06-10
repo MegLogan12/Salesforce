@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Duration_Source__c</fullName>
+    <description>How the Calculated_Duration_Minutes__c value was determined. Calculated from WLR = all or most lines matched WLR standards. Partial WLR = some lines matched, some missing. Manual Override = scheduler entered duration manually. Missing Standards = no WLR matches found. No Line Items = WO has no line items to calculate from.</description>
+    <label>Duration Source</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Calculated from WLR</fullName>
+                <default>false</default>
+                <label>Calculated from WLR</label>
+            </value>
+            <value>
+                <fullName>Partial WLR</fullName>
+                <default>false</default>
+                <label>Partial WLR (some lines missing standard)</label>
+            </value>
+            <value>
+                <fullName>Manual Override</fullName>
+                <default>false</default>
+                <label>Manual Override</label>
+            </value>
+            <value>
+                <fullName>Missing Standards</fullName>
+                <default>false</default>
+                <label>Missing Standards</label>
+            </value>
+            <value>
+                <fullName>No Line Items</fullName>
+                <default>false</default>
+                <label>No Line Items</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Invoice_Line_Item__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>The specific Invoice Line Item this Service Ticket maps to. Populated when invoice is generated and line items are assigned to service tickets. Enables billing reconciliation per service type.</description>
+    <label>Invoice Line Item</label>
+    <referenceTo>Invoice_Line_Item__c</referenceTo>
+    <relationshipLabel>Service Tickets</relationshipLabel>
+    <relationshipName>Service_Ticket_Invoice_Lines</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

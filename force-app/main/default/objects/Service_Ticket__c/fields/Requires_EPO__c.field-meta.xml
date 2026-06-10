@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Requires_EPO__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>True if this Service Ticket requires an Extra Purchase Order approval before work can be billed. Triggers EPO workflow when set to true. Automatically sets Included_In_PO__c = false.</description>
+    <label>Requires EPO</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

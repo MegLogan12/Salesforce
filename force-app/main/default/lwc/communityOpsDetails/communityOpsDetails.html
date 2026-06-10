@@ -1,0 +1,50 @@
+<template>
+    <template if:true={loaded}>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">O</div>
+                <h2 class="card-title">Operational Details</h2>
+            </div>
+            <div class="card-body">
+                <div class="meta-grid">
+                    <div class="meta-item">
+                        <div class="meta-label">Open Work Orders</div>
+                        <div class="meta-value">{openWoCount}</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Most Recent WO Status</div>
+                        <div class="meta-value">{latestWoStatus}</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Most Recent WO Number</div>
+                        <div class="meta-value">{latestWoNumber}</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Latest Task Date</div>
+                        <div class="meta-value">
+                            <template if:true={latestTaskDate}>
+                                <lightning-formatted-date-time
+                                    value={latestTaskDate}
+                                    year="numeric" month="short" day="numeric">
+                                </lightning-formatted-date-time>
+                            </template>
+                            <template if:false={latestTaskDate}>—</template>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Latest Task Subject</div>
+                        <div class="meta-value">{latestTaskSubject}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-primary" onclick={handleViewDetails}>View Details</button>
+            </div>
+        </div>
+    </template>
+    <template if:false={loaded}>
+        <div class="loading-state">
+            <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+        </div>
+    </template>
+</template>

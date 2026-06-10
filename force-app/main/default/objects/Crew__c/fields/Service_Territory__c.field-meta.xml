@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Service_Territory__c</fullName>
+    <label>Service Territory</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Charlotte NC</fullName>
+                <default>false</default>
+                <label>Charlotte NC</label>
+            </value>
+            <value>
+                <fullName>Asheville NC</fullName>
+                <default>false</default>
+                <label>Asheville NC</label>
+            </value>
+            <value>
+                <fullName>Raleigh NC</fullName>
+                <default>false</default>
+                <label>Raleigh NC</label>
+            </value>
+            <value>
+                <fullName>Greenville SC</fullName>
+                <default>false</default>
+                <label>Greenville SC</label>
+            </value>
+            <value>
+                <fullName>Columbia SC</fullName>
+                <default>false</default>
+                <label>Columbia SC</label>
+            </value>
+            <value>
+                <fullName>Triad NC</fullName>
+                <default>false</default>
+                <label>Triad NC</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

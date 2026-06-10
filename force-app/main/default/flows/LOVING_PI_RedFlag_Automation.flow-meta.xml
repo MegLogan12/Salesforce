@@ -14,144 +14,24 @@
     <label>LOVING PI Red Flag Automation</label>
     <processMetadataValues>
         <name>BuilderType</name>
-        <value><stringValue>LightningFlowBuilder</stringValue></value>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
     <start>
-        <locationX>50</locationX><locationY>0</locationY>
-        <connector><targetReference>Get_Red_Flag_WO</targetReference></connector>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Red_Flag_WO</targetReference>
+        </connector>
     </start>
     <status>Active</status>
-
-    <variables>
-        <name>varWorkOrderId</name><dataType>String</dataType>
-        <isCollection>false</isCollection><isInput>true</isInput><isOutput>false</isOutput>
-    </variables>
-    <variables>
-        <name>varFJRequired</name><dataType>Boolean</dataType>
-        <isCollection>false</isCollection><isInput>true</isInput><isOutput>false</isOutput>
-    </variables>
-    <variables>
-        <name>varFJReason</name><dataType>String</dataType>
-        <isCollection>false</isCollection><isInput>true</isInput><isOutput>false</isOutput>
-    </variables>
-    <variables>
-        <name>varRedNotes</name><dataType>String</dataType>
-        <isCollection>false</isCollection><isInput>true</isInput><isOutput>false</isOutput>
-    </variables>
-    <variables>
-        <name>varWO</name><dataType>SObject</dataType>
-        <isCollection>false</isCollection><isInput>false</isInput><isOutput>false</isOutput>
-        <objectType>WorkOrder</objectType>
-    </variables>
-
-    <recordLookups>
-        <name>Get_Red_Flag_WO</name>
-        <label>Get Work Order</label>
-        <locationX>200</locationX><locationY>100</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector><targetReference>Create_Scheduling_Escalation</targetReference></connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>Id</field><operator>EqualTo</operator>
-            <value><elementReference>varWorkOrderId</elementReference></value>
-        </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
-        <object>WorkOrder</object>
-        <outputReference>varWO</outputReference>
-        <queriedFields><field>Id</field></queriedFields>
-        <queriedFields><field>FM__c</field></queriedFields>
-        <queriedFields><field>FM__r.ManagerId</field></queriedFields>
-        <queriedFields><field>Lot_Address__c</field></queriedFields>
-        <queriedFields><field>Lot_Number__c</field></queriedFields>
-        <queriedFields><field>Red_Flag_Notes__c</field></queriedFields>
-        <queriedFields><field>Finish_Job_Required__c</field></queriedFields>
-        <queriedFields><field>Finish_Job_Reason__c</field></queriedFields>
-    </recordLookups>
-
-    <!-- SCHEDULING ESCALATION TASK -->
-    <recordCreates>
-        <name>Create_Scheduling_Escalation</name>
-        <label>Create Scheduling Escalation Task</label>
-        <locationX>200</locationX><locationY>200</locationY>
-        <connector><targetReference>Create_Ops_Escalation</targetReference></connector>
-        <inputAssignments>
-            <field>Subject</field>
-            <value><stringValue>RED FLAG — 2PM Health Check: Job Will Not Complete Today</stringValue></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>WhatId</field>
-            <value><elementReference>varWO.Id</elementReference></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Priority</field>
-            <value><stringValue>High</stringValue></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>ActivityDate</field>
-            <value><elementReference>$Flow.CurrentDate</elementReference></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Type</field>
-            <value><stringValue>Red Flag Escalation</stringValue></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Description</field>
-            <value><elementReference>varRedNotes</elementReference></value>
-        </inputAssignments>
-        <object>Task</object>
-        <storeOutputAutomatically>false</storeOutputAutomatically>
-    </recordCreates>
-
-    <!-- OPS MANAGER ESCALATION -->
-    <recordCreates>
-        <name>Create_Ops_Escalation</name>
-        <label>Create Ops Manager Escalation Task</label>
-        <locationX>200</locationX><locationY>300</locationY>
-        <connector><targetReference>Check_FJ_Required</targetReference></connector>
-        <inputAssignments>
-            <field>Subject</field>
-            <value><stringValue>OPS ALERT — Red Health Check — Decision Required</stringValue></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>OwnerId</field>
-            <value><elementReference>varWO.FM__r.ManagerId</elementReference></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>WhatId</field>
-            <value><elementReference>varWO.Id</elementReference></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Priority</field>
-            <value><stringValue>High</stringValue></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>ActivityDate</field>
-            <value><elementReference>$Flow.CurrentDate</elementReference></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Type</field>
-            <value><stringValue>Red Flag Decision</stringValue></value>
-        </inputAssignments>
-        <inputAssignments>
-            <field>Description</field>
-            <value><stringValue>FM has flagged this job Red at the 2PM health check. Immediate decision required:
-
-OPTION A — Extend crew time: Authorize overtime and mark job Green.
-OPTION B — Send additional crew: Dispatch second crew to complete today.
-OPTION C — Create Finish Job: Accept partial completion; schedule a return visit. Check Finish_Job_Required__c on the Work Order and fill in the reason.
-
-The Finish Job will be auto-created if FM marks Finish_Job_Required__c = true.</stringValue></value>
-        </inputAssignments>
-        <object>Task</object>
-        <storeOutputAutomatically>false</storeOutputAutomatically>
-    </recordCreates>
-
-    <!-- CHECK IF FINISH JOB REQUIRED -->
     <decisions>
         <name>Check_FJ_Required</name>
         <label>Finish Job Required?</label>
-        <locationX>200</locationX><locationY>400</locationY>
+        <locationX>200</locationX>
+        <locationY>500</locationY>
         <defaultConnectorLabel>No Finish Job</defaultConnectorLabel>
         <rules>
             <name>FJ_Is_Required</name>
@@ -159,40 +39,253 @@ The Finish Job will be auto-created if FM marks Finish_Job_Required__c = true.</
             <conditions>
                 <leftValueReference>varFJRequired</leftValueReference>
                 <operator>EqualTo</operator>
-                <rightValue><booleanValue>true</booleanValue></rightValue>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
             </conditions>
-            <connector><targetReference>Create_Finish_Job_Record</targetReference></connector>
+            <connector>
+                <targetReference>Create_Finish_Job_Record</targetReference>
+            </connector>
             <label>Finish Job Required</label>
         </rules>
     </decisions>
+    <recordCreates>
+        <name>Create_Scheduling_Escalation</name>
+        <label>Create Scheduling Escalation Task</label>
+        <locationX>200</locationX>
+        <locationY>300</locationY>
+        <connector>
+            <targetReference>Create_Ops_Escalation</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <stringValue>RED FLAG — 2PM Health Check: Job Will Not Complete Today</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhatId</field>
+            <value>
+                <elementReference>varWO.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value>
+                <stringValue>High</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ActivityDate</field>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type</field>
+            <value>
+                <stringValue>Red Flag Escalation</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Description</field>
+            <value>
+                <elementReference>varRedNotes</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
+    <recordCreates>
+        <name>Create_Ops_Escalation</name>
+        <label>Create Ops Manager Escalation Task</label>
+        <locationX>200</locationX>
+        <locationY>400</locationY>
+        <connector>
+            <targetReference>Check_FJ_Required</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <stringValue>OPS ALERT — Red Health Check — Decision Required</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <elementReference>varFMUser.ManagerId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhatId</field>
+            <value>
+                <elementReference>varWO.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value>
+                <stringValue>High</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>ActivityDate</field>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Type</field>
+            <value>
+                <stringValue>Red Flag Decision</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Description</field>
+            <value>
+                <stringValue>FM has flagged this job Red at the 2PM health check. Immediate decision required:
 
-    <!-- CREATE FINISH JOB RECORD -->
+OPTION A — Extend crew time: Authorize overtime and mark job Green.
+OPTION B — Send additional crew: Dispatch second crew to complete today.
+OPTION C — Create Finish Job: Accept partial completion; schedule a return visit. Check Finish_Job_Required__c on the Work Order and fill in the reason.
+
+The Finish Job will be auto-created if FM marks Finish_Job_Required__c = true.</stringValue>
+            </value>
+        </inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordCreates>
     <recordCreates>
         <name>Create_Finish_Job_Record</name>
         <label>Create Finish Job Record</label>
-        <locationX>400</locationX><locationY>400</locationY>
+        <locationX>400</locationX>
+        <locationY>500</locationY>
         <inputAssignments>
             <field>Parent_Work_Order__c</field>
-            <value><elementReference>varWO.Id</elementReference></value>
+            <value>
+                <elementReference>varWO.Id</elementReference>
+            </value>
         </inputAssignments>
         <inputAssignments>
             <field>FM__c</field>
-            <value><elementReference>varWO.FM__c</elementReference></value>
+            <value>
+                <elementReference>varWO.FM__c</elementReference>
+            </value>
         </inputAssignments>
         <inputAssignments>
             <field>FJ_Reason__c</field>
-            <value><elementReference>varFJReason</elementReference></value>
+            <value>
+                <elementReference>varFJReason</elementReference>
+            </value>
         </inputAssignments>
         <inputAssignments>
             <field>Accountability_Notes__c</field>
-            <value><elementReference>varRedNotes</elementReference></value>
+            <value>
+                <elementReference>varRedNotes</elementReference>
+            </value>
         </inputAssignments>
         <inputAssignments>
             <field>FJ_Date__c</field>
-            <value><elementReference>$Flow.CurrentDate</elementReference></value>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
         </inputAssignments>
         <object>Finish_Job__c</object>
         <storeOutputAutomatically>false</storeOutputAutomatically>
     </recordCreates>
-
+    <recordLookups>
+        <name>Get_Red_Flag_WO</name>
+        <label>Get Work Order</label>
+        <locationX>200</locationX>
+        <locationY>100</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Get_FM_User</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>varWorkOrderId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkOrder</object>
+        <outputReference>varWO</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>FM__c</queriedFields>
+        <queriedFields>Lot_Address__c</queriedFields>
+        <queriedFields>Lot_Number__c</queriedFields>
+        <queriedFields>Red_Flag_Notes__c</queriedFields>
+        <queriedFields>Finish_Job_Required__c</queriedFields>
+        <queriedFields>Finish_Job_Reason__c</queriedFields>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_FM_User</name>
+        <label>Get FM User (for Manager lookup)</label>
+        <locationX>200</locationX>
+        <locationY>200</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Create_Scheduling_Escalation</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>varWO.FM__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>User</object>
+        <outputReference>varFMUser</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>ManagerId</queriedFields>
+    </recordLookups>
+    <variables>
+        <name>varWorkOrderId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>varFJRequired</name>
+        <dataType>Boolean</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>varFJReason</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>varRedNotes</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>varWO</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>WorkOrder</objectType>
+    </variables>
+    <variables>
+        <name>varFMUser</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>User</objectType>
+    </variables>
 </Flow>

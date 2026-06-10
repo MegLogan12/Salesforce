@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Package_Item__c</fullName>
+    <label>Package Item</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other (Manual Entry)</label>
+            </value>
+            <value>
+                <fullName>Sod - Bermuda</fullName>
+                <default>false</default>
+                <label>Sod - Bermuda</label>
+            </value>
+            <value>
+                <fullName>Sod - Zoysia</fullName>
+                <default>false</default>
+                <label>Sod - Zoysia</label>
+            </value>
+            <value>
+                <fullName>Sod - Fescue</fullName>
+                <default>false</default>
+                <label>Sod - Fescue</label>
+            </value>
+            <value>
+                <fullName>Sod - Centipede</fullName>
+                <default>false</default>
+                <label>Sod - Centipede</label>
+            </value>
+            <value>
+                <fullName>Shrubs - Foundation Package</fullName>
+                <default>false</default>
+                <label>Shrubs - Foundation Package</label>
+            </value>
+            <value>
+                <fullName>Shrubs - Builder Standard</fullName>
+                <default>false</default>
+                <label>Shrubs - Builder Standard</label>
+            </value>
+            <value>
+                <fullName>Shrubs - Premium</fullName>
+                <default>false</default>
+                <label>Shrubs - Premium</label>
+            </value>
+            <value>
+                <fullName>Tree - Understory 2in</fullName>
+                <default>false</default>
+                <label>Tree - Understory 2in</label>
+            </value>
+            <value>
+                <fullName>Tree - Shade 3in</fullName>
+                <default>false</default>
+                <label>Tree - Shade 3in</label>
+            </value>
+            <value>
+                <fullName>Tree - Ornamental</fullName>
+                <default>false</default>
+                <label>Tree - Ornamental</label>
+            </value>
+            <value>
+                <fullName>Mulch - Pine Bark</fullName>
+                <default>false</default>
+                <label>Mulch - Pine Bark</label>
+            </value>
+            <value>
+                <fullName>Mulch - Hardwood</fullName>
+                <default>false</default>
+                <label>Mulch - Hardwood</label>
+            </value>
+            <value>
+                <fullName>Pine Straw</fullName>
+                <default>false</default>
+                <label>Pine Straw</label>
+            </value>
+            <value>
+                <fullName>Cleanup - Final Grade</fullName>
+                <default>false</default>
+                <label>Cleanup - Final Grade</label>
+            </value>
+            <value>
+                <fullName>Debris Removal</fullName>
+                <default>false</default>
+                <label>Debris Removal</label>
+            </value>
+            <value>
+                <fullName>Grading - Topsoil</fullName>
+                <default>false</default>
+                <label>Grading - Topsoil</label>
+            </value>
+            <value>
+                <fullName>Irrigation - Full System</fullName>
+                <default>false</default>
+                <label>Irrigation - Full System</label>
+            </value>
+            <value>
+                <fullName>Irrigation - Drip Only</fullName>
+                <default>false</default>
+                <label>Irrigation - Drip Only</label>
+            </value>
+            <value>
+                <fullName>Irrigation - Backflow Install</fullName>
+                <default>false</default>
+                <label>Irrigation - Backflow Install</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

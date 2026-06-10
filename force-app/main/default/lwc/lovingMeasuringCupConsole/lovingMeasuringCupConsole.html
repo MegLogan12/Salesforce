@@ -1,0 +1,161 @@
+<template>
+    <div class="console-home">
+
+        <!-- Loading -->
+        <template if:true={isLoading}>
+            <div class="odl-loading">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Error -->
+        <template if:true={hasError}>
+            <div class="odl-error-state">
+                <lightning-icon icon-name="utility:error" size="small" variant="error"></lightning-icon>
+                <p>{error}</p>
+                <lightning-button label="Retry" onclick={handleRefresh}></lightning-button>
+            </div>
+        </template>
+
+        <!-- Main -->
+        <template if:false={isLoading}>
+            <template if:false={hasError}>
+
+                <!-- Page header -->
+                <div class="page-header">
+                    <div class="page-header-icon" style="background:#c4607a">
+                        <lightning-icon icon-name="utility:metrics" size="small" variant="inverse"></lightning-icon>
+                    </div>
+                    <div>
+                        <h1 class="page-title">Measuring Cup</h1>
+                        <p class="page-sub">Job measurement and estimating work orders</p>
+                    </div>
+                    <div class="page-cta-row">
+                        <button type="button" class="btn btn-primary" onclick={handleNewWorkOrder}>+ New Measurement</button>
+                    </div>
+                    <lightning-button-icon
+                        icon-name="utility:refresh"
+                        alternative-text="Refresh"
+                        variant="bare"
+                        onclick={handleRefresh}
+                        class="page-refresh"
+                    ></lightning-button-icon>
+                </div>
+
+                <!-- KPI row -->
+                <div class="kpi-row">
+                    <div class="kpi-chip kc-orange" title="Pending measurement work orders">
+                        <div class="kpi-number">{pendingMeasurements}</div>
+                        <div class="kpi-label">Pending Measurements</div>
+                    </div>
+                    <div class="kpi-chip kc-teal" title="Completed today">
+                        <div class="kpi-number">{completedToday}</div>
+                        <div class="kpi-label">Completed Today</div>
+                    </div>
+                    <div class="kpi-chip kc-blue" title="Active crews">
+                        <div class="kpi-number">{crewCount}</div>
+                        <div class="kpi-label">Active Crews</div>
+                    </div>
+                </div>
+
+                <!-- Body layout -->
+                <div class="body-layout">
+
+                    <!-- Main: Work Orders table -->
+                    <div class="body-main">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon" style="background:#c4607a">
+                                    <lightning-icon icon-name="utility:work_order" size="x-small" variant="inverse"></lightning-icon>
+                                </div>
+                                <h2 class="card-title">Open Measurement Work Orders</h2>
+                                <lightning-button-icon
+                                    icon-name="utility:refresh"
+                                    alternative-text="Refresh"
+                                    variant="bare"
+                                    onclick={handleRefresh}
+                                    class="card-refresh"
+                                ></lightning-button-icon>
+                            </div>
+
+                            <template if:true={hasWorkOrders}>
+                                <table class="odl-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Work Order #</th>
+                                            <th>Subject</th>
+                                            <th>Status</th>
+                                            <th>Owner</th>
+                                            <th>Created</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template for:each={workOrders} for:item="row">
+                                            <tr key={row.id}>
+                                                <td>
+                                                    <a class="rec-link" data-id={row.id} onclick={handleOpenRecord}>{row.workOrderNumber}</a>
+                                                </td>
+                                                <td>{row.subject}</td>
+                                                <td>
+                                                    <span class={row.statusChipFull}>{row.status}</span>
+                                                </td>
+                                                <td class="muted">{row.ownerName}</td>
+                                                <td class="muted">{row.createdDateLabel}</td>
+                                                <td><button type="button" class="btn-inline" data-id={row.id} onclick={handleOpenRecord}>Open</button></td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </template>
+
+                            <template if:false={hasWorkOrders}>
+                                <div class="empty-state">
+                                    <lightning-icon icon-name="utility:check" size="small" variant="success"></lightning-icon>
+                                    <p>No open measurement work orders.</p>
+                                </div>
+                            </template>
+
+                            <div class="card-footer">
+                                <lightning-button
+                                    label="View All Work Orders"
+                                    variant="neutral"
+                                    onclick={handleOpenWorkOrders}
+                                ></lightning-button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rail: Quick Actions -->
+                    <div class="body-rail">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon" style="background:#e8936a">
+                                    <lightning-icon icon-name="utility:lightning_strike" size="x-small" variant="inverse"></lightning-icon>
+                                </div>
+                                <h2 class="card-title">Quick Actions</h2>
+                            </div>
+                            <div class="qa-list">
+                                <div class="qa-item" onclick={handleOpenWorkOrders}>
+                                    <lightning-icon icon-name="utility:work_order" size="x-small"></lightning-icon>
+                                    <span>View all work orders</span>
+                                </div>
+                                <div class="qa-item" onclick={handleNewWorkOrder}>
+                                    <lightning-icon icon-name="utility:add" size="x-small"></lightning-icon>
+                                    <span>New work order</span>
+                                </div>
+                                <div class="qa-item" onclick={handleOpenCrews}>
+                                    <lightning-icon icon-name="utility:groups" size="x-small"></lightning-icon>
+                                    <span>View crews</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </template>
+        </template>
+
+    </div>
+</template>

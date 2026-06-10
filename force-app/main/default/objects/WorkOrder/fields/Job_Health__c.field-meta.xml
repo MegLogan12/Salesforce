@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Job_Health__c</fullName>
+    <label>Job Health</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Green</fullName>
+                <default>false</default>
+                <label>Green</label>
+            </value>
+            <value>
+                <fullName>Yellow</fullName>
+                <default>false</default>
+                <label>Yellow</label>
+            </value>
+            <value>
+                <fullName>Red</fullName>
+                <default>false</default>
+                <label>Red</label>
+            </value>
+            <value>
+                <fullName>Not Yet Evaluated</fullName>
+                <default>false</default>
+                <label>Not Yet Evaluated</label>
+            </value>
+            <value>
+                <fullName>Not Prompted</fullName>
+                <default>true</default>
+                <label>Not Prompted</label>
+            </value>
+            <value>
+                <fullName>Awaiting Response</fullName>
+                <default>false</default>
+                <label>Awaiting Response</label>
+            </value>
+            <value>
+                <fullName>Updated by FM daily by 2 PM.</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Updated by FM daily by 2 PM.</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

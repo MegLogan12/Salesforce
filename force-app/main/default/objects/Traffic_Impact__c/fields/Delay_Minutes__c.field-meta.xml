@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Delay_Minutes__c</fullName>
+    <description>Additional delay vs. baseline drive time. Positive = delayed. Drives traffic risk badge color logic (Low &lt;5, Medium 5-15, High 15-30, Severe &gt;30).</description>
+    <externalId>false</externalId>
+    <label>Delay (Minutes)</label>
+    <precision>5</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

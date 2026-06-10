@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Services_Offered__c</fullName>
+    <label>Services Offered</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Production Landscaping</fullName>
+                <default>false</default>
+                <label>Production Landscaping</label>
+            </value>
+            <value>
+                <fullName>Aqua Service</fullName>
+                <default>false</default>
+                <label>Aqua Service</label>
+            </value>
+            <value>
+                <fullName>Irrigation</fullName>
+                <default>false</default>
+                <label>Irrigation</label>
+            </value>
+            <value>
+                <fullName>Lawn Care</fullName>
+                <default>false</default>
+                <label>Lawn Care</label>
+            </value>
+            <value>
+                <fullName>Grading</fullName>
+                <default>false</default>
+                <label>Grading</label>
+            </value>
+            <value>
+                <fullName>Refreshes</fullName>
+                <default>false</default>
+                <label>Refreshes</label>
+            </value>
+            <value>
+                <fullName>Signature Builds</fullName>
+                <default>false</default>
+                <label>Signature Builds</label>
+            </value>
+            <value>
+                <fullName>Finishing Touches</fullName>
+                <default>false</default>
+                <label>Finishing Touches</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

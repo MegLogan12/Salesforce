@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Requested_By__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>User who submitted this change order. Set automatically on submit.</description>
+    <label>Requested By</label>
+    <referenceTo>User</referenceTo>
+    <relationshipLabel>Change Orders (Requested By)</relationshipLabel>
+    <relationshipName>Change_Orders_Requested_By</relationshipName>
+    <required>false</required>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

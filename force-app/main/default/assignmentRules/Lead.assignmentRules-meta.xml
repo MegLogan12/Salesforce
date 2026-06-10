@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AssignmentRules xmlns="http://soap.sforce.com/2006/04/metadata">
+    <assignmentRule>
+        <fullName>ODL_Default_Assignment</fullName>
+        <active>true</active>
+        <ruleEntry>
+            <assignedTo>tr.haynes@thelovingcompanies.com</assignedTo>
+            <assignedToType>User</assignedToType>
+            <criteriaItems>
+                <field>Lead.Company</field>
+                <operation>notEqual</operation>
+                <value>ZZZNOMATCH_NEVER_EXISTS_XYZ</value>
+            </criteriaItems>
+        </ruleEntry>
+    </assignmentRule>
+</AssignmentRules>

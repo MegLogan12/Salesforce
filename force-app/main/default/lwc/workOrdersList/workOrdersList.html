@@ -1,0 +1,67 @@
+<template>
+    <div class="wo-card">
+        <div class="ch">
+            <h3>Work Orders: All Communities</h3>
+            <lightning-button label="New Work Order" icon-name="utility:add" onclick={handleNewWorkOrder}></lightning-button>
+            <div class="chips">
+                <span class="stat-chip chip-g">{completeCount} complete</span>
+                <span class="stat-chip chip-b">{scheduledCount} scheduled</span>
+                <span class="stat-chip chip-a">{inProgressCount} in progress</span>
+                <span class="stat-chip chip-r">{breachCount} breach risk</span>
+            </div>
+        </div>
+
+        <div class="filters">
+            <lightning-combobox label="Community" value={communityFilter} options={communityOptions} onchange={handleCommunityChange} variant="label-inline"></lightning-combobox>
+            <lightning-combobox label="Status" value={statusFilter} options={statusOptions} onchange={handleStatusChange} variant="label-inline"></lightning-combobox>
+        </div>
+
+        <template lwc:if={hasRows}>
+            <div class="tbl-wrap">
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Work Order</th>
+                            <th>Community</th>
+                            <th>Lot</th>
+                            <th>Type</th>
+                            <th>Foreman</th>
+                            <th>Scheduled</th>
+                            <th>Status</th>
+                            <th>QI</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={filtered} for:item="w">
+                            <tr key={w.id}>
+                                <td><a href={w.recordUrl} class="name-link">{w.name}</a></td>
+                                <td class="sm">{w.communityName}</td>
+                                <td class="sm">{w.lotNumber}</td>
+                                <td class="sm">{w.workType}</td>
+                                <td class="fm-link">{w.foremanName}</td>
+                                <td class="sm"><lightning-formatted-date-time value={w.scheduledDate}></lightning-formatted-date-time></td>
+                                <td><span class={w.statusPill}>{w.status}</span></td>
+                                <td>
+                                    <template lwc:if={w.qiLabel}>
+                                        <span class={w.qiPill}>{w.qiLabel}</span>
+                                    </template>
+                                </td>
+                                <td>
+                                    <button class="btn-inline" data-id={w.id} onclick={handleViewWorkOrder}>View</button>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+            <div class="foot-note">{showingNote}</div>
+        </template>
+        <template lwc:elif={error}>
+            <div class="err">{error}</div>
+        </template>
+        <template lwc:else>
+            <div class="empty">0 work orders match the current division filters.</div>
+        </template>
+    </div>
+</template>

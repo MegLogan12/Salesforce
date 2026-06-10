@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Business_Line__c</fullName>
+    <label>Business Line</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Production Landscape</fullName>
+                <default>false</default>
+                <label>Production Landscape</label>
+            </value>
+            <value>
+                <fullName>Shared/Internal</fullName>
+                <default>false</default>
+                <label>Shared/Internal</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

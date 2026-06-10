@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>No_Builder_Parent_On_PO</fullName>
+    <active>true</active>
+    <description>Builder PO must reference a Division/Market account, not a Builder Parent. Builder Parent is roll-up only per spec rule 1.</description>
+    <errorConditionFormula>AND(
+    NOT(ISBLANK(Builder_Account__c)),
+    Builder_Account__r.RecordType.DeveloperName = &quot;Builder_Parent&quot;
+)</errorConditionFormula>
+    <errorDisplayField>Builder_Account__c</errorDisplayField>
+    <errorMessage>The Builder Account on this PO must be a Builder Division account, not a Builder Parent. Builder Parent accounts are roll-up only. Select the Division-level account (child of the Parent) that will own this PO.</errorMessage>
+</ValidationRule>

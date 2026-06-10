@@ -1,15 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Run_Takeoff_Escalation</name>
+        <label>Run Takeoff Escalation Check (Apex)</label>
+        <locationX>200</locationX>
+        <locationY>100</locationY>
+        <actionName>LOVING_TakeoffEscalationScheduler</actionName>
+        <actionType>apex</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <nameSegment>LOVING_TakeoffEscalationScheduler</nameSegment>
+    </actionCalls>
     <apiVersion>62.0</apiVersion>
-    <description>Scheduled Flow: Hourly check for overdue takeoff tasks. Lots in 30-day or Ready To Schedule bucket with Takeoff_Task_Created__c = true and Takeoff_Complete__c = false that are more than 48 hours past Bucket_Changed_Date__c are escalated to the FM Manager. Delegates to LOVING_TakeoffEscalationScheduler (Apex).</description>
+    <description>Scheduled Flow: Daily check for overdue takeoff tasks. Work Orders in 30-day or Ready To Schedule bucket with Takeoff_Tasks_Created__c = true and Takeoff_Task_Complete__c = false that are overdue are escalated to the FM Manager. Delegates to LOVING_TakeoffEscalationScheduler (Apex).</description>
     <environments>Default</environments>
     <interviewLabel>LOVING Takeoff Escalation {!$Flow.CurrentDateTime}</interviewLabel>
-    <label>LOVING Takeoff Escalation Hourly</label>
-    <processMetadataValues><name>BuilderType</name><value><stringValue>LightningFlowBuilder</stringValue></value></processMetadataValues>
+    <label>LOVING Takeoff Escalation Daily</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
     <start>
-        <locationX>50</locationX><locationY>0</locationY>
-        <connector><targetReference>Run_Takeoff_Escalation</targetReference></connector>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Run_Takeoff_Escalation</targetReference>
+        </connector>
         <schedule>
             <frequency>Daily</frequency>
             <startDate>2025-01-01</startDate>
@@ -17,13 +35,5 @@
         </schedule>
         <triggerType>Scheduled</triggerType>
     </start>
-    <status>Active</status>
-
-    <actionCalls>
-        <name>Run_Takeoff_Escalation</name>
-        <label>Run Takeoff Escalation Check (Apex)</label>
-        <locationX>200</locationX><locationY>100</locationY>
-        <actionName>LOVING_TakeoffEscalationScheduler</actionName>
-        <actionType>apex</actionType>
-    </actionCalls>
+    <status>Draft</status>
 </Flow>

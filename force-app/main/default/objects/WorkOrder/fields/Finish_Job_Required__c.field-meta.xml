@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Finish_Job_Required__c</fullName><defaultValue>false</defaultValue>
-    <label>Finish Job Required</label><type>Checkbox</type>
+    <fullName>Finish_Job_Required__c</fullName>
+    <defaultValue>false</defaultValue>
+    <label>Finish Job Required</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
 </CustomField>

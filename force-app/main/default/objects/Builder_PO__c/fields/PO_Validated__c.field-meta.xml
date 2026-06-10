@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PO_Validated__c</fullName>
+    <formula>AND(ISPICKVAL(Price_Check_Result__c, &quot;Pass&quot;), ISPICKVAL(Qty_Check_Result__c, &quot;Pass&quot;))</formula>
+    <label>PO Validated</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

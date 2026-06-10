@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>QI_Due_Date__c</fullName>
+    <description>5-business-day deadline for QI completion after closeout approval. Set by CloseoutService.onApproved(). Used by QIService.checkQISLA() for escalation.</description>
+    <label>QI Due Date</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Date</type>
+</CustomField>

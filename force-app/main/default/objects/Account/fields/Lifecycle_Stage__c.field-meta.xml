@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Lifecycle_Stage__c</fullName>
+    <description>Homeowner relationship lifecycle, computed from Opportunities/WorkOrders/activity and written by ODLLifecycleRecalc for reporting. Source of truth is computed; do not hand-edit.</description>
+    <label>Lifecycle Stage</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Lead</fullName>
+                <default>false</default>
+                <label>Lead</label>
+            </value>
+            <value>
+                <fullName>Prospect</fullName>
+                <default>false</default>
+                <label>Prospect</label>
+            </value>
+            <value>
+                <fullName>Active Customer</fullName>
+                <default>false</default>
+                <label>Active Customer</label>
+            </value>
+            <value>
+                <fullName>Repeat Customer</fullName>
+                <default>false</default>
+                <label>Repeat Customer</label>
+            </value>
+            <value>
+                <fullName>Past Customer</fullName>
+                <default>false</default>
+                <label>Past Customer</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

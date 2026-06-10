@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Site_Readiness_Before_In_Progress</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+    NOT($Profile.Name = &quot;System Administrator&quot;),
+    (ISPICKVAL(Status, &quot;In Progress&quot;) &amp;&amp; !ISPICKVAL(Site_Ready__c, &quot;Ready&quot;))
+)</errorConditionFormula>
+    <errorDisplayField>Site_Ready__c</errorDisplayField>
+    <errorMessage>Site readiness check must be completed before this job can go In Progress.</errorMessage>
+</ValidationRule>

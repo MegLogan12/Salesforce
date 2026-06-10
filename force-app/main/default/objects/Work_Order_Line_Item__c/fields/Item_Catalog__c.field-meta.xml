@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Item_Catalog__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Item from catalog. Drives Goal_Minutes via Time_Standard_Min__c cross-object formula.</description>
+    <label>Item Catalog</label>
+    <referenceTo>Item_Catalog__c</referenceTo>
+    <relationshipLabel>Work Order Line Items</relationshipLabel>
+    <relationshipName>Work_Order_Line_Items</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

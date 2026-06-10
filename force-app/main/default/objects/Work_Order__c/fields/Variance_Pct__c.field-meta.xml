@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Variance_Pct__c</fullName>
+    <description>Variance as a percentage of goal hours. (Actual - Goal) / Goal * 100. Blank if Goal_Hours__c is zero. Used by Measuring Cup efficiency dashboard.</description>
+    <formula>IF(Goal_Hours__c = 0, NULL, (Actual_Hours__c - Goal_Hours__c) / Goal_Hours__c * 100)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Variance %</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>1</scale>
+    <trackTrending>false</trackTrending>
+    <type>Percent</type>
+</CustomField>

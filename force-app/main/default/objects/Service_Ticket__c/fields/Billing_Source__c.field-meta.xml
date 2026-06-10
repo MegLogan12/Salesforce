@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Billing_Source__c</fullName>
+    <description>Where the billing treatment originated. Set to Community Package at auto-creation; Manual Override when changed by a user.</description>
+    <label>Billing Source</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Builder PO</fullName>
+                <default>false</default>
+                <label>Builder PO</label>
+            </value>
+            <value>
+                <fullName>Community Package</fullName>
+                <default>true</default>
+                <label>Community Package</label>
+            </value>
+            <value>
+                <fullName>Manual Override</fullName>
+                <default>false</default>
+                <label>Manual Override</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

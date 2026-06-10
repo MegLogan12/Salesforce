@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Call_Missing_Material_Notify</name>
+        <label>Send Missing Material Notifications</label>
+        <locationX>44</locationX>
+        <locationY>888</locationY>
+        <actionName>ForemanMobileNotificationService</actionName>
+        <actionType>apex</actionType>
+        <connector>
+            <targetReference>Screen_FlagConfirm</targetReference>
+        </connector>
+        <faultConnector>
+            <targetReference>Screen_FlagConfirm</targetReference>
+        </faultConnector>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>flagNotes</name>
+            <value>
+                <elementReference>FlagNotesInput</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>flagType</name>
+            <value>
+                <stringValue>Missing Material</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>workOrderId</name>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>ForemanMobileNotificationService</nameSegment>
+    </actionCalls>
+    <apiVersion>62.0</apiVersion>
+    <choices>
+        <name>ChoiceBuilderRestriction</name>
+        <choiceText>Builder Restriction / Restricción del Constructor</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Builder Restriction</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>ChoiceEquipmentIssue</name>
+        <choiceText>Equipment Issue / Problema de Equipo</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Equipment Issue</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>ChoiceMissingMaterial</name>
+        <choiceText>Missing Material / Material Faltante</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Missing Material</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>ChoiceOther</name>
+        <choiceText>Other / Otro</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Other</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>ChoiceSafetyHazard</name>
+        <choiceText>Safety Hazard / Peligro de Seguridad</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Safety Hazard</stringValue>
+        </value>
+    </choices>
+    <choices>
+        <name>ChoiceSiteIssue</name>
+        <choiceText>Site Issue / Problema en el Sitio</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Site Issue</stringValue>
+        </value>
+    </choices>
+    <decisions>
+        <name>Check_Flag_Type</name>
+        <label>Is Missing Material?</label>
+        <locationX>176</locationX>
+        <locationY>408</locationY>
+        <defaultConnector>
+            <targetReference>Screen_OtherFlagWarning</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Other Flag Type</defaultConnectorLabel>
+        <rules>
+            <name>Is_Missing_Material</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>FlagTypePicker</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Missing Material</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Screen_MissingMaterialWarning</targetReference>
+            </connector>
+            <label>Missing Material</label>
+        </rules>
+    </decisions>
+    <description>Foreman issue flag flow for FSL Mobile. Missing Material notifies FM, Jim Howie, Inventory Specialist, T.R. Haynes. All other flags notify FM only. Creates Schedule_Issue__c. Updates WorkOrder.Red_Flag_Notes__c. Activated 2026-05-30. Reactivated 2026-05-30.</description>
+    <environments>Default</environments>
+    <interviewLabel>LOVING Foreman Flag Issue {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING Foreman Flag Issue</label>
+    <processType>Flow</processType>
+    <recordCreates>
+        <name>Create_Schedule_Issue_Missing</name>
+        <label>Create Schedule Issue — Missing Material</label>
+        <locationX>44</locationX>
+        <locationY>648</locationY>
+        <connector>
+            <targetReference>Update_WO_Flag_Missing</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Issue_Type__c</field>
+            <value>
+                <stringValue>Missing Material</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Standard_WorkOrder__c</field>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>Open</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Summary__c</field>
+            <value>
+                <elementReference>FlagNotesInput</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Schedule_Issue__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordCreates>
+        <name>Create_Schedule_Issue_Other</name>
+        <label>Create Schedule Issue — Other Flag Type</label>
+        <locationX>308</locationX>
+        <locationY>648</locationY>
+        <connector>
+            <targetReference>Update_WO_Flag_Other</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Issue_Type__c</field>
+            <value>
+                <elementReference>FlagTypePicker</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Standard_WorkOrder__c</field>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>Open</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Summary__c</field>
+            <value>
+                <elementReference>FlagNotesInput</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Schedule_Issue__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordLookups>
+        <name>Get_WO_For_Flag</name>
+        <label>Get Work Order</label>
+        <locationX>176</locationX>
+        <locationY>168</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Screen_FlagType</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkOrder</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_WO_Flag_Missing</name>
+        <label>Update WO Red Flag Notes — Missing Material</label>
+        <locationX>44</locationX>
+        <locationY>768</locationY>
+        <connector>
+            <targetReference>Call_Missing_Material_Notify</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Delivery_Issue_Flag__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Red_Flag_Notes__c</field>
+            <value>
+                <elementReference>FlagNotesInput</elementReference>
+            </value>
+        </inputAssignments>
+        <object>WorkOrder</object>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_WO_Flag_Other</name>
+        <label>Update WO Red Flag Notes — Other</label>
+        <locationX>308</locationX>
+        <locationY>768</locationY>
+        <connector>
+            <targetReference>Screen_FlagConfirm</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Red_Flag_Notes__c</field>
+            <value>
+                <elementReference>FlagNotesInput</elementReference>
+            </value>
+        </inputAssignments>
+        <object>WorkOrder</object>
+    </recordUpdates>
+    <runInMode>DefaultMode</runInMode>
+    <screens>
+        <name>Screen_FlagConfirm</name>
+        <label>Flag Submitted</label>
+        <locationX>176</locationX>
+        <locationY>1008</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>FlagConfirmText</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;font-size: 16px; color: #04844b;&quot;&gt;✓ Issue Flagged / Problema Reportado&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Your flag has been submitted and your FM has been notified.&lt;/p&gt;&lt;p&gt;&lt;em&gt;Tu reporte ha sido enviado y tu FM ha sido notificado.&lt;/em&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_FlagType</name>
+        <label>Flag an Issue</label>
+        <locationX>176</locationX>
+        <locationY>288</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Check_Flag_Type</targetReference>
+        </connector>
+        <fields>
+            <name>FlagTitle</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;font-size: 16px;&quot;&gt;Flag an Issue / Reportar un Problema&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Job:&lt;/strong&gt; {!Get_WO_For_Flag.Subject}&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>FlagTypePicker</name>
+            <choiceReferences>ChoiceMissingMaterial</choiceReferences>
+            <choiceReferences>ChoiceSiteIssue</choiceReferences>
+            <choiceReferences>ChoiceSafetyHazard</choiceReferences>
+            <choiceReferences>ChoiceEquipmentIssue</choiceReferences>
+            <choiceReferences>ChoiceBuilderRestriction</choiceReferences>
+            <choiceReferences>ChoiceOther</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Issue type / Tipo de problema</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>FlagNotesInput</name>
+            <fieldText>Describe the issue in detail / Describe el problema en detalle</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_MissingMaterialWarning</name>
+        <label>Missing Material — Confirm Send</label>
+        <locationX>44</locationX>
+        <locationY>528</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Create_Schedule_Issue_Missing</targetReference>
+        </connector>
+        <fields>
+            <name>MissingMaterialAlert</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;font-size: 16px; color: #c23934;&quot;&gt;Missing Material — Notification Will Be Sent / Material Faltante — Se Enviará Notificación&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Submitting this flag will immediately notify your FM, Jim Howie (Purchasing), and the Inventory Specialist.&lt;/p&gt;&lt;p&gt;&lt;em&gt;Enviar este reporte notificará a tu FM, Jim Howie y al Especialista de Inventario.&lt;/em&gt;&lt;/p&gt;&lt;p&gt;Press Next to confirm. Press Back to change.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_OtherFlagWarning</name>
+        <label>Flag Issue — Confirm Send</label>
+        <locationX>308</locationX>
+        <locationY>528</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Create_Schedule_Issue_Other</targetReference>
+        </connector>
+        <fields>
+            <name>OtherFlagAlert</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;font-size: 16px;&quot;&gt;Flag Issue — Confirm / Reportar Problema — Confirmar&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Submitting this flag will notify your FM.&lt;/p&gt;&lt;p&gt;&lt;em&gt;Enviar este reporte notificará a tu FM.&lt;/em&gt;&lt;/p&gt;&lt;p&gt;Press Next to confirm. Press Back to change.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <start>
+        <locationX>176</locationX>
+        <locationY>48</locationY>
+        <connector>
+            <targetReference>Get_WO_For_Flag</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

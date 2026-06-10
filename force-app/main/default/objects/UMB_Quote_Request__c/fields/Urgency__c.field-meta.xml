@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Urgency__c</fullName>
+    <label>Urgency</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>Routine</fullName><default>false</default><label>Routine</label></value>
+            <value><fullName>Within 1 week</fullName><default>false</default><label>Within 1 week</label></value>
+            <value><fullName>Same week</fullName><default>false</default><label>Same week</label></value>
+            <value><fullName>Immediate</fullName><default>false</default><label>Immediate</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

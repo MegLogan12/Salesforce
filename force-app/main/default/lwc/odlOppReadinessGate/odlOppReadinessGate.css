@@ -1,0 +1,201 @@
+:host {
+    width: 100%;
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
+
+    display: block;
+}
+
+.gate-card {
+    background: #fff;
+    border: 1.5px solid #e6e2d9;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+
+.gate-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 0.9rem;
+    background: #f5f2ec;
+    border-bottom: 1px solid #f0ebe3;
+}
+
+.gate-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #9c8e80;
+}
+
+.badge {
+    display: inline-block;
+    padding: 0.18rem 0.55rem;
+    border-radius: 99px;
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
+.badge-green { background: #e6f3ea; color: #1f5c38; }
+.badge-red { background: #fde8ee; color: #9c2c20; }
+.badge-amber { background: #fdeee6; color: #7a5a10; }
+.badge-blue { background: #ede8f6; color: #6840a0; }
+
+.gates-grid {
+    padding: 0.6rem 0.9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.gate-row {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.45rem 0.65rem;
+    border-radius: 7px;
+    border: 1px solid transparent;
+}
+
+.gate-pass {
+    background: #e6f3ea;
+    border-color: #a8d8b5;
+}
+
+.gate-fail {
+    background: #fde8ee;
+    border-color: #f5a0b0;
+}
+
+.gate-neutral {
+    background: #f5f2ec;
+    border-color: #e6e2d9;
+}
+
+.gate-check {
+    font-size: 0.9rem;
+    font-weight: 700;
+    width: 1.1rem;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.gate-pass .gate-check { color: #1f5c38; }
+.gate-fail .gate-check { color: #9c2c20; }
+.gate-neutral .gate-check { color: #9c8e80; }
+
+.gate-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.gate-name {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: #1f2421;
+    margin-bottom: 0.1rem;
+}
+
+.gate-detail {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.gate-sub {
+    font-size: 0.65rem;
+    color: #9c8e80;
+}
+
+.chip {
+    display: inline-block;
+    padding: 0.14rem 0.45rem;
+    border-radius: 99px;
+    font-size: 0.68rem;
+    font-weight: 600;
+}
+
+.chip-green { background: #e6f3ea; color: #1f5c38; }
+.chip-amber { background: #fdeee6; color: #7a5a10; }
+.chip-red { background: #fde8ee; color: #9c2c20; }
+.chip-gray { background: #f2ede5; color: #7a6f65; }
+
+.blocker-line {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0 0.9rem 0.55rem;
+    padding: 0.4rem 0.6rem;
+    background: #fde8ee;
+    border: 1px solid #f5a0b0;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    color: #9c2c20;
+    font-weight: 500;
+}
+
+.blocker-icon {
+    font-size: 0.8rem;
+    flex-shrink: 0;
+}
+
+.gate-footer {
+    padding: 0.6rem 0.9rem;
+    border-top: 1px solid #f0ebe3;
+    background: #f5f2ec;
+    text-align: right;
+}
+
+.btn-release {
+    padding: 0.38rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    background: #e6e2d9;
+    color: #9c8e80;
+    border: none;
+    border-radius: 6px;
+    cursor: not-allowed;
+}
+
+.btn-release-active {
+    background: #2c7a4b;
+    color: #fff;
+    cursor: pointer;
+}
+
+.btn-release-active:hover { background: #1f5c38; }
+
+.blocked-reason {
+    margin: 0.3rem 0 0;
+    font-size: 0.72rem;
+    color: #7a5a10;
+    font-weight: 500;
+}
+
+.gate-loading {
+    padding: 1rem;
+    font-size: 0.8rem;
+    color: #9c8e80;
+    text-align: center;
+}

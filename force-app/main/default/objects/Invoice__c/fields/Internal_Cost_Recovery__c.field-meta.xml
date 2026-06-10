@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Internal_Cost_Recovery__c</fullName>
+    <defaultValue>0</defaultValue>
+    <description>Internal, vendor-facing, crew-facing, or subcontractor-facing back-charge / cost recovery. Reduces COGS (cost), NOT revenue. Finance-editable input.</description>
+    <inlineHelpText>Vendor/crew/subcontractor back-charge recovered against cost. Reduces COGS, not revenue. Leave 0 if none.</inlineHelpText>
+    <label>Internal Cost Recovery</label>
+    <precision>14</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Currency</type>
+</CustomField>

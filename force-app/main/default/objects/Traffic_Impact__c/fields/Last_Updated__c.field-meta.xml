@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Last_Updated__c</fullName>
+    <description>Timestamp of last provider refresh. Console warns if stale (&gt;30 min) — same threshold as GPS staleness warning.</description>
+    <label>Last Updated</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>DateTime</type>
+</CustomField>

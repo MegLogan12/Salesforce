@@ -1,0 +1,163 @@
+<template>
+
+    <template lwc:if={isLoading}>
+        <div class="state-msg">Loading contact…</div>
+    </template>
+
+    <template lwc:if={hasError}>
+        <div class="state-msg state-error">Unable to load contact. Please refresh.</div>
+    </template>
+
+    <template lwc:if={hasData}>
+
+        <!-- ── Record header ─────────────────────────────────────────── -->
+        <div class="rec-head">
+            <div class="rh-top">
+                <div class="rh-avatar">{pageData.contactInitials}</div>
+                <div class="rh-id">
+                    <div class="rh-crumb">Contact &middot; {pageData.accountName}</div>
+                    <div class="rh-title">{contactName}</div>
+                    <div class="rh-chips">
+                        <template lwc:if={pageData.isPrimary}>
+                            <span class="chip chip-blue">Primary Contact</span>
+                        </template>
+                        <template lwc:if={pageData.isRepeatCustomer}>
+                            <span class="chip chip-green">Repeat Customer</span>
+                        </template>
+                        <template lwc:if={pageData.smsConsent}>
+                            <span class="chip chip-green">SMS Opted In</span>
+                        </template>
+                        <template lwc:if={pageData.location}>
+                            <span class="chip chip-slate">{pageData.location}</span>
+                        </template>
+                    </div>
+                </div>
+                <div class="rh-acts">
+                    <button class="btn btn-ghost" onclick={handleRefresh}>Refresh</button>
+                    <button class="btn" onclick={handleCall}>Call</button>
+                    <button class="btn btn-green" onclick={handleSendEmail}>Send Email</button>
+                    <button class="btn btn-primary" onclick={handleLogOutreach}>Log Outreach</button>
+                    <button class="btn" onclick={handleAddNote}>Add Note</button>
+                    <button class="btn btn-rose" onclick={handleEditContact}>Edit Contact</button>
+                </div>
+            </div>
+
+            <!-- Highlights strip -->
+            <div class="highlights">
+                <div class="hl"><div class="hl-k">Household</div>
+                    <div class="hl-v">{pageData.accountName}</div></div>
+                <div class="hl"><div class="hl-k">Phone</div>
+                    <div class="hl-v">{phoneDisplay}</div></div>
+                <div class="hl"><div class="hl-k">Email</div>
+                    <div class="hl-v">{pageData.emailStatus}</div></div>
+                <div class="hl"><div class="hl-k">SMS Consent</div>
+                    <div class={smsHighlightClass}>{smsHighlightLabel}</div></div>
+                <div class="hl"><div class="hl-k">Source</div>
+                    <div class="hl-v">{pageData.leadSource}</div></div>
+                <div class="hl"><div class="hl-k">Owner</div>
+                    <div class="hl-v">{pageData.ownerName}</div></div>
+            </div>
+
+            <!-- Next action banner -->
+            <template lwc:if={pageData.nextActionText}>
+                <div class="na-banner">
+                    <span class="na-pulse"></span>
+                    <span class="na-label">Next</span>
+                    <div class="na-body">
+                        <div class="na-text">{pageData.nextActionText}</div>
+                        <template lwc:if={pageData.nextActionWhy}>
+                            <div class="na-why">{pageData.nextActionWhy}</div>
+                        </template>
+                    </div>
+                    <template lwc:if={pageData.nextActionPrimaryLabel}>
+                        <button class="btn btn-sm btn-green" onclick={handleNextActionPrimary}>
+                            {pageData.nextActionPrimaryLabel}
+                        </button>
+                    </template>
+                </div>
+            </template>
+        </div>
+
+        <!-- ── Communication and Consent ─────────────────────────────── -->
+        <c-odl-contact-comms-consent page-data={pageData}></c-odl-contact-comms-consent>
+
+        <!-- ── Deals and Service ──────────────────────────────────────── -->
+        <div class="card">
+            <div class="card-head">
+                <span class="card-icon ci-orange">RL</span>
+                <span class="card-title">Deals and Service on this Contact</span>
+                <div class="card-actions">
+                    <button class="btn-inline" onclick={handleNewActivity}>+ New Activity</button>
+                </div>
+            </div>
+            <template lwc:if={hasDeals}>
+                <table class="tbl">
+                    <thead>
+                        <tr>
+                            <th>Record</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th class="tbl-r">Value</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={pageData.dealsAndService} for:item="row">
+                            <tr key={row.recordId}>
+                                <td><a href={row.recordUrl} class="tbl-link">{row.label}</a></td>
+                                <td>{row.type}</td>
+                                <td><span class={row.chipClass}>{row.status}</span></td>
+                                <td class="tbl-r">{row.value}</td>
+                                <td><button class="btn-inline" data-id={row.recordId} onclick={handleOpenRecord}>Open</button></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+                <div class="card-note">
+                    Lifetime value rolls up on the
+                    <a href={pageData.accountUrl} class="tbl-link">{pageData.accountName}</a>
+                    account.
+                </div>
+            </template>
+            <template lwc:else>
+                <div class="empty-msg">No deals or service records linked to this contact.</div>
+            </template>
+        </div>
+
+        <!-- ── Details ────────────────────────────────────────────────── -->
+        <div class="card">
+            <div class="card-head">
+                <span class="card-icon ci-slate">DT</span>
+                <span class="card-title">Details</span>
+                <div class="card-actions">
+                    <button class="btn-inline" onclick={handleEditContact}>Edit Contact</button>
+                </div>
+            </div>
+            <div class="kv-row">
+                <div class="kv-item">
+                    <div class="kv-k">Full name</div>
+                    <div class="kv-v">{contactName}</div>
+                </div>
+                <div class="kv-item">
+                    <div class="kv-k">Title / Role</div>
+                    <div class="kv-v">{contactTitle}</div>
+                </div>
+                <div class="kv-item">
+                    <div class="kv-k">Email</div>
+                    <div class="kv-v">{pageData.contactRecord.Email}</div>
+                </div>
+            </div>
+            <div class="kv-row">
+                <div class="kv-item">
+                    <div class="kv-k">Mailing address</div>
+                    <div class="kv-v">{mailingAddress}</div>
+                </div>
+                <div class="kv-item">
+                    <div class="kv-k">Source</div>
+                    <div class="kv-v">{pageData.leadSource}</div>
+                </div>
+            </div>
+        </div>
+
+    </template>
+</template>

@@ -1,0 +1,47 @@
+<template>
+    <template if:true={loaded}>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">C</div>
+                <h2 class="card-title">Community Identity</h2>
+            </div>
+            <div class="card-body">
+                <div class="meta-grid">
+                    <div class="meta-item">
+                        <div class="meta-label">Community Name</div>
+                        <div class="meta-value">{communityName}</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Builder Account</div>
+                        <div class="meta-value">{builderAccountId}</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Created Date</div>
+                        <div class="meta-value">
+                            <template if:true={createdDate}>
+                                <lightning-formatted-date-time
+                                    value={createdDate}
+                                    year="numeric" month="short" day="numeric">
+                                </lightning-formatted-date-time>
+                            </template>
+                            <template if:false={createdDate}>—</template>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Record ID</div>
+                        <div class="meta-value muted">{recordId}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-primary" onclick={handleViewDetails}>View Details</button>
+                <button class="btn btn-ghost" onclick={handleContactUs}>Contact Us</button>
+            </div>
+        </div>
+    </template>
+    <template if:false={loaded}>
+        <div class="loading-state">
+            <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+        </div>
+    </template>
+</template>

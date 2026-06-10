@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Field_Type__c</fullName>
+    <description>Coercion target for the Rippling value (Boolean, String, Date, DateTime, Number).</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Field Type</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Boolean</fullName>
+                <default>true</default>
+                <label>Boolean</label>
+            </value>
+            <value>
+                <fullName>String</fullName>
+                <default>false</default>
+                <label>String</label>
+            </value>
+            <value>
+                <fullName>Date</fullName>
+                <default>false</default>
+                <label>Date</label>
+            </value>
+            <value>
+                <fullName>DateTime</fullName>
+                <default>false</default>
+                <label>DateTime</label>
+            </value>
+            <value>
+                <fullName>Number</fullName>
+                <default>false</default>
+                <label>Number</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

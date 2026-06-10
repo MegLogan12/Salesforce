@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomTab xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>LOVING Field Manager — FM execution workspace (QI, takeoff, closeout, Aqua)</description>
+    <label>Field Manager</label>
+    <motif>standard:work_order</motif>
+    <page>LovingFMApp</page>
+</CustomTab>

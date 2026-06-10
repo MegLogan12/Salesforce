@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>EPO_Required_For_Customer_Care_Approval</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+    NOT($Profile.Name = &quot;System Administrator&quot;),
+    (ISPICKVAL(Job_Type__c, &quot;Customer Care&quot;) &amp;&amp; ISPICKVAL(Status, &quot;Closed&quot;) &amp;&amp; ISBLANK(EPO_Number__c))
+)</errorConditionFormula>
+    <errorDisplayField>EPO_Number__c</errorDisplayField>
+    <errorMessage>An EPO must be received and verified before a Customer Care job can be approved.</errorMessage>
+</ValidationRule>

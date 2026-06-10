@@ -1,0 +1,14 @@
+<template>
+    <div class={bannerClass}>
+        <div class="next-action-icon">{actionIcon}</div>
+        <div class="next-action-body">
+            <div class="next-action-label">Next Action</div>
+            <div class="next-action-text">{nextActionText}</div>
+        </div>
+        <template lwc:if={hasButton}>
+            <div class="next-action-cta">
+                <button class={buttonClass} onclick={handleAction}>{nextActionButton}</button>
+            </div>
+        </template>
+    </div>
+</template>

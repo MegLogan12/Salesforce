@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sod_Species_Match__c</fullName>
+    <description>Formula: true when Sod_Species_Delivered__c matches Expected_Sod_Species__c snapshot. Expected_Sod_Species__c is stored as text at DQC creation. TEXT() on delivered side for consistent picklist comparison. If false and Sod_Included__c is true, FM intervention required. PKG-DQC-PARENT-01b.</description>
+    <formula>IF(
+  Sod_Included__c = TRUE,
+  TEXT(Sod_Species_Delivered__c) = Expected_Sod_Species__c,
+  TRUE
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Sod Species Match</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,105 @@
+<template>
+    <div class="close-page-root">
+
+        <template lwc:if={isLoading}>
+            <div class="close-loading">Loading close page…</div>
+        </template>
+
+        <template lwc:if={hasError}>
+            <div class="close-error">Unable to load close page. Please refresh.</div>
+        </template>
+
+        <template lwc:if={pageData}>
+
+            <!-- ── Opportunity header ─────────────────────────────── -->
+            <div class="close-header-card">
+                <div class="close-opp-name">{opportunityName}</div>
+                <div class="close-opp-meta">
+                    <span class="close-stage-chip">{stageName}</span>
+                    <span class="close-account">{accountName}</span>
+                </div>
+            </div>
+
+            <!-- ── Readiness gate ─────────────────────────────────── -->
+            <c-odl-opp-readiness-gate
+                readiness={readiness}
+                record-id={recordId}>
+            </c-odl-opp-readiness-gate>
+
+            <!-- ── Payment summary ────────────────────────────────── -->
+            <template lwc:if={paymentSchedule}>
+                <c-odl-payment-schedule
+                    payment-data={paymentSchedule}
+                    is-umb={isUmb}
+                    record-id={recordId}>
+                </c-odl-payment-schedule>
+            </template>
+
+            <!-- ── Close action ───────────────────────────────────── -->
+            <template lwc:if={showCloseAction}>
+                <div class="close-action-card">
+                    <div class="close-action-header">
+                        <span class="close-action-title">Close Opportunity</span>
+                        <template lwc:if={woReady}>
+                            <span class="badge badge-green">Ready to Close</span>
+                        </template>
+                    </div>
+
+                    <template lwc:if={isNotConfirming}>
+                        <button
+                            class={closeButtonClass}
+                            disabled={closeButtonDisabled}
+                            onclick={handleConfirmClose}>
+                            Mark as Closed Won
+                        </button>
+                        <button
+                            class="btn-close-lost"
+                            onclick={handleCloseLost}>
+                            Mark as Closed Lost
+                        </button>
+                        <template lwc:if={isNotWoReady}>
+                            <p class="close-blocked-note">
+                                All readiness gates must be complete before closing.
+                            </p>
+                        </template>
+                        <p class="close-manual-note">
+                            Rep action required — opportunities are never closed automatically.
+                        </p>
+                    </template>
+
+                    <template lwc:if={isConfirming}>
+                        <div class="close-confirm-dialog">
+                            <p class="confirm-message">
+                                Confirm: Mark <strong>{opportunityName}</strong> as Closed Won?
+                                Verify all payment has been collected and the project is ready to release.
+                            </p>
+                            <div class="confirm-actions">
+                                <button
+                                    class="btn-confirm-yes"
+                                    disabled={isUpdating}
+                                    onclick={handleMarkClosedWon}>
+                                    {confirmButtonLabel}
+                                </button>
+                                <button
+                                    class="btn-confirm-cancel"
+                                    disabled={isUpdating}
+                                    onclick={handleCancelClose}>
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <!-- ── Already closed ─────────────────────────────────── -->
+            <template lwc:if={isAlreadyClosed}>
+                <div class="already-closed-card">
+                    <span class="closed-check">✓</span>
+                    <span class="closed-label">This opportunity is {stageName}.</span>
+                </div>
+            </template>
+
+        </template>
+    </div>
+</template>

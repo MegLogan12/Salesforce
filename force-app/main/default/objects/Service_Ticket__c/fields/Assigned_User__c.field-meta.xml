@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Assigned_User__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Individual user (technician or specialist) assigned to this Service Ticket. Use alongside Assigned_Crew__c for crew-level assignment. For Aqua, this is the Aqua technician. For Customer Care, this is the assigned rep.</description>
+    <label>Assigned Tech / User</label>
+    <referenceTo>User</referenceTo>
+    <relationshipLabel>Assigned Service Tickets</relationshipLabel>
+    <relationshipName>Assigned_Service_Tickets</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

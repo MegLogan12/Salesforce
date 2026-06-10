@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Parent_Transaction_Lock__c</fullName>
+    <defaultValue>true</defaultValue>
+    <description>Blocks POs, communities, WOs at the Builder Parent tier. Builder Account Backend Spec Section 2.</description>
+    <label>Parent Transaction Lock</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Grants Customer Success Manager access to the customer care console and case management.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>LOVING CSM</label>
+    <license>Salesforce</license>
+</PermissionSet>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Estimated_Line_Minutes__c</fullName>
+    <description>WLR-calculated labor minutes for this line item: Quantity × WLR Standard Minutes_Per_Unit. Falls back to legacy Time_Standard__c if WLR_Standard__c lookup is blank. Zero if both are missing (flags Duration_Calc_Status__c as Missing Standard).</description>
+    <externalId>false</externalId>
+    <formula>IF(
+    WLR_Standard__r.Minutes_Per_Unit__c != null,
+    ROUND(Quantity__c * WLR_Standard__r.Minutes_Per_Unit__c, 0),
+    IF(
+        Time_Standard__c != null,
+        ROUND(Quantity__c * Time_Standard__c, 0),
+        0
+    )
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Estimated Line Minutes</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

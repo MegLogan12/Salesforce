@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <assignments>
+        <name>Assign_Corner_Package</name>
+        <label>Set Effective Package — Corner</label>
+        <locationX>50</locationX>
+        <locationY>360</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Effective_Community_Package__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varCornerPkgId</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <assignments>
+        <name>Assign_Standard_Package</name>
+        <label>Set Effective Package — Standard</label>
+        <locationX>308</locationX>
+        <locationY>360</locationY>
+        <assignmentItems>
+            <assignToReference>$Record.Effective_Community_Package__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>varStandardPkgId</elementReference>
+            </value>
+        </assignmentItems>
+    </assignments>
+    <decisions>
+        <name>Decide_Package</name>
+        <label>Corner Lot?</label>
+        <locationX>176</locationX>
+        <locationY>240</locationY>
+        <defaultConnector>
+            <targetReference>Assign_Standard_Package</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Not a corner lot — use Standard Package</defaultConnectorLabel>
+        <rules>
+            <name>Is_Corner_Lot</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Corner_Lot__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Corner_Package</targetReference>
+            </connector>
+            <label>Is corner lot — use Corner Package</label>
+        </rules>
+    </decisions>
+    <description>Before-save on Lot__c (Create and Update): derives Effective_Community_Package__c from the parent Community based on Corner_Lot__c flag. If Corner_Lot__c = true, uses Community.Active_Corner_Package__c; otherwise uses Community.Active_Standard_Package__c. Required for D1 corner/standard package split. Downstream: LOVING_BuilderPO_Derive_From_Lot reads Effective_Community_Package__c when deriving Community Package onto Builder_PO__c.</description>
+    <interviewLabel>LOVING Lot Derive Effective Package {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING Lot Derive Effective Package</label>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Community</name>
+        <label>Get Community — Standard and Corner Packages</label>
+        <locationX>176</locationX>
+        <locationY>120</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Decide_Package</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Community__c</elementReference>
+            </value>
+        </filters>
+        <object>Community__c</object>
+        <outputAssignments>
+            <assignToReference>varCornerPkgId</assignToReference>
+            <field>Active_Corner_Package__c</field>
+        </outputAssignments>
+        <outputAssignments>
+            <assignToReference>varStandardPkgId</assignToReference>
+            <field>Active_Standard_Package__c</field>
+        </outputAssignments>
+    </recordLookups>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Community</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Community__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <object>Lot__c</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>varCornerPkgId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>varStandardPkgId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

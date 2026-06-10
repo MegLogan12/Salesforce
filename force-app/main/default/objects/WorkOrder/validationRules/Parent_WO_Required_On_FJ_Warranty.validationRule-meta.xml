@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Parent_WO_Required_On_FJ_Warranty</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+    NOT($Profile.Name = &quot;System Administrator&quot;),
+    ((Is_Finish_Job__c || Is_Warranty__c) &amp;&amp; ISBLANK(Parent_Work_Order__c))
+)</errorConditionFormula>
+    <errorDisplayField>Parent_Work_Order__c</errorDisplayField>
+    <errorMessage>A Finish Job or Warranty Work Order must link to its original parent Work Order.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Member of CC Closeout Queue. Active CC specialists.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Customer Success Queue Member</label>
+    <license>Salesforce</license>
+</PermissionSet>

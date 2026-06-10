@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <decisions>
+        <name>Check_FJ_Flag</name>
+        <label>FJ Flag Checked?</label>
+        <locationX>176</locationX>
+        <locationY>528</locationY>
+        <defaultConnector>
+            <targetReference>Update_WO_Closeout_NoFJ</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No FJ</defaultConnectorLabel>
+        <rules>
+            <name>FJ_Flagged</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>FJFlagInput</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_WO_Closeout_WithFJ</targetReference>
+            </connector>
+            <label>FJ Flagged</label>
+        </rules>
+    </decisions>
+    <description>Foreman closeout submission flow for FSL Mobile. Foreman enters closeout notes, sees photo reminder, optionally flags Finished Job. Sets WorkOrder to Pending Closeout. FJ flag sets FJ_Recommended__c — Customer Care notification handled by separate record-triggered flow.</description>
+    <environments>Default</environments>
+    <interviewLabel>LOVING Foreman Closeout Submit {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING Foreman Closeout Submit</label>
+    <processType>Flow</processType>
+    <recordLookups>
+        <name>Get_WO_For_Closeout</name>
+        <label>Get Work Order</label>
+        <locationX>176</locationX>
+        <locationY>168</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Screen_CloseoutNotes</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>WorkOrder</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_WO_Closeout_NoFJ</name>
+        <label>Update Work Order — Pending Closeout</label>
+        <locationX>308</locationX>
+        <locationY>648</locationY>
+        <connector>
+            <targetReference>Screen_CloseoutConfirm</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Closeout_Notes__c</field>
+            <value>
+                <elementReference>CloseoutNotesInput</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Job_Complete_Submitted_At__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Job_Complete_Submitted_By__c</field>
+            <value>
+                <elementReference>$User.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Pending Closeout</stringValue>
+            </value>
+        </inputAssignments>
+        <object>WorkOrder</object>
+    </recordUpdates>
+    <recordUpdates>
+        <name>Update_WO_Closeout_WithFJ</name>
+        <label>Update Work Order — Pending Closeout + FJ Recommended</label>
+        <locationX>44</locationX>
+        <locationY>648</locationY>
+        <connector>
+            <targetReference>Screen_CloseoutConfirmFJ</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Closeout_Notes__c</field>
+            <value>
+                <elementReference>CloseoutNotesInput</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>FJ_Recommended__c</field>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Job_Complete_Submitted_At__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Job_Complete_Submitted_By__c</field>
+            <value>
+                <elementReference>$User.Id</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Pending Closeout</stringValue>
+            </value>
+        </inputAssignments>
+        <object>WorkOrder</object>
+    </recordUpdates>
+    <runInMode>DefaultMode</runInMode>
+    <screens>
+        <name>Screen_CloseoutConfirm</name>
+        <label>Closeout Submitted</label>
+        <locationX>308</locationX>
+        <locationY>768</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>CloseoutConfirmText</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;font-size: 16px; color: #04844b;&quot;&gt;✓ Closeout Submitted / Cierre Enviado&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Your closeout has been submitted. Your FM will review and approve.&lt;/p&gt;&lt;p&gt;&lt;em&gt;Tu cierre ha sido enviado. Tu FM revisará y aprobará.&lt;/em&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_CloseoutConfirmFJ</name>
+        <label>Closeout Submitted — Finished Job Flagged</label>
+        <locationX>44</locationX>
+        <locationY>768</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>CloseoutConfirmFJText</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;font-size: 16px; color: #04844b;&quot;&gt;✓ Closeout Submitted — Finished Job Flagged / Cierre Enviado — Trabajo Terminado Marcado&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Closeout submitted. This lot has been flagged as Finished Job. Customer Care has been notified.&lt;/p&gt;&lt;p&gt;&lt;em&gt;Cierre enviado. Lote marcado como Trabajo Terminado. Atención al Cliente fue notificado.&lt;/em&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_CloseoutNotes</name>
+        <label>Submit for Closeout</label>
+        <locationX>176</locationX>
+        <locationY>288</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Screen_FJCheck</targetReference>
+        </connector>
+        <fields>
+            <name>CloseoutTitle</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;font-size: 16px;&quot;&gt;Submit Job for Closeout / Enviar Trabajo para Cierre&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Job:&lt;/strong&gt; {!Get_WO_For_Closeout.Subject}&lt;/p&gt;&lt;p style=&quot;color: #0a8aa6;&quot;&gt;&lt;strong&gt;PHOTOS REQUIRED before closeout can be approved.&lt;/strong&gt; Upload at least one completion photo in the Files tab.&lt;/p&gt;&lt;p&gt;&lt;em&gt;FOTOS REQUERIDAS. Sube al menos una foto en Archivos. El FM no puede aprobar sin fotos.&lt;/em&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>CloseoutNotesInput</name>
+            <fieldText>Closeout notes — describe work completed, issues, scope changes / Notas de cierre — describe el trabajo, problemas, cambios de alcance</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Screen_FJCheck</name>
+        <label>Finished Job Flag</label>
+        <locationX>176</locationX>
+        <locationY>408</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>false</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Check_FJ_Flag</targetReference>
+        </connector>
+        <fields>
+            <name>FJTitle</name>
+            <fieldText>&lt;p&gt;&lt;strong style=&quot;font-size: 16px;&quot;&gt;Finished Job? / ¿Trabajo Terminado?&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Check the box ONLY if this lot is fully complete and ready for homeowner walk-through.&lt;/p&gt;&lt;p style=&quot;color: #c23934;&quot;&gt;&lt;strong&gt;WARNING: Checking Finished Job will notify Customer Care.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;&lt;em&gt;ADVERTENCIA: Marcar Trabajo Terminado notificará a Atención al Cliente.&lt;/em&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>FJFlagInput</name>
+            <dataType>Boolean</dataType>
+            <defaultValue>
+                <booleanValue>false</booleanValue>
+            </defaultValue>
+            <fieldText>This lot is fully complete — flag as Finished Job / Este lote está terminado — marcar como Trabajo Terminado</fieldText>
+            <fieldType>InputField</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <start>
+        <locationX>176</locationX>
+        <locationY>48</locationY>
+        <connector>
+            <targetReference>Get_WO_For_Closeout</targetReference>
+        </connector>
+    </start>
+    <status>Draft</status>
+    <variables>
+        <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

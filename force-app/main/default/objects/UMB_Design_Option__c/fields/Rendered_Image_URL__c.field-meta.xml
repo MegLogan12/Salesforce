@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Rendered_Image_URL__c</fullName>
+    <description>URL of the Gemini-generated rendering of the customer&apos;s actual yard with this design applied.</description>
+    <label>Rendered Image URL</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Url</type>
+</CustomField>

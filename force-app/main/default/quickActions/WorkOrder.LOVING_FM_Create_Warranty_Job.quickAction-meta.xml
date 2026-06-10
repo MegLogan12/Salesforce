@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>FM creates a Warranty work order from an existing work order when warranty-covered rework is required. Links the warranty WO to the originating work order and notifies Customer Success.</description>
+    <label>Create Warranty Job</label>
+    <lightningWebComponent>lovingFmCreateWarrantyJobAction</lightningWebComponent>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <type>LightningWebComponent</type>
+</QuickAction>

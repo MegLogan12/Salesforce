@@ -1,0 +1,110 @@
+<template>
+    <div class="console-home">
+
+        <!-- Loading -->
+        <template if:true={isLoading}>
+            <div class="odl-loading">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Error -->
+        <template if:true={hasError}>
+            <div class="odl-error-state">
+                <lightning-icon icon-name="utility:error" size="small" variant="error"></lightning-icon>
+                <p>{error}</p>
+                <lightning-button label="Retry" onclick={handleRefresh}></lightning-button>
+            </div>
+        </template>
+
+        <!-- Main -->
+        <template if:false={isLoading}>
+            <template if:false={hasError}>
+
+                <!-- Page header -->
+                <div class="page-header">
+                    <div class="page-header-icon">
+                        <lightning-icon icon-name="utility:location" size="small" variant="inverse"></lightning-icon>
+                    </div>
+                    <div>
+                        <h1 class="page-title">Communities</h1>
+                        <p class="page-sub">{totalCount} communities</p>
+                    </div>
+                    <lightning-button-icon
+                        icon-name="utility:refresh"
+                        alternative-text="Refresh"
+                        variant="bare"
+                        onclick={handleRefresh}
+                        class="page-refresh"
+                    ></lightning-button-icon>
+                </div>
+
+                <!-- Search bar -->
+                <div class="search-bar">
+                    <lightning-input
+                        type="search"
+                        placeholder="Search communities or builders..."
+                        value={searchTerm}
+                        onchange={handleSearch}
+                        class="search-input"
+                    ></lightning-input>
+                    <span class="search-count">{filteredCount} shown</span>
+                </div>
+
+                <!-- Communities table -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-icon" style="background:#2c7a4b">
+                            <lightning-icon icon-name="utility:location" size="x-small" variant="inverse"></lightning-icon>
+                        </div>
+                        <h2 class="card-title">All Communities</h2>
+                        <lightning-button-icon
+                            icon-name="utility:refresh"
+                            alternative-text="Refresh"
+                            variant="bare"
+                            onclick={handleRefresh}
+                            class="card-refresh"
+                        ></lightning-button-icon>
+                    </div>
+
+                    <template if:true={hasCommunities}>
+                        <table class="odl-table">
+                            <thead>
+                                <tr>
+                                    <th>Community Name</th>
+                                    <th>Builder</th>
+                                    <th>Created</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={filteredCommunities} for:item="row">
+                                    <tr key={row.id}>
+                                        <td>
+                                            <a class="rec-link" data-id={row.id} onclick={handleOpenRecord}>{row.name}</a>
+                                        </td>
+                                        <td class="muted">{row.builderAccountName}</td>
+                                        <td class="muted">{row.createdDateLabel}</td>
+                                        <td>
+                                            <button class="btn-inline" data-id={row.id} onclick={handleOpenRecord}>View Details</button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+
+                    <template if:false={hasCommunities}>
+                        <div class="empty-state">
+                            <lightning-icon icon-name="utility:location" size="small"></lightning-icon>
+                            <p>No communities found.</p>
+                        </div>
+                    </template>
+
+                </div>
+
+            </template>
+        </template>
+
+    </div>
+</template>

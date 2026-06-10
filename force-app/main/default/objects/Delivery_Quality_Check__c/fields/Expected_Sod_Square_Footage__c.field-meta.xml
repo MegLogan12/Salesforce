@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Expected_Sod_Square_Footage__c</fullName>
+    <description>Snapshot: copied from WorkOrder.Sod_Square_Footage__c at DQC creation time by LOVING_Delivery_QC_Submit. Preserved so Sod_Rolls_Expected__c formula remains stable if WorkOrder data changes after inspection. PKG-DQC-PARENT-01a.</description>
+    <externalId>false</externalId>
+    <label>Expected Sod Square Footage</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>2</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

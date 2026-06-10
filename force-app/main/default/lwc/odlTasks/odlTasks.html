@@ -1,0 +1,134 @@
+<template>
+    <div class="list-toolbar">
+        <span class={allChipClass} onclick={showAll}>Today</span>
+        <span class={voicemailChipClass} onclick={showVoicemail}>Voicemail Follow-Up</span>
+        <span class={overdueChipClass} onclick={showOverdue}>Overdue</span>
+        <lightning-button label="New Task" icon-name="utility:add" onclick={handleNewTask}></lightning-button>
+        <input class="list-search" placeholder="Search tasks..." value={searchTerm} onchange={handleSearch} />
+    </div>
+    <div class="sf-body">
+        <div class="layout">
+            <div class="layout-main">
+                <div class="g4">
+                    <div class="kpi kr">
+                        <div class="kn big">{overdueCount}</div>
+                        <div class="kl">Overdue tasks</div>
+                    </div>
+                    <div class="kpi ka">
+                        <div class="kn big">{todayCount}</div>
+                        <div class="kl">Due today</div>
+                    </div>
+                    <div class="kpi kb">
+                        <div class="kn big">{voicemailCount}</div>
+                        <div class="kl">Voicemail follow-ups</div>
+                    </div>
+                    <div class="kpi kg">
+                        <div class="kn big">{completedTodayCount}</div>
+                        <div class="kl">Completed today</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci" style="background:#e8936a">TASK</div>
+                        <h3>Task Queue</h3>
+                        <span style="margin-left:auto;font-size:11px;color:#706e6b">{visibleTasks.length} records</span>
+                        <button class="btn-inline" onclick={handleNewTask}>+ New Task</button>
+                    </div>
+                    <table class="tbl">
+                        <thead>
+                            <tr>
+                                <th>Task</th>
+                                <th>Related To</th>
+                                <th>LOB</th>
+                                <th>Type</th>
+                                <th>Due</th>
+                                <th>Last Activity</th>
+                                <th>Owner</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={visibleTasks} for:item="task">
+                                <tr key={task.Id}>
+                                    <td>{task.Subject}</td>
+                                    <td>{task.whatName}</td>
+                                    <td>—</td>
+                                    <td>{task.Type}</td>
+                                    <td>{task.dueDateFormatted}</td>
+                                    <td>—</td>
+                                    <td>{task.Owner.Name}</td>
+                                    <td><span class={task.statusChipClass}>{task.Status}</span></td>
+                                    <td><button class="btn-inline" data-id={task.Id} onclick={handleCompleteTask}>Complete</button></td>
+                                </tr>
+                            </template>
+                            <template if:true={hasError}>
+                                <tr><td colspan="9" style="text-align:center;color:#9c3052;padding:16px">{error}</td></tr>
+                            </template>
+                            <template if:true={noTasks}>
+                                <tr><td colspan="9" style="text-align:center;color:#706e6b;padding:16px">No tasks in this view</td></tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci" style="background:#2c7a4b">CAL</div>
+                        <h3>Sales Activity Calendar</h3>
+                    </div>
+                    <div class="calendar-grid" style="padding:12px 14px">
+                        <template for:each={calendarDays} for:item="day">
+                            <div key={day.label} class="day">
+                                <div class="day-head">
+                                    <span>{day.dayName}</span>
+                                    <span>{day.count}</span>
+                                </div>
+                                <template for:each={day.events} for:item="evt">
+                                    <div key={evt.label} class={evt.cssClass}>{evt.label}</div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+            <div class="layout-rail">
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci" style="background:#9b7ec8">AI</div>
+                        <h3>Assistant Panel</h3>
+                    </div>
+                    <div class="qa-list">
+                        <div class="qa-item" onclick={handleSummarizeActivity}>Summarize latest customer activity</div>
+                        <div class="qa-item" onclick={handleDraftEmail}>Draft follow-up email</div>
+                        <div class="qa-item" onclick={handleNewTask}>Create next task</div>
+                        <div class="qa-item" onclick={showOverdue}>Show overdue items</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="ch">
+                        <div class="ci" style="background:#2c7a4b">SLA</div>
+                        <h3>Activity Health</h3>
+                    </div>
+                    <div style="padding:10px 14px">
+                        <div class="rail-row">
+                            <span>Overdue tasks</span>
+                            <span class="chip cr">{overdueCount}</span>
+                        </div>
+                        <div class="rail-row">
+                            <span>Due today</span>
+                            <span>{todayCount}</span>
+                        </div>
+                        <div class="rail-row">
+                            <span>Voicemail follow-ups</span>
+                            <span>{voicemailCount}</span>
+                        </div>
+                        <div class="rail-row">
+                            <span>Completed today</span>
+                            <span class="chip cg">{completedTodayCount}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

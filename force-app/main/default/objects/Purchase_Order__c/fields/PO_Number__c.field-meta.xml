@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PO_Number__c</fullName>
+    <caseSensitive>false</caseSensitive>
+    <description>Canonical builder-provided purchase order number used as the primary migration and integration match key.</description>
+    <externalId>true</externalId>
+    <inlineHelpText>Primary PO identifier from the builder source. Intended for migration matching and duplicate prevention.</inlineHelpText>
+    <label>PO Number</label>
+    <length>80</length>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>true</unique>
+</CustomField>

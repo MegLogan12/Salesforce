@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Fire_Pla__c</fullName>
+    <label>Fire Place</label>
+    <required>true</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>MultiselectPicklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>None</fullName>
+                <default>false</default>
+                <label>None</label>
+            </value>
+            <value>
+                <fullName>Firepit</fullName>
+                <default>false</default>
+                <label>Firepit</label>
+            </value>
+            <value>
+                <fullName>Standard Firepace</fullName>
+                <default>false</default>
+                <label>Standard Firepace</label>
+            </value>
+            <value>
+                <fullName>Deluxe Fireplace</fullName>
+                <default>false</default>
+                <label>Deluxe Fireplace</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+    <visibleLines>4</visibleLines>
+</CustomField>

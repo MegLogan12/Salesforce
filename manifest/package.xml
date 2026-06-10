@@ -1,47 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>LOVING_PI_Orchestrator</members>
-        <members>LOVING_PI_Schedule_Automation</members>
+        <members>LOVING_Health_Check_Daily</members>
+        <members>LOVING_PI_Approved_Automation</members>
+        <members>LOVING_PI_Auto_Close</members>
         <members>LOVING_PI_Closeout_Automation</members>
         <members>LOVING_PI_NFI_Loop</members>
-        <members>LOVING_PI_FinishJob_Branch</members>
-        <members>LOVING_PI_Aqua_Trigger</members>
-        <members>LOVING_PI_Auto_Close</members>
-        <members>LOVING_Bucket_Engine</members>
+        <members>LOVING_PI_RedFlag_Automation</members>
+        <members>LOVING_PI_Schedule_Automation</members>
         <members>LOVING_Takeoff_To_WO_Creation</members>
-        <members>LOVING_Health_Check_Daily</members>
-        <members>LOVING_Takeoff_Escalation</members>
         <name>Flow</name>
     </types>
     <types>
         <members>LOVING_WorkOrderTriggerHandler</members>
+        <members>LOVING_TriggerGuard</members>
         <members>LOVING_MeasuringCupService</members>
-        <members>LOVING_QIAutoCloseService</members>
         <members>LOVING_AquaTicketService</members>
+        <members>LOVING_BucketEngineScheduler</members>
+        <members>LOVING_BucketEngineService</members>
+        <members>LOVING_HealthCheckScheduler</members>
+        <members>LOVING_HealthCheckEscalationScheduler</members>
+        <members>LOVING_QIEscalationScheduler</members>
+        <members>LOVING_TakeoffEscalationScheduler</members>
         <members>LOVING_WorkOrderTriggerHandlerTest</members>
+        <members>LOVING_SchedulerClassesTest</members>
         <name>ApexClass</name>
-    </types>
-    <types>
-        <members>LOVING_WorkOrderTrigger</members>
-        <name>ApexTrigger</name>
-    </types>
-    <types>
-        <members>QI_Inspection__c</members>
-        <members>QI_Line_Item__c</members>
-        <members>Finish_Job__c</members>
-        <members>Time_Entry__c</members>
-        <members>Aqua_Inventory__c</members>
-        <name>CustomObject</name>
     </types>
     <types>
         <!-- WorkOrder custom fields -->
         <members>WorkOrder.Work_Order_Type__c</members>
-        <members>WorkOrder.Job_Type__c</members>
-        <members>WorkOrder.Builder__c</members>
-        <members>WorkOrder.Community__c</members>
         <members>WorkOrder.Builder_Regional__c</members>
-        <members>WorkOrder.Lot__c</members>
         <members>WorkOrder.Lot_Number__c</members>
         <members>WorkOrder.Lot_Address__c</members>
         <members>WorkOrder.PO_Number__c</members>
@@ -51,6 +39,17 @@
         <members>WorkOrder.Builder_Spec_Type__c</members>
         <members>WorkOrder.DR_Horton_Tree_Avg__c</members>
         <members>WorkOrder.Aqua_Community__c</members>
+        <members>WorkOrder.Aqua_Tech__c</members>
+        <members>WorkOrder.Check_Visit_Number__c</members>
+        <members>WorkOrder.Is_First_Visit__c</members>
+        <members>WorkOrder.Expected_Hoses__c</members>
+        <members>WorkOrder.Confirmed_Hoses__c</members>
+        <members>WorkOrder.Expected_Controllers__c</members>
+        <members>WorkOrder.Confirmed_Controllers__c</members>
+        <members>WorkOrder.Expected_Heads__c</members>
+        <members>WorkOrder.Confirmed_Heads__c</members>
+        <members>WorkOrder.Expected_Valves__c</members>
+        <members>WorkOrder.Confirmed_Valves__c</members>
         <members>WorkOrder.FM__c</members>
         <members>WorkOrder.Foreman__c</members>
         <members>WorkOrder.Takeoff_Complete__c</members>
@@ -69,13 +68,10 @@
         <members>WorkOrder.Scope_Outside_PO__c</members>
         <members>WorkOrder.MPO_Lot__c</members>
         <members>WorkOrder.Outside_PO_Notes__c</members>
-        <members>WorkOrder.Shift_Start_Time__c</members>
         <members>WorkOrder.Lunch_Minutes__c</members>
         <members>WorkOrder.Cushion_Minutes__c</members>
         <members>WorkOrder.Goal_Headcount__c</members>
         <members>WorkOrder.Actual_Headcount__c</members>
-        <members>WorkOrder.Goal_Hours__c</members>
-        <members>WorkOrder.Actual_Hours__c</members>
         <members>WorkOrder.Variance_Hours__c</members>
         <members>WorkOrder.Travel_Minutes_Planned__c</members>
         <members>WorkOrder.Zone__c</members>
@@ -97,7 +93,6 @@
         <members>WorkOrder.Red_Flag_Timestamp__c</members>
         <members>WorkOrder.Finish_Job_Required__c</members>
         <members>WorkOrder.Finish_Job_Reason__c</members>
-        <members>WorkOrder.FJ_Count__c</members>
         <members>WorkOrder.Closeout_Photos_Attached__c</members>
         <members>WorkOrder.Closeout_Quantities_Confirmed__c</members>
         <members>WorkOrder.Closeout_Notes__c</members>
@@ -121,6 +116,14 @@
         <members>WorkOrder.Payment_Received__c</members>
         <members>WorkOrder.Payment_Date__c</members>
         <members>WorkOrder.Crew_Complete_Timestamp__c</members>
+        <!-- QI_Inspection__c custom fields -->
+        <members>QI_Inspection__c.FM__c</members>
+        <members>QI_Inspection__c.Status__c</members>
+        <!-- QI_Line_Item__c custom fields -->
+        <members>QI_Line_Item__c.Work_Order_Line_Item_Ref__c</members>
+        <!-- Finish_Job__c custom fields -->
+        <members>Finish_Job__c.Accountability_Notes__c</members>
+        <members>Finish_Job__c.FJ_Date__c</members>
         <!-- Account (Community + Lot) custom fields -->
         <members>Account.Pipeline_Bucket__c</members>
         <members>Account.Target_Start_Date__c</members>
@@ -130,11 +133,13 @@
         <members>Account.Takeoff_Task_Created__c</members>
         <members>Account.Takeoff_Complete__c</members>
         <members>Account.Takeoff_Completed_Date__c</members>
+        <members>Account.Takeoff_Overdue__c</members>
         <members>Account.Bucket_Changed_Date__c</members>
         <members>Account.On_Hold_Reason__c</members>
         <members>Account.FM__c</members>
         <members>Account.Zone__c</members>
         <members>Account.Aqua_Customer__c</members>
+        <members>Account.Aqua_Service_Days__c</members>
         <members>Account.Aqua_Tech__c</members>
         <members>Account.Sod_Species__c</members>
         <members>Account.BMG_Package__c</members>
@@ -152,7 +157,6 @@
     <types>
         <members>WorkOrder.Takeoff_Required_Before_Scheduling</members>
         <members>WorkOrder.Site_Readiness_Required</members>
-        <members>WorkOrder.Loading_Ticket_Required</members>
         <members>WorkOrder.Red_Flag_Notes_Required</members>
         <members>WorkOrder.Closeout_Photos_Required</members>
         <members>WorkOrder.Closeout_Quantities_Required</members>

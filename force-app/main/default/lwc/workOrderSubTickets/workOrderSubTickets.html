@@ -1,0 +1,47 @@
+<template>
+    <lightning-card title="Sub-Tickets" icon-name="standard:work_order">
+        <div slot="actions">
+            <lightning-button label="New Sub-Ticket" icon-name="utility:add" onclick={handleNewSubTicket}></lightning-button>
+        </div>
+        <div class="slds-p-around_small">
+            <template if:true={loading}>
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </template>
+            <template for:each={sections} for:item="sec">
+                <section key={sec.key} class="sub-section">
+                    <header class="sec-head">
+                        <span class="sec-label">{sec.label}</span>
+                        <span class="sec-count">{sec.count}</span>
+                    </header>
+                    <template if:true={sec.isEmpty}>
+                        <p class="empty slds-text-color_weak">No records.</p>
+                    </template>
+                    <template if:false={sec.isEmpty}>
+                        <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Status</th>
+                                    <th>Materials</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={sec.rows} for:item="r">
+                                    <tr key={r.id}>
+                                        <td>{r.name}</td>
+                                        <td>{r.status}</td>
+                                        <td>{r.materialsList}</td>
+                                        <td>
+                                            <button class="btn-inline" data-id={r.id} onclick={handleViewRow}>View</button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                </section>
+            </template>
+        </div>
+    </lightning-card>
+</template>

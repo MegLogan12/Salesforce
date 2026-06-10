@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Warranty</fullName>
+    <active>true</active>
+    <label>Warranty</label>
+    <picklistValues>
+        <picklist>Billable_Type__c</picklist>
+        <values>
+            <fullName>Billable</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Internal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>No Charge</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Warranty</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Billing_Status__c</picklist>
+        <values>
+            <fullName>Awaiting Payment</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Closed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Disputed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Invoice Sent</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>On Hold</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Payment Received</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Invoice</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Builder_Spec_Type__c</picklist>
+        <values>
+            <fullName>Average %28DR Horton%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Exact %28Lennar%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Flexible %28Ryan Homes%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Standard</fullName>
+            <default>true</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Builder__c</picklist>
+        <values>
+            <fullName>DR Horton</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Lennar</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ryan Homes</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Yellowstone</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>ClosingCare_Status__c</picklist>
+        <values>
+            <fullName>Active</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Exited - Closed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not Enrolled</fullName>
+            <default>true</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Finish_Job_Reason__c</picklist>
+        <values>
+            <fullName>Crew Short</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Equipment Failure</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Material Short</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ran Out of Time</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Scope Change</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Site Access Blocked</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Weather</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Foreman_Submit_Status__c</picklist>
+        <values>
+            <fullName>Not Submitted</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Override</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Submitted</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Job_Category__c</picklist>
+        <values>
+            <fullName>Aqua Service</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Back Charge</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Customer Care</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Design %26 Build %E2%80%93 ODL %26 Land development</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Design %26 Build %E2%80%93Inground Irrigation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Finish Job</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inground Irrigation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Land Development</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Outdoor Living</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Plant %26 Sod Install</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Plant%2FSod Grading</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Residential</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Warranty</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Job_Health__c</picklist>
+        <values>
+            <fullName>Green</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not Yet Evaluated</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Red</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>NFI_Type__c</picklist>
+        <values>
+            <fullName>Incomplete Aqua Entry</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missing Photos</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Missing Scope</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Quantity Variance</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>PO_Source__c</picklist>
+        <values>
+            <fullName>Builder Portal</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Email</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>SupplyPro</fullName>
+            <default>true</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Pipeline_Bucket__c</picklist>
+        <values>
+            <fullName>30 Days</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>60%2B Days</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>90%2B Days</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Ready to Schedule</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Takeoff In Progress</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Priority</picklist>
+        <values>
+            <fullName>Critical</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>High</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Low</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Medium</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>QI_Result__c</picklist>
+        <values>
+            <fullName>Acceptable</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Excellent</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Red %E2%80%94 Rework Required</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>QI_Status__c</picklist>
+        <values>
+            <fullName>In Progress</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Required_Skills__c</picklist>
+        <values>
+            <fullName>Aqua</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Irrigation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Landscape Install</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Repair</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Shrubs</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sod</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Trees</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Warranty</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Schedule_Proposal_Status__c</picklist>
+        <values>
+            <fullName>Manager Approved</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Manager Rejected</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Manual Override</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Auto-Schedule</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Proposed</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Site_Readiness_Result__c</picklist>
+        <values>
+            <fullName>Not Ready</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ready</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Waived</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Site_Readiness_Status__c</picklist>
+        <values>
+            <fullName>Not Started</fullName>
+            <default>true</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Site_Ready__c</picklist>
+        <values>
+            <fullName>Not Checked</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Not Ready</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ready</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Sod_Species__c</picklist>
+        <values>
+            <fullName>Bermuda</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Fescue</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Zoysia</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Status</picklist>
+        <values>
+            <fullName>Canceled</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cannot Complete</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Closed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Completed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>In Progress</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>New</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>On Hold</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Status__c</picklist>
+        <values>
+            <fullName>Approved</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Closed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Completed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Draft</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>In Progress</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Invoiced</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Closeout</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pending Takeoff</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Ready to Schedule</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Scheduled</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Takeoff_Status__c</picklist>
+        <values>
+            <fullName>In Progress</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Locked</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not Started</fullName>
+            <default>true</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Travel_Variant__c</picklist>
+        <values>
+            <fullName>From-Only</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>To-Only</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>To-and-From</fullName>
+            <default>true</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Work_Order_Type__c</picklist>
+        <values>
+            <fullName>Aqua Check</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Aqua Pickup</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Customer Care</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Grading</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lawn Care</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Production Install</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Warranty</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

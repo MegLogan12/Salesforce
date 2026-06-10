@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ODL_Household_Display_Name__c</fullName>
+    <description>Outdoor Living-only household display name used on homeowner surfaces without renaming the underlying account.</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Use a LOVING household display label such as Smith Household for ODL homeowner pages.</inlineHelpText>
+    <label>ODL Household Display Name</label>
+    <length>255</length>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

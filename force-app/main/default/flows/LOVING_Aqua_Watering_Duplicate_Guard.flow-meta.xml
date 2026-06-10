@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <customErrors>
+        <name>Duplicate_Schedule_Error</name>
+        <label>Duplicate Schedule Exists</label>
+        <locationX>440</locationX>
+        <locationY>348</locationY>
+        <customErrorMessages>
+            <errorMessage>A watering schedule with this type, community, and time period already exists. Update the existing record instead of creating a new one.</errorMessage>
+            <isFieldError>false</isFieldError>
+        </customErrorMessages>
+    </customErrors>
+    <decisions>
+        <name>Check_Schedule_Type</name>
+        <label>Check Schedule Type</label>
+        <locationX>176</locationX>
+        <locationY>120</locationY>
+        <defaultConnectorLabel>Other / Unknown — allow save</defaultConnectorLabel>
+        <rules>
+            <name>Is_Seasonal</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Schedule_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Seasonal Monthly</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Seasonal_Duplicate</targetReference>
+            </connector>
+            <label>Seasonal Monthly</label>
+        </rules>
+        <rules>
+            <name>Is_Ramp</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Schedule_Type__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>New Install Ramp</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Get_Ramp_Duplicate</targetReference>
+            </connector>
+            <label>New Install Ramp</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Ramp_Dup_Found</name>
+        <label>Ramp Duplicate Found</label>
+        <locationX>700</locationX>
+        <locationY>228</locationY>
+        <defaultConnectorLabel>No Duplicate</defaultConnectorLabel>
+        <rules>
+            <name>Ramp_Is_Dup</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Ramp_Duplicate</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Duplicate_Schedule_Error</targetReference>
+            </connector>
+            <label>Duplicate Exists</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Seasonal_Dup_Found</name>
+        <label>Seasonal Duplicate Found</label>
+        <locationX>440</locationX>
+        <locationY>228</locationY>
+        <defaultConnectorLabel>No Duplicate</defaultConnectorLabel>
+        <rules>
+            <name>Seasonal_Is_Dup</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Seasonal_Duplicate</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Duplicate_Schedule_Error</targetReference>
+            </connector>
+            <label>Duplicate Exists</label>
+        </rules>
+    </decisions>
+    <description>Phase 6: Prevents duplicate Aqua_Watering_Schedule__c records. Seasonal Monthly must be unique per Community+Month+Year. New Install Ramp must be unique per Community+Week+Year.</description>
+    <interviewLabel>LOVING Aqua Watering Duplicate Guard {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING Aqua Watering Duplicate Guard</label>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Ramp_Duplicate</name>
+        <label>Get Ramp Duplicate</label>
+        <locationX>700</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Ramp_Dup_Found</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Community__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Community__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Schedule_Type__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>New Install Ramp</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Week_Number__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Week_Number__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Effective_Year__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Effective_Year__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Aqua_Watering_Schedule__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Seasonal_Duplicate</name>
+        <label>Get Seasonal Duplicate</label>
+        <locationX>440</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Seasonal_Dup_Found</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Community__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Community__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Schedule_Type__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Seasonal Monthly</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Month__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Month__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Effective_Year__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Effective_Year__c</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Aqua_Watering_Schedule__c</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Check_Schedule_Type</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Community__c</field>
+            <operator>IsNull</operator>
+            <value>
+                <booleanValue>false</booleanValue>
+            </value>
+        </filters>
+        <object>Aqua_Watering_Schedule__c</object>
+        <recordTriggerType>Create</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+</Flow>

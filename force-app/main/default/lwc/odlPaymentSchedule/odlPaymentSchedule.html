@@ -1,0 +1,69 @@
+<template>
+    <div class="payment-card">
+        <div class="payment-header">
+            <span class="payment-title">Payment Summary</span>
+            <div class="payment-header-actions">
+                <button class="btn-inline" onclick={handleRecordPayment}>Record Payment</button>
+                <button class="btn-inline" onclick={handleDownloadPdf}>Download PDF</button>
+            </div>
+        </div>
+
+        <div class="payment-table">
+            <div class="payment-row payment-row-total">
+                <span class="payment-label">Contract Total</span>
+                <span class="payment-value">{paymentData.formattedContractTotal}</span>
+            </div>
+
+            <template lwc:if={paymentData.hasVoucher}>
+                <div class="payment-row payment-row-credit">
+                    <span class="payment-label">
+                        Voucher Credit
+                        <template lwc:if={paymentData.voucherCode}>
+                            <span class="voucher-code-chip">{paymentData.voucherCode}</span>
+                        </template>
+                    </span>
+                    <span class="payment-value payment-credit">−{paymentData.formattedVoucherCredit}</span>
+                </div>
+                <div class="payment-divider"></div>
+                <div class="payment-row payment-row-balance">
+                    <span class="payment-label payment-label-strong">Customer Balance</span>
+                    <span class="payment-value payment-value-strong">{paymentData.formattedCustomerBalance}</span>
+                </div>
+            </template>
+
+            <div class="payment-divider"></div>
+
+            <div class="payment-row payment-row-deposit">
+                <span class="payment-label">
+                    Deposit
+                    <template lwc:if={paymentData.depositIsPaid}>
+                        <span class="chip chip-green">Paid</span>
+                        <template lwc:if={depositPaidDateDisplay}>
+                            <span class="deposit-paid-date">{depositPaidDateDisplay}</span>
+                        </template>
+                    </template>
+                    <template lwc:else>
+                        <span class="chip chip-amber">Pending</span>
+                    </template>
+                </span>
+                <span class="payment-value">{paymentData.formattedDepositDue}</span>
+            </div>
+
+            <div class="payment-row payment-row-remaining">
+                <span class="payment-label payment-label-strong">Remaining Balance</span>
+                <span class={remainingClass}>{paymentData.formattedRemainingBalance}</span>
+            </div>
+        </div>
+
+        <template lwc:if={paymentData.depositIsPaid}>
+            <div class="payment-paid-note">
+                Deposit received. Remaining balance due at project completion.
+            </div>
+        </template>
+        <template lwc:else>
+            <div class="payment-pending-note">
+                Deposit must be collected before releasing work order.
+            </div>
+        </template>
+    </div>
+</template>

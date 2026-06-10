@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Crew_Completed__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Outdoor Living field execution gate: crew has marked the install complete.</description>
+    <label>Crew Completed</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

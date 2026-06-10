@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Issue_Type__c</fullName>
+    <label>Issue Type</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Delivery Issue</fullName>
+                <default>false</default>
+                <label>Delivery Issue</label>
+            </value>
+            <value>
+                <fullName>Inventory</fullName>
+                <default>false</default>
+                <label>Inventory</label>
+            </value>
+            <value>
+                <fullName>Site Readiness</fullName>
+                <default>false</default>
+                <label>Site Readiness</label>
+            </value>
+            <value>
+                <fullName>Weather</fullName>
+                <default>false</default>
+                <label>Weather</label>
+            </value>
+            <value>
+                <fullName>Traffic</fullName>
+                <default>false</default>
+                <label>Traffic</label>
+            </value>
+            <value>
+                <fullName>Overtime</fullName>
+                <default>false</default>
+                <label>Overtime</label>
+            </value>
+            <value>
+                <fullName>Time Off</fullName>
+                <default>false</default>
+                <label>Time Off</label>
+            </value>
+            <value>
+                <fullName>GPS</fullName>
+                <default>false</default>
+                <label>GPS</label>
+            </value>
+            <value>
+                <fullName>EPO</fullName>
+                <default>false</default>
+                <label>EPO</label>
+            </value>
+            <value>
+                <fullName>2PM Health Check</fullName>
+                <default>false</default>
+                <label>2PM Health Check</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+            <value>
+                <fullName>Incomplete Schedule</fullName>
+                <default>false</default>
+                <label>Incomplete Schedule</label>
+            </value>
+            <value>
+                <fullName>Missing Material</fullName>
+                <default>false</default>
+                <label>Missing Material</label>
+            </value>
+            <value>
+                <fullName>Site Issue</fullName>
+                <default>false</default>
+                <label>Site Issue</label>
+            </value>
+            <value>
+                <fullName>Safety Hazard</fullName>
+                <default>false</default>
+                <label>Safety Hazard</label>
+            </value>
+            <value>
+                <fullName>Equipment Issue</fullName>
+                <default>false</default>
+                <label>Equipment Issue</label>
+            </value>
+            <value>
+                <fullName>Builder Restriction</fullName>
+                <default>false</default>
+                <label>Builder Restriction</label>
+            </value>
+            <value>
+                <fullName>Backcharge Risk</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Backcharge Risk</label>
+            </value>
+            <value>
+                <fullName>Crew Unassigned</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Crew Unassigned</label>
+            </value>
+            <value>
+                <fullName>Customer / Builder Hold</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Customer / Builder Hold</label>
+            </value>
+            <value>
+                <fullName>Duration Missing</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Duration Missing</label>
+            </value>
+            <value>
+                <fullName>Field Manager Missing</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Field Manager Missing</label>
+            </value>
+            <value>
+                <fullName>Finished Job Risk</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Finished Job Risk</label>
+            </value>
+            <value>
+                <fullName>Inventory Hold</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Inventory Hold</label>
+            </value>
+            <value>
+                <fullName>Late Submission</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Late Submission</label>
+            </value>
+            <value>
+                <fullName>Missing Coordinates</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Missing Coordinates</label>
+            </value>
+            <value>
+                <fullName>Resource Absence / PTO Conflict</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Resource Absence / PTO Conflict</label>
+            </value>
+            <value>
+                <fullName>Safety Issue</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Safety Issue</label>
+            </value>
+            <value>
+                <fullName>Service Territory Missing</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Service Territory Missing</label>
+            </value>
+            <value>
+                <fullName>Site Access Issue</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Site Access Issue</label>
+            </value>
+            <value>
+                <fullName>Site Not Ready</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Site Not Ready</label>
+            </value>
+            <value>
+                <fullName>Stale GPS</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Stale GPS</label>
+            </value>
+            <value>
+                <fullName>Takeoff Incomplete</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Takeoff Incomplete</label>
+            </value>
+            <value>
+                <fullName>Warranty Risk</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Warranty Risk</label>
+            </value>
+            <value>
+                <fullName>Work Type Missing</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Work Type Missing</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

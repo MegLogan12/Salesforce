@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Is_Terminal__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>True = this status ends the work order lifecycle (counts as closed for KPI batch). False = still open and in-flight. Finance must approve the full mapping before the batch runs.</description>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <label>Is Terminal (Closed)</label>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Require_48hr_Scheduling_Leadtime</fullName>
+    <active>true</active>
+    <description>Scheduled date must be at least 2 days in the future when schedule is being locked. Enforces 48-hour dispatch lead time per LOVING Full Process Guide (Phase 3, Stage 7).</description>
+    <errorConditionFormula>AND(
+  ISCHANGED(Schedule_Locked__c),
+  Schedule_Locked__c = TRUE,
+  NOT(ISBLANK(Scheduled_Date__c)),
+  Scheduled_Date__c &lt; (TODAY() + 2)
+)</errorConditionFormula>
+    <errorDisplayField>Scheduled_Date__c</errorDisplayField>
+    <errorMessage>Scheduled Date must be at least 2 days from today before the schedule can be locked.</errorMessage>
+</ValidationRule>

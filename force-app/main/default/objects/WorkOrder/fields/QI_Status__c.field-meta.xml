@@ -1,12 +1,87 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>QI_Status__c</fullName><label>QI Status</label><required>false</required><type>Picklist</type>
-    <valueSet><restricted>true</restricted><valueSetDefinition><sorted>false</sorted>
-        <value><fullName>Not Started</fullName><default>true</default><label>Not Started</label></value>
-        <value><fullName>Scheduled</fullName><default>false</default><label>Scheduled</label></value>
-        <value><fullName>In Progress</fullName><default>false</default><label>In Progress</label></value>
-        <value><fullName>Submitted</fullName><default>false</default><label>Submitted</label></value>
-        <value><fullName>FM QI Review (Red Hold)</fullName><default>false</default><label>FM QI Review (Red Hold)</label></value>
-        <value><fullName>Approved</fullName><default>false</default><label>Approved</label></value>
-    </valueSetDefinition></valueSet>
+    <fullName>QI_Status__c</fullName>
+    <label>QI Status</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Not Started</fullName>
+                <default>true</default>
+                <label>Not Started</label>
+            </value>
+            <value>
+                <fullName>Scheduled</fullName>
+                <default>false</default>
+                <label>Scheduled</label>
+            </value>
+            <value>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+                <label>In Progress</label>
+            </value>
+            <value>
+                <fullName>Submitted</fullName>
+                <default>false</default>
+                <label>Submitted</label>
+            </value>
+            <value>
+                <fullName>FM QI Review (Red Hold)</fullName>
+                <default>false</default>
+                <label>FM QI Review (Red Hold)</label>
+            </value>
+            <value>
+                <fullName>Approved</fullName>
+                <default>false</default>
+                <label>Approved</label>
+            </value>
+            <value>
+                <fullName>Failed — Rework Required</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Failed — Rework Required</label>
+            </value>
+            <value>
+                <fullName>Held - FM QI Review</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Held - FM QI Review</label>
+            </value>
+            <value>
+                <fullName>Not Required</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Not Required</label>
+            </value>
+            <value>
+                <fullName>On Hold</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>On Hold</label>
+            </value>
+            <value>
+                <fullName>Passed — Acceptable</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Passed — Acceptable</label>
+            </value>
+            <value>
+                <fullName>Passed — Excellent</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Passed — Excellent</label>
+            </value>
+            <value>
+                <fullName>Pending Quality Inspection</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Pending Quality Inspection</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
 </CustomField>

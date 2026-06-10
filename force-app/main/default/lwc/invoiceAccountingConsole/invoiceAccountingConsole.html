@@ -1,0 +1,215 @@
+<template>
+    <div class="inv-wrap">
+
+        <!-- Record Header -->
+        <div class="rechead">
+            <div class="recicon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+            </div>
+            <div class="rectitle">
+                <h1>Invoicing &amp; Accounting</h1>
+                <div class="rec-sub">The billing chain from Ready to Invoice through Paid, and the accounting export</div>
+                <div class="rec-chips">
+                    <span class="chip c-blue">{readyCount} ready</span>
+                    <span class="chip c-amber">G5 export pending</span>
+                    <span class="chip c-slate">builder terms</span>
+                </div>
+            </div>
+            <div class="rec-sp"></div>
+            <div class="rec-acts">
+                <button class="btn" onclick={handleExportBatch}>Export batch</button>
+                <button class="btn btn-primary" onclick={handleWorkQueue}>Work the queue</button>
+            </div>
+        </div>
+
+        <!-- Action Bar -->
+        <div class="actionbar">
+            <button class="btn" onclick={handleNavCloseout}>Closeout Approval</button>
+            <button class="btn" onclick={handleNavWorkOrderConsole}>Work Order Console</button>
+        </div>
+
+        <!-- KPI Strip (6 cells) -->
+        <div class="hi">
+            <div class="hi-cell">
+                <div class="hi-lab">Ready</div>
+                <div class="hi-val sm">{readyCount}</div>
+            </div>
+            <div class="hi-cell">
+                <div class="hi-lab">AR Open</div>
+                <div class="hi-val sm">{arOpenFormatted}</div>
+            </div>
+            <div class="hi-cell">
+                <div class="hi-lab">Accounting</div>
+                <div class="hi-val sm"><span class="chip c-amber">G5</span></div>
+            </div>
+            <div class="hi-cell">
+                <div class="hi-lab">Builders</div>
+                <div class="hi-val sm">{builderCount}</div>
+            </div>
+            <div class="hi-cell">
+                <div class="hi-lab">Paid Today</div>
+                <div class="hi-val sm">{paidCount}</div>
+            </div>
+            <div class="hi-cell">
+                <div class="hi-lab">Export</div>
+                <div class="hi-val sm"><span class="chip c-amber">G5</span></div>
+            </div>
+        </div>
+
+        <!-- Next Action Bar -->
+        <template if:true={hasReadyRows}>
+            <div class="nextbar">
+                <div class="nextbar-ico">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                    </svg>
+                </div>
+                <div class="nextbar-body">
+                    <div class="nextbar-t1">Closeout approvals are ready to bill</div>
+                    <div class="nextbar-t2">Generate invoices respecting each builder&rsquo;s terms. Paid invoices wait on the G5 accounting decision before export.</div>
+                </div>
+                <div class="nextbar-sp"></div>
+                <button class="btn btn-sm" onclick={handleWorkQueue}>Open queue</button>
+            </div>
+        </template>
+
+        <!-- Subtabs -->
+        <div class="subtabs">
+            <div class={readyTabClass}    data-tab="ready"    onclick={handleTabClick}>Ready to Invoice</div>
+            <div class={invoicedTabClass} data-tab="invoiced" onclick={handleTabClick}>Invoiced</div>
+            <div class={paidTabClass}     data-tab="paid"     onclick={handleTabClick}>Paid</div>
+        </div>
+
+        <!-- ── READY TAB ── -->
+        <template if:true={isReadyTab}>
+            <div class="cardbox">
+                <div class="cardbox-header">
+                    Ready to invoice
+                    <span class="count">{readyCount} jobs</span>
+                </div>
+                <div class="flagnote inner-note">
+                    <strong>Gate G5 open:</strong> the accounting system is not selected yet. Invoices generate and track here; the export target (QuickBooks or other) is pending Meg / Finance. Owner: Finance &middot; Action: pick the system, then wire the Paid &rarr; accounting export.
+                </div>
+                <template if:true={hasReadyRows}>
+                    <table class="qtbl">
+                        <thead>
+                            <tr>
+                                <th>Work Order</th>
+                                <th>Builder</th>
+                                <th>Community</th>
+                                <th class="r">Amount</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={readyRowsFormatted} for:item="row">
+                                <tr key={row.workOrderId}>
+                                    <td><strong>{row.name}</strong></td>
+                                    <td>{row.builder}</td>
+                                    <td>{row.community}</td>
+                                    <td class="r">{row.totalRevenueFormatted}</td>
+                                    <td>{row.status}</td>
+                                    <td class="r">
+                                        <button class="btn-inline" data-id={row.workOrderId} onclick={handleGenerateInvoice}>Generate invoice</button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+                <template if:false={hasReadyRows}>
+                    <div class="empty-note">Nothing waiting to invoice.</div>
+                </template>
+            </div>
+        </template>
+
+        <!-- ── INVOICED TAB ── -->
+        <template if:true={isInvoicedTab}>
+            <div class="cardbox">
+                <div class="cardbox-header">
+                    Invoiced (awaiting payment)
+                    <span class="count">{invoicedCount}</span>
+                </div>
+                <template if:true={hasInvoicedRows}>
+                    <table class="qtbl">
+                        <thead>
+                            <tr>
+                                <th>Invoice</th>
+                                <th>Work Order</th>
+                                <th>Builder</th>
+                                <th class="r">Amount</th>
+                                <th class="r">Balance Due</th>
+                                <th>GP Status</th>
+                                <th>Due Date</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={invoicedRowsFormatted} for:item="row">
+                                <tr key={row.invoiceId}>
+                                    <td><strong>{row.invoiceName}</strong></td>
+                                    <td>{row.workOrderName}</td>
+                                    <td>{row.builder}</td>
+                                    <td class="r">{row.totalRevenueFormatted}</td>
+                                    <td class="r">{row.balanceFormatted}</td>
+                                    <td>{row.gpStatus}</td>
+                                    <td>{row.dueDate}</td>
+                                    <td class="r">
+                                        <button class="btn-inline" data-id={row.invoiceId} onclick={handleMarkPaid}>Mark paid</button>
+                                        <button class="btn-inline btn-ghost" data-id={row.invoiceId} onclick={handleSendReminder}>Remind</button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+                <template if:false={hasInvoicedRows}>
+                    <div class="empty-note">Invoices you generate appear here. Mark paid when payment clears.</div>
+                </template>
+            </div>
+        </template>
+
+        <!-- ── PAID TAB ── -->
+        <template if:true={isPaidTab}>
+            <div class="cardbox">
+                <div class="cardbox-header">
+                    Paid
+                    <span class="count">{paidCount}</span>
+                </div>
+                <template if:true={hasPaidRows}>
+                    <table class="qtbl">
+                        <thead>
+                            <tr>
+                                <th>Invoice</th>
+                                <th>Builder</th>
+                                <th class="r">Amount</th>
+                                <th>Date Paid</th>
+                                <th>Status</th>
+                                <th>Export</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={paidRowsFormatted} for:item="row">
+                                <tr key={row.invoiceId}>
+                                    <td><strong>{row.invoiceName}</strong></td>
+                                    <td>{row.builder}</td>
+                                    <td class="r">{row.totalRevenueFormatted}</td>
+                                    <td>{row.datePaid}</td>
+                                    <td>{row.status}</td>
+                                    <td><span class="chip c-amber">pending G5</span></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+                <template if:false={hasPaidRows}>
+                    <div class="empty-note">Paid invoices export to accounting once G5 is decided.</div>
+                </template>
+            </div>
+        </template>
+
+    </div>
+</template>

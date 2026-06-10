@@ -4,7 +4,7 @@
     <active>true</active>
     <description>Red Flag Notes are mandatory when Health_Check_Status__c is set to Red.</description>
     <errorConditionFormula>AND(
-        ISPICKVAL(Health_Check_Status__c, "Red - Will Not Complete Today"),
+        ISPICKVAL(Health_Check_Status__c, &quot;Red - Will Not Complete Today&quot;),
         ISBLANK(Red_Flag_Notes__c)
     )</errorConditionFormula>
     <errorMessage>Red Flag Notes are required when marking a health check Red. Describe specifically why the job will not complete today, what has been completed, and what remains. Scheduling and your manager will be notified immediately.</errorMessage>

@@ -1,0 +1,189 @@
+<template>
+    <template if:true={hasError}>
+        <div class="error-state">
+            <lightning-icon icon-name="utility:error" size="small"></lightning-icon>
+            <span>{errorMessage}</span>
+        </div>
+    </template>
+
+    <template if:false={loaded}>
+        <div class="loading-state">
+            <lightning-spinner alternative-text="Loading production install" size="medium"></lightning-spinner>
+        </div>
+    </template>
+
+    <template if:true={loaded}>
+        <div class="ticket-shell">
+
+            <!-- Ticket Header -->
+            <div class="ticket-header">
+                <div class="ticket-mark">PI</div>
+                <div class="ticket-title-block">
+                    <div class="ticket-wo-number">{header.workOrderNumber}</div>
+                    <div class="ticket-subject">{header.subject}</div>
+                    <div class="ticket-subtitle">{identitySubtitle}</div>
+                </div>
+                <div class="ticket-cta-row">
+                    <button type="button" class="btn btn-primary" onclick={handleSubmit}>Submit</button>
+                    <button type="button" class="btn btn-ghost" onclick={handlePrint}>Print</button>
+                    <button type="button" class="btn btn-rose" onclick={handleComplete}>Complete</button>
+                </div>
+                <div class="ticket-pill-strip">
+                    <div class="ticket-pill">
+                        <span class="pill-label">Status</span>
+                        <span class="pill-value">{header.status}</span>
+                    </div>
+                    <div class="ticket-pill">
+                        <span class="pill-label">Billing</span>
+                        <span class="pill-value">{header.billingState}</span>
+                    </div>
+                    <div class="ticket-pill">
+                        <span class="pill-label">QI</span>
+                        <span class="pill-value">{header.qiStatus}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Identity + State -->
+            <div class="two-up">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="ch">◎</div>
+                        <h3 class="card-title">Install Identity</h3>
+                    </div>
+                    <div class="card-body meta-grid">
+                        <template for:each={identityRows} for:item="row">
+                            <div key={row.label} class="meta-item">
+                                <div class="meta-label">{row.label}</div>
+                                <div class="meta-value">{row.value}</div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="ch">#</div>
+                        <h3 class="card-title">Install State</h3>
+                    </div>
+                    <div class="card-body meta-grid">
+                        <template for:each={stateRows} for:item="row">
+                            <div key={row.label} class="meta-item">
+                                <div class="meta-label">{row.label}</div>
+                                <div class="meta-value">{row.value}</div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Appointments -->
+            <div class="card top-gap">
+                <div class="card-header">
+                    <div class="ch">⧉</div>
+                    <h3 class="card-title">Service Appointments</h3>
+                </div>
+                <div class="card-body">
+                    <template if:true={hasAppointments}>
+                        <table class="tbl">
+                            <thead>
+                                <tr>
+                                    <th>Appointment</th>
+                                    <th>Status</th>
+                                    <th>Scheduled Window</th>
+                                    <th>Territory</th>
+                                    <th>Assigned Resource</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={relatedAppointments} for:item="row">
+                                    <tr key={row.serviceAppointmentId}>
+                                        <td>{row.appointmentNumber}</td>
+                                        <td>{row.status}</td>
+                                        <td>{row.scheduledWindow}</td>
+                                        <td>{row.serviceTerritory}</td>
+                                        <td>{row.assignedResource}</td>
+                                        <td>
+                                            <button type="button" class="btn-inline"
+                                                data-id={row.serviceAppointmentId}
+                                                onclick={handleOpenAppointment}>
+                                                Open
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                    <template if:false={hasAppointments}>
+                        <div class="empty-note">No service appointments linked.</div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Line Items -->
+            <div class="card top-gap">
+                <div class="card-header">
+                    <div class="ch">≡</div>
+                    <h3 class="card-title">Install Line Items</h3>
+                </div>
+                <div class="card-body">
+                    <template if:true={hasLineItems}>
+                        <table class="tbl">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Scope</th>
+                                    <th class="num">Qty</th>
+                                    <th>Unit</th>
+                                    <th class="num">Unit Price</th>
+                                    <th class="num">Extended Price</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={lineItems} for:item="line">
+                                    <tr key={line.description}>
+                                        <td>{line.description}</td>
+                                        <td>{line.executionScope}</td>
+                                        <td class="num">{line.quantity}</td>
+                                        <td>{line.unit}</td>
+                                        <td class="num">{line.unitPrice}</td>
+                                        <td class="num">{line.extendedPrice}</td>
+                                        <td>{line.status}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                    <template if:false={hasLineItems}>
+                        <div class="empty-note">No line items linked.</div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Photo / Proof Gallery Section -->
+            <div class="card top-gap">
+                <div class="card-header">
+                    <div class="ch">▣</div>
+                    <h3 class="card-title">Proof + Photos</h3>
+                </div>
+                <div class="card-body">
+                    <div class="meta-grid">
+                        <template for:each={proofRows} for:item="row">
+                            <div key={row.label} class="meta-item">
+                                <div class="meta-label">{row.label}</div>
+                                <div class="meta-value">{row.value}</div>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="photo-gallery-cta">
+                        <button type="button" class="sf-btn" onclick={handleOpenFiles}>View Files &amp; Photos</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </template>
+</template>

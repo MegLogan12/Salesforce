@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Territory__c</fullName>
+    <description>Auto-derived territory based on Market.</description>
+    <externalId>false</externalId>
+    <formula>CASE( TEXT(Market__c),
+  &quot;Asheville&quot;, &quot;Western NC&quot;,
+  &quot;Charlotte&quot;, &quot;Metro Charlotte&quot;,
+  &quot;Greenville&quot;, &quot;Upstate SC&quot;,
+  &quot;Spartanburg&quot;, &quot;Upstate SC&quot;,
+  &quot;&quot;
+)</formula>
+    <inlineHelpText>Auto-populated from Market.</inlineHelpText>
+    <label>Territory</label>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

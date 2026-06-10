@@ -1,0 +1,137 @@
+<template>
+    <div class="panel">
+
+        <!-- Header -->
+        <div class="hdr">
+            <div class="hdr-av">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+                    <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+                </svg>
+            </div>
+            <div class="hdr-info">
+                <span class="hdr-name">Ask mcLOVIN'</span>
+                <span class="hdr-sub">LOVING AI Assistant</span>
+            </div>
+            <div class="hdr-acts">
+                <button class="hdr-btn" onclick={handleClear} title="New conversation">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="14" height="14">
+                        <polyline points="1 4 1 10 7 10"></polyline>
+                        <path d="M3.51 15a9 9 0 1 0 .49-3.63"></path>
+                    </svg>
+                </button>
+                <button class="hdr-btn close-btn" onclick={handleClose} title="Minimize / Restore">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Collapsed notice -->
+        <template if:true={isCollapsed}>
+            <div class="collapsed-notice" onclick={handleClose}>
+                Tap to open mcLOVIN'
+            </div>
+        </template>
+
+        <!-- Chat body -->
+        <div class={panelBodyClass} data-id="chatbody">
+
+            <!-- Welcome / empty state -->
+            <template if:true={isEmpty}>
+                <div class="welcome">
+                    <div class="welcome-av">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="26" height="26">
+                            <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+                        </svg>
+                    </div>
+                    <p class="welcome-t1">Psst... drop the details here.</p>
+                    <p class="welcome-t2">I'll find the right path before anything gets messy.</p>
+
+                    <div class="qa-grid">
+                        <button class="qa-btn" data-type="po" onclick={handleQuickAction}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                            Upload PO
+                        </button>
+                        <button class="qa-btn" data-type="scope" onclick={handleQuickAction}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="13" height="13"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            Scope
+                        </button>
+                        <button class="qa-btn" data-type="account" onclick={handleQuickAction}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="13" height="13"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            New Account
+                        </button>
+                        <button class="qa-btn" data-type="homeowner" onclick={handleQuickAction}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="13" height="13"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                            Homeowner Intake
+                        </button>
+                        <button class="qa-btn" data-type="find" onclick={handleQuickAction}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="13" height="13"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                            Find Existing Job
+                        </button>
+                        <button class="qa-btn" data-type="missing" onclick={handleQuickAction}>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="13" height="13"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            What's Missing?
+                        </button>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Messages -->
+            <template for:each={messages} for:item="msg">
+                <div key={msg.id} class={msg.rowCls}>
+                    <template if:false={msg.isUser}>
+                        <div class="bot-av">
+                            <svg viewBox="0 0 24 24" fill="currentColor" width="11" height="11">
+                                <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+                            </svg>
+                        </div>
+                    </template>
+                    <div class={msg.bubbleCls}>{msg.content}</div>
+                </div>
+            </template>
+
+            <!-- Typing indicator -->
+            <template if:true={isLoading}>
+                <div class="msg-row bot-row">
+                    <div class="bot-av">
+                        <svg viewBox="0 0 24 24" fill="currentColor" width="11" height="11">
+                            <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/>
+                        </svg>
+                    </div>
+                    <div class="bubble-bot typing">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                </div>
+            </template>
+
+        </div>
+
+        <!-- Input area -->
+        <div class={inputWrapClass}>
+            <textarea
+                class="input-box"
+                placeholder={inputPlaceholder}
+                value={inputText}
+                oninput={handleInput}
+                onkeydown={handleKeyDown}
+                disabled={isLoading}
+                rows="3">
+            </textarea>
+            <div class="input-footer">
+                <span class="input-hint">Shift+Enter for new line</span>
+                <button class="send-btn" onclick={handleSend} disabled={sendDisabled}>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                    Send
+                </button>
+            </div>
+        </div>
+
+    </div>
+</template>

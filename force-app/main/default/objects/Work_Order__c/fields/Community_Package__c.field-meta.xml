@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Community_Package__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>The specific community package this work order is executing against. Drives scope, pricing, and crew allocation.</description>
+    <label>Community Package</label>
+    <referenceTo>Community_Package__c</referenceTo>
+    <relationshipLabel>Work Orders</relationshipLabel>
+    <relationshipName>Work_Orders</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

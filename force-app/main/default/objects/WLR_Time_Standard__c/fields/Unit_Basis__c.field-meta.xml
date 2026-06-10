@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Unit_Basis__c</fullName>
+    <description>The unit of measure that Minutes_Per_Unit__c is expressed in. Must match the unit of measure on the Work Order Line Item for correct duration calculation.</description>
+    <label>Unit Basis</label>
+    <required>true</required>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Per Item</fullName>
+                <default>false</default>
+                <label>Per Item</label>
+            </value>
+            <value>
+                <fullName>Per Task</fullName>
+                <default>false</default>
+                <label>Per Task</label>
+            </value>
+            <value>
+                <fullName>Per Package</fullName>
+                <default>false</default>
+                <label>Per Package</label>
+            </value>
+            <value>
+                <fullName>Per SF</fullName>
+                <default>false</default>
+                <label>Per SF</label>
+            </value>
+            <value>
+                <fullName>Per 1,000 SF</fullName>
+                <default>false</default>
+                <label>Per 1,000 SF</label>
+            </value>
+            <value>
+                <fullName>Per LF</fullName>
+                <default>false</default>
+                <label>Per LF</label>
+            </value>
+            <value>
+                <fullName>Per 10 LF</fullName>
+                <default>false</default>
+                <label>Per 10 LF</label>
+            </value>
+            <value>
+                <fullName>Per Bale</fullName>
+                <default>false</default>
+                <label>Per Bale</label>
+            </value>
+            <value>
+                <fullName>Per Flat</fullName>
+                <default>false</default>
+                <label>Per Flat</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

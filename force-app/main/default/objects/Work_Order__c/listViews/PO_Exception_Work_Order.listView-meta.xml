@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PO_Exception_Work_Order</fullName>
+    <filterScope>Queue</filterScope>
+    <label>PO_Exception</label>
+    <queue>PO_Exception</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Schedule_Day__c</fullName>
+    <description>Schema repair v2 2026-04-30</description>
+    <label>Schedule Day</label>
+    <referenceTo>Schedule_Day__c</referenceTo>
+    <relationshipLabel>Schedule Stops</relationshipLabel>
+    <relationshipName>Schedule_Stops</relationshipName>
+    <relationshipOrder>0</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
+    <trackTrending>false</trackTrending>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
+</CustomField>

@@ -1,0 +1,426 @@
+/* ── Design tokens ──────────────────────────────────────────────────────── */
+:host {
+    display: block;
+    --odl-orange:      #e8936a;
+    --odl-orange-dark: #c06040;
+    --odl-blue:        #2c7a4b;
+    --odl-blue-dark:   #1f5c38;
+    --odl-purple:      #9b7ec8;
+    --odl-purple-dark: #6840a0;
+    --odl-teal:        #2c7a4b;
+    --odl-teal-dark:   #1f5c38;
+    --odl-amber:       #7a5a10;
+    --odl-amber-dark:  #5a4008;
+    --odl-red:         #9c2c20;
+    --odl-red-dark:    #7a1c12;
+    --odl-slate:       #706e6b;
+    --odl-slate-dark:  #504e4c;
+    --text-dark:       #1f2421;
+    --text-mid:        #706e6b;
+    --text-light:      #9c8e80;
+    --border:          #e6e2d9;
+    --bg-page:         #f5f2ec;
+    --bg-card:         #FFFFFF;
+    --radius-card:     8px;
+    --shadow-card:     0 1px 5px rgba(0,0,0,.09);
+
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
+}
+
+/* ── Button styles ──────────────────────────────────────────────────────── */
+.btn { font-size:13px; font-weight:600; padding:7px 14px; border-radius:7px; border:none; cursor:pointer; }
+.btn-primary { background:#2c7a4b; color:#fff; }
+.btn-primary:hover { background:#1f5c38; }
+.btn-ghost { background:transparent; color:#2c7a4b; border:1.5px solid #2c7a4b; }
+.btn-rose { background:#c4607a; color:#fff; }
+.btn-peach { background:#e8936a; color:#fff; }
+.btn-lav { background:#9b7ec8; color:#fff; }
+.btn-inline { font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; border:1.5px solid #2c7a4b; background:transparent; color:#2c7a4b; cursor:pointer; }
+.btn-inline-rose { font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; border:1.5px solid #c4607a; background:transparent; color:#c4607a; cursor:pointer; }
+
+/* ── Page wrapper ───────────────────────────────────────────────────────── */
+.odl-home {
+    background: var(--bg-page);
+    min-height: 100%;
+    padding: 16px 20px 28px;
+    box-sizing: border-box;
+    font-family: 'Salesforce Sans', Arial, sans-serif;
+    color: var(--text-dark);
+}
+
+/* ── Page header ────────────────────────────────────────────────────────── */
+.page-header {
+    background: linear-gradient(135deg, #9b7ec8 0%, #6840a0 100%);
+    padding: 16px 20px;
+    border-radius: var(--radius-card);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 2px;
+}
+
+.page-sub {
+    font-size: 13px;
+    color: rgba(255,255,255,0.80);
+    margin: 0;
+}
+
+.page-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.header-btn-primary {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 14px;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+    background: rgba(255,255,255,0.95);
+    color: #6840a0;
+}
+
+.header-btn-primary:hover {
+    background: #fff;
+}
+
+/* ── Error banner ───────────────────────────────────────────────────────── */
+.error-banner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #fef3c7;
+    border: 1px solid #f5c244;
+    border-radius: var(--radius-card);
+    padding: 10px 16px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: #7a5a10;
+}
+
+/* ── Sub-navigation tabs ────────────────────────────────────────────────── */
+.tabs-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.tab-chip {
+    border-radius: 999px;
+    padding: 7px 14px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-mid);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    transition: border-color 0.15s, color 0.15s;
+    white-space: nowrap;
+}
+
+.tab-chip:hover {
+    border-color: var(--odl-orange);
+    color: var(--odl-orange);
+}
+
+/* ── KPI chips row ──────────────────────────────────────────────────────── */
+.kpi-row {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.kpi-chip {
+    border-radius: var(--radius-card);
+    padding: 16px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.kpi-number {
+    font-size: 26px;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.kpi-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.85);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.chip-orange { background: linear-gradient(135deg, var(--odl-orange), var(--odl-orange-dark)); }
+.chip-blue   { background: linear-gradient(135deg, var(--odl-blue),   var(--odl-blue-dark));   }
+.chip-purple { background: linear-gradient(135deg, var(--odl-purple), var(--odl-purple-dark)); }
+.chip-teal   { background: linear-gradient(135deg, var(--odl-teal),   var(--odl-teal-dark));   }
+.chip-amber  { background: linear-gradient(135deg, var(--odl-amber),  var(--odl-amber-dark));  }
+.chip-red    { background: linear-gradient(135deg, var(--odl-red),    var(--odl-red-dark));    }
+
+/* ── Body layout ────────────────────────────────────────────────────────── */
+.body-layout {
+    display: grid;
+    grid-template-columns: 1fr 296px;
+    gap: 16px;
+    align-items: start;
+}
+
+/* ── Cards ──────────────────────────────────────────────────────────────── */
+.card {
+    background: var(--bg-card);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+
+.card:last-child { margin-bottom: 0; }
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 16px 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.card-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+}
+
+.ci-orange { background: var(--odl-orange); }
+.ci-blue   { background: var(--odl-blue);   }
+.ci-purple { background: var(--odl-purple); }
+.ci-teal   { background: var(--odl-teal);   }
+.ci-amber  { background: var(--odl-amber);  }
+.ci-red    { background: var(--odl-red);    }
+.ci-slate  { background: var(--odl-slate);  }
+
+.card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+    flex: 1;
+}
+
+.card-footer {
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    background: #fbfaf6;
+}
+
+/* ── Tables ─────────────────────────────────────────────────────────────── */
+.odl-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.odl-table thead tr {
+    background: #f5f2ec;
+}
+
+.odl-table th {
+    padding: 8px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+}
+
+.odl-table th.num,
+.odl-table td.num {
+    text-align: right;
+}
+
+.odl-table td {
+    padding: 10px 16px;
+    color: var(--text-dark);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    font-size: 13px;
+}
+
+.odl-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.odl-table tbody tr:hover {
+    background: #fbfaf6;
+}
+
+/* ── Links ──────────────────────────────────────────────────────────────── */
+.rec-link {
+    color: var(--odl-blue);
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.rec-link:hover {
+    text-decoration: underline;
+}
+
+/* ── LOB badge ──────────────────────────────────────────────────────────── */
+.lob-badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-mid);
+}
+
+/* ── Risk chips ─────────────────────────────────────────────────────────── */
+.risk-chip {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.chip-needs-touch {
+    background: #fef3c7;
+    color: #7a5a10;
+    border: 1px solid #f5c244;
+}
+
+.chip-monitor {
+    background: #ede8f6;
+    color: #5c3d8a;
+    border: 1px solid #c3b0e8;
+}
+
+.badge-success { background:#e6f3ea; color:#1f5c38; }
+.badge-warning { background:#fef3c7; color:#7a5a10; }
+.badge-danger  { background:#fde8ee; color:#9c3052; }
+.badge-info    { background:#ede8f6; color:#5c3d8a; }
+.chip-peach    { background:#fdeee6; color:#8b4020; }
+
+/* ── Muted ──────────────────────────────────────────────────────────────── */
+.muted { color: var(--text-light); }
+
+/* ── Empty state ────────────────────────────────────────────────────────── */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 28px 16px;
+    color: var(--text-light);
+    font-size: 13px;
+    text-align: center;
+}
+
+/* ── Quick actions ──────────────────────────────────────────────────────── */
+.qa-list { padding: 4px 0; }
+
+.qa-item {
+    padding: 11px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-mid);
+    cursor: pointer;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s, color 0.1s;
+}
+
+.qa-item:last-child { border-bottom: none; }
+
+.qa-item:hover {
+    background: #fbfaf6;
+    color: var(--odl-orange);
+}
+
+/* ── Summary rows (rail cards) ──────────────────────────────────────────── */
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 16px;
+    font-size: 13px;
+}
+
+.summary-label { color: var(--text-light); }
+
+.summary-value {
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.gp-green   { color: #1f5c38; }
+.gp-yellow  { color: #7a5a10; }
+.gp-red     { color: #9c2c20; }
+.gp-blocked { color: var(--odl-slate); }
+
+.summary-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 4px 16px;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 1200px) {
+    .kpi-row { grid-template-columns: repeat(3, 1fr); }
+    .body-layout { grid-template-columns: 1fr; }
+    .body-rail {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+}
+
+@media (max-width: 700px) {
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .body-rail { grid-template-columns: 1fr; }
+}

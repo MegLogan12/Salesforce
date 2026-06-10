@@ -1,0 +1,126 @@
+/* ── Design tokens ──────────────────────────────────────────────────────── */
+:host {
+    --odl-orange:      #e8936a;
+    --odl-orange-dark: #c06040;
+    --odl-blue:        #2c7a4b;
+    --odl-blue-dark:   #1f5c38;
+    --odl-purple:      #9b7ec8;
+    --odl-teal:        #2c7a4b;
+    --odl-amber:       #7a5a10;
+    --odl-slate:       #706e6b;
+    --odl-red:         #9c2c20;
+    --text-dark:       #1f2421;
+    --text-mid:        #706e6b;
+    --text-light:      #9c8e80;
+    --border:          #e6e2d9;
+    --bg-page:         #f5f2ec;
+    --bg-card:         #FFFFFF;
+    --radius-card:     8px;
+    --shadow-card:     0 1px 5px rgba(0,0,0,.09);
+
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
+}
+
+/* ── KPI strip ──────────────────────────────────────────────────────────── */
+.kpi-strip {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    padding: 10px 0 6px;
+    flex-wrap: wrap;
+    font-family: 'Salesforce Sans', Arial, sans-serif;
+}
+
+.kpi-tile {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 10px 14px;
+    border-radius: var(--radius-card);
+    min-width: 90px;
+    flex: 1 1 90px;
+    cursor: default;
+    transition: opacity 0.15s, transform 0.15s;
+    box-shadow: var(--shadow-card);
+}
+
+.kpi-tile:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+}
+
+.kpi-num {
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.kpi-lbl {
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.88);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+/* ── Tile colour variants ────────────────────────────────────────────────── */
+.kc-blue   { background: linear-gradient(135deg, var(--odl-blue),   var(--odl-blue-dark));   }
+.kc-orange { background: linear-gradient(135deg, var(--odl-orange), var(--odl-orange-dark)); }
+.kc-teal   { background: linear-gradient(135deg, var(--odl-teal),   var(--odl-blue-dark));   }
+.kc-purple { background: linear-gradient(135deg, var(--odl-purple), #6840a0);                }
+.kc-amber  { background: linear-gradient(135deg, var(--odl-amber),  #5a4008);                }
+.kc-slate  { background: linear-gradient(135deg, var(--odl-slate),  #504e4c);                }
+.kc-red    { background: linear-gradient(135deg, var(--odl-red),    #7a1c12);                }
+
+/* ── Loading / Error ─────────────────────────────────────────────────────── */
+.kpi-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 56px;
+}
+
+.kpi-error {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 0;
+    color: var(--odl-red);
+    font-size: 13px;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .kpi-strip {
+        gap: 8px;
+    }
+    .kpi-tile {
+        min-width: 80px;
+        padding: 8px 10px;
+    }
+    .kpi-num {
+        font-size: 18px;
+    }
+}

@@ -4,8 +4,8 @@
     <active>true</active>
     <description>Need_Further_Info_Notes__c must describe the specific issue when status is set to Need Further Info.</description>
     <errorConditionFormula>AND(
-        ISPICKVAL(Status, "Need Further Info"),
-        NOT(ISPICKVAL(PRIORVALUE(Status), "Need Further Info")),
+        ISPICKVAL(Status, &quot;Need Further Info&quot;),
+        NOT(ISPICKVAL(PRIORVALUE(Status), &quot;Need Further Info&quot;)),
         ISBLANK(Need_Further_Info_Notes__c)
     )</errorConditionFormula>
     <errorMessage>NFI Notes required: describe what info is missing, what the FM must do to resolve it, and whether photos are needed. The FM only sees this note — be specific.</errorMessage>

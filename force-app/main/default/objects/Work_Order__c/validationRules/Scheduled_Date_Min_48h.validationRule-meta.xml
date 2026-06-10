@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Scheduled_Date_Min_48h</fullName>
+    <active>true</active>
+    <description>Cannot schedule a WO within 48 hours of today</description>
+    <errorConditionFormula>AND(
+    NOT($Profile.Name = &quot;System Administrator&quot;),
+    (AND(
+        NOT(ISBLANK(Requested_Install_Date__c)),
+        Requested_Install_Date__c &lt; (TODAY() + 2)
+    ))
+)</errorConditionFormula>
+    <errorDisplayField>Requested_Install_Date__c</errorDisplayField>
+    <errorMessage>Cannot schedule within 48 hours</errorMessage>
+</ValidationRule>

@@ -1,0 +1,104 @@
+<template>
+    <div class="lot-page">
+        <template if:true={isLoading}>
+            <div class="spinner"><lightning-spinner alternative-text="Loading lot" size="small"></lightning-spinner></div>
+        </template>
+
+        <template if:true={errorMsg}>
+            <div class="banner error">{errorMsg}</div>
+        </template>
+
+        <template if:true={lot}>
+            <c-loving-lot-record-header-v2
+                lot={lot}
+                oneditrecord={handleEditRecord}
+                onviewworkorders={showWorkOrders}
+                onnewworkorder={handleNewWorkOrder}>
+            </c-loving-lot-record-header-v2>
+            <c-loving-lot-highlights lot={lot}></c-loving-lot-highlights>
+            <c-loving-lot-po-panel-v2 lot={lot}></c-loving-lot-po-panel-v2>
+            <c-loving-lot-tabs
+                active-tab={activeTab}
+                work-order-count={lot.workOrderCount}
+                photo-count={lot.photoCount}
+                ontabchange={setTab}>
+            </c-loving-lot-tabs>
+
+            <template if:true={showDetails}>
+                <div class="banner success">{lot.installBanner}</div>
+                <main class="content-grid">
+                    <section class="main-col">
+                        <c-loving-lot-card title="Lot Information" icon-label="LI" accent="blue">
+                            <c-loving-lot-field-grid fields={lotInfoFields} oneditfield={handleEditField}></c-loving-lot-field-grid>
+                        </c-loving-lot-card>
+
+                        <c-loving-lot-card title="Property Details" icon-label="PD" accent="purple">
+                            <c-loving-lot-field-grid fields={propertyFields} oneditfield={handleEditField}></c-loving-lot-field-grid>
+                        </c-loving-lot-card>
+                    </section>
+
+                    <aside class="rail">
+                        <c-loving-lot-card title="Hierarchy" icon-label="H">
+                            <div class="tree">
+                                <template for:each={lot.hierarchy} for:item="node">
+                                    <div key={node} class="tree-row">{node}</div>
+                                </template>
+                            </div>
+                        </c-loving-lot-card>
+
+                        <c-loving-lot-card title="Lifecycle Timeline" icon-label="LT">
+                            <c-loving-lot-timeline items={lot.timeline}></c-loving-lot-timeline>
+                        </c-loving-lot-card>
+
+                        <c-loving-lot-card title="Related" icon-label="R">
+                            <c-loving-lot-related-rail items={lot.relatedCounts}></c-loving-lot-related-rail>
+                        </c-loving-lot-card>
+                    </aside>
+                </main>
+            </template>
+
+            <template if:true={showPipeline}>
+                <c-loving-lot-card title="Pipeline &amp; Tasks" icon-label="PT" full>
+                    <c-loving-lot-field-grid fields={lot.pipelineTaskRows} oneditfield={handleEditField}></c-loving-lot-field-grid>
+                </c-loving-lot-card>
+            </template>
+
+            <template if:true={showWorkOrderPanel}>
+                <c-loving-lot-card title="Work Orders" icon-label="WO" full>
+                    <c-loving-lot-work-order-table rows={lot.workOrders}></c-loving-lot-work-order-table>
+                </c-loving-lot-card>
+            </template>
+
+            <template if:true={showPhotos}>
+                <c-loving-lot-card title="Photos" icon-label="PH" full>
+                    <div class="empty-state">{photoMessage}</div>
+                </c-loving-lot-card>
+            </template>
+
+            <template if:true={showAqua}>
+                <c-loving-lot-card title="Aqua" icon-label="AQ" full>
+                    <div class="empty-state">Aqua status: {aquaStatus}</div>
+                </c-loving-lot-card>
+            </template>
+        </template>
+
+        <template if:true={isEditModalOpen}>
+            <section class="modal-backdrop">
+                <div class="modal">
+                    <header>
+                        <h2>Edit {editingLabel}</h2>
+                        <button onclick={closeEditModal}>x</button>
+                    </header>
+                    <lightning-record-edit-form object-api-name={editingObjectApiName} record-id={recordId} onsuccess={handleEditSuccess} onerror={handleEditError}>
+                        <lightning-messages></lightning-messages>
+                        <lightning-input-field field-name={editingField}></lightning-input-field>
+                        <footer>
+                            <button type="button" class="sf-btn" onclick={closeEditModal}>Cancel</button>
+                            <button type="submit" class="sf-btn primary">Save</button>
+                        </footer>
+                    </lightning-record-edit-form>
+                </div>
+            </section>
+        </template>
+    </div>
+</template>

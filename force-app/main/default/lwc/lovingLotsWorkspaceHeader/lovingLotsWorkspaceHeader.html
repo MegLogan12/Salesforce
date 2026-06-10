@@ -1,0 +1,12 @@
+<template>
+    <section class="page-header">
+        <div>
+            <div class="eyebrow">{objectLabel}</div>
+            <h2>{objectPluralLabel} <span>{lotCount} total | {activeLotCount} active</span></h2>
+        </div>
+        <div class="header-actions">
+            <button class="sf-btn" onclick={handleExport}>Export</button>
+            <button class="sf-btn primary" onclick={handleNewLot}>New {objectLabel}</button>
+        </div>
+    </section>
+</template>

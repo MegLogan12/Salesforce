@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Active_Corner_Package__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Default Community Package for corner lots in this community. Used when Lot.Corner_Lot__c = true.</description>
+    <label>Active Corner Package</label>
+    <referenceTo>Community_Package__c</referenceTo>
+    <relationshipLabel>Communities (Corner Package)</relationshipLabel>
+    <relationshipName>Corner_Package_Communities</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

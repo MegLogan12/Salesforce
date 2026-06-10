@@ -1,0 +1,134 @@
+<template>
+    <template if:true={isLoaded}>
+        <div class="sf-body">
+            <!-- Path -->
+            <div class="card">
+                <div class="ch" style="--ch-bg:#fe9339">
+                    <div class="ci">PATH</div>
+                    <h3>Work Order Status</h3>
+                    <span class="chip co">{recordTypeName}</span>
+                </div>
+                <div class="path">
+                    <template for:each={pathSteps} for:item="step">
+                        <div key={step.label} class={step.cssClass}>{step.label}</div>
+                    </template>
+                </div>
+            </div>
+
+            <div class="layout">
+                <div class="layout-main">
+                    <!-- Header -->
+                    <div class="card info">
+                        <div class="ch" style="--ch-bg:#0070d2">
+                            <div class="ci">WO</div>
+                            <h3>Work Order</h3>
+                            <lightning-button label="Edit Work Order" variant="neutral" onclick={handleEditWorkOrder} style="margin-left:auto"></lightning-button>
+                        </div>
+                        <div class="fields-grid">
+                            <div><div class="field-label">Work Order</div><div class="field-value">{workOrder.WorkOrderNumber}</div></div>
+                            <div><div class="field-head"><span class="field-label">Opportunity</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Opportunity" variant="bare" size="x-small" onclick={handleEditWorkOrder}></lightning-button-icon></div><div class="field-value nl">{opportunityName}</div></div>
+                            <div><div class="field-head"><span class="field-label">Division</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Division" variant="bare" size="x-small" onclick={handleEditWorkOrder}></lightning-button-icon></div><div class="field-value">{workOrder.Division__c}</div></div>
+                            <div><div class="field-head"><span class="field-label">Job Type</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Job Type" variant="bare" size="x-small" onclick={handleEditWorkOrder}></lightning-button-icon></div><div class="field-value">{workOrder.Job_Type__c}</div></div>
+                            <div><div class="field-head"><span class="field-label">Customer Visible Status</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Customer Visible Status" variant="bare" size="x-small" onclick={handleEditWorkOrder}></lightning-button-icon></div><div class="field-value">{workOrder.Customer_Visible_Status__c}</div></div>
+                            <div><div class="field-head"><span class="field-label">Property</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Property" variant="bare" size="x-small" onclick={handleEditProperty}></lightning-button-icon></div><div class="field-value nl">{propertyName}</div></div>
+                        </div>
+                    </div>
+
+                    <!-- Crew + Photos side by side -->
+                    <div class="g2">
+                        <div class="card">
+                            <div class="ch" style="--ch-bg:#04844b">
+                                <div class="ci">CREW</div>
+                                <h3>Crew and Schedule</h3>
+                            </div>
+                            <div class="fields-grid">
+                                <div><div class="field-label">Crew</div><div class="field-value">{crewName}</div></div>
+                                <div><div class="field-head"><span class="field-label">Field Manager</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Field Manager" variant="bare" size="x-small" onclick={handleEditWorkOrder}></lightning-button-icon></div><div class="field-value">{fieldManagerName}</div></div>
+                                <div><div class="field-head"><span class="field-label">Start Date</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Start Date" variant="bare" size="x-small" onclick={handleEditWorkOrder}></lightning-button-icon></div><div class="field-value">{startDateFormatted}</div></div>
+                                <div><div class="field-head"><span class="field-label">Target Completion</span><lightning-button-icon icon-name="utility:edit" alternative-text="Edit Target Completion" variant="bare" size="x-small" onclick={handleEditWorkOrder}></lightning-button-icon></div><div class="field-value">{endDateFormatted}</div></div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="ch" style="--ch-bg:#534ab7">
+                                <div class="ci">PHOTO</div>
+                                <h3>Photos</h3>
+                            </div>
+                            <div style="padding:12px 14px">
+                                <lightning-file-upload label="Upload progress photos" name="workOrderPhotos" accept=".jpg,.jpeg,.png,.heic,.pdf" record-id={recordId} multiple></lightning-file-upload>
+                                <div style="margin-top:10px;color:#54698d;font-size:11px">Photos upload to this work order's Files. Open Files to view what crews have captured.</div>
+                                <lightning-button label="View Files" onclick={viewFiles} style="margin-top:8px"></lightning-button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Punch Items -->
+                    <div class="card">
+                        <div class="ch" style="--ch-bg:#fe9339">
+                            <div class="ci">PUNCH</div>
+                            <h3>Punch Items</h3>
+                            <lightning-button label="New Task" onclick={createTask} style="margin-left:auto"></lightning-button>
+                            <lightning-button label="Log Call" onclick={logCall} style="margin-left:8px"></lightning-button>
+                        </div>
+                        <table class="tbl">
+                            <thead><tr><th>Item</th><th>Owner</th><th>Status</th><th>Due</th></tr></thead>
+                            <tbody>
+                                <template for:each={lineItems} for:item="item">
+                                    <tr key={item.Id}>
+                                        <td>{item.Subject}</td>
+                                        <td>{item.ownerName}</td>
+                                        <td><span class={item.statusChipClass}>{item.Status}</span></td>
+                                        <td>{item.dueDateFormatted}</td>
+                                    </tr>
+                                </template>
+                                <template if:true={noLineItems}>
+                                    <tr><td colspan="4" style="text-align:center;color:#54698d;padding:12px">No punch items yet</td></tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Rail -->
+                <div class="layout-rail">
+                    <div class="card">
+                        <div class="ch" style="--ch-bg:#04844b">
+                            <div class="ci">MOB</div>
+                            <h3>Foreman Mobile Actions</h3>
+                        </div>
+                        <div class="qa-list">
+                            <div class="qa-item" onclick={viewFiles}>Upload progress photos</div>
+                            <div class="qa-item" onclick={logLabor}>Log labor</div>
+                            <div class="qa-item" onclick={updateMaterials}>Update materials used</div>
+                            <div class="qa-item" onclick={submitPunchNote}>Submit punch notes</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch" style="--ch-bg:#534ab7">
+                            <div class="ci">STATS</div>
+                            <h3>Quick Stats</h3>
+                        </div>
+                        <div style="padding:10px 14px">
+                            <div class="rail-row"><span>Open punches</span><span class="chip cb2">{openPunchCount}</span></div>
+                            <div class="rail-row"><span>Completed punches</span><span class="chip cg">{completedPunchCount}</span></div>
+                            <div class="rail-row"><span>Total punches</span><span>{totalPunchCount}</span></div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="ch" style="--ch-bg:#0070d2">
+                            <div class="ci">SLA</div>
+                            <h3>Activity Health</h3>
+                        </div>
+                        <div style="padding:10px 14px">
+                            <div class="rail-row"><span>Last touch</span><span>{lastTouchDisplay}</span></div>
+                            <div class="rail-row"><span>Days since</span><span class={stalenessChipClass}>{daysSinceLastTouchDisplay}</span></div>
+                            <div class="rail-row"><span>Open tasks</span><span>{openPunchCount}</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template if:false={isLoaded}>
+        <div style="padding:20px;text-align:center;color:#54698d">Loading...</div>
+    </template>
+</template>

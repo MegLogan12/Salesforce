@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Vehicle_Check_Completed__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Stage 9. Crew morning vehicle inspection complete. Required before Begin Drive.</description>
+    <label>Vehicle Check Completed</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Loving_Operating_Division__c</fullName>
+    <description>Which Loving operating unit (shop/branch) services this community. Sourced from Cloudscape Division field.</description>
+    <inlineHelpText>Loving&apos;s own shop/branch servicing this community. E.g. &quot;The Loving Group - Charlotte&quot;.</inlineHelpText>
+    <label>Loving Operating Division</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Aqua Service</fullName>
+                <default>false</default>
+                <label>Aqua Service</label>
+            </value>
+            <value>
+                <fullName>Materials &amp; Services - TLG Carolinas</fullName>
+                <default>false</default>
+                <label>Materials &amp; Services - TLG Carolinas</label>
+            </value>
+            <value>
+                <fullName>Materials &amp; Services - Turf Carolinas</fullName>
+                <default>false</default>
+                <label>Materials &amp; Services - Turf Carolinas</label>
+            </value>
+            <value>
+                <fullName>TerraROK Charleston</fullName>
+                <default>false</default>
+                <label>TerraROK Charleston</label>
+            </value>
+            <value>
+                <fullName>The Loving Group - Asheville</fullName>
+                <default>false</default>
+                <label>The Loving Group - Asheville</label>
+            </value>
+            <value>
+                <fullName>The Loving Group - Charlotte</fullName>
+                <default>false</default>
+                <label>The Loving Group - Charlotte</label>
+            </value>
+            <value>
+                <fullName>The Loving Group - Columbia</fullName>
+                <default>false</default>
+                <label>The Loving Group - Columbia</label>
+            </value>
+            <value>
+                <fullName>The Loving Group - Fort Myers</fullName>
+                <default>false</default>
+                <label>The Loving Group - Fort Myers</label>
+            </value>
+            <value>
+                <fullName>The Loving Group - Greenville</fullName>
+                <default>false</default>
+                <label>The Loving Group - Greenville</label>
+            </value>
+            <value>
+                <fullName>The Loving Group - Triad</fullName>
+                <default>false</default>
+                <label>The Loving Group - Triad</label>
+            </value>
+            <value>
+                <fullName>TLG Turf</fullName>
+                <default>false</default>
+                <label>TLG Turf</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

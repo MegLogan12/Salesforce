@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Design_Build</fullName>
+    <active>true</active>
+    <businessProcess>Design_Build</businessProcess>
+    <label>Design Build</label>
+    <picklistValues>
+        <picklist>Billing_Frequency__c</picklist>
+        <values>
+            <fullName>Bi-Monthly</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Monthly</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Seasonal</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Budget__c</picklist>
+        <values>
+            <fullName>%2410%2C000-%2420%2C000</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>%2420%2C000%2B</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>%245%2C000-%2410%2C000</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not sure yet</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Under %245%2C000</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Contract_Status__c</picklist>
+        <values>
+            <fullName>Not Sent</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Sent</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Signed</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Design_Fee_Status__c</picklist>
+        <values>
+            <fullName>Charged</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not Charged</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Paid</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Waived</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Design_Status__c</picklist>
+        <values>
+            <fullName>Approved</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>In Review</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not Started</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Rejected</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Designer_Decision__c</picklist>
+        <values>
+            <fullName>Awaiting Customer Response</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Customer Approved</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Customer Denied</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Estimate_Status__c</picklist>
+        <values>
+            <fullName>Complete</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>In Progress</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not Started</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Features_Selected__c</picklist>
+        <values>
+            <fullName>Back Only</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Corner Lot</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Front Only</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Full Yard</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>HOA Standard</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Model Home</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Slope %2F Grading</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Walkout Basement</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Water Feature</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Financing_Option__c</picklist>
+        <values>
+            <fullName>ACH</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Cash</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Credit Card</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Financing Requested</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Outside Financing</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Financing_Status__c</picklist>
+        <values>
+            <fullName>Approved</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Declined</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>In Progress</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not Started</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>ForecastCategoryName</picklist>
+        <values>
+            <fullName>Best Case</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Closed</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Commit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Omitted</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pipeline</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>LeadSource</picklist>
+        <values>
+            <fullName>Employee Referral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>External Referral</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Google</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Homebuilder Event</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Inbound Call</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lennar Voucher</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Social Media</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>UMB Builder Pop Up</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Web - Consultation Form</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Web - Design Form</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Website</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Loss_Reason__c</picklist>
+        <values>
+            <fullName>Lost to Competitor</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>No Budget %2F Lost Funding</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>No Decision %2F Non-Responsive</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Price</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Market__c</picklist>
+        <values>
+            <fullName>Asheville</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Charlotte</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Columbia</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Greenville</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Triad</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>ODL_Path__c</picklist>
+        <values>
+            <fullName>Custom Build</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Lawn Care</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>UMB</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Quote_Status__c</picklist>
+        <values>
+            <fullName>Accepted</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Not Sent</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Rejected</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sent</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Selected_Package__c</picklist>
+        <values>
+            <fullName>Entertainer</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Retreat</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Signature</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Selected_Requirements__c</picklist>
+        <values>
+            <fullName>Fire Pit</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Grilling Island</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Irrigation Upgrades</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Landscape Enhancements</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Low Voltage Lighting</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Outdoor Fireplace</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Paver Patio</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sitting Wall</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Services_Selected__c</picklist>
+        <values>
+            <fullName>Aqua Check</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Aqua Install</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Aqua Pickup</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Drainage</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Irrigation</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Mulch</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Pine Straw</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Plant Install</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Punch</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Service Call</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sod Install</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Sod Replace</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Tree Install</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Warranty</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Sod_Species__c</picklist>
+        <values>
+            <fullName>Bermuda</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>Fescue</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Other</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Zoysia</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Sod_Type__c</picklist>
+        <values>
+            <fullName>Bermuda</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Centipede</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Fescue</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Seed%2FStraw</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Timeline__c</picklist>
+        <values>
+            <fullName>2-4 months</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>4-6 months</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>6%2B months</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>ASAP %280-2 months%29</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>Just exploring</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Type</picklist>
+        <values>
+            <fullName>Design and Build</fullName>
+            <default>true</default>
+        </values>
+    </picklistValues>
+    <picklistValues>
+        <picklist>Zone__c</picklist>
+        <values>
+            <fullName>1</fullName>
+            <default>true</default>
+        </values>
+        <values>
+            <fullName>10</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>11</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>12</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>13</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>14</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>15</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>2</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>3</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>4</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>5</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>6</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>7</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>8</fullName>
+            <default>false</default>
+        </values>
+        <values>
+            <fullName>9</fullName>
+            <default>false</default>
+        </values>
+    </picklistValues>
+</RecordType>

@@ -1,0 +1,119 @@
+<template>
+    <section class="workspace-shell">
+        <div class="workspace-header">
+            <div>
+                <p class="eyebrow">Outdoor Living Console</p>
+                <h1>{title}</h1>
+                <p class="subtitle">{subtitle}</p>
+            </div>
+            <div class="header-actions">
+                <button class="primary-btn" onclick={handleNewActivity}>+ New Activity</button>
+                <button class="primary-btn" onclick={handleLogCall}>Log Call</button>
+                <button class="primary-btn" onclick={handleSendEmail}>Send Email</button>
+                <button class="secondary-btn" onclick={handleRefresh}>Refresh</button>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <div class="chip-row">
+                <template for:each={filters} for:item="filter">
+                    <button
+                        key={filter.value}
+                        class={filter.className}
+                        data-value={filter.value}
+                        onclick={handleFilterClick}
+                    >
+                        {filter.label}
+                    </button>
+                </template>
+            </div>
+            <lightning-input
+                class="search-input"
+                type="search"
+                variant="label-hidden"
+                placeholder="Search homeowner opportunities"
+                value={searchTerm}
+                onchange={handleSearchChange}
+            ></lightning-input>
+        </div>
+
+        <template if:true={isLoading}>
+            <div class="state-card">Loading homeowner opportunities...</div>
+        </template>
+
+        <template if:true={errorMessage}>
+            <div class="state-card error">{errorMessage}</div>
+        </template>
+
+        <template if:true={hasRows}>
+            <div class="list-card">
+                <div class="card-heading">
+                    <div>
+                        <h2>Homeowner Opportunity Operating List</h2>
+                        <p>Live homeowner records only. Last Action and Date of Action pull from Salesforce activity.</p>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table class="opportunity-table">
+                        <thead>
+                            <tr>
+                                <th>Opportunity</th>
+                                <th>Homeowner</th>
+                                <th>Project Path</th>
+                                <th>Stage</th>
+                                <th>Amount</th>
+                                <th>Package / Service</th>
+                                <th>Last Action</th>
+                                <th>Date of Action</th>
+                                <th>Follow-Up Due</th>
+                                <th>Owner</th>
+                                <th>Open Item</th>
+                                <th>CTA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={visibleRows} for:item="row">
+                                <tr key={row.id}>
+                                    <td>
+                                        <button class="link-button" data-id={row.id} onclick={handleOpenRecord}>{row.name}</button>
+                                    </td>
+                                    <td>{row.accountName}</td>
+                                    <td>
+                                        <span class={row.pathClass}>{row.projectPath}</span>
+                                    </td>
+                                    <td>{row.stage}</td>
+                                    <td>
+                                        <template if:true={row.hasAmount}>
+                                            <lightning-formatted-number
+                                                value={row.amount}
+                                                format-style="currency"
+                                                currency-code="USD"
+                                            ></lightning-formatted-number>
+                                        </template>
+                                        <template if:false={row.hasAmount}>--</template>
+                                    </td>
+                                    <td>{row.packageOrService}</td>
+                                    <td>{row.lastAction}</td>
+                                    <td>{row.dateOfAction}</td>
+                                    <td>{row.followUpDue}</td>
+                                    <td>{row.ownerName}</td>
+                                    <td>{row.openItem}</td>
+                                    <td>
+                                        <button class="btn-inline" data-id={row.id} onclick={handleLogCall}>Log Call</button>
+                                        <button class="btn-inline" data-id={row.id} onclick={handleSendEmail}>Email</button>
+                                        <button class="primary-btn" data-id={row.id} onclick={handleOpenRecord}>Open</button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </template>
+
+        <template if:true={showEmptyState}>
+            <div class="state-card">No homeowner opportunities match the current filters.</div>
+        </template>
+    </section>
+</template>

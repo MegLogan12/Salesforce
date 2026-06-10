@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reason_Code_Required</fullName>
+    <active>true</active>
+    <description>Reason code required to save</description>
+    <errorConditionFormula>AND(
+    NOT($Profile.Name = &quot;System Administrator&quot;),
+    (ISBLANK(TEXT(Aqua_Inventory_Reason_Code__c)))
+)</errorConditionFormula>
+    <errorDisplayField>Aqua_Inventory_Reason_Code__c</errorDisplayField>
+    <errorMessage>Cannot save without reason code</errorMessage>
+</ValidationRule>

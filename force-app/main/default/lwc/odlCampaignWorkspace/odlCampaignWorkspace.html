@@ -1,0 +1,97 @@
+<template>
+    <section class="workspace-shell">
+        <div class="workspace-header">
+            <div>
+                <p class="eyebrow">Outdoor Living Console</p>
+                <h1>ODL Campaigns</h1>
+                <p class="subtitle">Marketing campaigns linked to Outdoor Living leads and opportunities.</p>
+            </div>
+            <div class="header-actions">
+                <button class="secondary-btn" onclick={handleRefresh}>Refresh</button>
+                <button class="primary-btn" onclick={handleNewCampaign}>+ New Campaign</button>
+            </div>
+        </div>
+
+        <div class="toolbar">
+            <div class="chip-row">
+                <template for:each={filters} for:item="filter">
+                    <button
+                        key={filter.value}
+                        class={filter.className}
+                        data-value={filter.value}
+                        onclick={handleFilterClick}
+                    >
+                        {filter.label}
+                    </button>
+                </template>
+            </div>
+            <lightning-input
+                class="search-input"
+                type="search"
+                variant="label-hidden"
+                placeholder="Search campaigns"
+                value={searchTerm}
+                onchange={handleSearchChange}
+            ></lightning-input>
+        </div>
+
+        <template if:true={isLoading}>
+            <div class="state-card">Loading campaigns...</div>
+        </template>
+
+        <template if:true={errorMessage}>
+            <div class="state-card error">{errorMessage}</div>
+        </template>
+
+        <template if:true={hasRows}>
+            <div class="list-card">
+                <div class="card-heading">
+                    <div>
+                        <h2>Campaign Operating List</h2>
+                        <p>All campaigns ordered by start date.</p>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table class="workspace-table">
+                        <thead>
+                            <tr>
+                                <th>Campaign Name</th>
+                                <th>Status</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Leads</th>
+                                <th>Contacts</th>
+                                <th>CTA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={visibleRows} for:item="row">
+                                <tr key={row.id}>
+                                    <td>
+                                        <button class="link-button" data-id={row.id} onclick={handleOpenRecord}>{row.name}</button>
+                                    </td>
+                                    <td>
+                                        <span class="status-chip">{row.status}</span>
+                                    </td>
+                                    <td>{row.startDate}</td>
+                                    <td>{row.endDate}</td>
+                                    <td>{row.numberOfLeads}</td>
+                                    <td>{row.numberOfContacts}</td>
+                                    <td>
+                                        <button class="btn-inline-green" data-id={row.id} onclick={handleAddMember}>Add Member</button>
+                                        <button class="btn-inline" data-id={row.id} onclick={handleExportList}>Export List</button>
+                                        <button class="primary-btn" data-id={row.id} onclick={handleOpenRecord}>Open</button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </template>
+
+        <template if:true={showEmptyState}>
+            <div class="state-card">No campaigns match the current filters.</div>
+        </template>
+    </section>
+</template>

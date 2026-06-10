@@ -1,0 +1,46 @@
+<template>
+    <div class="task-record-page">
+        <!-- Action bar -->
+        <div class="action-bar">
+            <div class="action-bar-left">
+                <button class="btn-return" onclick={handleReturn}>
+                    &#8592; Task List
+                </button>
+                <template lwc:if={hasPrev}>
+                    <button class="btn-nav" onclick={handlePrev}>&#8249; Previous</button>
+                </template>
+                <template lwc:if={hasNext}>
+                    <button class="btn-nav" onclick={handleNext}>Next &#8250;</button>
+                </template>
+            </div>
+            <div class="action-bar-right">
+                <template lwc:if={isCompleted}>
+                    <span class="status-badge completed">&#10003; Completed</span>
+                </template>
+                <template lwc:else>
+                    <button class="btn-snooze" onclick={handleSnooze} disabled={isSaving}>
+                        Snooze
+                    </button>
+                    <button class="btn-reassign" onclick={handleReassign} disabled={isSaving}>
+                        Reassign
+                    </button>
+                    <button class="btn-complete" onclick={handleMarkComplete} disabled={isSaving}>
+                        {completeLabel}
+                    </button>
+                </template>
+            </div>
+        </div>
+
+        <!-- Task detail body -->
+        <div class="task-body">
+            <lightning-record-form
+                record-id={recordId}
+                object-api-name="Task"
+                layout-type="Full"
+                mode="view"
+                columns="2"
+                fields={fields}>
+            </lightning-record-form>
+        </div>
+    </div>
+</template>

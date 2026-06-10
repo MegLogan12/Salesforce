@@ -1,0 +1,22 @@
+<template>
+    <table class="tbl">
+        <thead>
+            <tr><th>WO #</th><th>Type</th><th>Subject</th><th>Status</th><th>Schedule</th><th>FM</th><th>Action</th></tr>
+        </thead>
+        <tbody>
+            <template for:each={displayRows} for:item="wo">
+                <tr key={wo.id}>
+                    <td>{wo.workOrderNumber}</td>
+                    <td>{wo.workOrderType}</td>
+                    <td>{wo.subject}</td>
+                    <td><span class={wo.statusClassName}>{wo.status}</span></td>
+                    <td>{wo.requestedInstallDisplay}</td>
+                    <td>{wo.fieldManagerName}</td>
+                    <td>
+                        <button class="btn-inline" data-id={wo.id} onclick={handleViewWorkOrder}>View</button>
+                    </td>
+                </tr>
+            </template>
+        </tbody>
+    </table>
+</template>

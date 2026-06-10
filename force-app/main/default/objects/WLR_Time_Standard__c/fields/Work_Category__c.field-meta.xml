@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Work_Category__c</fullName>
+    <description>Broad category describing the type of work for this time standard. Used for filtering and reporting.</description>
+    <label>Work Category</label>
+    <required>true</required>
+    <trackHistory>true</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Grading</fullName>
+                <default>false</default>
+                <label>Grading</label>
+            </value>
+            <value>
+                <fullName>Planting - Trees</fullName>
+                <default>false</default>
+                <label>Planting - Trees</label>
+            </value>
+            <value>
+                <fullName>Planting - Shrubs</fullName>
+                <default>false</default>
+                <label>Planting - Shrubs</label>
+            </value>
+            <value>
+                <fullName>Sod / Seeding</fullName>
+                <default>false</default>
+                <label>Sod / Seeding</label>
+            </value>
+            <value>
+                <fullName>Mulch / Ground Cover</fullName>
+                <default>false</default>
+                <label>Mulch / Ground Cover</label>
+            </value>
+            <value>
+                <fullName>Pest / Disease Treatment</fullName>
+                <default>false</default>
+                <label>Pest / Disease Treatment</label>
+            </value>
+            <value>
+                <fullName>Aqua / Irrigation</fullName>
+                <default>false</default>
+                <label>Aqua / Irrigation</label>
+            </value>
+            <value>
+                <fullName>Accessories</fullName>
+                <default>false</default>
+                <label>Accessories</label>
+            </value>
+            <value>
+                <fullName>Plant Layout</fullName>
+                <default>false</default>
+                <label>Plant Layout</label>
+            </value>
+            <value>
+                <fullName>Outdoor Living</fullName>
+                <default>false</default>
+                <label>Outdoor Living</label>
+            </value>
+            <value>
+                <fullName>Admin</fullName>
+                <default>false</default>
+                <label>Admin</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

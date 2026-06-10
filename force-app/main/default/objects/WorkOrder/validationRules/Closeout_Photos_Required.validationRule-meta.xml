@@ -4,8 +4,8 @@
     <active>true</active>
     <description>Closeout_Photos_Attached__c must be true before status can change to Pending Closeout Approval.</description>
     <errorConditionFormula>AND(
-        ISPICKVAL(Status, "Pending Closeout Approval"),
-        NOT(ISPICKVAL(PRIORVALUE(Status), "Pending Closeout Approval")),
+        ISPICKVAL(Status, &quot;Pending Closeout Approval&quot;),
+        NOT(ISPICKVAL(PRIORVALUE(Status), &quot;Pending Closeout Approval&quot;)),
         NOT(Closeout_Photos_Attached__c)
     )</errorConditionFormula>
     <errorMessage>Closeout photos must be attached before submitting for approval. Take and upload photos of the completed installation before changing status. Required: front of lot, plantings installed, any notable site conditions.</errorMessage>

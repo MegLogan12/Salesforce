@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Checklist_Type__c</fullName>
+    <label>Checklist Type</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Vehicle Checklist</fullName>
+                <default>false</default>
+                <label>Vehicle Checklist</label>
+            </value>
+            <value>
+                <fullName>Loaded Checklist</fullName>
+                <default>false</default>
+                <label>Loaded Checklist</label>
+            </value>
+            <value>
+                <fullName>Arrival Checklist</fullName>
+                <default>false</default>
+                <label>Arrival Checklist</label>
+            </value>
+            <value>
+                <fullName>Active Job Checklist</fullName>
+                <default>false</default>
+                <label>Active Job Checklist</label>
+            </value>
+            <value>
+                <fullName>Closeout Checklist</fullName>
+                <default>false</default>
+                <label>Closeout Checklist</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

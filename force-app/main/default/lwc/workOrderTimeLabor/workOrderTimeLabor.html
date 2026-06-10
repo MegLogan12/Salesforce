@@ -1,0 +1,59 @@
+<template>
+    <lightning-card title="Time and Labor" icon-name="standard:timesheet">
+        <div class="slds-p-around_small">
+            <template if:true={loading}>
+                <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+            </template>
+
+            <div class="kpi-grid">
+                <div class="kpi"><span class="kpi-label">Goal Hours</span><span class="kpi-value">{goalHours}</span></div>
+                <div class="kpi"><span class="kpi-label">Actual Hours</span><span class="kpi-value">{actualHours}</span></div>
+                <div class="kpi"><span class="kpi-label">Variance</span><span class={varianceClass}>{varianceHours}</span></div>
+                <div class="kpi"><span class="kpi-label">Bonus Eligible</span><span class={bonusClass}>{bonusLabel}</span></div>
+                <div class="kpi"><span class="kpi-label">OT Status</span><span class={otClass}>{otLabel}</span></div>
+                <div class="kpi"><span class="kpi-label">Entries</span><span class="kpi-value">{entries.length}</span></div>
+            </div>
+
+            <div class="bar-wrap">
+                <div class="bar-track">
+                    <div class={barClass} style={barStyle}></div>
+                </div>
+                <div class="bar-caption">Actual vs Goal ({barPct})</div>
+            </div>
+
+            <template if:true={hasEntries}>
+                <div class="table-toolbar">
+                    <button class="btn btn-primary" onclick={handleAddEntry}>Add Time Entry</button>
+                </div>
+                <table class="slds-table slds-table_bordered slds-table_cell-buffer slds-m-top_small">
+                    <thead>
+                        <tr>
+                            <th>Technician</th>
+                            <th>Hours</th>
+                            <th>Date</th>
+                            <th>Source</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={entries} for:item="e">
+                            <tr key={e.id}>
+                                <td>{e.technician}</td>
+                                <td>{e.hours}</td>
+                                <td>{e.entryDate}</td>
+                                <td>{e.source}</td>
+                                <td><button class="btn-inline" data-id={e.id} onclick={handleEditEntry}>Edit</button></td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+            <template if:false={hasEntries}>
+                <div class="table-toolbar">
+                    <button class="btn btn-primary" onclick={handleAddEntry}>Add Time Entry</button>
+                </div>
+                <p class="slds-text-color_weak slds-m-top_small">No time entries captured.</p>
+            </template>
+        </div>
+    </lightning-card>
+</template>

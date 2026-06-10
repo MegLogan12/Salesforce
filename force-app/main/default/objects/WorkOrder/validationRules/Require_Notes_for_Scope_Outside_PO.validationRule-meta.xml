@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Require_Notes_for_Scope_Outside_PO</fullName>
+    <active>true</active>
+    <errorConditionFormula>Scope_Outside_PO__c = True &amp;&amp; ISBLANK(Outside_PO_Notes__c)</errorConditionFormula>
+    <errorMessage>Please provide details in the Scope Notes field if there is scope outside of the PO</errorMessage>
+</ValidationRule>

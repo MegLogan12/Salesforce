@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Homeowner_Property__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Links the voucher to the ODL homeowner property identity record used for voucher identity, lot enforcement, and homeowner proof.</description>
+    <label>Homeowner Property</label>
+    <referenceTo>Homeowner_Property__c</referenceTo>
+    <relationshipLabel>Vouchers</relationshipLabel>
+    <relationshipName>Vouchers</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

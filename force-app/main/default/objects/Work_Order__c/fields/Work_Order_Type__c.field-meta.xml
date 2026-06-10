@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Work_Order_Type__c</fullName>
+    <description>Classifies the type of work this Work Order represents. Used alongside record type for routing, permissions, and service ticket generation. Production Install is the standard builder PO path.</description>
+    <label>Work Order Type</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Production Install</fullName>
+                <default>true</default>
+                <label>Production Install</label>
+            </value>
+            <value>
+                <fullName>Finish Job</fullName>
+                <default>false</default>
+                <label>Finish Job</label>
+            </value>
+            <value>
+                <fullName>Warranty</fullName>
+                <default>false</default>
+                <label>Warranty</label>
+            </value>
+            <value>
+                <fullName>Customer Care</fullName>
+                <default>false</default>
+                <label>Customer Care</label>
+            </value>
+            <value>
+                <fullName>Site Visit</fullName>
+                <default>false</default>
+                <label>Site Visit</label>
+            </value>
+            <value>
+                <fullName>Aqua Install</fullName>
+                <default>false</default>
+                <label>Aqua Install</label>
+            </value>
+            <value>
+                <fullName>Aqua Check</fullName>
+                <default>false</default>
+                <label>Aqua Check</label>
+            </value>
+            <value>
+                <fullName>Aqua Pickup</fullName>
+                <default>false</default>
+                <label>Aqua Pickup</label>
+            </value>
+            <value>
+                <fullName>Lawn Care</fullName>
+                <default>false</default>
+                <label>Lawn Care</label>
+            </value>
+            <value>
+                <fullName>Irrigation</fullName>
+                <default>false</default>
+                <label>Irrigation</label>
+            </value>
+            <value>
+                <fullName>Back Charge</fullName>
+                <default>false</default>
+                <label>Back Charge</label>
+            </value>
+            <value>
+                <fullName>Internal</fullName>
+                <default>false</default>
+                <label>Internal</label>
+            </value>
+            <value>
+                <fullName>Install</fullName>
+                <default>false</default>
+                <label>Install (Legacy)</label>
+            </value>
+            <value>
+                <fullName>Service</fullName>
+                <default>false</default>
+                <label>Service (Legacy)</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LOVING_Opp_Amount_Required_At_Commit</fullName>
+    <active>true</active>
+    <description>Requires Amount &gt; 0 once an Opportunity reaches Proposal Presented or any later commit stage. Early pipeline and Closed Lost are exempt; System Administrator is exempt. Source: forensic audit OPP-DQ-02 / M8-5.</description>
+    <errorConditionFormula>AND(
+    NOT($Profile.Name = &quot;System Administrator&quot;),
+    OR(
+        ISPICKVAL(StageName, &quot;Proposal Presented&quot;),
+        ISPICKVAL(StageName, &quot;Contract Sent&quot;),
+        ISPICKVAL(StageName, &quot;Financing Review&quot;),
+        ISPICKVAL(StageName, &quot;Contract Signed&quot;),
+        ISPICKVAL(StageName, &quot;Deposit Paid&quot;),
+        ISPICKVAL(StageName, &quot;Pre-Production&quot;),
+        ISPICKVAL(StageName, &quot;In Progress&quot;),
+        ISPICKVAL(StageName, &quot;Pre Close&quot;),
+        ISPICKVAL(StageName, &quot;Job Completed&quot;)
+    ),
+    OR(ISBLANK(Amount), Amount &lt;= 0)
+)</errorConditionFormula>
+    <errorDisplayField>Amount</errorDisplayField>
+    <errorMessage>Amount must be greater than $0 once this Opportunity reaches Proposal Presented or later. Add the deal amount before saving.</errorMessage>
+</ValidationRule>

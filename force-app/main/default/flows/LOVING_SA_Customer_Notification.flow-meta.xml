@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Send_Rescheduled_Email</name>
+        <label>Send Rescheduled Notification</label>
+        <locationX>620</locationX>
+        <locationY>260</locationY>
+        <actionName>emailSimple</actionName>
+        <actionType>emailSimple</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>emailAddresses</name>
+            <value>
+                <elementReference>varContact.Email</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailSubject</name>
+            <value>
+                <elementReference>Rescheduled_Subject</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailBody</name>
+            <value>
+                <elementReference>Rescheduled_Email_Body</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>emailSimple</nameSegment>
+    </actionCalls>
+    <actionCalls>
+        <name>Send_Scheduled_Email</name>
+        <label>Send Scheduled Notification</label>
+        <locationX>620</locationX>
+        <locationY>120</locationY>
+        <actionName>emailSimple</actionName>
+        <actionType>emailSimple</actionType>
+        <flowTransactionModel>CurrentTransaction</flowTransactionModel>
+        <inputParameters>
+            <name>emailAddresses</name>
+            <value>
+                <elementReference>varContact.Email</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailSubject</name>
+            <value>
+                <stringValue>Your appointment is confirmed</stringValue>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>emailBody</name>
+            <value>
+                <elementReference>Scheduled_Email_Body</elementReference>
+            </value>
+        </inputParameters>
+        <nameSegment>emailSimple</nameSegment>
+    </actionCalls>
+    <apiVersion>62.0</apiVersion>
+    <decisions>
+        <name>Check_Status_Changed</name>
+        <label>Status is Scheduled or Rescheduled?</label>
+        <locationX>200</locationX>
+        <locationY>230</locationY>
+        <defaultConnectorLabel>Not Applicable</defaultConnectorLabel>
+        <rules>
+            <name>Is_Scheduled</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Scheduled</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Has_Contact_Email_Scheduled</targetReference>
+            </connector>
+            <label>Scheduled</label>
+        </rules>
+        <rules>
+            <name>Is_Rescheduled</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Rescheduled</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Has_Contact_Email_Rescheduled</targetReference>
+            </connector>
+            <label>Rescheduled</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Has_Contact_Email_Rescheduled</name>
+        <label>Contact has email (Rescheduled)?</label>
+        <locationX>400</locationX>
+        <locationY>260</locationY>
+        <defaultConnectorLabel>No Email</defaultConnectorLabel>
+        <rules>
+            <name>Has_Email_Resched</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varContact.Email</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Rescheduled_Email</targetReference>
+            </connector>
+            <label>Has Email</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Has_Contact_Email_Scheduled</name>
+        <label>Contact has email (Scheduled)?</label>
+        <locationX>400</locationX>
+        <locationY>120</locationY>
+        <defaultConnectorLabel>No Email</defaultConnectorLabel>
+        <rules>
+            <name>Has_Email_Sched</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>varContact.Email</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Send_Scheduled_Email</targetReference>
+            </connector>
+            <label>Has Email</label>
+        </rules>
+    </decisions>
+    <description>Sends a customer email when a ServiceAppointment is Scheduled or Rescheduled. For Rescheduled appointments, includes the previous and new appointment windows in the body.</description>
+    <interviewLabel>LOVING SA Customer Notification {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>LOVING SA Customer Notification</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_Contact</name>
+        <label>Get Contact for Email</label>
+        <locationX>200</locationX>
+        <locationY>110</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Check_Status_Changed</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.ContactId</elementReference>
+            </value>
+        </filters>
+        <object>Contact</object>
+        <outputReference>varContact</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>FirstName</queriedFields>
+        <queriedFields>Email</queriedFields>
+    </recordLookups>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_Contact</targetReference>
+        </connector>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Status</field>
+            <operator>IsChanged</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <object>ServiceAppointment</object>
+        <recordTriggerType>CreateAndUpdate</recordTriggerType>
+        <triggerType>RecordAfterSave</triggerType>
+    </start>
+    <status>Draft</status>
+    <textTemplates>
+        <name>Rescheduled_Email_Body</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Dear {!varContact.FirstName},
+
+We are writing to let you know that your appointment has been rescheduled.
+
+Appointment: {!$Record.AppointmentNumber}
+New Date &amp; Time: {!$Record.SchedStartTime}
+
+We apologize for any inconvenience this change may cause. If this new time does not work for you, or if you have any questions, please contact us as soon as possible and we will work with you to find a suitable alternative.
+
+Thank you for your understanding and for choosing LOVING Group.
+
+Warm regards,
+LOVING Group Scheduling Team</text>
+    </textTemplates>
+    <textTemplates>
+        <name>Rescheduled_Subject</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Your appointment has been rescheduled — {!$Record.AppointmentNumber}</text>
+    </textTemplates>
+    <textTemplates>
+        <name>Scheduled_Email_Body</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>Dear {!varContact.FirstName},
+
+We are pleased to confirm your upcoming appointment with LOVING Group.
+
+Appointment: {!$Record.AppointmentNumber}
+Date &amp; Time: {!$Record.SchedStartTime}
+
+If you have any questions or need to make changes, please don&apos;t hesitate to contact us.
+
+Thank you for choosing LOVING Group. We look forward to seeing you!
+
+Warm regards,
+LOVING Group Scheduling Team</text>
+    </textTemplates>
+    <variables>
+        <name>varContact</name>
+        <dataType>SObject</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Contact</objectType>
+    </variables>
+</Flow>

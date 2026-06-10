@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Completed_For_Billing__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Billing confirmation gate. Set to true by CS or FM when the Service Ticket is ready to be included on an invoice. Required before invoice generation includes this ticket. Does not mean the ticket is operationally complete — check Status__c for operational status.</description>
+    <label>Completed for Billing</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

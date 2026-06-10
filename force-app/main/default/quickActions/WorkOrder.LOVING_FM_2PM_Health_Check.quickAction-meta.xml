@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>FM submits the daily 2 PM job health check. Green = on track for completion today. Red = will not complete today, creates a Schedule Issue for the scheduling team.</description>
+    <label>2 PM Health Check</label>
+    <lightningWebComponent>lovingFm2pmHealthCheckAction</lightningWebComponent>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <type>LightningWebComponent</type>
+</QuickAction>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Delivery_QC_Complete__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Set to true by the LOVING_Aqua_Delivery_QC_Submit flow when a Delivery_Quality_Check__c record is submitted for this work order with Overall_Pass__c = true. Required because WorkOrder formula fields cannot directly reference child record fields — this checkbox is the writeback mechanism. Used in Delivery_QC_Status__c formula to determine if QC was completed. If Overall_Pass__c = false on the DQC, this field stays false and Delivery_QC_Status__c = Pending until FM resolves the issue.</description>
+    <label>Delivery QC Complete</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>true</trackHistory>
+    <type>Checkbox</type>
+</CustomField>

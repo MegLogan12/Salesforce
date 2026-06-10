@@ -1,0 +1,178 @@
+<template>
+    <section class="page-canvas">
+
+        <!-- Page header -->
+        <div class="page-header">
+            <div class="header-left">
+                <div class="page-icon">OP</div>
+                <div>
+                    <h1 class="page-title">Homeowner Opportunity List</h1>
+                    <p class="page-subtitle">Outdoor Living — UMB &amp; Design Build</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn-new" onclick={handleNewActivity}>+ New Activity</button>
+                <button class="btn-new" onclick={handleLogCall}>Log Call</button>
+                <button class="btn-new" onclick={handleSendEmail}>Send Email</button>
+                <button class="btn-new" onclick={handleNewUmb}>+ New UMB</button>
+                <button class="btn-new btn-design" onclick={handleNewDesignBuild}>+ New Design Build</button>
+            </div>
+        </div>
+
+        <!-- KPI cards -->
+        <div class="kpi-grid">
+            <template for:each={kpiCards} for:item="kpi">
+                <div key={kpi.key} class={kpi.cardClass} data-key={kpi.key} onclick={handleKpiClick}>
+                    <div class="kpi-label">{kpi.label}</div>
+                    <div class="kpi-count">{kpi.count}</div>
+                    <template lwc:if={kpi.amountDisplay}>
+                        <div class="kpi-amount">{kpi.amountDisplay}</div>
+                    </template>
+                </div>
+            </template>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="toolbar-bar">
+            <div class="chip-row">
+                <template for:each={chipList} for:item="chip">
+                    <button key={chip.key} class={chip.cls} data-key={chip.key} onclick={handleChipClick}>
+                        {chip.label}&nbsp;<span class="chip-count">{chip.count}</span>
+                    </button>
+                </template>
+            </div>
+            <div class="toolbar-right">
+                <select class="owner-select" onchange={handleOwnerChange}>
+                    <option value="">All owners</option>
+                    <template for:each={ownerNames} for:item="name">
+                        <option key={name} value={name}>{name}</option>
+                    </template>
+                </select>
+                <input type="search" class="search-box"
+                    placeholder="Search opps, accounts, vouchers…"
+                    oninput={handleSearchInput}
+                    value={searchText} />
+            </div>
+        </div>
+
+        <!-- Error -->
+        <template lwc:if={hasError}>
+            <div class="error-bar">{errorMessage}</div>
+        </template>
+
+        <!-- Table -->
+        <div class="table-card">
+            <div class="table-header-row">
+                <span class="row-count">{rowCount} opportunities</span>
+            </div>
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="col-sticky">Opportunity</th>
+                            <th>Account</th>
+                            <th>Path</th>
+                            <th>Stage</th>
+                            <th class="col-num sortable" onclick={handleSortAmount}>Amount {sortIconAmount}</th>
+                            <th>Package</th>
+                            <th>Voucher / Campaign</th>
+                            <th>Quote</th>
+                            <th>Contract</th>
+                            <th>Deposit</th>
+                            <th>WO Release</th>
+                            <th class="sortable" onclick={handleSortActivity}>Last Activity {sortIconActivity}</th>
+                            <th class="sortable" onclick={handleSortFollowUp}>Follow-Up {sortIconFollowUp}</th>
+                            <th>Owner</th>
+                            <th class="col-next-action">Next Action</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={visibleRows} for:item="row">
+                            <tr key={row.id}>
+                                <td class="col-sticky">
+                                    <a class="opp-link" href={row.oppHref} data-id={row.id} onclick={handleOpenRecord}>{row.oppName}</a>
+                                </td>
+                                <td>
+                                    <template lwc:if={row.accountHref}>
+                                        <a class="acct-link" href={row.accountHref} data-id={row.accountId} onclick={handleOpenAccount}>{row.accountName}</a>
+                                    </template>
+                                    <template lwc:else>{row.accountName}</template>
+                                </td>
+                                <td><span class={row.lobChipClass}>{row.lob}</span></td>
+                                <td><span class={row.stageChipClass}>{row.stageName}</span></td>
+                                <td class="col-num">{row.amountDisplay}</td>
+                                <td>{row.packageDisplay}</td>
+                                <td>
+                                    <template lwc:if={row.voucherCode}>
+                                        <span class="voucher-code">{row.voucherCode}</span>
+                                        <template lwc:if={row.hasBuilderVoucher}>
+                                            <span class="chip chip-umb">Builder</span>
+                                        </template>
+                                    </template>
+                                    <template lwc:elseif={row.campaignName}>
+                                        <span class="campaign-name">{row.campaignName}</span>
+                                    </template>
+                                </td>
+                                <td>
+                                    <template lwc:if={row.quoteStatus}>
+                                        <span class={row.quoteStatusChipClass}>{row.quoteStatus}</span>
+                                    </template>
+                                </td>
+                                <td>{row.contractStatus}</td>
+                                <td>
+                                    <template lwc:if={row.depositPaid}>
+                                        <span class="chip chip-green">Paid</span>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="chip chip-gray">—</span>
+                                    </template>
+                                </td>
+                                <td>
+                                    <template lwc:if={row.woReady}>
+                                        <span class="chip chip-green">Ready</span>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="chip chip-gray">Not Ready</span>
+                                    </template>
+                                </td>
+                                <td>
+                                    <span class={row.lastActivityChipClass}>{row.lastActivityResult}</span>
+                                    <template lwc:if={row.lastActivityDateDisplay}>
+                                        <span class="date-sub">{row.lastActivityDateDisplay}</span>
+                                    </template>
+                                </td>
+                                <td>
+                                    <template lwc:if={row.followUpDateDisplay}>
+                                        <span class={row.followUpChipClass}>{row.followUpDateDisplay}</span>
+                                        <template lwc:if={row.followUpSubject}>
+                                            <span class="date-sub">{row.followUpSubject}</span>
+                                        </template>
+                                    </template>
+                                    <template lwc:else>
+                                        <span class="chip chip-gray">None</span>
+                                    </template>
+                                </td>
+                                <td>{row.ownerName}</td>
+                                <td class="col-next-action">
+                                    <span class="next-action-text">{row.nextActionText}</span>
+                                    <button class={row.actionBtnClass} data-id={row.id} data-action={row.nextActionButton} onclick={handleActionClick}>{row.nextActionButton}</button>
+                                </td>
+                                <td>
+                                    <button class="btn-inline" data-id={row.id} onclick={handleLogCall}>Log Call</button>
+                                    <button class="btn-inline" data-id={row.id} onclick={handleSendEmail}>Email</button>
+                                </td>
+                            </tr>
+                        </template>
+                        <template lwc:if={isEmpty}>
+                            <tr>
+                                <td colspan="16" class="empty-cell">No opportunities match the current filters.</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </section>
+</template>

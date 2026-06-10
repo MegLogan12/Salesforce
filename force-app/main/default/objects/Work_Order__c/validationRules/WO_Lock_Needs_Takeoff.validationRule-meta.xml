@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WO_Lock_Needs_Takeoff</fullName>
+    <active>true</active>
+    <description>Cannot lock schedule until takeoff approved. Home Builder only: fires only for Production Install WOs with a Builder Division (Builder_Market_Account__c set), so it never touches Outdoor Living. Spec Section 8.</description>
+    <errorConditionFormula>AND( RecordType.DeveloperName = &quot;Production_Install&quot;, NOT(ISBLANK(Builder_Market_Account__c)), Schedule_Locked__c, NOT(Takeoff_Approved__c) )</errorConditionFormula>
+    <errorDisplayField>Schedule_Locked__c</errorDisplayField>
+    <errorMessage>Cannot lock the schedule until the takeoff is approved.</errorMessage>
+</ValidationRule>

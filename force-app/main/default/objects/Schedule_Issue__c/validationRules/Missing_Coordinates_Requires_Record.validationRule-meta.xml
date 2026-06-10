@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Missing_Coordinates_Requires_Record</fullName>
+    <active>true</active>
+    <description>Missing Coordinates issues must link to a Service Appointment or Work Order so the correct record can be geocoded.</description>
+    <errorConditionFormula>AND(ISPICKVAL(Issue_Type__c, &quot;Missing Coordinates&quot;), ISBLANK(Service_Appointment__c), ISBLANK(Work_Order__c))</errorConditionFormula>
+    <errorMessage>Missing Coordinates issues require a Service Appointment or Work Order. Please link one before saving.</errorMessage>
+</ValidationRule>

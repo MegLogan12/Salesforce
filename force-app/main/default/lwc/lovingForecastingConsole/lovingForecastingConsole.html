@@ -1,0 +1,227 @@
+<template>
+    <div class="console-home">
+
+        <!-- Loading -->
+        <template if:true={isLoading}>
+            <div class="odl-loading">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <!-- Error -->
+        <template if:true={hasError}>
+            <div class="odl-error-state">
+                <lightning-icon icon-name="utility:error" size="small" variant="error"></lightning-icon>
+                <p>{error}</p>
+                <lightning-button label="Retry" onclick={handleRefresh}></lightning-button>
+            </div>
+        </template>
+
+        <!-- Main -->
+        <template if:false={isLoading}>
+            <template if:false={hasError}>
+
+                <!-- Page header -->
+                <div class="page-header">
+                    <div class="page-header-icon" style="background:#e8936a">
+                        <lightning-icon icon-name="utility:resource_absence" size="small" variant="inverse"></lightning-icon>
+                    </div>
+                    <div>
+                        <h1 class="page-title">Forecasting &amp; Workforce</h1>
+                        <p class="page-sub">Hire requests and crew overview</p>
+                    </div>
+                    <div class="page-cta-row">
+                        <button type="button" class="btn btn-primary" onclick={handleExportForecast}>Export Forecast</button>
+                        <button type="button" class="btn btn-ghost" onclick={handleRefresh}>Refresh</button>
+                    </div>
+                    <lightning-button-icon
+                        icon-name="utility:refresh"
+                        alternative-text="Refresh"
+                        variant="bare"
+                        onclick={handleRefresh}
+                        class="page-refresh"
+                    ></lightning-button-icon>
+                </div>
+
+                <!-- KPI row -->
+                <div class="kpi-row">
+                    <div class="kpi-chip kc-orange" onclick={handleOpenHireRequests} title="View open hire requests">
+                        <div class="kpi-number">{openHireRequests}</div>
+                        <div class="kpi-label">Open Hire Requests</div>
+                    </div>
+                    <div class="kpi-chip kc-blue" onclick={handleOpenCrews} title="View active crews">
+                        <div class="kpi-number">{activeCrew}</div>
+                        <div class="kpi-label">Active Crews</div>
+                    </div>
+                </div>
+
+                <!-- Body layout -->
+                <div class="body-layout">
+
+                    <!-- Main: Hire Requests -->
+                    <div class="body-main">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon" style="background:#e8936a">
+                                    <lightning-icon icon-name="utility:people" size="x-small" variant="inverse"></lightning-icon>
+                                </div>
+                                <h2 class="card-title">Recent Hire Requests</h2>
+                                <lightning-button-icon
+                                    icon-name="utility:refresh"
+                                    alternative-text="Refresh"
+                                    variant="bare"
+                                    onclick={handleRefresh}
+                                    class="card-refresh"
+                                ></lightning-button-icon>
+                            </div>
+
+                            <template if:true={hasHireRequests}>
+                                <table class="odl-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Position</th>
+                                            <th>Priority</th>
+                                            <th>Status</th>
+                                            <th>Created</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template for:each={recentHireRequests} for:item="row">
+                                            <tr key={row.id}>
+                                                <td>
+                                                    <a class="rec-link" data-id={row.id} onclick={handleOpenRecord}>{row.name}</a>
+                                                </td>
+                                                <td>{row.position}</td>
+                                                <td>
+                                                    <template if:true={row.priority}>
+                                                        <span class="status-chip chip-alert">{row.priority}</span>
+                                                    </template>
+                                                </td>
+                                                <td>{row.status}</td>
+                                                <td class="muted">{row.createdDateLabel}</td>
+                                                <td><button type="button" class="btn-inline" data-id={row.id} onclick={handleOpenRecord}>Open</button></td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </template>
+
+                            <template if:false={hasHireRequests}>
+                                <div class="empty-state">
+                                    <lightning-icon icon-name="utility:check" size="small" variant="success"></lightning-icon>
+                                    <p>No recent hire requests.</p>
+                                </div>
+                            </template>
+
+                            <div class="card-footer">
+                                <lightning-button
+                                    label="View All Hire Requests"
+                                    variant="neutral"
+                                    onclick={handleOpenHireRequests}
+                                ></lightning-button>
+                                <button type="button" class="btn btn-primary" onclick={handleExportForecast}>Export Forecast</button>
+                            </div>
+                        </div>
+
+                        <!-- Crews -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon" style="background:#2c7a4b">
+                                    <lightning-icon icon-name="utility:groups" size="x-small" variant="inverse"></lightning-icon>
+                                </div>
+                                <h2 class="card-title">Active Crews</h2>
+                            </div>
+
+                            <template if:true={hasCrews}>
+                                <table class="odl-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Crew Name</th>
+                                            <th>Lead Foreman</th>
+                                            <th class="num-col">Members</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template for:each={recentCrews} for:item="row">
+                                            <tr key={row.id}>
+                                                <td>
+                                                    <a class="rec-link" data-id={row.id} onclick={handleOpenRecord}>{row.name}</a>
+                                                </td>
+                                                <td>{row.leadForeman}</td>
+                                                <td class="num-col">{row.memberCount}</td>
+                                                <td>
+                                                    <span class="status-chip chip-ok">{row.status}</span>
+                                                </td>
+                                                <td><button type="button" class="btn-inline" data-id={row.id} onclick={handleOpenRecord}>Open</button></td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </template>
+
+                            <template if:false={hasCrews}>
+                                <div class="empty-state">
+                                    <lightning-icon icon-name="utility:warning" size="small" variant="warning"></lightning-icon>
+                                    <p>No active crews found.</p>
+                                </div>
+                            </template>
+
+                            <div class="card-footer">
+                                <lightning-button
+                                    label="View All Crews"
+                                    variant="neutral"
+                                    onclick={handleOpenCrews}
+                                ></lightning-button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rail: Quick Actions -->
+                    <div class="body-rail">
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-icon" style="background:#e8936a">
+                                    <lightning-icon icon-name="utility:lightning_strike" size="x-small" variant="inverse"></lightning-icon>
+                                </div>
+                                <h2 class="card-title">Quick Actions</h2>
+                            </div>
+                            <div class="qa-list">
+                                <div class="qa-item" onclick={handleExportForecast}>
+                                    <lightning-icon icon-name="utility:download" size="x-small"></lightning-icon>
+                                    <span>Export Forecast</span>
+                                </div>
+                                <div class="qa-item" onclick={handleRefresh}>
+                                    <lightning-icon icon-name="utility:refresh" size="x-small"></lightning-icon>
+                                    <span>Refresh Data</span>
+                                </div>
+                                <div class="qa-item" onclick={handleOpenHireRequests}>
+                                    <lightning-icon icon-name="utility:people" size="x-small"></lightning-icon>
+                                    <span>View hire requests</span>
+                                </div>
+                                <div class="qa-item" onclick={handleNewHireRequest}>
+                                    <lightning-icon icon-name="utility:add" size="x-small"></lightning-icon>
+                                    <span>New hire request</span>
+                                </div>
+                                <div class="qa-item" onclick={handleOpenCrews}>
+                                    <lightning-icon icon-name="utility:groups" size="x-small"></lightning-icon>
+                                    <span>View all crews</span>
+                                </div>
+                                <div class="qa-item" onclick={handleNewCrew}>
+                                    <lightning-icon icon-name="utility:add" size="x-small"></lightning-icon>
+                                    <span>New crew</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </template>
+        </template>
+
+    </div>
+</template>

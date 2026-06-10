@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Traffic_Requires_Market</fullName>
+    <active>true</active>
+    <description>Traffic issues must specify a Market so dispatchers know which territory is affected.</description>
+    <errorConditionFormula>AND(ISPICKVAL(Issue_Type__c, &quot;Traffic&quot;), ISBLANK(Market__c))</errorConditionFormula>
+    <errorMessage>Traffic issues require a Market. Please select the affected Market before saving.</errorMessage>
+</ValidationRule>

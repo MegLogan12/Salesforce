@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PO_Mismatch_Needs_Notes</fullName>
+    <active>true</active>
+    <description>Requires a mismatch type and notes when CS parks a PO in mismatch review.</description>
+    <errorConditionFormula>AND(
+    ISPICKVAL(Status__c, &quot;Mismatch Review&quot;),
+    OR(ISBLANK(TEXT(Mismatch_Type__c)), ISBLANK(Mismatch_Notes__c))
+)</errorConditionFormula>
+    <errorMessage>Record the mismatch type and notes before holding the PO in mismatch review.</errorMessage>
+</ValidationRule>

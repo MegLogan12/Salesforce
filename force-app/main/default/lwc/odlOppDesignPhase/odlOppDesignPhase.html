@@ -1,0 +1,44 @@
+<template>
+    <div class="design-phase-card">
+        <div class="design-phase-header">
+            <span class="design-phase-title">Design Phase</span>
+            <template lwc:if={designStatusLabel}>
+                <span class={designStatusClass}>{designStatusLabel}</span>
+            </template>
+        </div>
+
+        <!-- Design Fee panel (interim: Design_Fee_Status__c until retainer fields confirmed) -->
+        <div class="design-phase-section">
+            <div class="dps-row">
+                <span class="dps-label">Design Fee</span>
+                <span class={designFeeClass}>{designFeeDisplay}</span>
+            </div>
+            <template lwc:if={designFeePaidDate}>
+                <div class="dps-row">
+                    <span class="dps-label">Paid Date</span>
+                    <span class="dps-value">{designFeePaidDate}</span>
+                </div>
+            </template>
+            <template lwc:if={showFeeNote}>
+                <p class="dps-note">{feeNote}</p>
+            </template>
+        </div>
+
+        <!-- Design Development panel -->
+        <div class="design-phase-section">
+            <div class="dps-row">
+                <span class="dps-label">Design Status</span>
+                <span class={designStatusChipClass}>{designStatusLabel}</span>
+            </div>
+            <template lwc:if={designLink}>
+                <div class="dps-row">
+                    <span class="dps-label">Design Link</span>
+                    <a href={designLink} target="_blank" rel="noopener noreferrer" class="dps-link">Open Design</a>
+                </div>
+            </template>
+            <template lwc:if={noDesign}>
+                <p class="dps-empty">No design on file yet.</p>
+            </template>
+        </div>
+    </div>
+</template>

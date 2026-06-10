@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>No_Opportunities_On_Builder_Accounts</fullName>
+    <active>true</active>
+    <description>Builder Parent and Builder Division accounts do not use Opportunities. All builder transactions enter through Builder PO intake. Gates homeowner pipeline automation from builder records.</description>
+    <errorConditionFormula>OR(
+    Account.RecordType.DeveloperName = &quot;Builder_Parent&quot;,
+    Account.RecordType.DeveloperName = &quot;Builder_Market&quot;
+)</errorConditionFormula>
+    <errorDisplayField>AccountId</errorDisplayField>
+    <errorMessage>Opportunities cannot be created on Builder accounts. Builder transactions use the Builder PO intake process (Builder PO → Takeoff → Work Order). Select a homeowner or commercial account, or use the Builder PO workflow instead.</errorMessage>
+</ValidationRule>

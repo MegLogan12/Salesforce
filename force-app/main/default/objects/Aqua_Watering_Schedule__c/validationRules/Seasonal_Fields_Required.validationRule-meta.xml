@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Seasonal_Fields_Required</fullName>
+    <active>true</active>
+    <description>Seasonal Monthly type requires Month and Run Time Pct.</description>
+    <errorConditionFormula>AND(
+  ISPICKVAL(Schedule_Type__c, &quot;Seasonal Monthly&quot;),
+  OR(
+    ISBLANK(TEXT(Month__c)),
+    ISNULL(Run_Time_Pct__c)
+  )
+)</errorConditionFormula>
+    <errorDisplayField>Month__c</errorDisplayField>
+    <errorMessage>Seasonal Monthly schedule requires Month and Run Time Pct.</errorMessage>
+</ValidationRule>

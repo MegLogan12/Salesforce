@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Builder_PO_Timing_Status__c</fullName>
+    <label>Builder PO Timing Status</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Too Early</fullName>
+                <default>false</default>
+                <label>Too Early</label>
+            </value>
+            <value>
+                <fullName>In Expected Window</fullName>
+                <default>false</default>
+                <label>In Expected Window</label>
+            </value>
+            <value>
+                <fullName>Late</fullName>
+                <default>false</default>
+                <label>Late</label>
+            </value>
+            <value>
+                <fullName>Missing Rule</fullName>
+                <default>false</default>
+                <label>Missing Rule</label>
+            </value>
+            <value>
+                <fullName>Missing Dates</fullName>
+                <default>false</default>
+                <label>Missing Dates</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

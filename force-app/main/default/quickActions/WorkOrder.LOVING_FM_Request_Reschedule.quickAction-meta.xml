@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>FM requests a reschedule of a work order. Records the reschedule reason and notes; creates a Schedule Issue and notifies the scheduling team.</description>
+    <label>Request Reschedule</label>
+    <lightningWebComponent>lovingFmRequestRescheduleAction</lightningWebComponent>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <type>LightningWebComponent</type>
+</QuickAction>

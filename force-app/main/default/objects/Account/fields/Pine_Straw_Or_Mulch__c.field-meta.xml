@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Pine_Straw_Or_Mulch__c</fullName>
+    <label>Pine Straw or Mulch</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Pine Straw</fullName>
+                <default>false</default>
+                <label>Pine Straw</label>
+            </value>
+            <value>
+                <fullName>Mulch</fullName>
+                <default>false</default>
+                <label>Mulch</label>
+            </value>
+            <value>
+                <fullName>Varies by Community</fullName>
+                <default>false</default>
+                <label>Varies by Community</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

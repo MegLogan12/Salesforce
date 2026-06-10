@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Note_Type__c</fullName>
+    <label>Note Type</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>System</fullName>
+                <default>true</default>
+                <label>System</label>
+            </value>
+            <value>
+                <fullName>FM</fullName>
+                <default>false</default>
+                <label>FM</label>
+            </value>
+            <value>
+                <fullName>Ops Manager</fullName>
+                <default>false</default>
+                <label>Ops Manager</label>
+            </value>
+            <value>
+                <fullName>Finance</fullName>
+                <default>false</default>
+                <label>Finance</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

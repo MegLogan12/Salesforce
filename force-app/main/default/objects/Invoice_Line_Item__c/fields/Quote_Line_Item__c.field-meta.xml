@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Quote_Line_Item__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Source quote line item this invoice line was generated from. Provides audit trail from approved quote to billed invoice.</description>
+    <label>Quote Line Item</label>
+    <referenceTo>Quote_Line_Item__c</referenceTo>
+    <relationshipLabel>Invoice Line Items</relationshipLabel>
+    <relationshipName>Inv_Lines_Quote_Line_Item</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>OpportunityStageName</fullName>
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Prospecting</fullName>
+        <default>false</default>
+        <label>Prospecting</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Community Activated</fullName>
+        <default>false</default>
+        <label>Community Activated</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Quote Requested</fullName>
+        <default>false</default>
+        <label>Quote Requested</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Consultation Scheduled</fullName>
+        <default>false</default>
+        <label>Consultation Scheduled</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Design In Progress</fullName>
+        <default>false</default>
+        <label>Design In Progress</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Proposal Presented</fullName>
+        <default>false</default>
+        <label>Proposal Presented</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Contract Sent</fullName>
+        <default>false</default>
+        <label>Contract Sent</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Financing Review</fullName>
+        <default>false</default>
+        <label>Financing Review</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Contract Signed</fullName>
+        <default>false</default>
+        <label>Contract Signed</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Deposit Paid</fullName>
+        <default>false</default>
+        <label>Deposit Paid</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Pre-Production</fullName>
+        <default>false</default>
+        <label>Pre-Production</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>In Progress</fullName>
+        <default>false</default>
+        <label>In Progress</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Pre Close</fullName>
+        <default>false</default>
+        <label>Pre Close</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Job Completed</fullName>
+        <default>false</default>
+        <label>Job Completed</label>
+        <closed>true</closed>
+        <won>true</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Closed Lost</fullName>
+        <default>false</default>
+        <label>Closed Lost</label>
+        <closed>true</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Nurturing</fullName>
+        <default>false</default>
+        <label>Nurturing</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Discovery</fullName>
+        <default>false</default>
+        <label>Discovery</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Consult Scheduled</fullName>
+        <default>false</default>
+        <label>Consult Scheduled</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Quote Review</fullName>
+        <default>false</default>
+        <label>Quote Review</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Deposit Pending</fullName>
+        <default>false</default>
+        <label>Deposit Pending</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Closed Won</fullName>
+        <default>false</default>
+        <label>Closed Won</label>
+        <closed>true</closed>
+        <won>true</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Qualifying</fullName>
+        <default>false</default>
+        <label>Qualifying</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Package Selected</fullName>
+        <default>false</default>
+        <label>Package Selected</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Quote Sent</fullName>
+        <default>false</default>
+        <label>Quote Sent</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Quote Accepted</fullName>
+        <default>false</default>
+        <label>Quote Accepted</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Discovery Consult</fullName>
+        <default>false</default>
+        <label>Discovery Consult</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Design Agreement</fullName>
+        <default>false</default>
+        <label>Design Agreement</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Design Development</fullName>
+        <default>false</default>
+        <label>Design Development</label>
+        <closed>false</closed>
+        <won>false</won>
+    </standardValue>
+</StandardValueSet>

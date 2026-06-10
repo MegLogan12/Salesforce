@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Run_Frequency__c</fullName>
+    <label>Run Frequency</label>
+    <required>false</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Daily</fullName>
+                <default>false</default>
+                <label>Daily</label>
+            </value>
+            <value>
+                <fullName>Every Other Day</fullName>
+                <default>false</default>
+                <label>Every Other Day</label>
+            </value>
+            <value>
+                <fullName>3x Per Week</fullName>
+                <default>false</default>
+                <label>3x Per Week</label>
+            </value>
+            <value>
+                <fullName>2x Per Week</fullName>
+                <default>false</default>
+                <label>2x Per Week</label>
+            </value>
+            <value>
+                <fullName>Weekly</fullName>
+                <default>false</default>
+                <label>Weekly</label>
+            </value>
+            <value>
+                <fullName>As Needed</fullName>
+                <default>false</default>
+                <label>As Needed</label>
+            </value>
+            <value>
+                <fullName>3x/day</fullName>
+                <default>false</default>
+                <label>3x/day</label>
+            </value>
+            <value>
+                <fullName>1x/day</fullName>
+                <default>false</default>
+                <label>1x/day</label>
+            </value>
+            <value>
+                <fullName>3x/week</fullName>
+                <default>false</default>
+                <label>3x/week</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

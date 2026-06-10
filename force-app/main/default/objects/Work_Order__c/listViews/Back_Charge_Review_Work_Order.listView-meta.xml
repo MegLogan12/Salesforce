@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Back_Charge_Review_Work_Order</fullName>
+    <filterScope>Queue</filterScope>
+    <label>Back_Charge_Review</label>
+    <queue>Back_Charge_Review</queue>
+    <sharedTo>
+        <allInternalUsers></allInternalUsers>
+    </sharedTo>
+</ListView>

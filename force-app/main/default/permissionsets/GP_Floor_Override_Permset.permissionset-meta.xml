@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customPermissions>
+        <enabled>true</enabled>
+        <name>GP_Floor_Override</name>
+    </customPermissions>
+    <description>Permission set granting GP Floor Override custom permission. Assigned to COO only.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>GP Floor Override</label>
+    <license>Salesforce</license>
+</PermissionSet>

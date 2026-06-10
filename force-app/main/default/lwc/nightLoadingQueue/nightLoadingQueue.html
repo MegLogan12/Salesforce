@@ -1,0 +1,102 @@
+<template>
+    <lightning-card title="Night Loading Queue" icon-name="standard:truck">
+        <div class="slds-p-around_medium">
+
+            <!-- Date + Actions -->
+            <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                <div class="slds-col slds-size_1-of-4">
+                    <lightning-input
+                        type="date"
+                        label="Load Date"
+                        value={selectedDate}
+                        onchange={handleDateChange}>
+                    </lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-4 slds-align_absolute-center">
+                    <lightning-button
+                        label="Regenerate"
+                        icon-name="utility:refresh"
+                        onclick={handleRegenerate}
+                        disabled={isRegenerating}>
+                    </lightning-button>
+                    <template if:true={isRegenerating}>
+                        <lightning-spinner size="small" alternative-text="Regenerating..."></lightning-spinner>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Truck Cards -->
+            <template if:true={isLoading}>
+                <lightning-spinner alternative-text="Loading queue..."></lightning-spinner>
+            </template>
+
+            <template if:false={isLoading}>
+                <template if:false={queue.length}>
+                    <p class="slds-text-color_weak slds-p-around_medium">No loading tickets for this date. Click Regenerate to build from tomorrow&apos;s scheduled work orders.</p>
+                </template>
+
+                <template for:each={queue} for:item="ticket">
+                    <div key={ticket.ticketId} class="slds-box slds-m-bottom_medium">
+                        <!-- Truck Header -->
+                        <div class="slds-grid slds-gutters">
+                            <div class="slds-col slds-size_1-of-3">
+                                <p class="slds-text-heading_small">
+                                    <lightning-icon icon-name="utility:truck" size="small" class="slds-m-right_x-small"></lightning-icon>
+                                    {ticket.truckNumber}
+                                </p>
+                                <p class="slds-text-color_weak">{ticket.status} — Truck {ticket.truckNumber}</p>
+                            </div>
+                            <div class="slds-col slds-size_1-of-3 slds-align_absolute-center">
+                                <lightning-progress-bar
+                                    value={ticket.progressPct}
+                                    size="medium"
+                                    variant={ticket.progressVariant}>
+                                </lightning-progress-bar>
+                                <p class="slds-text-align_center slds-text-body_small">
+                                    {ticket.loadedLines} / {ticket.totalLines} items loaded
+                                </p>
+                            </div>
+                            <div class="slds-col slds-size_1-of-3 slds-align_absolute-center">
+                                <lightning-button
+                                    label="Release Truck"
+                                    variant={ticket.releaseVariant}
+                                    disabled={ticket.releaseDisabled}
+                                    data-ticket-id={ticket.ticketId}
+                                    onclick={handleRelease}>
+                                </lightning-button>
+                            </div>
+                        </div>
+
+                        <!-- Lines -->
+                        <div class="slds-m-top_small">
+                            <template for:each={ticket.lines} for:item="line">
+                                <div key={line.lineId} class="slds-grid slds-gutters slds-border_bottom slds-p-vertical_x-small">
+                                    <div class="slds-col slds-size_1-of-12">
+                                        <lightning-input
+                                            type="checkbox"
+                                            label=""
+                                            checked={line.loaded}
+                                            data-line-id={line.lineId}
+                                            data-ticket-id={ticket.ticketId}
+                                            onchange={handleMarkLoaded}>
+                                        </lightning-input>
+                                    </div>
+                                    <div class="slds-col slds-size_5-of-12">
+                                        <p class={line.loadedClass}>{line.productName}</p>
+                                    </div>
+                                    <div class="slds-col slds-size_2-of-12">
+                                        <p>Qty: {line.quantity}</p>
+                                    </div>
+                                    <div class="slds-col slds-size_4-of-12">
+                                        <p class="slds-text-color_weak slds-text-body_small">{line.notes}</p>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>

@@ -1,0 +1,47 @@
+<template>
+    <div class="ops-panel">
+        <div class="ops-header">Ops Quick Links</div>
+
+        <template for:each={linksByCategory} for:item="group">
+            <div key={group.category} class="ops-section">
+                <div class="ops-section-label">{group.category}</div>
+                <template for:each={group.links} for:item="link">
+                    <button key={link.key} class="ops-btn" data-url={link.url} onclick={handleLinkClick}>
+                        <span class="ops-icon">{link.iconEmoji}</span>
+                        <span class="ops-text">
+                            <span class="ops-name">{link.label}</span>
+                            <span class="ops-sub">{link.subLabel}</span>
+                        </span>
+                        <span class="ops-arrow">↗</span>
+                    </button>
+                </template>
+            </div>
+        </template>
+
+        <div class="ops-section">
+            <div class="ops-section-label">Weather — {weatherLabel}</div>
+            <button class="ops-btn weather" onclick={openWeather}>
+                <span class="ops-icon">🌤</span>
+                <span class="ops-text">
+                    <span class="ops-name">Weather Today</span>
+                    <span class="ops-sub">{weatherLabel} forecast</span>
+                </span>
+                <span class="ops-arrow">↗</span>
+            </button>
+        </div>
+
+        <div class="ops-divider"></div>
+
+        <div class="ops-section">
+            <div class="ops-section-label">Map / Routing</div>
+            <button class="ops-btn maps" onclick={openMaps}>
+                <span class="ops-icon">🗺</span>
+                <span class="ops-text">
+                    <span class="ops-name">Google Maps — {mapsLabel}</span>
+                    <span class="ops-sub">Route planning &amp; traffic</span>
+                </span>
+                <span class="ops-arrow">↗</span>
+            </button>
+        </div>
+    </div>
+</template>

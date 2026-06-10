@@ -1,0 +1,73 @@
+<!--
+  lovingLeadQualifier - a perchable LOVING question form.
+  Rendered in LIGHT DOM (see .js) so Ask mcLOVIN' can find the perch attributes.
+  Bound to the standard Lead object via lightning-record-edit-form, so it saves
+  with no schema changes. Landscape-specific custom fields are marked TODO.
+-->
+<template>
+  <div class="loving-lead-qualifier">
+    <!-- perch hooks: this is all mcLOVIN needs to sit on the form -->
+    <section class="lq-card"
+             data-mclovin-perch="lean-right"
+             data-mclovin-context="lead"
+             data-mclovin-priority="10">
+
+      <div class="lq-hd">
+        <span class="lq-dot"></span>
+        <h2 class="lq-title">New Lead Qualifier</h2>
+        <span class="lq-pill">LEAD</span>
+      </div>
+
+      <lightning-record-edit-form
+          object-api-name="Lead"
+          record-id={recordId}
+          onsuccess={handleSuccess}
+          onerror={handleError}
+          onsubmit={handleSubmit}>
+
+        <div class="lq-bd">
+          <div class="lq-field"><lightning-input-field field-name="FirstName"></lightning-input-field></div>
+          <div class="lq-field"><lightning-input-field field-name="LastName"></lightning-input-field></div>
+          <div class="lq-field"><lightning-input-field field-name="Company"></lightning-input-field></div>
+          <div class="lq-field"><lightning-input-field field-name="Phone"></lightning-input-field></div>
+          <div class="lq-field"><lightning-input-field field-name="Email"></lightning-input-field></div>
+          <div class="lq-field"><lightning-input-field field-name="LeadSource"></lightning-input-field></div>
+          <div class="lq-field"><lightning-input-field field-name="Status"></lightning-input-field></div>
+          <div class="lq-field"><lightning-input-field field-name="Rating"></lightning-input-field></div>
+
+          <div class="lq-field lq-full">
+            <label class="lq-label">What are they after</label>
+            <div class="lq-checks">
+              <label class="lq-check"><input type="checkbox" data-scope="Patio">Patio</label>
+              <label class="lq-check"><input type="checkbox" data-scope="Retaining wall">Retaining wall</label>
+              <label class="lq-check"><input type="checkbox" data-scope="Pavers">Pavers / hardscape</label>
+              <label class="lq-check"><input type="checkbox" data-scope="Plants">Plant palette</label>
+              <label class="lq-check"><input type="checkbox" data-scope="Full backyard">Full backyard</label>
+            </div>
+          </div>
+          <div class="lq-field">
+            <label class="lq-label">Timeline</label>
+            <select class="lq-select" data-q="timeline">
+              <option>ASAP</option><option>1 to 3 months</option><option>3 to 6 months</option><option>Just exploring</option>
+            </select>
+          </div>
+          <div class="lq-field">
+            <label class="lq-label">Budget range</label>
+            <select class="lq-select" data-q="budget">
+              <option>Under 10k</option><option>10k to 25k</option><option>25k to 50k</option><option>50k+</option>
+            </select>
+          </div>
+
+          <div class="lq-field lq-full">
+            <lightning-input-field field-name="Description"></lightning-input-field>
+          </div>
+
+          <div class="lq-actions">
+            <lightning-button label="Save draft" onclick={handleSaveDraft}></lightning-button>
+            <lightning-button variant="brand" type="submit" label="Qualify"></lightning-button>
+          </div>
+        </div>
+      </lightning-record-edit-form>
+    </section>
+  </div>
+</template>

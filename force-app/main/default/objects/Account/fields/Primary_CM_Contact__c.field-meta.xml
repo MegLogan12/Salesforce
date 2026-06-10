@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Primary_CM_Contact__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Primary builder Construction Manager for this division. Used as default CM on new communities when no community-level CM is set.</description>
+    <label>Primary CM Contact</label>
+    <referenceTo>Contact</referenceTo>
+    <relationshipLabel>Accounts (CM Contact)</relationshipLabel>
+    <relationshipName>Accounts_CM</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Lookup</type>
+</CustomField>

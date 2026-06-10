@@ -1,0 +1,214 @@
+<template>
+    <template lwc:if={isLoading}>
+        <div class="cc-home odl-loading">
+            <lightning-spinner alternative-text="Loading Customer Care" size="medium"></lightning-spinner>
+        </div>
+    </template>
+
+    <template lwc:elseif={hasError}>
+        <div class="cc-home">
+            <div class="odl-error-state">
+                <lightning-icon icon-name="utility:error" size="large"></lightning-icon>
+                <p>{error}</p>
+                <button class="btn btn-primary" onclick={handleRefresh}>Retry</button>
+            </div>
+        </div>
+    </template>
+
+    <template lwc:else>
+        <div class="cc-home">
+
+            <!-- ── Page header ───────────────────────────────────────────── -->
+            <div class="page-header">
+                <div class="page-header-inner">
+                    <div class="page-title-block">
+                        <lightning-icon icon-name="standard:case" size="medium" class="page-icon"></lightning-icon>
+                        <div>
+                            <div class="page-title">Customer Care</div>
+                            <div class="page-subtitle">Real-time overview · open cases, work orders, and overdue tasks</div>
+                        </div>
+                    </div>
+                    <div class="page-header-actions">
+                        <button class="header-btn-primary" onclick={handleNewCase}>+ New Case</button>
+                        <button class="refresh-btn" onclick={handleRefresh} title="Refresh">
+                            <lightning-icon icon-name="utility:refresh" size="x-small"></lightning-icon>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── KPI row ───────────────────────────────────────────────── -->
+            <div class="kpi-row">
+                <div class="kpi-chip kc-blue" title="Total open cases">
+                    <span class="kpi-number">{openCases}</span>
+                    <span class="kpi-label">Open Cases</span>
+                </div>
+                <div class="kpi-chip kc-red" title="High priority or escalated open cases">
+                    <span class="kpi-number">{criticalCases}</span>
+                    <span class="kpi-label">Critical / Escalated</span>
+                </div>
+                <div class="kpi-chip kc-orange" title="Open work orders (not completed)">
+                    <span class="kpi-number">{openWorkOrders}</span>
+                    <span class="kpi-label">Open Work Orders</span>
+                </div>
+                <div class="kpi-chip kc-slate" title="Average age of open cases in days">
+                    <span class="kpi-number">{avgDays}</span>
+                    <span class="kpi-label">Avg Days Open</span>
+                </div>
+            </div>
+
+            <!-- ── Body layout ───────────────────────────────────────────── -->
+            <div class="body-layout">
+
+                <!-- Main column -->
+                <div class="body-main">
+
+                    <!-- Recent Open Cases -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background:#e6f3ea;">
+                                <lightning-icon icon-name="standard:case" size="x-small"></lightning-icon>
+                            </div>
+                            <h2 class="card-title">Recent Open Cases</h2>
+                            <button class="btn-inline" onclick={handleNewCase}>+ New Case</button>
+                        </div>
+                        <template lwc:if={hasRecentCases}>
+                            <table class="odl-table">
+                                <thead>
+                                    <tr>
+                                        <th>Case #</th>
+                                        <th>Subject</th>
+                                        <th>Account</th>
+                                        <th>Status</th>
+                                        <th>Priority</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={recentCases} for:item="row">
+                                        <tr key={row.id}>
+                                            <td>
+                                                <a class="rec-link" href={row.url} target="_blank">{row.caseNumber}</a>
+                                            </td>
+                                            <td>{row.subject}</td>
+                                            <td class="muted">{row.accountName}</td>
+                                            <td>
+                                                <span class="status-chip chip-alert">{row.status}</span>
+                                            </td>
+                                            <td>
+                                                <span class={row.priorityClass}>{row.priority}</span>
+                                            </td>
+                                            <td class="muted">{row.createdDate}</td>
+                                            <td>
+                                                <button class="btn-inline" data-id={row.id} onclick={handleViewCase}>View</button>
+                                                <button class="btn-inline-rose" data-id={row.id} onclick={handleEscalateCase} style="margin-left:4px">Escalate</button>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </template>
+                        <template lwc:else>
+                            <div class="empty-state">
+                                <lightning-icon icon-name="utility:check" size="medium"></lightning-icon>
+                                <p>No open cases — great work!</p>
+                                <button class="btn btn-primary" onclick={handleNewCase}>Create New Case</button>
+                            </div>
+                        </template>
+                        <div class="card-footer">
+                            <button class="footer-link" onclick={handleOpenCases}>View All Open Cases</button>
+                        </div>
+                    </div>
+
+                    <!-- Overdue Tasks -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon" style="background:#fdeee6;">
+                                <lightning-icon icon-name="utility:task" size="x-small"></lightning-icon>
+                            </div>
+                            <h2 class="card-title">Overdue Tasks</h2>
+                            <button class="btn-inline" onclick={handleNewTask}>+ New Task</button>
+                        </div>
+                        <template lwc:if={hasOverdueTasks}>
+                            <table class="odl-table">
+                                <thead>
+                                    <tr>
+                                        <th>Subject</th>
+                                        <th>Related To</th>
+                                        <th>Owner</th>
+                                        <th>Due Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={overdueTasks} for:item="row">
+                                        <tr key={row.id}>
+                                            <td>
+                                                <a class="rec-link" href={row.url} target="_blank">{row.subject}</a>
+                                            </td>
+                                            <td class="muted">{row.relatedTo}</td>
+                                            <td class="muted">{row.ownerName}</td>
+                                            <td>
+                                                <span class="status-chip chip-alert">{row.activityDate}</span>
+                                            </td>
+                                            <td class="muted">{row.status}</td>
+                                            <td>
+                                                <button class="btn-inline" data-id={row.id} onclick={handleCompleteTask}>Complete</button>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </template>
+                        <template lwc:else>
+                            <div class="empty-state">
+                                <lightning-icon icon-name="utility:check" size="medium"></lightning-icon>
+                                <p>No overdue tasks.</p>
+                                <button class="btn btn-primary" onclick={handleNewTask}>Create Task</button>
+                            </div>
+                        </template>
+                    </div>
+
+                </div>
+
+                <!-- Quick-actions rail -->
+                <div class="body-rail">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Quick Actions</h2>
+                        </div>
+                        <div class="qa-list">
+                            <div class="qa-item" onclick={handleNewCase}>
+                                <lightning-icon icon-name="utility:add" size="x-small"></lightning-icon>
+                                <span>New Case</span>
+                            </div>
+                            <div class="qa-item" onclick={handleNewTask}>
+                                <lightning-icon icon-name="utility:add" size="x-small"></lightning-icon>
+                                <span>New Task</span>
+                            </div>
+                            <div class="qa-item" onclick={handleOpenCases}>
+                                <lightning-icon icon-name="utility:cases" size="x-small"></lightning-icon>
+                                <span>All Open Cases</span>
+                            </div>
+                            <div class="qa-item" onclick={handleOpenWorkOrders}>
+                                <lightning-icon icon-name="utility:service_report" size="x-small"></lightning-icon>
+                                <span>Open Work Orders</span>
+                            </div>
+                            <div class="qa-item" onclick={handleOpenTasks}>
+                                <lightning-icon icon-name="utility:task" size="x-small"></lightning-icon>
+                                <span>Open Tasks</span>
+                            </div>
+                            <div class="qa-item" onclick={handleOpenReports}>
+                                <lightning-icon icon-name="utility:report" size="x-small"></lightning-icon>
+                                <span>Reports</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </template>
+</template>

@@ -1,0 +1,31 @@
+<template>
+    <template if:true={loaded}>
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">L</div>
+                <h2 class="card-title">Lot Tracker</h2>
+            </div>
+            <div class="card-body">
+                <div class="card-toolbar">
+                    <button class="btn btn-primary" onclick={handleTrackMyLot}>Track My Lot</button>
+                </div>
+                <template if:true={hasLots}>
+                    <lightning-datatable
+                        key-field="id"
+                        data={lots}
+                        columns={columns}
+                        hide-checkbox-column>
+                    </lightning-datatable>
+                </template>
+                <template if:false={hasLots}>
+                    <div class="empty-state">No lots linked to this community.</div>
+                </template>
+            </div>
+        </div>
+    </template>
+    <template if:false={loaded}>
+        <div class="loading-state">
+            <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+        </div>
+    </template>
+</template>

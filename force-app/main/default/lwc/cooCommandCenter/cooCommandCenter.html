@@ -1,0 +1,313 @@
+<template>
+    <div class="coo-wrap">
+
+        <!-- Record Header -->
+        <div class="rechead">
+            <div class="recicon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="3" width="7" height="7"/>
+                    <rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+            </div>
+            <div class="rectitle">
+                <h1>COO Command Center</h1>
+                <div class="rec-sub">Pipeline, KPIs, exceptions, and the open decisions across every division and system</div>
+                <template if:true={kpis}>
+                    <div class="rec-chips">
+                        <span class="chip c-blue">{kpis.activeWOs} active WOs</span>
+                        <span class="chip c-amber">{gateCount} gates open</span>
+                        <span class="chip c-green">{divisionCount} divisions</span>
+                    </div>
+                </template>
+            </div>
+            <div class="rec-sp"></div>
+            <div class="rec-acts">
+                <button class="btn" onclick={handleOpenGates}>Open decisions</button>
+                <button class="btn btn-primary" onclick={handleOpenExceptions}>Exceptions</button>
+            </div>
+        </div>
+
+        <!-- Action Bar -->
+        <div class="actionbar">
+            <button class="btn" onclick={handleNavWorkOrders}>Work Orders</button>
+            <button class="btn" onclick={handleNavCapacity}>Capacity</button>
+            <button class="btn" onclick={handleNavBilling}>Billing</button>
+        </div>
+
+        <!-- KPI Strip (8 cells) -->
+        <template if:true={kpis}>
+            <div class="hi">
+                <div class="hi-cell">
+                    <div class="hi-lab">Active WOs</div>
+                    <div class="hi-val">{kpis.activeWOs}</div>
+                </div>
+                <div class="hi-cell">
+                    <div class="hi-lab">Scheduled Today</div>
+                    <div class="hi-val">{kpis.scheduledToday}</div>
+                </div>
+                <div class="hi-cell">
+                    <div class="hi-lab">Pending Proposals</div>
+                    <div class="hi-val">{kpis.pendingProposals}</div>
+                </div>
+                <div class="hi-cell">
+                    <div class="hi-lab">Pending Closeout</div>
+                    <div class="hi-val">{kpis.pendingCloseout}</div>
+                </div>
+                <div class="hi-cell">
+                    <div class="hi-lab">Paid This Month</div>
+                    <div class="hi-val">{kpis.paidThisMonth}</div>
+                </div>
+                <div class="hi-cell">
+                    <div class="hi-lab">Open Escalations</div>
+                    <div class="hi-val">{kpis.openEscalations}</div>
+                </div>
+                <div class="hi-cell">
+                    <div class="hi-lab">Open Hire Requests</div>
+                    <div class="hi-val">{kpis.openHireRequests}</div>
+                </div>
+                <div class="hi-cell">
+                    <div class="hi-lab">Site Readiness Overdue</div>
+                    <div class="hi-val">{kpis.siteReadinessOverdue}</div>
+                </div>
+            </div>
+        </template>
+
+        <!-- Next Action Bar -->
+        <div class="nextbar">
+            <div class="nextbar-ico">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                </svg>
+            </div>
+            <div class="nextbar-body">
+                <div class="nextbar-t1">{gateCount} open decision{gateCountPlural} holding work back</div>
+                <div class="nextbar-t2">Each gate has an owner and a required action. See the Gates tab to escalate or track progress.</div>
+            </div>
+            <div class="nextbar-sp"></div>
+            <button class="btn btn-sm" onclick={handleOpenGates}>See gates</button>
+        </div>
+
+        <!-- Subtabs -->
+        <div class="subtabs">
+            <div class={overviewTabClass}    data-tab="overview"    onclick={handleTabClick}>Overview</div>
+            <div class={byDivisionTabClass}  data-tab="division"    onclick={handleTabClick}>By Division</div>
+            <div class={exceptionsTabClass}  data-tab="exceptions"  onclick={handleTabClick}>Exceptions</div>
+            <div class={gatesTabClass}       data-tab="gates"       onclick={handleTabClick}>Gates</div>
+        </div>
+
+        <!-- ── OVERVIEW ── -->
+        <template if:true={isOverviewTab}>
+
+            <!-- 4 Stat Cards -->
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <div class="stat-lab">Active Work Orders</div>
+                    <div class="stat-val">{activeWosStat}</div>
+                    <div class="stat-note">across all divisions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-lab">Pending Revenue</div>
+                    <div class="stat-val">{pendingRevenueStat}</div>
+                    <div class="stat-note">awaiting closeout &amp; invoicing</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-lab">Avg On-time Install</div>
+                    <div class="stat-val">{avgOnTimePct}</div>
+                    <div class="stat-note">division average</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-lab">Avg GP %</div>
+                    <div class="stat-val">{avgGpPct}</div>
+                    <div class="stat-note">price book vs landed cost</div>
+                </div>
+            </div>
+
+            <div class="overview-grid">
+
+                <!-- WO Pipeline -->
+                <div class="cardbox">
+                    <div class="cardbox-header">WO Pipeline by Status</div>
+                    <template if:true={pipeline}>
+                        <table class="qtbl">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th class="r">Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={pipeline} for:item="row">
+                                    <tr key={row.status}>
+                                        <td>{row.status}</td>
+                                        <td class="r">{row.count}</td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </template>
+                    <template if:false={pipeline}>
+                        <div class="empty-note">Loading pipeline&hellip;</div>
+                    </template>
+                </div>
+
+                <!-- GP Summary -->
+                <template if:true={gpSummary}>
+                    <div class="gp-card">
+                        <div class="gp-card-header">GP Summary</div>
+                        <div class="gp-grid">
+                            <div class="gp-cell">
+                                <div class="gp-label green">Green</div>
+                                <div class="gp-num">{gpSummary.greenCount}</div>
+                            </div>
+                            <div class="gp-cell">
+                                <div class="gp-label yellow">Yellow</div>
+                                <div class="gp-num">{gpSummary.yellowCount}</div>
+                            </div>
+                            <div class="gp-cell">
+                                <div class="gp-label red">Red</div>
+                                <div class="gp-num">{gpSummary.redCount}</div>
+                            </div>
+                            <div class="gp-cell">
+                                <div class="gp-label blocked">Blocked</div>
+                                <div class="gp-num">{gpSummary.blockedCount}</div>
+                            </div>
+                        </div>
+                        <div class="gp-footer">Pending Revenue: {gpSummary.totalRevenuePendingFormatted}</div>
+                    </div>
+                </template>
+
+            </div>
+        </template>
+
+        <!-- ── BY DIVISION ── -->
+        <template if:true={isByDivisionTab}>
+            <div class="cardbox">
+                <div class="cardbox-header">
+                    By Operating Division
+                    <span class="count">nightly KPI batch</span>
+                </div>
+                <template if:true={showDivisionBanner}>
+                    <div class="flagnote inner-note">
+                        Values populate after DivisionKpiRecalcBatch runs nightly.
+                    </div>
+                </template>
+                <template if:true={divisions}>
+                    <table class="div-tbl">
+                        <thead>
+                            <tr>
+                                <th>Division</th>
+                                <th class="r">Rev T12M</th>
+                                <th class="r">GP%</th>
+                                <th class="r">Open WOs</th>
+                                <th class="r">On-Time%</th>
+                                <th class="r">Communities</th>
+                                <th class="r">Lots</th>
+                                <th class="r">Open POs</th>
+                                <th class="r">Warranties</th>
+                                <th class="r">NFIs</th>
+                                <th>Health</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={divisions} for:item="div">
+                                <tr key={div.accountId}>
+                                    <td>{div.divisionName}</td>
+                                    <td class="r">{div.revenueT12MFormatted}</td>
+                                    <td class="r">{div.gpPctFormatted}</td>
+                                    <td class="r">{div.openWoCount}</td>
+                                    <td class="r">{div.onTimePctFormatted}</td>
+                                    <td class="r">{div.activeCommunities}</td>
+                                    <td class="r">{div.activeLots}</td>
+                                    <td class="r">{div.openPoCount}</td>
+                                    <td class="r">{div.openWarrantyCount}</td>
+                                    <td class="r">{div.openNfiCount}</td>
+                                    <td>
+                                        <span class={div.healthClass}>{div.healthLabel}</span>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+            </div>
+        </template>
+
+        <!-- ── EXCEPTIONS ── -->
+        <template if:true={isExceptionsTab}>
+            <div class="cardbox">
+                <div class="cardbox-header">
+                    Exceptions
+                    <span class="count">items needing attention</span>
+                </div>
+                <template if:true={kpis}>
+                    <div class="scline">
+                        <div class="exc-dot"></div>
+                        <div class="exc-text">
+                            <strong>{kpis.pendingCloseout}</strong> work orders pending closeout approval
+                        </div>
+                        <span class="chip c-amber">action</span>
+                    </div>
+                    <div class="scline">
+                        <div class="exc-dot"></div>
+                        <div class="exc-text">
+                            <strong>{kpis.openEscalations}</strong> open escalations
+                        </div>
+                        <span class="chip c-amber">open</span>
+                    </div>
+                    <div class="scline">
+                        <div class="exc-dot"></div>
+                        <div class="exc-text">
+                            <strong>{kpis.siteReadinessOverdue}</strong> site readiness tasks overdue
+                        </div>
+                        <span class="chip c-amber">overdue</span>
+                    </div>
+                    <div class="scline">
+                        <div class="exc-dot"></div>
+                        <div class="exc-text">
+                            Paid invoices cannot export until G5 (accounting system) is resolved
+                        </div>
+                        <span class="chip c-amber">blocked</span>
+                    </div>
+                    <div class="scline">
+                        <div class="exc-dot"></div>
+                        <div class="exc-text">
+                            <strong>{kpis.openHireRequests}</strong> open hire requests pending review
+                        </div>
+                        <span class="chip c-slate">review</span>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <!-- ── GATES ── -->
+        <template if:true={isGatesTab}>
+            <div class="cardbox">
+                <div class="cardbox-header">
+                    Open Decision Gates
+                    <span class="count">owner &amp; action for each</span>
+                </div>
+                <template for:each={gates} for:item="gate">
+                    <div class="scline" key={gate.id}>
+                        <div class="scline-body">
+                            <div class="scline-title">
+                                {gate.id}
+                                &nbsp;&middot;&nbsp;
+                                {gate.label}
+                            </div>
+                            <div class="scline-sub">Owner: {gate.owner} &middot; Action: {gate.action}</div>
+                        </div>
+                        <button
+                            class="btn-escalate"
+                            data-gate-id={gate.id}
+                            onclick={handleEscalate}>
+                            Escalate
+                        </button>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+    </div>
+</template>

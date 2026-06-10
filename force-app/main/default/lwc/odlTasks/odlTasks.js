@@ -1,0 +1,141 @@
+import { LightningElement, wire, track } from 'lwc';
+import { NavigationMixin } from 'lightning/navigation';
+import { updateRecord } from 'lightning/uiRecordApi';
+import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { loadStyle } from 'lightning/platformResourceLoader';
+import homeownerStyles from '@salesforce/resourceUrl/homeownerStyles';
+import getTaskDashboard from '@salesforce/apex/ODL_TaskController.getTaskDashboard';
+
+const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+export default class OdlTasks extends NavigationMixin(LightningElement) {
+    @track allTasks = [];
+    @track overdueTasks = [];
+    @track todayTasks = [];
+    @track upcomingTasks = [];
+    @track activeView = 'today';
+    @track searchTerm = '';
+    overdueCount = 0;
+    todayCount = 0;
+    upcomingCount = 0;
+    voicemailCount = 0;
+    completedTodayCount = 0;
+    error;
+
+    connectedCallback() {
+        loadStyle(this, homeownerStyles).catch(() => {});
+    }
+
+    @wire(getTaskDashboard)
+    wiredData({ error, data }) {
+        if (data) {
+            this.error = undefined;
+            const mapTask = t => ({
+                ...t,
+                whatName: t.What ? t.What.Name : '—',
+                dueDateFormatted: t.ActivityDate ? new Date(t.ActivityDate + 'T12:00:00').toLocaleDateString('en-US', {month:'short', day:'numeric'}) : '—',
+                statusChipClass: t.Status === 'Completed' ? 'chip cg' : 'chip ca'
+            });
+            this.overdueTasks = (data.overdueTasks || []).map(mapTask);
+            this.todayTasks = (data.todayTasks || []).map(mapTask);
+            this.upcomingTasks = (data.upcomingTasks || []).map(mapTask);
+            this.overdueCount = data.overdueCount || 0;
+            this.todayCount = data.todayCount || 0;
+            this.upcomingCount = this.upcomingTasks.length;
+            const allMapped = [...this.overdueTasks, ...this.todayTasks, ...this.upcomingTasks];
+            this.voicemailCount = allMapped.filter(t => t.Subject && t.Subject.toLowerCase().includes('voicemail')).length;
+            this.completedTodayCount = (data.completedTodayTasks || []).length;
+        } else if (error) {
+            this.error = (error.body && error.body.message) || 'Unable to load task data.';
+            this.overdueTasks = [];
+            this.todayTasks = [];
+            this.upcomingTasks = [];
+        }
+    }
+
+    get visibleTasks() {
+        let base;
+        if (this.activeView === 'overdue') {
+            base = this.overdueTasks;
+        } else if (this.activeView === 'upcoming') {
+            base = this.upcomingTasks;
+        } else if (this.activeView === 'voicemail') {
+            base = [...this.overdueTasks, ...this.todayTasks, ...this.upcomingTasks]
+                .filter(t => t.Subject && t.Subject.toLowerCase().includes('voicemail'));
+        } else {
+            base = this.todayTasks;
+        }
+        if (this.searchTerm) {
+            const t = this.searchTerm.toLowerCase();
+            base = base.filter(task => (task.Subject || '').toLowerCase().includes(t));
+        }
+        return base;
+    }
+
+    get allChipClass() { return this.activeView === 'today' ? 'filter-chip on' : 'filter-chip'; }
+    get voicemailChipClass() { return this.activeView === 'voicemail' ? 'filter-chip on' : 'filter-chip'; }
+    get overdueChipClass() { return this.activeView === 'overdue' ? 'filter-chip on' : 'filter-chip'; }
+    get upcomingChipClass() { return this.activeView === 'upcoming' ? 'filter-chip on' : 'filter-chip'; }
+
+    showAll() { this.activeView = 'today'; }
+    showVoicemail() { this.activeView = 'voicemail'; }
+    showOverdue() { this.activeView = 'overdue'; }
+    showUpcoming() { this.activeView = 'upcoming'; }
+    handleSearch(e) { this.searchTerm = e.target.value; }
+
+    get calendarDays() {
+        const today = new Date();
+        const startOfWeek = new Date(today);
+        startOfWeek.setDate(today.getDate() - today.getDay());
+        const all = [...this.overdueTasks, ...this.todayTasks, ...this.upcomingTasks];
+        return Array.from({ length: 7 }, (_, i) => {
+            const d = new Date(startOfWeek);
+            d.setDate(startOfWeek.getDate() + i);
+            const dateStr = d.toISOString().split('T')[0];
+            const dayTasks = all.filter(t => t.ActivityDate === dateStr);
+            return {
+                label: d.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' }),
+                dayName: DAY_NAMES[d.getDay()],
+                count: dayTasks.length,
+                events: dayTasks.slice(0, 3).map(t => ({ label: t.Subject, cssClass: 'event' }))
+            };
+        });
+    }
+
+    get hasError() { return !!this.error; }
+    get noTasks() { return !this.error && this.visibleTasks.length === 0; }
+
+    async handleCompleteTask(event) {
+        const taskId = event?.currentTarget?.dataset?.id;
+        if (!taskId) return;
+        try {
+            await updateRecord({ fields: { Id: taskId, Status: 'Completed' } });
+            this.dispatchEvent(new ShowToastEvent({ title: 'Done', message: 'Task marked complete.', variant: 'success' }));
+        } catch (err) {
+            this.dispatchEvent(new ShowToastEvent({ title: 'Error', message: err?.body?.message ?? 'Could not complete task.', variant: 'error' }));
+        }
+    }
+
+    handleDraftEmail() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.SendEmail' },
+            state: { recordId: '' }
+        });
+    }
+
+    handleNewTask() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__quickAction',
+            attributes: { apiName: 'Global.NewTask' },
+            state: { recordId: '' }
+        });
+    }
+
+    handleSummarizeActivity() {
+        this[NavigationMixin.Navigate]({
+            type: 'standard__objectPage',
+            attributes: { objectApiName: 'Task', actionName: 'list' }
+        });
+    }
+}

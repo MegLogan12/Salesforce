@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Is_Concept__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>True when the rendering was generated without the customer&apos;s own backyard photo (a concept, not their actual yard).</description>
+    <label>Is Concept</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

@@ -1,0 +1,104 @@
+.ops-panel {
+    padding: 8px 10px 12px;
+    font-family: var(--lwc-fontFamily, 'Salesforce Sans', sans-serif);
+    min-width: 220px;
+    background: #f5f2ec;
+}
+
+.ops-header {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #706e6b;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e6e2d9;
+    background: linear-gradient(135deg, #9b7ec8 0%, #6840a0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.ops-section {
+    margin-bottom: 8px;
+}
+
+.ops-section-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #9c8e80;
+    margin-bottom: 4px;
+    padding-left: 2px;
+}
+
+.ops-btn {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 7px 10px;
+    border-radius: 6px;
+    border: 1px solid #e6e2d9;
+    background: #fff;
+    cursor: pointer;
+    text-align: left;
+    gap: 10px;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.ops-btn:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    border-color: #e6e2d9;
+    background: #fbfaf6;
+}
+
+.ops-btn:focus {
+    outline: 2px solid #2c7a4b;
+    outline-offset: 1px;
+}
+
+.ops-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.ops-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.ops-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #1f2421;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ops-sub {
+    font-size: 10px;
+    color: #9c8e80;
+    margin-top: 1px;
+}
+
+.ops-arrow {
+    font-size: 11px;
+    color: #9c8e80;
+    flex-shrink: 0;
+}
+
+.ops-btn.wex { border-left: 3px solid #e8936a; }
+.ops-btn.weather { border-left: 3px solid #9b7ec8; }
+.ops-btn.rippling { border-left: 3px solid #9b7ec8; }
+.ops-btn.maps { border-left: 3px solid #2c7a4b; }
+
+.ops-divider {
+    height: 1px;
+    background: #e6e2d9;
+    margin: 8px 0;
+}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Builder_Parent_Is_Rollup_Only</fullName>
+    <active>true</active>
+    <description>Builder Parent is roll-up only. POs, communities, and invoices must use the Builder Division/Market child account.</description>
+    <errorConditionFormula>AND(
+    NOT($Profile.Name = &quot;System Administrator&quot;),
+    RecordType.DeveloperName = &quot;Builder_Parent&quot;,
+    OR(
+        NOT(ISBLANK(BillingStreet)),
+        NOT(ISBLANK(Phone))
+    ),
+    ISNEW()
+)</errorConditionFormula>
+    <errorDisplayField>RecordTypeId</errorDisplayField>
+    <errorMessage>Builder Parent accounts are roll-up only. Use a Builder Division account for POs, invoicing, and community operations.</errorMessage>
+</ValidationRule>

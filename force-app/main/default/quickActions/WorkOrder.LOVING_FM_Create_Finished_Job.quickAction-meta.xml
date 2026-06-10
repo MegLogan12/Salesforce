@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>FM creates a Finished Job child work order when a Production Install cannot be completed in the scheduled window. Notifies the scheduling team to schedule the remaining scope.</description>
+    <label>Create Finished Job</label>
+    <lightningWebComponent>lovingFmCreateFinishedJobAction</lightningWebComponent>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <type>LightningWebComponent</type>
+</QuickAction>

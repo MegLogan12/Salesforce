@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Campaign_Required_After_Submission</fullName>
+    <active>true</active>
+    <description>Requires campaign attribution once a voucher enters the active homeowner funnel.</description>
+    <errorConditionFormula>AND(
+            OR(
+                ISPICKVAL(Status__c, &apos;Submitted&apos;),
+                ISPICKVAL(Status__c, &apos;Validated&apos;),
+                ISPICKVAL(Status__c, &apos;Reserved&apos;),
+                ISPICKVAL(Status__c, &apos;Applied to Quote&apos;),
+                ISPICKVAL(Status__c, &apos;Contract Signed&apos;),
+                ISPICKVAL(Status__c, &apos;Deposit Paid&apos;),
+                ISPICKVAL(Status__c, &apos;Builder Invoice Pending&apos;),
+                ISPICKVAL(Status__c, &apos;Builder Invoiced&apos;),
+                ISPICKVAL(Status__c, &apos;Paid by Builder&apos;),
+                ISPICKVAL(Status__c, &apos;Redeemed&apos;)
+            ),
+            ISBLANK(Campaign__c)
+        )</errorConditionFormula>
+    <errorMessage>Campaign is required once a voucher enters the submitted funnel.</errorMessage>
+</ValidationRule>

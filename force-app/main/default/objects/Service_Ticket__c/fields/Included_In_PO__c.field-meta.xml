@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Included_In_PO__c</fullName>
+    <defaultValue>true</defaultValue>
+    <description>True if this Service Ticket&apos;s cost/revenue is covered by the Builder PO and should roll into the standard invoice. False if it requires a separate EPO or is non-billable. Drives invoice line item generation.</description>
+    <label>Included in PO</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

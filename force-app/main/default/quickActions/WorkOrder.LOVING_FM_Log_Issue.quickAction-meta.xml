@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QuickAction xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Guided issue router. FM selects from 14 issue types; flow routes to the correct record (Schedule Issue, Warranty Record, Finished Job, Quote Request, or Case) with type-specific data capture.</description>
+    <label>Log Issue</label>
+    <lightningWebComponent>lovingFmLogIssueAction</lightningWebComponent>
+    <optionsCreateFeedItem>false</optionsCreateFeedItem>
+    <type>LightningWebComponent</type>
+</QuickAction>

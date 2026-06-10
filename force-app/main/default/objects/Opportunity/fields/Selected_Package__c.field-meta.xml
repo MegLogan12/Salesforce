@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Selected_Package__c</fullName>
+    <label>Selected Package</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Retreat</fullName>
+                <default>false</default>
+                <label>Retreat</label>
+            </value>
+            <value>
+                <fullName>Entertainer</fullName>
+                <default>false</default>
+                <label>Entertainer</label>
+            </value>
+            <value>
+                <fullName>Signature</fullName>
+                <default>false</default>
+                <label>Signature</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Weather_Requires_Market</fullName>
+    <active>true</active>
+    <description>Weather issues must specify a Market (ServiceTerritory) so alerts can be routed correctly.</description>
+    <errorConditionFormula>AND(ISPICKVAL(Issue_Type__c, &quot;Weather&quot;), ISBLANK(Market__c))</errorConditionFormula>
+    <errorMessage>Weather issues require a Market. Please select the affected Market before saving.</errorMessage>
+</ValidationRule>

@@ -1,32 +1,78 @@
 global without sharing class LOVING_TakeoffEscalationScheduler implements Schedulable {
+
+    @TestVisible private static List<WorkOrder> mockWorkOrders;
+    @TestVisible private static Set<Id> mockWorkOrdersWithTakeoffTasks;
+    @TestVisible private static List<Task> lastCreatedTasks;
+
+    @InvocableMethod(label='Run Takeoff Escalation' description='Escalates overdue takeoff tasks to FM managers')
+    public static void runFromFlow(List<String> params) {
+        escalate();
+    }
+
     global void execute(SchedulableContext ctx) {
-        DateTime cutoff = System.now().addHours(-48);
-        List<Account> lots = [
-            SELECT Id, Name, FM__c, FM__r.ManagerId, Target_Start_Date__c, Bucket_Changed_Date__c
-            FROM Account
-            WHERE RecordType.DeveloperName = 'Lot'
-            AND Pipeline_Bucket__c IN ('30 Days', 'Ready to Schedule')
-            AND Takeoff_Task_Created__c = true
+        escalate();
+    }
+
+    private static void escalate() {
+        List<WorkOrder> wos = mockWorkOrders != null ? mockWorkOrders : [
+            SELECT Id, WorkOrderNumber, Field_Manager__c, Field_Manager__r.ManagerId,
+                   Requested_Install_Date__c
+            FROM WorkOrder
+            WHERE Pipeline_Bucket__c IN ('30 Days', 'Ready to Schedule')
             AND Takeoff_Complete__c = false
-            AND Bucket_Changed_Date__c < :cutoff
+            AND Status NOT IN ('Closed', 'Canceled', 'Invoiced', 'Paid',
+                                  'Ready for Invoice', 'Field Complete')
         ];
-        if (lots.isEmpty()) return;
-        List<Task>    tasks  = new List<Task>();
-        List<Account> toFlag = new List<Account>();
-        for (Account lot : lots) {
-            Id ownerId = lot.FM__r.ManagerId != null ? lot.FM__r.ManagerId : lot.FM__c;
-            Task t = new Task();
-            t.Subject      = 'OVERDUE TAKEOFF — ' + lot.Name;
-            t.OwnerId      = ownerId;
-            t.WhatId       = lot.Id;
-            t.Priority     = 'High';
-            t.ActivityDate = Date.today();
-            t.Type         = 'Escalation';
-            t.Description  = 'Site takeoff not completed within 48 hours. Contact FM immediately.';
-            tasks.add(t);
-            toFlag.add(new Account(Id = lot.Id, Takeoff_Overdue__c = true));
+        if (wos.isEmpty()) return;
+
+        Set<Id> workOrderIds = new Map<Id, WorkOrder>(wos).keySet();
+        Set<Id> workOrdersWithTakeoffTasks = new Set<Id>();
+        if (mockWorkOrders != null) {
+            workOrdersWithTakeoffTasks = mockWorkOrdersWithTakeoffTasks != null
+                ? mockWorkOrdersWithTakeoffTasks
+                : new Set<Id>();
+        } else {
+            for (Task task : [
+                SELECT WhatId
+                FROM Task
+                WHERE WhatId IN :workOrderIds
+                AND Type = 'Takeoff'
+                AND Subject LIKE 'Site Takeoff Required%'
+            ]) {
+                workOrdersWithTakeoffTasks.add(task.WhatId);
+            }
         }
-        if (!tasks.isEmpty())  insert tasks;
-        if (!toFlag.isEmpty()) update toFlag;
+
+        List<Task> tasks = new List<Task>();
+        for (WorkOrder wo : wos) {
+            if (!workOrdersWithTakeoffTasks.contains(wo.Id)) continue;
+            Id ownerId = (wo.Field_Manager__r != null && wo.Field_Manager__r.ManagerId != null)
+                         ? wo.Field_Manager__r.ManagerId
+                         : wo.Field_Manager__c;
+            if (ownerId == null) continue;
+            tasks.add(buildEscalationTask(wo, ownerId));
+        }
+        if (mockWorkOrders != null) {
+            lastCreatedTasks = tasks;
+            return;
+        }
+
+        if (!tasks.isEmpty()) insert tasks;
+    }
+
+    @TestVisible private static Task buildEscalationTask(WorkOrder wo, Id ownerId) {
+        String workOrderName = String.isNotBlank(wo.WorkOrderNumber) ? wo.WorkOrderNumber : String.valueOf(wo.Id);
+        Task t       = new Task();
+        t.Subject      = 'OVERDUE TAKEOFF — ' + workOrderName;
+        t.OwnerId      = ownerId;
+        t.WhatId       = wo.Id;
+        t.Priority     = 'High';
+        t.ActivityDate = Date.today();
+        t.Type         = 'Escalation';
+        t.Description  = 'Site takeoff not completed. Contact FM immediately. '
+                       + 'Target install date: '
+                       + (wo.Requested_Install_Date__c != null
+                          ? wo.Requested_Install_Date__c.format() : 'TBD');
+        return t;
     }
 }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Quantity_Cannot_Be_Zero</fullName>
+    <active>true</active>
+    <description>Quantity must be non-zero to record an adjustment.</description>
+    <errorConditionFormula>Quantity__c = 0</errorConditionFormula>
+    <errorDisplayField>Quantity__c</errorDisplayField>
+    <errorMessage>Quantity cannot be zero. Enter the actual adjustment quantity.</errorMessage>
+</ValidationRule>

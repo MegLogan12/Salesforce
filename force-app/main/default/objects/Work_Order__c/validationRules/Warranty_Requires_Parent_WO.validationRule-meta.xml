@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Warranty_Requires_Parent_WO</fullName>
+    <active>true</active>
+    <description>Warranty WOs must link to original install</description>
+    <errorConditionFormula>AND(
+    NOT($Profile.Name = &quot;System Administrator&quot;),
+    (AND(
+        Is_Warranty__c,
+        ISBLANK(Parent_Work_Order__c)
+    ))
+)</errorConditionFormula>
+    <errorDisplayField>Parent_Work_Order__c</errorDisplayField>
+    <errorMessage>Warranty must link to original</errorMessage>
+</ValidationRule>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LOVING_Work_Order_Highlights</fullName>
+    <fields>WorkOrderNumber</fields>
+    <fields>Status__c</fields>
+    <fields>Work_Order_Type__c</fields>
+    <fields>Community__c</fields>
+    <fields>Scheduled_Date__c</fields>
+    <fields>QI_Status__c</fields>
+    <fields>Billing_Status__c</fields>
+    <fields>Site_Readiness_Status__c</fields>
+    <fields>Foreman__c</fields>
+    <fields>NFI_Count__c</fields>
+    <label>LOVING Work Order Highlights</label>
+</CompactLayout>

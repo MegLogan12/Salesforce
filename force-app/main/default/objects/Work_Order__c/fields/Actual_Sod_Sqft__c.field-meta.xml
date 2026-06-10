@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Actual_Sod_Sqft__c</fullName>
+    <description>Actual sod square footage installed at closeout. May differ from Sod_Sqft__c due to site conditions or scope changes.</description>
+    <externalId>false</externalId>
+    <label>Actual Sod Sq Ft</label>
+    <precision>10</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

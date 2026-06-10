@@ -1,0 +1,19 @@
+<template>
+    <section class="toolbar">
+        <strong>Pipeline:</strong>
+        <template for:each={filters} for:item="filter">
+            <button key={filter.value} class={filter.className} data-value={filter.value} onclick={setPipeline}>{filter.label}</button>
+        </template>
+        <select value={builderFilter} onchange={handleBuilderFilter}>
+            <template for:each={builderOptions} for:item="option">
+                <option key={option.value} value={option.value}>{option.label}</option>
+            </template>
+        </select>
+        <select value={fmFilter} onchange={handleFmFilter}>
+            <template for:each={fmOptions} for:item="option">
+                <option key={option.value} value={option.value}>{option.label}</option>
+            </template>
+        </select>
+        <input type="search" placeholder="Search lots, PO, address..." value={searchTerm} oninput={handleSearch} />
+    </section>
+</template>

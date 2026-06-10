@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Loving_CSM__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <label>LOVING Customer Success</label>
+    <referenceTo>User</referenceTo>
+    <relationshipLabel>LOVING Customer Success</relationshipLabel>
+    <relationshipName>Loving_CSM</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Lookup</type>
+</CustomField>

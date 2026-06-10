@@ -1,0 +1,242 @@
+:host {
+    display: block;
+    height: 100%;
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
+}
+
+.dispatch-board {
+    display: flex;
+    flex-direction: column;
+    background: #f5f2ec;
+    min-height: 100%;
+    font-family: var(--lwc-fontFamily, 'Salesforce Sans', sans-serif);
+}
+
+/* ── Header ── */
+.dispatch-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #9b7ec8 0%, #6840a0 100%);
+    color: #fff;
+    padding: 14px 20px;
+    flex-shrink: 0;
+}
+
+.dh-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dh-icon { --lwc-colorTextIconDefault: #ede8f6; }
+
+.dh-title {
+    font-size: 17px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #ffffff;
+}
+
+.dh-territory {
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    background: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.9);
+    padding: 3px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.dh-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.dh-stat {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    padding: 4px 14px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.dh-date {
+    font-size: 11px;
+    color: rgba(255,255,255,0.8);
+}
+
+.dh-refresh { --lwc-colorTextIconDefault: rgba(255,255,255,0.8); }
+
+/* CTA buttons */
+.dh-cta-row { display: flex; gap: 8px; align-items: center; }
+.btn { font-size:13px; font-weight:600; padding:7px 14px; border-radius:7px; border:none; cursor:pointer; }
+.btn-lav { background:rgba(255,255,255,0.2); color:#fff; border:1px solid rgba(255,255,255,0.4); }
+.btn-lav:hover { background:rgba(255,255,255,0.3); }
+.btn-primary { background:#2c7a4b; color:#fff; }
+.btn-primary:hover { background:#1f5c38; }
+.btn-inline { font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; border:1.5px solid #9b7ec8; background:transparent; color:#9b7ec8; cursor:pointer; }
+
+/* ── Map ── */
+.map-wrap {
+    height: 520px;
+    flex-shrink: 0;
+    background: #e8edf4;
+}
+
+.loading-wrap {
+    height: 520px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ── Roster ── */
+.roster-section {
+    padding: 16px 20px 20px;
+}
+
+.roster-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #706e6b;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.roster-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.truck-card {
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e6e2d9;
+    border-top: 3px solid #9b7ec8;
+    padding: 12px 14px;
+    flex: 1 1 180px;
+    max-width: 220px;
+    min-width: 160px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+
+.tc-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.tc-unit {
+    font-size: 15px;
+    font-weight: 800;
+    color: #1f2421;
+    letter-spacing: 0.3px;
+}
+
+.tc-driver {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #9b7ec8;
+    margin-bottom: 7px;
+}
+
+.tc-driver-icon,
+.tc-loc-icon { flex-shrink: 0; }
+
+.tc-job {
+    font-size: 12px;
+    color: #1f2421;
+    font-weight: 500;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tc-addr {
+    display: flex;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 11px;
+    color: #706e6b;
+    margin-bottom: 8px;
+}
+
+.tc-time {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1f2421;
+}
+
+.tc-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+/* Status chips */
+.tc-status {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 2px 7px;
+    border-radius: 10px;
+}
+
+.status-scheduled  { background: #ede8f6; color: #6840a0; }
+.status-dispatched { background: #e6f3ea; color: #1f5c38; }
+.status-inprogress { background: #fef3c7; color: #7a5a10; }
+.status-completed  { background: #fde8ee; color: #9c3052; }
+.status-other      { background: #f5f2ec; color: #706e6b; }
+
+/* Empty / error */
+.no-dispatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: #706e6b;
+    gap: 12px;
+}
+
+.error-banner {
+    margin: 12px 20px;
+    padding: 12px 16px;
+    background: #fde8ee;
+    color: #9c2c20;
+    border-radius: 6px;
+    font-size: 13px;
+    border-left: 3px solid #9c2c20;
+}

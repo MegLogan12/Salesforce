@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>lovingLotPageV2</componentName>
+                <identifier>loving_lot_page_v2</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>main</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <masterLabel>LOVING Lot Record Page V2</masterLabel>
+    <sobjectType>Lot__c</sobjectType>
+    <template>
+        <name>lovingFullWidthRecordTemplate</name>
+    </template>
+    <type>RecordPage</type>
+</FlexiPage>

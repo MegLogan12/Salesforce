@@ -1,0 +1,314 @@
+<template>
+    <div class="shell">
+        <div class="hero">
+            <div>
+                <div class="hero-title">{t.appTitle}</div>
+                <div class="hero-sub">{t.appSub}</div>
+            </div>
+            <div class="hero-actions">
+                <button class="ghost-btn" onclick={handleLanguageToggle}>{t.language}: {lang}</button>
+                <button class="ghost-btn" onclick={handleRefresh}>{t.refresh}</button>
+            </div>
+        </div>
+
+        <template if:true={loading}>
+            <div class="loading-wrap">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+        </template>
+
+        <template if:false={loading}>
+            <template if:true={hasJob}>
+                <div class="content">
+                    <!-- Primary CTA actions bar — Start Shift, Flag Issue, End of Day -->
+                    <div class="button-stack" style="margin-top:14px;margin-bottom:4px">
+                        <button type="button" class="btn-start-shift" disabled={beginDriveDisabled} onclick={handleBeginDrive}>{t.startShift}</button>
+                        <button type="button" class="btn-flag-issue" onclick={handleFlagIssueAction}>{t.flagIssue}</button>
+                        <button type="button" class="btn-end-day" onclick={handleEndOfDay}>{t.endOfDay}</button>
+                    </div>
+
+                    <div class="clock-card">
+                        <div class={clockTone}>
+                            <div class="clock-label">{clockLabel}</div>
+                            <div class="clock-sub">{clockSubLabel}</div>
+                        </div>
+                    </div>
+
+                    <template if:true={isMyDay}>
+                        <div class="card">
+                            <div class="card-title">{t.todayAtGlance}</div>
+                            <div class="stat-grid">
+                                <div class="stat">
+                                    <div class="stat-label">{t.schedule}</div>
+                                    <div class="stat-value">{scheduleRows.length}</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-label">{t.goalHours}</div>
+                                    <div class="stat-value">{goalHoursLabel}</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-label">{t.beforePhotos}</div>
+                                    <div class="stat-value">{beforeCountLabel}</div>
+                                </div>
+                                <div class="stat">
+                                    <div class="stat-label">{t.closeoutPhotos}</div>
+                                    <div class="stat-value">{afterCountLabel}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-title">{t.activeWorkOrder}</div>
+                            <div class="job-name">{currentJob.woNumber}</div>
+                            <div class="job-meta">{t.appointment}: {currentJob.appointmentNumber}</div>
+                            <div class="job-meta">{currentJob.lotName}</div>
+                            <div class="job-meta">{currentAddress}</div>
+                            <div class="job-meta">{currentJob.communityName} · {currentJob.builderName}</div>
+                            <div class="pill-row">
+                                <span class="pill blue">{currentJob.workOrderType}</span>
+                                <span class="pill gray">{currentJob.statusLabel}</span>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-title">{t.crewToday}</div>
+                            <div class="job-meta">{currentJob.fm}</div>
+                            <div class="job-meta">{currentJob.crewName}</div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-title">{t.todaySchedule}</div>
+                            <template for:each={schedulePreviewRows} for:item="row">
+                                <div key={row.workOrderId} class="mini-schedule-row">
+                                    <div>
+                                        <div class="scope-title">{row.workOrderNumber}</div>
+                                        <div class="job-meta">{row.serviceAppointmentNumber}</div>
+                                    </div>
+                                    <div class="scope-meta">{row.timeLabel}</div>
+                                </div>
+                            </template>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-title">{t.readyToStart}</div>
+                            <button class="primary-btn" disabled={beginDriveDisabled} onclick={handleBeginDrive}>{t.startDrive}</button>
+                            <div class="help-text">{beginDriveReason}</div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-title">{t.syncStatus}</div>
+                            <div class="job-meta">{syncStatusLabel}</div>
+                            <div class="job-meta">{t.ripplingStatus}: {clockLabel}</div>
+                            <div class="job-meta">{clockSubLabel}</div>
+                        </div>
+                    </template>
+
+                    <template if:true={isSchedule}>
+                        <template for:each={scheduleRows} for:item="row">
+                            <div key={row.workOrderId} class={row.rowClass}>
+                                <div class="job-top">
+                                    <div>
+                                        <div class="job-name">{row.workOrderNumber}</div>
+                                        <div class="job-meta">{row.serviceAppointmentNumber}</div>
+                                    </div>
+                                    <span class="pill gray">{row.status}</span>
+                                </div>
+                                <div class="job-meta">{row.lotName}</div>
+                                <div class="job-meta">{row.address}</div>
+                                <div class="job-meta">{row.communityName}</div>
+                                <div class="job-footer">
+                                    <span>{row.timeLabel}</span>
+                                    <span>{row.goalHours} {t.goalHours}</span>
+                                </div>
+                            </div>
+                        </template>
+                    </template>
+
+                    <template if:true={isMap}>
+                        <div class="card">
+                            <div class="card-title">{t.address}</div>
+                            <div class="job-name">{currentJob.lotName}</div>
+                            <div class="job-meta">{currentAddress}</div>
+                            <div class="button-stack">
+                                <button class="primary-btn" disabled={beginDriveDisabled} onclick={handleBeginDrive}>{t.startDrive}</button>
+                                <button class="primary-btn" disabled={startJobDisabled} onclick={handleStartJob}>{t.confirmArrival}</button>
+                                <button class="ghost-btn block" data-provider="apple" onclick={handleOpenMaps}>{t.openAppleMaps}</button>
+                                <button class="ghost-btn block" data-provider="google" onclick={handleOpenMaps}>{t.openGoogleMaps}</button>
+                            </div>
+                            <template if:true={beginDriveReason}>
+                                <div class="help-text">{beginDriveReason}</div>
+                            </template>
+                            <template if:true={startJobReason}>
+                                <div class="help-text">{startJobReason}</div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <template if:true={isActiveJob}>
+                        <div class="card">
+                            <div class="card-title">{t.vehicleChecklist}</div>
+                            <div class="job-meta">{t.truck}: {context.vehicleChecklist.truckNumber}</div>
+                            <template for:each={vehicleItems} for:item="item">
+                                <div key={item.key} class={item.rowClass}>
+                                    <span>{item.label}</span>
+                                    <button class="ghost-btn small" data-key={item.key} onclick={handleVehicleToggle}>{item.statusLabel}</button>
+                                </div>
+                            </template>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-title">{t.loadedChecklist}</div>
+                            <div class="job-meta">{t.scopePulled}</div>
+                            <div class="job-meta">{context.loadedChecklist.scopeCount} {t.lineItems}</div>
+                            <button class="primary-btn" onclick={handleLoadingToggle}>{loadingChecklistLabel}</button>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-title">{t.beforePhotos}</div>
+                            <div class="photo-grid">
+                                <template for:each={beforeSlots} for:item="slot">
+                                    <label key={slot.key} class="photo-tile">
+                                        <span>{slot.label}</span>
+                                        <span>{slot.count}</span>
+                                        <input class="hidden-input" type="file" accept="image/*" capture="environment" data-category={slot.key} onchange={handlePhotoUpload} />
+                                    </label>
+                                </template>
+                            </div>
+                            <button class="primary-btn" disabled={startJobDisabled} onclick={handleStartJob}>{t.confirmArrival}</button>
+                            <template if:true={startJobReason}>
+                                <div class="help-text">{startJobReason}</div>
+                            </template>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-title">{t.workScope}</div>
+                            <template if:true={hasLineItems}>
+                                <template for:each={lineItems} for:item="item">
+                                    <div key={item.id} class="scope-row">
+                                        <div>
+                                            <div class="scope-title">{item.packageItem}</div>
+                                            <div class="job-meta">{item.description}</div>
+                                        </div>
+                                        <div class="scope-meta">{item.quantityLabel}</div>
+                                    </div>
+                                </template>
+                            </template>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-title">{t.workChecklists}</div>
+                            <template if:true={hasChecklists}>
+                                <template for:each={checklistGroups} for:item="group">
+                                    <div key={group.id} class="group-block">
+                                        <div class="group-head">
+                                            <span>{group.name}</span>
+                                            <span class="pill blue">{group.progressLabel}</span>
+                                        </div>
+                                        <template for:each={group.items} for:item="item">
+                                            <div key={item.id} class="scope-row">
+                                                <div class="scope-title">{item.name}</div>
+                                                <select class="status-select" data-id={item.id} value={item.status} onchange={handleChecklistChange}>
+                                                    <option value="Pending">Pending</option>
+                                                    <option value="Complete">Complete</option>
+                                                    <option value="N/A">N/A</option>
+                                                </select>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                            </template>
+                            <template if:false={hasChecklists}>
+                                <div class="help-text">{t.noChecklist}</div>
+                            </template>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-title">{t.flagIssue}</div>
+                            <select class="field-input" data-field="issueType" value={issueDraft.issueType} onchange={handleIssueInput}>
+                                <template for:each={issueTypeOptions} for:item="option">
+                                    <option key={option} value={option}>{option}</option>
+                                </template>
+                            </select>
+                            <select class="field-input" data-field="severity" value={issueDraft.severity} onchange={handleIssueInput}>
+                                <template for:each={severityOptions} for:item="option">
+                                    <option key={option} value={option}>{option}</option>
+                                </template>
+                            </select>
+                            <input class="field-input" data-field="summary" value={issueDraft.summary} oninput={handleIssueInput} placeholder={t.summary} />
+                            <textarea class="field-input notes" data-field="notes" value={issueDraft.notes} oninput={handleIssueInput} placeholder={t.notes}></textarea>
+                            <label class="photo-tile inline-upload">
+                                <span>{t.issuePhoto}</span>
+                                <span>{context.photoSummary.issueCount}</span>
+                                <input class="hidden-input" type="file" accept="image/*" capture="environment" data-category="issue_photo" onchange={handlePhotoUpload} />
+                            </label>
+                            <button class="primary-btn" disabled={issueDisabled} onclick={handleSubmitIssue}>{t.submitIssue}</button>
+                            <template if:true={issueDisabled}>
+                                <div class="help-text">{t.actionRequired}: {t.summary}</div>
+                            </template>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-title">{t.closeout}</div>
+                            <div class="photo-grid">
+                                <template for:each={closeoutSlots} for:item="slot">
+                                    <label key={slot.key} class="photo-tile">
+                                        <span>{slot.label}</span>
+                                        <span>{slot.count}</span>
+                                        <input class="hidden-input" type="file" accept="image/*" capture="environment" data-category={slot.key} onchange={handlePhotoUpload} />
+                                    </label>
+                                </template>
+                            </div>
+                            <input class="field-input" data-field="installedSodSqft" value={closeoutDraft.installedSodSqft} oninput={handleCloseoutInput} placeholder={t.installedSod} />
+                            <textarea class="field-input notes" data-field="closeoutNotes" value={closeoutDraft.closeoutNotes} oninput={handleCloseoutInput} placeholder={t.closeoutNotes}></textarea>
+                            <button class="ghost-btn block" onclick={handleSaveCloseout}>{t.saveCloseout}</button>
+                            <button class="primary-btn" disabled={submitCloseoutDisabled} onclick={handleSubmitCloseout}>{t.submitCloseout}</button>
+                            <template for:each={closeoutGates} for:item="gate">
+                                <div key={gate} class="help-text">{gate}</div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <template if:true={isMore}>
+                        <div class="card">
+                            <div class="card-title">{t.syncStatus}</div>
+                            <div class="job-meta">{clockSubLabel}</div>
+                            <div class="job-meta">{t.language}: {lang}</div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-title">{t.openIssues}</div>
+                            <template if:true={hasIssues}>
+                                <template for:each={openIssues} for:item="issue">
+                                    <div key={issue.id} class="issue-row">
+                                        <div class="scope-title">{issue.summary}</div>
+                                        <div class="job-meta">{issue.issueType} · {issue.severity} · {issue.status}</div>
+                                        <div class="job-meta">{issue.createdDateLabel}</div>
+                                    </div>
+                                </template>
+                            </template>
+                            <template if:false={hasIssues}>
+                                <div class="help-text">{t.noIssues}</div>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="tabbar">
+                    <button class={myDayTabClass} data-tab="myDay" onclick={handleTabChange}>{t.myDay}</button>
+                    <button class={scheduleTabClass} data-tab="schedule" onclick={handleTabChange}>{t.schedule}</button>
+                    <button class={mapTabClass} data-tab="map" onclick={handleTabChange}>{t.map}</button>
+                    <button class={activeJobTabClass} data-tab="activeJob" onclick={handleTabChange}>{t.activeJob}</button>
+                    <button class={moreTabClass} data-tab="more" onclick={handleTabChange}>{t.more}</button>
+                </div>
+            </template>
+
+            <template if:false={hasJob}>
+                <div class="card empty">
+                    <div class="card-title">{t.noJob}</div>
+                    <div class="job-meta">{t.noJobSub}</div>
+                    <button class="primary-btn" onclick={handleRefresh}>{t.refresh}</button>
+                </div>
+            </template>
+        </template>
+    </div>
+</template>

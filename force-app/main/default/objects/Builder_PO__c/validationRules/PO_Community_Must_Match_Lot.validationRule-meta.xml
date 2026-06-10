@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PO_Community_Must_Match_Lot</fullName>
+    <active>true</active>
+    <description>Community must equal the Lot Community. LOVING_BuilderPO_Derive_From_Lot normally sets this automatically — rule catches manual overrides.</description>
+    <errorConditionFormula>AND(
+  NOT(ISBLANK(Lot__c)),
+  NOT(ISBLANK(Community__c)),
+  Community__c != Lot__r.Community__c
+)</errorConditionFormula>
+    <errorDisplayField>Community__c</errorDisplayField>
+    <errorMessage>Community must match the Community on the selected Lot. The Lot determines the Community in the Production Landscape hierarchy. To change the Community, update the Lot first.</errorMessage>
+</ValidationRule>

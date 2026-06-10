@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Aqua_Active_Requires_Customer</fullName>
+    <active>true</active>
+    <description>Aqua cannot be activated on a community that is not an Aqua customer. Activation cannot precede the sale. Aqua gate field report, resolution step 2.</description>
+    <errorConditionFormula>AND( Aqua_Active__c = true, Aqua_Customer__c = false )</errorConditionFormula>
+    <errorDisplayField>Aqua_Active__c</errorDisplayField>
+    <errorMessage>Aqua can only be Active on a community that is an Aqua Customer. Set Aqua Customer first.</errorMessage>
+</ValidationRule>

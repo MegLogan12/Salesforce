@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Aqua_Customer__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>Commercial designation. The community bought Aqua or is designated for it, set at community setup. Drives Work Order scope and the takeoff-to-WO flow. Not the same as Aqua Active.</description>
+    <inlineHelpText>Customer means this community bought Aqua. Set it at community setup. (Active means Aqua is actually installed and running.)</inlineHelpText>
+    <label>Aqua Customer</label>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

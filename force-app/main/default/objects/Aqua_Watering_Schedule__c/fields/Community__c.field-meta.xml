@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Community__c</fullName>
+    <deleteConstraint>Restrict</deleteConstraint>
+    <description>Community is an Opportunity per the data model: Builder Market Account -&gt; Community (Opportunity) -&gt; Work Order. Aqua tickets reference the same Opportunity, so watering schedules use the same parent type for clean joins.</description>
+    <label>Community</label>
+    <referenceTo>Opportunity</referenceTo>
+    <relationshipLabel>Aqua Watering Schedules</relationshipLabel>
+    <relationshipName>Aqua_Watering_Schedules</relationshipName>
+    <required>true</required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

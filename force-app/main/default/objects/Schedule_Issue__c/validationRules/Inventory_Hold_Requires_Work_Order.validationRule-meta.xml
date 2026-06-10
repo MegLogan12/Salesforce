@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Inventory_Hold_Requires_Work_Order</fullName>
+    <active>true</active>
+    <description>Inventory Hold issues must be linked to a Work Order so the inventory gap can be traced.</description>
+    <errorConditionFormula>AND(ISPICKVAL(Issue_Type__c, &quot;Inventory Hold&quot;), ISBLANK(Work_Order__c))</errorConditionFormula>
+    <errorMessage>Inventory Hold issues require a Work Order. Please link the affected Work Order before saving.</errorMessage>
+</ValidationRule>

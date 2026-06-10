@@ -1,0 +1,266 @@
+/* ── Design tokens ──────────────────────────────────────────────────────────── */
+:host {
+    --odl-orange:      #e8936a;
+    --odl-orange-dark: #c06040;
+    --odl-blue:        #2c7a4b;
+    --odl-blue-dark:   #1f5c38;
+    --odl-slate:       #706e6b;
+    --text-dark:       #1f2421;
+    --text-mid:        #706e6b;
+    --text-light:      #9c8e80;
+    --border:          #e6e2d9;
+    --bg-page:         #f5f2ec;
+    --bg-card:         #FFFFFF;
+    --radius-card:     8px;
+    --shadow-card:     0 1px 4px rgba(0,0,0,0.10);
+
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
+}
+
+.prep-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--border);
+    font-family: 'Salesforce Sans', Arial, sans-serif;
+    overflow: hidden;
+}
+
+/* ── Loading / Error ──────────────────────────────────────────────────────── */
+.odl-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 120px;
+}
+
+.odl-error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 32px;
+    color: var(--text-mid);
+    text-align: center;
+}
+
+/* ── Card header ──────────────────────────────────────────────────────────── */
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px 12px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #c4607a 0%, #9c3052 100%);
+}
+
+.card-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: rgba(255,255,255,0.2);
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    flex: 1;
+}
+
+.card-refresh { margin-left: auto; }
+
+/* ── Meeting details ──────────────────────────────────────────────────────── */
+.detail-section {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.detail-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 5px 0;
+    font-size: 13px;
+}
+
+.detail-row--full {
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-label {
+    min-width: 80px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+}
+
+.detail-value {
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.detail-notes {
+    color: var(--text-mid);
+    font-size: 13px;
+    margin: 0;
+    white-space: pre-wrap;
+    line-height: 1.5;
+}
+
+/* ── Section header ───────────────────────────────────────────────────────── */
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px 10px;
+    border-bottom: 1px solid var(--border);
+    background: #f5f2ec;
+}
+
+.section-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+    flex: 1;
+}
+
+.section-count {
+    background: var(--rose);
+    color: #fff;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 1px 7px;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* ── Table ────────────────────────────────────────────────────────────────── */
+.odl-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.odl-table thead tr { background: #f5f2ec; }
+
+.odl-table th {
+    padding: 7px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border);
+}
+
+.odl-table td {
+    padding: 9px 16px;
+    color: var(--text-dark);
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+.odl-table tbody tr:last-child td { border-bottom: none; }
+.odl-table tbody tr:hover { background: #fbfaf6; }
+
+/* ── Links ────────────────────────────────────────────────────────────────── */
+.rec-link {
+    color: var(--rose);
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.rec-link:hover { text-decoration: underline; }
+
+/* ── Status chips ─────────────────────────────────────────────────────────── */
+.status-chip {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.chip-blue {
+    background: #ede8f6;
+    color: #6840a0;
+    border: 1px solid #c8b8e8;
+}
+
+.chip-orange {
+    background: #fdeee6;
+    color: #7a5a10;
+    border: 1px solid #f5c6a0;
+}
+
+.chip-green {
+    background: #e6f3ea;
+    color: #1f5c38;
+    border: 1px solid #a8d8b5;
+}
+
+.chip-neutral {
+    background: #f5f2ec;
+    color: var(--text-mid);
+    border: 1px solid var(--border);
+}
+
+.chip-overdue {
+    background: #fde8ee;
+    color: #9c2c20;
+    border: 1px solid #f5a0b0;
+}
+
+/* ── Muted / Empty ────────────────────────────────────────────────────────── */
+.muted { color: var(--text-light); }
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 24px 16px;
+    color: var(--text-light);
+    font-size: 13px;
+    text-align: center;
+}
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+.card-footer {
+    padding: 12px 16px;
+    border-top: 1px solid var(--border);
+    background: #f5f2ec;
+}

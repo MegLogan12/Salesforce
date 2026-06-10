@@ -1,4 +1,5 @@
 extracted/
+retrieved/
 node_modules/
 
 # Salesforce CLI local state and auth artifacts
@@ -29,3 +30,4 @@ refresh_token
 
 # macOS metadata
 .DS_Store
+.flow-scan/

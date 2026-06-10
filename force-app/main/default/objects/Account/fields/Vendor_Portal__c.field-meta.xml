@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Vendor_Portal__c</fullName>
+    <label>Vendor Portal</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>SupplyPro</fullName>
+                <default>false</default>
+                <label>SupplyPro</label>
+            </value>
+            <value>
+                <fullName>HomebuilderONE</fullName>
+                <default>false</default>
+                <label>HomebuilderONE</label>
+            </value>
+            <value>
+                <fullName>MetaViewer</fullName>
+                <default>false</default>
+                <label>MetaViewer</label>
+            </value>
+            <value>
+                <fullName>BuildPro</fullName>
+                <default>false</default>
+                <label>BuildPro</label>
+            </value>
+            <value>
+                <fullName>Email</fullName>
+                <default>false</default>
+                <label>Email</label>
+            </value>
+            <value>
+                <fullName>Builder Portal</fullName>
+                <default>false</default>
+                <label>Builder Portal</label>
+            </value>
+            <value>
+                <fullName>Other</fullName>
+                <default>false</default>
+                <label>Other</label>
+            </value>
+            <value>
+                <fullName>Cloudscape</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>Cloudscape</label>
+            </value>
+            <value>
+                <fullName>HomebuilderONE (HB1)</fullName>
+                <default>false</default>
+                <isActive>false</isActive>
+                <label>HomebuilderONE (HB1)</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

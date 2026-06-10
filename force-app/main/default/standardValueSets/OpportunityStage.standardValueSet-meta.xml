@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <sorted>false</sorted>
+    <standardValue>
+        <fullName>Prospecting</fullName>
+        <default>false</default>
+        <description>Initial outreach or lead qualification stage before quote request.</description>
+        <label>Prospecting</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Community Activated</fullName>
+        <default>false</default>
+        <description>Community-channel opportunity created when a new homebuilder community is onboarded.</description>
+        <label>Community Activated</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Quote Requested</fullName>
+        <default>false</default>
+        <description>Customer completed quote builder flow, project intake complete</description>
+        <label>Quote Requested</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>20</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Consultation Scheduled</fullName>
+        <default>false</default>
+        <description>A design consult or quote review meeting has been scheduled with the customer.</description>
+        <label>Consultation Scheduled</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>25</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Design In Progress</fullName>
+        <default>false</default>
+        <description>Internal design and pricing are being developed for the customer&apos;s request.</description>
+        <label>Design In Progress</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>25</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Proposal Presented</fullName>
+        <default>false</default>
+        <description>Proposal and pricing have been presented to the customer for review.</description>
+        <label>Proposal Presented</label>
+        <closed>false</closed>
+        <forecastCategory>BestCase</forecastCategory>
+        <probability>30</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Contract Sent</fullName>
+        <default>false</default>
+        <description>A formal contract has been prepared and sent to the customer.</description>
+        <label>Contract Sent</label>
+        <closed>false</closed>
+        <forecastCategory>BestCase</forecastCategory>
+        <probability>60</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Financing Review</fullName>
+        <default>false</default>
+        <description>Customer is reviewing or applying for financing options before moving forward.</description>
+        <label>Financing Review</label>
+        <closed>false</closed>
+        <forecastCategory>BestCase</forecastCategory>
+        <probability>50</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Contract Signed</fullName>
+        <default>false</default>
+        <description>Customer has signed the contract to move forward with the project.</description>
+        <label>Contract Signed</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>75</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Deposit Paid</fullName>
+        <default>false</default>
+        <description>Initial deposit payment has been received and project is financially committed.</description>
+        <label>Deposit Paid</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>90</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Pre-Production</fullName>
+        <default>false</default>
+        <description>Materials are being ordered, permits prepared, and crew scheduled.</description>
+        <label>Pre-Production</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>100</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>In Progress</fullName>
+        <default>false</default>
+        <description>Construction or installation is actively underway.</description>
+        <label>In Progress</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>100</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Pre Close</fullName>
+        <default>false</default>
+        <label>Pre Close</label>
+        <closed>false</closed>
+        <forecastCategory>BestCase</forecastCategory>
+        <probability>100</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Job Completed</fullName>
+        <default>false</default>
+        <description>Work is complete, final walkthrough done, project closed.</description>
+        <label>Job Completed</label>
+        <closed>true</closed>
+        <forecastCategory>Closed</forecastCategory>
+        <probability>100</probability>
+        <won>true</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Discovery</fullName>
+        <default>false</default>
+        <description>Initial homeowner contact, discovery call, and project vision.</description>
+        <label>Discovery</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Consult Scheduled</fullName>
+        <default>false</default>
+        <description>Design consultation booked with the homeowner.</description>
+        <label>Consult Scheduled</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>20</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Quote Review</fullName>
+        <default>false</default>
+        <description>Quote has been sent; homeowner is reviewing scope and pricing.</description>
+        <label>Quote Review</label>
+        <closed>false</closed>
+        <forecastCategory>BestCase</forecastCategory>
+        <probability>40</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Deposit Pending</fullName>
+        <default>false</default>
+        <description>Contract signed; awaiting deposit to release work order.</description>
+        <label>Deposit Pending</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>85</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Closed Won</fullName>
+        <default>false</default>
+        <description>Deal won; work order released to field.</description>
+        <label>Closed Won</label>
+        <closed>true</closed>
+        <forecastCategory>Closed</forecastCategory>
+        <probability>100</probability>
+        <won>true</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Closed Lost</fullName>
+        <default>false</default>
+        <description>No sale.</description>
+        <label>Closed Lost</label>
+        <closed>true</closed>
+        <forecastCategory>Omitted</forecastCategory>
+        <probability>0</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Qualifying</fullName>
+        <default>false</default>
+        <description>Initial contact confirmed; rep qualifying project fit and budget.</description>
+        <label>Qualifying</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Package Selected</fullName>
+        <default>false</default>
+        <description>Homeowner has selected a UMB package; consult being scheduled.</description>
+        <label>Package Selected</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>20</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Quote Sent</fullName>
+        <default>false</default>
+        <description>Quote delivered to homeowner; awaiting acceptance.</description>
+        <label>Quote Sent</label>
+        <closed>false</closed>
+        <forecastCategory>BestCase</forecastCategory>
+        <probability>35</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Quote Accepted</fullName>
+        <default>false</default>
+        <description>Homeowner accepted quote; contract in progress.</description>
+        <label>Quote Accepted</label>
+        <closed>false</closed>
+        <forecastCategory>Forecast</forecastCategory>
+        <probability>60</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Discovery Consult</fullName>
+        <default>false</default>
+        <description>Initial discovery and design consultation with homeowner.</description>
+        <label>Discovery Consult</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>10</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Design Agreement</fullName>
+        <default>false</default>
+        <description>Design scope agreed; design fee collected or waived.</description>
+        <label>Design Agreement</label>
+        <closed>false</closed>
+        <forecastCategory>Pipeline</forecastCategory>
+        <probability>25</probability>
+        <won>false</won>
+    </standardValue>
+    <standardValue>
+        <fullName>Design Development</fullName>
+        <default>false</default>
+        <description>Design drawings and pricing package being developed.</description>
+        <label>Design Development</label>
+        <closed>false</closed>
+        <forecastCategory>BestCase</forecastCategory>
+        <probability>40</probability>
+        <won>false</won>
+    </standardValue>
+</StandardValueSet>

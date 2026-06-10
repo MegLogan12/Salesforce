@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Utility_Marking_Complete__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>System-set when the 811 Utility Marking Task (Type=811 Utility Marking) is marked Completed.</description>
+    <label>811 Utility Marking Complete</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

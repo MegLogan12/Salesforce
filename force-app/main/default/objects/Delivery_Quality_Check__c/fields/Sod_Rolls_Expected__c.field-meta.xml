@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sod_Rolls_Expected__c</fullName>
+    <description>Formula: expected sod roll count using snapshot fields. Same-object calculation — no cross-object references. Expected_Sod_Square_Footage__c / Expected_Sod_Roll_Coverage__c, fallback 9 SF per roll if coverage blank or zero. Snapshot fields populated by LOVING_Delivery_QC_Submit at DQC creation. PKG-DQC-PARENT-01b.</description>
+    <externalId>false</externalId>
+    <formula>IF(
+  Sod_Included__c = TRUE,
+  ROUND(
+    Expected_Sod_Square_Footage__c /
+    IF(
+      OR(
+        ISBLANK(Expected_Sod_Roll_Coverage__c),
+        Expected_Sod_Roll_Coverage__c = 0
+      ),
+      9,
+      Expected_Sod_Roll_Coverage__c
+    ),
+    0
+  ),
+  0
+)</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <label>Sod Rolls Expected</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

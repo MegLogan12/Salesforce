@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Takeoff_Tasks_Created__c</fullName>
+    <defaultValue>false</defaultValue>
+    <description>System-set once the Takeoff Task + 811 Utility Marking Task have been auto-created on the WO entering the 30 Days bucket. Prevents duplicate creation on bucket recalcs.</description>
+    <label>Takeoff Tasks Created</label>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackTrending>false</trackTrending>
+    <type>Checkbox</type>
+</CustomField>

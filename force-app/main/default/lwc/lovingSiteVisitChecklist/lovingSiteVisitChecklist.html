@@ -1,0 +1,84 @@
+<template lwc:render-mode="light">
+    <div class="lov-wrap">
+        <!-- mcLOVIN' perch hook — lean-right gives him 110 px of clearance on the right -->
+        <div class="lov-card"
+             data-mclovin-perch="lean-right"
+             data-mclovin-context="opportunity"
+             data-mclovin-priority="10">
+
+            <div class="lov-hd">
+                <span class="lov-dot"></span>
+                <h2 class="lov-title">Site Visit Checklist</h2>
+                <span class="lov-pill">OPPORTUNITY</span>
+            </div>
+
+            <div class="lov-bd">
+                <!-- Col 1 -->
+                <div class="lov-field">
+                    <label>Opportunity / Job name</label>
+                    <input type="text" placeholder="e.g. Rivera Backyard">
+                </div>
+                <div class="lov-field">
+                    <label>Visit date</label>
+                    <input type="date">
+                </div>
+                <div class="lov-field">
+                    <label>Access notes</label>
+                    <input type="text" placeholder="Gate code, side entry...">
+                </div>
+                <div class="lov-field">
+                    <label>Soil condition</label>
+                    <select>
+                        <option value="">Select...</option>
+                        <option>Good — firm, well-draining</option>
+                        <option>Soft / clay — may need prep</option>
+                        <option>Rocky — excavation needed</option>
+                        <option>Unknown — test required</option>
+                    </select>
+                </div>
+                <div class="lov-field">
+                    <label>Slope / grade</label>
+                    <select>
+                        <option value="">Select...</option>
+                        <option>Flat — minimal grading</option>
+                        <option>Gentle slope</option>
+                        <option>Steep — retaining wall likely</option>
+                    </select>
+                </div>
+                <div class="lov-field">
+                    <label>Drainage concerns</label>
+                    <select>
+                        <option value="">Select...</option>
+                        <option>None visible</option>
+                        <option>Minor — low spots</option>
+                        <option>Significant — standing water</option>
+                    </select>
+                </div>
+
+                <!-- Full-width fields -->
+                <div class="lov-field lov-full">
+                    <label>Checklist</label>
+                    <div class="lov-checks">
+                        <label class="lov-check"><input type="checkbox"> Existing irrigation noted</label>
+                        <label class="lov-check"><input type="checkbox"> Utilities marked / called in</label>
+                        <label class="lov-check"><input type="checkbox"> Photos taken</label>
+                        <label class="lov-check"><input type="checkbox"> Measurements captured</label>
+                        <label class="lov-check"><input type="checkbox"> HOA approval needed</label>
+                        <label class="lov-check"><input type="checkbox"> Hardscape scope confirmed</label>
+                        <label class="lov-check"><input type="checkbox"> Plant palette discussed</label>
+                        <label class="lov-check"><input type="checkbox"> Lighting scope discussed</label>
+                    </div>
+                </div>
+
+                <div class="lov-field lov-full">
+                    <label>Recommended scope summary</label>
+                    <textarea placeholder="Brief notes on what this job will need..."></textarea>
+                </div>
+
+                <div class="lov-actions">
+                    <button class="lov-btn lov-primary" type="button" onclick={handleSave}>Save Notes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

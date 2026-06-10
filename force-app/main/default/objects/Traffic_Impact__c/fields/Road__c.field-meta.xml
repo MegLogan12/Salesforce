@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Road__c</fullName>
+    <description>Road name or highway segment affected by this traffic incident. Populated from TomTom or HERE incident feed when available (e.g. I-77 Northbound between Exit 23 and Exit 25). Blank for OSRM-sourced route delay records.</description>
+    <externalId>false</externalId>
+    <label>Affected Road</label>
+    <length>200</length>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>

@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>60.0</apiVersion>
+    <customErrors>
+        <name>Block_Duplicate_Voucher</name>
+        <label>Block — Duplicate Voucher Detected</label>
+        <locationX>440</locationX>
+        <locationY>840</locationY>
+        <customErrorMessages>
+            <errorMessage>A duplicate Lennar grilling island voucher already exists for this property. Only one voucher per lot is allowed. Do not apply a quote credit until the duplicate is resolved. Contact your manager to approve an exception.</errorMessage>
+            <isFieldError>false</isFieldError>
+        </customErrorMessages>
+    </customErrors>
+    <customErrors>
+        <name>Block_No_Homeowner</name>
+        <label>Block — Homeowner Contact Required</label>
+        <locationX>440</locationX>
+        <locationY>240</locationY>
+        <customErrorMessages>
+            <errorMessage>A homeowner Contact must be assigned before this voucher can advance to {!$Record.Status__c}. Assign Contact__c and try again.</errorMessage>
+            <fieldSelection>Contact__c</fieldSelection>
+            <isFieldError>true</isFieldError>
+        </customErrorMessages>
+    </customErrors>
+    <customErrors>
+        <name>Block_No_Lot</name>
+        <label>Block — Lot Required</label>
+        <locationX>440</locationX>
+        <locationY>480</locationY>
+        <customErrorMessages>
+            <errorMessage>A Lot must be assigned before this voucher can advance to {!$Record.Status__c}. Populate Lot__c and try again.</errorMessage>
+            <fieldSelection>Lot__c</fieldSelection>
+            <isFieldError>true</isFieldError>
+        </customErrorMessages>
+    </customErrors>
+    <decisions>
+        <name>Is_Contact_Present</name>
+        <label>Is Contact__c (homeowner) set?</label>
+        <locationX>176</locationX>
+        <locationY>240</locationY>
+        <defaultConnector>
+            <targetReference>Block_No_Homeowner</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No — block</defaultConnectorLabel>
+        <rules>
+            <name>Contact_Present</name>
+            <conditionLogic>1</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Contact__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Requires_Lot_Check</targetReference>
+            </connector>
+            <label>Yes — proceed to lot/address check</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Is_Lot_Or_Property_Present</name>
+        <label>Is Lot__c present?</label>
+        <locationX>176</locationX>
+        <locationY>480</locationY>
+        <defaultConnector>
+            <targetReference>Block_No_Lot</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No lot — block</defaultConnectorLabel>
+        <rules>
+            <name>Lot_Present</name>
+            <conditionLogic>1</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Lot__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Requires_Duplicate_Check</targetReference>
+            </connector>
+            <label>Present — proceed to duplicate check</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Requires_Contact_Check</name>
+        <label>Does this status require Contact__c?</label>
+        <locationX>176</locationX>
+        <locationY>120</locationY>
+        <defaultConnectorLabel>No — Draft/Active/Submitted/Expired/Voided/Rejected — exit</defaultConnectorLabel>
+        <rules>
+            <name>Contact_Required_Status</name>
+            <conditionLogic>1 OR 2 OR 3 OR 4 OR 5 OR 6 OR 7 OR 8 OR 9</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Validated</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Reserved</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Applied to Quote</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Contract Signed</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Deposit Paid</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Builder Invoice Pending</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Builder Invoiced</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Paid by Builder</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Redeemed</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Is_Contact_Present</targetReference>
+            </connector>
+            <label>Yes — requires Contact</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Requires_Duplicate_Check</name>
+        <label>Does this status trigger duplicate check?</label>
+        <locationX>176</locationX>
+        <locationY>600</locationY>
+        <defaultConnectorLabel>No — allow</defaultConnectorLabel>
+        <rules>
+            <name>Dup_Check_Required</name>
+            <conditionLogic>1 OR 2 OR 3</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Reserved</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Applied to Quote</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Validated</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Check_Duplicate_By_Property</targetReference>
+            </connector>
+            <label>Yes — check for duplicates</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Requires_Lot_Check</name>
+        <label>Does this status require Lot/Property/Address?</label>
+        <locationX>176</locationX>
+        <locationY>360</locationY>
+        <defaultConnector>
+            <targetReference>Requires_Duplicate_Check</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No — Submitted only needs Contact</defaultConnectorLabel>
+        <rules>
+            <name>Lot_Required_Status</name>
+            <conditionLogic>1 OR 2 OR 3 OR 4 OR 5 OR 6 OR 7 OR 8 OR 9</conditionLogic>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Validated</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Reserved</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Applied to Quote</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Contract Signed</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Deposit Paid</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Builder Invoice Pending</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Builder Invoiced</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Paid by Builder</stringValue>
+                </rightValue>
+            </conditions>
+            <conditions>
+                <leftValueReference>$Record.Status__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Redeemed</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Is_Lot_Or_Property_Present</targetReference>
+            </connector>
+            <label>Yes — Validated or beyond</label>
+        </rules>
+    </decisions>
+    <decisions>
+        <name>Was_Duplicate_Found</name>
+        <label>Were duplicate vouchers found?</label>
+        <locationX>176</locationX>
+        <locationY>840</locationY>
+        <defaultConnectorLabel>No duplicates — allow</defaultConnectorLabel>
+        <rules>
+            <name>Duplicate_Found</name>
+            <conditionLogic>1</conditionLogic>
+            <conditions>
+                <leftValueReference>DuplicateVouchers</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Block_Duplicate_Voucher</targetReference>
+            </connector>
+            <label>Yes — block and flag</label>
+        </rules>
+    </decisions>
+    <description>PHASE 4 — Homeowner Claim and Status Validation.
+
+        WHAT THIS FLOW DOES:
+        ─────────────────────────────────────────────────────────────────
+        Runs before save on Voucher__c UPDATE when Status__c changes.
+        Enforces that Contact__c (homeowner) and Lot__c are present
+        before a voucher can advance into claim-owned or sales-owned statuses.
+        Also runs the one-per-lot duplicate check before Reserved or Applied to Quote.
+
+        STATUS GATE RULES (per spec):
+        ─────────────────────────────────────────────────────────────────
+        Draft, Active           → no Contact or Lot required
+        Submitted               → no Contact or Lot required
+        Validated, Reserved,
+        Applied to Quote,
+        Contract Signed,
+        Deposit Paid,
+        Builder Invoice Pending,
+        Builder Invoiced,
+        Paid by Builder,
+        Redeemed                → Contact AND Lot__c required
+
+        DUPLICATE CHECK:
+        ─────────────────────────────────────────────────────────────────
+        Before Reserved or Applied to Quote: checks for other active/claimable vouchers
+        on the same Lot__c.
+        If found: blocks advance, sets Needs_Review__c = true.
+
+        OVERLAYS:
+        ─────────────────────────────────────────────────────────────────
+        This is an overlay on the UMB/ODL process. Does not bypass quote, product,
+        pricebook, payment, design review, or approval rules.</description>
+    <environments>Default</environments>
+    <interviewLabel>Lennar Voucher Claim Validation {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Lennar Voucher Claim Validation</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Check_Duplicate_By_Property</name>
+        <label>Query: Duplicate vouchers on same Lot__c</label>
+        <locationX>176</locationX>
+        <locationY>720</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Was_Duplicate_Found</targetReference>
+        </connector>
+        <filterLogic>1 AND 2 AND 3 AND 4 AND 5 AND 6</filterLogic>
+        <filters>
+            <field>Lot__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$Record.Lot__c</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Id</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <elementReference>$Record.Id</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Voucher_Type__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Standard Grilling Island</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status__c</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>Expired</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status__c</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>Voided</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status__c</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>Rejected</stringValue>
+            </value>
+        </filters>
+        <object>Voucher__c</object>
+        <outputReference>DuplicateVouchers</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <queriedFields>Status__c</queriedFields>
+    </recordLookups>
+    <start>
+        <locationX>176</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Requires_Contact_Check</targetReference>
+        </connector>
+        <filterLogic>1 AND 2</filterLogic>
+        <filters>
+            <field>Voucher_Type__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Standard Grilling Island</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status__c</field>
+            <operator>IsChanged</operator>
+            <value>
+                <booleanValue>true</booleanValue>
+            </value>
+        </filters>
+        <object>Voucher__c</object>
+        <recordTriggerType>Update</recordTriggerType>
+        <triggerType>RecordBeforeSave</triggerType>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>DuplicateVouchers</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+        <objectType>Voucher__c</objectType>
+    </variables>
+</Flow>

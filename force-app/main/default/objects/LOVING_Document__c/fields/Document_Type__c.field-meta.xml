@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Document_Type__c</fullName>
+    <label>Document Type</label>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>Takeoff Summary PDF</fullName>
+                <default>true</default>
+                <label>Takeoff Summary PDF</label>
+            </value>
+            <value>
+                <fullName>Takeoff Measurement Sheet</fullName>
+                <default>false</default>
+                <label>Takeoff Measurement Sheet</label>
+            </value>
+            <value>
+                <fullName>Quote Verification PDF</fullName>
+                <default>false</default>
+                <label>Quote Verification PDF</label>
+            </value>
+            <value>
+                <fullName>Change Notification / EPO PDF</fullName>
+                <default>false</default>
+                <label>Change Notification / EPO PDF</label>
+            </value>
+            <value>
+                <fullName>Site Readiness Summary</fullName>
+                <default>false</default>
+                <label>Site Readiness Summary</label>
+            </value>
+            <value>
+                <fullName>Closeout Packet</fullName>
+                <default>false</default>
+                <label>Closeout Packet</label>
+            </value>
+            <value>
+                <fullName>Warranty Review Packet</fullName>
+                <default>false</default>
+                <label>Warranty Review Packet</label>
+            </value>
+            <value>
+                <fullName>Quality Inspection Report</fullName>
+                <default>false</default>
+                <label>Quality Inspection Report</label>
+            </value>
+            <value>
+                <fullName>Aqua Install Summary</fullName>
+                <default>false</default>
+                <label>Aqua Install Summary</label>
+            </value>
+            <value>
+                <fullName>Aqua Check Summary</fullName>
+                <default>false</default>
+                <label>Aqua Check Summary</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

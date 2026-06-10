@@ -1,0 +1,214 @@
+:host {
+    display: block;
+    --green:          #2c7a4b;
+    --green-dark:     #1f5c38;
+    --green-light:    #e6f3ea;
+    --peach:          #e8936a;
+    --peach-dark:     #c06040;
+    --peach-light:    #fdeee6;
+    --rose:           #c4607a;
+    --rose-dark:      #9c3052;
+    --rose-light:     #fde8ee;
+    --lavender:       #9b7ec8;
+    --lavender-dark:  #6840a0;
+    --lavender-light: #ede8f6;
+    --mauve:          #c890c0;
+    --mauve-light:    #f2e8f0;
+    --canvas:         #f5f2ec;
+    --hover:          #fbfaf6;
+    --ink:            #1f2421;
+    --muted:          #706e6b;
+    --border-warm:    #e6e2d9;
+}
+
+.workspace-shell {
+    box-sizing: border-box;
+    width: 100%;
+    background: #f5f2ec;
+    min-height: 100vh;
+    padding: 1.5rem;
+    color: #1f2421;
+}
+
+.workspace-header,
+.toolbar,
+.list-card,
+.state-card {
+    background: #fff;
+    border: 1px solid #e6e2d9;
+    border-radius: 8px;
+}
+
+.workspace-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+    padding: 1.25rem 1.5rem;
+}
+
+.eyebrow {
+    margin: 0 0 0.25rem;
+    color: #706e6b;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    line-height: 1.2;
+}
+
+.subtitle {
+    margin: 0.35rem 0 0;
+    color: #706e6b;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding: 0.9rem 1rem;
+}
+
+.chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-chip,
+.secondary-btn,
+.primary-btn {
+    border-radius: 999px;
+    border: 1px solid #e6e2d9;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.filter-chip {
+    background: #fff;
+    color: #1f2421;
+    padding: 0.45rem 0.85rem;
+}
+
+.filter-chip.active {
+    background: #1f2421;
+    border-color: #1f2421;
+    color: #fff;
+}
+
+.search-input {
+    min-width: 17rem;
+}
+
+.secondary-btn,
+.primary-btn {
+    padding: 0.55rem 0.95rem;
+}
+
+.secondary-btn {
+    background: #fff;
+    color: #1f2421;
+}
+
+.primary-btn {
+    background: #c4607a;
+    border-color: #c4607a;
+    color: #fff;
+}
+
+.primary-btn:hover { background: #9c3052; }
+
+.list-card,
+.state-card {
+    padding: 1rem 1.25rem;
+}
+
+.state-card.error {
+    border-color: #9c2c20;
+    color: #9c2c20;
+}
+
+.card-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.card-heading h2 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.card-heading p {
+    margin: 0.3rem 0 0;
+    color: #706e6b;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+.workspace-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.workspace-table th,
+.workspace-table td {
+    border-top: 1px solid #e6e2d9;
+    padding: 0.9rem 0.75rem;
+    text-align: left;
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+.workspace-table th {
+    border-top: 0;
+    color: #706e6b;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.workspace-table tbody tr:hover td { background: #fbfaf6; }
+
+.link-button {
+    background: none;
+    border: 0;
+    color: #c4607a;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0;
+    text-align: left;
+}
+
+.status-chip {
+    border-radius: 999px;
+    display: inline-flex;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 0.25rem 0.65rem;
+    background: #fde8ee;
+    color: #9c3052;
+}
+
+.btn-inline { font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; border:1.5px solid #c4607a; background:transparent; color:#c4607a; cursor:pointer; }
+.btn-inline-green { font-size:12px; font-weight:600; padding:4px 10px; border-radius:6px; border:1.5px solid #2c7a4b; background:transparent; color:#2c7a4b; cursor:pointer; }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Supplier__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description>Sod or mulch supplier for this work order. Pulled from Community__c default supplier or overridden during takeoff. Used in Scene 6B (Delivery Quality Check) to identify the supplier on the Delivery_Quality_Check__c record, and in the Flag Delivery Issue flow to route notifications and create Quality_Case__c records linked to the correct Supplier Account.</description>
+    <label>Supplier</label>
+    <referenceTo>Account</referenceTo>
+    <relationshipLabel>Work Orders (Supplier)</relationshipLabel>
+    <relationshipName>Supplier_Work_Orders</relationshipName>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Lookup</type>
+</CustomField>

@@ -1,0 +1,380 @@
+<template>
+    <!-- ── Loading ────────────────────────────────────────────────────────── -->
+    <template if:true={isLoading}>
+        <div class="loading-state">
+            <lightning-spinner alternative-text="Loading..." size="medium"></lightning-spinner>
+        </div>
+    </template>
+
+    <!-- ── Error ──────────────────────────────────────────────────────────── -->
+    <template if:true={hasError}>
+        <div class="ab ab-r">
+            <span class="ab-ic">⚠</span>
+            <span>{errorMsg}</span>
+        </div>
+    </template>
+
+    <template if:false={isLoading}>
+        <template if:false={hasError}>
+
+            <div class="sf-top">
+                <div class="sf-waffle" aria-hidden="true">
+                    <span></span><span></span><span></span>
+                    <span></span><span></span><span></span>
+                    <span></span><span></span><span></span>
+                </div>
+                <div class="sf-app">
+                    <div class="sf-app-icon">HB</div>
+                    <span>{builderAppLabel}</span>
+                </div>
+                <div class="sf-search">{builderSearchPlaceholder}</div>
+                <div class="sf-icons" aria-hidden="true">
+                    <div class="sf-ico">⚙</div>
+                    <div class="sf-ico">?</div>
+                    <div class="sf-ico">🔔</div>
+                    <div class="sf-avatar">{userInitials}</div>
+                </div>
+            </div>
+
+            <div class="sf-nav">
+                <template for:each={builderNavTabs} for:item="tab">
+                    <button
+                        type="button"
+                        key={tab.id}
+                        class={tab.className}
+                        data-id={tab.id}
+                        onclick={handleBuilderTabClick}
+                        disabled={tab.disabled}>
+                        {tab.label}
+                    </button>
+                </template>
+            </div>
+
+            <!-- ── Record header ──────────────────────────────────────────── -->
+            <div class="rec-header">
+                <div class="rec-top-row">
+                    <div class="rec-icon" style={recIconStyle}>{header.typeLabel}</div>
+                    <div class="rec-title-block">
+                        <div class="rec-breadcrumb">{header.breadcrumb}</div>
+                        <div class="rec-title-row">
+                            <span class="rec-title">{header.workOrderName}</span>
+                            <span class="badge">{header.workOrderType}</span>
+                            <span class="badge warn">Child Work Order</span>
+                        </div>
+                    </div>
+                    <div class="rec-actions">
+                        <button class="sf-btn" onclick={handleEditWorkOrder}>Edit</button>
+                        <button class="sf-btn" onclick={handleNewTask}>New Task</button>
+                        <button class="sf-btn" onclick={handleNewNote}>Add Note</button>
+                        <button class="sf-btn" onclick={handleOpenFiles}>Files</button>
+                        <button class="sf-btn" onclick={handleOpenParent}>Open Parent</button>
+                        <button class="sf-btn" onclick={handleRefresh}>Refresh</button>
+                        <button class="sf-btn primary" onclick={handleSave}>Edit Record</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Short path ─────────────────────────────────────────────── -->
+            <div class="path-wrap">
+                <ul class="short-path">
+                    <template for:each={shortPath} for:item="step">
+                        <li key={step.stepIndex} class={step.stepClass}>
+                            <div class="stage">{step.stepIndex}</div>
+                            <div class="label">{step.label}</div>
+                            <div class="desc">{step.description}</div>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+
+            <!-- ── Highlights bar ─────────────────────────────────────────── -->
+            <div class="highlights">
+                <template for:each={highlightsItems} for:item="hl">
+                    <div key={hl.id} class="hl-item">
+                        <div class="hl-label">{hl.label}</div>
+                        <div class={hl.hlValueClass}>{hl.value}</div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- ── Warning banner ─────────────────────────────────────────── -->
+            <template if:true={hasWarnings}>
+                <div class={warningBannerClass} style="margin: 8px 20px 0;">
+                    <span class="ab-ic">⚠</span>
+                    <span>{primaryWarning.message}</span>
+                </div>
+            </template>
+
+            <!-- ── Subtabs ────────────────────────────────────────────────── -->
+            <div class="subtabs">
+                <button class={tabOverviewCss}  data-tab="overview"  onclick={handleTabSelect}>Overview</button>
+                <button class={tabScopeCss}      data-tab="scope"     onclick={handleTabSelect}>Scope / Items</button>
+                <button class={tabScheduleCss}   data-tab="schedule"  onclick={handleTabSelect}>Schedule</button>
+                <button class={tabCloseoutCss}   data-tab="closeout"  onclick={handleTabSelect}>Closeout</button>
+                <button class={tabPhotosCss}     data-tab="photos"    onclick={handleTabSelect}>Photos &amp; Docs</button>
+                <button class={tabActivityCss}   data-tab="activity"  onclick={handleTabSelect}>Activity</button>
+            </div>
+
+            <!-- ── Tab bodies ──────────────────────────────────────────────── -->
+            <div class="sf-body">
+
+                <!-- ══ Overview tab ══════════════════════════════════════════ -->
+                <template if:true={showOverview}>
+                    <div class="layout">
+                        <div class="layout-main">
+
+                            <!-- ── FJ: Control Panel ── -->
+                            <template if:true={isFinishedJob}>
+                                <div class="card warn">
+                                    <div class="ch">
+                                        <div class="ci" style="background:#2c7a4b;">FJ</div>
+                                        <h3>Finished Job Control Panel</h3>
+                                    </div>
+                                    <div class="cb">
+                                        <button class="sf-btn primary" onclick={handleConfirmScope}>Confirm Scope</button>
+                                        <div class="fields-grid" style="margin-top:12px;">
+                                            <div><div class="field-label">Parent Work Order</div><div class="field-value">{header.parentWorkOrderName}</div></div>
+                                            <div><div class="field-label">FJ Reason Code</div><div class="field-value">{sourceSummary.fjReasonCode}</div></div>
+                                            <div><div class="field-label">Reason Detail</div><div class="field-value">{sourceSummary.fjReasonDetail}</div></div>
+                                            <div><div class="field-label">Original Foreman</div><div class="field-value">{sourceSummary.fjOriginalForemanName}</div></div>
+                                            <div><div class="field-label">Created By FM</div><div class="field-value">{sourceSummary.fjCreatedByFmName}</div></div>
+                                            <div><div class="field-label">Billable Type</div><div class="field-value">{header.billableType}</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- ── Warranty: Decision Panel ── -->
+                            <template if:true={isWarranty}>
+                                <div class="card info">
+                                    <div class="ch">
+                                        <div class="ci" style="background:#2c7a4b;">WT</div>
+                                        <h3>Warranty Decision</h3>
+                                    </div>
+                                    <div class="cb">
+                                        <button class="sf-btn primary" onclick={handleClassifyWarranty}>Classify Warranty</button>
+                                        <div class="fields-grid" style="margin-top:12px;">
+                                            <div><div class="field-label">Original Install</div><div class="field-value">{header.parentWorkOrderName}</div></div>
+                                            <div><div class="field-label">Coverage Type</div><div class="field-value">{sourceSummary.warrantyCoverageType}</div></div>
+                                            <div><div class="field-label">Coverage Status</div><div class="field-value">{sourceSummary.warrantyCoverageStatus}</div></div>
+                                            <div><div class="field-label">Warranty Start</div><div class="field-value">{sourceSummary.warrantyStartDate}</div></div>
+                                            <div><div class="field-label">Warranty End</div><div class="field-value">{sourceSummary.warrantyEndDate}</div></div>
+                                            <div><div class="field-label">Voided Reason</div><div class="field-value">{sourceSummary.warrantyVoidedReason}</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <!-- ── Customer Care: Intake Panel ── -->
+                            <template if:true={isCustomerCare}>
+                                <div class="card alert">
+                                    <div class="ch">
+                                        <div class="ci" style="background:#2c7a4b;">CC</div>
+                                        <h3>Customer Care Intake</h3>
+                                    </div>
+                                    <div class="cb">
+                                        <button class="sf-btn primary" onclick={handleNewAction}>New Action</button>
+                                        <div class="fields-grid" style="margin-top:12px;">
+                                            <div><div class="field-label">Case</div><div class="field-value">{sourceSummary.caseNumber}</div></div>
+                                            <div><div class="field-label">Request Type</div><div class="field-value">{sourceSummary.caseCustomerCareType}</div></div>
+                                            <div><div class="field-label">Priority Tier</div><div class="field-value">{sourceSummary.casePriorityTier}</div></div>
+                                            <div><div class="field-label">Construction Manager</div><div class="field-value">{sourceSummary.caseCmName}</div></div>
+                                            <div><div class="field-label">Related Parent WO</div><div class="field-value">{header.parentWorkOrderName}</div></div>
+                                            <div><div class="field-label">Resolution Status</div><div class="field-value">{sourceSummary.caseResolutionStatus}</div></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+
+                        </div>
+
+                        <!-- ── Rail ──────────────────────────────────────── -->
+                        <aside class="layout-rail">
+                            <!-- Quick Actions -->
+                            <div class="card">
+                                <div class="ch">
+                                    <div class="ci" style="background:#2c7a4b;">⚡</div>
+                                    <h3>Quick Actions</h3>
+                                </div>
+                                <ul class="qa-list">
+                                    <template for:each={actions} for:item="act">
+                                        <li key={act.label} class="qa-item">
+                                            <span class="qa-icon">›</span>
+                                            <span>{act.label}</span>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
+
+                            <!-- Gate Warnings -->
+                            <div class="card last">
+                                <div class="ch">
+                                    <div class="ci" style="background:#e8936a;">⚠</div>
+                                    <h3>Gate Warnings</h3>
+                                </div>
+                                <div class="cb">
+                                    <template if:true={hasWarnings}>
+                                        <template for:each={warnings} for:item="w">
+                                            <div key={w.key} class="gate-warn-row">
+                                                <span class="pill warn">{w.message}</span>
+                                            </div>
+                                        </template>
+                                    </template>
+                                    <template if:false={hasWarnings}>
+                                        <span class="pill ok">All gates passed</span>
+                                    </template>
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                </template>
+
+                <!-- ══ Scope / Items tab ══════════════════════════════════════ -->
+                <template if:true={showScope}>
+                    <div class="card last">
+                        <div class="ch">
+                            <div class="ci" style="background:#2c7a4b;">📄</div>
+                            <h3>Scope / Items</h3>
+                            <button class="btn-inline" style="margin-left:auto;" onclick={handleEditWorkOrder}>Add Item</button>
+                        </div>
+                        <template if:true={hasScopeItems}>
+                            <table class="tbl">
+                                <thead>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Source</th>
+                                        <th class="num">Original Qty</th>
+                                        <th class="num">Remaining</th>
+                                        <th>Reason</th>
+                                        <th>Charge</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={scopeItems} for:item="item">
+                                        <tr key={item.id}>
+                                            <td>{item.itemName}</td>
+                                            <td><span class="chip cgr">{item.source}</span></td>
+                                            <td class="num">{item.originalQty}</td>
+                                            <td class="num">{item.remainingQty}</td>
+                                            <td>{item.reason}</td>
+                                            <td>
+                                                <span class={item.chargeClass}>{item.charge}</span>
+                                            </td>
+                                            <td><button class="btn-inline" data-id={item.id} onclick={handleEditWorkOrder}>Edit</button></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </template>
+                        <template if:false={hasScopeItems}>
+                            <div class="empty-state">0 scope items found for this child work order.</div>
+                        </template>
+                    </div>
+                </template>
+
+                <!-- ══ Schedule tab ═══════════════════════════════════════════ -->
+                <template if:true={showSchedule}>
+                    <div class="card last">
+                        <div class="ch">
+                            <div class="ci" style="background:#2c7a4b;">📅</div>
+                            <h3>Schedule</h3>
+                            <button class="btn-inline" style="margin-left:auto;" onclick={handleEditWorkOrder}>Update Schedule</button>
+                        </div>
+                        <div class="fields-grid">
+                            <div><div class="field-label">Scheduled Date</div><div class="field-value">{schedule.scheduledDate}</div></div>
+                            <div><div class="field-label">Field Manager</div><div class="field-value">{schedule.fmName}</div></div>
+                            <div><div class="field-label">Foreman</div><div class="field-value">{schedule.foremanName}</div></div>
+                            <div><div class="field-label">Crew</div><div class="field-value">{schedule.crewName}</div></div>
+                            <div><div class="field-label">Stop #</div><div class="field-value">{schedule.stopNumber}</div></div>
+                            <div><div class="field-label">Locked</div><div class="field-value">{schedule.isLocked}</div></div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- ══ Closeout tab ═══════════════════════════════════════════ -->
+                <template if:true={showCloseout}>
+                    <div class="card last">
+                        <div class="ch">
+                            <div class="ci" style="background:#2c7a4b;">✓</div>
+                            <h3>Closeout</h3>
+                        </div>
+                        <div class="cb">
+                            <div class="fields-grid">
+                                <div><div class="field-label">Photos Uploaded</div><div class="field-value">{closeout.photoCount} / {closeout.photoRequired}</div></div>
+                                <div><div class="field-label">Closeout Notes</div><div class="field-value">{closeout.closeoutNotes}</div></div>
+                                <div><div class="field-label">FM Review</div><div class="field-value">{closeout.fmReviewComplete}</div></div>
+                                <div><div class="field-label">Closeout Eligible</div><div class="field-value">{closeout.closeoutEligible}</div></div>
+                            </div>
+                            <div style="margin-top:12px;">
+                                <button class="sf-btn success" onclick={handleOpenWorkOrder}>Open Work Order</button>
+                                <button class="sf-btn warning" style="margin-left:8px;" onclick={handleEditWorkOrder}>Edit Work Order</button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- ══ Photos & Docs tab ══════════════════════════════════════ -->
+                <template if:true={showPhotos}>
+                    <div class="card last">
+                        <div class="ch">
+                            <div class="ci" style="background:#9b7ec8;">📷</div>
+                            <h3>Photos &amp; Docs ({documents.length})</h3>
+                            <button class="sf-btn" style="margin-left:auto;" onclick={handleEditWorkOrder}>Edit Work Order</button>
+                        </div>
+                        <template if:true={hasDocuments}>
+                            <table class="tbl">
+                                <thead>
+                                    <tr>
+                                        <th>File</th>
+                                        <th>Type</th>
+                                        <th>Uploaded By</th>
+                                        <th>Date</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <template for:each={documents} for:item="doc">
+                                        <tr key={doc.id}>
+                                            <td class="nl">{doc.title}</td>
+                                            <td><span class="chip cgr">{doc.fileType}</span></td>
+                                            <td>{doc.uploadedByName}</td>
+                                            <td>{doc.createdDate}</td>
+                                            <td><button class="sf-btn dark" data-url={doc.downloadUrl} onclick={handleOpenDocument}>Open</button></td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </template>
+                        <template if:false={hasDocuments}>
+                            <div class="empty-state">0 files uploaded yet.</div>
+                        </template>
+                    </div>
+                </template>
+
+                <!-- ══ Activity tab ═══════════════════════════════════════════ -->
+                <template if:true={showActivity}>
+                    <div class="card last">
+                        <div class="ch">
+                            <div class="ci" style="background:#2c7a4b;">💬</div>
+                            <h3>Activity</h3>
+                            <button class="btn-inline" style="margin-left:auto;" onclick={handleNewNote}>Add Note</button>
+                        </div>
+                        <div class="cb">
+                            <template for:each={activity} for:item="item">
+                                <div key={item.id} class="feed-item">
+                                    <div class="feed-avatar" style="background:#706e6b;">{item.actorInitials}</div>
+                                    <div class="feed-body">
+                                        <div class="feed-meta">{item.actorName} · {item.timeAgo}</div>
+                                        <div class="feed-content">{item.body}</div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+            </div><!-- end sf-body -->
+        </template>
+    </template>
+</template>

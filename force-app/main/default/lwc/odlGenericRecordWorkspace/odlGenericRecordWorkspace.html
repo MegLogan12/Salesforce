@@ -1,0 +1,26 @@
+<template>
+    <section class="workspace">
+        <section class="panel hero">
+            <div class="hero-copy">
+                <div class="eyebrow">{objectApiName}</div>
+                <h1>Record Detail</h1>
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="panel-header">
+                <span>Record Fields</span>
+                <button class="btn btn-primary" onclick={handleEditRecord}>Edit Record</button>
+            </div>
+            <div class="form-wrap">
+                <lightning-record-form
+                    record-id={recordId}
+                    object-api-name={objectApiName}
+                    mode="view"
+                    layout-type="Full">
+                </lightning-record-form>
+            </div>
+        </section>
+
+    </section>
+</template>

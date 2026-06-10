@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Task_Type__c</fullName>
+    <label>Task Type</label>
+    <required>true</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>811 Call</fullName>
+                <default>false</default>
+                <label>811 Call</label>
+            </value>
+            <value>
+                <fullName>Field Measurement</fullName>
+                <default>false</default>
+                <label>Field Measurement</label>
+            </value>
+            <value>
+                <fullName>Photo Capture</fullName>
+                <default>false</default>
+                <label>Photo Capture</label>
+            </value>
+            <value>
+                <fullName>Scope Verification</fullName>
+                <default>false</default>
+                <label>Scope Verification</label>
+            </value>
+            <value>
+                <fullName>Access / Site Notes</fullName>
+                <default>false</default>
+                <label>Access / Site Notes</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

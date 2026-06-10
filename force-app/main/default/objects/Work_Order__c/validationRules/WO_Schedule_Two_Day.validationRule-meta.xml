@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>WO_Schedule_Two_Day</fullName>
+    <active>true</active>
+    <description>Cannot lock a schedule less than two days out. Scoped to Production Install and Finish Job; Aqua, Repair, and Customer Care record types are exempt. Spec Section 8.</description>
+    <errorConditionFormula>AND( OR(RecordType.DeveloperName=&quot;Production_Install&quot;,RecordType.DeveloperName=&quot;Finish_Job&quot;), Schedule_Locked__c, Scheduled_Date__c &lt; TODAY()+2 )</errorConditionFormula>
+    <errorDisplayField>Scheduled_Date__c</errorDisplayField>
+    <errorMessage>Cannot lock a schedule for less than two days out.</errorMessage>
+</ValidationRule>
