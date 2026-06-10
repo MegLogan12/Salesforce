@@ -1,4 +1,40 @@
 <template>
-    <!-- Intentionally empty — all rendering happens in a body-level portal
-         created in connectedCallback to escape the utility bar stacking context. -->
+    <!-- Only the singleton owner renders the overlay -->
+    <template if:true={isOwner}>
+        <!-- Full-viewport transparent overlay -->
+        <div class="ov">
+            <div class="mc pe" data-ref="mc">
+                <div class="flip" data-ref="flip">
+                    <img class="lean-img pe" data-ref="lean" src={peekUrl} alt="Ask mcLOVIN'">
+                    <div class="badge pe" data-ref="badge">
+                        <img class="badge-img" data-ref="badgeImg" src={headUrl} alt="">
+                        <div class="ring">&#10022;</div>
+                    </div>
+                </div>
+            </div>
+            <div class="bubble pe" data-ref="bubble">
+                <span class="spark">&#10022;</span><span data-ref="bubText" class="bub-text"></span><span data-ref="bubChip" class="chip pe" style="display:none">Log a site visit</span>
+            </div>
+        </div>
+        <!-- Scrim + pop-up form outside the overlay div so z-index stacks cleanly -->
+        <div class="scrim pe" data-ref="scrim"></div>
+        <div class="popform" data-ref="popform">
+            <div class="pf-hd">
+                <span class="pf-dot"></span>
+                <span class="pf-title">Log Site Visit</span>
+                <button type="button" class="pf-close pe">&#x2715;</button>
+            </div>
+            <div class="pf-bd">
+                <div class="pf-field"><label>Access notes</label><input type="text" placeholder="Gate code, key location..."></div>
+                <div class="pf-field"><label>Slope / grade</label><select><option>Flat</option><option>Moderate slope</option><option>Steep</option></select></div>
+                <div class="pf-field"><label>Drainage concern</label><select><option>None</option><option>Minor pooling</option><option>Major issue</option></select></div>
+                <div class="pf-field"><label>Photos taken</label><select><option>Yes</option><option>No</option></select></div>
+                <div class="pf-field pf-full"><label>Recommended scope</label><input type="text" placeholder="Describe recommended work..."></div>
+                <div class="pf-actions">
+                    <button type="button" class="pf-btn pe pf-close">Cancel</button>
+                    <button type="button" class="pf-btn pf-primary pe pf-save">Save Visit</button>
+                </div>
+            </div>
+        </div>
+    </template>
 </template>

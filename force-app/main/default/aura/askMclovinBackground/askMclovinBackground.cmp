@@ -1,0 +1,3 @@
+<aura:component implements="lightning:backgroundUtilityItem" access="global">
+    <c:askMclovin />
+</aura:component>

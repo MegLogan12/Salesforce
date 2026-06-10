@@ -1,2 +1,186 @@
-/* All styles are injected into document.head via JS portal pattern.
-   See askMclovin.js _injectStyles(). */
+/* Host is a fixed full-page transparent block — the overlay lives inside it */
+:host {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    pointer-events: none;
+    width: 100vw;
+    height: 100vh;
+}
+
+.ov { position: absolute; inset: 0; pointer-events: none; }
+.pe { pointer-events: auto; }
+
+/* ── Character — ONE eased transform, no left/top animation ── */
+.mc {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transition: transform 1.1s cubic-bezier(.22,.61,.36,1);
+    will-change: transform;
+}
+.mc.drag { transition: none; }
+
+/* ── Flip wrapper — direction eases separately from travel ── */
+.flip { transition: transform .45s ease; transform-origin: center bottom; }
+
+/* ── Lean image — transparent PNG, breathing bob ── */
+@keyframes mcBreathe {
+    0%,100% { transform: translateY(0) scale(1); }
+    50%      { transform: translateY(-6px) scale(1.008); }
+}
+.lean-img {
+    height: 330px;
+    display: block;
+    cursor: grab;
+    background: transparent;
+    filter: drop-shadow(0 18px 26px rgba(20,24,40,.24));
+    animation: mcBreathe 4.6s ease-in-out infinite;
+    transform-origin: bottom center;
+    will-change: transform;
+}
+.lean-img.hidden { display: none; }
+
+/* ── Badge (circular head, shows at edge when no perch) ── */
+.badge {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #e9eaee;
+    box-shadow: 0 14px 34px rgba(20,24,40,.20);
+    overflow: hidden;
+    display: none;
+    place-items: end center;
+    cursor: grab;
+    position: relative;
+}
+.badge.show { display: grid; }
+.badge-img {
+    height: 110px;
+    margin-bottom: -8px;
+    transition: opacity .18s, transform .14s;
+    background: transparent;
+}
+.ring {
+    position: absolute;
+    right: 6px; bottom: 6px;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: #FCD400;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+}
+
+/* ── Bubble ── */
+.bubble {
+    position: absolute;
+    max-width: 240px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 18px;
+    padding: 12px 14px;
+    box-shadow: 0 18px 40px rgba(20,24,40,.18);
+    font-size: 14.5px;
+    line-height: 1.35;
+    color: #1b1f25;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity .25s, transform .25s;
+    z-index: 10;
+}
+.bubble.show { opacity: 1; transform: none; }
+
+.spark {
+    display: inline-grid;
+    place-items: center;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: #FCD400;
+    font-size: 12px;
+    vertical-align: -5px;
+    margin-right: 7px;
+}
+
+.chip {
+    display: inline-block;
+    margin-top: 8px;
+    background: #fff7cc;
+    border: 1px solid #f1e08a;
+    border-radius: 999px;
+    padding: 5px 11px;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* ── Scrim ── */
+.scrim {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,19,28,.28);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .25s;
+    z-index: 9998;
+}
+.scrim.show { opacity: 1; pointer-events: auto; }
+
+/* ── Pop-up form ── */
+.popform {
+    position: fixed;
+    left: 50%; top: 52%;
+    transform: translate(-50%,-50%) scale(.9);
+    opacity: 0;
+    pointer-events: none;
+    width: min(540px, 92vw);
+    background: #fff;
+    border: 1px solid #e9eaee;
+    border-radius: 20px;
+    box-shadow: 0 40px 90px rgba(15,19,28,.35);
+    z-index: 9999;
+    transition: transform .32s cubic-bezier(.2,.8,.2,1), opacity .32s;
+    font-family: inherit;
+}
+.popform.show { opacity: 1; transform: translate(-50%,-50%) scale(1); pointer-events: auto; }
+
+.pf-hd {
+    display: flex; align-items: center; gap: 10px;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e9eaee;
+}
+.pf-dot { width: 9px; height: 9px; border-radius: 50%; background: #FCD400; }
+.pf-title { font-size: 15px; font-weight: 800; color: #1b1f25; }
+.pf-close {
+    margin-left: auto;
+    background: none; border: 1px solid #e9eaee; border-radius: 8px;
+    padding: 5px 10px; cursor: pointer; font-size: 13px; font-weight: 700; color: #525a66;
+}
+.pf-bd {
+    padding: 18px 20px 22px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px;
+}
+.pf-field { display: flex; flex-direction: column; gap: 5px; }
+.pf-field.pf-full { grid-column: 1 / -1; }
+.pf-field label { font-size: 12.5px; font-weight: 700; color: #525a66; }
+.pf-field input, .pf-field select {
+    font-family: inherit; font-size: 14px;
+    border: 1px solid #dfe2e8; border-radius: 10px;
+    padding: 9px 11px; background: #fcfcfd; color: #1b1f25;
+}
+.pf-actions { grid-column: 1 / -1; display: flex; justify-content: flex-end; gap: 10px; }
+.pf-btn {
+    font-family: inherit; font-weight: 700; border-radius: 11px;
+    padding: 10px 16px; cursor: pointer; border: 1px solid #e9eaee;
+    background: #fff; font-size: 14px;
+}
+.pf-btn.pf-primary { background: #FCD400; border-color: #e7c200; }
+
+@media (prefers-reduced-motion: reduce) {
+    .lean-img { animation: none; }
+    .mc { transition: none !important; }
+    .flip { transition: none; }
+    .bubble { transition: none; }
+}
