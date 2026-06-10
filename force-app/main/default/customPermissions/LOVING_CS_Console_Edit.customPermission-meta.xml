@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomPermission xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Gates every write action in the LOVING Customer Success Console (PO verify/NFI/approve, quotes, warranty determinations, case actions, onboarding). Without it the console is read-only.</description>
+    <label>LOVING CS Console Edit</label>
+</CustomPermission>

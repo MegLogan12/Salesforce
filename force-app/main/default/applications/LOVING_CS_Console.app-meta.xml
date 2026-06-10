@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>LOVING Customer Success Console: PO intake and approval, pipeline, EPOs and quotes, cases, warranty determinations, FJ tracking, read-only invoices with GP%, the six CS reports, builders, communities, zones, and knowledge.</description>
+    <formFactors>Large</formFactors>
+    <isNavAutoTempTabsDisabled>false</isNavAutoTempTabsDisabled>
+    <isNavPersonalizationDisabled>false</isNavPersonalizationDisabled>
+    <isNavTabPersistenceDisabled>false</isNavTabPersistenceDisabled>
+    <label>Customer Success</label>
+    <navType>Standard</navType>
+    <tabs>LOVING_CS_Console</tabs>
+    <uiType>Lightning</uiType>
+</CustomApplication>

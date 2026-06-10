@@ -1,0 +1,598 @@
+<template>
+<div class="shell">
+    <header class="hdr">
+        <span class="logo">❧</span>
+        <div class="app"><b>LOVING</b><span>CUSTOMER SUCCESS CONSOLE</span></div>
+        <div class="gsearch">
+            <input type="text" placeholder="Search POs, cases, quotes, communities" oninput={handleSearch} />
+        </div>
+        <div class="right">
+            <template if:true={readOnly}><span class="hpill">Read-only</span></template>
+            <template if:true={canEdit}><span class="hpill">CS edit enabled</span></template>
+        </div>
+    </header>
+    <nav class="tabbar">
+        <template for:each={tabs} for:item="t">
+            <button key={t.key} class={t.css} data-key={t.key} onclick={handleTab}>
+                {t.label}
+                <template if:true={t.count}><span class="ct">{t.count}</span></template>
+            </button>
+        </template>
+    </nav>
+    <div class="main">
+        <div class="center">
+
+            <!-- HOME -->
+            <template if:true={isHome}>
+                <div class="ptitle"><h1>Home</h1>
+                    <div class="acts">
+                        <template if:true={canEdit}>
+                            <button class="btn primary" onclick={handleOpenNewPo}>New PO</button>
+                            <button class="btn" onclick={handleQbStartEpo}>Create EPO</button>
+                        </template>
+                    </div>
+                </div>
+                <div class="kgrid">
+                    <template for:each={homeKpis} for:item="k">
+                        <div key={k.l} class="kpi"><div class="l">{k.l}</div><div class={k.css}>{k.v}</div><div class="s">{k.s}</div></div>
+                    </template>
+                </div>
+                <div class="card"><div class="ch">Pipeline by stage</div><div class="cb">
+                    <div class="two-col">
+                        <div>
+                            <div class="mini-h">PO stages</div>
+                            <template for:each={homePoStages} for:item="r">
+                                <div key={r.st} class="stage-row"><span class="stage-n">{r.st}</span>
+                                    <span class="bar"><span class="bar-fill orange" style={r.barStyle}></span></span>
+                                    <span class="num stage-c">{r.n}</span></div>
+                            </template>
+                        </div>
+                        <div>
+                            <div class="mini-h">Work Order stages (top, read-only)</div>
+                            <template for:each={homeWoStages} for:item="r">
+                                <div key={r.st} class="stage-row"><span class="stage-n">{r.st}</span>
+                                    <span class="bar"><span class="bar-fill ever" style={r.barStyle}></span></span>
+                                    <span class="num stage-c">{r.n}</span></div>
+                            </template>
+                        </div>
+                    </div>
+                </div></div>
+            </template>
+
+            <!-- PIPELINE -->
+            <template if:true={isPipeline}>
+                <div class="ptitle"><h1>Pipeline</h1>
+                    <div class="acts"><template if:true={canEdit}>
+                        <button class="btn primary" onclick={handleOpenNewPo}>New PO</button></template></div>
+                </div>
+                <div class="boardlbl">PO stages <span>Builder_PO__c.Status__c · CS owns this lane</span></div>
+                <div class="board">
+                    <template for:each={poLane} for:item="col">
+                        <div key={col.st} class={col.colCss}>
+                            <div class="colh"><b>{col.st}</b><span class="cn">{col.count}</span><span class="cv">{col.sum}</span></div>
+                            <div class="cards">
+                                <template if:true={col.empty}><div class="note">Empty</div></template>
+                                <template for:each={col.cards} for:item="c">
+                                    <button key={c.id} class="pcard" data-id={c.id} onclick={handlePoCard}>
+                                        <span class="pid">{c.poNumber}</span>
+                                        <span class="pb">{c.builder} · {c.lot}</span>
+                                        <span class="pm">{c.community}</span>
+                                        <span class="pf">
+                                            <template for:each={c.chips} for:item="ch">
+                                                <span key={ch.id} class={ch.css}>{ch.label}</span>
+                                            </template>
+                                            <span class="amt">{c.amountLabel}</span>
+                                        </span>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <div class="boardlbl mt14">Work Order stages <span>Work_Order__c.Status__c · read-only for CS</span></div>
+                <div class="board">
+                    <template for:each={woLane} for:item="col">
+                        <div key={col.st} class={col.colCss}>
+                            <div class="colh"><b>{col.stLabel}</b><span class="cn">{col.count}</span></div>
+                            <div class="cards">
+                                <template if:true={col.empty}><div class="note">Empty</div></template>
+                                <template for:each={col.cards} for:item="c">
+                                    <button key={c.id} class="pcard" data-id={c.id} onclick={handleWoCard}>
+                                        <span class="pid">{c.name}</span>
+                                        <span class="pb">{c.lot} · {c.community}</span>
+                                        <span class="pm">{c.fmLabel}</span>
+                                        <span class="pf">
+                                            <template if:true={c.typeChip}><span class={c.typeChip.css}>{c.typeChip.label}</span></template>
+                                            <template if:true={c.subChip}><span class={c.subChip.css}>{c.subChip.label}</span></template>
+                                            <span class="amt">{c.amountLabel}</span>
+                                        </span>
+                                    </button>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+                <div class="note mt10">Two lanes: the PO lane is fully workable here. The Work Order lane is read-only for CS — sub-statuses ride as chips on the cards, and WO detail lives in the scheduling console.</div>
+            </template>
+
+            <!-- PO INTAKE -->
+            <template if:true={isPo}>
+                <div class="ptitle"><h1>PO Intake</h1>
+                    <div class="acts"><template if:true={canEdit}>
+                        <button class="btn primary" onclick={handleOpenNewPo}>New PO</button></template></div>
+                </div>
+                <div class="filters">
+                    <template for:each={poFilterChips} for:item="f">
+                        <button key={f.key} class={f.css} data-key={f.key} onclick={handlePoFilter}>{f.label}<span class="ct">{f.count}</span></button>
+                    </template>
+                </div>
+                <div class="card"><div class="ch">PO intake queue<span class="pill gray ml">{poRowCount} shown</span></div>
+                <div class="cb nopad scrollx">
+                    <table class="grid"><thead><tr><th>PO</th><th>Builder / Community</th><th>Lot</th><th class="r">Amount</th><th>Install</th><th>Status</th><th class="tr">Actions</th></tr></thead><tbody>
+                    <template for:each={poRows} for:item="p">
+                        <tr key={p.id}>
+                            <td class="num">{p.poNumber}
+                                <template if:true={p.noFile}><span class="pill red ml5">No file</span></template></td>
+                            <td>{p.builder}<span class="sub">{p.community}</span>
+                                <template if:true={p.mismatchLine}><span class="sub red-t">{p.mismatchLine}</span></template>
+                                <template if:true={p.nfiLine}><span class="sub amber-t">{p.nfiLine}</span></template></td>
+                            <td>{p.lot}</td><td class="r">{p.amountLabel}</td><td>{p.install}</td>
+                            <td><span class={p.pillCss}>{p.status}</span></td>
+                            <td><div class="rowacts">
+                                <template if:true={canEdit}>
+                                    <button class="btn" data-id={p.id} onclick={handleVerify}>Verify</button>
+                                    <button class="btn red" data-id={p.id} onclick={handleNfi}>NFI</button>
+                                    <template if:true={p.isMismatch}>
+                                        <button class="btn dark" data-id={p.id} onclick={handleEpoFromPo}>Create EPO</button>
+                                    </template>
+                                    <button class="btn" data-id={p.id} data-kind="po" onclick={handleOpenEmail}>Email</button>
+                                    <button class="btn ghost" data-id={p.id} onclick={handleEscalate}>Escalate</button>
+                                </template>
+                            </div></td>
+                        </tr>
+                    </template>
+                    </tbody></table>
+                </div>
+                <div class="cb"><div class="note">Verify checks the PO against the community package (a PO file must be attached). NFI returns it with the count incrementing. Mismatches resolve by correction or EPO. Verified POs move to Approvals for the CS Approve that gates Work Order creation.</div></div></div>
+            </template>
+
+            <!-- APPROVALS -->
+            <template if:true={isApprovals}>
+                <div class="ptitle"><h1>Approvals</h1></div>
+                <div class="card"><div class="ch">Waiting on you<span class="pill gray ml">{approvalCount}</span></div>
+                <div class="cb nopad">
+                    <template if:true={noApprovals}><div class="note m14">Nothing waiting on you. New POs, quotes, and warranty determinations land here.</div></template>
+                    <template if:false={noApprovals}>
+                    <table class="grid"><thead><tr><th>Type</th><th>Record</th><th>Detail</th><th class="tr">Decision</th></tr></thead><tbody>
+                    <template for:each={approvalRows} for:item="i">
+                        <tr key={i.key}>
+                            <td><span class={i.kindCss}>{i.kind}</span></td>
+                            <td class="num">{i.rec}</td><td class="maxw">{i.desc}</td>
+                            <td><div class="rowacts"><template if:true={canEdit}>
+                                <button class="btn green" data-act={i.act} data-id={i.id} onclick={handleApprovalAct}>{i.actLabel}</button>
+                                <button class="btn red" data-rej={i.rej} data-id={i.id} onclick={handleApprovalRej}>{i.rejLabel}</button>
+                            </template></div></td>
+                        </tr>
+                    </template>
+                    </tbody></table>
+                    </template>
+                </div>
+                <div class="cb"><div class="note">One queue for every CS decision: PO approvals, mismatch resolutions, quote approvals, and warranty determinations. Takeoff approvals are intentionally not here (Meg, Jun 10 2026).</div></div></div>
+            </template>
+
+            <!-- CASES -->
+            <template if:true={isCases}>
+                <div class="ptitle"><h1>Cases</h1>
+                    <div class="acts"><template if:true={canEdit}>
+                        <button class="btn primary" onclick={handleOpenNewCase}>New case</button></template></div>
+                </div>
+                <template for:each={caseRows} for:item="c">
+                    <div key={c.id} class={c.rowCss}>
+                        <button class="crh" data-id={c.id} onclick={handleToggleCase}>
+                            <div class="flex1"><b>{c.name} · {c.subject}</b>
+                                <span class="sub">{c.account} · {c.lot} · {c.origin}</span></div>
+                            <span class="pill gray">{c.statusLabel}</span>
+                            <template if:true={c.qiLocked}><span class="pill red">Close locked · QI</span></template>
+                        </button>
+                        <template if:true={c.expanded}>
+                            <div class="crb">
+                                <template for:each={c.noteLines} for:item="n">
+                                    <div key={n.id} class="fitem"><span>{n.text}</span></div>
+                                </template>
+                                <template if:true={canEdit}>
+                                    <div class="composer mt9"><textarea data-note={c.id} placeholder="Add a note to the timeline"></textarea></div>
+                                    <div class="btnrow mt9">
+                                        <button class="btn dark" data-id={c.id} onclick={handleCaseNote}>Add note</button>
+                                        <button class="btn" data-id={c.id} data-kind="case" onclick={handleOpenEmail}>Email</button>
+                                        <button class="btn green" data-id={c.id} onclick={handleCaseResolve}>Resolve</button>
+                                        <button class="btn" data-id={c.id} onclick={handleCaseClose}>Close</button>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+                <div class="note">QI failures keep Close locked until re-inspection passes with every item at 9 or above (the score posts from the field). Warranty claims, builder disputes, and Outdoor Living issues share the queue.</div>
+            </template>
+
+            <!-- QUOTE BUILDER -->
+            <template if:true={isQuotes}>
+                <div class="ptitle"><h1>Quote Builder</h1>
+                    <div class="acts"><template if:true={canEdit}>
+                        <button class="btn dark" onclick={handleQbStartEpo}>Create EPO</button></template></div>
+                </div>
+                <div class="qb">
+                    <div class="card"><div class="ch">Calculator<span class={qbKindCss}>{qbKind}</span></div><div class="cb">
+                        <div class="qb-head">
+                            <select class="fs w160" onchange={handleQbKind}>
+                                <option value="Customer Care">Customer Care</option>
+                                <option value="EPO">EPO</option>
+                            </select>
+                            <input class="fi" placeholder="Lot / client (e.g., Lot 96 · Fox Ridge Ph 3)" value={qbLot} oninput={handleQbLot} />
+                        </div>
+                        <template for:each={qbLineRows} for:item="l">
+                            <div key={l.id} class="qbline">
+                                <select data-id={l.id} onchange={handleQbItem}>
+                                    <template for:each={l.options} for:item="o">
+                                        <option key={o.id} value={o.id} selected={o.selected}>{o.name}</option>
+                                    </template>
+                                </select>
+                                <input type="number" value={l.qty} min="0" class="tr-inp" data-id={l.id} oninput={handleQbQty} />
+                                <input type="number" value={l.price} min="0" step="0.01" class="tr-inp" data-id={l.id} oninput={handleQbPrice} />
+                                <span class="lt">{l.lineTotal}</span>
+                                <button class="x" data-id={l.id} onclick={handleQbRemove}>×</button>
+                            </div>
+                        </template>
+                        <button class="btn mt10" onclick={handleQbAdd}>Add line</button>
+                        <div class="mt14">
+                            <div class="qtot"><span>Subtotal</span><span class="num">{qbTotals.rev}</span></div>
+                            <div class="qtot"><span>Est. cost (catalog)</span><span class="num">{qbTotals.cost}</span></div>
+                            <div class="qtot big"><span>Quote total</span><span class="num">{qbTotals.rev}</span></div>
+                            <div class="gp" style={qbTotals.gpStyle}>GP {qbTotals.gp}% · GP floor is an open Section 11 decision, shown but not enforced</div>
+                        </div>
+                        <template if:true={canEdit}>
+                            <div class="btnrow mt13"><button class="btn primary" onclick={handleQbSave}>Save quote</button></div>
+                        </template>
+                        <div class="note mt11">Unit prices preload from Item_Catalog__c and stay editable. EPOs raised from a PO mismatch land here; saving routes the quote to Approvals and marks the mismatch resolved.</div>
+                    </div></div>
+                    <div class="card"><div class="ch">Quotes<span class="pill gray ml">{quoteCount}</span></div>
+                    <div class="cb nopad scrollx">
+                        <table class="grid"><thead><tr><th>Quote</th><th>Type</th><th>Lot</th><th class="r">Amount</th><th class="r">GP</th><th>Status</th><th class="r">Days</th><th></th></tr></thead><tbody>
+                        <template for:each={quoteRows} for:item="q">
+                            <tr key={q.id}>
+                                <td class="num">{q.name}</td>
+                                <td><span class={q.kindCss}>{q.kind}</span></td>
+                                <td>{q.lot}</td><td class="r">{q.amountLabel}</td><td class="r">{q.gpLabel}</td>
+                                <td><span class={q.statusCss}>{q.statusLabel}</span></td><td class="r">{q.daysLabel}</td>
+                                <td><div class="rowacts"><template if:true={q.canSend}><template if:true={canEdit}>
+                                    <button class="btn dark" data-id={q.id} onclick={handleSendQuote}>Send</button>
+                                </template></template></div></td>
+                            </tr>
+                        </template>
+                        </tbody></table>
+                    </div></div>
+                </div>
+            </template>
+
+            <!-- WARRANTY -->
+            <template if:true={isWarranty}>
+                <div class="ptitle"><h1>Warranty</h1></div>
+                <div class="card"><div class="ch">Warranty work orders<span class="pill gray ml">{warrantyCount}</span></div>
+                <div class="cb nopad scrollx">
+                    <table class="grid"><thead><tr><th>WO</th><th>Lot / Community</th><th>FM</th><th>Reason</th><th>Scheduled</th><th>Determination</th></tr></thead><tbody>
+                    <template for:each={warrantyRows} for:item="w">
+                        <tr key={w.id}>
+                            <td class="num">{w.name}</td>
+                            <td>{w.lot}<span class="sub">{w.community}</span></td>
+                            <td><template if:true={w.fmBlocked}><span class="pill red">G6</span></template>
+                                <template if:false={w.fmBlocked}>{w.fmLabel}</template></td>
+                            <td class="maxw">{w.reason}</td>
+                            <td>{w.scheduled}<span class="sub">{w.status}</span></td>
+                            <td><template if:true={w.determination}><span class={w.detCss}>{w.determination}</span></template>
+                                <template if:false={w.determination}><div class="rowacts"><template if:true={canEdit}>
+                                    <button class="btn green" data-id={w.id} onclick={handleWApprove}>Approve</button>
+                                    <button class="btn red" data-id={w.id} onclick={handleWDeny}>Deny</button>
+                                </template></div></template></td>
+                        </tr>
+                    </template>
+                    </tbody></table>
+                </div>
+                <div class="cb"><div class="note">Warranty WOs bill nothing (BR-032). CS owns the determination; scheduling owns the dates, read-only here. Q-010 (does warranty damage ever bill) is recommended No and awaiting confirmation.</div></div></div>
+            </template>
+
+            <!-- FINISHED JOBS -->
+            <template if:true={isFj}>
+                <div class="ptitle"><h1>Finished Jobs</h1></div>
+                <div class="card"><div class="ch">Open Finished Job work orders<span class="pill gray ml">{fjCount}</span></div>
+                <div class="cb nopad scrollx">
+                    <table class="grid"><thead><tr><th>WO</th><th>Lot / Community</th><th>FM</th><th>Reason incomplete</th><th>Scheduled</th></tr></thead><tbody>
+                    <template for:each={fjRows} for:item="w">
+                        <tr key={w.id}>
+                            <td class="num">{w.name}</td>
+                            <td>{w.lot}<span class="sub">{w.community}</span></td>
+                            <td>{w.fm}</td><td class="maxw">{w.reason}</td>
+                            <td>{w.scheduled}<span class="sub">{w.status}</span></td>
+                        </tr>
+                    </template>
+                    </tbody></table>
+                </div>
+                <div class="cb"><div class="note">Finished Jobs are return visits for incomplete scope, no client billing. Chronic FJ on a community is a production problem and gets escalated.</div></div></div>
+            </template>
+
+            <!-- TAKEOFFS (read-only) -->
+            <template if:true={isTakeoffs}>
+                <div class="ptitle"><h1>Takeoffs</h1><span class="pill gray">Read-only for CS</span></div>
+                <div class="card"><div class="ch">Takeoff status<span class="pill gray ml">{takeoffCount}</span></div>
+                <div class="cb nopad scrollx">
+                    <table class="grid"><thead><tr><th>Takeoff</th><th>Lot / Community</th><th class="r">Photos</th><th>Status</th><th>Linked PO</th></tr></thead><tbody>
+                    <template for:each={takeoffRows} for:item="t">
+                        <tr key={t.id}>
+                            <td class="num">{t.name}
+                                <template if:true={t.mismatch}><span class="pill red ml5">Mismatch</span></template></td>
+                            <td>{t.lot}<span class="sub">{t.community}</span></td>
+                            <td class="r">{t.photos}</td>
+                            <td><span class={t.statusCss}>{t.status}</span></td>
+                            <td class="num">{t.po}</td>
+                        </tr>
+                    </template>
+                    </tbody></table>
+                </div>
+                <div class="cb"><div class="note">CS sees takeoff status because it gates the pipeline, but takes no approval action here (Meg, Jun 10 2026). OPEN DECISION: takeoff approval needs a new owner; recommendation is the zone manager in Ops.</div></div></div>
+            </template>
+
+            <!-- INVOICES (read-only) -->
+            <template if:true={isInvoices}>
+                <div class="ptitle"><h1>Invoices</h1><span class="pill gray">Read-only · GP% visible</span></div>
+                <div class="card"><div class="ch">Invoice queue<span class="pill gray ml">{invoiceCount}</span></div>
+                <div class="cb nopad scrollx">
+                    <table class="grid"><thead><tr><th>Invoice</th><th>Builder</th><th>Lot</th><th>WO</th><th class="r">Amount</th><th class="r">GP%</th><th>Type</th><th>Status</th><th></th></tr></thead><tbody>
+                    <template for:each={invoiceRows} for:item="i">
+                        <tr key={i.id}>
+                            <td class="num">{i.name}</td><td>{i.builder}</td><td>{i.lot}</td><td class="num">{i.wo}</td>
+                            <td class="r">{i.amountLabel}</td><td class="r" style={i.gpStyle}>{i.gpLabel}</td>
+                            <td><span class={i.typeCss}>{i.invType}</span></td>
+                            <td><span class={i.statusCss}>{i.status}</span></td>
+                            <td><div class="rowacts"><template if:true={i.cloudscapeHeld}>
+                                <button class="btn" data-id={i.id} onclick={handleCloudscape}>Check Cloudscape</button>
+                            </template></div></td>
+                        </tr>
+                    </template>
+                    </tbody></table>
+                </div>
+                <div class="cb"><div class="note">Invoices are Finance-owned and read-only here; CS sees them with GP%. Warranty and FJ work bills nothing (BR-032). DR Horton invoices hold in Pending Send until the Cloudscape entry-complete flag is true (BR step 22). No payment actions exist in this console (G5).</div></div></div>
+            </template>
+
+            <!-- REPORTS -->
+            <template if:true={isReports}>
+                <div class="ptitle"><h1>Reports</h1></div>
+                <div class="card"><div class="ch">PO aging</div><div class="cb nopad scrollx">
+                    <table class="grid"><thead><tr><th>PO</th><th>Builder</th><th>Received</th><th>Status</th></tr></thead><tbody>
+                    <template for:each={rptPoAging} for:item="r"><tr key={r.id}><td class="num">{r.c1}</td><td>{r.c2}</td><td>{r.c3}</td><td>{r.c4}</td></tr></template>
+                    </tbody></table></div></div>
+                <div class="card"><div class="ch">NFI rate by builder</div><div class="cb nopad scrollx">
+                    <table class="grid"><thead><tr><th>Builder</th><th>POs</th><th>NFI returns</th><th>NFI rate</th></tr></thead><tbody>
+                    <template for:each={rptNfiRate} for:item="r"><tr key={r.id}><td>{r.c1}</td><td>{r.c2}</td><td>{r.c3}</td><td>{r.c4}</td></tr></template>
+                    </tbody></table></div></div>
+                <div class="card"><div class="ch">Open EPO tracker</div><div class="cb nopad scrollx">
+                    <table class="grid"><thead><tr><th>Quote</th><th>Lot</th><th>Amount</th><th>Status</th></tr></thead><tbody>
+                    <template for:each={rptEpoTracker} for:item="r"><tr key={r.id}><td class="num">{r.c1}</td><td>{r.c2}</td><td>{r.c3}</td><td>{r.c4}</td></tr></template>
+                    </tbody></table></div></div>
+                <div class="card"><div class="ch">Warranty rate by community (90d)</div><div class="cb nopad scrollx">
+                    <table class="grid"><thead><tr><th>Community</th><th>Installs</th><th>Warranty WOs</th><th>Rate</th></tr></thead><tbody>
+                    <template for:each={rptWarrantyRate} for:item="r"><tr key={r.id}><td>{r.c1}</td><td>{r.c2}</td><td>{r.c3}</td><td>{r.c4}</td></tr></template>
+                    </tbody></table></div></div>
+                <div class="card"><div class="ch">QI trend by FM (90d)</div><div class="cb nopad scrollx">
+                    <table class="grid"><thead><tr><th>FM</th><th>Avg QI</th><th>Scored WOs</th></tr></thead><tbody>
+                    <template for:each={rptQiTrend} for:item="r"><tr key={r.id}><td>{r.c1}</td><td>{r.c2}</td><td>{r.c3}</td></tr></template>
+                    </tbody></table></div>
+                    <div class="cb"><div class="note">Floor is 9. Blocked zones (G6) report nothing rather than guesses.</div></div></div>
+                <div class="card"><div class="ch">Takeoff approval time</div><div class="cb nopad scrollx">
+                    <table class="grid"><thead><tr><th>Takeoff</th><th>Community</th><th>Approved</th><th>Days</th></tr></thead><tbody>
+                    <template for:each={rptTakeoffTime} for:item="r"><tr key={r.id}><td class="num">{r.c1}</td><td>{r.c2}</td><td>{r.c3}</td><td>{r.c4}</td></tr></template>
+                    </tbody></table></div></div>
+                <div class="note">The six CS reports computed from live records. Salesforce report/dashboard versions follow as a phase-2 deliverable; exports run from standard report export.</div>
+            </template>
+
+            <!-- BUILDERS -->
+            <template if:true={isBuilders}>
+                <div class="ptitle"><h1>Builders</h1>
+                    <div class="acts"><template if:true={canEdit}>
+                        <button class="btn primary" onclick={handleOpenOnboard}>Onboard builder</button></template></div>
+                </div>
+                <div class="card"><div class="ch">Division accounts<span class="pill gray ml">{builderCount}</span></div>
+                <div class="cb nopad scrollx">
+                    <table class="grid"><thead><tr><th>Division</th><th class="r">Communities</th><th class="r">Lots</th><th></th></tr></thead><tbody>
+                    <template for:each={builderRows} for:item="b">
+                        <tr key={b.id}>
+                            <td>{b.name}</td><td class="r">{b.communities}</td><td class="r">{b.lots}</td>
+                            <td><div class="rowacts"><button class="btn" data-name={b.name} onclick={handleBuilderComms}>Communities</button></div></td>
+                        </tr>
+                    </template>
+                    </tbody></table>
+                </div></div>
+            </template>
+
+            <!-- COMMUNITIES -->
+            <template if:true={isCommunities}>
+                <div class="ptitle"><h1>Communities</h1>
+                    <div class="acts"><template if:true={canEdit}>
+                        <button class="btn primary" onclick={handleOpenNewComm}>New community</button></template></div>
+                </div>
+                <div class="filters">
+                    <template for:each={terrChips} for:item="t">
+                        <button key={t.key} class={t.css} data-key={t.key} onclick={handleTerrFilter}>{t.label}</button>
+                    </template>
+                </div>
+                <div class="card"><div class="ch">Active communities<span class="pill gray ml">{communityCount}</span></div>
+                <div class="cb nopad scrollx">
+                    <table class="grid"><thead><tr><th>Community</th><th>Division</th><th>FM assignment</th><th class="r">Lots</th><th>BMG</th><th>Aqua</th></tr></thead><tbody>
+                    <template for:each={communityRows} for:item="c">
+                        <tr key={c.id}>
+                            <td>{c.name}</td>
+                            <td>{c.division}<span class="sub">{c.territory}</span></td>
+                            <td><template if:true={c.fmBlocked}><span class="pill red">BLOCKED pending Ops (G6)</span></template>
+                                <template if:false={c.fmBlocked}>{c.fmLabel}</template></td>
+                            <td class="r">{c.lotsLabel}</td><td class="num">{c.bmg}</td>
+                            <td><template if:true={c.aqua}><span class="pill aqua">Active</span></template>
+                                <template if:false={c.aqua}><span class="pill gray">Off</span></template></td>
+                        </tr>
+                    </template>
+                    </tbody></table>
+                </div>
+                <div class="cb"><div class="note">FM assignment is community configuration (G6): zones 1, 3, and 4 stay BLOCKED pending Ops and are never guessed, including on newly created communities.</div></div></div>
+            </template>
+
+            <!-- ZONE MAP (phase 1: assignment table; map layer waits on territory cleanup Q-020) -->
+            <template if:true={isZones}>
+                <div class="ptitle"><h1>Zone Map</h1><span class="pill gray">Assignment table · map layer pending territory cleanup (Q-020)</span></div>
+                <div class="card"><div class="ch">Zone assignments</div><div class="cb">
+                    <template for:each={zoneRows} for:item="z">
+                        <div key={z.zone} class="zrow">
+                            <div class="flex1"><b>{z.label}</b><span class="sub">{z.comms}</span></div>
+                            <template if:true={z.blocked}><span class="pill red">BLOCKED pending Ops (G6)</span></template>
+                            <template if:false={z.blocked}><span class="pill green">{z.fmLabel}</span></template>
+                        </div>
+                    </template>
+                    <div class="note mt10">Zone ownership lives on configuration (gate G6). Zones 1, 3, and 4 FM names stay BLOCKED pending Ops input and are never guessed, here or anywhere else. The geographic layer ships after the community territory backfill (36 communities currently missing territory).</div>
+                </div></div>
+            </template>
+
+            <!-- KNOWLEDGE -->
+            <template if:true={isKnowledge}>
+                <div class="ptitle"><h1>Knowledge</h1><span class="pill amber">Draft articles · pending review before publish</span></div>
+                <template for:each={kbRows} for:item="k">
+                    <div key={k.id} class={k.rowCss}>
+                        <button class="krh" data-id={k.id} onclick={handleToggleKb}>
+                            <span class={k.catCss}>{k.cat}</span>
+                            <div class="flex1"><b>{k.title}</b><span class="sub">{k.id} · draft</span></div>
+                        </button>
+                        <template if:true={k.expanded}><div class="krb">{k.body}</div></template>
+                    </div>
+                </template>
+                <div class="note">Production home for these is Service Cloud Knowledge attached to cases, POs, and quotes. Content above is draft pending Meg review (Section 11, item 14) and is not seeded to records.</div>
+            </template>
+
+        </div>
+
+        <!-- RAIL -->
+        <aside class="rail">
+            <div class="af">
+                <div class="afh"><span class="aficon">✦</span><div><b>Agentforce</b><span>READ &amp; ROUTE · CONSOLE DATA ONLY</span></div></div>
+                <div class="afb">
+                    <template for:each={afLog} for:item="m">
+                        <div key={m.id} class={m.css}>{m.text}</div>
+                    </template>
+                    <div class="afchips">
+                        <template for:each={afChips} for:item="c">
+                            <button key={c.key} data-key={c.key} onclick={handleAfChip}>{c.label}</button>
+                        </template>
+                    </div>
+                    <div class="afask">
+                        <input type="text" data-f="afInput" placeholder="Ask about POs, quotes, zones, warranty" onkeydown={handleAfKey} />
+                        <button onclick={handleAfAsk}>Ask</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card"><div class="ch">CSM alerts</div><div class="cb pt4">
+                <template for:each={alerts} for:item="a">
+                    <div key={a.id} class="alert"><span class={a.css}>!</span>
+                        <div><b>{a.title}</b><span>{a.text}</span></div></div>
+                </template>
+            </div></div>
+            <div class="card"><div class="ch">Role &amp; gates</div><div class="cb">
+                <div class="note">CS owns PO intake and approval, EPOs, quotes, cases, warranty determination, FJ tracking, onboarding, pipeline, knowledge, and zone visibility. Takeoff approvals are out of CS (Meg, Jun 10 2026). No scheduling, no field execution edits, no QI approval. G6: zone 1/3/4 FM names BLOCKED. G5: no payments. Agentforce here is read-and-route only.</div>
+            </div></div>
+        </aside>
+    </div>
+</div>
+
+<!-- MODALS -->
+<template if:true={anyModal}>
+    <div class="modal-back" onclick={handleCloseModal}>
+        <div class="modal" onclick={stopProp}>
+            <template if:true={showNewPo}>
+                <div class="mh">Create new PO</div>
+                <div class="mb">
+                    <label class="fl">Community</label>
+                    <select class="fs" data-f="npComm">
+                        <template for:each={communityRows} for:item="c">
+                            <option key={c.id} value={c.id}>{c.name} — {c.division}</option>
+                        </template>
+                    </select>
+                    <label class="fl">PO number</label><input class="fi" data-f="npNum" placeholder="PO-105001" />
+                    <label class="fl">PO amount</label><input class="fi" data-f="npAmt" type="number" placeholder="8500" />
+                    <label class="fl">Requested install date</label><input class="fi" data-f="npDate" type="date" />
+                </div>
+                <div class="mf"><button class="btn ghost" onclick={handleCloseModal}>Cancel</button>
+                    <button class="btn primary" onclick={handleCreatePo}>Create PO</button></div>
+            </template>
+            <template if:true={showNewCase}>
+                <div class="mh">New case</div>
+                <div class="mb">
+                    <label class="fl">Subject</label><input class="fi" data-f="ncSubj" placeholder="What happened, in one line" />
+                    <label class="fl">Community (optional)</label>
+                    <select class="fs" data-f="ncComm"><option value="">—</option>
+                        <template for:each={communityRows} for:item="c">
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                        </template>
+                    </select>
+                    <label class="fl">Lot / location</label><input class="fi" data-f="ncLot" placeholder="Lot 96" />
+                    <label class="fl">Origin</label>
+                    <select class="fs" data-f="ncOrigin">
+                        <option>Builder call</option><option>Builder email</option>
+                        <option>Homeowner portal</option><option>Customer call</option><option>Customer email</option>
+                    </select>
+                    <label class="fl">First note</label><textarea class="fi ta64" data-f="ncNote" placeholder="What was reported and what you committed to"></textarea>
+                </div>
+                <div class="mf"><button class="btn ghost" onclick={handleCloseModal}>Cancel</button>
+                    <button class="btn primary" onclick={handleCreateCase}>Create case</button></div>
+            </template>
+            <template if:true={showOnboard}>
+                <div class="mh">Onboard new builder</div>
+                <div class="mb">
+                    <label class="fl">Builder division name</label><input class="fi" data-f="nbName" placeholder="Toll Brothers · Charlotte" />
+                    <div class="note mt12">Creates the division Account. Communities, BMG package codes, and POs hang off this record.</div>
+                </div>
+                <div class="mf"><button class="btn ghost" onclick={handleCloseModal}>Cancel</button>
+                    <button class="btn primary" onclick={handleOnboardBuilder}>Onboard builder</button></div>
+            </template>
+            <template if:true={showNewComm}>
+                <div class="mh">New community</div>
+                <div class="mb">
+                    <label class="fl">Community name</label><input class="fi" data-f="ncName" placeholder="Catawba Crossing Ph 1" />
+                    <label class="fl">Builder division</label>
+                    <select class="fs" data-f="ncDiv">
+                        <template for:each={builderRows} for:item="b">
+                            <option key={b.id} value={b.id}>{b.name}</option>
+                        </template>
+                    </select>
+                    <label class="fl">Territory</label><input class="fi" data-f="ncTerr" placeholder="Charlotte" />
+                    <label class="fl">BMG package code</label><input class="fi" data-f="ncBmg" placeholder="DRH-CLT-13" />
+                    <label class="fchk"><input type="checkbox" data-f="ncAqua" /> Aqua temporary irrigation active</label>
+                    <div class="note mt12">FM assignment is zone configuration (G6) and is never set here — it stays unassigned until Ops provides it.</div>
+                </div>
+                <div class="mf"><button class="btn ghost" onclick={handleCloseModal}>Cancel</button>
+                    <button class="btn primary" onclick={handleCreateCommunity}>Create community</button></div>
+            </template>
+            <template if:true={showEmail}>
+                <div class="mh">Email · {emailCtx.label}</div>
+                <div class="mb">
+                    <label class="fl">To</label><input class="fi" data-f="emTo" placeholder="contact@builder.com" />
+                    <label class="fl">Template</label>
+                    <select class="fs" onchange={handleEmailTpl}>
+                        <template for:each={emailTemplates} for:item="t">
+                            <option key={t.key} value={t.key}>{t.label}</option>
+                        </template>
+                    </select>
+                    <label class="fl">Subject</label><input class="fi" data-f="emSub" placeholder="Subject" />
+                    <label class="fl">Body</label><textarea class="fi ta130" data-f="emBody" placeholder="Plain language: what happened, what happens next, and when."></textarea>
+                </div>
+                <div class="mf"><button class="btn ghost" onclick={handleCloseModal}>Cancel</button>
+                    <button class="btn primary" onclick={handleSendEmail}>Send email</button></div>
+            </template>
+        </div>
+    </div>
+</template>
+
+<div class={toastCss}>{toastMsg}</div>
+</template>
